@@ -5,7 +5,6 @@
            class="kt-link"><?= \backend\modules\conf\settings\SystemSettings::getCompanyName() ?></a>
     </div>
     <div class="kt-footer__menu">
-        <a href="#" target="_blank" class="kt-footer__menu-link kt-link">Terms</a>
         <a href="#" target="_blank" class="kt-footer__menu-link kt-link">Website</a>
         <a href="#" target="_blank" class="kt-footer__menu-link kt-link">Contact
         </a>

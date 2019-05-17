@@ -1,7 +1,7 @@
 <div id="kt_header_mobile" class="kt-header-mobile  kt-header-mobile--fixed ">
     <div class="kt-header-mobile__logo">
         <a href="<?= Yii::$app->homeUrl ?>">
-            <img alt="Logo" src="<?= Yii::$app->view->theme->baseUrl ?>/assets/img/logo-mobile.png"/>
+            <img alt="Logo" src="<?= Yii::$app->view->theme->baseUrl ?>/assets/img/adgg.jpg"/>
         </a>
     </div>
     <div class="kt-header-mobile__toolbar">

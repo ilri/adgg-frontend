@@ -56,7 +56,7 @@ $controller = Yii::$app->controller;
                 <div class="kt-aside__brand kt-grid__item " id="kt_aside_brand">
                     <div class="kt-aside__brand-logo">
                         <a href="<?= Yii::$app->homeUrl ?>">
-                            <img alt="Logo" src="<?= Yii::$app->view->theme->baseUrl ?>/assets/img/logo.png"/>
+                            <img alt="Logo" src="<?= Yii::$app->view->theme->baseUrl ?>/assets/img/adgg.jpg"/>
                         </a>
                     </div>
                     <div class="kt-aside__brand-tools">
@@ -132,25 +132,25 @@ $controller = Yii::$app->controller;
             <div class="kt-grid-nav-v2">
                 <a href="#" class="kt-grid-nav-v2__item">
                     <div class="kt-grid-nav-v2__item-icon"><i class="flaticon2-box"></i></div>
-                    <div class="kt-grid-nav-v2__item-title">Orders</div>
+                    <div class="kt-grid-nav-v2__item-title">Farmers</div>
                 </a>
                 <a href="#" class="kt-grid-nav-v2__item">
-                    <div class="kt-grid-nav-v2__item-icon"><i class="flaticon2-percentage"></i></div>
-                    <div class="kt-grid-nav-v2__item-title">Rebates</div>
+                    <div class="kt-grid-nav-v2__item-icon"><i class="flaticon2-pie-chart"></i></div>
+                    <div class="kt-grid-nav-v2__item-title">Milk Collections</div>
                 </a>
                 <a href="#" class="kt-grid-nav-v2__item">
-                    <div class="kt-grid-nav-v2__item-icon"><i class="flaticon2-supermarket"></i></div>
-                    <div class="kt-grid-nav-v2__item-title">Products</div>
+                    <div class="kt-grid-nav-v2__item-icon"><i class="flaticon2-avatars"></i></div>
+                    <div class="kt-grid-nav-v2__item-title">Field Offices</div>
                 </a>
                 <a href="#" class="kt-grid-nav-v2__item">
-                    <div class="kt-grid-nav-v2__item-icon"><i class="flaticon2-hospital"></i></div>
-                    <div class="kt-grid-nav-v2__item-title">Members</div>
+                    <div class="kt-grid-nav-v2__item-icon"><i class="flaticon2-list"></i></div>
+                    <div class="kt-grid-nav-v2__item-title">Partners</div>
                 </a>
                 <a href="#" class="kt-grid-nav-v2__item">
                     <div class="kt-grid-nav-v2__item-icon"><i class="flaticon2-avatar"></i></div>
                     <div class="kt-grid-nav-v2__item-title">Users</div>
                 </a>
-                <a href="<?= Url::to(['/conf/settings/index'])?>" class="kt-grid-nav-v2__item">
+                <a href="<?= Url::to(['/conf/settings/index']) ?>" class="kt-grid-nav-v2__item">
                     <div class="kt-grid-nav-v2__item-icon"><i class="flaticon2-settings"></i></div>
                     <div class="kt-grid-nav-v2__item-title">Settings</div>
                 </a>

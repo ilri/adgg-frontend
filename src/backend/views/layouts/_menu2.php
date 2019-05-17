@@ -15,105 +15,63 @@ use yii\helpers\Url;
                 </a>
             </li>
             <li class="kt-menu__section ">
-                <h4 class="kt-menu__section-text">Orders</h4>
+                <h4 class="kt-menu__section-text">Farmers</h4>
                 <i class="kt-menu__section-icon flaticon-more-v2"></i>
             </li>
             <li class="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true"
                 data-ktmenu-submenu-toggle="hover">
                 <a href="#" class="kt-menu__link kt-menu__toggle">
                     <i class="kt-menu__link-icon flaticon2-list"></i>
-                    <span class="kt-menu__link-text">Pending Orders</span>
+                    <span class="kt-menu__link-text">Active Farmers</span>
                     <span class="kt-menu__link-badge"><span class="kt-badge kt-badge--brand">2</span></span>
                 </a>
             </li>
             <li class="kt-menu__item " aria-haspopup="true">
                 <a href="#" class="kt-menu__link ">
-                    <i class="kt-menu__link-icon fa fa-check"></i>
-                    <span class="kt-menu__link-text">Approved Orders</span>
-                </a>
-            </li>
-            <li class="kt-menu__item " aria-haspopup="true">
-                <a href="#" class="kt-menu__link ">
-                    <i class="kt-menu__link-icon fa fa-check"></i>
-                    <span class="kt-menu__link-text">Fulfilled Orders</span>
-                </a>
-            </li>
-            <li class="kt-menu__item " aria-haspopup="true">
-                <a href="#" class="kt-menu__link ">
                     <i class="kt-menu__link-icon fa fa-search"></i>
-                    <span class="kt-menu__link-text">Search Orders</span>
+                    <span class="kt-menu__link-text">Search Farmers</span>
                 </a>
             </li>
             <li class="kt-menu__section ">
-                <h4 class="kt-menu__section-text">Distributors</h4>
+                <h4 class="kt-menu__section-text">Field Officers</h4>
                 <i class="kt-menu__section-icon flaticon-more-v2"></i>
-            </li>
-            <li class="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true"
-                data-ktmenu-submenu-toggle="hover">
-                <a href="#" class="kt-menu__link kt-menu__toggle">
-                    <i class="kt-menu__link-icon flaticon2-list"></i>
-                    <span class="kt-menu__link-text">Pending Approval</span>
-                    <span class="kt-menu__link-badge"><span class="kt-badge kt-badge--brand">2</span></span>
-                </a>
-            </li>
-            <li class="kt-menu__item " aria-haspopup="true">
-                <a href="#" class="kt-menu__link ">
-                    <i class="kt-menu__link-icon fa fa-check"></i>
-                    <span class="kt-menu__link-text">Approved Distributors</span>
-                </a>
             </li>
             <li class="kt-menu__item " aria-haspopup="true">
                 <a href="#" class="kt-menu__link ">
                     <i class="kt-menu__link-icon fa fa-search"></i>
-                    <span class="kt-menu__link-text">Search Distributors</span>
+                    <span class="kt-menu__link-text">Search Field Officers</span>
                 </a>
             </li>
             <li class="kt-menu__section">
-                <h4 class="kt-menu__section-text">Members</h4>
+                <h4 class="kt-menu__section-text">Users</h4>
                 <i class="kt-menu__section-icon flaticon-more-v2"></i>
             </li>
             <li class="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true"
                 data-ktmenu-submenu-toggle="hover">
                 <a href="#" class="kt-menu__link kt-menu__toggle">
                     <i class="kt-menu__link-icon flaticon2-list"></i>
-                    <span class="kt-menu__link-text">Pending Approval</span>
+                    <span class="kt-menu__link-text">Active Users</span>
                     <span class="kt-menu__link-badge"><span class="kt-badge kt-badge--brand">2</span></span>
                 </a>
             </li>
             <li class="kt-menu__item " aria-haspopup="true">
                 <a href="#" class="kt-menu__link ">
-                    <i class="kt-menu__link-icon fa fa-check"></i>
-                    <span class="kt-menu__link-text">Approved Members</span>
-                </a>
-            </li>
-            <li class="kt-menu__item " aria-haspopup="true">
-                <a href="#" class="kt-menu__link ">
                     <i class="kt-menu__link-icon fa fa-search"></i>
-                    <span class="kt-menu__link-text">Search Members</span>
-                </a>
-            </li>
-            <li class="kt-menu__section">
-                <h4 class="kt-menu__section-text">Rebates</h4>
-                <i class="kt-menu__section-icon flaticon-more-v2"></i>
-            </li>
-            <li class="kt-menu__item " aria-haspopup="true">
-                <a href="#" class="kt-menu__link ">
-                    <i class="kt-menu__link-icon flaticon2-percentage"></i>
-                    <span class="kt-menu__link-text">Generate Report</span>
+                    <span class="kt-menu__link-text">Search Users</span>
                 </a>
             </li>
             <li class="kt-menu__section ">
-                <h4 class="kt-menu__section-text">Products Catalogue</h4>
+                <h4 class="kt-menu__section-text">Menu Item</h4>
                 <i class="kt-menu__section-icon flaticon-more-v2"></i>
             </li>
             <li class="kt-menu__item " aria-haspopup="true">
                 <a href="#" class="kt-menu__link ">
                     <i class="kt-menu__link-icon fa fa-search"></i>
-                    <span class="kt-menu__link-text">View Catalogue</span>
+                    <span class="kt-menu__link-text">Sub Menu Item</span>
                 </a>
             </li>
             <li class="kt-menu__section ">
-                <h4 class="kt-menu__section-text">Credits</h4>
+                <h4 class="kt-menu__section-text">Reports</h4>
                 <i class="kt-menu__section-icon flaticon-more-v2"></i>
             </li>
             <li class="kt-menu__item " aria-haspopup="true">
@@ -129,7 +87,8 @@ use yii\helpers\Url;
 <div class="kt-aside__footer kt-grid__item" id="kt_aside_footer">
     <div class="kt-aside__footer-nav">
         <div class="kt-aside__footer-item">
-            <a href="<?= Url::to(['/conf/settings/index'])?>" class="btn btn-icon" title="Settings"><i class="flaticon2-gear"></i></a>
+            <a href="<?= Url::to(['/conf/settings/index']) ?>" class="btn btn-icon" title="Settings"><i
+                        class="flaticon2-gear"></i></a>
         </div>
         <div class="kt-aside__footer-item">
             <a href="#" class="btn btn-icon" title="Users"><i class="flaticon2-avatar"></i></a>

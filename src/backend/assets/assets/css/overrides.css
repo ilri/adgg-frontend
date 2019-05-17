@@ -3,13 +3,13 @@ body {
 }
 
 .kt-link.kt-link--brand, .kt-font-brand {
-    color: #e36f1e !important;
+    color: #5b206e !important;
 }
 
 .btn-brand {
     color: #fff;
-    background-color: #e36f1e;
-    border-color: #e36f1e;
+    background-color: #5b206e;
+    border-color: #5b206e;
 }
 
 .btn-brand:hover, .btn-brand:active, .btn-brand:focus {
@@ -29,7 +29,7 @@ body {
     border-color: #9aabff;
     outline: 0;
     -webkit-box-shadow: 0 0 0 0.2rem rgba(88, 103, 221, 0.25) !important;
-    box-shadow: 0 0 0 0.2rem rgba(66, 113, 29, 0.25) !important;
+    box-shadow: 0 0 0 0.2rem rgba(59, 27, 99, 0.25) !important;
 }
 
 .breadcrumb {
@@ -54,7 +54,7 @@ body {
 
 .kt-grid-nav-v2 .kt-grid-nav-v2__item .kt-grid-nav-v2__item-icon i {
     font-size: 2.25rem;
-    color: #e36f1e;
+    color: #5b206e;
 }
 
 .btn.btn-label-brand {
@@ -64,30 +64,30 @@ body {
 }
 
 a.btn.btn-label-brand:focus, a.btn.btn-label-brand:hover, a.btn.btn-label-brand.active, button.btn.btn-label-brand:focus, button.btn.btn-label-brand:hover, button.btn.btn-label-brand.active, input.btn.btn-label-brand:focus, input.btn.btn-label-brand:hover, input.btn.btn-label-brand.active {
-    background-color: #e36f1e;
+    background-color: #5b206e;
     color: #ffffff;
 }
 
 .kt-nav .kt-nav__item.kt-nav__item--active > .kt-nav__link .kt-nav__link-icon, .kt-nav .kt-nav__item.kt-nav__item--active > .kt-nav__link .kt-nav__link-text, .kt-nav .kt-nav__item.kt-nav__item--active > .kt-nav__link .kt-nav__link-arrow, .kt-nav .kt-nav__item:hover:not(.kt-nav__item--disabled):not(.kt-nav__item--sub) > .kt-nav__link .kt-nav__link-icon, .kt-nav .kt-nav__item:hover:not(.kt-nav__item--disabled):not(.kt-nav__item--sub) > .kt-nav__link .kt-nav__link-text, .kt-nav .kt-nav__item:hover:not(.kt-nav__item--disabled):not(.kt-nav__item--sub) > .kt-nav__link .kt-nav__link-arrow {
-    color: #e36f1e;
+    color: #5b206e;
 }
 
 .kt-header .kt-header-menu .kt-menu__nav > .kt-menu__item.kt-menu__item--here > .kt-menu__link .kt-menu__link-text, .kt-header .kt-header-menu .kt-menu__nav > .kt-menu__item.kt-menu__item--active > .kt-menu__link .kt-menu__link-text, .kt-header .kt-header-menu .kt-menu__nav > .kt-menu__item:hover > .kt-menu__link .kt-menu__link-text {
-    color: #e36f1e;
+    color: #5b206e;
 }
 
 .kt-header-menu .kt-menu__nav > .kt-menu__item .kt-menu__submenu > .kt-menu__subnav > .kt-menu__item:hover:not(.kt-menu__item--here):not(.kt-menu__item--active) > .kt-menu__link .kt-menu__link-text, .kt-header-menu .kt-menu__nav > .kt-menu__item .kt-menu__submenu > .kt-menu__subnav > .kt-menu__item.kt-menu__item--hover:not(.kt-menu__item--here):not(.kt-menu__item--active) > .kt-menu__link .kt-menu__link-text {
-    color: #e36f1e;
+    color: #5b206e;
 }
 
 a {
-    color: #e36f1e;
+    color: #5b206e;
     text-decoration: none;
     background-color: transparent;
 }
 
 .kt-aside-menu .kt-menu__nav > .kt-menu__item.kt-menu__item--here > .kt-menu__heading .kt-menu__link-text, .kt-aside-menu .kt-menu__nav > .kt-menu__item.kt-menu__item--here > .kt-menu__link .kt-menu__link-text {
-    color: #e36f1e;
+    color: #5b206e;
 }
 
 .kt-aside-menu .kt-menu__nav > .kt-menu__item:not(.kt-menu__item--parent):not(.kt-menu__item--open):not(.kt-menu__item--here):not(.kt-menu__item--active):hover > .kt-menu__heading, .kt-aside-menu .kt-menu__nav > .kt-menu__item:not(.kt-menu__item--parent):not(.kt-menu__item--open):not(.kt-menu__item--here):not(.kt-menu__item--active):hover > .kt-menu__link {
@@ -99,7 +99,7 @@ a {
 }
 
 .kt-aside-menu .kt-menu__nav > .kt-menu__item:not(.kt-menu__item--parent):not(.kt-menu__item--open):not(.kt-menu__item--here):not(.kt-menu__item--active):hover > .kt-menu__heading .kt-menu__link-icon, .kt-aside-menu .kt-menu__nav > .kt-menu__item:not(.kt-menu__item--parent):not(.kt-menu__item--open):not(.kt-menu__item--here):not(.kt-menu__item--active):hover > .kt-menu__link .kt-menu__link-icon {
-    color: #e36f1e;
+    color: #5b206e;
 }
 
 .kt-aside-menu .kt-menu__nav > .kt-menu__item:not(.kt-menu__item--parent):not(.kt-menu__item--open):not(.kt-menu__item--here):not(.kt-menu__item--active):hover > .kt-menu__heading .kt-menu__ver-arrow, .kt-aside-menu .kt-menu__nav > .kt-menu__item:not(.kt-menu__item--parent):not(.kt-menu__item--open):not(.kt-menu__item--here):not(.kt-menu__item--active):hover > .kt-menu__link .kt-menu__ver-arrow {
@@ -113,7 +113,7 @@ a {
 
 .kt-aside-menu .kt-menu__nav > .kt-menu__item:not(.kt-menu__item--parent):not(.kt-menu__item--open):not(.kt-menu__item--here):not(.kt-menu__item--active):hover > .kt-menu__heading, .kt-aside-menu .kt-menu__nav > .kt-menu__item:not(.kt-menu__item--parent):not(.kt-menu__item--open):not(.kt-menu__item--here):not(.kt-menu__item--active):hover > .kt-badge.kt-badge--brand {
     color: #fff;
-    background: #e36f1e;
+    background: #5b206e;
 }
 
 .kt-aside {
@@ -130,4 +130,16 @@ a {
 
 .kt-nav.kt-nav--v2 .kt-nav__item.kt-nav__item--active > .kt-nav__link {
     background-color: #38997a;
+}
+
+.kt-header {
+    background-color: #4d0d6f;
+    border-bottom: 1px solid #eff0f6;
+}
+
+.kt-aside__brand {
+    background-color: #4d0d6f;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+
 }

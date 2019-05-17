@@ -1,5 +1,6 @@
 <?php
 
+use backend\modules\conf\settings\SystemSettings;
 use backend\widgets\Alert;
 use yii\helpers\Html;
 
@@ -18,7 +19,7 @@ $controller = Yii::$app->controller;
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
         <?= Html::csrfMetaTags() ?>
-        <title><?= !empty($this->title) ? Html::encode($this->title) : \backend\modules\conf\settings\SystemSettings::getAppName() ?></title>
+        <title><?= !empty($this->title) ? Html::encode($this->title) : SystemSettings::getAppName() ?></title>
         <?php $this->head(); ?>
         <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
         <script>
@@ -45,12 +46,11 @@ $controller = Yii::$app->controller;
                 <div class="kt-login-v2__head">
                     <div class="kt-login-v2__logo">
                         <a href="<?= Yii::$app->homeUrl ?>">
-                            <img src="<?= Yii::$app->view->theme->baseUrl ?>/assets/img/login/logo.png" alt=""/>
+                            <img src="<?= Yii::$app->view->theme->baseUrl ?>/assets/img/login/adgg.jpg" alt=""/>
                         </a>
                     </div>
                     <div class="kt-login-v2__signup">
-                        <span>Don't have an account?</span>
-                        <a href="#" class="kt-link kt-font-brand">Sign Up</a>
+                        <a href="#" class="kt-link kt-font-brand">Move to ADGG Website</a>
                     </div>
                 </div>
                 <!--begin::Head-->
@@ -78,13 +78,12 @@ $controller = Yii::$app->controller;
             <div class="kt-grid__item">
                 <div class="kt-login-v2__footer">
                     <div class="kt-login-v2__link">
-                        <a href="#" class="kt-link kt-font-brand">Terms</a>
                         <a href="#" class="kt-link kt-font-brand">Website</a>
                         <a href="#" class="kt-link kt-font-brand">Contact</a>
                     </div>
                     <div class="kt-login-v2__info">
                         <a href="#"
-                           class="kt-link">&copy; <?= date('Y') ?> <?= \backend\modules\conf\settings\SystemSettings::getCompanyName() ?></a>
+                           class="kt-link">&copy; <?= date('Y') ?> <?= SystemSettings::getCompanyName() ?></a>
                     </div>
                 </div>
             </div>
