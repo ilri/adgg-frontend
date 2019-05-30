@@ -1,0 +1,29 @@
+.select2-container--krajee-bs4 .select2-selection--single {
+    height: calc(1.5em + 1.3rem + 2px);
+}
+
+form .required label::after {
+    content: "*";
+    color: red;
+}
+
+.select2-container--bootstrap .select2-selection--single {
+    height: calc(1.5em + 1.3rem + 2px);
+    line-height: 1.5;
+    padding: 0.65rem 1rem;
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.kv-password ~ .invalid-feedback {
+    display: block;
+}
+
+.form-control:disabled, .form-control[readonly] {
+    background-color: #f7f8fa;
+    opacity: 1;
+}
+
+.form-control, .input-group-text, .select2-container--bootstrap .select2-selection {
+    border-color: #a9abae;
+}

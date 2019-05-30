@@ -12,7 +12,7 @@
                 <span class="qq-upload-drop-area-text-selector"></span>
             </div>
             <div class="buttons">
-                <div class="qq-upload-button-selector qq-upload-button btn btn-danger">
+                <div class="qq-upload-button-selector qq-upload-button btn btn-brand">
                     <div>
                         <span class="<?= $widget->buttonIcon ?>" aria-hidden="true"></span> <?= $widget->buttonLabel ?>
                     </div>

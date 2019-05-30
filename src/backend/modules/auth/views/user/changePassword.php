@@ -8,12 +8,5 @@ use common\helpers\Lang;
 $this->title = Lang::t('Change your password');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-
-<div class="row">
-    <div class="col-md-2">
-        <?= $this->render('_viewOptions', ['model' => $model]) ?>
-    </div>
-    <div class="col-md-10">
-        <?= $this->render('_changePasswordForm', ['model' => $model]) ?>
-    </div>
-</div>
+<?= $this->render('_profileHeader', ['model' => $model]) ?>
+<?= $this->render('_changePasswordForm', ['model' => $model]) ?>

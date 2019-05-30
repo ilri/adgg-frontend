@@ -11,7 +11,8 @@ $this->params['breadcrumbs'][] = ['label' => Html::encode($model->name), 'url' =
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-12">
+        <?= $this->render('_profileHeader', ['model' => $model]) ?>
         <?= $this->render('_form', ['model' => $model]) ?>
     </div>
 </div>

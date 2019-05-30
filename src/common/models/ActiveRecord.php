@@ -27,6 +27,7 @@ use yii\web\NotFoundHttpException;
  * @property int $is_deleted
  * @property string $deleted_at
  * @property int $deleted_by
+ * @property string $uuid
  *
  * @property Users $createdByUser
  * @property Users $updatedByUser
@@ -55,15 +56,15 @@ abstract class ActiveRecord extends AR
     /**
      * @var string
      */
-    public $actionCreateDescriptionTemplate = 'Created a resource. Table affected: {{table}}, Record modified:{{id}}';
+    public $actionCreateDescriptionTemplate = 'Created a resource. Table affected: {{table}}, Record Id modified:{{id}}';
     /**
      * @var string
      */
-    public $actionUpdateDescriptionTemplate = 'Updated a resource. Table affected: {{table}}, Record modified:{{id}}';
+    public $actionUpdateDescriptionTemplate = 'Updated a resource. Table affected: {{table}}, Record Id modified:{{id}}';
     /**
      * @var string
      */
-    public $actionDeleteDescriptionTemplate = 'Deleted a resource. Table affected: {{table}}, Record modified:{{id}}';
+    public $actionDeleteDescriptionTemplate = 'Deleted a resource. Table affected: {{table}}, Record Id modified:{{id}}';
     /**
      * @var bool
      */
@@ -175,6 +176,10 @@ abstract class ActiveRecord extends AR
                 // update operation
                 if ($this->hasAttribute('updated_at')) {
                     $this->updated_at = DateUtils::mysqlTimestamp();
+                }
+                //uuid
+                if ($this->hasAttribute('uuid')) {
+                    $this->uuid = \common\helpers\Str::generateUUID();
                 }
             } else {
                 //updated_by

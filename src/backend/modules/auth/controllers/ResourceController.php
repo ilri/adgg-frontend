@@ -40,13 +40,13 @@ class ResourceController extends Controller
     public function actionCreate()
     {
         $model = new Resources();
-        return $model->simpleAjaxSaveRenderAjax();
+        return $model->simpleAjaxSave();
     }
 
     public function actionUpdate($id)
     {
         $model = Resources::loadModel($id);
-        return $model->simpleAjaxSaveRenderAjax();
+        return $model->simpleAjaxSave();
     }
 
     public function actionDelete($id)

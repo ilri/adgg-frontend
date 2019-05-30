@@ -13,6 +13,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <div class="row">
     <div class="col-md-12">
-        <?= $this->render('widgets/lineItems/_widget', ['lineItemModels' => $lineItemModels, 'role' => $role]); ?>
+        <?= $this->render('@authModule/views/layouts/_tab', []) ?>
+        <div class="tab-content">
+            <?= $this->render('widgets/lineItems/_widget', ['lineItemModels' => $lineItemModels, 'role' => $role]); ?>
+        </div>
     </div>
 </div>

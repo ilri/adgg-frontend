@@ -63,14 +63,14 @@ class RoleController extends Controller
 
     public function actionCreate()
     {
-        $model = new Roles();
-        return $model->simpleAjaxSaveRenderAjax();
+        $model = new Roles(['is_active' => true]);
+        return $model->simpleAjaxSave();
     }
 
     public function actionUpdate($id)
     {
         $model = Roles::loadModel($id);
-        return $model->simpleAjaxSaveRenderAjax();
+        return $model->simpleAjaxSave();
     }
 
     public function actionDelete($id)

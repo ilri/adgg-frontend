@@ -34,8 +34,12 @@ class GridView extends \kartik\grid\GridView
     const ICON_COLLAPSE = '<span class="fa fa-compress"></span>';
     const ICON_UNCHECKED = '<span class="fa fa-unchecked"></span>';
 
+    public $options = [
+        'class' => 'grid-view',
+    ];
+
     public $pjax = true;
-    public $condensed = true;
+    public $condensed = false;
     public $hover = true;
     public $floatHeader = false;
     public $bootstrap = true;
@@ -44,16 +48,30 @@ class GridView extends \kartik\grid\GridView
     public $responsive = true;
     public $showPageSummary = false;
     public $title;
+    public $panelTemplate = <<< HTML
+    <div class="kt-portlet__head kt-portlet__head--lg">
+    {panelHeading}
+    {panelBefore}
+</div>
+{items}
+{panelAfter}
+{panelFooter}
+HTML;
     public $panel = [
         'type' => GridView::TYPE_DEFAULT,
         'after' => false,
+        'options' => ['class' => 'kt-portlet kt-portlet--mobile'],
+        'headingOptions' => ['class' => 'kt-portlet__head-label'],
+        'titleOptions' => ['class' => 'kt-portlet__head-title'],
     ];
+    public $panelPrefix = '';
     public $persistResize = false;
     // set export properties
     public $export = [
         'fontAwesome' => true,
         'icon' => '',
-        'label' => '<i class="fa fa-download"></i>',
+        'label' => '<i class="la la-download"></i> EXPORT',
+        'options' => ['class' => 'btn btn-default btn-bold btn-upper btn-font-sm'],
     ];
 
     public $headerRowOptions = ['class' => 'kartik-sheet-style'];
@@ -82,11 +100,39 @@ class GridView extends \kartik\grid\GridView
 
     public $tableOptions = [];
 
+    public $layouts = "{summary}\n{items}\n{pager}";
+
+    public $layout = <<< HTML
+<div class="kt-portlet kt-portlet--mobile" style="margin-bottom: 0;">
+<div class="kt-portlet__head kt-portlet__head--lg">
+<div class="kt-portlet__head-label">
+ {title}
+</div>
+<div class="kt-portlet__head-toolbar">
+{toolbarContainer}
+</div>
+</div>
+<div class="kt-portlet__body kt-portlet__body--fit">
+<div class="kt-datatable kt-datatable--default kt-datatable--brand kt-datatable--scroll kt-datatable--loaded">
+{items}
+<div class="kt-datatable__pager kt-datatable--paging-loaded">
+{pager}
+<div class="kt-datatable__pager-info">
+<span class="kt-datatable__pager-detail">{summary}</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+HTML;
+
+
     /**
      * @inheritdoc
      */
     public function init()
     {
+
         if (!empty($this->searchModel)) {
             $this->dataProvider = $this->searchModel->search();
             $this->id = $this->searchModel->getGridViewWidgetId();
@@ -190,6 +236,11 @@ class GridView extends \kartik\grid\GridView
         ];
 
         parent::init();
+
+        $this->setPagerOptionClass('options', 'kt-datatable__pager-nav');
+        $this->setPagerOptionClass('linkContainerOptions', 'page-item');
+        $this->setPagerOptionClass('linkOptions', 'page-link kt-datatable__pager-link kt-datatable__pager-link-number');
+        $this->setPagerOptionClass('disabledListItemSubTagOptions', 'page-link');
     }
 
     /**
@@ -203,15 +254,13 @@ class GridView extends \kartik\grid\GridView
         if ($this->createButton['visible']) {
             $create_button_url = ArrayHelper::getValue($this->createButton, 'url', Url::to(array_merge(['create'], Yii::$app->request->queryParams)));
             $create_button_label = ArrayHelper::getValue($this->createButton, 'label', '<i class="fa fa-plus-circle"></i> ' . Lang::t('Add ' . $view->context->resourceLabel));
-            $create_button_html_options = ArrayHelper::getValue($this->createButton, 'options', ['class' => 'btn btn-default', 'data-pjax' => 0]);
+            $create_button_html_options = ArrayHelper::getValue($this->createButton, 'options', ['class' => 'btn btn-brand btn-bold btn-upper btn-font-sm', 'data-pjax' => 0]);
             $create_button_modal = ArrayHelper::getValue($this->createButton, 'modal', false);
             if ($create_button_modal) {
-                $new_class = 'show_modal_form';
-                if (empty($create_button_html_options['class']))
-                    $create_button_html_options['class'] = $new_class;
-                else
-                    $create_button_html_options['class'] .= ' ' . $new_class;
+                $create_button_html_options['data-toggle'] = 'modal';
+                $create_button_html_options['data-href'] = $create_button_url;
                 $create_button_html_options['data-grid'] = $this->id . '-pjax';
+                $create_button_url = '#';
             }
 
             array_push($this->toolbarButtons, Html::a($create_button_label, $create_button_url, $create_button_html_options));
@@ -244,20 +293,16 @@ class GridView extends \kartik\grid\GridView
 
     protected function setToolbar()
     {
+        $this->generateCreateButton();
+        $buttons = $this->toolbarButtons;
         if (($key = array_search('{export}', $this->toolbar)) !== false) {
             unset($this->toolbar[$key]);
         }
         if (($key = array_search('{toggleData}', $this->toolbar)) !== false) {
             unset($this->toolbar[$key]);
         }
-        $this->generateCreateButton();
-        $buttons = $this->toolbarButtons;
 
-        if (!empty($buttons)) {
-            array_push($this->toolbar, [
-                'content' => implode(' ', $buttons),
-            ]);
-        }
+        array_push($this->toolbar, '{toggleData}');
 
         array_push($this->toolbar, '{refreshButton}');
 
@@ -265,7 +310,14 @@ class GridView extends \kartik\grid\GridView
             array_push($this->toolbar, '{export}');
         }
 
-        array_push($this->toolbar, '{toggleData}');
+
+        if (!empty($buttons)) {
+            array_push($this->toolbar, [
+                'content' => implode(' ', $buttons),
+            ]);
+        }
+
+        //dd($this->toolbar);
     }
 
     /**
@@ -278,7 +330,7 @@ class GridView extends \kartik\grid\GridView
             $template = '<div class="btn-group">{button}</div>';
 
             $button = strtr($template, [
-                '{button}' => Html::a('<i class="fa fa-repeat"></i>', empty($this->refreshUrl) ? Yii::$app->getUrlManager()->createUrl(array_merge([Yii::$app->controller->route],Yii::$app->controller->actionParams)) : $this->refreshUrl, ['data-pjax' => 1, 'class' => 'btn btn-default', 'title' => Lang::t('Refresh Grid')]),
+                '{button}' => Html::a('<i class="fas fa-redo-alt"></i>', empty($this->refreshUrl) ? Yii::$app->getUrlManager()->createUrl(array_merge([Yii::$app->controller->route], Yii::$app->controller->actionParams)) : $this->refreshUrl, ['data-pjax' => 1, 'class' => 'btn btn-default', 'title' => Lang::t('Refresh Grid')]),
             ]);
         }
 
@@ -291,5 +343,76 @@ class GridView extends \kartik\grid\GridView
         $this->replaceTags = [
             '{refreshButton}' => $this->generateRefreshButton(),
         ];
+    }
+
+    /**
+     * Initializes and sets the grid panel layout based on the [[template]] and [[panel]] settings.
+     * @throws InvalidConfigException
+     */
+    protected function initPanel()
+    {
+        if (!$this->bootstrap || !is_array($this->panel) || empty($this->panel)) {
+            return;
+        }
+        $options = ArrayHelper::getValue($this->panel, 'options', []);
+        $type = ArrayHelper::getValue($this->panel, 'type', 'default');
+        $heading = ArrayHelper::getValue($this->panel, 'heading', '');
+        $footer = ArrayHelper::getValue($this->panel, 'footer', '');
+        $before = ArrayHelper::getValue($this->panel, 'before', '');
+        $after = ArrayHelper::getValue($this->panel, 'after', '');
+        $headingOptions = ArrayHelper::getValue($this->panel, 'headingOptions', []);
+        $titleOptions = ArrayHelper::getValue($this->panel, 'titleOptions', []);
+        $footerOptions = ArrayHelper::getValue($this->panel, 'footerOptions', []);
+        $beforeOptions = ArrayHelper::getValue($this->panel, 'beforeOptions', []);
+        $afterOptions = ArrayHelper::getValue($this->panel, 'afterOptions', []);
+        $summaryOptions = ArrayHelper::getValue($this->panel, 'summaryOptions', []);
+        $panelHeading = '';
+        $panelBefore = '';
+        $panelAfter = '';
+        $panelFooter = '';
+        $isBs4 = $this->isBs4();
+        if (isset($this->panelPrefix)) {
+            static::initCss($options, $this->panelPrefix . $type);
+        } else {
+            $this->addCssClass($options, self::BS_PANEL);
+            Html::addCssClass($options, $isBs4 ? "border-{$type}" : "panel-{$type}");
+        }
+        static::initCss($summaryOptions, $this->getCssClass(self::BS_PULL_RIGHT));
+        $titleTag = ArrayHelper::remove($titleOptions, 'tag', ($isBs4 ? 'h3' : 'h3'));
+        static::initCss($titleOptions, $isBs4 ? 'm-0' : $this->getCssClass(self::BS_PANEL_TITLE));
+        if ($heading !== false) {
+            //$color = $isBs4 ? ($type === 'default' ? ' bg-light' : " text-white bg-{$type}") : '';
+            //static::initCss($headingOptions, $this->getCssClass(self::BS_PANEL_HEADING) . $color);
+            $panelHeading = Html::tag('div', $this->panelHeadingTemplate, $headingOptions);
+        }
+        if ($footer !== false) {
+            static::initCss($footerOptions, $this->getCssClass(self::BS_PANEL_FOOTER));
+            $content = strtr($this->panelFooterTemplate, ['{footer}' => $footer]);
+            $panelFooter = Html::tag('div', $content, $footerOptions);
+        }
+        if ($before !== false) {
+            static::initCss($beforeOptions, 'kv-panel-before');
+            $content = strtr($this->panelBeforeTemplate, ['{before}' => $before]);
+            $panelBefore = Html::tag('div', $content, $beforeOptions);
+        }
+        if ($after !== false) {
+            static::initCss($afterOptions, 'kv-panel-after');
+            $content = strtr($this->panelAfterTemplate, ['{after}' => $after]);
+            $panelAfter = Html::tag('div', $content, $afterOptions);
+        }
+        $out = strtr($this->panelTemplate, [
+            '{panelHeading}' => $panelHeading,
+            '{type}' => $type,
+            '{panelFooter}' => $panelFooter,
+            '{panelBefore}' => $panelBefore,
+            '{panelAfter}' => $panelAfter,
+        ]);
+
+        $out = $this->layout;
+
+        $this->layout = Html::tag('div', strtr($out, [
+            '{title}' => Html::tag($titleTag, $heading, $titleOptions),
+            '{summary}' => Html::tag('div', '{summary}', $summaryOptions),
+        ]), $options);
     }
 }

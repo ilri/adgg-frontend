@@ -8,7 +8,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="row">
     <div class="col-md-2">
-        <?= $this->render('@app/modules/conf/views/layouts/submenu'); ?>
+        <?= $this->render('@app/modules/conf/views/layouts/_submenu'); ?>
     </div>
     <div class="col-md-10">
         <?= $this->render('@backend/modules/conf/views/email/_tab'); ?>

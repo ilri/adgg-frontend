@@ -1,11 +1,11 @@
 <?php
 
 use common\helpers\Lang;
-use yii\bootstrap\ActiveForm;
+use yii\bootstrap4\ActiveForm;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $form yii\bootstrap\ActiveForm */
+/* @var $form ActiveForm */
 /* @var $controller \backend\controllers\BackendController */
 /* @var $model \backend\modules\conf\models\SmsTemplate */
 $controller = Yii::$app->controller;
@@ -14,12 +14,12 @@ $this->title = $controller->getPageTitle();
 $form = ActiveForm::begin([
     'id' => 'my-modal-form',
     'layout' => 'horizontal',
-    'options' => ['data-model' => strtolower($model->shortClassName())],
+    'options' => ['class'=>'kt-form kt-form--label-right'],
     'fieldConfig' => [
         'template' => "{label}\n{beginWrapper}\n{input}\n{hint}\n{error}\n{endWrapper}",
         'horizontalCssClasses' => [
             'label' => 'col-md-3',
-            'offset' => 'col-md-offset-3',
+            'offset' => 'offset-md-3',
             'wrapper' => 'col-md-6',
             'error' => '',
             'hint' => '',
@@ -28,12 +28,14 @@ $form = ActiveForm::begin([
 ]);
 ?>
 <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h4 class="modal-title"><?= Html::encode($this->title); ?></h4>
+    <h5 class="modal-title"><?= Html::encode($this->title); ?></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
 </div>
 
 <div class="modal-body">
-    <div class="alert hidden" id="my-modal-notif"></div>
+    <div class="hidden" id="my-modal-notif"></div>
     <?= $form->field($model, 'code', []) ?>
     <?= $form->field($model, 'name', []) ?>
     <?= $form->field($model, 'template', [])->textarea() ?>
@@ -42,11 +44,9 @@ $form = ActiveForm::begin([
     <?php endif; ?>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-primary" type="submit">
-        <i class="fa fa-check"></i> <?= Lang::t($model->isNewRecord ? 'Create' : 'Save changes') ?>
+    <button type="submit" class="btn btn-primary">
+        <?= Lang::t($model->isNewRecord ? 'Create' : 'Save changes') ?>
     </button>
-    <button type="button" class="btn btn-default" data-dismiss="modal">
-        <i class="fa fa-times"></i> <?= Lang::t('Close') ?>
-    </button>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 </div>
 <?php ActiveForm::end(); ?>

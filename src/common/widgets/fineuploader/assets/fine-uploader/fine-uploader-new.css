@@ -74,7 +74,7 @@
 ------------------------------------------ */
 .qq-upload-button {
     display: inline;
-    width: 105px;
+    width: 100%;
     margin-bottom: 10px;
     padding: 7px 10px;
     text-align: center;

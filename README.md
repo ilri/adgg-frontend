@@ -4,11 +4,13 @@ The following will guide you through setting up the project on your local PC. If
 + php version 7.0+
 + Mysql version 8.0+
 + composer. (https://getcomposer.org/download/)
-+ bower. (bower requires nodejs, so ensure that you have it first. Follow the steps below to install both)
++ Yarn. (Yarn requires nodejs, so ensure that you have it first. Follow the steps below to install both)
 ```sh
-curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash -
+curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
 sudo apt-get install -y nodejs
-sudo npm install bower -g
+curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+sudo apt-get update && sudo apt-get install yarn
 ```
 + An empty mysql database. Make sure that the mysql user configured has access to it
 
@@ -33,10 +35,10 @@ mysql -u root adgg -p < src/data/adgg.sql
 # install composer dependencies
 composer install
 
-# install bower dependencies
-bower install --allow-root
+# install yarn dependencies
+yarn
 
-# If bower throws some strange permission denied errors please run the following command to fix it.
+# If composer or yarn throws some strange permission denied errors please run the following command to fix it.
 
 sudo chown -R $USER:$GROUP ~/.npm
 sudo chown -R $USER:$GROUP ~/.config

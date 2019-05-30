@@ -10,9 +10,9 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="row">
     <div class="col-md-12">
         <?= $this->render('@authModule/views/layouts/_tab',['orgModel'=>$orgModel]) ?>
-        <div class="tab-content padding-top-10">
-            <?= $this->render('_filter', ['model' => $searchModel, 'filterOptions' => $filterOptions]); ?>
-            <?= $this->render('_grid', ['model' => $searchModel, 'filterOptions' => $filterOptions]) ?>
+        <div class="tab-content">
+            <?= $this->render('_filter', ['model' => $searchModel]); ?>
+            <?= $this->render('_grid', ['model' => $searchModel]) ?>
         </div>
     </div>
 </div>

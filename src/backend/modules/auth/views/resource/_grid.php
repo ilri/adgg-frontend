@@ -44,7 +44,12 @@ use common\helpers\Utils;
         ],
         [
             'class' => common\widgets\grid\ActionColumn::class,
-            'template' => '{update}',
+            'template' => '{update}{delete}',
+            'visibleButtons' => [
+                'delete' => function () {
+                    return \backend\modules\auth\Session::isDev();
+                },
+            ],
             'buttons' => [],
         ],
     ],

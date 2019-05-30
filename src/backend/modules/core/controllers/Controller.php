@@ -23,9 +23,9 @@ class Controller extends BackendController
         parent::init();
 
         if (empty($this->activeMenu))
-            $this->activeMenu = Constants::MENU_CLIENT;
+            $this->activeMenu = Constants::MENU_ORGANIZATION;
         if (empty($this->resource))
-            $this->resource = Constants::RES_CLIENT;
+            $this->resource = Constants::RES_MEMBERS;
 
         $this->enableDefaultAcl = true;
     }
@@ -50,12 +50,10 @@ class Controller extends BackendController
                             'download',
                             'upload',
                             'approve',
-                            'close',
                             'get-list',
-                            'update-contact',
-                            'update-social-economic',
                             'quick-create',
                             'typeahead-list',
+                            'change-status',
                         ],
                         'allow' => true,
                         'roles' => ['@'],

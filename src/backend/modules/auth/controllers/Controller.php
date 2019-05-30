@@ -52,6 +52,7 @@ class Controller extends BackendController
                             'change-status',
                             'filter',
                             'get-list',
+                            'register',
                         ],
                         'allow' => true,
                         'roles' => ['@'],

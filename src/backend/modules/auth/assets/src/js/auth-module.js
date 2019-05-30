@@ -235,6 +235,7 @@ MyApp.modules.auth = {};
         let defaultOptions = {
             organizationWrapperSelector: '#organization-id-wrapper',
             levelIdFieldSelector: '#users-level_id',
+            orgIdFieldSelector: '#users-org_id'
         }
         this.options = $.extend({}, defaultOptions, options || {});
     }
@@ -245,11 +246,13 @@ MyApp.modules.auth = {};
                 selector = $this.options.levelIdFieldSelector;
             let _toggle = function (e) {
                 let val = $(e).val(),
-                    showOrganizationFlags = $(e).data('show-organization');
+                    showOrganizationFlags = $(e).data('show-organization'),
+                    orgSelect = $($this.options.orgIdFieldSelector);
                 if (showOrganizationFlags.includes(parseInt(val))) {
-                    $($this.options.organizationWrapperSelector).show();
+                    orgSelect.removeAttr("disabled");
                 } else {
-                    $($this.options.organizationWrapperSelector).hide();
+                    orgSelect.select2("enable", false);
+                    orgSelect.val('').trigger('change');
                 }
             }
             //on page load
@@ -274,4 +277,187 @@ MyApp.modules.auth = {};
         MyApp.modules.auth.toggleOrganization(options);
         MyApp.modules.auth.autoGeneratePassword(options);
     }
+}(jQuery));
+
+//carousel
+//$('.carousel').carousel()
+(function ($) {
+    "use strict";
+
+    function changeBackground(i) {
+        let element = $('#kt-login-v1-body');
+        let images = element.data('images');
+        let imagesCount = images.length;
+        let index = i || 0;
+        if (typeof i !== 'undefined') {
+            element.stop().animate({opacity: 0.7}, 1000, function () {
+                $(this).css('background-image', 'url(' + images[i] + ')').animate({opacity: 1}, {duration: 1000});
+            });
+        }
+
+        $.fn.preloadImages = function () {
+            this.each(function () {
+                $('<img/>')[0].src = this;
+            });
+        }
+        $([images[0], images[1], images[2], images[3]]).preloadImages();
+        setTimeout(function () {
+            let i = index + 1;
+            if (i > (imagesCount - 1)) {
+                i = 0;
+            }
+            changeBackground(i);
+        }, 10000);
+    }
+
+    changeBackground();
+}(jQuery));
+
+//dynamic form after add
+(function ($) {
+    'use strict';
+    MyApp.modules.auth.dynamicFormAfterAdd = function (index) {
+        var script = $('#_raw_script_' + index).data('content');
+        if (!MyApp.utils.empty(script)) {
+            //alert(script);
+            eval(script);
+        }
+    }
+}(jQuery));
+
+//registration steps
+(function ($) {
+    'use strict';
+    let FORM = function (options) {
+        let defaultOptions = {
+            formId: 'registration-form',
+            step1SectionSelector: '#reg-step1-form-section',
+            step2SectionSelector: '#reg-step2-form-section',
+            step3SectionSelector: '#reg-step3-form-section',
+            step4SectionSelector: '#reg-step4-form-section',
+            regStepsLabelsSelector: '#reg-steps-labels',
+            regStep1LabelSelector: "#reg-step1-label",
+            regStep2LabelSelector: "#reg-step2-label",
+            regStep3LabelSelector: "#reg-step3-label",
+            regStep4LabelSelector: "#reg-step4-label",
+            alertId: 'my-modal-notif'
+        };
+        this.options = $.extend({}, defaultOptions, options || {});
+    }
+
+    let activateNext = function (step, nextStep, goNext = true) {
+        let $this = this;
+        let currentStepButtonSelector = "#reg-step" + step + "-label";
+        let currentSectionSelector = "#reg-step" + step + "-form-section";
+        let currentSection = $(currentSectionSelector);
+        let currentStepButton = $(currentStepButtonSelector);
+        let nextButton = $('button[data-ktwizard-type="action-next"]');
+        if (goNext) {
+            currentStepButton.attr('data-ktwizard-state', 'done');
+        } else {
+            currentStepButton.removeAttr('data-ktwizard-state');
+        }
+        currentSection.removeAttr('data-ktwizard-state');
+
+        let nextStepButtonSelector = "#reg-step" + nextStep + "-label";
+        let nextSectionSelector = "#reg-step" + nextStep + "-form-section";
+        let nextSection = $(nextSectionSelector);
+        let nextStepButton = $(nextStepButtonSelector);
+
+        nextStepButton.attr('data-ktwizard-state', 'current');
+        nextButton.attr('data-active-step', nextStep);
+        nextSection.attr('data-ktwizard-state', 'current');
+        if (nextStep == 1) {
+            $($this.options.regStepsLabelsSelector).attr('data-ktwizard-state', 'first');
+        } else if (nextStep == 2 || nextStep == 3) {
+            $($this.options.regStepsLabelsSelector).attr('data-ktwizard-state', 'between');
+        } else {
+            $($this.options.regStepsLabelsSelector).attr('data-ktwizard-state', 'last');
+        }
+    }
+
+    FORM.prototype.submitStep = function () {
+        let $this = this;
+        let selector = 'button[data-ktwizard-type="action-next"]';
+
+        let _submitStep = function (e) {
+            let section = $('[data-ktwizard-type="step-content"][data-ktwizard-state="current"]');
+            let form = $('#' + $this.options.formId);
+            let data = section.find('input,select,textarea').serialize();
+            let url = form.attr('action');
+            let originalButtonHtml = $(e).html();
+            //console.log(data);
+            $.ajax({
+                type: 'post',
+                url: url,
+                data: data,
+                dataType: 'json',
+                success: function (response) {
+                    let alertWrapper = $('#' + $this.options.alertId);
+                    if (response.success) {
+                        let activeStep = parseInt($(e).attr('data-active-step'));
+                        alertWrapper.addClass('hidden');
+                        activateNext.call($this, activeStep, activeStep + 1);
+                    } else {
+                        let summary = '<ul>';
+                        if (response.message) {
+                            MyApp.utils.showAlertMessage(response.message, 'error', alertWrapper);
+                        } else {
+                            if (typeof response === 'object') {
+                                $.each(response, function (i) {
+                                    if ($.isArray(response[i])) {
+                                        $.each(response[i], function (j, msg) {
+                                            let $input = $('#' + i);
+                                            $input.addClass('is-invalid');
+                                            $input.next('.invalid-feedback').html(msg);
+                                            summary += '<li>' + msg + '</li>';
+                                        });
+                                    }
+                                });
+                            }
+                        }
+                        summary += '</ul>';
+                        if (alertWrapper.length) {
+                            MyApp.utils.showAlertMessage(summary, 'error', alertWrapper);
+                        }
+                    }
+                },
+                beforeSend: function () {
+                    $(e).attr('disabled', 'disabled').html('Please wait....');
+                },
+                complete: function () {
+                    $(e).html(originalButtonHtml).removeAttr('disabled');
+                },
+                error: function (XHR) {
+                    console.log(XHR.responseText);
+                    MyApp.utils.showAlertMessage(XHR.responseText, 'error', '#' + $this.options.notif_id);
+                }
+            });
+        }
+
+        $(selector).on('click', function (event) {
+            _submitStep(this);
+        })
+    }
+
+    FORM.prototype.goBack = function () {
+        let $this = this;
+        let selector = 'button[data-ktwizard-type="action-prev"]';
+        let _goBack = function (e) {
+            let nextButton = $('button[data-ktwizard-type="action-next"]');
+            let activeStep = parseInt(nextButton.attr('data-active-step'));
+            activateNext.call($this, activeStep, activeStep - 1, false);
+        }
+
+        $(selector).on('click', function (event) {
+            _goBack(this);
+        })
+    }
+
+    MyApp.modules.auth.initRegForm = function (options) {
+        let obj = new FORM(options);
+        obj.submitStep();
+        obj.goBack();
+    }
+
 }(jQuery));

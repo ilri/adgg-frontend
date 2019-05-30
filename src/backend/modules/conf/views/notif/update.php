@@ -1,4 +1,5 @@
 <?php
+
 use common\helpers\Lang;
 
 /* @var $this yii\web\View */
@@ -11,7 +12,10 @@ $this->params['breadcrumbs'] = [
 ];
 ?>
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-lg-2">
+        <?= $this->render('@app/modules/conf/views/layouts/_submenu'); ?>
+    </div>
+    <div class="col-lg-10">
         <?= $this->render('_form', ['model' => $model]); ?>
     </div>
 </div>

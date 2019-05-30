@@ -48,15 +48,10 @@ class AuditTrailController extends Controller
         $searchModel->user_id = $user_id;
         $searchModel->org_id = $org_id;
         $searchModel->action = $action;
+        $searchModel->_dateFilterFrom = $date_filter['from'];
+        $searchModel->_dateFilterTo = $date_filter['to'];
 
         return $this->render('index', [
-            'filterOptions' => [
-                'user_id' => $user_id,
-                'org_id' => $org_id,
-                'action' => $action,
-                'from' => $date_filter['from'],
-                'to' => $date_filter['to'],
-            ],
             'searchModel' => $searchModel,
             'orgModel' => $orgModel,
         ]);

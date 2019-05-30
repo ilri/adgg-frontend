@@ -7,10 +7,10 @@ $this->title = 'Notification Templates';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="row">
-    <div class="col-md-2">
-        <?= $this->render('@app/modules/conf/views/layouts/submenu'); ?>
+    <div class="col-lg-2">
+        <?= $this->render('@app/modules/conf/views/layouts/_submenu'); ?>
     </div>
-    <div class="col-md-10">
+    <div class="col-lg-10">
         <?= $this->render('_grid', ['model' => $searchModel]) ?>
     </div>
 </div>

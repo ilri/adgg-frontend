@@ -1,0 +1,21 @@
+.kt-aside, .kt-aside-menu {
+    /*background-color: #fff;*/
+    /*background-color: #f6f1f1;*/
+    /* background-color: #fbfcfd;*/
+    background: #f2f2f2;
+}
+
+.kt-aside__brand {
+    background-color: #f2f2f2;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    border-bottom: none;
+}
+
+.kt-aside-menu .kt-menu__nav > .kt-menu__item .kt-menu__submenu .kt-menu__subnav {
+    background-color: #f2f2f2;
+}
+
+.kt-aside-menu .kt-menu__nav > .kt-menu__item > .kt-menu__heading .kt-menu__ver-arrow, .kt-aside-menu .kt-menu__nav > .kt-menu__item > .kt-menu__link .kt-menu__ver-arrow {
+    color: #313752;
+}

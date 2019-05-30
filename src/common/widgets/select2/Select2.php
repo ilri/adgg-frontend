@@ -18,6 +18,8 @@ class Select2 extends \kartik\select2\Select2
      */
     public $modal = false;
 
+    //public $bsVersion='4.x';
+
     /**
      * @var string
      */
@@ -29,7 +31,7 @@ class Select2 extends \kartik\select2\Select2
         if (!empty($this->dropdownParentSelector)) {
             $this->pluginOptions['dropdownParent'] = new JsExpression("$('{$this->dropdownParentSelector}')");
         } elseif ($this->modal) {
-            $this->pluginOptions['dropdownParent'] = new JsExpression("$('#my_bs_modal')");
+            $this->pluginOptions['dropdownParent'] = new JsExpression("$('#my-bs-modal')");
         }
         parent::run();
     }

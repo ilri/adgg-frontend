@@ -64,17 +64,6 @@ class Session
     /**
      * @return bool
      */
-    public static function isOrgClient()
-    {
-        if (Yii::$app->user->isGuest) {
-            return false;
-        }
-        return Yii::$app->user->identity->level_id == UserLevels::LEVEL_ORGANIZATION_CLIENT;
-    }
-
-    /**
-     * @return bool
-     */
     public static function isPrivilegedAdmin()
     {
         return static::isDev() || static::isSuperAdmin() || static::isSystemAdmin();
@@ -85,7 +74,7 @@ class Session
      */
     public static function accountId()
     {
-        return Yii::$app->user->identity->org_id;
+        return Yii::$app->user->identity->org_id ?? null;
     }
 
 
@@ -94,7 +83,7 @@ class Session
      */
     public static function userId()
     {
-        return Yii::$app->user->id;
+        return Yii::$app->user->id ?? null;
     }
 
     /**
@@ -102,7 +91,7 @@ class Session
      */
     public static function userLevelId()
     {
-        return Yii::$app->user->identity->level_id;
+        return Yii::$app->user->identity->level_id ?? null;
     }
 
     /**
@@ -110,7 +99,7 @@ class Session
      */
     public static function userRoleId()
     {
-        return Yii::$app->user->identity->role_id;
+        return Yii::$app->user->identity->role_id ?? null;
     }
 
     /**
@@ -118,6 +107,6 @@ class Session
      */
     public static function userName()
     {
-        return Yii::$app->user->identity->name;
+        return Yii::$app->user->identity->name ?? null;
     }
 }

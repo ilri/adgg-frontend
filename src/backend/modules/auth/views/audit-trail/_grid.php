@@ -3,7 +3,6 @@
 use backend\modules\auth\models\AuditTrail;
 use common\widgets\grid\GridView;
 use common\helpers\DateUtils;
-use yii\helpers\Html;
 
 /* @var $model backend\modules\auth\models\AuditTrail */
 ?>
@@ -37,7 +36,7 @@ use yii\helpers\Html;
         [
             'attribute' => 'org_id',
             'value' => function (AuditTrail $model) {
-                 return $model->getRelationAttributeValue('org', 'name');
+                return $model->getRelationAttributeValue('org', 'name');
             }
         ],
         [
@@ -50,16 +49,7 @@ use yii\helpers\Html;
             'class' => \common\widgets\grid\ActionColumn::class,
             'width' => '120px',
             'template' => '{view}',
-            'buttons' => [
-                'view' => function ($url, AuditTrail $model) {
-                    return Html::a('More details <i class="fa fa-chevron-circle-right"></i>', $url, [
-                        'data-pjax' => 0,
-                        'style' => 'min-width:100px;',
-                        'class' => 'show_modal_form',
-                        'data-grid' => $model->getPjaxWidgetId(),
-                    ]);
-                },
-            ]
+            'viewOptions' => ['data-pjax' => 0, 'label' => 'More Details', 'style' => 'min-width:100px;', 'data-toggle' => 'modal', 'data-grid' => $model->getPjaxWidgetId(),],
         ],
     ],
 ]);

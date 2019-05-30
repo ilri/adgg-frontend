@@ -6,36 +6,34 @@ use backend\modules\core\models\Organization;
 use common\helpers\Lang;
 use common\helpers\Url;
 use common\widgets\select2\Select2;
-use yii\bootstrap\Html;
 use backend\modules\auth\models\Users;
 use backend\modules\auth\models\AuditTrail;
+use yii\bootstrap4\Html;
 
+/* @var $model AuditTrail */
 ?>
-<?= Html::beginForm(Url::to(['index']), 'get', ['class' => '', 'id' => 'grid-filter-form', 'data-grid' => $model->getPjaxWidgetId()]) ?>
-<div class="panel panel-default">
-    <div class="panel-heading" role="tab">
-        <h4 class="panel-title">
-            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-                <i class="glyphicon glyphicon-chevron-right"></i> <?= Lang::t('Filters') ?>:
-            </a>
-        </h4>
-    </div>
 
-    <div id="collapseOne" class="panel-collapse collapse" role="tabpanel">
-        <div class="panel-body">
-            <div class="row">
-                <?php if (!Session::isOrganization()): ?>
-                    <!-- FILTER FOR ORG -->
-                    <div class="col-sm-2">
-                        <div class="form-group">
-                            <?= Html::label($model->getAttributeLabel('org_id'), "", ['class' => 'control-label']) ?>
+<div class="accordion mb-5" id="accordion">
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                 aria-controls="collapseOne">
+                <i class="fas fa-chevron-right"></i> <?= Lang::t('Filters') ?>:
+            </div>
+        </div>
+        <div id="collapseOne" class="collapse" data-parent="#accordion">
+            <div class="card-body">
+                <?= Html::beginForm(['index'], 'get', ['class' => '', 'id' => 'grid-filter-form', 'data-grid' => $model->getPjaxWidgetId()]) ?>
+                <div class="form-row align-items-center">
+                    <?php if (!Session::isOrganization()): ?>
+                        <div class="col-lg-2">
+                            <?= Html::label($model->getAttributeLabel('org_id')) ?>
                             <?= Select2::widget([
                                 'name' => 'org_id',
-                                'value' => $filterOptions['org_id'],
+                                'value' => $model->org_id,
                                 'data' => Organization::getListData('id', 'name', SystemSettings::getCompanyName()),
-                                'theme' => Select2::THEME_BOOTSTRAP,
                                 'options' => [
-                                    'class' => 'form-control parent-depdropdown',
+                                    'class' => 'form-control select2 parent-depdropdown',
                                     'data-child-selectors' => [
                                         '#' . Html::getInputId($model, 'user_id'),
                                     ],
@@ -45,72 +43,59 @@ use backend\modules\auth\models\AuditTrail;
                                 ],
                             ]); ?>
                         </div>
-                    </div>
-                <?php endif; ?>
-
-                <!-- FILTER FOR USER -->
-                <div class="col-sm-2">
-                    <div class="form-group">
-                        <?= Html::label($model->getAttributeLabel('user_id'), "", ['class' => 'control-label']) ?>
+                    <?php endif; ?>
+                    <div class="col-lg-2">
+                        <?= Html::label($model->getAttributeLabel('user_id')) ?>
                         <?= Select2::widget([
                             'name' => 'user_id',
-                            'value' => $filterOptions['user_id'],
-                            'data' => Users::getListData('id', 'name', '--All--'),
-                            'theme' => Select2::THEME_BOOTSTRAP,
+                            'value' => $model->user_id,
+                            'data' => Users::getListData('id', 'name', false),
                             'options' => [
                                 'id' => Html::getInputId($model, 'user_id'),
                                 'data-url' => Url::to(['user/get-list', 'org_id' => 'idV']),
-                                'data-selected' => $filterOptions['user_id'],
+                                'data-selected' => $model->user_id,
+                                'placeholder' => '[all]',
+                                'class' => 'form-control select2',
                             ],
                             'pluginOptions' => [
-                                'allowClear' => false
+                                'allowClear' => true
                             ],
                         ]); ?>
                     </div>
-                </div>
-
-                <!-- FILTER FOR ACTION -->
-                <div class="col-sm-2">
-                    <div class="form-group">
-                        <?= Html::label($model->getAttributeLabel('action'), "", ['class' => 'control-label']) ?>
+                    <div class="col-lg-2">
+                        <?= Html::label($model->getAttributeLabel('action')) ?>
                         <?= Select2::widget([
                             'name' => 'action',
-                            'value' => $filterOptions['action'],
-                            'data' => AuditTrail::actionOptions('--All--'),
-                            'theme' => Select2::THEME_BOOTSTRAP,
+                            'value' => $model->action,
+                            'data' => AuditTrail::actionOptions(false),
+                            'options' => [
+                                'placeholder' => '[all]',
+                                'class' => 'form-control select2',
+                            ],
                             'pluginOptions' => [
-                                'allowClear' => false
+                                'allowClear' => true
                             ],
                         ]); ?>
                     </div>
-                </div>
-
-                <!-- FILTER FOR DATE(FROM) -->
-                <div class="col-sm-2">
-                    <div class="form-group">
-                        <?= Html::label('From', "", ['class' => 'control-label']) ?>
-                        <?= Html::textInput('from', $filterOptions['from'], ['class' => 'form-control show-datepicker']); ?>
+                    <div class="col-lg-2">
+                        <?= Html::label('From') ?>
+                        <?= Html::textInput('from', $model->_dateFilterFrom, ['class' => 'form-control show-datepicker', 'placeholder' => 'From']) ?>
+                    </div>
+                    <div class="col-lg-2">
+                        <?= Html::label('To') ?>
+                        <?= Html::textInput('to', $model->_dateFilterTo, ['class' => 'form-control show-datepicker', 'placeholder' => 'To']) ?>
+                    </div>
+                    <div class="col-lg-2">
+                        <br>
+                        <button class="btn btn-primary pull-left" type="submit"><?= Lang::t('Go') ?></button>
+                        &nbsp;
+                        <button class="btn btn-default" type="reset"
+                                onclick="$('select.select2').val('').trigger('change');"><?= Lang::t('Reset') ?></button>
                     </div>
                 </div>
-
-                <!-- FILTER FOR DATE(TO) -->
-                <div class="col-sm-2">
-                    <div class="form-group">
-                        <?= Html::label('To', "", ['class' => 'control-label']) ?>
-                        <?= Html::textInput('to', $filterOptions['to'], ['class' => 'form-control show-datepicker']); ?>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <label>&nbsp;</label>
-                    <div class="form-group">
-                        <button class="btn btn-primary" type="submit">
-                            <?= Lang::t('Submit') ?>
-                        </button>
-                    </div>
-                </div>
+                <?= Html::endForm() ?>
             </div>
         </div>
     </div>
 </div>
-<?= Html::endForm() ?>
 

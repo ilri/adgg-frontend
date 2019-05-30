@@ -173,18 +173,21 @@ var MyApp = (function ($) {
         },
 
         renderAlert: function (type, message) {
-            var validTypes = ['success', 'error', 'notice'], html = '';
+            let validTypes = ['success', 'error', 'notice'], html = '';
             if (typeof type === 'undefined' || ($.inArray(type, validTypes) < 0))
                 type = validTypes[0];
             if (type === 'success') {
-                html += '<div class="alert alert-success alert-block">';
+                html += '<div class="alert alert-success alert-dismissible fade show w-100" role="alert">';
             } else if (type === 'error') {
-                html += '<div class="alert alert-danger alert-block">';
+                html += '<div class="alert alert-danger alert-dismissible fade show w-100" role="alert">';
             } else {
-                html += '<div class="alert alert-warning alert-block">';
+                html += '<div class="alert alert-warning alert-dismissible fade show w-100" role="alert">';
             }
-            html += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
-            html += '<p>' + message + '</p>';
+            if (!MyApp.utils.empty(message)) {
+                html += '<p>' + message + '</p>';
+            }
+            html += '<div class="alert-close"><button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button></div>';
+
             html += '</div>';
             return {html: html, type: type};
         },
@@ -195,39 +198,27 @@ var MyApp = (function ($) {
          * @param containerSelector
          */
         showAlertMessage: function (message, type, containerSelector) {
-            var __ret = this.renderAlert(type, message);
-            var html = __ret.html;
+            let __ret = this.renderAlert(type, message);
             type = __ret.type;
             if (MyApp.utils.empty(containerSelector)) {
                 if (type === 'success') {
-                    BootstrapDialog.alert({
-                        title: 'SUCCESS',
-                        message: message,
-                        type: BootstrapDialog.TYPE_SUCCESS,
-                        closable: true
-                    });
+                    let template = '<div class="alert alert-outline-success">{message}</div>';
+                    swal("SUCCESS!", template.strtr({'{message}': message}), "success");
                 } else if (type === 'error') {
-                    BootstrapDialog.alert({
-                        title: 'ERROR',
-                        message: message,
-                        type: BootstrapDialog.TYPE_DANGER,
-                        closable: true
-                    });
+                    let template = '<div class="alert alert-outline-danger">{message}</div>';
+                    swal("ERROR!", template.strtr({'{message}': message}), "error");
                 } else {
-                    BootstrapDialog.alert({
-                        title: 'WARNING',
-                        message: message,
-                        type: BootstrapDialog.TYPE_WARNING,
-                        closable: true
-                    });
+                    let template = '<div class="alert alert-outline-warning">{message}</div>';
+                    swal("ERROR!", template.strtr({'{message}': message}), "warning");
                 }
             } else {
-                var container;
+                let container;
                 if (typeof containerSelector === 'object') {
                     container = containerSelector;
                 } else {
                     container = $(containerSelector);
                 }
+                let html = __ret.html;
                 container.html(html).removeClass('hidden');
             }
         }
@@ -356,13 +347,13 @@ var MyApp = (function ($) {
          * @param model
          */
         display_model_errors: function (string, notif_container_selector, model) {
-            var input_error_class = 'has-error'
+            let inputErrorClass = 'is-invalid'
                 , addErrorClass = function (id) {
-                $('#' + id).closest('.form-group').addClass(input_error_class);
+                $('#' + id).addClass(inputErrorClass).attr('aria-invalid', true);
             };
             //remove all errors
-            $('.' + input_error_class).removeClass(input_error_class);
-            var message = '<ul>';
+            $('.' + inputErrorClass).removeClass(inputErrorClass);
+            let message = '<ul>';
             $.each(string, function (i) {
                 if ($.isArray(string[i])) {
                     $.each(string[i], function (j, msg) {
@@ -375,12 +366,8 @@ var MyApp = (function ($) {
             if (!utils.empty(notif_container_selector)) {
                 this.showAlertMessage(message, 'error', notif_container_selector);
             } else {
-                BootstrapDialog.alert({
-                    title: 'WARNING',
-                    message: message,
-                    type: BootstrapDialog.TYPE_WARNING,
-                    closable: true
-                });
+                let template = "<div class='alert alert-outline-danger'>{message}</div>";
+                swal("ERROR!", template.strtr({'{message}': message}), "error");
             }
         }
         ,

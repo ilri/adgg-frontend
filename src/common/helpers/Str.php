@@ -48,4 +48,34 @@ class Str
     {
         return preg_replace("/[^0-9]/", "", $string);
     }
+
+    /**
+     * @return string
+     * @throws \Exception
+     */
+    public static function generateUUID()
+    {
+        $data = random_bytes(16);
+        $data[6] = chr(ord($data[6]) & 0x0f | 0x40);
+        $data[8] = chr(ord($data[8]) & 0x3f | 0x80);
+        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+    }
+
+
+    /**
+     * @param string $string
+     * @param bool $pluralize
+     * @return string
+     */
+    public static function getInitials(string $string, bool $pluralize = true): string
+    {
+        $string = trim($string);
+        $acronym = "";
+        $words = preg_split("/\s+/", $string);
+        foreach ($words as $w) {
+            $acronym .= $pluralize ? strtoupper($w[0]) : $w[0];
+        }
+        return $acronym;
+    }
+
 }

@@ -19,6 +19,8 @@ use Yii;
  * @property string $created_at
  * @property integer $created_by
  * @property int $is_active
+ *
+ * @property UserLevels $level
  */
 class Roles extends ActiveRecord implements ActiveSearchInterface
 {
@@ -63,7 +65,7 @@ class Roles extends ActiveRecord implements ActiveSearchInterface
         return [
             'name' => Lang::t('Name'),
             'description' => Lang::t('Description'),
-            'level_id' => Lang::t('Level'),
+            'level_id' => Lang::t('Account Type'),
             'is_active' => Lang::t('Active'),
         ];
     }
@@ -84,6 +86,7 @@ class Roles extends ActiveRecord implements ActiveSearchInterface
      * Get users in a role
      * @param integer $role_id
      * @return array $user_ids
+     * @throws \Exception
      */
     public static function getUsers($role_id)
     {

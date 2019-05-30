@@ -2,125 +2,120 @@
 
 use backend\modules\auth\models\Users;
 use common\helpers\Lang;
-use kartik\select2\Select2;
-use yii\bootstrap\Html;
+use common\widgets\select2\Select2;
+use yii\bootstrap4\Html;
 
-/* @var $filterOptions array */
 /* @var $model Users */
 $url = ['index'];
 ?>
-<?= Html::beginForm($url, 'get', ['class' => '', 'id' => 'grid-filter-form', 'data-grid' => $model->getPjaxWidgetId()]) ?>
-    <div class="panel-group" id="accordion" role="tablist">
-    <div class="panel panel-default">
-        <div class="panel-heading" role="tab">
-            <h4 class="panel-title">
-                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-                    <i class="glyphicon glyphicon-chevron-right"></i> <?= Lang::t('Filters') ?>:
-                </a>
-            </h4>
+<div class="accordion mb-5" id="accordion">
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                 aria-controls="collapseOne">
+                <i class="fas fa-chevron-right"></i> <?= Lang::t('Filters') ?>:
+            </div>
         </div>
-        <div id="collapseOne" class="panel-collapse collapse" role="tabpanel">
-            <div class="panel-body">
-                <div class="row">
+        <div id="collapseOne" class="collapse" data-parent="#accordion">
+            <div class="card-body">
+                <?= Html::beginForm($url, 'get', ['class' => '', 'id' => 'grid-filter-form', 'data-grid' => $model->getPjaxWidgetId()]) ?>
+                <div class="form-row align-items-center">
                     <?php if (!\backend\modules\auth\Session::isOrganization()): ?>
-                        <div class="col-sm-2">
-                            <div class="form-group">
-                                <?= Html::label($model->getAttributeLabel('org_id'), null, ['class' => 'control-label']) ?>
-                                <?= Select2::widget([
-                                    'name' => 'org_id',
-                                    'value' => $filterOptions['org_id'],
-                                    'data' => \backend\modules\core\models\Organization::getListData('id', 'name', '--All--'),
-                                    'theme' => Select2::THEME_BOOTSTRAP,
-                                    'pluginOptions' => [
-                                        'allowClear' => false
-                                    ],
-                                ]); ?>
-                            </div>
+                        <div class="col-lg-2">
+                            <?= Html::label($model->getAttributeLabel('org_id')) ?>
+                            <?= Select2::widget([
+                                'name' => 'org_id',
+                                'value' => $model->org_id,
+                                'data' => \backend\modules\core\models\Organization::getListData('id', 'name', false),
+                                'options' => [
+                                    'placeholder' => '[all]',
+                                    'class' => 'form-control mb-2 select2'
+                                ],
+                                'pluginOptions' => [
+                                    'allowClear' => true
+                                ],
+                            ]); ?>
                         </div>
-                        <div class="col-sm-2">
-                            <div class="form-group">
-                                <?= Html::label($model->getAttributeLabel('level_id'), null, ['class' => 'control-label']) ?>
-                                <?= Select2::widget([
-                                    'name' => 'level_id',
-                                    'value' => $filterOptions['level_id'],
-                                    'data' => Users::levelIdListData('--All--'),
-                                    'theme' => Select2::THEME_BOOTSTRAP,
-                                    'pluginOptions' => [
-                                        'allowClear' => false
-                                    ],
-                                ]); ?>
-                            </div>
+                        <div class="col-lg-2">
+                            <?= Html::label($model->getAttributeLabel('level_id')) ?>
+                            <?= Select2::widget([
+                                'name' => 'level_id',
+                                'value' => $model->level_id,
+                                'data' => Users::levelIdListData(false),
+                                'options' => [
+                                    'placeholder' => '[all]',
+                                    'class' => 'form-control mb-2 select2'
+                                ],
+                                'pluginOptions' => [
+                                    'allowClear' => true
+                                ],
+                            ]); ?>
                         </div>
                     <?php endif; ?>
-                    <div class="col-sm-2">
-                        <div class="form-group">
-                            <?= Html::label($model->getAttributeLabel('role_id'), null, ['class' => 'control-label']) ?>
-                            <?= Select2::widget([
-                                'name' => 'role_id',
-                                'value' => $filterOptions['role_id'],
-                                'data' => \backend\modules\auth\models\Roles::getListData('id', 'name', '--All--', \backend\modules\auth\Session::isOrganization() ? ['level_id' => \backend\modules\auth\models\UserLevels::LEVEL_ORGANIZATION] : []),
-                                'theme' => Select2::THEME_BOOTSTRAP,
-                                'pluginOptions' => [
-                                    'allowClear' => false
-                                ],
-                            ]); ?>
-                        </div>
+                    <div class="col-lg-2">
+                        <?= Html::label($model->getAttributeLabel('role_id')) ?>
+                        <?= Select2::widget([
+                            'name' => 'role_id',
+                            'value' => $model->role_id,
+                            'data' => \backend\modules\auth\models\Roles::getListData('id', 'name', false, \backend\modules\auth\Session::isOrganization() ? ['level_id' => \backend\modules\auth\models\UserLevels::LEVEL_ORGANIZATION] : []),
+                            'options' => [
+                                'placeholder' => '[all]',
+                                'class' => 'form-control mb-2 select2'
+                            ],
+                            'pluginOptions' => [
+                                'allowClear' => true
+                            ],
+                        ]); ?>
                     </div>
-                    <div class="col-sm-2">
-                        <div class="form-group">
-                            <?= Html::label($model->getAttributeLabel('status'), null, ['class' => 'control-label']) ?>
-                            <?= Select2::widget([
-                                'name' => 'status',
-                                'value' => $filterOptions['status'],
-                                'data' => Users::statusOptions('--All--'),
-                                'theme' => Select2::THEME_BOOTSTRAP,
-                                'pluginOptions' => [
-                                    'allowClear' => false
-                                ],
-                            ]); ?>
-                        </div>
+                    <div class="col-lg-2">
+                        <?= Html::label($model->getAttributeLabel('status')) ?>
+                        <?= Select2::widget([
+                            'name' => 'status',
+                            'value' => $model->status,
+                            'data' => Users::statusOptions(false),
+                            'options' => [
+                                'placeholder' => '[all]',
+                                'class' => 'form-control mb-2 select2'
+                            ],
+                            'pluginOptions' => [
+                                'allowClear' => true
+                            ],
+                        ]); ?>
                     </div>
-                    <div class="col-sm-2">
-                        <div class="form-group">
-                            <?= Html::label($model->getAttributeLabel('name'), null, ['class' => 'control-label']) ?>
-                            <?= Html::textInput('name', $filterOptions['name'], ['class' => 'form-control']) ?>
-                        </div>
+                    <div class="col-lg-2">
+                        <?= Html::label($model->getAttributeLabel('name')) ?>
+                        <?= Html::textInput('name', $model->name, ['class' => 'form-control']) ?>
                     </div>
-                    <div class="col-sm-2">
-                        <div class="form-group">
-                            <?= Html::label($model->getAttributeLabel('username'), null, ['class' => 'control-label']) ?>
-                            <?= Html::textInput('username', $filterOptions['username'], ['class' => 'form-control']) ?>
-                        </div>
+                    <div class="col-lg-2">
+                        <?= Html::label($model->getAttributeLabel('username')) ?>
+                        <?= Html::textInput('username', $model->username, ['class' => 'form-control']) ?>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-2">
-                        <div class="form-group">
-                            <?= Html::label($model->getAttributeLabel('email'), null, ['class' => 'control-label']) ?>
-                            <?= Html::textInput('email', $filterOptions['email'], ['class' => 'form-control']) ?>
-                        </div>
+                    <div class="col-lg-2">
+                        <?= Html::label($model->getAttributeLabel('email')) ?>
+                        <?= Html::textInput('email', $model->email, ['class' => 'form-control']) ?>
                     </div>
-                    <div class="col-sm-2">
-                        <div class="form-group">
-                            <?= Html::label($model->getAttributeLabel('phone'), null, ['class' => 'control-label']) ?>
-                            <?= Html::textInput('phone', $filterOptions['phone'], ['class' => 'form-control']) ?>
-                        </div>
+                    <div class="col-lg-2">
+                        <?= Html::label($model->getAttributeLabel('phone')) ?>
+                        <?= Html::textInput('phone', $model->phone, ['class' => 'form-control']) ?>
                     </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <?= Html::label($model->getAttributeLabel('last_login'), null, ['class' => 'control-label']) ?>
-                            <?= Html::textInput('from', $filterOptions['from'], ['class' => 'form-control show-datepicker', 'placeholder' => 'From']) ?>
-                            <?= Html::textInput('to', $filterOptions['to'], ['class' => 'form-control show-datepicker', 'placeholder' => 'To']) ?>
-                        </div>
+                    <div class="col-lg-2">
+                        <?= Html::label($model->getAttributeLabel('last_login')) ?>
+                        <?= Html::textInput('from', $model->_dateFilterFrom, ['class' => 'form-control show-datepicker', 'placeholder' => 'From']) ?>
                     </div>
-                    <div class="col-md-2">
-                        <label>&nbsp;</label>
-                        <div class="form-group">
-                            <button class="btn btn-primary pull-left" type="submit"><?= Lang::t('Go') ?></button>
-                        </div>
+                    <div class="col-lg-2">
+                        <?= Html::label($model->getAttributeLabel('last_login')) ?>
+                        <?= Html::textInput('to', $model->_dateFilterTo, ['class' => 'form-control show-datepicker', 'placeholder' => 'To']) ?>
+                    </div>
+                    <div class="col-lg-2">
+                        <br>
+                        <button class="btn btn-primary pull-left" type="submit"><?= Lang::t('Go') ?></button>
+                        &nbsp;
+                        <button class="btn btn-default" type="reset"
+                                onclick="$('select.select2').val('').trigger('change');"><?= Lang::t('Reset') ?></button>
                     </div>
                 </div>
+                <?= Html::endForm() ?>
             </div>
         </div>
     </div>
-<?= Html::endForm() ?>
+</div>

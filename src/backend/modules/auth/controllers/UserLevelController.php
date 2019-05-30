@@ -40,14 +40,14 @@ class UserLevelController extends Controller
 
     public function actionCreate()
     {
-        $model = new UserLevels();
-        return $model->simpleAjaxSaveRenderAjax();
+        $model = new UserLevels(['is_active' => true]);
+        return $model->simpleAjaxSave();
     }
 
     public function actionUpdate($id)
     {
         $model = UserLevels::loadModel($id);
-        return $model->simpleAjaxSaveRenderAjax();
+        return $model->simpleAjaxSave();
     }
 
 

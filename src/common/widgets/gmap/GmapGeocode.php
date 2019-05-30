@@ -10,7 +10,6 @@ namespace common\widgets\gmap;
 use backend\modules\conf\settings\GoogleMapSettings;
 use common\helpers\Lang;
 use common\models\ActiveRecord;
-use Yii;
 use yii\base\Widget;
 use yii\bootstrap\Html;
 use yii\helpers\Json;
@@ -65,7 +64,7 @@ class GmapGeocode extends Widget
      *
      * @var string
      */
-    public $template = '<div class="form-group">{{latitudeField}}{{longitudeField}}</div>{{map}}<div class="form-group"><br/>{{addressField}}</div>';
+    public $template = '<div class="form-group row">{{latitudeField}}{{longitudeField}}</div>{{map}}<br/><div class="form-group row">{{addressField}}</div>';
 
     /**
      * Template for latitude field

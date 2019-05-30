@@ -161,19 +161,19 @@ HTML;*/
     /**
      * @var array
      */
-    public $panelOptions = ['class' => 'panel panel-default'];
+    public $panelOptions = ['class' => 'card'];
     /**
      * @var array
      */
-    public $panelHeadingOptions = ['class' => 'panel-heading'];
+    public $panelHeadingOptions = ['class' => 'card-header'];
     /**
      * @var array
      */
-    public $panelTitleOptions = ['class' => 'panel-title'];
+    public $panelTitleOptions = ['class' => 'card-title'];
     /**
      * @var array
      */
-    public $panelFooterOptions = ['class' => 'panel-footer clearfix text-right'];
+    public $panelFooterOptions = ['class' => 'card-footer'];
     /**
      * @var array|string
      */
@@ -345,27 +345,30 @@ HTML;*/
                         '{title}' => $this->title,
                         '{lineItemsCount}' => count($this->lineItemModels),
                     ]);
-                    $title = Html::tag('h3', $title, $this->panelTitleOptions);
-                    $heading = Html::tag('div', $title, $this->panelHeadingOptions);
+                    $heading = Html::tag('h5', $title, $this->panelHeadingOptions);
                     $inner_html = Html::beginTag('div', $this->panelOptions);
                     $inner_html .= $heading;
-                    $inner_html .= $this->getTableHtml();
+                    $inner_html .= Html::tag('div', $this->getTableHtml(), ['class' => 'card-body']);
                     $footer_contents = $this->getAddButtonHtml();
+                    //$footer_contents .= Html::tag('button', $this->finishButtonLabel, $this->finishButtonOptions);
                     if (!empty($footer_contents)) {
                         $footer = Html::tag('div', $footer_contents, $this->panelFooterOptions);
                         $inner_html .= $footer;
                     }
                     $inner_html .= Html::endTag('div');
 
+                    $inner_html = strtr($this->template, [
+                        '{items}' => $inner_html,
+                        '{finishButton}' => Html::tag('button', $this->finishButtonLabel, $this->finishButtonOptions),
+                    ]);
+
                 } else {
-                    $inner_html = $this->getTableHtml();
+                    $inner_html = strtr($this->template, [
+                        '{items}' => $this->getTableHtml(),
+                        '{finishButton}' => Html::tag('button', $this->finishButtonLabel, $this->finishButtonOptions),
+                    ]);
                 }
             }
-
-            $inner_html = strtr($this->template, [
-                '{items}' => $inner_html,
-                '{finishButton}' => Html::tag('button', $this->finishButtonLabel, $this->finishButtonOptions),
-            ]);
 
             if (null !== $this->parentModel) {
                 echo $this->activeForm->field($this->parentModel, $this->parentPrimaryKeyAttribute)->hiddenInput()->label(false);

@@ -3,7 +3,6 @@
 namespace backend\modules\conf\models;
 
 use backend\modules\core\models\Organization;
-use backend\modules\core\models\OrganizationDataTrait;
 use common\helpers\DbUtils;
 use common\helpers\Lang;
 use common\models\ActiveRecord;
@@ -31,7 +30,7 @@ use yii\helpers\ArrayHelper;
  */
 class NumberingFormat extends ActiveRecord implements ActiveSearchInterface
 {
-    use ActiveSearchTrait, OrganizationDataTrait;
+    use ActiveSearchTrait;
 
     /**
      * @inheritdoc
@@ -51,7 +50,7 @@ class NumberingFormat extends ActiveRecord implements ActiveSearchInterface
      */
     public static function tableName()
     {
-        return '{{%core_master_numbering_format}}';
+        return '{{%conf_numbering_format}}';
     }
 
     /**
@@ -142,7 +141,7 @@ class NumberingFormat extends ActiveRecord implements ActiveSearchInterface
     public function afterSave($insert, $changedAttributes)
     {
         if ($insert) {
-            $this->cascadeNumberingFormat();
+           // $this->cascadeNumberingFormat();
         }
         parent::afterSave($insert, $changedAttributes);
     }

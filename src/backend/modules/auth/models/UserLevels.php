@@ -25,7 +25,6 @@ class UserLevels extends ActiveRecord implements ActiveSearchInterface
     const LEVEL_SUPER_ADMIN = 1;
     const LEVEL_ADMIN = 2;
     const LEVEL_ORGANIZATION = 3;
-    const LEVEL_ORGANIZATION_CLIENT = 4;
 
     /**
      * @inheritdoc

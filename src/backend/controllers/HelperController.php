@@ -50,7 +50,7 @@ class HelperController extends Controller
     {
         if (!empty($_POST['qquuid'])) {
             $path = FileManager::getTempDir() . DIRECTORY_SEPARATOR . $_POST['qquuid'];
-            FileManager::deleteDir($path);
+            FileManager::deleteDirOrFile($path);
         }
 
         return json_encode(['success' => true]);

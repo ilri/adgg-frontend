@@ -137,7 +137,7 @@ trait ExcelReaderTrait
         $this->file = time() . '_' . $this->original_file_name;
         $new_path = static::getDir() . DIRECTORY_SEPARATOR . $this->file;
         if (copy($temp_path, $new_path))
-            FileManager::deleteDir(dirname($temp_path));
+            FileManager::deleteDirOrFile(dirname($temp_path));
         else
             throw new Exception('Could not copy the file to the new location.');
     }

@@ -70,9 +70,9 @@ class SystemSettings extends BaseSettings
     public $defaultTheme;
 
     //themes
-    const THEME1 = 'theme1';
-    const THEME2 = 'theme2';
-    const THEME3 = 'theme3';
+    const THEME_DEFAULT = 'default';
+    const THEME_GREEN = 'green';
+    const THEME_DARK = 'dark';
 
     public function rules()
     {
@@ -84,6 +84,7 @@ class SystemSettings extends BaseSettings
                     self::KEY_DEFAULT_TIMEZONE,
                     self::KEY_DEFAULT_COUNTRY,
                     self::KEY_PAGINATION_SIZE,
+                    self::KEY_DEFAULT_THEME,
                 ],
                 'required',
             ],
@@ -105,7 +106,7 @@ class SystemSettings extends BaseSettings
             self::KEY_DEFAULT_TIMEZONE => Lang::t('Default Timezone'),
             self::KEY_DEFAULT_COUNTRY => Lang::t('Country'),
             self::KEY_PAGINATION_SIZE => Lang::t('Items Per Page'),
-            self::KEY_DEFAULT_THEME => Lang::t('Default theme'),
+            self::KEY_DEFAULT_THEME => Lang::t('Theme'),
             self::KEY_DEFAULT_CURRENCY => Lang::t('Default Currency'),
         ];
     }
@@ -171,7 +172,7 @@ class SystemSettings extends BaseSettings
      */
     public static function getDefaultTheme()
     {
-        return static::getSettingsComponent()->get(self::SECTION_SYSTEM, self::KEY_DEFAULT_THEME, self::THEME1);
+        return static::getSettingsComponent()->get(self::SECTION_SYSTEM, self::KEY_DEFAULT_THEME, self::THEME_GREEN);
     }
 
     /**
@@ -182,14 +183,14 @@ class SystemSettings extends BaseSettings
     {
         $stringVal = null;
         switch ($val) {
-            case self::THEME1:
-                $stringVal = 'Theme 1';
+            case self::THEME_DEFAULT:
+                $stringVal = 'Default Skin';
                 break;
-            case self::THEME2:
-                $stringVal = 'Theme 2';
+            case self::THEME_GREEN:
+                $stringVal = 'Green Skin';
                 break;
-            case self::THEME3:
-                $stringVal = 'Theme 3';
+            case self::THEME_DARK:
+                $stringVal = 'Dark Skin';
                 break;
         }
 
@@ -202,8 +203,9 @@ class SystemSettings extends BaseSettings
     public static function themeOptions()
     {
         return [
-            self::THEME1 => static::decodeTheme(self::THEME1),
-            self::THEME2 => static::decodeTheme(self::THEME2),
+            self::THEME_DEFAULT => static::decodeTheme(self::THEME_DEFAULT),
+            self::THEME_GREEN => static::decodeTheme(self::THEME_GREEN),
+            //self::THEME_DARK => static::decodeTheme(self::THEME_DARK),
         ];
     }
 }

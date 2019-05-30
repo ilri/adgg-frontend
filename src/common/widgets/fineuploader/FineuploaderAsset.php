@@ -27,7 +27,7 @@ class FineuploaderAsset extends AssetBundle
         'fine-uploader/fine-uploader.min.js'
     ];
     public $css = [
-        'fine-uploader/fine-uploader-new.min.css',
+        'fine-uploader/fine-uploader-new.css',
     ];
     public $depends = [
         AppAsset::class

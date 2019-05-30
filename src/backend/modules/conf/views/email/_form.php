@@ -2,36 +2,44 @@
 
 use common\helpers\Lang;
 use common\helpers\Url;
-use yii\bootstrap\ActiveForm;
 use yii\bootstrap\Html;
 use vova07\imperavi\Widget;
+use yii\bootstrap4\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model backend\modules\conf\models\EmailTemplate */
-/* @var $form yii\bootstrap\ActiveForm */
-
-$form = ActiveForm::begin([
-    'id' => 'email-template-form',
-    'layout' => 'horizontal',
-    'fieldConfig' => [
-        'template' => "{label}\n{beginWrapper}\n{input}\n{hint}\n{error}\n{endWrapper}",
-        'horizontalCssClasses' => [
-            'label' => 'col-md-2',
-            'offset' => 'col-md-offset-2',
-            'wrapper' => 'col-md-6',
-            'error' => '',
-            'hint' => '',
-        ],
-    ],
-]);
+/* @var $form  ActiveForm */
 ?>
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h3 class="panel-title"><?= Html::encode($this->title) ?></h3>
+<div class="kt-portlet">
+    <div class="kt-portlet__head">
+        <div class="kt-portlet__head-label">
+            <h3 class="kt-portlet__head-title"><?= Html::encode($this->title) ?></h3>
+        </div>
     </div>
-    <div class="panel-body">
-        <?= Html::errorSummary($model, ['class' => 'alert alert-danger']); ?>
 
+    <!--begin::Form-->
+    <?php
+    $form = ActiveForm::begin([
+        'id' => 'email-template-form',
+        'layout' => 'horizontal',
+        'enableClientValidation' => true,
+        'enableAjaxValidation' => true,
+        'options' => ['class'=>'kt-form kt-form--label-right'],
+        'fieldClass' => \common\forms\ActiveField::class,
+        'fieldConfig' => [
+            'template' => "{label}\n{beginWrapper}\n{input}\n{hint}\n{error}\n{endWrapper}",
+            'horizontalCssClasses' => [
+                'label' => 'col-md-2 col-form-label',
+                'offset' => 'offset-md-2',
+                'wrapper' => 'col-md-10',
+                'error' => '',
+                'hint' => '',
+            ],
+        ],
+    ]);
+    ?>
+    <div class="kt-portlet__body">
+        <?= Html::errorSummary($model, ['class' => 'alert alert-warning', 'header' => '']); ?>
         <?php if (\backend\modules\auth\Session::isDev()): ?>
             <?= $form->field($model, 'id', []); ?>
         <?php endif ?>
@@ -61,14 +69,19 @@ $form = ActiveForm::begin([
                 placeholders'));
         ?>
     </div>
-    <div class="panel-footer clearfix">
-        <div class="pull-right">
-            <button class="btn btn-sm btn-primary" type="submit"><i
-                    class="fa fa-check"></i> <?= Lang::t($model->isNewRecord ? 'Create' : 'Save changes') ?>
-            </button>
-            <a class="btn btn-default btn-sm"
-               href="<?= Url::getReturnUrl(Url::to(['index'])) ?>"><i
-                    class="fa fa-times"></i> <?= Lang::t('Cancel') ?></a>
+    <div class="kt-portlet__foot">
+        <div class="kt-form__actions">
+            <div class="row">
+                <div class="col-md-2">
+                </div>
+                <div class="col-md-10">
+                    <button type="submit"
+                            class="btn btn-success"><?= Lang::t($model->isNewRecord ? 'Create' : 'Save changes') ?></button>
+                    <a class="btn btn-secondary" href="<?= Url::getReturnUrl(Url::to(['index'])) ?>">
+                        <?= Lang::t('Cancel') ?>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
     <?php ActiveForm::end(); ?>

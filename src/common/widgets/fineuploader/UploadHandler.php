@@ -256,7 +256,7 @@ class UploadHandler
                 continue;
 
             if (time() - filemtime($path) > $this->chunksExpireIn) {
-                FileManager::deleteDir($path);
+                FileManager::deleteDirOrFile($path);
             }
         }
     }

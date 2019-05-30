@@ -29,26 +29,16 @@ class JobManagerController extends DevController
         ]);
     }
 
-    public function actionView($id)
-    {
-        $job = Jobs::loadModel($id);
-
-        return $this->render('view', [
-            'searchModel' => JobProcesses::searchModel(['condition' => ['job_id' => $id], 'defaultOrder' => ['created_at' => SORT_DESC]]),
-            'job' => $job,
-        ]);
-    }
-
     public function actionCreate()
     {
-        $model = new Jobs();
-        return $model->simpleAjaxSaveRenderAjax();
+        $model = new Jobs(['is_active' => 1]);
+        return $model->simpleAjaxSave();
     }
 
     public function actionUpdate($id)
     {
         $model = Jobs::loadModel($id);
-        return $model->simpleAjaxSaveRenderAjax();
+        return $model->simpleAjaxSave();
     }
 
     public function actionDelete($id)

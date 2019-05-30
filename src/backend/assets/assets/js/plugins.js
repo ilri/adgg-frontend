@@ -9,43 +9,69 @@ MyApp.plugin = {};
 (function ($) {
     'use strict';
     let DATA_GRID_ID = null;
-    var MODAL = function (options) {
-        var defaultOptions = {
-            modal_id: 'my_bs_modal',
+    let MODAL = function (options) {
+        let defaultOptions = {
+            modal_id: 'my-bs-modal',
             notif_id: 'my-modal-notif',
             form_id: 'my-modal-form',
             success_class: 'alert-success',
             error_class: 'alert-danger',
             modalTriggerSelector: '.show_modal_form,[data-show-modal],[data-toggle="modal"]',
-            onShown: function (e, modal) {
-                var grid_id = $(e).data('grid');
+            onShown: function (button) {
+                let grid_id = $(button).data('grid');
                 if (!MyApp.utils.empty(grid_id)) {
                     DATA_GRID_ID = grid_id;
                 } else {
                     DATA_GRID_ID = null;
                 }
             },
-            onHidden: function (e, modal) {
-                var refresh = $(e).data('refresh');
+            onHidden: function (button) {
+                let refresh = $(button).data('refresh');
                 if (!MyApp.utils.empty(refresh)) {
                     MyApp.utils.reload();
                 } else {
                     $(this).removeData('bs.modal');
                 }
             },
-            onShow: function (e, modal) {
-                var modal = $('#' + modal.options.modal_id);
-                var modal_size = $(e).data('modal-size');
-                if (!MyApp.utils.empty(modal_size)) {
-                    modal.find('.modal-dialog').addClass('modal-lg');
-                }
-                var loading = '<div class="row"><div class="col-md-12"><div class="content-loading"><i class="fa fa-spinner fa-5x fa-spin text-warning"></i></div></div></div>';
-                modal.find('.modal-content').html(loading);
+            onShow: function (button) {
+                button = $(button);
+                let modal = $(this);
+                let modalContentWrapper = modal.find('.modal-content');
+                let defaultContentTemplate = '<div class="modal-header"> <h5 class="modal-title">{title}</h5> <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>' +
+                    '<div class="modal-body">{content}</div>' +
+                    '<div class="modal-footer"> <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button></div>';
+                let loading = '<div class="row"><div class="col-12"><div class="content-loading text-center"><i class="fa fa-spinner fa-5x fa-spin text-warning"></i></div></div></div>';
+                let content = defaultContentTemplate.strtr({
+                    '{title}': 'Loading content ...',
+                    '{content}': loading,
+                });
+                modalContentWrapper.html(content);
+                //ajax load the remote content
+                let url = button.data('href') || button.data('url') || button.attr('href');
+                modalContentWrapper.load(url, function (responseTxt, statusTxt, xhr) {
+                    if (statusTxt === "error") {
+                        let alert = '<div class="alert alert-outline-danger"><div class="alert-icon"><i class="flaticon-warning"></i></div><div class="alert-text">{error}</div></div>';
+                        content = defaultContentTemplate.strtr({
+                            '{title}': 'ERROR',
+                            '{content}': alert,
+                        });
+                        if (MyApp.DEBUG_MODE) {
+                            content = content.strtr({
+                                '{error}': xhr.statusText,
+                            });
+                            modalContentWrapper.html(content);
+                        } else {
+                            content = content.strtr({
+                                '{error}': 'ERROR: Could not load the Page. Try again later or contact the system administrator',
+                            });
+                            modalContentWrapper.html(content);
+                        }
+                    }
+                });
             },
-            onLoaded: function (e, modal) {
+            onLoaded: function (button, modal) {
                 $.fn.modal.Constructor.prototype.enforceFocus = function () {
                 };
-                $("select.select2").select2({});
                 MyApp.plugin.depDropDown({});
             },
         };
@@ -56,27 +82,21 @@ MyApp.plugin = {};
      * show the modal
      */
     MODAL.prototype.show = function () {
-        var $this = this;
-        var modal_id = $this.options.modal_id;
-        var clickHandler = function (e) {
-            var modal_size = $(e).data('modal-size');
-            if (!MyApp.utils.empty(modal_size)) {
-                $('#' + modal_id).find('.modal-dialog').addClass(modal_size);
-            }
-            var url = $(e).data('href') || $(e).data('url') || $(e).attr('href');
-            var modal = $('#' + modal_id);
-            modal.off('shown.bs.modal').on('shown.bs.modal', function () {
-                $this.options.onShown.call(this, e, $this);
-            }).off('hidden.bs.modal').on('hidden.bs.modal', function () {
-                $this.options.onHidden.call(this, e, $this);
-            }).off('show.bs.modal').on('show.bs.modal', function () {
-                $this.options.onShow.call(this, e, $this);
+        let $this = this;
+        let modal_id = $this.options.modal_id;
+        let clickHandler = function (button) {
+            let modalSize = $(button).data('modal-size') || 'modal-lg';
+            $('#' + modal_id).find('.modal-dialog').addClass(modalSize);
+            let modal = $('#' + modal_id);
+            modal.off('shown.bs.modal').on('shown.bs.modal', function (event) {
+                $this.options.onShown.call(this, button, $this);
+            }).off('hidden.bs.modal').on('hidden.bs.modal', function (event) {
+                $this.options.onHidden.call(this, button, $this);
+            }).off('show.bs.modal').on('show.bs.modal', function (event) {
+                $this.options.onShow.call(this, button, $this);
             }).off('loaded.bs.modal').on('loaded.bs.modal', function () {
-                $this.options.onLoaded.call(this, e, $this);
-            }).modal({
-                remote: url,
-                refresh: true,
-            });
+                $this.options.onLoaded.call(this, button, $this);
+            }).modal({backdrop: 'static'});
         };
 
         $(function () {
@@ -91,9 +111,8 @@ MyApp.plugin = {};
      * submit the modal form
      */
     MODAL.prototype.submitForm = function () {
-        var $this = this;
-
-        var submit_form = function (e) {
+        let $this = this;
+        let submitForm = function (e) {
             let form = $('#' + $this.options.form_id)
                 , data = form.serialize()
                 , action = form.attr('action')
@@ -106,9 +125,8 @@ MyApp.plugin = {};
                 data: data,
                 dataType: 'json',
                 success: function (response) {
-                    console.log(response);
                     if (response.success) {
-                        var message = '<i class=\"fa fa-check\"></i> ';
+                        let message = '<i class=\"fas fa-check\"></i> ';
                         message += response.message;
                         MyApp.utils.showAlertMessage(message, 'success', '#' + $this.options.notif_id);
                         if (response.forceRedirect === true) {
@@ -124,7 +142,28 @@ MyApp.plugin = {};
                             }, 1000);
                         }
                     } else {
-                        MyApp.utils.display_model_errors(response.message, '#' + $this.options.notif_id, form.data('model'));
+                        let summary = '<ul>';
+                        let notifWrapper = $('#' + $this.options.notif_id);
+                        if (response.message) {
+                            MyApp.utils.showAlertMessage(response.message, 'error', notifWrapper);
+                        } else {
+                            if (typeof response === 'object') {
+                                $.each(response, function (i) {
+                                    if ($.isArray(response[i])) {
+                                        $.each(response[i], function (j, msg) {
+                                            let $input = $('#' + i);
+                                            $input.addClass('is-invalid');
+                                            $input.next('.invalid-feedback').html(msg);
+                                            summary += '<li>' + msg + '</li>';
+                                        });
+                                    }
+                                });
+                            }
+                        }
+                        summary += '</ul>';
+                        if (notifWrapper.length) {
+                            MyApp.utils.showAlertMessage(summary, 'error', notifWrapper);
+                        }
                     }
                 },
                 beforeSend: function () {
@@ -142,17 +181,15 @@ MyApp.plugin = {};
 
         $('#' + $this.options.modal_id).off("click.myapp.modal").on("click.myapp.modal", '#' + $this.options.form_id + ' button[type="submit"]', function (e) {
             e.preventDefault();
-            submit_form(this);
+            submitForm(this);
         });
     };
 
-    var PLUGIN = function (options) {
+    MyApp.plugin.modal = function (options) {
         var obj = new MODAL(options);
         obj.show();
         obj.submitForm();
     };
-
-    MyApp.plugin.modal = PLUGIN;
 }(jQuery));
 //NOTIFICATIONS
 (function ($) {

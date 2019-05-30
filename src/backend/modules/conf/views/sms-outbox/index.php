@@ -7,22 +7,12 @@ $this->title = 'SMS Outbox';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="row">
-    <div class="col-md-2">
-        <?= $this->render('@confModule/views/layouts/submenu'); ?>
+    <div class="col-lg-2">
+        <?= $this->render('@app/modules/conf/views/layouts/_submenu'); ?>
     </div>
-    <div class="col-md-10">
-
-        <!--flash message for SMS resent successfully -->
-        <?php
-        if(Yii::$app->session->hasFlash('sms-resent'))
-        {
-            echo Yii::$app->session->getFlash('sms-resent');
-        }
-        ?>
-
-        <!-- Nav-tab for sms-outbox template -->
+    <div class="col-lg-10">
         <?= $this->render('@confModule/views/sms-template/_tab'); ?>
-        <div class="tab-content padding-top-10">
+        <div class="tab-content">
             <?= $this->render('_grid', ['model' => $searchModel]) ?>
         </div>
     </div>

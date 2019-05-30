@@ -6,11 +6,11 @@
     'use strict';
     //shorthand for $( document ).ready....
     $(function () {
-        var init = {
+        let init = {
             updateGridView: function () {
-                var updateGrid = function (e) {
-                    var url = $(e).data('href')
-                        , confirm_msg = $(e).data('confirm-message')
+                let updateGrid = function (e) {
+                    let url = $(e).data('href')
+                        , confirm_msg = $(e).data('confirm-message') || 'Are you sure?'
                         , dataType = $(e).data('data-type')
                         , pjax_id = $(e).data('grid');
 
@@ -18,7 +18,7 @@
                         dataType = 'html';
                     }
 
-                    var ajax = function () {
+                    let ajax = function () {
                         $.ajax({
                             type: 'POST',
                             url: url,
@@ -39,22 +39,25 @@
                             }
                             ,
                             error: function (XHR) {
-                                var message = XHR.responseText;
+                                let message = XHR.responseText;
                                 MyApp.utils.showAlertMessage(message, 'error');
                                 return false;
                             }
                         });
                     }
-
-                    if (MyApp.utils.empty(confirm_msg)) {
-                        ajax();
-                    } else {
-                        BootstrapDialog.confirm(confirm_msg, function (result) {
-                            if (result) {
-                                ajax();
-                            }
-                        });
-                    }
+                    swal({
+                        title: 'Confirmation',
+                        text: confirm_msg,
+                        type: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'Cancel',
+                        reverseButtons: false
+                    }).then(function (result) {
+                        if (result.value) {
+                            ajax();
+                        }
+                    });
                 };
                 $('body').on('click', 'a.grid-update', function (e) {
                     e.preventDefault();
@@ -77,7 +80,7 @@
                 //activate tabs
                 $('ul.my-nav li>a').each(function () {
                     if (checkLink(this)) {
-                        $(this).parent().addClass('active');
+                        $(this).addClass('active');
                     }
                 });
                 //activate list-group links
@@ -128,10 +131,10 @@
             }
             ,
             collapsePanel: function () {
-                $('.collapse').on('shown.bs.collapse', function () {
-                    $(this).parent().find(".glyphicon-chevron-right").removeClass("glyphicon-chevron-right").addClass("glyphicon-chevron-down");
-                }).on('hidden.bs.collapse', function () {
-                    $(this).parent().find(".glyphicon-chevron-down").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-right");
+                $('.collapse').on('show.bs.collapse', function () {
+                    $(this).parent().find(".fas.fa-chevron-right").removeClass("fa-chevron-right").addClass("fa-chevron-down");
+                }).on('hide.bs.collapse', function () {
+                    $(this).parent().find(".fas.fa-chevron-down").removeClass("fa-chevron-down").addClass("fa-chevron-right");
                 });
             },
             disableCopyPaste: function () {
@@ -145,21 +148,37 @@
                 let selector = 'a.simple-ajax-post,button.simple-ajax-post';
                 let ajaxPost = function (e) {
                     let url = $(e).data('href');
-                    $.ajax({
-                        url: url,
-                        type: 'post',
-                        dataType: 'json',
-                        success: function (data) {
-                            if (data.success) {
-                                MyApp.utils.reload(null, 0);
+                    let _post = function () {
+                        $.ajax({
+                            url: url,
+                            type: 'post',
+                            dataType: 'json',
+                            success: function (data) {
+                                if (data.success) {
+                                    MyApp.utils.reload(null, 0);
+                                }
+                            },
+                            error: function (xhr) {
+                                if (MyApp.DEBUG_MODE) {
+                                    console.log(xhr);
+                                }
                             }
-                        },
-                        error: function (xhr) {
-                            if (MyApp.DEBUG_MODE) {
-                                console.log(xhr);
-                            }
+                        })
+                    }
+                    let confirm_msg = $(e).data('confirm-message') || 'Are you sure?'
+                    swal({
+                        title: 'Confirmation',
+                        text: confirm_msg,
+                        type: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'Cancel',
+                        reverseButtons: false
+                    }).then(function (result) {
+                        if (result.value) {
+                            _post();
                         }
-                    })
+                    });
                 };
 
                 //event

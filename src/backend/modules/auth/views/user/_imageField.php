@@ -10,12 +10,12 @@ use yii\helpers\Url;
 $class_name = strtolower($model->shortClassName());
 $fileAttribute = 'profile_image';
 $tmpFileAttribute = 'tmp_' . $fileAttribute;
-$notif_id = $fileAttribute . '_upload_notif';
+$alertId = $fileAttribute . '_upload-alert';
 
 ?>
-<div class="form-group">
-    <?= Html::activeLabel($model, $tmpFileAttribute, ['class' => 'control-label col-md-4']) ?>
-    <div class="col-md-8">
+<div class="form-group row">
+    <?= Html::activeLabel($model, $tmpFileAttribute, ['class' => 'col-lg-3 col-form-label']) ?>
+    <div class="col-lg-9">
         <?= Html::activeHiddenInput($model, $tmpFileAttribute) ?>
         <div>
             <?= Fineuploader::widget([
@@ -23,7 +23,7 @@ $notif_id = $fileAttribute . '_upload_notif';
                 'buttonLabel' => 'Browse Image',
                 'fileType' => Fineuploader::FILE_TYPE_IMAGE,
                 'fileSelector' => '#' . Html::getInputId($model, $tmpFileAttribute),
-                'alertSelector' => '#' . $notif_id,
+                'alertSelector' => '#' . $alertId,
                 'options' => [
                     'request' => [
                         'endpoint' => Url::to(['/helper/upload-file']),
@@ -47,7 +47,7 @@ $notif_id = $fileAttribute . '_upload_notif';
                     'debug' => false,
                 ]
             ]) ?>
-            <div id="<?= $notif_id ?>"></div>
+            <div id="<?= $alertId ?>"></div>
         </div>
     </div>
 </div>

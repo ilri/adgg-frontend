@@ -11,12 +11,13 @@ namespace backend\controllers;
 use backend\modules\auth\Acl;
 use backend\modules\auth\models\Users;
 use common\controllers\Controller;
-use common\helpers\Utils;
 use Yii;
+use yii\base\Action;
+use yii\helpers\Inflector;
 
 class BackendController extends Controller
 {
-    public $layout = '@backend/views/layouts/main2';
+    public $layout = '@backend/views/layouts/main';
     /**
      * @var
      */
@@ -91,47 +92,66 @@ class BackendController extends Controller
             // allow overrides
             if ($this->enableDefaultAcl) {
                 // check permissions, for all default existing actions
-                switch ($action->id) {
-                    case "index":
-                    case "view":
-                        $this->hasPrivilege(Acl::ACTION_VIEW);
-                        break;
-                    case "create":
-                        $this->hasPrivilege(Acl::ACTION_CREATE);
-                        break;
-                    case "update":
-                        $this->hasPrivilege(Acl::ACTION_UPDATE);
-                        break;
-                    case "delete":
-                        $this->hasPrivilege(Acl::ACTION_DELETE);
-                        break;
-                    default:
-                        // do nothing.A custom implementation is required
-                        break;
-                }
+                $this->checkDefaultActionsPermissions($action);
             }
             //set default page titles
-            if (empty($this->pageTitle) && !empty($this->resourceLabel)) {
-                switch ($action->id) {
-                    case "index":
-                        $this->pageTitle = 'Manage ' . Utils::pluralize($this->resourceLabel);
-                        break;
-                    case "view":
-                        $this->pageTitle = 'View ' . $this->resourceLabel;
-                        break;
-                    case "create":
-                        $this->pageTitle = 'Create ' . $this->resourceLabel;
-                        break;
-                    case "update":
-                        $this->pageTitle = 'Update ' . $this->resourceLabel;
-                        break;
-                    case "delete":
-                        $this->pageTitle = 'Delete ' . $this->resourceLabel;
-                        break;
-                }
-            }
+            $this->setDefaultPageTitles($action);
             return true;
         }
         return false;
+    }
+
+    /**
+     * @param Action $action
+     * @throws \yii\web\BadRequestHttpException
+     * @throws \yii\web\ForbiddenHttpException
+     * @throws \yii\web\NotFoundHttpException
+     */
+    public function checkDefaultActionsPermissions(Action $action)
+    {
+        switch ($action->id) {
+            case "index":
+            case "view":
+                $this->hasPrivilege(Acl::ACTION_VIEW);
+                break;
+            case "create":
+                $this->hasPrivilege(Acl::ACTION_CREATE);
+                break;
+            case "update":
+                $this->hasPrivilege(Acl::ACTION_UPDATE);
+                break;
+            case "delete":
+                $this->hasPrivilege(Acl::ACTION_DELETE);
+                break;
+            default:
+                // do nothing.A custom implementation is required
+                break;
+        }
+    }
+
+    /**
+     * @param Action $action
+     */
+    public function setDefaultPageTitles(Action $action)
+    {
+        if (empty($this->pageTitle) && !empty($this->resourceLabel)) {
+            switch ($action->id) {
+                case "index":
+                    $this->pageTitle = 'Manage ' . Inflector::pluralize($this->resourceLabel);
+                    break;
+                case "view":
+                    $this->pageTitle = 'View ' . $this->resourceLabel;
+                    break;
+                case "create":
+                    $this->pageTitle = 'Create ' . $this->resourceLabel;
+                    break;
+                case "update":
+                    $this->pageTitle = 'Update ' . $this->resourceLabel;
+                    break;
+                case "delete":
+                    $this->pageTitle = 'Delete ' . $this->resourceLabel;
+                    break;
+            }
+        }
     }
 }

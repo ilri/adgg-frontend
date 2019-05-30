@@ -41,13 +41,13 @@ class NumberFormatController extends DevController
     public function actionCreate()
     {
         $model = new NumberingFormat();
-        return $model->simpleAjaxSaveRenderAjax();
+        return $model->simpleAjaxSave();
     }
 
     public function actionUpdate($id)
     {
         $model = NumberingFormat::loadModel($id);
-        return $model->simpleAjaxSaveRenderAjax();
+        return $model->simpleAjaxSave();
     }
 
     public function actionDelete($id)

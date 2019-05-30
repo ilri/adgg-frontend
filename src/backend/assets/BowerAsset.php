@@ -15,9 +15,10 @@ class BowerAsset extends AssetBundle
     public $sourcePath = '@bower';
 
     public $css = [
-
+        'jquery-ui/themes/south-street/jquery-ui.min.css',
     ];
 
     public $js = [
+        'jquery-ui/jquery-ui.min.js',
     ];
 }

@@ -2,8 +2,6 @@
 
 use backend\modules\auth\Session;
 use common\widgets\grid\GridView;
-use common\helpers\Lang;
-use yii\helpers\Html;
 use backend\modules\auth\models\Users;
 use yii\helpers\Url;
 
@@ -71,14 +69,12 @@ use yii\helpers\Url;
         [
             'class' => common\widgets\grid\ActionColumn::class,
             'template' => '{view}{update}',
-            'buttons' => [
-                'update' => function ($url, Users $model) {
-                    return Yii::$app->user->canUpdate() && $model->checkPermission(false, true, false, true) ? Html::a('<i class="fa fa-pencil text-success"></i>', $url, [
-                        'data-pjax' => 0,
-                        'title' => Lang::t('Update'),
-                    ]) : '';
-                },
-            ]
+            'visibleButtons' => [
+                'update' => function (Users $model) {
+                    return Yii::$app->user->canUpdate() && $model->checkPermission(false, true, false, true);
+                }
+            ],
+            'updateOptions' => ['data-pjax' => 0, 'title' => 'Update', 'modal' => false],
         ],
     ],
 ]);

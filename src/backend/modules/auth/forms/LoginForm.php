@@ -31,7 +31,7 @@ class LoginForm extends Model
             'authLog' => [
                 'class' => AuthLogLoginFormBehavior::class,
                 'findIdentity' => 'findIdentity',
-                'verifyRobotFailedLoginSequence' => 3,
+                'verifyRobotFailedLoginSequence' => 2,
                 'verifyRobotAttribute' => 'verifyCode',
                 'verifyRobotRule' => ['captcha', 'captchaAction' => '/auth/auth/captcha'],
                 'deactivateFailedLoginSequence' => 50,

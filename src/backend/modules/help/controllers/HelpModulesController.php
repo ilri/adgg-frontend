@@ -37,12 +37,6 @@ class HelpModulesController extends Controller
         ]);
     }
 
-    /**
-     * Displays a single HelpModules model.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException
-     */
     public function actionView($id)
     {
         return $this->render('view', [
@@ -50,11 +44,6 @@ class HelpModulesController extends Controller
         ]);
     }
 
-    /**
-     * Creates a new HelpModules model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
     public function actionCreate()
     {
         $model = new HelpModules();
@@ -62,13 +51,7 @@ class HelpModulesController extends Controller
         return $model->simpleAjaxSave();
     }
 
-    /**
-     * Updates an existing HelpModules model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException
-     */
+
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);

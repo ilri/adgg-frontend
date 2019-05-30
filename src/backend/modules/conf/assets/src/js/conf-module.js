@@ -8,8 +8,8 @@ MyApp.modules.conf = {};
 (function ($) {
     'use strict';
 
-    var NF = function (options) {
-        var defaultOptions = {
+    let NF = function (options) {
+        let defaultOptions = {
             form: 'my-modal-form',
             nextNumberSelector: '#numberingformat-next_number',
             minDigitsSelector: '#numberingformat-min_digits',
@@ -21,32 +21,30 @@ MyApp.modules.conf = {};
     };
 
     NF.prototype.updatePreview = function () {
-        var $this = this;
-        var update_preview = function () {
-            var next_number = parseInt($($this.options.nextNumberSelector).val())
+        let $this = this;
+        let update_preview = function () {
+            let next_number = parseInt($($this.options.nextNumberSelector).val())
                 , min_digits = parseInt($($this.options.minDigitsSelector).val())
                 , prefix = $($this.options.prefixSelector).val()
                 , suffix = $($this.options.suffixSelector).val()
                 , template = '{{prefix}}{{number}}{{suffix}}';
-            var number = MyApp.utils.str_pad(next_number, min_digits, "0", 'STR_PAD_LEFT');
-            var preview = template.replace('{{prefix}}', prefix);
+            let number = MyApp.utils.str_pad(next_number, min_digits, "0", 'STR_PAD_LEFT');
+            let preview = template.replace('{{prefix}}', prefix);
             preview = preview.replace('{{number}}', number);
             preview = preview.replace('{{suffix}}', suffix);
             $($this.options.previewSelector).val(preview);
         };
 
         //onblur
-        $('#' + $this.options.form).find('input.update-preview').off('blur.myapp.settings').on('blur.myapp.settings', function () {
+        $('#' + $this.options.form).find('input.update-preview').off('change.myapp.settings').on('change.myapp.settings', function () {
             update_preview();
-        }).trigger('blur');
+        });
     };
 
-    var PLUGIN = function (options) {
-        var obj = new NF(options);
+    MyApp.modules.conf.numberingFormat = function (options) {
+        let obj = new NF(options);
         obj.updatePreview();
     };
-
-    MyApp.modules.conf.numberingFormat = PLUGIN;
 }(jQuery));
 
 //notification setting
@@ -205,10 +203,10 @@ MyApp.modules.conf = {};
             let _toggle = function (e) {
                 let isChecked = $(e).is(':checked');
                 if (isChecked) {
-                    $($this.options.formSelector).find('input[type="number"]').attr('readonly', 'readonly');
+                    $($this.options.formSelector).find('input[type="number"]').attr('disabled', 'disabled');
                     $($this.options.presetFieldWrapper).show();
                 } else {
-                    $($this.options.formSelector).find('input[type="number"]').removeAttr('readonly');
+                    $($this.options.formSelector).find('input[type="number"]').removeAttr('disabled');
                     $($this.options.presetFieldWrapper).hide();
                 }
             }

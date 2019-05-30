@@ -1,6 +1,6 @@
 <?php
 return [
-    'name' => 'ILRI LIVEGENE ADGG SYSTEM',
+    'name' => 'MEDSOURCE ERP',
     //'language' => 'sr',
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
     'modules' => require(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'modules.php'),

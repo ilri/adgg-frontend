@@ -41,7 +41,8 @@ class EmailTemplate extends ActiveRecord implements ActiveSearchInterface
             [['sender'], 'email'],
             [['id', 'name'], 'string', 'max' => 128],
             [['id'], 'unique'],
-            [['subject', 'sender', 'comments'], 'string', 'max' => 255]
+            [['subject', 'sender', 'comments'], 'string', 'max' => 255],
+            [[self::SEARCH_FIELD],'safe','on' => self::SCENARIO_SEARCH]
         ];
     }
 

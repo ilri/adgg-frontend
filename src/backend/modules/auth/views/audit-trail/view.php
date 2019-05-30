@@ -4,6 +4,7 @@ use backend\modules\auth\models\AuditTrail;
 use backend\modules\auth\models\Users;
 use common\helpers\DateUtils;
 use common\helpers\Lang;
+use Illuminate\Support\Str;
 use yii\helpers\Html;
 use yii\helpers\Json;
 use yii\widgets\DetailView;
@@ -14,22 +15,21 @@ use yii\widgets\DetailView;
 $this->title = Lang::t('Audit Trail #{id}', ['id' => $model->id]);
 ?>
 <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h4 class="modal-title"><?= Html::encode($this->title); ?></h4>
+    <h5 class="modal-title"><?= Html::encode($this->title); ?></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
 </div>
 <div class="modal-body">
+    <div class="alert alert-outline-dark" role="alert">
+        <div class="alert-text"><strong><?= Html::encode($model->action_description) ?></strong></div>
+    </div>
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
             [
-                'attribute' => 'id',
-            ],
-            [
                 'attribute' => 'action',
                 'value' => AuditTrail::decodeAction($model->action),
-            ],
-            [
-                'attribute' => 'action_description',
             ],
             [
                 'attribute' => 'url',
@@ -51,19 +51,36 @@ $this->title = Lang::t('Audit Trail #{id}', ['id' => $model->id]);
 
         ],
     ]) ?>
-
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title"><?= Lang::t('Data modification') ?></h3>
-        </div>
-        <div class="panel-body">
+    <div class="card">
+        <h5 class="card-header"><?= Lang::t('Data modification') ?></h5>
+        <div class="card-body">
             <div style="max-height: 200px;overflow-y: auto">
-                <?= Json::encode(@unserialize($model->details), JSON_PRETTY_PRINT) ?>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Field</th>
+                        <th>Value Before</th>
+                        <th>Value After</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach ((array)@unserialize($model->details) as $field => $details):
+                        if (empty($details['old']) && empty($details['new'])) {
+                            continue;
+                        }
+                        ?>
+                        <tr>
+                            <td><?= $field ?></td>
+                            <td><?= Html::encode(Str::limit(is_array($details['old']) ? Json::encode($details['old']) : $details['old'], 200, ' ...')) ?></td>
+                            <td><?= Html::encode(Str::limit(is_array($details['new']) ? Json::encode($details['new']) : $details['new'], 200, ' ...')) ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-default" data-dismiss="modal"><i
-                class="fa fa-times"></i> <?= Lang::t('Close') ?></button>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 </div>

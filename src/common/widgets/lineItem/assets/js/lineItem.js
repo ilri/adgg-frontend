@@ -6,8 +6,8 @@ var MyApp = MyApp || {};
 MyApp.widget = MyApp.widget || {};
 (function ($) {
     'use strict';
-    var WIDGET = function (options) {
-        var defaultOptions = {
+    let WIDGET = function (options) {
+        let defaultOptions = {
             selectors: {
                 form: null,
                 panel: null,
@@ -29,7 +29,7 @@ MyApp.widget = MyApp.widget || {};
             actionParamItemId: null,
             actionParamSaveItem: null,
             itemTrIdPrefix: null,
-            itemInputErrorClass: 'my-form-error',
+            itemInputErrorClass: 'is-invalid',
             parentModelShortClassName: null,
             events: {
                 afterAdd: function (index) {
@@ -56,21 +56,21 @@ MyApp.widget = MyApp.widget || {};
     };
 
     //utils
-    var updateItemsCount = function () {
+    let updateItemsCount = function () {
         $(this.options.selectors.panel).find('.panel-title>span').html($(this.options.selectors.form).find(this.options.selectors.itemTr).length + ' Items');
     }, showItemInputError = function (tr, input_class) {
-        tr.find('.' + input_class).addClass(this.options.itemInputErrorClass);
-        tr.addClass('bg-danger');
+        tr.find('.' + input_class).addClass(this.options.itemInputErrorClass).attr('aria-invalid', true);
+        //tr.addClass('bg-danger');
     }, hideItemInputError = function (tr) {
         tr.find('.' + this.options.itemInputErrorClass).removeClass(this.options.itemInputErrorClass);
         tr.removeClass('bg-danger');
     }, markItemAsSaved = function (tr) {
-        var saved_css_class = 'text-success'
+        let saved_css_class = 'text-success'
             , unsaved_css_class = 'text-warning';
         tr.find(this.options.selectors.saveLineItem).removeClass(unsaved_css_class).addClass(saved_css_class);
 
     }, processItemSaveResponse = function (tr, response, noExistingError = true) {
-        var $this = this;
+        let $this = this;
 
         if (response.success) {
             $this.options.events.afterSave.call($this, tr, response);
@@ -79,15 +79,14 @@ MyApp.widget = MyApp.widget || {};
             //set Id
             tr.find($this.options.selectors.primaryKeyField).val(response.id);
             return true;
-        }
-        else {
+        } else {
             if (noExistingError) {
                 hideItemInputError.call($this, tr);
                 //show error
+                MyApp.utils.display_model_errors(response.error, false, true);
                 $.each(response.error, function (i) {
                     showItemInputError.call($this, tr, i);
                 });
-                MyApp.utils.display_model_errors(response.error, false, true);
             }
             return false;
         }

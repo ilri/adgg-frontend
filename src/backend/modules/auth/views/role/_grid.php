@@ -4,8 +4,6 @@ use backend\modules\auth\models\Roles;
 use backend\modules\auth\Session;
 use common\helpers\Utils;
 use common\widgets\grid\GridView;
-use common\helpers\Lang;
-use yii\bootstrap\Html;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
@@ -33,7 +31,7 @@ use yii\helpers\Url;
         [
             'attribute' => 'level_id',
             'value' => function (Roles $model) {
-                return \backend\modules\auth\models\UserLevels::getFieldByPk($model->level_id, 'name');
+                return $model->getRelationAttributeValue('level', 'name');
             },
             'filter' => false,
             'visible' => Session::isDev(),
@@ -49,17 +47,12 @@ use yii\helpers\Url;
             'class' => common\widgets\grid\ActionColumn::class,
             'template' => '{view}{update}',
             'viewOptions' => ['label' => 'Update Privileges'],
-            'width' => '150px',
-            'buttons' => [
-                'update' => function ($url, Roles $model) {
-                    return Yii::$app->user->canUpdate() && !Session::isOrganization() ? Html::a('<i class="fa fa-pencil text-success"></i>', $url, [
-                        'data-pjax' => 0,
-                        'class' => 'show_modal_form',
-                        'data-grid' => $model->getPjaxWidgetId(),
-                        'title' => Lang::t('Update'),
-                    ]) : '';
-                },
-            ]
+            'width' => '200px',
+            'visibleButtons' => [
+                'update' => function (Roles $model) {
+                    return Yii::$app->user->canUpdate() && !Session::isOrganization();
+                }
+            ],
         ],
     ],
 ]);

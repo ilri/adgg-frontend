@@ -1,75 +1,74 @@
 <?php
 
+use common\forms\ActiveField;
 use common\helpers\Lang;
-use common\helpers\Url;
 use kartik\password\PasswordInput;
-use yii\bootstrap\ActiveForm;
-use yii\bootstrap\Html;
+use yii\bootstrap4\ActiveForm;
+use yii\bootstrap4\Html;
 
 /* @var $this yii\web\View */
 /* @var $model backend\modules\auth\models\Users */
 ?>
-
-<div class="row">
-    <div class="col-xs-12">
-        <?php
-        $form = ActiveForm::begin([
-            'id' => 'change-password-form',
-            'layout' => 'horizontal',
-            'enableAjaxValidation' => false,
-            'enableClientValidation' => false,
-            'fieldConfig' => [
-                'template' => "{label}\n{beginWrapper}\n{input}\n{hint}\n{error}\n{endWrapper}",
-                'horizontalCssClasses' => [
-                    'label' => 'col-md-2',
-                    'offset' => 'col-md-offset-2',
-                    'wrapper' => 'col-md-4',
-                    'error' => '',
-                    'hint' => '',
-                ],
+<div class="kt-portlet">
+    <div class="kt-portlet__head">
+        <div class="kt-portlet__head-label">
+            <h3 class="kt-portlet__head-title"><?= Html::encode($this->title) ?></h3>
+        </div>
+    </div>
+    <?php
+    $form = ActiveForm::begin([
+        'id' => 'change-password-form',
+        'layout' => 'horizontal',
+        'enableClientValidation' => true,
+        'enableAjaxValidation' => true,
+        'options' => ['class' => 'kt-form kt-form--label-right'],
+        'fieldClass' => ActiveField::class,
+        'fieldConfig' => [
+            'template' => "{label}\n{beginWrapper}\n{input}\n{hint}\n{error}\n{endWrapper}",
+            'horizontalCssClasses' => [
+                'label' => 'col-lg-2 col-form-label',
+                'offset' => 'offset-lg-2',
+                'wrapper' => 'col-lg-4',
+                'error' => '',
+                'hint' => '',
             ],
-        ]);
-        ?>
-
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title"><i class="fa fa-lock"></i> <?= Html::encode($this->title) ?></h3>
-            </div>
-            <div class="panel-body">
-                <?= $form->field($model, 'currentPassword')->widget(PasswordInput::class, [
-                    'pluginOptions' => [
-                        'showMeter' => false,
-                        'toggleMask' => true,
-                    ],
-                    'options' => ['class' => 'form-control disable-copy-paste']
-                ]) ?>
-                <?= $form->field($model, 'password')->widget(PasswordInput::class, [
-                    'pluginOptions' => [
-                        'showMeter' => true,
-                        'toggleMask' => true,
-                    ],
-                    'options' => ['class' => 'form-control disable-copy-paste']
-                ]) ?>
-                <?= $form->field($model, 'confirm')->widget(PasswordInput::class, [
-                    'pluginOptions' => [
-                        'showMeter' => false,
-                        'toggleMask' => true,
-                    ],
-                    'options' => ['class' => 'form-control disable-copy-paste']
-                ]) ?>
-            </div>
-            <div class="panel-footer clearfix">
-                <div class="pull-right">
-                    <button class="btn btn-primary" type="submit">
-                        <i class="fa fa-check"></i> <?= Lang::t('Change Password') ?>
+        ],
+    ]);
+    ?>
+    <div class="kt-portlet__body">
+        <?= Html::errorSummary($model, ['class' => 'alert alert-warning', 'header' => '']); ?>
+        <?= $form->field($model, 'currentPassword')->widget(PasswordInput::class, [
+            'pluginOptions' => [
+                'showMeter' => false,
+                'toggleMask' => true,
+            ],
+            'options' => ['class' => 'form-control disable-copy-paste']
+        ]) ?>
+        <?= $form->field($model, 'password')->widget(PasswordInput::class, [
+            'pluginOptions' => [
+                'showMeter' => true,
+                'toggleMask' => true,
+            ],
+            'options' => ['class' => 'form-control disable-copy-paste']
+        ]) ?>
+        <?= $form->field($model, 'confirm')->widget(PasswordInput::class, [
+            'pluginOptions' => [
+                'showMeter' => false,
+                'toggleMask' => true,
+            ],
+            'options' => ['class' => 'form-control disable-copy-paste']
+        ]) ?>
+    </div>
+    <div class="kt-portlet__foot">
+        <div class="kt-form__actions">
+            <div class="row">
+                <div class="offset-lg-2 col-lg-10">
+                    <button type="submit" class="btn btn-success">
+                        <?= Lang::t('Change Password') ?>
                     </button>
-                    <a class="btn btn-default hidden"
-                       href="<?= Url::getReturnUrl(Url::to(['update', 'id' => $model->id])) ?>">
-                        <i class="fa fa-times"></i> <?= Lang::t('Cancel') ?>
-                    </a>
                 </div>
             </div>
         </div>
-        <?php ActiveForm::end(); ?>
     </div>
+    <?php ActiveForm::end(); ?>
 </div>

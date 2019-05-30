@@ -69,16 +69,27 @@ class SingleViewWidget extends Widget
     private $mapCentre;
 
     /**
+     * @var bool
+     */
+    public $showDefaultMap = false;
+
+    /**
      * @inheritdoc
      */
     public function init()
     {
         parent::init();
+    }
 
+    public function run()
+    {
         if (empty($this->mapWrapperHtmlOptions['id'])) {
             $this->mapWrapperHtmlOptions['id'] = 'gmap-single-view-xx';
         }
         if (empty($this->latitude) || empty($this->longitude)) {
+            if (!$this->showDefaultMap) {
+                return false;
+            }
             $this->mapCentre = GoogleMapSettings::getDefaultMapCenter();
             if (!empty($this->mapCentre)) {
                 $center = explode(',', $this->mapCentre);
@@ -92,10 +103,7 @@ class SingleViewWidget extends Widget
 
         if (empty($this->mapType))
             $this->mapType = GmapUtils::MAP_TYPE_HYBRID;
-    }
 
-    public function run()
-    {
         echo Html::tag('div', "", $this->mapWrapperHtmlOptions);
         $this->registerAssets();
     }

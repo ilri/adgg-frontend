@@ -14,8 +14,8 @@ return [
     'user' => [
         'class' => \common\components\User::class,
         'identityClass' => \backend\modules\auth\models\Users::class,
-        'enableAutoLogin' => true,
-        'autoRenewCookie' => true,
+        'enableAutoLogin' => false,
+        'autoRenewCookie' => false,
         'loginUrl' => ['auth/auth/login'],
         'authTimeout' => 60 * 60,
     ],

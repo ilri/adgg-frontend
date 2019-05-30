@@ -7,7 +7,6 @@
 
 namespace backend\controllers;
 
-use Yii;
 
 class ErrorController extends BackendController
 {

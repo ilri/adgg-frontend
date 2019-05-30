@@ -31,3 +31,54 @@ table.kv-grid-table tr.linkable:hover {
 .panel > table.table-bordered.kv-grid-table > thead > tr:first-child > td, .panel > .table-responsive > table.table-bordered.kv-grid-table > thead > tr:first-child > td, .panel > table.table-bordered.kv-grid-table > tbody > tr:first-child > td, .panel > .table-responsive > table.table-bordered.kv-grid-table > tbody > tr:first-child > td, .panel > table.table-bordered.kv-grid-table > thead > tr:first-child > th, .panel > .table-responsive > table.table-bordered.kv-grid-table > thead > tr:first-child > th, .panel > table.table-bordered.kv-grid-table > tbody > tr:first-child > th, .panel > .table-responsive > table.table-bordered.kv-grid-table > tbody > tr:first-child > th {
     border-bottom: 1px solid #ddd;
 }
+
+.kv-grid-toolbar .btn-group + .btn-group {
+    margin-left: 4px;
+}
+
+.kv-grid-bs4 a.asc::after {
+    content: "\2191" !important;
+}
+
+.kv-grid-bs4 a.desc::after {
+    content: "\2193" !important;
+}
+
+.kv-expand-detail-row.table-info, .kv-expand-detail-row.table-info > th, .kv-expand-detail-row.table-info > td, .table-hover .kv-expand-detail-row.table-info:hover, .table-hover .kv-expand-detail-row.table-info:hover > td, .table-hover .kv-expand-detail-row.table-info:hover > th {
+    background-color: #fff;
+}
+
+.kv-expand-detail-row .kt-iconbox .kt-iconbox__icon {
+    margin-bottom: 1rem;
+    color: #566b4f;
+    font-size: 5rem;
+    position: relative;
+}
+
+.kv-expand-detail-row .kt-iconbox {
+
+    text-align: center;
+    padding: 1rem;
+    background-color: #fff;
+    border: 2px solid transparent;
+    -webkit-transition: all 0.3s;
+    transition: all 0.3s;
+    border-radius: 0.35rem;
+
+}
+/*.kt-portlet .kt-portlet__head {
+    background-color: #004730;
+}
+
+.kt-portlet .kt-portlet__head .kt-portlet__head-label .kt-portlet__head-title {
+    color: #fff;
+}
+
+.kt-portlet .kt-portlet__head .btn.btn-default {
+    color: #fff;
+    border: 1px solid #fff;
+}
+
+.kt-portlet .kt-portlet__head .btn.btn-default i {
+    color: #fff;
+}*/

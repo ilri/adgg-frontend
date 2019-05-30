@@ -69,7 +69,7 @@ class Users extends UserIdentity implements ActiveSearchInterface
             ['username', 'string', 'min' => 4, 'max' => 30],
             // password field is required on 'create' scenario
             [
-                'password',
+                ['password', 'confirm'],
                 'required',
                 'on' => [
                     self::SCENARIO_CREATE,
@@ -188,9 +188,10 @@ class Users extends UserIdentity implements ActiveSearchInterface
     /**
      * @inheritdoc
      */
-    public static function getListData($valueColumn = 'id', $textColumn = 'name', $prompt = true, $condition = ['status' => self::STATUS_ACTIVE], $params = [], $options = [])
+    public static function getListData($valueColumn = 'id', $textColumn = 'name', $prompt = false, $condition = '', $params = [], $options = [])
     {
         list($condition, $params) = static::appendOrgSessionIdCondition($condition, $params, false);
+        list($condition, $params) = DbUtils::appendCondition('status', self::STATUS_ACTIVE, $condition, $params);
         $options['orderBy'] = ['name' => SORT_ASC];
         return parent::getListData($valueColumn, $textColumn, $prompt, $condition, $params, $options);
     }
@@ -249,7 +250,7 @@ class Users extends UserIdentity implements ActiveSearchInterface
      * @return array
      * @throws \Exception
      */
-    public static function levelIdListData($tip=false)
+    public static function levelIdListData($tip = false)
     {
         list($condition, $params) = static::appendLevelCondition(null, [], 'id');
         return UserLevels::getListData('id', 'name', $tip, $condition, $params, ['orderBy' => ['id' => SORT_ASC]]);
@@ -292,7 +293,7 @@ class Users extends UserIdentity implements ActiveSearchInterface
             $this->save(false);
 
             if (!empty($temp_dir))
-                FileManager::deleteDir($temp_dir);
+                FileManager::deleteDirOrFile($temp_dir);
 
             $this->createThumbs($new_path, $image_name);
         }
@@ -407,5 +408,13 @@ class Users extends UserIdentity implements ActiveSearchInterface
     public function getOrg()
     {
         return $this->hasOne(Organization::class, ['id' => 'org_id']);
+    }
+
+    /**
+     * @return string
+     */
+    public function getDecodedStatus()
+    {
+        return static::decodeStatus($this->status);
     }
 }

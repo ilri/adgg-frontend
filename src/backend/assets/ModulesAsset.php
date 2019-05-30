@@ -9,18 +9,36 @@
 namespace backend\assets;
 
 
+use Yii;
 use yii\web\AssetBundle;
 
 class ModulesAsset extends AssetBundle
 {
-    public $depends = [
-        AppAsset::class,
-        \backend\modules\auth\assets\Asset::class,
-        \backend\modules\conf\assets\Asset::class,
-        \backend\modules\dashboard\assets\Asset::class,
-        \backend\modules\reports\assets\Asset::class,
-        \backend\modules\core\assets\Asset::class,
-        \backend\modules\help\assets\Asset::class,
-        \backend\modules\accounting\assets\Asset::class,
-    ];
+    public function init()
+    {
+        $moduleId = Yii::$app->controller->module->getUniqueId();
+
+        $depends = [
+            AppAsset::class,
+        ];
+        if ($moduleId === 'auth') {
+            $depends[] = \backend\modules\auth\assets\Asset::class;
+        } elseif ($moduleId === 'conf') {
+            $depends[] = \backend\modules\conf\assets\Asset::class;
+        } elseif ($moduleId === 'dashboard') {
+            $depends[] = \backend\modules\dashboard\assets\Asset::class;
+        } elseif ($moduleId === 'reports') {
+            $depends[] = \backend\modules\reports\assets\Asset::class;
+        } elseif ($moduleId === 'core') {
+            $depends[] = \backend\modules\core\assets\Asset::class;
+        } elseif ($moduleId === 'help') {
+            $depends[] = \backend\modules\help\assets\Asset::class;
+        } elseif ($moduleId === 'accounting') {
+            $depends[] = \backend\modules\accounting\assets\Asset::class;
+        }
+
+        $this->depends = $depends;
+
+        parent::init();
+    }
 }

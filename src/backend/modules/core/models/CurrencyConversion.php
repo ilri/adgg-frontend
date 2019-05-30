@@ -107,7 +107,7 @@ class CurrencyConversion extends ActiveRecord implements ActiveSearchInterface, 
                 'input' => function (CurrencyConversion $model) {
                     /* @var $lineItem LineItem */
                     $lineItem = $this;
-                    $template = '<div class="input-group" style="max-width: 300px;"><span class="input-group-addon">1 {currency} = </span>{input}<span class="input-group-addon">{default_currency}</span></div>';
+                    $template = '<div class="input-group" style="max-width: 300px;"><div class="input-group-prepend"><span class="input-group-text">1 {currency} = </span></div>{input}<div class="input-group-append"><span class="input-group-text">{default_currency}</span></div></div>';
                     $options = $lineItem->getActiveInputOptions($model, 'conversion_rate', $this->nextItemIndex, ['class' => 'form-control']);
                     return strtr($template, [
                         '{currency}' => $model->currency,

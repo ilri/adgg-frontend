@@ -6,11 +6,17 @@ namespace backend\modules\auth\controllers;
 use backend\modules\auth\forms\LoginForm;
 use backend\modules\auth\forms\PasswordResetRequestForm;
 use backend\modules\auth\forms\ResetPasswordForm;
+use backend\modules\conf\settings\SystemSettings;
+use backend\modules\core\models\County;
+use backend\modules\core\models\Organization;
+use backend\modules\core\models\RegistrationDocumentLine;
+use common\widgets\lineItem\LineItem;
 use InvalidArgumentException;
 use Yii;
 use yii\captcha\CaptchaAction;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\Json;
 use yii\web\BadRequestHttpException;
 
 /**
@@ -47,7 +53,7 @@ class AuthController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['login', 'request-password-reset', 'reset-password', 'captcha'],
+                        'actions' => ['login', 'register', 'request-password-reset', 'reset-password', 'captcha','get-county-list'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
@@ -139,6 +145,54 @@ class AuthController extends Controller
         return $this->render('resetPassword', [
             'model' => $model,
         ]);
+    }
+
+    public function actionRegister()
+    {
+        $model = new Organization([
+            'registration_source' => Organization::REG_SOURCE_PUBLIC_PAGE,
+            'country' => SystemSettings::getDefaultCountry(),
+            'scenario' => Organization::SCENARIO_SIGN_UP,
+        ]);
+
+        $step = Yii::$app->request->post('step', null);
+        $finishButton = Yii::$app->request->post('finish_button', null);
+        if (!$finishButton) {
+            if ($step == 1) {
+                $model->ajaxValidate(['name', 'business_type', 'business_entity_type', 'daily_customers', 'applicant_name', 'applicant_phone', 'applicant_business_ownership_type']);
+            } elseif ($step == 2) {
+                $model->ajaxValidate(['country', 'county', 'sub_county', 'street', 'postal_address']);
+            } elseif ($step == 3) {
+                $model->ajaxValidate(['contact_first_name', 'contact_last_name', 'contact_phone', 'contact_alt_phone', 'contact_email', 'is_credit_requested']);
+            }
+        }
+
+        $lineItemModelClassName = RegistrationDocumentLine::class;
+
+        if ($resp = LineItem::addItemAction('@authModule/views/auth/register/_widget', ['class' => $lineItemModelClassName, 'org_id' => $model->id], 1)) {
+            return $resp;
+        }
+
+        if ($resp = LineItem::deleteItemAction($lineItemModelClassName)) {
+            return $resp;
+        }
+        if ($resp = LineItem::finishAction($model, $lineItemModelClassName, 'org_id', true, [
+            'redirectRoute' => 'auth/login',
+            'redirectParams' => [],
+        ])) {
+            return $resp;
+        }
+
+        return $this->render('register', [
+            'model' => $model,
+            'lineItemModels' => RegistrationDocumentLine::getLineModels(1, []),
+        ]);
+    }
+
+    public function actionGetCountyList($country_id)
+    {
+        $data = County::getListData('name', 'name', false, ['country' => $country_id]);
+        return Json::encode($data);
     }
 
 }

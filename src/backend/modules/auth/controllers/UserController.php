@@ -49,16 +49,13 @@ class UserController extends Controller
         $params = [];
 
         list($condition, $params) = Users::appendLevelCondition($condition, $params);
-        if (!empty($org_id)) {
-            list($condition, $params) = DbUtils::appendCondition('org_id', $org_id, $condition, $params);
-        }
-
         $searchModel = Users::searchModel([
             'defaultOrder' => ['username' => SORT_ASC],
             'condition' => $condition,
             'params' => $params,
             'with' => ['level', 'role', 'org'],
         ]);
+        $searchModel->org_id = $org_id;
         $searchModel->level_id = $level_id;
         $searchModel->status = Users::STATUS_ACTIVE;
         $searchModel->name = $name;
@@ -67,22 +64,12 @@ class UserController extends Controller
         $searchModel->phone = $phone;
         $searchModel->role_id = $role_id;
         $searchModel->status = $status;
+        $searchModel->_dateFilterFrom = $date_filter['from'];
+        $searchModel->_dateFilterTo = $date_filter['to'];
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'orgModel' => $orgModel,
-            'filterOptions' => [
-                'org_id' => $org_id,
-                'level_id' => $level_id,
-                'name' => $name,
-                'username' => $username,
-                'email' => $email,
-                'phone' => $phone,
-                'role_id' => $role_id,
-                'status' => $status,
-                'from' => $date_filter['from'],
-                'to' => $date_filter['to'],
-            ]
         ]);
     }
 

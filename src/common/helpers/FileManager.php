@@ -29,7 +29,7 @@ class FileManager
                 @unlink($path);
 
             elseif (is_dir($path) && (time() - filemtime($path) >= $expiry_secs)) {
-                static::deleteDir($path);
+                static::deleteDirOrFile($path);
             }
         }
     }
@@ -73,13 +73,17 @@ class FileManager
      * @param string $path path to the file/folder
      * @return bool
      */
-    public static function deleteDir($path)
+    public static function deleteDirOrFile($path)
     {
         if (!file_exists($path))
-            return FALSE;
+            return false;
 
         $this_func = [__CLASS__, __FUNCTION__];
-        return is_file($path) ? @unlink($path) : array_map($this_func, glob($path . '/*')) == @rmdir($path);
+        $array_map = [];
+        foreach (glob($path . '/*') as $key => $value) {
+            $array_map[$key] = $this_func(glob($path . '/*')[$key]);
+        }
+        return is_file($path) ? @unlink($path) : $array_map == @rmdir($path);
     }
 
     /**
@@ -108,7 +112,7 @@ class FileManager
             ob_clean();
             flush();
             readfile($file_path);
-            \Yii::$app->end();
+            Yii::$app->end();
         }
     }
 

@@ -21,17 +21,6 @@ $controller = Yii::$app->controller;
         <?= Html::csrfMetaTags() ?>
         <title><?= !empty($this->title) ? Html::encode($this->title) : SystemSettings::getAppName() ?></title>
         <?php $this->head(); ?>
-        <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
-        <script>
-            WebFont.load({
-                google: {
-                    "families": ["Poppins:300,400,500,600,700"]
-                },
-                active: function () {
-                    sessionStorage.fonts = true;
-                }
-            });
-        </script>
     </head>
     <body class="kt-login-v2--enabled kt-quick-panel--right kt-demo-panel--right kt-offcanvas-panel--right kt-header--fixed kt-header-mobile--fixed kt-subheader--enabled kt-subheader--transparent kt-aside--enabled kt-aside--fixed kt-page--loading">
     <?php $this->beginBody() ?>
