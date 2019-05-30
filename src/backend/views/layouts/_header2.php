@@ -1,9 +1,10 @@
 <?php
 
+use backend\modules\auth\models\Users;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
-/* @var $user \backend\modules\auth\models\Users */
+/* @var $user Users */
 $user = Yii::$app->user->identity;
 ?>
 <div id="kt_header" class="kt-header kt-grid__item  kt-header--fixed ">
@@ -150,7 +151,7 @@ $user = Yii::$app->user->identity;
                         </a>
                     </li>
                     <li class="kt-nav__item kt-nav__item--custom kt-margin-t-15">
-                        <a href="<?= Url::to(['/auth/auth/logout']) ?>" target="_blank"
+                        <a href="<?= Url::to(['/auth/auth/logout']) ?>"
                            class="btn btn-label-brand btn-upper btn-sm btn-bold">Sign Out</a>
                     </li>
                 </ul>
