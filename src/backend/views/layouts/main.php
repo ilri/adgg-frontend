@@ -45,7 +45,7 @@ $controller = Yii::$app->controller;
                     <div class="kt-aside__brand-logo">
                         <a href="<?= Yii::$app->homeUrl ?>">
                             <img alt="Logo"
-                                 src="<?= Yii::$app->view->theme->baseUrl ?>/assets/img/<?= SystemSettings::getDefaultTheme() === SystemSettings::THEME_DEFAULT ? 'logo.png' : 'logo-white.png' ?>"/>
+                                 src="<?= Yii::$app->view->theme->baseUrl ?>/assets/img/<?= SystemSettings::getDefaultTheme() === SystemSettings::THEME_DEFAULT ? 'logo.jpg' : 'logo.jpg' ?>"/>
                         </a>
                     </div>
                     <div class="kt-aside__brand-tools">

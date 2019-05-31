@@ -25,7 +25,7 @@ class Controller extends BackendController
         if (empty($this->activeMenu))
             $this->activeMenu = Constants::MENU_ORGANIZATION;
         if (empty($this->resource))
-            $this->resource = Constants::RES_MEMBERS;
+            $this->resource = Constants::RES_COUNTRY;
 
         $this->enableDefaultAcl = true;
     }

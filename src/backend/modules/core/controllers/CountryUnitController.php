@@ -12,6 +12,7 @@ namespace backend\modules\core\controllers;
 use backend\modules\auth\Acl;
 use backend\modules\conf\settings\SystemSettings;
 use backend\modules\core\Constants;
+use backend\modules\core\models\CountryUnits;
 use backend\modules\core\models\Organization;
 use common\helpers\DateUtils;
 use common\helpers\Lang;
@@ -20,7 +21,7 @@ use yii\db\Exception;
 use common\helpers\Url;
 use yii\web\BadRequestHttpException;
 
-class OrganizationController extends Controller
+class CountryUnitController extends Controller
 {
     /**
      * @var int
@@ -32,31 +33,22 @@ class OrganizationController extends Controller
         parent::init();
     }
 
-    protected function initAction($businessType = null, $isMember = null, $is_supplier = null)
+    protected function initAction($type = null)
     {
-        if ($isMember) {
-            $this->activeTab = Yii::$app->request->get('tab') ?? Constants::TAB_ALL_MEMBERS;
-            $this->resourceLabel = 'Member';
-            $this->resource = Constants::RES_COUNTRY;
-            if ($businessType == Organization::BUSINESS_TYPE_PHARMACY) {
-                $this->resourceLabel = 'Pharmacy';
-            } elseif ($businessType == Organization::BUSINESS_TYPE_HOSPITAL) {
-                $this->resourceLabel = 'Hospital';
-            } elseif ($businessType == Organization::BUSINESS_TYPE_CLINIC) {
-                $this->resourceLabel = 'Clinic';
-            }
-        } elseif ($is_supplier) {
-            $this->activeTab = Yii::$app->request->get('tab') ?? Constants::TAB_ALL_SUPPLIERS;
-            $this->resourceLabel = 'Supplier';
-            $this->resource = Constants::RES_SUPPLIER;
-            if ($businessType == Organization::BUSINESS_TYPE_MANUFACTURER) {
-                $this->resourceLabel = 'Manufacturer';
-            } elseif ($businessType == Organization::BUSINESS_TYPE_DISTRIBUTOR) {
-                $this->resourceLabel = 'Distributor';
-            }
+        if ($type == CountryUnits::TYPE_REGION) {
+            $this->resourceLabel = 'Region';
+            $this->resource = Constants::RES_REGION;
+        } elseif ($type == CountryUnits::TYPE_DISTRICT) {
+            $this->resourceLabel = 'District';
+            $this->resource = Constants::RES_DISTRICT;
+        } elseif ($type == CountryUnits::TYPE_WARD) {
+            $this->resourceLabel = 'Ward';
+            $this->resource = Constants::RES_WARD;
+        } elseif ($type == CountryUnits::TYPE_VILLAGE) {
+            $this->resourceLabel = 'Village';
+            $this->resource = Constants::RES_VILLAGE;
         }
-        $this->resourceLabel = 'Country';
-        $this->resource = Constants::RES_COUNTRY;
+
         // check permissions, for all default existing actions
         $this->checkDefaultActionsPermissions($this->action);
         //set default page titles
@@ -64,50 +56,32 @@ class OrganizationController extends Controller
     }
 
 
-    public function actionIndex($name = null, $account_no = null, $business_type = null, $status = Organization::STATUS_ACTIVE, $is_approved = null, $is_supplier = null, $is_member = null, $account_manager_id = null, $is_credit_requested = null)
+    public function actionIndex($type)
     {
-        $this->initAction($business_type, $is_member, $is_supplier);
+        $this->initAction($type);
         $condition = '';
         $params = [];
 
-        $searchModel = Organization::searchModel([
+        $searchModel = CountryUnits::searchModel([
             'defaultOrder' => ['name' => SORT_ASC],
             'condition' => $condition,
             'params' => $params,
-            'with' => ['accountManager'],
         ]);
-        $searchModel->account_no = $account_no;
-        $searchModel->name = $name;
-        //$searchModel->business_type = $business_type;
-        //$searchModel->status = $status;
-        //$searchModel->is_approved = $is_approved;
-        //$searchModel->is_credit_requested = $is_credit_requested;
-        //$searchModel->is_supplier = $is_supplier;
-        //$searchModel->is_member = $is_member;
-        //$searchModel->account_manager_id = $account_manager_id;
+        $searchModel->type = $type;
 
         return $this->render('index', [
             'searchModel' => $searchModel,
         ]);
     }
 
-    public function actionView($id)
-    {
-        return $this->redirect(['organization/index']);
-        $model = Organization::loadModel($id);
-        $this->initAction($model->business_type, $model->is_member, $model->is_supplier);
-        return $this->render('view', ['model' => $model]);
-    }
 
-    public function actionCreate($is_member = null, $is_supplier = null, $business_type = null)
+
+    public function actionCreate($type)
     {
-        $this->initAction($business_type, $is_member, $is_supplier);
+        $this->initAction($type);
         $model = new Organization([
             'status' => Organization::STATUS_PENDING_APPROVAL,
             'is_approved' => 0,
-            'is_member' => $is_member,
-            'is_supplier' => $is_supplier,
-            'business_type' => $business_type,
             'country' => SystemSettings::getDefaultCountry(),
         ]);
 

@@ -55,7 +55,7 @@ use yii\helpers\Json;
                                 'data-child-selectors' => [
                                     '#' . Html::getInputId($model, 'role_id'),
                                 ],
-                                'data-show-organization' => [UserLevels::LEVEL_ORGANIZATION]
+                                'data-show-organization' => [UserLevels::LEVEL_COUNTRY]
                             ],
                             'pluginOptions' => [
                                 'allowClear' => false
@@ -75,7 +75,7 @@ use yii\helpers\Json;
                     <?php endif; ?>
                     <div class="col-md-4">
                         <?= $form->field($model, 'role_id')->widget(Select2::class, [
-                            'data' => \backend\modules\auth\models\Roles::getListData('id', 'name', false, Session::isOrganization() ? ['level_id' => UserLevels::LEVEL_ORGANIZATION] : []),
+                            'data' => \backend\modules\auth\models\Roles::getListData('id', 'name', false, Session::isOrganization() ? ['level_id' => UserLevels::LEVEL_COUNTRY] : []),
                             'theme' => Select2::THEME_BOOTSTRAP,
                             'options' => [
                                 'data-url' => Url::to(['role/get-list', 'level_id' => 'idV']),

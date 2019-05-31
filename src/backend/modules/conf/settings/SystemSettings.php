@@ -204,7 +204,7 @@ class SystemSettings extends BaseSettings
     {
         return [
             self::THEME_DEFAULT => static::decodeTheme(self::THEME_DEFAULT),
-            self::THEME_GREEN => static::decodeTheme(self::THEME_GREEN),
+            //self::THEME_GREEN => static::decodeTheme(self::THEME_GREEN),
             //self::THEME_DARK => static::decodeTheme(self::THEME_DARK),
         ];
     }

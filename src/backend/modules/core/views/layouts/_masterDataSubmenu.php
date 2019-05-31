@@ -14,7 +14,7 @@ use yii\helpers\Url;
     <li class="nav-item">
         <a class="nav-link" href="<?= Url::to(['/core/currency/index']) ?>"><?= Lang::t('Currencies') ?></a>
     </li>
-    <li class="nav-item">
+    <li class="nav-item hidden">
         <a class="nav-link"
            href="<?= Url::to(['/core/currency-conversion/update']) ?>"><?= Lang::t('Currency Conversion Rates') ?></a>
     </li>

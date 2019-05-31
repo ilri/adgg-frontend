@@ -58,7 +58,7 @@ class Session
         if (Yii::$app->user->isGuest) {
             return false;
         }
-        return Yii::$app->user->identity->level_id == UserLevels::LEVEL_ORGANIZATION;
+        return Yii::$app->user->identity->level_id == UserLevels::LEVEL_COUNTRY;
     }
 
     /**

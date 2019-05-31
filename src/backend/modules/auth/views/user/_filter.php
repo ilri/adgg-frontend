@@ -57,7 +57,7 @@ $url = ['index'];
                         <?= Select2::widget([
                             'name' => 'role_id',
                             'value' => $model->role_id,
-                            'data' => \backend\modules\auth\models\Roles::getListData('id', 'name', false, \backend\modules\auth\Session::isOrganization() ? ['level_id' => \backend\modules\auth\models\UserLevels::LEVEL_ORGANIZATION] : []),
+                            'data' => \backend\modules\auth\models\Roles::getListData('id', 'name', false, \backend\modules\auth\Session::isOrganization() ? ['level_id' => \backend\modules\auth\models\UserLevels::LEVEL_COUNTRY] : []),
                             'options' => [
                                 'placeholder' => '[all]',
                                 'class' => 'form-control mb-2 select2'

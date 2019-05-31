@@ -39,7 +39,7 @@ class UserController extends Controller
         $orgModel = null;
         if (Session::isOrganization()) {
             $org_id = Session::accountId();
-            $level_id = UserLevels::LEVEL_ORGANIZATION;
+            $level_id = UserLevels::LEVEL_COUNTRY;
         }
         if (!empty($org_id)) {
             $orgModel = Organization::loadModel($org_id);
@@ -87,7 +87,7 @@ class UserController extends Controller
     {
         if (Session::isOrganization()) {
             $org_id = Session::accountId();
-            $level_id = UserLevels::LEVEL_ORGANIZATION;
+            $level_id = UserLevels::LEVEL_COUNTRY;
         }
 
         $model = new Users([

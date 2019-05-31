@@ -39,7 +39,7 @@ $controller = Yii::$app->controller;
                         </a>
                     </div>
                     <div class="kt-login-v2__signup">
-                        <a href="#" class="kt-link kt-font-brand">Move to ADGG Website</a>
+                        <a href="https://africadgg.wordpress.com/category/adgg/" target="_blank" class="kt-link kt-font-brand">Move to ADGG Website</a>
                     </div>
                 </div>
                 <!--begin::Head-->
@@ -67,8 +67,7 @@ $controller = Yii::$app->controller;
             <div class="kt-grid__item">
                 <div class="kt-login-v2__footer">
                     <div class="kt-login-v2__link">
-                        <a href="#" class="kt-link kt-font-brand">Website</a>
-                        <a href="#" class="kt-link kt-font-brand">Contact</a>
+                        <a href="https://africadgg.wordpress.com/category/adgg/" target="_blank" class="kt-link kt-font-brand">Website</a>
                     </div>
                     <div class="kt-login-v2__info">
                         <a href="#"

@@ -14,7 +14,11 @@ class Constants
     const MENU_ORGANIZATION = 'ORG';
     const SUBMENU_REGISTRATION_DOCUMENTS = 'REG_DOCS';
     //resources
-    const RES_MEMBERS = 'ORG_MEMBER';
+    const RES_COUNTRY = 'ORG_COUNTRY';
+    const RES_REGION='ORG_REGION';
+    const RES_DISTRICT='ORG_DISTRICT';
+    const RES_WARD='WARD';
+    const RES_VILLAGE='VILLAGE';
     const RES_SUPPLIER = 'ORG_SUPPLIER';
     const RES_REGISTRATION_DOCUMENT = 'ORG_REGISTRATION_DOCUMENT';
     //member tab

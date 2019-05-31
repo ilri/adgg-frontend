@@ -129,7 +129,7 @@ class Organization extends ActiveRecord implements ActiveSearchInterface
     public function rules()
     {
         return [
-            [['name', 'business_type', 'country', 'contact_first_name', 'contact_last_name', 'contact_phone', 'contact_email'], 'required'],
+            [['country', 'contact_first_name', 'contact_last_name', 'contact_phone', 'contact_email'], 'required'],
             [['business_type', 'status', 'is_approved', 'approved_by', 'business_entity_type', 'applicant_business_ownership_type', 'is_credit_requested', 'is_supplier', 'is_member', 'account_manager_id'], 'integer'],
             [['application_date', 'date_approved', 'approved_at', 'membership_end_date'], 'safe'],
             [['account_no', 'applicant_name', 'contact_first_name', 'contact_middle_name', 'contact_last_name', 'daily_customers'], 'string', 'max' => 128],
@@ -155,8 +155,8 @@ class Organization extends ActiveRecord implements ActiveSearchInterface
     {
         return [
             'id' => 'ID',
-            'account_no' => 'Account No',
-            'name' => 'Business Name',
+            'account_no' => 'Code',
+            'name' => 'Country Name',
             'business_type' => 'Business Type',
             'applicant_name' => 'Applicant Name',
             'applicant_phone' => 'Applicant Phone',
@@ -288,13 +288,7 @@ class Organization extends ActiveRecord implements ActiveSearchInterface
 
     protected function setDefaultValues()
     {
-        if ($this->business_type == self::BUSINESS_TYPE_MANUFACTURER || $this->business_type == self::BUSINESS_TYPE_DISTRIBUTOR) {
-            $this->is_member = 0;
-            $this->is_supplier = 1;
-        } else {
-            $this->is_member = 1;
-            $this->is_supplier = 0;
-        }
+        $this->name = Country::getScalar('name', ['iso2' => $this->country]);
     }
 
 

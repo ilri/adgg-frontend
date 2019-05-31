@@ -16,151 +16,66 @@ use yii\helpers\Url;
             </li>
 
             <li class="kt-menu__section ">
-                <h4 class="kt-menu__section-text">TRANSACTIONS &amp; FINANCE</h4>
+                <h4 class="kt-menu__section-text">FARMERS AND HERDS</h4>
                 <i class="kt-menu__section-icon flaticon-more-v2"></i>
             </li>
-            <li class="kt-menu__item kt-menu__item--submenu" data-ktmenu-submenu-toggle="hover">
-                <a href="#" class="kt-menu__link kt-menu__toggle">
-                    <i class="kt-menu__link-icon fas fa-shopping-cart"></i>
-                    <span class="kt-menu__link-text">ORDERS</span>
-                    <i class="kt-menu__ver-arrow la la-angle-right"></i>
-                </a>
-                <div class="kt-menu__submenu">
-                    <span class="kt-menu__arrow"></span>
-                    <ul class="kt-menu__subnav">
-                        <li class="kt-menu__item  kt-menu__item--parent">
-                            <span class="kt-menu__link"><span class="kt-menu__link-text">ORDERS</span></span>
-                        </li>
-                        <li class="kt-menu__item">
-                            <a href="#" class="kt-menu__link ">
-                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                <span class="kt-menu__link-text">Pending Orders</span>
-                            </a>
-                        </li>
-                        <li class="kt-menu__item">
-                            <a href="#" class="kt-menu__link ">
-                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                <span class="kt-menu__link-text">Approved Orders</span>
-                            </a>
-                        </li>
-                        <li class="kt-menu__item">
-                            <a href="#" class="kt-menu__link ">
-                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                <span class="kt-menu__link-text">Fulfilled Orders</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
             <li class="kt-menu__item kt-menu__item--submenu">
                 <a href="#" class="kt-menu__link">
-                    <i class="kt-menu__link-icon fas fa-percent"></i>
-                    <span class="kt-menu__link-text">REBATES</span>
+                    <i class="kt-menu__link-icon fas fa-users"></i>
+                    <span class="kt-menu__link-text">CLIENTS/FARMERS</span>
                 </a>
             </li>
             <li class="kt-menu__item kt-menu__item--submenu">
                 <a href="#" class="kt-menu__link">
-                    <i class="kt-menu__link-icon fas fa-hand-holding-usd"></i>
-                    <span class="kt-menu__link-text">CREDITS</span>
+                    <i class="kt-menu__link-icon fas fa-list"></i>
+                    <span class="kt-menu__link-text">FARMS</span>
                 </a>
             </li>
             <li class="kt-menu__item kt-menu__item--submenu">
                 <a href="#" class="kt-menu__link">
-                    <i class="kt-menu__link-icon fas fa-percent"></i>
-                    <span class="kt-menu__link-text">DISCOUNTS</span>
+                    <i class="kt-menu__link-icon fas fa-list"></i>
+                    <span class="kt-menu__link-text">HERDS</span>
                 </a>
             </li>
-            <li class="kt-menu__section ">
-                <h4 class="kt-menu__section-text">RELATIONSHIP MANAGEMENT</h4>
-                <i class="kt-menu__section-icon flaticon-more-v2"></i>
-            </li>
-            <li class="kt-menu__item kt-menu__item--submenu" data-ktmenu-submenu-toggle="hover">
-                <a href="#" class="kt-menu__link kt-menu__toggle">
-                    <i class="kt-menu__link-icon fas fa-clinic-medical"></i>
-                    <span class="kt-menu__link-text">MEMBERS</span>
-                    <i class="kt-menu__ver-arrow la la-angle-right"></i>
+            <li class="kt-menu__item kt-menu__item--submenu">
+                <a href="#" class="kt-menu__link">
+                    <i class="kt-menu__link-icon fas fa-calendar-day"></i>
+                    <span class="kt-menu__link-text">HERD EVENTS</span>
                 </a>
-                <div class="kt-menu__submenu">
-                    <span class="kt-menu__arrow"></span>
-                    <ul class="kt-menu__subnav">
-                        <li class="kt-menu__item  kt-menu__item--parent">
-                            <span class="kt-menu__link"><span class="kt-menu__link-text">MEMBERS</span></span>
-                        </li>
-                        <li class="kt-menu__item">
-                            <a href="<?= Url::to(['/core/organization/index', 'is_member' => 1]) ?>"
-                               class="kt-menu__link ">
-                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                <span class="kt-menu__link-text">All Members</span>
-                            </a>
-                        </li>
-                        <li class="kt-menu__item">
-                            <a href="<?= Url::to(['/core/organization/index', 'is_member' => 1, 'business_type' => Organization::BUSINESS_TYPE_PHARMACY]) ?>"
-                               class="kt-menu__link ">
-                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                <span class="kt-menu__link-text">Pharmacies</span>
-                            </a>
-                        </li>
-                        <li class="kt-menu__item">
-                            <a href="<?= Url::to(['/core/organization/index', 'is_member' => 1, 'business_type' => Organization::BUSINESS_TYPE_HOSPITAL]) ?>"
-                               class="kt-menu__link ">
-                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                <span class="kt-menu__link-text">Hospitals</span>
-                            </a>
-                        </li>
-                        <li class="kt-menu__item">
-                            <a href="<?= Url::to(['/core/organization/index', 'is_member' => 1, 'business_type' => Organization::BUSINESS_TYPE_CLINIC]) ?>"
-                               class="kt-menu__link ">
-                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                <span class="kt-menu__link-text">Clinics</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
             </li>
-            <li class="kt-menu__item kt-menu__item--submenu" data-ktmenu-submenu-toggle="hover">
-                <a href="#" class="kt-menu__link kt-menu__toggle">
-                    <i class="kt-menu__link-icon fas fa-building"></i>
-                    <span class="kt-menu__link-text">SUPPLIERS</span>
-                    <i class="kt-menu__ver-arrow la la-angle-right"></i>
-                </a>
-                <div class="kt-menu__submenu">
-                    <span class="kt-menu__arrow"></span>
-                    <ul class="kt-menu__subnav">
-                        <li class="kt-menu__item  kt-menu__item--parent">
-                            <span class="kt-menu__link"><span class="kt-menu__link-text">SUPPLIERS</span></span>
-                        </li>
-                        <li class="kt-menu__item">
-                            <a href="<?= Url::to(['/core/organization/index', 'is_supplier' => 1]) ?>"
-                               class="kt-menu__link ">
-                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                <span class="kt-menu__link-text">All Suppliers</span>
-                            </a>
-                        </li>
-                        <li class="kt-menu__item">
-                            <a href="<?= Url::to(['/core/organization/index', 'is_supplier' => 1, 'business_type' => Organization::BUSINESS_TYPE_DISTRIBUTOR]) ?>"
-                               class="kt-menu__link ">
-                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                <span class="kt-menu__link-text">Distributors</span>
-                            </a>
-                        </li>
-                        <li class="kt-menu__item">
-                            <a href="<?= Url::to(['/core/organization/index', 'is_supplier' => 1, 'business_type' => Organization::BUSINESS_TYPE_MANUFACTURER]) ?>"
-                               class="kt-menu__link ">
-                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                <span class="kt-menu__link-text">Manufacturers</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
+
             <li class="kt-menu__section ">
                 <h4 class="kt-menu__section-text">ADMINISTRATION</h4>
                 <i class="kt-menu__section-icon flaticon-more-v2"></i>
             </li>
             <li class="kt-menu__item kt-menu__item--submenu">
-                <a href="#" class="kt-menu__link">
-                    <i class="kt-menu__link-icon fas fa-medkit"></i>
-                    <span class="kt-menu__link-text">PRODUCTS</span>
+                <a href="<?=Url::to(['/core/organization/index'])?>" class="kt-menu__link">
+                    <i class="kt-menu__link-icon fas fa-list"></i>
+                    <span class="kt-menu__link-text">COUNTRIES</span>
+                </a>
+            </li>
+            <li class="kt-menu__item kt-menu__item--submenu">
+                <a href="<?=Url::to(['/core/country-unit/index','type'=>\backend\modules\core\models\CountryUnits::TYPE_REGION])?>" class="kt-menu__link">
+                    <i class="kt-menu__link-icon fas fa-list"></i>
+                    <span class="kt-menu__link-text">REGIONS</span>
+                </a>
+            </li>
+            <li class="kt-menu__item kt-menu__item--submenu">
+                <a href="<?=Url::to(['/core/country-unit/index','type'=>\backend\modules\core\models\CountryUnits::TYPE_DISTRICT])?>" class="kt-menu__link">
+                    <i class="kt-menu__link-icon fas fa-list"></i>
+                    <span class="kt-menu__link-text">DISTRICTS</span>
+                </a>
+            </li>
+            <li class="kt-menu__item kt-menu__item--submenu">
+                <a href="<?=Url::to(['/core/country-unit/index','type'=>\backend\modules\core\models\CountryUnits::TYPE_WARD])?>" class="kt-menu__link">
+                    <i class="kt-menu__link-icon fas fa-list"></i>
+                    <span class="kt-menu__link-text">WARDS</span>
+                </a>
+            </li>
+            <li class="kt-menu__item kt-menu__item--submenu">
+                <a href="<?=Url::to(['/core/country-unit/index','type'=>\backend\modules\core\models\CountryUnits::TYPE_VILLAGE])?>" class="kt-menu__link">
+                    <i class="kt-menu__link-icon fas fa-list"></i>
+                    <span class="kt-menu__link-text">VILLAGES</span>
                 </a>
             </li>
             <li class="kt-menu__item kt-menu__item--submenu">

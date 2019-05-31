@@ -25,31 +25,25 @@ $user = Yii::$app->user->identity;
                             <li class="kt-menu__item " aria-haspopup="true">
                                 <a href="#" class="kt-menu__link ">
                                     <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                    <span class="kt-menu__link-text">Create New Order</span>
+                                    <span class="kt-menu__link-text">Create Client/Farmer</span>
                                 </a>
                             </li>
                             <li class="kt-menu__item " aria-haspopup="true">
                                 <a href="#" class="kt-menu__link ">
                                     <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                    <span class="kt-menu__link-text">Create New Product</span>
+                                    <span class="kt-menu__link-text">Create New Farm</span>
                                 </a>
                             </li>
                             <li class="kt-menu__item " aria-haspopup="true">
                                 <a href="#" class="kt-menu__link ">
                                     <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                    <span class="kt-menu__link-text">Register New Member</span>
+                                    <span class="kt-menu__link-text">Register New Herd</span>
                                 </a>
                             </li>
                             <li class="kt-menu__item " aria-haspopup="true">
                                 <a href="#" class="kt-menu__link ">
                                     <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                    <span class="kt-menu__link-text">Register New Distributor</span>
-                                </a>
-                            </li>
-                            <li class="kt-menu__item " aria-haspopup="true">
-                                <a href="#" class="kt-menu__link ">
-                                    <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                    <span class="kt-menu__link-text">Register New Manufacturer</span>
+                                    <span class="kt-menu__link-text">Register New Herd Event</span>
                                 </a>
                             </li>
                         </ul>
@@ -67,31 +61,31 @@ $user = Yii::$app->user->identity;
                             <li class="kt-menu__item " aria-haspopup="true">
                                 <a href="javascript:;" class="kt-menu__link ">
                                     <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                    <span class="kt-menu__link-text">Rebates</span>
+                                    <span class="kt-menu__link-text">Report 1</span>
                                 </a>
                             </li>
                             <li class="kt-menu__item " aria-haspopup="true">
                                 <a href="javascript:;" class="kt-menu__link ">
                                     <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                    <span class="kt-menu__link-text">Completed Orders</span>
+                                    <span class="kt-menu__link-text">Report 2</span>
                                 </a>
                             </li>
                             <li class="kt-menu__item " aria-haspopup="true">
                                 <a href="javascript:;" class="kt-menu__link ">
                                     <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                    <span class="kt-menu__link-text">Pending Orders</span>
+                                    <span class="kt-menu__link-text">Report 3</span>
                                 </a>
                             </li>
                             <li class="kt-menu__item " aria-haspopup="true">
                                 <a href="javascript:;" class="kt-menu__link ">
                                     <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                    <span class="kt-menu__link-text">Payments</span>
+                                    <span class="kt-menu__link-text">Report 4</span>
                                 </a>
                             </li>
                             <li class="kt-menu__item " aria-haspopup="true">
                                 <a href="javascript:;" class="kt-menu__link ">
                                     <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                    <span class="kt-menu__link-text">Credits</span>
+                                    <span class="kt-menu__link-text">Report 5</span>
                                 </a>
                             </li>
                         </ul>
@@ -105,20 +99,6 @@ $user = Yii::$app->user->identity;
 
     <!-- begin:: Header Topbar -->
     <div class="kt-header__topbar">
-        <!--begin: Shopping cart -->
-        <div class="kt-header__topbar-item dropdown">
-            <div class="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="30px, 0px"
-                 aria-expanded="true">
-									<span class="kt-header__topbar-icon">
-										<i class="flaticon2-shopping-cart"></i>
-										<span class="kt-badge kt-badge--dot kt-badge--notify kt-badge--sm kt-badge--brand">22</span>
-									</span>
-            </div>
-            <div class="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-top-unround dropdown-menu-lg">
-
-            </div>
-        </div>
-        <!--end: Shopping cart -->
         <!--begin: Notifications -->
         <div class="kt-header__topbar-item dropdown">
             <div class="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="30px, 0px"
