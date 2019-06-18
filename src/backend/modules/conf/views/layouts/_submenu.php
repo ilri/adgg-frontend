@@ -49,6 +49,11 @@ $controller = Yii::$app->controller;
                         <span class="kt-nav__link-text"><?= Lang::t('Google Map Settings') ?></span>
                     </a>
                 </li>
+                <li class="kt-nav__item">
+                    <a href="<?= Url::to(['/conf/country-units/index']) ?>" class="kt-nav__link">
+                        <span class="kt-nav__link-text"><?= Lang::t('Country Administrative Units') ?></span>
+                    </a>
+                </li>
             <?php endif; ?>
             <?php if (Session::isDev()): ?>
                 <li class="kt-nav__separator"></li>

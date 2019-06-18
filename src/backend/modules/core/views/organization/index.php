@@ -12,10 +12,6 @@ $this->params['breadcrumbs'] = [
 ?>
 <div class="row">
     <div class="col-lg-12">
-        <?php // $this->render($searchModel->is_member ? '@coreModule/views/organization/_memberTab' : '@coreModule/views/organization/_supplierTab') ?>
-        <div class="tab-content">
-            <?php // $this->render('_filter', ['model' => $searchModel,]) ?>
-            <?= $this->render('_grid', ['model' => $searchModel]) ?>
-        </div>
+        <?= $this->render('_grid', ['model' => $searchModel]) ?>
     </div>
 </div>

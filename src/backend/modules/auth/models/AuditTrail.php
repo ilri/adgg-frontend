@@ -11,7 +11,6 @@ use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
 use Yii;
-use yii\web\Application;
 
 /**
  * This is the model class for table "auth_audit_trail".
