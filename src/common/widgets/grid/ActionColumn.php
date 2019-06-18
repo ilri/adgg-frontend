@@ -29,7 +29,7 @@ class ActionColumn extends \kartik\grid\ActionColumn
     protected function initDefaultButtons()
     {
         if (!isset($this->buttons['view'])) {
-            $this->buttons['view'] = function ($url) {
+            $this->buttons['view'] = function ($url, $model) {
                 $options = $this->viewOptions;
                 if (isset($this->viewOptions['visible']) && $this->viewOptions['visible'] === false) {
                     return '';

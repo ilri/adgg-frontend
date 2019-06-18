@@ -41,7 +41,7 @@ class OrganizationController extends Controller
 
     public function actionView($id)
     {
-        $model = Organization::loadModel($id);
+        $model = $this->loadModel($id);
         return $this->render('view', ['model' => $model]);
     }
 
@@ -71,7 +71,7 @@ class OrganizationController extends Controller
 
     public function actionUpdate($id)
     {
-        $model = Organization::loadModel($id);
+        $model = $this->loadModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $transaction = Yii::$app->db->beginTransaction();
@@ -91,5 +91,21 @@ class OrganizationController extends Controller
         return $this->render('update', [
             'model' => $model,
         ]);
+    }
+
+    /**
+     * @param $id
+     * @return Organization
+     * @throws \yii\web\NotFoundHttpException
+     */
+    protected function loadModel($id)
+    {
+        if (is_string($id) && !is_numeric($id)) {
+            $model = Organization::loadModel(['uuid' => $id]);
+        } else {
+            $model = Organization::loadModel($id);
+        }
+
+        return $model;
     }
 }

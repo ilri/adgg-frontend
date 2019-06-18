@@ -10,6 +10,7 @@ use yii\helpers\Html;
 ?>
 <?= GridView::widget([
     'searchModel' => $model,
+    'filterModel' => $model,
     'createButton' => ['visible' => Yii::$app->user->canCreate(), 'modal' => false],
     'columns' => [
         [
@@ -31,13 +32,6 @@ use yii\helpers\Html;
         [
             'attribute' => 'is_active',
             'value' => function (Organization $model) {
-                return Utils::decodeBoolean($model->is_active);
-            },
-            'filter' => Utils::booleanOptions(),
-        ],
-        [
-            'attribute' => 'is_active',
-            'value' => function (Organization $model) {
                 return Html::tag('span', Utils::decodeBoolean($model->is_active), ['class' => $model->is_active ? 'kt-badge  kt-badge--success kt-badge--inline kt-badge--pill' : 'kt-badge  kt-badge--metal kt-badge--inline kt-badge--pill']);
             },
             'format' => 'raw',
@@ -45,7 +39,7 @@ use yii\helpers\Html;
         ],
         [
             'class' => common\widgets\grid\ActionColumn::class,
-            'template' => '{view}{update}{delete}',
+            'template' => '{view}{update}',
             'visibleButtons' => [
                 'update' => function (Organization $model) {
                     return Yii::$app->user->canUpdate();

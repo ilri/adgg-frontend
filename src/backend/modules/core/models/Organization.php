@@ -4,6 +4,7 @@ namespace backend\modules\core\models;
 
 use backend\modules\auth\models\Users;
 use backend\modules\conf\models\NumberingFormat;
+use backend\modules\conf\settings\CountryAdministrativeUnits;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
@@ -38,6 +39,17 @@ class Organization extends ActiveRecord implements ActiveSearchInterface
 
     const NUMBERING_FORMAT_ID = 'organization_account_no';
 
+    public function init()
+    {
+        parent::init();
+        if ($this->isNewRecord) {
+            $this->unit1_name = CountryAdministrativeUnits::getUnit1Name();
+            $this->unit2_name = CountryAdministrativeUnits::getUnit2Name();
+            $this->unit3_name = CountryAdministrativeUnits::getUnit3Name();
+            $this->unit4_name = CountryAdministrativeUnits::getUnit4Name();
+        }
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -52,7 +64,7 @@ class Organization extends ActiveRecord implements ActiveSearchInterface
     public function rules()
     {
         return [
-            [['name', 'country', 'contact_phone', 'contact_email', 'unit1_name', 'unit2_name', 'unit3_name', 'unit4_name'], 'required'],
+            [['country', 'unit1_name', 'unit2_name', 'unit3_name', 'unit4_name'], 'required'],
             [['is_active'], 'safe'],
             [['code'], 'string', 'max' => 128],
             [['name', 'contact_email', 'uuid'], 'string', 'max' => 255],
@@ -126,7 +138,7 @@ class Organization extends ActiveRecord implements ActiveSearchInterface
             if (empty($this->code)) {
                 $this->code = NumberingFormat::getNextFormattedNumber(self::NUMBERING_FORMAT_ID);
             }
-
+            $this->name = Country::getScalar('name', ['iso2' => $this->country]);
             return true;
         }
         return false;

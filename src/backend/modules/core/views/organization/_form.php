@@ -1,12 +1,8 @@
 <?php
 
-use backend\modules\auth\models\UserLevels;
-use backend\modules\conf\models\NotifTypes;
 use backend\modules\core\models\Country;
-use backend\modules\core\models\County;
 use backend\modules\core\models\Organization;
 use common\forms\ActiveField;
-use common\helpers\DateUtils;
 use common\widgets\select2\Select2;
 use yii\bootstrap\Html;
 use common\helpers\Url;
@@ -54,13 +50,16 @@ use yii\bootstrap4\ActiveForm;
                                 'allowClear' => false
                             ],
                         ]) ?>
-                        <?= $form->field($model, 'contact_first_name') ?>
-                        <?= $form->field($model, 'contact_last_name') ?>
+                        <?= $form->field($model, 'contact_person') ?>
                         <?= $form->field($model, 'contact_phone') ?>
-                        <?= $form->field($model, 'contact_alt_phone') ?>
                         <?= $form->field($model, 'contact_email') ?>
-                        <?= $form->field($model, 'street') ?>
-                        <?= $form->field($model, 'postal_address') ?>
+                        <?= $form->field($model, 'unit1_name') ?>
+                        <?= $form->field($model, 'unit2_name') ?>
+                        <?= $form->field($model, 'unit3_name') ?>
+                        <?= $form->field($model, 'unit4_name') ?>
+                        <?php if (!$model->isNewRecord): ?>
+                            <?= $form->field($model, 'is_active')->checkbox() ?>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>

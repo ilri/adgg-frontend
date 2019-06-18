@@ -9,13 +9,13 @@ $controller = Yii::$app->controller;
 
 $this->title = $controller->getPageTitle();
 $this->params['breadcrumbs'] = [
-    ['label' => Inflector::pluralize($controller->resourceLabel), 'url' => ['index', 'is_member' => $model->is_member, 'is_supplier' => $model->is_supplier, 'business_type' => $model->business_type]],
+    ['label' => Inflector::pluralize($controller->resourceLabel), 'url' => ['index']],
     $this->title
 ];
 
 ?>
 <div class="row">
     <div class="col-lg-12">
-        <?= $this->render('forms/_form', ['model' => $model]) ?>
+        <?= $this->render('_form', ['model' => $model]) ?>
     </div>
 </div>
