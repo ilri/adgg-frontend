@@ -19,3 +19,7 @@
 .kt-aside-menu .kt-menu__nav > .kt-menu__item > .kt-menu__heading .kt-menu__ver-arrow, .kt-aside-menu .kt-menu__nav > .kt-menu__item > .kt-menu__link .kt-menu__ver-arrow {
     color: #313752;
 }
+.kt-aside .ps > .ps__rail-y > .ps__thumb-y {
+    background: #5b206e;
+    opacity: 1;
+}

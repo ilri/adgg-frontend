@@ -56,6 +56,7 @@ class AppAsset extends AssetBundle
         BootstrapPluginAsset::class,
         BowerAsset::class,
         NPMAsset::class,
+        FontawesomeAsset::class,
         ThemeAsset::class,
     ];
 }

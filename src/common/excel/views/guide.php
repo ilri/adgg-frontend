@@ -1,3 +1,6 @@
+<?php
+/* @var $sampleUrl string*/
+?>
 <h1 class="text-danger">Upload Guide</h1>
 
 <div class="text-muted">

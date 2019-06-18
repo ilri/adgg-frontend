@@ -120,27 +120,27 @@ $controller = Yii::$app->controller;
         <div class="kt-offcanvas-panel__body">
             <div class="kt-grid-nav-v2">
                 <a href="#" class="kt-grid-nav-v2__item">
-                    <div class="kt-grid-nav-v2__item-icon"><i class="flaticon2-box"></i></div>
-                    <div class="kt-grid-nav-v2__item-title">Orders</div>
+                    <div class="kt-grid-nav-v2__item-icon"><i class="far fa-cow"></i></div>
+                    <div class="kt-grid-nav-v2__item-title">Animals</div>
                 </a>
                 <a href="#" class="kt-grid-nav-v2__item">
-                    <div class="kt-grid-nav-v2__item-icon"><i class="flaticon2-percentage"></i></div>
-                    <div class="kt-grid-nav-v2__item-title">Rebates</div>
+                    <div class="kt-grid-nav-v2__item-icon"><i class="far fa-tractor"></i></div>
+                    <div class="kt-grid-nav-v2__item-title">Farms</div>
                 </a>
                 <a href="#" class="kt-grid-nav-v2__item">
-                    <div class="kt-grid-nav-v2__item-icon"><i class="flaticon2-supermarket"></i></div>
-                    <div class="kt-grid-nav-v2__item-title">Products</div>
+                    <div class="kt-grid-nav-v2__item-icon"><i class="far fa-users"></i></div>
+                    <div class="kt-grid-nav-v2__item-title">Clients/People</div>
                 </a>
                 <a href="#" class="kt-grid-nav-v2__item">
-                    <div class="kt-grid-nav-v2__item-icon"><i class="flaticon2-hospital"></i></div>
-                    <div class="kt-grid-nav-v2__item-title">Members</div>
+                    <div class="kt-grid-nav-v2__item-icon"><i class="far fa-calendar-day"></i></div>
+                    <div class="kt-grid-nav-v2__item-title">Animal Events</div>
                 </a>
                 <a href="<?= Url::to(['/auth/user/index']) ?>" class="kt-grid-nav-v2__item">
-                    <div class="kt-grid-nav-v2__item-icon"><i class="flaticon2-avatar"></i></div>
+                    <div class="kt-grid-nav-v2__item-icon"><i class="far fa-users"></i></div>
                     <div class="kt-grid-nav-v2__item-title">Users</div>
                 </a>
                 <a href="<?= Url::to(['/conf/settings/index']) ?>" class="kt-grid-nav-v2__item">
-                    <div class="kt-grid-nav-v2__item-icon"><i class="flaticon2-settings"></i></div>
+                    <div class="kt-grid-nav-v2__item-icon"><i class="far fa-cog"></i></div>
                     <div class="kt-grid-nav-v2__item-title">Settings</div>
                 </a>
             </div>

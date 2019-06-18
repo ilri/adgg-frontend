@@ -17,7 +17,6 @@ class NPMAsset extends AssetBundle
 
     public $css = [
         'perfect-scrollbar/css/perfect-scrollbar.css',
-        '@fortawesome/fontawesome-free/css/all.min.css',
         'tether/dist/css/tether.min.css',
         'animate.css/animate.min.css',
         'sweetalert2/dist/sweetalert2.min.css',

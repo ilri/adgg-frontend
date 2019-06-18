@@ -16,31 +16,37 @@ use yii\helpers\Url;
             </li>
 
             <li class="kt-menu__section ">
-                <h4 class="kt-menu__section-text">FARMERS AND HERDS</h4>
+                <h4 class="kt-menu__section-text">ANIMALS, FARMS AND CLIENTS</h4>
                 <i class="kt-menu__section-icon flaticon-more-v2"></i>
             </li>
             <li class="kt-menu__item kt-menu__item--submenu">
                 <a href="#" class="kt-menu__link">
-                    <i class="kt-menu__link-icon fas fa-users"></i>
-                    <span class="kt-menu__link-text">CLIENTS/FARMERS</span>
+                    <i class="kt-menu__link-icon far fa-cow"></i>
+                    <span class="kt-menu__link-text">ANIMALS</span>
                 </a>
             </li>
             <li class="kt-menu__item kt-menu__item--submenu">
                 <a href="#" class="kt-menu__link">
-                    <i class="kt-menu__link-icon fas fa-list"></i>
+                    <i class="kt-menu__link-icon far fa-tractor"></i>
                     <span class="kt-menu__link-text">FARMS</span>
                 </a>
             </li>
             <li class="kt-menu__item kt-menu__item--submenu">
                 <a href="#" class="kt-menu__link">
-                    <i class="kt-menu__link-icon fas fa-list"></i>
-                    <span class="kt-menu__link-text">HERDS</span>
+                    <i class="kt-menu__link-icon far fa-users"></i>
+                    <span class="kt-menu__link-text">CLIENTS/PEOPLE</span>
                 </a>
             </li>
             <li class="kt-menu__item kt-menu__item--submenu">
                 <a href="#" class="kt-menu__link">
-                    <i class="kt-menu__link-icon fas fa-calendar-day"></i>
-                    <span class="kt-menu__link-text">HERD EVENTS</span>
+                    <i class="kt-menu__link-icon far fa-calendar-day"></i>
+                    <span class="kt-menu__link-text">ANIMAL EVENTS</span>
+                </a>
+            </li>
+            <li class="kt-menu__item kt-menu__item--submenu">
+                <a href="#" class="kt-menu__link">
+                    <i class="kt-menu__link-icon far fa-chart-pie"></i>
+                    <span class="kt-menu__link-text">REPORTS</span>
                 </a>
             </li>
 
@@ -49,55 +55,21 @@ use yii\helpers\Url;
                 <i class="kt-menu__section-icon flaticon-more-v2"></i>
             </li>
             <li class="kt-menu__item kt-menu__item--submenu">
-                <a href="<?=Url::to(['/core/organization/index'])?>" class="kt-menu__link">
-                    <i class="kt-menu__link-icon fas fa-list"></i>
+                <a href="<?= Url::to(['/core/organization/index']) ?>" class="kt-menu__link">
+                    <i class="kt-menu__link-icon far fa-globe-africa"></i>
                     <span class="kt-menu__link-text">COUNTRIES</span>
                 </a>
             </li>
             <li class="kt-menu__item kt-menu__item--submenu">
-                <a href="<?=Url::to(['/core/country-unit/index','type'=>\backend\modules\core\models\CountryUnits::TYPE_REGION])?>" class="kt-menu__link">
-                    <i class="kt-menu__link-icon fas fa-list"></i>
-                    <span class="kt-menu__link-text">REGIONS</span>
-                </a>
-            </li>
-            <li class="kt-menu__item kt-menu__item--submenu">
-                <a href="<?=Url::to(['/core/country-unit/index','type'=>\backend\modules\core\models\CountryUnits::TYPE_DISTRICT])?>" class="kt-menu__link">
-                    <i class="kt-menu__link-icon fas fa-list"></i>
-                    <span class="kt-menu__link-text">DISTRICTS</span>
-                </a>
-            </li>
-            <li class="kt-menu__item kt-menu__item--submenu">
-                <a href="<?=Url::to(['/core/country-unit/index','type'=>\backend\modules\core\models\CountryUnits::TYPE_WARD])?>" class="kt-menu__link">
-                    <i class="kt-menu__link-icon fas fa-list"></i>
-                    <span class="kt-menu__link-text">WARDS</span>
-                </a>
-            </li>
-            <li class="kt-menu__item kt-menu__item--submenu">
-                <a href="<?=Url::to(['/core/country-unit/index','type'=>\backend\modules\core\models\CountryUnits::TYPE_VILLAGE])?>" class="kt-menu__link">
-                    <i class="kt-menu__link-icon fas fa-list"></i>
-                    <span class="kt-menu__link-text">VILLAGES</span>
-                </a>
-            </li>
-            <li class="kt-menu__item kt-menu__item--submenu">
                 <a href="<?= Url::to(['/auth/user/index']) ?>" class="kt-menu__link">
-                    <i class="kt-menu__link-icon fas fa-users"></i>
+                    <i class="kt-menu__link-icon far fa-users"></i>
                     <span class="kt-menu__link-text">USERS</span>
                 </a>
             </li>
             <li class="kt-menu__item kt-menu__item--submenu">
                 <a href="<?= Url::to(['/conf/settings/index']) ?>" class="kt-menu__link">
-                    <i class="kt-menu__link-icon flaticon2-gear"></i>
+                    <i class="kt-menu__link-icon far fa-cog"></i>
                     <span class="kt-menu__link-text">SETTINGS</span>
-                </a>
-            </li>
-            <li class="kt-menu__section ">
-                <h4 class="kt-menu__section-text">REPORTS</h4>
-                <i class="kt-menu__section-icon flaticon-more-v2"></i>
-            </li>
-            <li class="kt-menu__item kt-menu__item--submenu">
-                <a href="#" class="kt-menu__link">
-                    <i class="kt-menu__link-icon fas fa-chart-line"></i>
-                    <span class="kt-menu__link-text">REPORTS</span>
                 </a>
             </li>
         </ul>

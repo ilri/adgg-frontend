@@ -18,11 +18,6 @@ $controller = Yii::$app->controller;
                     <span class="kt-nav__link-text"><?= Lang::t('General Settings') ?></span>
                 </a>
             </li>
-            <li class="kt-nav__item<?= ($controller->activeSubMenu === Constants::SUBMENU_REGISTRATION) ? ' kt-nav__item--active' : '' ?>">
-                <a class="kt-nav__link" href="<?= Url::to(['/core/registration-document-type/index']) ?>">
-                    <span class="kt-nav__link-text"><?= Lang::t('Registration Settings') ?></span>
-                </a>
-            </li>
             <?php if (!Session::isOrganization()): ?>
                 <li class="kt-nav__item<?= ($controller->activeSubMenu === Constants::SUBMENU_EMAIL) ? ' kt-nav__item--active' : '' ?>">
                     <a href="<?= Url::to(['/conf/email/index']) ?>" class="kt-nav__link">

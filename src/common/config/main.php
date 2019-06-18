@@ -1,6 +1,6 @@
 <?php
 return [
-    'name' => 'MEDSOURCE ERP',
+    'name' => 'ADGG SYSTEM',
     //'language' => 'sr',
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
     'modules' => require(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'modules.php'),

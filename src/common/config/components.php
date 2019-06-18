@@ -20,7 +20,7 @@ return [
         'cookieParams' => ['httponly' => true, 'lifetime' => 3600 * 4],
         'timeout' => 3600 * 4,
         'useCookies' => true,
-        'name' => 'SACCOHUBBACKENDSESSIONID',
+        'name' => 'ADGGBACKENDSESSIONID',
     ],
     'log' => [
         'traceLevel' => YII_DEBUG ? 3 : 0,
