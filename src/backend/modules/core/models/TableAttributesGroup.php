@@ -18,7 +18,7 @@ use common\models\ActiveSearchTrait;
  * @property string $created_at
  * @property int $created_by
  *
- * @property TableAttributes[] $tableAttributes
+ * @property TableAttribute[] $tableAttributes
  */
 class TableAttributesGroup extends ActiveRecord implements ActiveSearchInterface
 {
@@ -68,7 +68,7 @@ class TableAttributesGroup extends ActiveRecord implements ActiveSearchInterface
      */
     public function getTableAttributes()
     {
-        return $this->hasMany(TableAttributes::class, ['group_id' => 'id']);
+        return $this->hasMany(TableAttribute::class, ['group_id' => 'id']);
     }
 
     /**

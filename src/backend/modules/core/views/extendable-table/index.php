@@ -5,6 +5,7 @@ use common\helpers\Lang;
 /* @var $this \yii\web\View */
 /* @var $controller \backend\controllers\BackendController */
 /* @var $groupSearchModel \backend\modules\core\models\TableAttributesGroup */
+/* @var $searchModel \backend\modules\core\models\TableAttribute */
 $controller = Yii::$app->controller;
 $this->title = $controller->getPageTitle();
 $this->params['breadcrumbs'][] = $this->title;
@@ -20,6 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </h2>
         <?= $this->render('_tab'); ?>
         <div class="tab-content">
+            <?= $this->render('@coreModule/views/table-attribute/_grid', ['model' => $searchModel]) ?>
             <?= $this->render('@coreModule/views/table-attributes-group/_grid', ['model' => $groupSearchModel]) ?>
         </div>
     </div>

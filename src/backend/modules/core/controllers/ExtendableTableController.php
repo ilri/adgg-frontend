@@ -10,6 +10,7 @@ namespace backend\modules\core\controllers;
 
 
 use backend\modules\core\models\ExtendableTable;
+use backend\modules\core\models\TableAttribute;
 use backend\modules\core\models\TableAttributesGroup;
 
 class ExtendableTableController extends MasterDataController
@@ -33,6 +34,13 @@ class ExtendableTableController extends MasterDataController
     public function actionIndex($table_id = ExtendableTable::TABLE_CLIENT)
     {
         $this->setResourceLabel($table_id);
+        $searchModel = TableAttribute::searchModel([
+            'defaultOrder' => ['group_id' => SORT_ASC, 'id' => SORT_ASC],
+            'with' => ['group', 'listType'],
+        ]);
+        $searchModel->is_active = 1;
+        $searchModel->table_id = $table_id;
+
         $groupSearchModel = TableAttributesGroup::searchModel([
             'defaultOrder' => ['id' => SORT_ASC],
         ]);
@@ -40,6 +48,7 @@ class ExtendableTableController extends MasterDataController
         $groupSearchModel->table_id = $table_id;
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
             'groupSearchModel' => $groupSearchModel,
         ]);
     }

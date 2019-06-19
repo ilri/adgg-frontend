@@ -56,7 +56,7 @@ class SmartSelect extends \yii\base\Widget
     /**
      * @var array
      */
-    public $containerHtmlOptions = ['class' => 'form-group'];
+    public $containerHtmlOptions = ['class' => 'form-group row'];
     /**
      * @var string base template
      */
