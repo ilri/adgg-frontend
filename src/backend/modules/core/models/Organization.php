@@ -73,6 +73,7 @@ class Organization extends ActiveRecord implements ActiveSearchInterface
             [['contact_person', 'unit1_name', 'unit2_name', 'unit3_name', 'unit4_name'], 'string', 'max' => 30],
             [['contact_phone'], 'string', 'min' => 8, 'max' => 20],
             ['code', 'unique'],
+            ['contact_email','email'],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
     }
