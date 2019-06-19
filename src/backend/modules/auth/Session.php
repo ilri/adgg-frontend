@@ -58,7 +58,54 @@ class Session
         if (Yii::$app->user->isGuest) {
             return false;
         }
+        $orgUserLevels = [
+            UserLevels::LEVEL_COUNTRY,
+            UserLevels::LEVEL_REGION,
+            UserLevels::LEVEL_DISTRICT,
+            UserLevels::LEVEL_WARD,
+            UserLevels::LEVEL_VILLAGE,
+        ];
+        return in_array(Yii::$app->user->identity->level_id, $orgUserLevels);
+    }
+
+    public static function isCountryUser()
+    {
+        if (Yii::$app->user->isGuest) {
+            return false;
+        }
         return Yii::$app->user->identity->level_id == UserLevels::LEVEL_COUNTRY;
+    }
+
+    public static function isRegionUser()
+    {
+        if (Yii::$app->user->isGuest) {
+            return false;
+        }
+        return Yii::$app->user->identity->level_id == UserLevels::LEVEL_REGION;
+    }
+
+    public static function isDistrictUser()
+    {
+        if (Yii::$app->user->isGuest) {
+            return false;
+        }
+        return Yii::$app->user->identity->level_id == UserLevels::LEVEL_DISTRICT;
+    }
+
+    public static function isWardUser()
+    {
+        if (Yii::$app->user->isGuest) {
+            return false;
+        }
+        return Yii::$app->user->identity->level_id == UserLevels::LEVEL_WARD;
+    }
+
+    public static function isVillageUser()
+    {
+        if (Yii::$app->user->isGuest) {
+            return false;
+        }
+        return Yii::$app->user->identity->level_id == UserLevels::LEVEL_VILLAGE;
     }
 
     /**
@@ -72,16 +119,47 @@ class Session
     /**
      * @return mixed
      */
-    public static function accountId()
+    public static function getOrgId()
     {
         return Yii::$app->user->identity->org_id ?? null;
     }
 
+    /**
+     * @return mixed
+     */
+    public static function getRegionId()
+    {
+        return Yii::$app->user->identity->region_id ?? null;
+    }
+
+    /**
+     * @return mixed
+     */
+    public static function getDistrictId()
+    {
+        return Yii::$app->user->identity->district_id ?? null;
+    }
+
+    /**
+     * @return mixed
+     */
+    public static function getWardId()
+    {
+        return Yii::$app->user->identity->ward_id ?? null;
+    }
+
+    /**
+     * @return mixed
+     */
+    public static function getVillageId()
+    {
+        return Yii::$app->user->identity->village_id ?? null;
+    }
 
     /**
      * @return int|string
      */
-    public static function userId()
+    public static function getUserId()
     {
         return Yii::$app->user->id ?? null;
     }
@@ -89,7 +167,7 @@ class Session
     /**
      * @return int|string
      */
-    public static function userLevelId()
+    public static function getUserLevelId()
     {
         return Yii::$app->user->identity->level_id ?? null;
     }
@@ -97,7 +175,7 @@ class Session
     /**
      * @return int|string
      */
-    public static function userRoleId()
+    public static function getUserRoleId()
     {
         return Yii::$app->user->identity->role_id ?? null;
     }
@@ -105,7 +183,7 @@ class Session
     /**
      * @return string
      */
-    public static function userName()
+    public static function getName()
     {
         return Yii::$app->user->identity->name ?? null;
     }

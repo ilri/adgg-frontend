@@ -170,8 +170,8 @@ class AuditTrail extends ActiveRecord implements ActiveSearchInterface
         $audit->action_description = static::getActionDescription($model, $action);
 
         if (Utils::isWebApp()) {
-            if (!empty(Session::accountId())) {
-                $audit->org_id = Session::accountId();
+            if (!empty(Session::getOrgId())) {
+                $audit->org_id = Session::getOrgId();
             }
         }
 

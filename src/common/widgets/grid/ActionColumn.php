@@ -89,7 +89,7 @@ class ActionColumn extends \kartik\grid\ActionColumn
                     //$options['class'] = 'btn btn-sm btn-clean btn-icon btn-icon-md';
                 }
                 $title = Lang::t('Delete');
-                $icon = '<i class="fas fa-trash"></i>';
+                $icon = '<i class="text-muted fas fa-trash"></i>';
                 $label = ArrayHelper::remove($options, 'label', ($this->_isDropdown ? $icon . ' ' . $title : $icon));
                 $options = ArrayHelper::merge(
                     [

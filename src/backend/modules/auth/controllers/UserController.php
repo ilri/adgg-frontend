@@ -38,7 +38,7 @@ class UserController extends Controller
     {
         $orgModel = null;
         if (Session::isOrganization()) {
-            $org_id = Session::accountId();
+            $org_id = Session::getOrgId();
             $level_id = UserLevels::LEVEL_COUNTRY;
         }
         if (!empty($org_id)) {
@@ -86,7 +86,7 @@ class UserController extends Controller
     public function actionCreate($level_id = null, $org_id = null)
     {
         if (Session::isOrganization()) {
-            $org_id = Session::accountId();
+            $org_id = Session::getOrgId();
             $level_id = UserLevels::LEVEL_COUNTRY;
         }
 

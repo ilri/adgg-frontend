@@ -31,7 +31,7 @@ class AuditTrailController extends Controller
     {
         $orgModel = null;
         if (Session::isOrganization()) {
-            $org_id = Session::accountId();
+            $org_id = Session::getOrgId();
         }
         if (!empty($org_id)) {
             $orgModel = Organization::loadModel($org_id);

@@ -1,0 +1,149 @@
+<?php
+
+namespace backend\modules\core\models;
+
+use common\models\ActiveRecord;
+use common\models\ActiveSearchInterface;
+use common\models\ActiveSearchTrait;
+use yii\db\Expression;
+use yii\helpers\Html;
+
+/**
+ * This is the model class for table "core_client".
+ *
+ * @property int $id
+ * @property string $code
+ * @property string $name
+ * @property int $org_id
+ * @property int $region_id
+ * @property int $district_id
+ * @property int $ward_id
+ * @property int $village_id
+ * @property string $reg_date
+ * @property string $phone
+ * @property string $email
+ * @property int $total_cattle
+ * @property int $field_agent_id
+ * @property int $is_head
+ * @property string $project
+ * @property string $farm_type
+ * @property string $gender_code
+ * @property int $is_active
+ * @property string $latitude
+ * @property string $longitude
+ * @property string $map_address
+ * @property string $latlng
+ * @property string $uuid
+ * @property string $created_at
+ * @property int $created_by
+ * @property string $updated_at
+ * @property int $updated_by
+ * @property int $is_deleted
+ * @property string $deleted_at
+ * @property int $deleted_by
+ *
+ * @property Organization $org
+ */
+class Client extends ActiveRecord implements ActiveSearchInterface
+{
+    use ActiveSearchTrait, OrganizationUnitDataTrait;
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function tableName()
+    {
+        return '{{%core_client}}';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function rules()
+    {
+        return [
+            [['name', 'org_id'], 'required'],
+            [['org_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'total_cattle', 'field_agent_id', 'is_head', 'is_active',], 'integer'],
+            [['reg_date'], 'date', 'format' => 'Y-m-d'],
+            [['latitude', 'latitude'], 'number'],
+            [['code', 'name', 'project'], 'string', 'max' => 128],
+            [['phone'], 'string', 'min' => 8, 'max' => 20],
+            [['email', 'map_address'], 'string', 'max' => 255],
+            [['farm_type'], 'string', 'max' => 30],
+            [['gender_code'], 'string', 'max' => 10],
+            [['email'], 'email'],
+            [['org_id'], 'exist', 'skipOnError' => true, 'targetClass' => Organization::class, 'targetAttribute' => ['org_id' => 'id']],
+            [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
+
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'code' => 'Client Code',
+            'name' => 'Name',
+            'org_id' => 'Country',
+            'region_id' => $this->org !== null ? Html::encode($this->org->unit1_name) : 'Region',
+            'district_id' => $this->org !== null ? Html::encode($this->org->unit2_name) : 'District',
+            'ward_id' => $this->org !== null ? Html::encode($this->org->unit3_name) : 'Ward',
+            'village_id' => $this->org !== null ? Html::encode($this->org->unit4_name) : 'Village',
+            'reg_date' => 'Reg Date',
+            'phone' => 'Mobile Phone No.',
+            'email' => 'Email Address',
+            'total_cattle' => 'Total Cattle',
+            'field_agent_id' => 'Field Agent',
+            'is_head' => 'Is Head',
+            'project' => 'Project',
+            'farm_type' => 'Farm Type',
+            'gender_code' => 'Gender Code',
+            'is_active' => 'Active',
+            'latitude' => 'Latitude',
+            'longitude' => 'Longitude',
+            'map_address' => 'Map Address',
+            'latlng' => 'Latlong',
+            'uuid' => 'Uuid',
+            'created_at' => 'Created At',
+            'created_by' => 'Created By',
+            'updated_at' => 'Updated At',
+            'updated_by' => 'Updated By',
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function searchParams()
+    {
+        return [
+            ['code', 'code'],
+            ['name', 'name'],
+            ['phone', 'phone'],
+            ['project', 'project'],
+            'org_id',
+            'region_id',
+            'district_id',
+            'ward_id',
+            'village_id',
+            'field_agent_id',
+            'is_head',
+            'farm_type',
+            'gender_code',
+            'is_active',
+        ];
+    }
+
+    public function beforeSave($insert)
+    {
+        if (!empty($this->latitude) && !empty($this->longitude)) {
+            $this->latlng = new Expression("ST_GeomFromText('POINT({$this->latitude} {$this->longitude})', 4326);");
+        }
+        return parent::beforeSave($insert);
+    }
+
+
+}

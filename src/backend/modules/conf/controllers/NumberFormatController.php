@@ -24,7 +24,7 @@ class NumberFormatController extends DevController
     public function actionIndex($org_id = null)
     {
         if (Session::isOrganization()) {
-            $org_id = Session::accountId();
+            $org_id = Session::getOrgId();
         }
         $condition = ['org_id' => $org_id];
         $searchModel = NumberingFormat::searchModel([

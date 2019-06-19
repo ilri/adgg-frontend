@@ -33,7 +33,7 @@ class RoleController extends Controller
     {
         $orgModel = null;
         if (Session::isOrganization()) {
-            $orgModel = Organization::loadModel(Session::accountId());
+            $orgModel = Organization::loadModel(Session::getOrgId());
         }
         $searchModel = Roles::searchModel([
             'defaultOrder' => ['name' => SORT_ASC]

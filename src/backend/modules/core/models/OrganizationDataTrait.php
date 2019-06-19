@@ -35,9 +35,9 @@ trait OrganizationDataTrait
     {
         if (Utils::isWebApp() && Session::isOrganization()) {
             if (is_array($condition)) {
-                $condition[$orgIdAttribute] = Session::accountId();
+                $condition[$orgIdAttribute] = Session::getOrgId();
             } else {
-                list($condition, $params) = DbUtils::appendCondition($orgIdAttribute, Session::accountId(), $condition, $params);
+                list($condition, $params) = DbUtils::appendCondition($orgIdAttribute, Session::getOrgId(), $condition, $params);
             }
         } elseif ($strict && Utils::isWebApp() && !Session::isOrganization()) {
             if (is_array($condition)) {
@@ -69,7 +69,7 @@ trait OrganizationDataTrait
             if ($throwException) {
                 throw new NotFoundHttpException('The requested resource was not found.');
             }
-        } elseif (Utils::isWebApp() && Session::isOrganization() && $model->{$orgIdAttribute} != Session::accountId()) {
+        } elseif (Utils::isWebApp() && Session::isOrganization() && $model->{$orgIdAttribute} != Session::getOrgId()) {
             throw new ForbiddenHttpException();
         }
         return $model;

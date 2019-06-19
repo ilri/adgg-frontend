@@ -6,7 +6,8 @@ namespace backend\modules\auth\models;
 use backend\modules\auth\Session;
 use backend\modules\conf\settings\SystemSettings;
 use backend\modules\core\models\Organization;
-use backend\modules\core\models\OrganizationDataTrait;
+use backend\modules\core\models\OrganizationUnitDataTrait;
+use backend\modules\core\models\OrganizationUnits;
 use common\helpers\DbUtils;
 use common\helpers\FileManager;
 use common\helpers\Lang;
@@ -23,12 +24,20 @@ use yii\web\NotFoundHttpException;
  *
  * @property integer $branch_id
  * @property int $org_id
+ * @property int $region_id
+ * @property int $district_id
+ * @property int $ward_id
+ * @property int $village_id
  *
  * @property Organization $org
+ * @property OrganizationUnits $region
+ * @property OrganizationUnits $district
+ * @property OrganizationUnits $ward
+ * @property OrganizationUnits $village
  */
 class Users extends UserIdentity implements ActiveSearchInterface
 {
-    use ActiveSearchTrait, OrganizationDataTrait, UserNotificationTrait;
+    use ActiveSearchTrait, OrganizationUnitDataTrait, UserNotificationTrait;
 
     /**
      *
@@ -108,6 +117,7 @@ class Users extends UserIdentity implements ActiveSearchInterface
             ],
             static::passwordValidator(),
             $this->passwordHistoryValidator(),
+            [['region_id', 'district_id', 'ward_id', 'village_id'], 'safe'],
         ];
     }
 
@@ -208,7 +218,7 @@ class Users extends UserIdentity implements ActiveSearchInterface
         if (Yii::$app->user->getIsGuest()) {
             return [$condition, $params];
         }
-        $levelIds = UserLevels::getColumnData('id', '[[id]]<:id', [':id' => Session::userLevelId()]);
+        $levelIds = UserLevels::getColumnData('id', '[[id]]<:id', [':id' => Session::getUserLevelId()]);
         if (empty($levelIds)) {
             return [$condition, $params];
         }
@@ -228,13 +238,13 @@ class Users extends UserIdentity implements ActiveSearchInterface
         $hasPermission = false;
         if ($this->level_id === null) {
             $hasPermission = true;
-        } elseif (Session::userLevelId() < $this->level_id) {
+        } elseif (Session::getUserLevelId() < $this->level_id) {
             $hasPermission = true;
         } elseif ($allowMyAccount && $this->isMyAccount()) {
             $hasPermission = true;
-        } elseif ($allowSameLevel && Session::userLevelId() === $this->level_id) {
+        } elseif ($allowSameLevel && Session::getUserLevelId() === $this->level_id) {
             $hasPermission = true;
-        } elseif ($allowSameRole && Session::userRoleId() === $this->role_id && Session::userLevelId() === $this->level_id) {
+        } elseif ($allowSameRole && Session::getUserRoleId() === $this->role_id && Session::getUserLevelId() === $this->level_id) {
             $hasPermission = true;
         }
 
@@ -396,18 +406,10 @@ class Users extends UserIdentity implements ActiveSearchInterface
             if ($throwException) {
                 throw new NotFoundHttpException('The requested resource was not found.');
             }
-        } elseif (Utils::isWebApp() && Session::isOrganization() && $model->org_id != Session::accountId()) {
+        } elseif (Utils::isWebApp() && Session::isOrganization() && $model->org_id != Session::getOrgId()) {
             throw new ForbiddenHttpException();
         }
         return $model;
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getOrg()
-    {
-        return $this->hasOne(Organization::class, ['id' => 'org_id']);
     }
 
     /**

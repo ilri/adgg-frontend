@@ -53,7 +53,7 @@ class Settings extends \yii2mod\settings\components\Settings
     public static function getQualifiedSection($section, $org_id = null)
     {
         if (Utils::isWebApp() && !Yii::$app->user->getIsGuest() && Session::isOrganization()) {
-            $org_id = Session::accountId();
+            $org_id = Session::getOrgId();
         }
         if (!empty($org_id)) {
             $section .= '_org_' . $org_id;

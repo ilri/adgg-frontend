@@ -122,7 +122,7 @@ class SendSmsJob extends BaseObject implements JobInterface
                 $obj = $params;
             } else {
                 if (empty($params['created_by']) && Yii::$app instanceof \yii\web\Application)
-                    $params['created_by'] = Session::userId();
+                    $params['created_by'] = Session::getUserId();
                 if (empty($params['created_at']))
                     $params['created_at'] = DateUtils::mysqlTimestamp();
                 $obj = new self($params);

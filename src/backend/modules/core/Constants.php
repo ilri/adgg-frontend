@@ -15,21 +15,13 @@ class Constants
     const SUBMENU_REGISTRATION_DOCUMENTS = 'REG_DOCS';
     //resources
     const RES_COUNTRY = 'ORG_COUNTRY';
-    const RES_REGION='ORG_REGION';
-    const RES_DISTRICT='ORG_DISTRICT';
-    const RES_WARD='WARD';
-    const RES_VILLAGE='VILLAGE';
-    const RES_SUPPLIER = 'ORG_SUPPLIER';
-    const RES_REGISTRATION_DOCUMENT = 'ORG_REGISTRATION_DOCUMENT';
-    //member tab
-    const TAB_ALL_MEMBERS = 1;
-    const TAB_PHARMACIES = 2;
-    const TAB_HOSPITALS = 3;
-    const TAB_CLINICS = 4;
-    const TAB_PENDING_APPROVAL = 5;
-    //supplier tab
-    const TAB_ALL_SUPPLIERS = 11;
-    const TAB_DISTRIBUTORS = 12;
-    const TAB_MANUFACTURERS = 13;
+    const RES_REGION = 'ORG_REGION';
+    const RES_DISTRICT = 'ORG_DISTRICT';
+    const RES_WARD = 'WARD';
+    const RES_VILLAGE = 'VILLAGE';
+    const RES_CLIENT = 'CLIENT';
+    const RES_FARM = 'FARM';
+    const RES_ANIMAL = 'ANIMAL';
+    const RES_ANIMAL_EVENTS = 'ANIMAL_EVENTS';
 
 }
