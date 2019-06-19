@@ -73,7 +73,7 @@ class Organization extends ActiveRecord implements ActiveSearchInterface
             [['contact_person', 'unit1_name', 'unit2_name', 'unit3_name', 'unit4_name'], 'string', 'max' => 30],
             [['contact_phone'], 'string', 'min' => 8, 'max' => 20],
             ['code', 'unique'],
-            ['contact_email','email'],
+            ['contact_email', 'email'],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
     }
@@ -93,10 +93,10 @@ class Organization extends ActiveRecord implements ActiveSearchInterface
             'contact_email' => 'Contact Email',
             'is_active' => 'Active',
             'uuid' => 'Uuid',
-            'unit1_name' => 'Unit 1 Name',
-            'unit2_name' => 'Unit 2 Name',
-            'unit3_name' => 'Unit 3 Name',
-            'unit4_name' => 'Unit 4 Name',
+            'unit1_name' => 'Region Level Name',
+            'unit2_name' => 'District Level Name',
+            'unit3_name' => 'Ward Level Name',
+            'unit4_name' => 'Village Level Name',
             'created_at' => 'Created At',
             'created_by' => 'Created By',
             'updated_at' => 'Updated At',

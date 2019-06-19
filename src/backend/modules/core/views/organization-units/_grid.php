@@ -32,7 +32,7 @@ use yii\helpers\Html;
             'value' => function (OrganizationUnits $model) {
                 return $model->getRelationAttributeValue('parent', 'name');
             },
-            'visible' => $model->level > OrganizationUnits::LEVEL_UNIT_1,
+            'visible' => $model->level > OrganizationUnits::LEVEL_REGION,
             'filter' => OrganizationUnits::getListData('id', 'name', false, ['level' => $model->level - 1, 'org_id' => $model->org_id])
         ],
         [

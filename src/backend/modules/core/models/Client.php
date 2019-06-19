@@ -24,6 +24,7 @@ use yii\helpers\Html;
  * @property string $email
  * @property int $total_cattle
  * @property int $field_agent_id
+ * @property string $field_agent_name
  * @property int $is_head
  * @property string $project
  * @property string $farm_type
@@ -44,7 +45,7 @@ use yii\helpers\Html;
  *
  * @property Organization $org
  */
-class Client extends ActiveRecord implements ActiveSearchInterface
+class Client extends ActiveRecord implements ActiveSearchInterface, UploadExcelInterface
 {
     use ActiveSearchTrait, OrganizationUnitDataTrait;
 
@@ -62,11 +63,11 @@ class Client extends ActiveRecord implements ActiveSearchInterface
     public function rules()
     {
         return [
-            [['name', 'org_id'], 'required'],
+            [['name', 'org_id', 'region_id', 'district_id', 'ward_id'], 'required'],
             [['org_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'total_cattle', 'field_agent_id', 'is_head', 'is_active',], 'integer'],
             [['reg_date'], 'date', 'format' => 'Y-m-d'],
             [['latitude', 'latitude'], 'number'],
-            [['code', 'name', 'project'], 'string', 'max' => 128],
+            [['code', 'name', 'project', 'field_agent_name'], 'string', 'max' => 128],
             [['phone'], 'string', 'min' => 8, 'max' => 20],
             [['email', 'map_address'], 'string', 'max' => 255],
             [['farm_type'], 'string', 'max' => 30],
@@ -93,10 +94,11 @@ class Client extends ActiveRecord implements ActiveSearchInterface
             'ward_id' => $this->org !== null ? Html::encode($this->org->unit3_name) : 'Ward',
             'village_id' => $this->org !== null ? Html::encode($this->org->unit4_name) : 'Village',
             'reg_date' => 'Reg Date',
-            'phone' => 'Mobile Phone No.',
+            'phone' => 'Phone No.',
             'email' => 'Email Address',
-            'total_cattle' => 'Total Cattle',
-            'field_agent_id' => 'Field Agent',
+            'total_cattle' => 'Total Cattle Owned',
+            'field_agent_id' => 'Field Agent Id',
+            'field_agent_name' => 'AI Tech',
             'is_head' => 'Is Head',
             'project' => 'Project',
             'farm_type' => 'Farm Type',
@@ -139,11 +141,42 @@ class Client extends ActiveRecord implements ActiveSearchInterface
 
     public function beforeSave($insert)
     {
-        if (!empty($this->latitude) && !empty($this->longitude)) {
-            $this->latlng = new Expression("ST_GeomFromText('POINT({$this->latitude} {$this->longitude})', 4326);");
+        if (parent::beforeSave($insert)) {
+            if (!empty($this->latitude) && !empty($this->longitude)) {
+                $this->latlng = new Expression("ST_GeomFromText('POINT({$this->latitude} {$this->longitude})')");
+            }
+
+            return true;
         }
-        return parent::beforeSave($insert);
+        return false;
     }
 
 
+    /**
+     * @return array
+     */
+    public function getExcelColumns()
+    {
+        $columns = [
+            'code',
+            'reg_date',
+            'region',
+            'district',
+            'ward',
+            'village',
+            'field_agent_name',
+            'name',
+            'phone',
+            'total_cattle',
+            'latitude',
+            'longitude',
+            'farm_type',
+            'gender_code',
+            'project',
+        ];
+
+        //@todo add dynamically defined fields
+
+        return $columns;
+    }
 }

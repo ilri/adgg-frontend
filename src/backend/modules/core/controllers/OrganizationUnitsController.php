@@ -27,16 +27,16 @@ class OrganizationUnitsController extends Controller
     public function setResourceLabel(Organization $country, $level)
     {
         switch ($level) {
-            case OrganizationUnits::LEVEL_UNIT_1:
+            case OrganizationUnits::LEVEL_REGION:
                 $this->resourceLabel = Html::encode($country->unit1_name);
                 break;
-            case OrganizationUnits::LEVEL_UNIT_2:
+            case OrganizationUnits::LEVEL_DISTRICT:
                 $this->resourceLabel = Html::encode($country->unit2_name);
                 break;
-            case OrganizationUnits::LEVEL_UNIT_3:
+            case OrganizationUnits::LEVEL_WARD:
                 $this->resourceLabel = Html::encode($country->unit3_name);
                 break;
-            case OrganizationUnits::LEVEL_UNIT_4:
+            case OrganizationUnits::LEVEL_VILLAGE:
                 $this->resourceLabel = Html::encode($country->unit4_name);
                 break;
             default:

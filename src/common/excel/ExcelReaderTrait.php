@@ -65,13 +65,13 @@ trait ExcelReaderTrait
      *
      * @var array
      */
-    public $file_columns = ['[phone]' => 'Phone'];
+    public $file_columns = [];
 
     /**
      *
      * @var array
      */
-    private $required_columns = ['phone'];
+    private $required_columns = [];
 
     /**
      *
@@ -102,6 +102,15 @@ trait ExcelReaderTrait
      * @var \PhpOffice\PhpSpreadsheet\Reader\IReader
      */
     private $_objReader;
+
+    /**
+     * @var array
+     */
+    private $_failedRows = [];
+    /**
+     * @var array
+     */
+    private $_savedRows = [];
 
     /**
      * @throws \PhpOffice\PhpSpreadsheet\Reader\Exception
@@ -266,6 +275,14 @@ trait ExcelReaderTrait
         $this->setObjSpreadsheet();
         $sheetData = $this->_objSpreadsheet->getActiveSheet()->toArray(null, true, true, true);
 
+        foreach ($sheetData as $k => $row) {
+            if ($k < $this->start_row) {
+                unset($sheetData[$k]);
+            }
+            if (!empty($this->end_row) && $k > $this->end_row) {
+                unset($sheetData[$k]);
+            }
+        }
         return $sheetData;
     }
 
@@ -418,5 +435,21 @@ trait ExcelReaderTrait
         }
 
         return $columns;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSavedRows()
+    {
+        return $this->_savedRows;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFailedRows()
+    {
+        return $this->_failedRows;
     }
 }

@@ -34,10 +34,10 @@ class OrganizationUnits extends ActiveRecord implements ActiveSearchInterface
 {
     use ActiveSearchTrait;
 
-    const LEVEL_UNIT_1 = 1;
-    const LEVEL_UNIT_2 = 2;
-    const LEVEL_UNIT_3 = 3;
-    const LEVEL_UNIT_4 = 4;
+    const LEVEL_REGION = 1;
+    const LEVEL_DISTRICT = 2;
+    const LEVEL_WARD = 3;
+    const LEVEL_VILLAGE = 4;
 
     /**
      * {@inheritdoc}
@@ -63,7 +63,7 @@ class OrganizationUnits extends ActiveRecord implements ActiveSearchInterface
             [['org_id'], 'exist', 'skipOnError' => true, 'targetClass' => Organization::class, 'targetAttribute' => ['org_id' => 'id']],
             ['contact_email', 'email'],
             ['parent_id', 'required', 'when' => function (self $model) {
-                return $model->level > self::LEVEL_UNIT_1;
+                return $model->level > self::LEVEL_REGION;
             }],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
@@ -94,13 +94,13 @@ class OrganizationUnits extends ActiveRecord implements ActiveSearchInterface
         $parentIdLabel = 'Parent';
         if ($this->org !== null) {
             switch ($this->level) {
-                case self::LEVEL_UNIT_2:
+                case self::LEVEL_DISTRICT:
                     $parentIdLabel = Html::encode($this->org->unit1_name);
                     break;
-                case self::LEVEL_UNIT_3:
+                case self::LEVEL_WARD:
                     $parentIdLabel = Html::encode($this->org->unit2_name);
                     break;
-                case self::LEVEL_UNIT_4:
+                case self::LEVEL_VILLAGE:
                     $parentIdLabel = Html::encode($this->org->unit3_name);
                     break;
             }

@@ -26,6 +26,11 @@ class ListType extends ActiveRecord implements ActiveSearchInterface
 {
     use ActiveSearchTrait;
 
+    const LIST_TYPE_PROJECT = 1;
+    const LIST_TYPE_FARM_TYPE = 2;
+    const LIST_TYPE_GENDER = 3;
+
+
     /**
      * {@inheritdoc}
      */

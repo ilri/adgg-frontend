@@ -105,4 +105,43 @@ class LookupList extends ActiveRecord implements ActiveSearchInterface
         list($condition, $params) = DbUtils::appendCondition('list_type_id', $listType, $condition, $params);
         return parent::getListData('value', 'label', $prompt, $condition, $params, $options);
     }
+
+    /**
+     * @param mixed $prompt
+     * @param string $condition
+     * @param array $params
+     * @param array $options
+     * @return array
+     * @throws \Exception
+     */
+    public static function getProjectListData($prompt = false, $condition = '', $params = [], $options = [])
+    {
+        return static::getList(ListType::LIST_TYPE_PROJECT, $prompt, $condition, $params, $options);
+    }
+
+    /**
+     * @param mixed $prompt
+     * @param string $condition
+     * @param array $params
+     * @param array $options
+     * @return array
+     * @throws \Exception
+     */
+    public static function getFarmTypeListData($prompt = false, $condition = '', $params = [], $options = [])
+    {
+        return static::getList(ListType::LIST_TYPE_FARM_TYPE, $prompt, $condition, $params, $options);
+    }
+
+    /**
+     * @param mixed $prompt
+     * @param string $condition
+     * @param array $params
+     * @param array $options
+     * @return array
+     * @throws \Exception
+     */
+    public static function getGenderListData($prompt = false, $condition = '', $params = [], $options = [])
+    {
+        return static::getList(ListType::LIST_TYPE_PROJECT, $prompt, $condition, $params, $options);
+    }
 }

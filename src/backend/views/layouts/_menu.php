@@ -20,19 +20,19 @@ use yii\helpers\Url;
                 <i class="kt-menu__section-icon flaticon-more-v2"></i>
             </li>
             <li class="kt-menu__item kt-menu__item--submenu">
-                <a href="#" class="kt-menu__link">
+                <a href="<?= Url::to(['/core/animal/index']) ?>" class="kt-menu__link">
                     <i class="kt-menu__link-icon far fa-cow"></i>
                     <span class="kt-menu__link-text">ANIMALS</span>
                 </a>
             </li>
             <li class="kt-menu__item kt-menu__item--submenu">
-                <a href="#" class="kt-menu__link">
+                <a href="<?= Url::to(['/core/farm/index']) ?>" class="kt-menu__link">
                     <i class="kt-menu__link-icon far fa-tractor"></i>
                     <span class="kt-menu__link-text">FARMS</span>
                 </a>
             </li>
             <li class="kt-menu__item kt-menu__item--submenu">
-                <a href="#" class="kt-menu__link">
+                <a href="<?= Url::to(['/core/client/index']) ?>" class="kt-menu__link">
                     <i class="kt-menu__link-icon far fa-users"></i>
                     <span class="kt-menu__link-text">CLIENTS/PEOPLE</span>
                 </a>

@@ -49,6 +49,7 @@ class Controller extends BackendController
                             'delete',
                             'download',
                             'upload',
+                            'upload-preview',
                             'approve',
                             'get-list',
                             'quick-create',
