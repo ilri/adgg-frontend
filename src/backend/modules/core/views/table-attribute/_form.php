@@ -7,6 +7,7 @@ use common\helpers\Lang;
 use common\widgets\select2\Select2;
 use yii\bootstrap4\ActiveForm;
 use yii\helpers\Html;
+use yii\helpers\Json;
 use yii\helpers\Url;
 
 /* @var $this \yii\web\View */
@@ -59,7 +60,10 @@ $form = ActiveForm::begin([
     <?= $form->field($model, 'input_type')->widget(Select2::class, [
         'data' => TableAttribute::inputTypeOptions(),
         'modal' => true,
-        'options' => ['placeholder' => '[select one]'],
+        'options' => [
+            'placeholder' => '[select one]',
+            'data-show-list-type' => TableAttribute::INPUT_TYPE_SELECT,
+        ],
         'pluginOptions' => [
             'allowClear' => false
         ],
@@ -85,3 +89,10 @@ $form = ActiveForm::begin([
     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 </div>
 <?php ActiveForm::end(); ?>
+<?php
+$options = [
+    'inputTypeFieldSelector' => '#' . Html::getInputId($model, 'input_type'),
+    'listTypeIdFieldSelector' => '#' . Html::getInputId($model, 'list_type_id'),
+];
+$this->registerJs("MyApp.modules.core.initTableAttributesForm(" . Json::encode($options) . ");");
+?>

@@ -156,7 +156,7 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
             case self::INPUT_TYPE_CHECKBOX:
                 return 'CHECKBOX';
             case self::INPUT_TYPE_SELECT:
-                return 'SELECT/DROPDOWN LIST';
+                return 'SELECT';
             case self::INPUT_TYPE_TEXTAREA:
                 return 'TEXTAREA';
             case self::INPUT_TYPE_DATE:
