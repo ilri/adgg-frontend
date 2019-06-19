@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: May 27, 2019 at 05:10 AM
+-- Generation Time: Jun 19, 2019 at 12:25 PM
 -- Server version: 8.0.16
--- PHP Version: 7.2.17-0ubuntu0.18.04.1
+-- PHP Version: 7.2.19-0ubuntu0.18.04.1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `medsource`
+-- Database: `adgg`
 --
 
 -- --------------------------------------------------------
@@ -205,7 +205,76 @@ INSERT INTO `auth_audit_trail` (`id`, `action`, `action_description`, `url`, `ip
 (158, 3, 'Updated a resource. Table affected: org_registration_document, Record Id modified:4', 'http://localhost/medsource/core/registration-document/approve?id=4', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0', 1, NULL, 'a:1:{s:11:\"is_approved\";a:2:{s:3:\"old\";i:0;s:3:\"new\";i:1;}}'),
 (159, 3, 'Updated a resource. Table affected: organization, Record Id modified:3', 'http://localhost/medsource/core/organization/approve?id=3', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0', 1, NULL, 'a:2:{s:6:\"status\";a:2:{s:3:\"old\";i:1;s:3:\"new\";i:2;}s:11:\"is_approved\";a:2:{s:3:\"old\";i:0;s:3:\"new\";i:1;}}'),
 (160, 3, 'Updated a resource. Table affected: organization, Record Id modified:3', 'http://localhost/medsource/core/organization/update?id=747feb92-5363-4365-af53-148e0a5bd3d5', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0', 1, NULL, 'a:3:{s:11:\"map_address\";a:2:{s:3:\"old\";s:34:\"Haile Selassie Ave, Nairobi, Kenya\";s:3:\"new\";s:37:\"Sheikh Abdullas F. Rd, Mombasa, Kenya\";}s:12:\"map_latitude\";a:2:{s:3:\"old\";s:11:\"-1.29206590\";s:3:\"new\";s:18:\"-4.043593351913261\";}s:13:\"map_longitude\";a:2:{s:3:\"old\";s:11:\"36.82194620\";s:3:\"new\";s:17:\"39.66831743714465\";}}'),
-(161, 2, 'Created a resource. Table affected: auth_users, Record Id modified:5', 'http://localhost/medsource/auth/user/create?level_id=3&org_id=3', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0', 1, NULL, 'a:11:{s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:16:\"Beatrice Onyango\";}s:8:\"username\";a:2:{s:3:\"old\";N;s:3:\"new\";s:8:\"beatrice\";}s:5:\"email\";a:2:{s:3:\"old\";N;s:3:\"new\";s:26:\"beatrice.onyango@gmail.com\";}s:8:\"level_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"3\";}s:7:\"role_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"4\";}s:6:\"org_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"3\";}s:22:\"auto_generate_password\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"0\";}s:9:\"branch_id\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"profile_image\";a:2:{s:3:\"old\";N;s:3:\"new\";s:40:\"f37135ab-93f6-4062-980d-7d1474672c37.jpg\";}s:8:\"timezone\";a:2:{s:3:\"old\";N;s:3:\"new\";s:16:\"America/New_York\";}s:5:\"phone\";a:2:{s:3:\"old\";N;s:3:\"new\";s:10:\"0707292929\";}}');
+(161, 2, 'Created a resource. Table affected: auth_users, Record Id modified:5', 'http://localhost/medsource/auth/user/create?level_id=3&org_id=3', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0', 1, NULL, 'a:11:{s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:16:\"Beatrice Onyango\";}s:8:\"username\";a:2:{s:3:\"old\";N;s:3:\"new\";s:8:\"beatrice\";}s:5:\"email\";a:2:{s:3:\"old\";N;s:3:\"new\";s:26:\"beatrice.onyango@gmail.com\";}s:8:\"level_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"3\";}s:7:\"role_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"4\";}s:6:\"org_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"3\";}s:22:\"auto_generate_password\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"0\";}s:9:\"branch_id\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"profile_image\";a:2:{s:3:\"old\";N;s:3:\"new\";s:40:\"f37135ab-93f6-4062-980d-7d1474672c37.jpg\";}s:8:\"timezone\";a:2:{s:3:\"old\";N;s:3:\"new\";s:16:\"America/New_York\";}s:5:\"phone\";a:2:{s:3:\"old\";N;s:3:\"new\";s:10:\"0707292929\";}}'),
+(162, 2, 'Created a resource. Table affected: org_registration_document_type, Record Id modified:13', 'http://localhost/medsource/core/registration-document-type/create', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0', 1, NULL, 'a:7:{s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:20:\"Sample Document Type\";}s:9:\"is_active\";a:2:{s:3:\"old\";N;s:3:\"new\";i:1;}s:14:\"has_start_date\";a:2:{s:3:\"old\";N;s:3:\"new\";i:1;}s:11:\"has_renewal\";a:2:{s:3:\"old\";N;s:3:\"new\";i:1;}s:11:\"description\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:14:\"business_types\";a:2:{s:3:\"old\";N;s:3:\"new\";s:66:\"a:5:{i:0;s:1:\"1\";i:1;s:1:\"2\";i:2;s:1:\"3\";i:3;s:1:\"4\";i:4;s:1:\"5\";}\";}s:21:\"business_entity_types\";a:2:{s:3:\"old\";N;s:3:\"new\";s:42:\"a:3:{i:0;s:1:\"1\";i:1;s:1:\"2\";i:2;s:1:\"3\";}\";}}'),
+(163, 3, 'Updated a resource. Table affected: org_registration_document, Record Id modified:17', 'http://localhost/medsource/core/registration-document/approve?id=17', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0', 1, NULL, 'a:1:{s:11:\"is_approved\";a:2:{s:3:\"old\";i:0;s:3:\"new\";i:1;}}'),
+(164, 3, 'Updated a resource. Table affected: org_registration_document, Record Id modified:16', 'http://localhost/medsource/core/registration-document/approve?id=16', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0', 1, NULL, 'a:1:{s:11:\"is_approved\";a:2:{s:3:\"old\";i:0;s:3:\"new\";i:1;}}'),
+(165, 3, 'Updated a resource. Table affected: org_registration_document, Record Id modified:15', 'http://localhost/medsource/core/registration-document/approve?id=15', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0', 1, NULL, 'a:1:{s:11:\"is_approved\";a:2:{s:3:\"old\";i:0;s:3:\"new\";i:1;}}'),
+(166, 3, 'Updated a resource. Table affected: org_registration_document, Record Id modified:14', 'http://localhost/medsource/core/registration-document/approve?id=14', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0', 1, NULL, 'a:1:{s:11:\"is_approved\";a:2:{s:3:\"old\";i:0;s:3:\"new\";i:1;}}'),
+(167, 3, 'Updated a resource. Table affected: organization, Record Id modified:6', 'http://localhost/medsource/core/organization/approve?id=6', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0', 1, NULL, 'a:2:{s:6:\"status\";a:2:{s:3:\"old\";i:1;s:3:\"new\";i:2;}s:11:\"is_approved\";a:2:{s:3:\"old\";i:0;s:3:\"new\";i:1;}}'),
+(168, 2, 'Created a resource. Table affected: auth_users, Record Id modified:6', 'http://localhost/medsource/auth/user/create?level_id=3&org_id=6', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0', 1, NULL, 'a:11:{s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:13:\"Joseph Mukoko\";}s:8:\"username\";a:2:{s:3:\"old\";N;s:3:\"new\";s:6:\"mukoko\";}s:5:\"email\";a:2:{s:3:\"old\";N;s:3:\"new\";s:16:\"mukoko@gmail.com\";}s:8:\"level_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"3\";}s:7:\"role_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:6:\"org_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"6\";}s:22:\"auto_generate_password\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"0\";}s:9:\"branch_id\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"profile_image\";a:2:{s:3:\"old\";N;s:3:\"new\";s:40:\"1b9817de-5bd1-48b5-855c-a1db91b97ddc.jpg\";}s:8:\"timezone\";a:2:{s:3:\"old\";N;s:3:\"new\";s:14:\"Africa/Nairobi\";}s:5:\"phone\";a:2:{s:3:\"old\";N;s:3:\"new\";s:10:\"0724962381\";}}'),
+(169, 3, 'Updated a resource. Table affected: auth_user_levels, Record Id modified:3', 'http://localhost/adgg/auth/user-level/update?id=3', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0', 1, NULL, 'a:1:{s:4:\"name\";a:2:{s:3:\"old\";s:18:\"ORGANIZATION ADMIN\";s:3:\"new\";s:12:\"COUNTRY USER\";}}'),
+(170, 2, 'Created a resource. Table affected: auth_user_levels, Record Id modified:4', 'http://localhost/adgg/auth/user-level/create?_pjax=%23UserLevels-grid-pjax', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0', 1, NULL, 'a:5:{s:2:\"id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:4;}s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:11:\"REGION USER\";}s:9:\"parent_id\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:9:\"is_active\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:15:\"forbidden_items\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}}'),
+(171, 2, 'Created a resource. Table affected: auth_user_levels, Record Id modified:5', 'http://localhost/adgg/auth/user-level/create?_pjax=%23UserLevels-grid-pjax', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0', 1, NULL, 'a:5:{s:2:\"id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:5;}s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:13:\"DISTRICT USER\";}s:9:\"parent_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"4\";}s:9:\"is_active\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:15:\"forbidden_items\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}}'),
+(172, 2, 'Created a resource. Table affected: auth_user_levels, Record Id modified:6', 'http://localhost/adgg/auth/user-level/create?_pjax=%23UserLevels-grid-pjax', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0', 1, NULL, 'a:5:{s:2:\"id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:6;}s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:9:\"WARD USER\";}s:9:\"parent_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"5\";}s:9:\"is_active\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:15:\"forbidden_items\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}}'),
+(173, 2, 'Created a resource. Table affected: auth_user_levels, Record Id modified:7', 'http://localhost/adgg/auth/user-level/create?_pjax=%23UserLevels-grid-pjax', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0', 1, NULL, 'a:5:{s:2:\"id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:7;}s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:12:\"VILLAGE USER\";}s:9:\"parent_id\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:9:\"is_active\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:15:\"forbidden_items\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}}'),
+(174, 3, 'Updated a resource. Table affected: auth_resources, Record Id modified:ORG_COUNTRY', 'http://localhost/adgg/auth/resource/update?id=ORG_MEMBER', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0', 1, NULL, 'a:2:{s:2:\"id\";a:2:{s:3:\"old\";s:10:\"ORG_MEMBER\";s:3:\"new\";s:11:\"ORG_COUNTRY\";}s:4:\"name\";a:2:{s:3:\"old\";s:43:\"MEMBERS (PHARMACIES, HOSPITALS AND CLINICS)\";s:3:\"new\";s:9:\"COUNTRIES\";}}'),
+(175, 3, 'Updated a resource. Table affected: auth_resources, Record Id modified:ORG_REGION', 'http://localhost/adgg/auth/resource/update?id=ORG_REGISTRATION_DOCUMENT', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0', 1, NULL, 'a:1:{s:2:\"id\";a:2:{s:3:\"old\";s:25:\"ORG_REGISTRATION_DOCUMENT\";s:3:\"new\";s:10:\"ORG_REGION\";}}'),
+(176, 3, 'Updated a resource. Table affected: auth_resources, Record Id modified:ORG_DISTRICT', 'http://localhost/adgg/auth/resource/update?id=ORG_SUPPLIER', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0', 1, NULL, 'a:2:{s:2:\"id\";a:2:{s:3:\"old\";s:12:\"ORG_SUPPLIER\";s:3:\"new\";s:12:\"ORG_DISTRICT\";}s:4:\"name\";a:2:{s:3:\"old\";s:41:\"SUPPLERS (DISTRIBUTORS AND MANUFACTURERS)\";s:3:\"new\";s:9:\"DISTRICTS\";}}'),
+(177, 3, 'Updated a resource. Table affected: auth_resources, Record Id modified:ORG_REGION', 'http://localhost/adgg/auth/resource/update?id=ORG_REGION', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0', 1, NULL, 'a:1:{s:4:\"name\";a:2:{s:3:\"old\";s:22:\"REGISTRATION DOCUMENTS\";s:3:\"new\";s:7:\"REGIONS\";}}'),
+(178, 4, 'Deleted a resource. Table affected: auth_resources, Record Id modified:PRODUCT', 'http://localhost/adgg/auth/resource/delete?id=PRODUCT', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0', 1, NULL, 'a:7:{s:2:\"id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:7:\"PRODUCT\";}s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:8:\"PRODUCTS\";}s:8:\"viewable\";a:2:{s:3:\"old\";N;s:3:\"new\";i:1;}s:9:\"creatable\";a:2:{s:3:\"old\";N;s:3:\"new\";i:1;}s:8:\"editable\";a:2:{s:3:\"old\";N;s:3:\"new\";i:1;}s:9:\"deletable\";a:2:{s:3:\"old\";N;s:3:\"new\";i:1;}s:10:\"executable\";a:2:{s:3:\"old\";N;s:3:\"new\";i:0;}}');
+INSERT INTO `auth_audit_trail` (`id`, `action`, `action_description`, `url`, `ip_address`, `user_agent`, `user_id`, `org_id`, `details`) VALUES
+(179, 2, 'Created a resource. Table affected: auth_resources, Record Id modified:ORG_WARD', 'http://localhost/adgg/auth/resource/create?_pjax=%23Resources-grid-pjax', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0', 1, NULL, 'a:7:{s:2:\"id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:8:\"ORG_WARD\";}s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:5:\"WARDS\";}s:8:\"viewable\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:9:\"creatable\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:8:\"editable\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:9:\"deletable\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"executable\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}}'),
+(180, 2, 'Created a resource. Table affected: auth_resources, Record Id modified:ORG_VILLAGE', 'http://localhost/adgg/auth/resource/create?_pjax=%23Resources-grid-pjax', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0', 1, NULL, 'a:7:{s:2:\"id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:11:\"ORG_VILLAGE\";}s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:7:\"VILLAGE\";}s:8:\"viewable\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:9:\"creatable\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"0\";}s:8:\"editable\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"0\";}s:9:\"deletable\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"0\";}s:10:\"executable\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}}'),
+(181, 3, 'Updated a resource. Table affected: auth_resources, Record Id modified:ORG_VILLAGE', 'http://localhost/adgg/auth/resource/update?id=ORG_VILLAGE', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0', 1, NULL, 'a:1:{s:4:\"name\";a:2:{s:3:\"old\";s:7:\"VILLAGE\";s:3:\"new\";s:8:\"VILLAGES\";}}'),
+(182, 3, 'Updated a resource. Table affected: organization, Record Id modified:3', 'http://localhost/adgg/core/organization/update?id=3', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0', 1, NULL, 'a:2:{s:18:\"account_manager_id\";a:2:{s:3:\"old\";i:3;s:3:\"new\";N;}s:13:\"map_longitude\";a:2:{s:3:\"old\";s:11:\"39.66831744\";s:3:\"new\";s:17:\"39.66831744000001\";}}'),
+(183, 4, 'Deleted a resource. Table affected: organization, Record Id modified:6', 'http://localhost/adgg/core/organization/delete?id=6', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0', 1, NULL, 'a:37:{s:13:\"business_type\";a:2:{s:3:\"old\";N;s:3:\"new\";i:4;}s:7:\"country\";a:2:{s:3:\"old\";N;s:3:\"new\";s:2:\"KE\";}s:18:\"contact_first_name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:8:\"Fredrick\";}s:17:\"contact_last_name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:7:\"Onyango\";}s:13:\"contact_phone\";a:2:{s:3:\"old\";N;s:3:\"new\";s:10:\"0724962380\";}s:13:\"contact_email\";a:2:{s:3:\"old\";N;s:3:\"new\";s:25:\"fred@competamillman.co.ke\";}s:6:\"status\";a:2:{s:3:\"old\";N;s:3:\"new\";i:2;}s:11:\"is_approved\";a:2:{s:3:\"old\";N;s:3:\"new\";i:1;}s:11:\"approved_by\";a:2:{s:3:\"old\";N;s:3:\"new\";i:1;}s:20:\"business_entity_type\";a:2:{s:3:\"old\";N;s:3:\"new\";i:1;}s:33:\"applicant_business_ownership_type\";a:2:{s:3:\"old\";N;s:3:\"new\";i:1;}s:19:\"is_credit_requested\";a:2:{s:3:\"old\";N;s:3:\"new\";i:1;}s:11:\"is_supplier\";a:2:{s:3:\"old\";N;s:3:\"new\";i:0;}s:9:\"is_member\";a:2:{s:3:\"old\";N;s:3:\"new\";i:1;}s:18:\"account_manager_id\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:16:\"application_date\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"date_approved\";a:2:{s:3:\"old\";N;s:3:\"new\";s:10:\"2019-05-27\";}s:11:\"approved_at\";a:2:{s:3:\"old\";N;s:3:\"new\";s:19:\"2019-05-27 08:41:19\";}s:19:\"membership_end_date\";a:2:{s:3:\"old\";N;s:3:\"new\";s:10:\"2019-05-27\";}s:10:\"account_no\";a:2:{s:3:\"old\";N;s:3:\"new\";s:5:\"10006\";}s:14:\"applicant_name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:8:\"Fredrick\";}s:19:\"contact_middle_name\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:15:\"daily_customers\";a:2:{s:3:\"old\";N;s:3:\"new\";s:4:\"500+\";}s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:16:\"Nairobi Hospital\";}s:15:\"applicant_email\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:6:\"county\";a:2:{s:3:\"old\";N;s:3:\"new\";s:7:\"Nairobi\";}s:10:\"sub_county\";a:2:{s:3:\"old\";N;s:3:\"new\";s:15:\"Dagoretti South\";}s:6:\"street\";a:2:{s:3:\"old\";N;s:3:\"new\";s:11:\"Naivasha Rd\";}s:4:\"town\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:14:\"postal_address\";a:2:{s:3:\"old\";N;s:3:\"new\";s:27:\"P.O. Box 20202-0001 NAIROBI\";}s:14:\"approval_notes\";a:2:{s:3:\"old\";N;s:3:\"new\";s:8:\"Approved\";}s:11:\"map_address\";a:2:{s:3:\"old\";N;s:3:\"new\";s:50:\"P. O. Box 15000 Argwings Kodhek Rd, Nairobi, Kenya\";}s:15:\"applicant_phone\";a:2:{s:3:\"old\";N;s:3:\"new\";s:10:\"0724962380\";}s:17:\"contact_alt_phone\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"contact_title\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:12:\"map_latitude\";a:2:{s:3:\"old\";N;s:3:\"new\";s:11:\"-1.29586300\";}s:13:\"map_longitude\";a:2:{s:3:\"old\";N;s:3:\"new\";s:11:\"36.80339950\";}}'),
+(184, 4, 'Deleted a resource. Table affected: organization, Record Id modified:1', 'http://localhost/adgg/core/organization/delete?id=1', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0', 1, NULL, 'a:37:{s:13:\"business_type\";a:2:{s:3:\"old\";N;s:3:\"new\";i:3;}s:7:\"country\";a:2:{s:3:\"old\";N;s:3:\"new\";s:2:\"KE\";}s:18:\"contact_first_name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:8:\"FREDRICK\";}s:17:\"contact_last_name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:6:\"OCHOLA\";}s:13:\"contact_phone\";a:2:{s:3:\"old\";N;s:3:\"new\";s:10:\"0724962380\";}s:13:\"contact_email\";a:2:{s:3:\"old\";N;s:3:\"new\";s:25:\"fred@competamillman.co.ke\";}s:6:\"status\";a:2:{s:3:\"old\";N;s:3:\"new\";i:2;}s:11:\"is_approved\";a:2:{s:3:\"old\";N;s:3:\"new\";i:1;}s:11:\"approved_by\";a:2:{s:3:\"old\";N;s:3:\"new\";i:1;}s:20:\"business_entity_type\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:33:\"applicant_business_ownership_type\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:19:\"is_credit_requested\";a:2:{s:3:\"old\";N;s:3:\"new\";i:0;}s:11:\"is_supplier\";a:2:{s:3:\"old\";N;s:3:\"new\";i:0;}s:9:\"is_member\";a:2:{s:3:\"old\";N;s:3:\"new\";i:1;}s:18:\"account_manager_id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:1;}s:16:\"application_date\";a:2:{s:3:\"old\";N;s:3:\"new\";s:10:\"2019-05-08\";}s:13:\"date_approved\";a:2:{s:3:\"old\";N;s:3:\"new\";s:10:\"2019-05-23\";}s:11:\"approved_at\";a:2:{s:3:\"old\";N;s:3:\"new\";s:19:\"2019-05-24 01:26:52\";}s:19:\"membership_end_date\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:10:\"account_no\";a:2:{s:3:\"old\";N;s:3:\"new\";s:5:\"10001\";}s:14:\"applicant_name\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:19:\"contact_middle_name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:7:\"ONYANGO\";}s:15:\"daily_customers\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:11:\"Melchizedek\";}s:15:\"applicant_email\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:6:\"county\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:10:\"sub_county\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:6:\"street\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:4:\"town\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:14:\"postal_address\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:14:\"approval_notes\";a:2:{s:3:\"old\";N;s:3:\"new\";s:25:\"This was approved by Fred\";}s:11:\"map_address\";a:2:{s:3:\"old\";N;s:3:\"new\";s:24:\"KU Plaza, Nairobi, Kenya\";}s:15:\"applicant_phone\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:17:\"contact_alt_phone\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"contact_title\";a:2:{s:3:\"old\";N;s:3:\"new\";s:3:\"MR.\";}s:12:\"map_latitude\";a:2:{s:3:\"old\";N;s:3:\"new\";s:11:\"-1.29206590\";}s:13:\"map_longitude\";a:2:{s:3:\"old\";N;s:3:\"new\";s:11:\"36.82194620\";}}'),
+(185, 4, 'Deleted a resource. Table affected: organization, Record Id modified:2', 'http://localhost/adgg/core/organization/delete?id=2', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0', 1, NULL, 'a:37:{s:13:\"business_type\";a:2:{s:3:\"old\";N;s:3:\"new\";i:4;}s:7:\"country\";a:2:{s:3:\"old\";N;s:3:\"new\";s:2:\"KE\";}s:18:\"contact_first_name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:7:\"STEPHEN\";}s:17:\"contact_last_name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:5:\"MAINA\";}s:13:\"contact_phone\";a:2:{s:3:\"old\";N;s:3:\"new\";s:10:\"0724962381\";}s:13:\"contact_email\";a:2:{s:3:\"old\";N;s:3:\"new\";s:28:\"stephen@competamillman.co.ke\";}s:6:\"status\";a:2:{s:3:\"old\";N;s:3:\"new\";i:2;}s:11:\"is_approved\";a:2:{s:3:\"old\";N;s:3:\"new\";i:1;}s:11:\"approved_by\";a:2:{s:3:\"old\";N;s:3:\"new\";i:1;}s:20:\"business_entity_type\";a:2:{s:3:\"old\";N;s:3:\"new\";i:1;}s:33:\"applicant_business_ownership_type\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:19:\"is_credit_requested\";a:2:{s:3:\"old\";N;s:3:\"new\";i:0;}s:11:\"is_supplier\";a:2:{s:3:\"old\";N;s:3:\"new\";i:0;}s:9:\"is_member\";a:2:{s:3:\"old\";N;s:3:\"new\";i:1;}s:18:\"account_manager_id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:1;}s:16:\"application_date\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"date_approved\";a:2:{s:3:\"old\";N;s:3:\"new\";s:10:\"2019-05-24\";}s:11:\"approved_at\";a:2:{s:3:\"old\";N;s:3:\"new\";s:19:\"2019-05-23 23:29:04\";}s:19:\"membership_end_date\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:10:\"account_no\";a:2:{s:3:\"old\";N;s:3:\"new\";s:5:\"10002\";}s:14:\"applicant_name\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:19:\"contact_middle_name\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:15:\"daily_customers\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:17:\"Goodlife Pharmacy\";}s:15:\"applicant_email\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:6:\"county\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:10:\"sub_county\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:6:\"street\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:4:\"town\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:14:\"postal_address\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:14:\"approval_notes\";a:2:{s:3:\"old\";N;s:3:\"new\";s:25:\"This was approved by Fred\";}s:11:\"map_address\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:15:\"applicant_phone\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:17:\"contact_alt_phone\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"contact_title\";a:2:{s:3:\"old\";N;s:3:\"new\";s:3:\"DR.\";}s:12:\"map_latitude\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"map_longitude\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}}'),
+(186, 4, 'Deleted a resource. Table affected: organization, Record Id modified:3', 'http://localhost/adgg/core/organization/delete?id=3', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0', 1, NULL, 'a:37:{s:13:\"business_type\";a:2:{s:3:\"old\";N;s:3:\"new\";i:5;}s:7:\"country\";a:2:{s:3:\"old\";N;s:3:\"new\";s:2:\"KE\";}s:18:\"contact_first_name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:5:\"Moses\";}s:17:\"contact_last_name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:5:\"Maina\";}s:13:\"contact_phone\";a:2:{s:3:\"old\";N;s:3:\"new\";s:11:\"07259393393\";}s:13:\"contact_email\";a:2:{s:3:\"old\";N;s:3:\"new\";s:24:\"mosesmain@fourways.co.ke\";}s:6:\"status\";a:2:{s:3:\"old\";N;s:3:\"new\";i:2;}s:11:\"is_approved\";a:2:{s:3:\"old\";N;s:3:\"new\";i:1;}s:11:\"approved_by\";a:2:{s:3:\"old\";N;s:3:\"new\";i:1;}s:20:\"business_entity_type\";a:2:{s:3:\"old\";N;s:3:\"new\";i:1;}s:33:\"applicant_business_ownership_type\";a:2:{s:3:\"old\";N;s:3:\"new\";i:1;}s:19:\"is_credit_requested\";a:2:{s:3:\"old\";N;s:3:\"new\";i:1;}s:11:\"is_supplier\";a:2:{s:3:\"old\";N;s:3:\"new\";i:0;}s:9:\"is_member\";a:2:{s:3:\"old\";N;s:3:\"new\";i:1;}s:18:\"account_manager_id\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:16:\"application_date\";a:2:{s:3:\"old\";N;s:3:\"new\";s:10:\"2019-05-24\";}s:13:\"date_approved\";a:2:{s:3:\"old\";N;s:3:\"new\";s:10:\"2019-05-24\";}s:11:\"approved_at\";a:2:{s:3:\"old\";N;s:3:\"new\";s:19:\"2019-05-24 12:07:53\";}s:19:\"membership_end_date\";a:2:{s:3:\"old\";N;s:3:\"new\";s:10:\"2019-12-31\";}s:10:\"account_no\";a:2:{s:3:\"old\";N;s:3:\"new\";s:5:\"10003\";}s:14:\"applicant_name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:11:\"Moses Maina\";}s:19:\"contact_middle_name\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:15:\"daily_customers\";a:2:{s:3:\"old\";N;s:3:\"new\";s:6:\"50-100\";}s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:9:\"Four Ways\";}s:15:\"applicant_email\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:6:\"county\";a:2:{s:3:\"old\";N;s:3:\"new\";s:7:\"Nairobi\";}s:10:\"sub_county\";a:2:{s:3:\"old\";N;s:3:\"new\";s:15:\"Dagoretti South\";}s:6:\"street\";a:2:{s:3:\"old\";N;s:3:\"new\";s:11:\"Naivasha Rd\";}s:4:\"town\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:14:\"postal_address\";a:2:{s:3:\"old\";N;s:3:\"new\";s:27:\"P.O. Box 20202-0001 NAIROBI\";}s:14:\"approval_notes\";a:2:{s:3:\"old\";N;s:3:\"new\";s:21:\"Registration approved\";}s:11:\"map_address\";a:2:{s:3:\"old\";N;s:3:\"new\";s:37:\"Sheikh Abdullas F. Rd, Mombasa, Kenya\";}s:15:\"applicant_phone\";a:2:{s:3:\"old\";N;s:3:\"new\";s:11:\"07259393393\";}s:17:\"contact_alt_phone\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"contact_title\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:12:\"map_latitude\";a:2:{s:3:\"old\";N;s:3:\"new\";s:11:\"-4.04359335\";}s:13:\"map_longitude\";a:2:{s:3:\"old\";N;s:3:\"new\";s:11:\"39.66831744\";}}'),
+(187, 2, 'Created a resource. Table affected: organization, Record Id modified:8', 'http://localhost/adgg/core/organization/create?_pjax=%23Organization-grid-pjax', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0', 1, NULL, 'a:37:{s:7:\"country\";a:2:{s:3:\"old\";N;s:3:\"new\";s:2:\"KE\";}s:18:\"contact_first_name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:8:\"Fredrick\";}s:17:\"contact_last_name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:7:\"Onyango\";}s:13:\"contact_phone\";a:2:{s:3:\"old\";N;s:3:\"new\";s:13:\"+254728282828\";}s:13:\"contact_email\";a:2:{s:3:\"old\";N;s:3:\"new\";s:17:\"info@smsmsm.co.ke\";}s:13:\"business_type\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:6:\"status\";a:2:{s:3:\"old\";N;s:3:\"new\";i:1;}s:11:\"is_approved\";a:2:{s:3:\"old\";N;s:3:\"new\";i:0;}s:11:\"approved_by\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:20:\"business_entity_type\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:33:\"applicant_business_ownership_type\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:19:\"is_credit_requested\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:11:\"is_supplier\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:9:\"is_member\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:18:\"account_manager_id\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:16:\"application_date\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"date_approved\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:11:\"approved_at\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:19:\"membership_end_date\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:10:\"account_no\";a:2:{s:3:\"old\";N;s:3:\"new\";s:5:\"10008\";}s:14:\"applicant_name\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:19:\"contact_middle_name\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:15:\"daily_customers\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:5:\"Kenya\";}s:15:\"applicant_email\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:6:\"county\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:10:\"sub_county\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:6:\"street\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:4:\"town\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:14:\"postal_address\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:14:\"approval_notes\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:11:\"map_address\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:15:\"applicant_phone\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:17:\"contact_alt_phone\";a:2:{s:3:\"old\";N;s:3:\"new\";s:13:\"+020209282828\";}s:13:\"contact_title\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:12:\"map_latitude\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"map_longitude\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}}'),
+(188, 2, 'Created a resource. Table affected: organization, Record Id modified:9', 'http://localhost/adgg/core/organization/create', '::1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36', 1, NULL, 'a:37:{s:7:\"country\";a:2:{s:3:\"old\";N;s:3:\"new\";s:2:\"ET\";}s:18:\"contact_first_name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:8:\"Fredrick\";}s:17:\"contact_last_name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:6:\"Ochola\";}s:13:\"contact_phone\";a:2:{s:3:\"old\";N;s:3:\"new\";s:10:\"0723322322\";}s:13:\"contact_email\";a:2:{s:3:\"old\";N;s:3:\"new\";s:14:\"info@cgiar.com\";}s:13:\"business_type\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:6:\"status\";a:2:{s:3:\"old\";N;s:3:\"new\";i:1;}s:11:\"is_approved\";a:2:{s:3:\"old\";N;s:3:\"new\";i:0;}s:11:\"approved_by\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:20:\"business_entity_type\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:33:\"applicant_business_ownership_type\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:19:\"is_credit_requested\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:11:\"is_supplier\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:9:\"is_member\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:18:\"account_manager_id\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:16:\"application_date\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"date_approved\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:11:\"approved_at\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:19:\"membership_end_date\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:10:\"account_no\";a:2:{s:3:\"old\";N;s:3:\"new\";s:5:\"10009\";}s:14:\"applicant_name\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:19:\"contact_middle_name\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:15:\"daily_customers\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:8:\"Ethiopia\";}s:15:\"applicant_email\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:6:\"county\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:10:\"sub_county\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:6:\"street\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:4:\"town\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:14:\"postal_address\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:14:\"approval_notes\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:11:\"map_address\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:15:\"applicant_phone\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:17:\"contact_alt_phone\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"contact_title\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:12:\"map_latitude\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"map_longitude\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}}'),
+(189, 2, 'Created a resource. Table affected: auth_resources, Record Id modified:FARM', 'http://localhost/adgg/auth/resource/create', '::1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36', 1, NULL, 'a:7:{s:2:\"id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:4:\"FARM\";}s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:5:\"FARMS\";}s:8:\"viewable\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:9:\"creatable\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:8:\"editable\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:9:\"deletable\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"executable\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}}'),
+(190, 2, 'Created a resource. Table affected: auth_resources, Record Id modified:HERDS', 'http://localhost/adgg/auth/resource/create?_pjax=%23Resources-grid-pjax', '::1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36', 1, NULL, 'a:7:{s:2:\"id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:5:\"HERDS\";}s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:5:\"HERDS\";}s:8:\"viewable\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:9:\"creatable\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:8:\"editable\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:9:\"deletable\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"executable\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}}'),
+(191, 2, 'Created a resource. Table affected: auth_resources, Record Id modified:HERD_EVENT', 'http://localhost/adgg/auth/resource/create?_pjax=%23Resources-grid-pjax', '::1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36', 1, NULL, 'a:7:{s:2:\"id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:10:\"HERD_EVENT\";}s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:11:\"HERD EVENTS\";}s:8:\"viewable\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:9:\"creatable\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:8:\"editable\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:9:\"deletable\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"executable\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}}'),
+(192, 2, 'Created a resource. Table affected: auth_roles, Record Id modified:1', 'http://localhost/adgg/auth/role/create', '::1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36', 1, NULL, 'a:5:{s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:15:\"Project Manager\";}s:8:\"readonly\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:8:\"level_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"2\";}s:9:\"is_active\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:11:\"description\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}}'),
+(193, 2, 'Created a resource. Table affected: auth_roles, Record Id modified:2', 'http://localhost/adgg/auth/role/create', '::1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36', 1, NULL, 'a:5:{s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:6:\"AITECH\";}s:8:\"readonly\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:8:\"level_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"5\";}s:9:\"is_active\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:11:\"description\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}}'),
+(194, 2, 'Created a resource. Table affected: auth_roles, Record Id modified:3', 'http://localhost/adgg/auth/role/create', '::1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36', 1, NULL, 'a:5:{s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:15:\"Country Manager\";}s:8:\"readonly\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:8:\"level_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"3\";}s:9:\"is_active\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:11:\"description\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}}'),
+(195, 2, 'Created a resource. Table affected: auth_permission, Record Id modified:33', 'http://localhost/adgg/auth/role/view?id=3', '::1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36', 1, NULL, 'a:6:{s:7:\"role_id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:3;}s:11:\"resource_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:16:\"AUTH_AUDIT_TRAIL\";}s:8:\"can_view\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_create\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_update\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_delete\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}}'),
+(196, 2, 'Created a resource. Table affected: auth_permission, Record Id modified:34', 'http://localhost/adgg/auth/role/view?id=3', '::1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36', 1, NULL, 'a:6:{s:7:\"role_id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:3;}s:11:\"resource_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:9:\"AUTH_USER\";}s:8:\"can_view\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_create\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_update\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_delete\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}}'),
+(197, 2, 'Created a resource. Table affected: auth_permission, Record Id modified:35', 'http://localhost/adgg/auth/role/view?id=3', '::1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36', 1, NULL, 'a:6:{s:7:\"role_id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:3;}s:11:\"resource_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:13:\"CONF_SETTINGS\";}s:8:\"can_view\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_create\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_update\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_delete\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}}'),
+(198, 2, 'Created a resource. Table affected: auth_permission, Record Id modified:36', 'http://localhost/adgg/auth/role/view?id=3', '::1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36', 1, NULL, 'a:6:{s:7:\"role_id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:3;}s:11:\"resource_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:4:\"FARM\";}s:8:\"can_view\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_create\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_update\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_delete\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}}'),
+(199, 2, 'Created a resource. Table affected: auth_permission, Record Id modified:37', 'http://localhost/adgg/auth/role/view?id=3', '::1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36', 1, NULL, 'a:6:{s:7:\"role_id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:3;}s:11:\"resource_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:4:\"HELP\";}s:8:\"can_view\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_create\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_update\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_delete\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}}'),
+(200, 2, 'Created a resource. Table affected: auth_permission, Record Id modified:38', 'http://localhost/adgg/auth/role/view?id=3', '::1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36', 1, NULL, 'a:6:{s:7:\"role_id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:3;}s:11:\"resource_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:10:\"HERD_EVENT\";}s:8:\"can_view\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_create\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_update\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_delete\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}}'),
+(201, 2, 'Created a resource. Table affected: auth_permission, Record Id modified:39', 'http://localhost/adgg/auth/role/view?id=3', '::1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36', 1, NULL, 'a:6:{s:7:\"role_id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:3;}s:11:\"resource_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:5:\"HERDS\";}s:8:\"can_view\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_create\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_update\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_delete\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}}'),
+(202, 2, 'Created a resource. Table affected: auth_permission, Record Id modified:40', 'http://localhost/adgg/auth/role/view?id=3', '::1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36', 1, NULL, 'a:6:{s:7:\"role_id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:3;}s:11:\"resource_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:11:\"ORG_COUNTRY\";}s:8:\"can_view\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_create\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_update\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_delete\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}}'),
+(203, 2, 'Created a resource. Table affected: auth_permission, Record Id modified:41', 'http://localhost/adgg/auth/role/view?id=3', '::1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36', 1, NULL, 'a:6:{s:7:\"role_id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:3;}s:11:\"resource_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:12:\"ORG_DISTRICT\";}s:8:\"can_view\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_create\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_update\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_delete\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}}'),
+(204, 2, 'Created a resource. Table affected: auth_permission, Record Id modified:42', 'http://localhost/adgg/auth/role/view?id=3', '::1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36', 1, NULL, 'a:6:{s:7:\"role_id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:3;}s:11:\"resource_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:10:\"ORG_REGION\";}s:8:\"can_view\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_create\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_update\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_delete\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}}'),
+(205, 2, 'Created a resource. Table affected: auth_permission, Record Id modified:43', 'http://localhost/adgg/auth/role/view?id=3', '::1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36', 1, NULL, 'a:6:{s:7:\"role_id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:3;}s:11:\"resource_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:11:\"ORG_VILLAGE\";}s:8:\"can_view\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_create\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:10:\"can_update\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:10:\"can_delete\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}}'),
+(206, 2, 'Created a resource. Table affected: auth_permission, Record Id modified:44', 'http://localhost/adgg/auth/role/view?id=3', '::1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36', 1, NULL, 'a:6:{s:7:\"role_id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:3;}s:11:\"resource_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:8:\"ORG_WARD\";}s:8:\"can_view\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_create\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_update\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_delete\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}}'),
+(207, 2, 'Created a resource. Table affected: auth_permission, Record Id modified:45', 'http://localhost/adgg/auth/role/view?id=3', '::1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36', 1, NULL, 'a:6:{s:7:\"role_id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:3;}s:11:\"resource_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:7:\"REPORTS\";}s:8:\"can_view\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_create\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_update\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_delete\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}}'),
+(208, 2, 'Created a resource. Table affected: auth_permission, Record Id modified:46', 'http://localhost/adgg/auth/role/view?id=3', '::1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36', 1, NULL, 'a:6:{s:7:\"role_id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:3;}s:11:\"resource_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:16:\"REPORTS_SETTINGS\";}s:8:\"can_view\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_create\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_update\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_delete\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}}'),
+(209, 2, 'Created a resource. Table affected: auth_permission, Record Id modified:47', 'http://localhost/adgg/auth/role/view?id=3', '::1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36', 1, NULL, 'a:6:{s:7:\"role_id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:3;}s:11:\"resource_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:10:\"RES_EXPORT\";}s:8:\"can_view\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_create\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:10:\"can_update\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:10:\"can_delete\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}}'),
+(210, 2, 'Created a resource. Table affected: auth_users, Record Id modified:2', 'http://localhost/adgg/auth/user/create', '::1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36', 1, NULL, 'a:11:{s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:12:\"David Mogaka\";}s:8:\"username\";a:2:{s:3:\"old\";N;s:3:\"new\";s:7:\"dmogaka\";}s:5:\"email\";a:2:{s:3:\"old\";N;s:3:\"new\";s:17:\"dmogaka@gmail.com\";}s:8:\"level_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"3\";}s:7:\"role_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"3\";}s:6:\"org_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"9\";}s:22:\"auto_generate_password\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"0\";}s:9:\"branch_id\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"profile_image\";a:2:{s:3:\"old\";N;s:3:\"new\";s:40:\"491d83e3-688e-4d07-a01c-664c9292d282.jpg\";}s:8:\"timezone\";a:2:{s:3:\"old\";N;s:3:\"new\";s:14:\"Africa/Nairobi\";}s:5:\"phone\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}}'),
+(211, 2, 'Created a resource. Table affected: auth_users, Record Id modified:3', 'http://localhost/adgg/auth/user/create?level_id=3&org_id=9', '::1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36', 1, NULL, 'a:11:{s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:15:\"Harrison Njamba\";}s:8:\"username\";a:2:{s:3:\"old\";N;s:3:\"new\";s:8:\"h.njamba\";}s:5:\"email\";a:2:{s:3:\"old\";N;s:3:\"new\";s:18:\"harrison@gmail.com\";}s:8:\"level_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"3\";}s:7:\"role_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"2\";}s:6:\"org_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"9\";}s:22:\"auto_generate_password\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"0\";}s:9:\"branch_id\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"profile_image\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:8:\"timezone\";a:2:{s:3:\"old\";N;s:3:\"new\";s:14:\"Africa/Nairobi\";}s:5:\"phone\";a:2:{s:3:\"old\";N;s:3:\"new\";s:14:\"+2542929920202\";}}'),
+(212, 3, 'Updated a resource. Table affected: auth_user_levels, Record Id modified:4', 'http://localhost/adgg/auth/user-level/update?id=4', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0', 1, NULL, 'a:1:{s:4:\"name\";a:2:{s:3:\"old\";s:11:\"REGION USER\";s:3:\"new\";s:19:\"COUNTRY UNIT 1 USER\";}}'),
+(213, 3, 'Updated a resource. Table affected: auth_user_levels, Record Id modified:5', 'http://localhost/adgg/auth/user-level/update?id=5', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0', 1, NULL, 'a:1:{s:4:\"name\";a:2:{s:3:\"old\";s:13:\"DISTRICT USER\";s:3:\"new\";s:18:\"COUNTRY UNIT2 USER\";}}'),
+(214, 3, 'Updated a resource. Table affected: auth_user_levels, Record Id modified:6', 'http://localhost/adgg/auth/user-level/update?id=6', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0', 1, NULL, 'a:1:{s:4:\"name\";a:2:{s:3:\"old\";s:9:\"WARD USER\";s:3:\"new\";s:18:\"COUNTRY UNIT3 USER\";}}'),
+(215, 3, 'Updated a resource. Table affected: auth_user_levels, Record Id modified:7', 'http://localhost/adgg/auth/user-level/update?id=7', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0', 1, NULL, 'a:1:{s:4:\"name\";a:2:{s:3:\"old\";s:12:\"VILLAGE USER\";s:3:\"new\";s:18:\"COUNTRY UNIT4 USER\";}}'),
+(216, 2, 'Created a resource. Table affected: organization, Record Id modified:10', 'http://localhost/adgg/core/organization/create', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0', 1, NULL, 'a:12:{s:7:\"country\";a:2:{s:3:\"old\";N;s:3:\"new\";s:2:\"KE\";}s:10:\"unit1_name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:6:\"Region\";}s:10:\"unit2_name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:8:\"District\";}s:10:\"unit3_name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:4:\"Ward\";}s:10:\"unit4_name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:7:\"Village\";}s:9:\"is_active\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:4:\"code\";a:2:{s:3:\"old\";N;s:3:\"new\";s:5:\"10010\";}s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:5:\"Kenya\";}s:13:\"contact_email\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:4:\"uuid\";a:2:{s:3:\"old\";N;s:3:\"new\";s:36:\"59fe84b1-2636-4eb6-97cf-2d0546c718f8\";}s:14:\"contact_person\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"contact_phone\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}}'),
+(217, 2, 'Created a resource. Table affected: organization_units, Record Id modified:9', 'http://localhost/adgg/core/organization-units/create?level=1&org_id=59fe84b1-2636-4eb6-97cf-2d0546c718f8&tab=2', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0', 1, NULL, 'a:9:{s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:10:\"Region One\";}s:5:\"level\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:6:\"org_id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:10;}s:9:\"parent_id\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:9:\"is_active\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:4:\"code\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:12:\"contact_name\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"contact_email\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"contact_phone\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}}'),
+(218, 2, 'Created a resource. Table affected: organization_units, Record Id modified:10', 'http://localhost/adgg/core/organization-units/create?level=1&org_id=59fe84b1-2636-4eb6-97cf-2d0546c718f8&tab=2&_pjax=%23OrganizationUnits-grid-pjax', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0', 1, NULL, 'a:9:{s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:10:\"Region Two\";}s:5:\"level\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:6:\"org_id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:10;}s:9:\"parent_id\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:9:\"is_active\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:4:\"code\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:12:\"contact_name\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"contact_email\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"contact_phone\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}}'),
+(219, 2, 'Created a resource. Table affected: organization_units, Record Id modified:11', 'http://localhost/adgg/core/organization-units/create?level=1&org_id=59fe84b1-2636-4eb6-97cf-2d0546c718f8&tab=2&_pjax=%23OrganizationUnits-grid-pjax', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0', 1, NULL, 'a:9:{s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:12:\"Region Three\";}s:5:\"level\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:6:\"org_id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:10;}s:9:\"parent_id\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:9:\"is_active\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:4:\"code\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:12:\"contact_name\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"contact_email\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"contact_phone\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}}'),
+(220, 2, 'Created a resource. Table affected: organization_units, Record Id modified:12', 'http://localhost/adgg/core/organization-units/create?level=1&org_id=59fe84b1-2636-4eb6-97cf-2d0546c718f8&tab=2&_pjax=%23OrganizationUnits-grid-pjax', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0', 1, NULL, 'a:9:{s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:11:\"Region Four\";}s:5:\"level\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"1\";}s:6:\"org_id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:10;}s:9:\"parent_id\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:9:\"is_active\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:4:\"code\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:12:\"contact_name\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"contact_email\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"contact_phone\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}}'),
+(221, 2, 'Created a resource. Table affected: organization_units, Record Id modified:13', 'http://localhost/adgg/core/organization-units/create?level=2&org_id=59fe84b1-2636-4eb6-97cf-2d0546c718f8&tab=3', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0', 1, NULL, 'a:9:{s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:12:\"District One\";}s:5:\"level\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"2\";}s:6:\"org_id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:10;}s:9:\"parent_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"9\";}s:9:\"is_active\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:4:\"code\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:12:\"contact_name\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"contact_email\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"contact_phone\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}}'),
+(222, 2, 'Created a resource. Table affected: organization_units, Record Id modified:14', 'http://localhost/adgg/core/organization-units/create?level=2&org_id=59fe84b1-2636-4eb6-97cf-2d0546c718f8&tab=3&_pjax=%23OrganizationUnits-grid-pjax', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0', 1, NULL, 'a:9:{s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:12:\"District Two\";}s:5:\"level\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"2\";}s:6:\"org_id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:10;}s:9:\"parent_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"9\";}s:9:\"is_active\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:4:\"code\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:12:\"contact_name\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"contact_email\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"contact_phone\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}}'),
+(223, 2, 'Created a resource. Table affected: organization_units, Record Id modified:15', 'http://localhost/adgg/core/organization-units/create?level=2&org_id=59fe84b1-2636-4eb6-97cf-2d0546c718f8&tab=3&_pjax=%23OrganizationUnits-grid-pjax', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0', 1, NULL, 'a:9:{s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:14:\"District Three\";}s:5:\"level\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"2\";}s:6:\"org_id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:10;}s:9:\"parent_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:2:\"10\";}s:9:\"is_active\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:4:\"code\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:12:\"contact_name\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"contact_email\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"contact_phone\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}}'),
+(224, 2, 'Created a resource. Table affected: organization_units, Record Id modified:16', 'http://localhost/adgg/core/organization-units/create?level=2&org_id=59fe84b1-2636-4eb6-97cf-2d0546c718f8&tab=3&_pjax=%23OrganizationUnits-grid-pjax', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0', 1, NULL, 'a:9:{s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:13:\"District Four\";}s:5:\"level\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"2\";}s:6:\"org_id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:10;}s:9:\"parent_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:2:\"10\";}s:9:\"is_active\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:4:\"code\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:12:\"contact_name\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"contact_email\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"contact_phone\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}}'),
+(225, 2, 'Created a resource. Table affected: organization_units, Record Id modified:17', 'http://localhost/adgg/core/organization-units/create?level=3&org_id=59fe84b1-2636-4eb6-97cf-2d0546c718f8&tab=4', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0', 1, NULL, 'a:9:{s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:8:\"Ward One\";}s:5:\"level\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"3\";}s:6:\"org_id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:10;}s:9:\"parent_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:2:\"13\";}s:9:\"is_active\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:4:\"code\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:12:\"contact_name\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"contact_email\";a:2:{s:3:\"old\";N;s:3:\"new\";s:19:\"mconyango@gmail.com\";}s:13:\"contact_phone\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}}'),
+(226, 2, 'Created a resource. Table affected: organization_units, Record Id modified:18', 'http://localhost/adgg/core/organization-units/create?level=3&org_id=59fe84b1-2636-4eb6-97cf-2d0546c718f8&tab=4&_pjax=%23OrganizationUnits-grid-pjax', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0', 1, NULL, 'a:9:{s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:8:\"Ward Two\";}s:5:\"level\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"3\";}s:6:\"org_id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:10;}s:9:\"parent_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:2:\"13\";}s:9:\"is_active\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:4:\"code\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:12:\"contact_name\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"contact_email\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"contact_phone\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}}'),
+(227, 3, 'Updated a resource. Table affected: organization_units, Record Id modified:18', 'http://localhost/adgg/core/organization-units/update?id=18', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0', 1, NULL, 'a:1:{s:9:\"parent_id\";a:2:{s:3:\"old\";i:13;s:3:\"new\";s:2:\"16\";}}'),
+(228, 2, 'Created a resource. Table affected: organization_units, Record Id modified:19', 'http://localhost/adgg/core/organization-units/create?level=3&org_id=59fe84b1-2636-4eb6-97cf-2d0546c718f8&tab=4', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0', 1, NULL, 'a:9:{s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:10:\"Ward Three\";}s:5:\"level\";a:2:{s:3:\"old\";N;s:3:\"new\";s:1:\"3\";}s:6:\"org_id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:10;}s:9:\"parent_id\";a:2:{s:3:\"old\";N;s:3:\"new\";s:2:\"15\";}s:9:\"is_active\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:4:\"code\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:12:\"contact_name\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"contact_email\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}s:13:\"contact_phone\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}}'),
+(229, 2, 'Created a resource. Table affected: core_master_list_type, Record Id modified:1', 'http://localhost/adgg/core/list-type/create', '127.0.0.1', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0', 1, NULL, 'a:4:{s:2:\"id\";a:2:{s:3:\"old\";N;s:3:\"new\";i:1;}s:4:\"name\";a:2:{s:3:\"old\";N;s:3:\"new\";s:19:\"House Hold (HH) Age\";}s:9:\"is_active\";a:2:{s:3:\"old\";N;s:3:\"new\";i:1;}s:11:\"description\";a:2:{s:3:\"old\";N;s:3:\"new\";N;}}');
 
 -- --------------------------------------------------------
 
@@ -226,15 +295,6 @@ CREATE TABLE `auth_log` (
   `userAgent` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Dumping data for table `auth_log`
---
-
-INSERT INTO `auth_log` (`id`, `userId`, `date`, `cookieBased`, `duration`, `error`, `ip`, `host`, `url`, `userAgent`) VALUES
-(1, 1, 1558900705, NULL, NULL, 'password', '127.0.0.1', 'localhost', 'http://localhost/medsource/auth/auth/login', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0'),
-(2, 1, 1558900708, NULL, NULL, 'password', '127.0.0.1', 'localhost', 'http://localhost/medsource/auth/auth/login', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0'),
-(3, 1, 1558900736, NULL, NULL, 'password', '127.0.0.1', 'localhost', 'http://localhost/medsource/auth/auth/login', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0');
-
 -- --------------------------------------------------------
 
 --
@@ -251,13 +311,6 @@ CREATE TABLE `auth_password_reset_history` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `created_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `auth_password_reset_history`
---
-
-INSERT INTO `auth_password_reset_history` (`id`, `user_id`, `old_password_hash`, `new_password_hash`, `ip_address`, `password_reset_token`, `created_by`) VALUES
-(1, 2, '$2y$13$kS4ta6GDhnOB3AqynYjn3u/yAEIB/giLk1ze3tzO4CsfqSF9HfVAa', '$2y$13$.FKU1MkHCDgctO4Bql43pec4nDStyUBPW0Yv4.gBfOSBPFj.8qjz2', NULL, NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -285,7 +338,6 @@ INSERT INTO `auth_permission` (`id`, `role_id`, `resource_id`, `can_view`, `can_
 (3, 1, 'AUTH_USER', 1, 1, 1, 1, 1),
 (4, 1, 'CONF_SETTINGS', 1, 1, 1, 1, 1),
 (5, 1, 'HELP', 1, 1, 1, 1, 1),
-(7, 1, 'PRODUCT', 1, 1, 1, 1, 1),
 (8, 1, 'REPORTS', 1, 1, 1, 1, 1),
 (9, 1, 'REPORTS_SETTINGS', 1, 1, 1, 1, 1),
 (10, 1, 'RES_EXPORT', 1, 1, 0, 0, 1),
@@ -293,7 +345,6 @@ INSERT INTO `auth_permission` (`id`, `role_id`, `resource_id`, `can_view`, `can_
 (13, 2, 'AUTH_USER', 1, 1, 1, 1, 1),
 (14, 2, 'CONF_SETTINGS', 1, 1, 1, 1, 1),
 (15, 2, 'HELP', 1, 1, 1, 1, 1),
-(17, 2, 'PRODUCT', 1, 1, 1, 1, 1),
 (18, 2, 'REPORTS', 1, 1, 1, 1, 1),
 (19, 2, 'REPORTS_SETTINGS', 1, 1, 1, 1, 1),
 (20, 2, 'RES_EXPORT', 1, 1, 0, 0, 1),
@@ -301,12 +352,26 @@ INSERT INTO `auth_permission` (`id`, `role_id`, `resource_id`, `can_view`, `can_
 (23, 4, 'AUTH_USER', 1, 1, 1, 1, 1),
 (24, 4, 'CONF_SETTINGS', 0, 1, 1, 1, 1),
 (25, 4, 'HELP', 1, 1, 1, 1, 1),
-(26, 4, 'ORG_MEMBER', 1, 1, 1, 1, 1),
-(28, 4, 'PRODUCT', 1, 1, 1, 1, 1),
+(26, 4, 'ORG_COUNTRY', 1, 1, 1, 1, 1),
 (29, 4, 'REPORTS', 1, 1, 1, 1, 1),
 (30, 4, 'REPORTS_SETTINGS', 1, 1, 1, 1, 1),
 (31, 4, 'RES_EXPORT', 1, 1, 0, 0, 1),
-(32, 4, 'ORG_SUPPLIER', 1, 1, 1, 1, 1);
+(32, 4, 'ORG_DISTRICT', 1, 1, 1, 1, 1),
+(33, 3, 'AUTH_AUDIT_TRAIL', 1, 1, 1, 1, 1),
+(34, 3, 'AUTH_USER', 1, 1, 1, 1, 1),
+(35, 3, 'CONF_SETTINGS', 1, 1, 1, 1, 1),
+(36, 3, 'FARM', 1, 1, 1, 1, 1),
+(37, 3, 'HELP', 1, 1, 1, 1, 1),
+(38, 3, 'HERD_EVENT', 1, 1, 1, 1, 1),
+(39, 3, 'HERDS', 1, 1, 1, 1, 1),
+(40, 3, 'ORG_COUNTRY', 1, 1, 1, 1, 1),
+(41, 3, 'ORG_DISTRICT', 1, 1, 1, 1, 1),
+(42, 3, 'ORG_REGION', 1, 1, 1, 1, 1),
+(43, 3, 'ORG_VILLAGE', 1, 0, 0, 0, 1),
+(44, 3, 'ORG_WARD', 1, 1, 1, 1, 1),
+(45, 3, 'REPORTS', 1, 1, 1, 1, 1),
+(46, 3, 'REPORTS_SETTINGS', 1, 1, 1, 1, 1),
+(47, 3, 'RES_EXPORT', 1, 1, 0, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -333,11 +398,15 @@ INSERT INTO `auth_resources` (`id`, `name`, `viewable`, `creatable`, `editable`,
 ('AUTH_ROLE', 'ROLES', 1, 1, 1, 1, 0),
 ('AUTH_USER', 'USER MANAGEMENT', 1, 1, 1, 1, 0),
 ('CONF_SETTINGS', 'SETTINGS', 1, 1, 1, 1, 0),
+('FARM', 'FARMS', 1, 1, 1, 1, 0),
 ('HELP', 'HELP MODULE', 1, 1, 1, 1, 1),
-('ORG_MEMBER', 'MEMBERS (PHARMACIES, HOSPITALS AND CLINICS)', 1, 1, 1, 1, 0),
-('ORG_REGISTRATION_DOCUMENT', 'REGISTRATION DOCUMENTS', 1, 1, 1, 1, 0),
-('ORG_SUPPLIER', 'SUPPLERS (DISTRIBUTORS AND MANUFACTURERS)', 1, 1, 1, 1, 0),
-('PRODUCT', 'PRODUCTS', 1, 1, 1, 1, 0),
+('HERD_EVENT', 'HERD EVENTS', 1, 1, 1, 1, 0),
+('HERDS', 'HERDS', 1, 1, 1, 1, 0),
+('ORG_COUNTRY', 'COUNTRIES', 1, 1, 1, 1, 0),
+('ORG_DISTRICT', 'DISTRICTS', 1, 1, 1, 1, 0),
+('ORG_REGION', 'REGIONS', 1, 1, 1, 1, 0),
+('ORG_VILLAGE', 'VILLAGES', 1, 0, 0, 0, 0),
+('ORG_WARD', 'WARDS', 1, 1, 1, 1, 0),
 ('REPORTS', 'REPORTS', 1, 1, 1, 1, 1),
 ('REPORTS_SETTINGS', 'REPORTS SETTINGS', 1, 1, 1, 1, 0),
 ('RES_EXPORT', 'EXPORTING/PRINTING DATA', 1, 1, 0, 0, 0);
@@ -364,9 +433,9 @@ CREATE TABLE `auth_roles` (
 --
 
 INSERT INTO `auth_roles` (`id`, `name`, `description`, `readonly`, `level_id`, `is_active`, `created_at`, `created_by`) VALUES
-(1, 'Administrator', NULL, 0, 3, 1, '2018-10-12 08:43:44', 1),
-(2, 'System Admin Role', NULL, 0, 2, 1, '2018-10-29 12:41:12', 1),
-(4, 'Pharmacy', NULL, 0, 3, 1, '2019-05-22 13:40:11', 1);
+(1, 'Project Manager', NULL, 0, 2, 1, '2019-05-31 08:00:32', 1),
+(2, 'AITECH', NULL, 0, 5, 1, '2019-05-31 08:03:21', 1),
+(3, 'Country Manager', NULL, 0, 3, 1, '2019-05-31 08:12:02', 1);
 
 -- --------------------------------------------------------
 
@@ -402,7 +471,7 @@ CREATE TABLE `auth_users` (
   `deleted_at` timestamp NULL DEFAULT NULL,
   `deleted_by` int(11) DEFAULT NULL,
   `last_login` timestamp NULL DEFAULT NULL,
-  `uuid` varchar(256) COLLATE utf8_unicode_ci NOT NULL
+  `uuid` varchar(256) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ROW_FORMAT=COMPACT;
 
 --
@@ -410,11 +479,7 @@ CREATE TABLE `auth_users` (
 --
 
 INSERT INTO `auth_users` (`id`, `name`, `username`, `phone`, `email`, `status`, `timezone`, `password_hash`, `password_reset_token`, `auth_key`, `account_activation_token`, `level_id`, `org_id`, `is_main_account`, `role_id`, `profile_image`, `require_password_change`, `auto_generate_password`, `branch_id`, `created_by`, `updated_at`, `updated_by`, `is_deleted`, `deleted_at`, `deleted_by`, `last_login`, `uuid`) VALUES
-(1, 'Fredrick Ochola', 'admin', '0724962380', 'mconyango@gmail.com', 1, 'Africa/Nairobi', '$2y$13$9Mdns3kGFeEDbtVnPJWR9.ZwqE7pXRnJvLmRec0Lu20EnqNU4in5i', 'KjhibxV3NYOZv3zzwUQ4ilLku-f9fzwS_1558899741', NULL, NULL, -1, NULL, 1, 1, '1700f92b-0a6f-4b78-a154-d625ae6a1b3f.jpg', 0, 0, NULL, NULL, '2019-05-26 19:42:21', 1, 0, NULL, NULL, '2019-05-27 02:29:29', 'b9200532-ff13-4c7e-8aac-c48c6f09064b'),
-(2, 'Stephen Maina', 'stephen', '0707292929', 'stephen@competamillman.co.ke', 1, 'Africa/Nairobi', '$2y$13$.FKU1MkHCDgctO4Bql43pec4nDStyUBPW0Yv4.gBfOSBPFj.8qjz2', NULL, 'TitTUtdcWOAvwcYktH4CTHp1v_KUn0Wv', NULL, 1, NULL, 1, 1, NULL, 1, 0, NULL, 1, '2019-05-22 12:57:44', 1, 0, NULL, NULL, NULL, '26856999-063d-4c92-8245-92da8b01be01'),
-(3, 'Eric Munene', 'eric', '0707839641', 'eric@medsourcegroup.com', 1, 'America/New_York', '$2y$13$wtUL6mZnkauPrmUwAmls3OvRZFoxAIXfOOBW1RO3hpEmRZPtgWCKS', NULL, 'rJMCgQjneSTtTL8-KRikUyHwo4fteCuu', NULL, 1, NULL, 1, NULL, '0e5d9de4-0357-4256-810c-4cedaccbb74c.jpg', 1, 0, NULL, 1, '2019-05-23 15:23:02', 1, 0, NULL, NULL, NULL, '3daea9b7-98ed-47dc-80ad-61db0e26b814'),
-(4, 'Dr Moses Aran', 'mosesaran', '0713042478', 'mosesaran@gmail.com', 1, 'Africa/Nairobi', '$2y$13$e2X40eKEZcopz/NMX9hGEuejd8EtUzaYZAENjmUO2cS5oQ81oC.Ce', NULL, 'tbreTcmhrLwicc0sLYPGCvLwkoNandCQ', NULL, 3, 1, 1, 1, NULL, 1, 0, NULL, 1, '2019-05-24 01:46:15', 1, 0, NULL, NULL, NULL, 'd0c0c137-b33f-4cf1-8a39-1a1a767cfb6f'),
-(5, 'Beatrice Onyango', 'beatrice', '0707292929', 'beatrice.onyango@gmail.com', 1, 'America/New_York', '$2y$13$dCrPJN7d9ElSAiAvyWjo5.h4JCAe2HW.NgSILJnxrAnH/K1cL/AIW', NULL, 'VT3VXs9lLkjqbFhNKzToB4ZwEeAjYDX_', NULL, 3, 3, 1, 4, 'f37135ab-93f6-4062-980d-7d1474672c37.jpg', 1, 0, NULL, 1, '2019-05-24 12:14:14', 1, 0, NULL, NULL, NULL, '676f16c4-81ca-4b55-a80d-078f29a5edd3');
+(1, 'Fredrick Ochola', 'admin', '0724962380', 'mconyango@gmail.com', 1, 'Africa/Nairobi', '$2y$13$9Mdns3kGFeEDbtVnPJWR9.ZwqE7pXRnJvLmRec0Lu20EnqNU4in5i', 'Ba210zVHKfFawTmBLgAA7VEgEX84PH0i_1558947450', NULL, NULL, -1, NULL, 1, 1, '1700f92b-0a6f-4b78-a154-d625ae6a1b3f.jpg', 0, 0, NULL, NULL, '2019-05-27 08:57:30', 1, 0, NULL, NULL, '2019-06-19 09:05:16', 'b9200532-ff13-4c7e-8aac-c48c6f09064b');
 
 -- --------------------------------------------------------
 
@@ -438,7 +503,11 @@ INSERT INTO `auth_user_levels` (`id`, `name`, `forbidden_items`, `parent_id`, `i
 (-1, 'DEVELOPER', NULL, NULL, 1),
 (1, 'SUPER-ADMIN', 'a:2:{i:0;s:13:\"AUTH_RESOURCE\";i:1;s:15:\"AUTH_USER_LEVEL\";}', -1, 1),
 (2, 'SYSTEM ADMIN', 'a:1:{i:0;s:9:\"AUTH_ROLE\";}', 1, 1),
-(3, 'ORGANIZATION ADMIN', NULL, 2, 1);
+(3, 'COUNTRY USER', NULL, 2, 1),
+(4, 'COUNTRY UNIT 1 USER', NULL, 3, 1),
+(5, 'COUNTRY UNIT2 USER', NULL, 4, 1),
+(6, 'COUNTRY UNIT3 USER', NULL, 5, 1),
+(7, 'COUNTRY UNIT4 USER', NULL, NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -573,7 +642,7 @@ CREATE TABLE `conf_numbering_format` (
 
 INSERT INTO `conf_numbering_format` (`id`, `code`, `name`, `next_number`, `min_digits`, `prefix`, `suffix`, `preview`, `org_id`, `is_private`, `is_active`, `created_by`) VALUES
 (1, '20100101', '2020202020', 1, 3, '202/', '/2822', '202/001/2822', NULL, 1, 1, 1),
-(2, 'organization_account_no', 'Organization Account Number', 10006, 3, NULL, NULL, '10003', NULL, 1, 1, 1);
+(2, 'organization_account_no', 'Organization Account Number', 10011, 3, NULL, NULL, '10003', NULL, 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -1055,6 +1124,45 @@ INSERT INTO `conf_timezone_ref` (`id`, `name`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `core_extendable_table`
+--
+
+CREATE TABLE `core_extendable_table` (
+  `id` int(11) NOT NULL,
+  `name` varchar(128) NOT NULL,
+  `label` varchar(255) NOT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `uuid` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_by` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `core_farm`
+--
+
+CREATE TABLE `core_farm` (
+  `id` int(11) NOT NULL,
+  `name` varchar(128) NOT NULL,
+  `uuid` varchar(255) NOT NULL,
+  `country_id` int(11) NOT NULL,
+  `lat` decimal(13,8) DEFAULT NULL,
+  `lng` decimal(13,8) DEFAULT NULL,
+  `latlng` point DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_by` int(11) DEFAULT NULL,
+  `updated_at` timestamp NOT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT '0',
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `deleted_by` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `core_master_country`
 --
 
@@ -1341,53 +1449,53 @@ CREATE TABLE `core_master_county` (
 --
 
 INSERT INTO `core_master_county` (`id`, `code`, `name`, `country`, `is_active`, `created_by`) VALUES
-(1, '1', 'Mombasa', NULL, 1, 1),
-(2, '2', 'Kwale', NULL, 1, 1),
-(3, '3', 'Kilifi', NULL, 1, 1),
-(4, '4', 'Tana River', NULL, 1, 1),
-(5, '5', 'Lamu', NULL, 1, 1),
-(6, '6', 'Taita-Taveta', NULL, 1, 1),
-(7, '7', 'Garissa', NULL, 1, 1),
-(8, '8', 'Wajir', NULL, 1, 1),
-(9, '9', 'Mandera', NULL, 1, 1),
-(10, '10', 'Marsabit', NULL, 1, 1),
-(11, '11', 'Isiolo', NULL, 1, 1),
-(12, '12', 'Meru', NULL, 1, 1),
-(13, '13', 'Tharaka-Nithi', NULL, 1, 1),
-(14, '14', 'Embu', NULL, 1, 1),
-(15, '15', 'Kitui', NULL, 1, 1),
-(16, '16', 'Machakos', NULL, 1, 1),
-(17, '17', 'Makueni', NULL, 1, 1),
-(18, '18', 'Nyandarua', NULL, 1, 1),
-(19, '19', 'Nyeri', NULL, 1, 1),
-(20, '20', 'Kirinyaga', NULL, 1, 1),
-(21, '21', 'Murang\'a', NULL, 1, 1),
-(22, '22', 'Kiambu', NULL, 1, 1),
-(23, '23', 'Turkana', NULL, 1, 1),
-(24, '24', 'West Pokot', NULL, 1, 1),
-(25, '25', 'Samburu', NULL, 1, 1),
-(26, '26', 'Trans Nzoia', NULL, 1, 1),
-(27, '27', 'Uasin Gishu', NULL, 1, 1),
-(28, '28', 'Elgeyo-Marakwet', NULL, 1, 1),
-(29, '29', 'Nandi', NULL, 1, 1),
-(30, '30', 'Baringo', NULL, 1, 1),
-(31, '31', 'Laikipia', NULL, 1, 1),
-(32, '32', 'Nakuru', NULL, 1, 1),
-(33, '33', 'Narok', NULL, 1, 1),
-(34, '34', 'Kajiado', NULL, 1, 1),
-(35, '35', 'Kericho', NULL, 1, 1),
-(36, '36', 'Bomet', NULL, 1, 1),
-(37, '37', 'Kakamega', NULL, 1, 1),
-(38, '38', 'Vihiga', NULL, 1, 1),
-(39, '39', 'Bungoma', NULL, 1, 1),
-(40, '40', 'Busia', NULL, 1, 1),
-(41, '41', 'Siaya', NULL, 1, 1),
-(42, '42', 'Kisumu', NULL, 1, 1),
-(43, '43', 'Homa Bay', NULL, 1, 1),
-(44, '44', 'Migori', NULL, 1, 1),
-(45, '45', 'Kisii', NULL, 1, 1),
-(46, '46', 'Nyamira', NULL, 1, 1),
-(47, '47', 'Nairobi', NULL, 1, 1);
+(1, '1', 'Mombasa', 'KE', 1, 1),
+(2, '2', 'Kwale', 'KE', 1, 1),
+(3, '3', 'Kilifi', 'KE', 1, 1),
+(4, '4', 'Tana River', 'KE', 1, 1),
+(5, '5', 'Lamu', 'KE', 1, 1),
+(6, '6', 'Taita-Taveta', 'KE', 1, 1),
+(7, '7', 'Garissa', 'KE', 1, 1),
+(8, '8', 'Wajir', 'KE', 1, 1),
+(9, '9', 'Mandera', 'KE', 1, 1),
+(10, '10', 'Marsabit', 'KE', 1, 1),
+(11, '11', 'Isiolo', 'KE', 1, 1),
+(12, '12', 'Meru', 'KE', 1, 1),
+(13, '13', 'Tharaka-Nithi', 'KE', 1, 1),
+(14, '14', 'Embu', 'KE', 1, 1),
+(15, '15', 'Kitui', 'KE', 1, 1),
+(16, '16', 'Machakos', 'KE', 1, 1),
+(17, '17', 'Makueni', 'KE', 1, 1),
+(18, '18', 'Nyandarua', 'KE', 1, 1),
+(19, '19', 'Nyeri', 'KE', 1, 1),
+(20, '20', 'Kirinyaga', 'KE', 1, 1),
+(21, '21', 'Murang\'a', 'KE', 1, 1),
+(22, '22', 'Kiambu', 'KE', 1, 1),
+(23, '23', 'Turkana', 'KE', 1, 1),
+(24, '24', 'West Pokot', 'KE', 1, 1),
+(25, '25', 'Samburu', 'KE', 1, 1),
+(26, '26', 'Trans Nzoia', 'KE', 1, 1),
+(27, '27', 'Uasin Gishu', 'KE', 1, 1),
+(28, '28', 'Elgeyo-Marakwet', 'KE', 1, 1),
+(29, '29', 'Nandi', 'KE', 1, 1),
+(30, '30', 'Baringo', 'KE', 1, 1),
+(31, '31', 'Laikipia', 'KE', 1, 1),
+(32, '32', 'Nakuru', 'KE', 1, 1),
+(33, '33', 'Narok', 'KE', 1, 1),
+(34, '34', 'Kajiado', 'KE', 1, 1),
+(35, '35', 'Kericho', 'KE', 1, 1),
+(36, '36', 'Bomet', 'KE', 1, 1),
+(37, '37', 'Kakamega', 'KE', 1, 1),
+(38, '38', 'Vihiga', 'KE', 1, 1),
+(39, '39', 'Bungoma', 'KE', 1, 1),
+(40, '40', 'Busia', 'KE', 1, 1),
+(41, '41', 'Siaya', 'KE', 1, 1),
+(42, '42', 'Kisumu', 'KE', 1, 1),
+(43, '43', 'Homa Bay', 'KE', 1, 1),
+(44, '44', 'Migori', 'KE', 1, 1),
+(45, '45', 'Kisii', 'KE', 1, 1),
+(46, '46', 'Nyamira', 'KE', 1, 1),
+(47, '47', 'Nairobi', 'KE', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -1445,6 +1553,50 @@ INSERT INTO `core_master_currency_conversion` (`id`, `default_currency`, `curren
 (7, 'KES', 'UGX', '0.0270', 1, 1, '2019-05-24 11:54:31', 1),
 (8, 'KES', 'USD', '101.3400', 1, 1, '2019-05-24 11:54:31', 1),
 (9, 'KES', 'CAD', '100.0000', 1, 1, '2019-05-24 11:54:31', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `core_master_list`
+--
+
+CREATE TABLE `core_master_list` (
+  `id` int(11) NOT NULL,
+  `value` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `label` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `list_type_id` int(11) NOT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_by` int(11) DEFAULT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT '0',
+  `deleted_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `deleted_by` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `core_master_list_type`
+--
+
+CREATE TABLE `core_master_list_type` (
+  `id` int(11) NOT NULL,
+  `name` varchar(30) NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_by` int(11) DEFAULT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT '0',
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `deleted_by` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `core_master_list_type`
+--
+
+INSERT INTO `core_master_list_type` (`id`, `name`, `description`, `is_active`, `created_by`, `is_deleted`, `deleted_at`, `deleted_by`) VALUES
+(1, 'House Hold (HH) Age', NULL, 1, 1, 0, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -1509,6 +1661,30 @@ INSERT INTO `core_master_salutation` (`id`, `name`, `is_active`) VALUES
 (5, 'Hon.', 1),
 (6, 'Dr.', 1),
 (7, 'Eng.', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `core_table_attributes`
+--
+
+CREATE TABLE `core_table_attributes` (
+  `id` int(11) NOT NULL,
+  `name` varchar(128) NOT NULL,
+  `label` varchar(255) NOT NULL,
+  `table_id` int(11) NOT NULL,
+  `data_type` int(11) NOT NULL,
+  `min_length` int(11) DEFAULT NULL,
+  `max_length` int(11) DEFAULT NULL,
+  `allow_null` tinyint(1) NOT NULL DEFAULT '1',
+  `default_value` text,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_by` int(11) DEFAULT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT '0',
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `deleted_by` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -1581,47 +1757,18 @@ CREATE TABLE `migration` (
 
 CREATE TABLE `organization` (
   `id` int(11) NOT NULL,
-  `account_no` varchar(128) NOT NULL,
+  `code` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `name` varchar(255) NOT NULL,
-  `business_type` tinyint(1) NOT NULL,
-  `applicant_name` varchar(128) DEFAULT NULL,
-  `applicant_phone` varchar(20) DEFAULT NULL,
-  `applicant_business_ownership_type` tinyint(4) DEFAULT NULL,
-  `applicant_email` varchar(255) DEFAULT NULL,
-  `daily_customers` varchar(128) DEFAULT NULL,
   `country` varchar(3) NOT NULL,
-  `county` varchar(255) DEFAULT NULL,
-  `sub_county` varchar(255) DEFAULT NULL,
-  `street` varchar(255) DEFAULT NULL,
-  `postal_address` varchar(255) DEFAULT NULL,
-  `contact_first_name` varchar(128) NOT NULL,
-  `contact_middle_name` varchar(128) DEFAULT NULL,
-  `contact_last_name` varchar(128) NOT NULL,
-  `contact_title` varchar(30) DEFAULT NULL,
-  `contact_phone` varchar(20) NOT NULL,
-  `contact_alt_phone` varchar(20) DEFAULT NULL,
-  `contact_email` varchar(255) NOT NULL,
-  `status` tinyint(4) NOT NULL DEFAULT '1',
-  `application_date` date DEFAULT NULL,
-  `is_approved` tinyint(1) NOT NULL DEFAULT '0',
-  `date_approved` date DEFAULT NULL,
-  `approved_at` timestamp NULL DEFAULT NULL,
-  `approved_by` int(11) DEFAULT NULL,
-  `approval_notes` varchar(255) DEFAULT NULL,
-  `membership_end_date` date DEFAULT NULL,
-  `business_entity_type` tinyint(4) DEFAULT NULL,
-  `is_credit_requested` tinyint(1) NOT NULL DEFAULT '0',
-  `registration_source` tinyint(4) DEFAULT NULL,
-  `is_supplier` tinyint(1) NOT NULL DEFAULT '0',
-  `is_member` tinyint(1) NOT NULL DEFAULT '1',
-  `account_manager_id` int(11) DEFAULT NULL COMMENT 'Medsource Relationship Manager for this account',
-  `logo` varchar(255) DEFAULT NULL,
-  `map_address` varchar(255) DEFAULT NULL,
-  `map_latitude` decimal(11,8) DEFAULT NULL,
-  `map_longitude` decimal(11,8) DEFAULT NULL,
+  `contact_person` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `contact_phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `contact_email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `uuid` varchar(255) NOT NULL,
-  `last_order_date` timestamp NULL DEFAULT NULL,
-  `last_login_date` timestamp NULL DEFAULT NULL,
+  `unit1_name` varchar(30) NOT NULL,
+  `unit2_name` varchar(30) NOT NULL,
+  `unit3_name` varchar(30) NOT NULL,
+  `unit4_name` varchar(30) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `created_by` int(11) DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -1632,92 +1779,49 @@ CREATE TABLE `organization` (
 -- Dumping data for table `organization`
 --
 
-INSERT INTO `organization` (`id`, `account_no`, `name`, `business_type`, `applicant_name`, `applicant_phone`, `applicant_business_ownership_type`, `applicant_email`, `daily_customers`, `country`, `county`, `sub_county`, `street`, `postal_address`, `contact_first_name`, `contact_middle_name`, `contact_last_name`, `contact_title`, `contact_phone`, `contact_alt_phone`, `contact_email`, `status`, `application_date`, `is_approved`, `date_approved`, `approved_at`, `approved_by`, `approval_notes`, `membership_end_date`, `business_entity_type`, `is_credit_requested`, `registration_source`, `is_supplier`, `is_member`, `account_manager_id`, `logo`, `map_address`, `map_latitude`, `map_longitude`, `uuid`, `last_order_date`, `last_login_date`, `created_by`, `updated_at`, `updated_by`) VALUES
-(1, '10001', 'Melchizedek', 3, NULL, NULL, NULL, NULL, NULL, 'KE', NULL, NULL, NULL, NULL, 'FREDRICK', 'ONYANGO', 'OCHOLA', 'MR.', '0724962380', NULL, 'fred@competamillman.co.ke', 2, '2019-05-08', 1, '2019-05-23', '2019-05-24 01:26:52', 1, 'This was approved by Fred', NULL, NULL, 0, NULL, 0, 1, 1, NULL, 'KU Plaza, Nairobi, Kenya', '-1.29206590', '36.82194620', 'd667ebbd-e11f-4c8a-8047-2361acc5ec21', NULL, '2019-05-23 21:00:00', NULL, '2019-05-24 01:46:26', 1),
-(2, '10002', 'Goodlife Pharmacy', 4, NULL, NULL, NULL, NULL, NULL, 'KE', NULL, NULL, NULL, NULL, 'STEPHEN', NULL, 'MAINA', 'DR.', '0724962381', NULL, 'stephen@competamillman.co.ke', 2, NULL, 1, '2019-05-24', '2019-05-23 23:29:04', 1, 'This was approved by Fred', NULL, 1, 0, NULL, 0, 1, 1, NULL, NULL, NULL, NULL, 'fc55a5c2-a75a-42c6-a814-16c5797b5e8b', '2019-01-31 21:00:00', '2019-03-31 21:00:00', NULL, '2019-05-23 23:29:04', 1),
-(3, '10003', 'Four Ways', 5, 'Moses Maina', '07259393393', 1, NULL, '50-100', 'KE', 'Nairobi', 'Dagoretti South', 'Naivasha Rd', 'P.O. Box 20202-0001 NAIROBI', 'Moses', NULL, 'Maina', NULL, '07259393393', NULL, 'mosesmain@fourways.co.ke', 2, '2019-05-24', 1, '2019-05-24', '2019-05-24 12:07:53', 1, 'Registration approved', '2019-12-31', 1, 1, NULL, 0, 1, 3, 'logo.jpg', 'Sheikh Abdullas F. Rd, Mombasa, Kenya', '-4.04359335', '39.66831744', '747feb92-5363-4365-af53-148e0a5bd3d5', NULL, NULL, 1, '2019-05-24 12:09:53', 1),
-(4, '10004', 'Business One', 1, 'Fred', '07259393393', 1, NULL, '500+', 'KE', 'Nairobi', 'Dagoretti South', 'Kinyanjui Rd', 'P.O. Box 20202-0001 NAIROBI', 'Fredrick', NULL, 'Onyango', NULL, '07259393393', '07228282828', 'fred@competamillman.co.ke', 1, NULL, 0, NULL, NULL, NULL, NULL, NULL, 1, 1, 2, 1, 0, NULL, NULL, NULL, NULL, NULL, 'd8193b3e-8c59-436e-b9f8-f11981909654', NULL, NULL, NULL, '2019-05-27 02:27:31', NULL),
-(5, '10005', 'Business Two', 1, 'Fredrick Onyango', '07259393393', 1, NULL, NULL, 'KE', 'Bungoma', NULL, NULL, NULL, 'Fredrick', NULL, 'Onyango', NULL, '07259393393', NULL, 'mosesmain@fourways.co.ke', 1, NULL, 0, NULL, NULL, NULL, NULL, NULL, 1, 0, 2, 1, 0, NULL, NULL, NULL, NULL, NULL, 'b983f34d-a2a2-43b4-b7ed-b17ea040916d', NULL, NULL, NULL, '2019-05-27 03:10:07', NULL);
+INSERT INTO `organization` (`id`, `code`, `name`, `country`, `contact_person`, `contact_phone`, `contact_email`, `is_active`, `uuid`, `unit1_name`, `unit2_name`, `unit3_name`, `unit4_name`, `created_by`, `updated_at`, `updated_by`) VALUES
+(10, '10010', 'Kenya', 'KE', NULL, NULL, NULL, 1, '59fe84b1-2636-4eb6-97cf-2d0546c718f8', 'Region', 'District', 'Ward', 'Village', 1, '2019-06-18 22:22:34', NULL);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `org_registration_document`
+-- Table structure for table `organization_units`
 --
 
-CREATE TABLE `org_registration_document` (
+CREATE TABLE `organization_units` (
   `id` int(11) NOT NULL,
+  `code` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `name` varchar(255) NOT NULL,
+  `level` tinyint(1) NOT NULL,
   `org_id` int(11) NOT NULL,
-  `document_no` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `doc_type_id` int(11) NOT NULL,
-  `description` varchar(255) DEFAULT NULL,
-  `file_name` varchar(255) NOT NULL,
+  `parent_id` int(11) DEFAULT NULL,
+  `contact_name` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `contact_phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `contact_email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
-  `is_approved` tinyint(1) NOT NULL DEFAULT '0',
-  `start_date` date DEFAULT NULL,
-  `renewal_date` date DEFAULT NULL,
+  `uuid` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `created_by` int(11) DEFAULT NULL,
-  `date_approved` date DEFAULT NULL,
-  `approved_at` timestamp NULL DEFAULT NULL,
-  `approved_by` int(11) DEFAULT NULL,
-  `approval_notes` varchar(255) DEFAULT NULL,
-  `uuid` varchar(255) NOT NULL
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=COMPACT;
 
 --
--- Dumping data for table `org_registration_document`
+-- Dumping data for table `organization_units`
 --
 
-INSERT INTO `org_registration_document` (`id`, `org_id`, `document_no`, `doc_type_id`, `description`, `file_name`, `is_active`, `is_approved`, `start_date`, `renewal_date`, `created_by`, `date_approved`, `approved_at`, `approved_by`, `approval_notes`, `uuid`) VALUES
-(1, 2, '22020202020', 3, 'Sample Description', '1558672278.6444.jpg', 1, 1, '2019-05-01', '2019-12-31', 1, '2019-05-24', '2019-05-24 08:21:49', 1, 'This is now approved', '59265275-c701-42cb-94fd-8e46ae88beaa'),
-(2, 2, '20202020202', 3, 'KMPDU', '1558675580.2886.pdf', 1, 1, '2019-05-01', '2019-05-31', 1, '2019-05-24', '2019-05-24 08:20:48', 1, 'This is now approved', '0e2c8a6e-8372-4916-8303-5f5b72164998'),
-(3, 2, '2020202020', 3, 'This is a sample document', '1558686147.8187.docx', 1, 0, '2019-05-24', '2019-05-31', 1, NULL, NULL, NULL, NULL, '08572b36-ebe7-456d-934f-37af2a2854ee'),
-(4, 3, '24555555', 12, '2019 Cert', '1558699498.6066.pdf', 1, 1, '2019-01-01', '2019-12-31', 1, '2019-05-24', '2019-05-24 12:07:11', 1, 'This is now approved', '9daabb33-1673-409c-82ee-d860c70b1d4e'),
-(5, 3, '22020202', 7, NULL, '1558699526.474.png', 1, 1, '2019-05-07', '2019-05-31', 1, '2019-05-24', '2019-05-24 12:07:00', 1, 'Approved', '9dd98b20-f56c-4ebe-9a06-17c30bf374ef'),
-(6, 4, NULL, 7, NULL, '1558924051.3571.pdf', 1, 0, NULL, '2019-05-28', NULL, NULL, NULL, NULL, NULL, '0984690e-36fa-42af-bf66-270767f5140b'),
-(7, 4, NULL, 5, NULL, '1558924051.3596.pdf', 1, 0, NULL, '2019-05-28', NULL, NULL, NULL, NULL, NULL, '6aa5c3c9-a8ee-4fc9-8864-e7e8ea1bd25b'),
-(8, 4, NULL, 2, NULL, '1558924051.3609.pdf', 1, 0, NULL, '2019-05-31', NULL, NULL, NULL, NULL, NULL, '46300d82-cdb2-4364-875e-7c67a9f314e9'),
-(9, 5, NULL, 10, NULL, '1558926607.9483.pdf', 1, 0, NULL, '2019-05-28', NULL, NULL, NULL, NULL, NULL, '46dca1e8-54ca-4a84-88b9-feddc404f91d'),
-(10, 5, NULL, 12, NULL, '1558926607.9514.pdf', 1, 0, NULL, '2019-05-28', NULL, NULL, NULL, NULL, NULL, '5abbadb2-deaa-4fdb-850f-b9831babeafd'),
-(11, 5, NULL, 6, NULL, '1558926607.9532.pdf', 1, 0, NULL, '2019-05-29', NULL, NULL, NULL, NULL, NULL, 'f5f42753-ab90-4b23-81bd-8d1e14833240'),
-(12, 5, NULL, 10, NULL, '1558926607.9545.pdf', 1, 0, NULL, '2019-05-31', NULL, NULL, NULL, NULL, NULL, 'eac973e0-a49c-4da6-9a09-78200e49a2a4'),
-(13, 5, NULL, 10, NULL, '1558926607.956.pdf', 1, 0, NULL, '2019-05-31', NULL, NULL, NULL, NULL, NULL, 'd88a1b9e-4d96-4c73-9ff4-20815263bd3e');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `org_registration_document_type`
---
-
-CREATE TABLE `org_registration_document_type` (
-  `id` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `description` varchar(255) DEFAULT NULL,
-  `business_types` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `business_entity_types` varchar(255) DEFAULT NULL,
-  `has_start_date` tinyint(1) NOT NULL DEFAULT '0',
-  `has_renewal` tinyint(1) NOT NULL DEFAULT '1',
-  `is_active` tinyint(1) NOT NULL DEFAULT '1',
-  `created_at` int(11) DEFAULT NULL,
-  `created_by` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=COMPACT;
-
---
--- Dumping data for table `org_registration_document_type`
---
-
-INSERT INTO `org_registration_document_type` (`id`, `name`, `description`, `business_types`, `business_entity_types`, `has_start_date`, `has_renewal`, `is_active`, `created_at`, `created_by`) VALUES
-(2, 'Premises License', NULL, 'a:1:{i:0;s:1:\"3\";}', 'a:3:{i:0;s:1:\"1\";i:1;s:1:\"2\";i:2;s:1:\"3\";}', 1, 1, 1, 2019, 1),
-(3, 'Kenya Medical Practitioners & Dentists Licence', NULL, 'a:2:{i:0;s:1:\"3\";i:1;s:1:\"4\";}', 'a:3:{i:0;s:1:\"1\";i:1;s:1:\"2\";i:2;s:1:\"3\";}', 1, 1, 1, 2019, 1),
-(5, 'PPB (Pharmacist or Pharmacist tech)', NULL, 'a:2:{i:0;s:1:\"3\";i:1;s:1:\"4\";}', 'a:3:{i:0;s:1:\"1\";i:1;s:1:\"2\";i:2;s:1:\"3\";}', 1, 1, 1, 2019, 1),
-(6, 'KBPPB (hospital Pharmacy)', NULL, 'a:1:{i:0;s:1:\"3\";}', 'a:3:{i:0;s:1:\"1\";i:1;s:1:\"2\";i:2;s:1:\"3\";}', 1, 1, 1, 2019, 1),
-(7, 'COC (Clinical Officers Council)', NULL, 'a:1:{i:0;s:1:\"5\";}', 'a:3:{i:0;s:1:\"1\";i:1;s:1:\"2\";i:2;s:1:\"3\";}', 1, 1, 1, 2019, 1),
-(8, 'NCK (Nursing Council of Kenya)', NULL, 'a:4:{i:0;s:1:\"1\";i:1;s:1:\"2\";i:2;s:1:\"3\";i:3;s:1:\"5\";}', 'a:3:{i:0;s:1:\"1\";i:1;s:1:\"2\";i:2;s:1:\"3\";}', 1, 1, 1, 2019, 1),
-(9, 'KMLTTB (Lab Technologist or Lab technicians)', NULL, 'a:1:{i:0;s:1:\"3\";}', 'a:3:{i:0;s:1:\"1\";i:1;s:1:\"2\";i:2;s:1:\"3\";}', 1, 1, 1, 2019, 1),
-(10, 'Certification of Incorporation', NULL, 'a:3:{i:0;s:1:\"1\";i:1;s:1:\"2\";i:2;s:1:\"3\";}', 'a:3:{i:0;s:1:\"1\";i:1;s:1:\"2\";i:2;s:1:\"3\";}', 1, 0, 1, 2019, 1),
-(11, 'Contract With Medsource', NULL, 'a:2:{i:0;s:1:\"1\";i:1;s:1:\"2\";}', 'a:3:{i:0;s:1:\"1\";i:1;s:1:\"2\";i:2;s:1:\"3\";}', 1, 1, 1, 2019, 1),
-(12, 'Clinical Certificate', NULL, 'a:1:{i:0;s:1:\"5\";}', 'a:1:{i:0;s:1:\"1\";}', 1, 1, 1, 2019, 1);
+INSERT INTO `organization_units` (`id`, `code`, `name`, `level`, `org_id`, `parent_id`, `contact_name`, `contact_phone`, `contact_email`, `is_active`, `uuid`, `created_by`, `updated_at`, `updated_by`) VALUES
+(9, NULL, 'Region One', 1, 10, NULL, NULL, NULL, 'mconyango@gmail.com', 1, '0c11250e-91c2-47e9-a62e-0c1d8b29a5f2', 1, '2019-06-18 23:59:50', 1),
+(10, NULL, 'Region Two', 1, 10, NULL, NULL, NULL, 'mconyango@gmail.com', 1, '86b40fff-e456-4ba8-a759-9785ca64dd29', 1, '2019-06-19 00:00:05', 1),
+(11, NULL, 'Region Three', 1, 10, NULL, NULL, NULL, 'mconyango@gmail.com', 1, 'a7aa26d4-37e6-4be4-8ec6-b2f509d69684', 1, '2019-06-19 00:00:11', 1),
+(12, NULL, 'Region Four', 1, 10, NULL, NULL, NULL, 'mconyango@gmail.com', 1, 'b565a6bd-3104-4125-90e7-cb3c70284aa7', 1, '2019-06-19 00:00:17', 1),
+(13, NULL, 'District One', 2, 10, 9, NULL, NULL, NULL, 1, 'd3dc515d-dff3-4bf0-9817-96ec53afa5ca', 1, '2019-06-18 23:49:27', NULL),
+(14, NULL, 'District Two', 2, 10, 9, NULL, NULL, NULL, 1, '6fd50627-d636-4463-b93e-f05c9c149ddb', 1, '2019-06-18 23:49:50', NULL),
+(15, NULL, 'District Three', 2, 10, 10, NULL, NULL, NULL, 1, 'ee7bbe5b-5e91-43b5-ac78-14f7e4d10242', 1, '2019-06-18 23:50:00', NULL),
+(16, NULL, 'District Four', 2, 10, 10, NULL, NULL, NULL, 1, 'd37700bb-4122-4019-9ba6-7dcdbfaf988d', 1, '2019-06-18 23:50:22', NULL),
+(17, NULL, 'Ward One', 3, 10, 13, NULL, NULL, 'mconyango@gmail.com', 1, '1e17d784-1d2e-40b8-9c9b-20a2f6a98169', 1, '2019-06-19 00:01:23', NULL),
+(18, NULL, 'Ward Two', 3, 10, 16, NULL, NULL, 'mconyango@gmail.com', 1, '5752e500-fa47-415d-94f3-7923c303c81e', 1, '2019-06-19 00:02:03', 1),
+(19, NULL, 'Ward Three', 3, 10, 15, NULL, NULL, 'mconyango@gmail.com', 1, 'dd4565ac-2122-4cfb-bca6-9530a8295da0', 1, '2019-06-19 00:05:20', 1);
 
 -- --------------------------------------------------------
 
@@ -1742,18 +1846,22 @@ CREATE TABLE `setting` (
 --
 
 INSERT INTO `setting` (`id`, `type`, `section`, `key`, `value`, `status`, `description`, `created_at`, `updated_at`) VALUES
-(1, 'string', 'system', 'companyName', 'MEDSOURCE GROUP LIMITED', 1, NULL, 1558082145, 1558082145),
-(2, 'string', 'system', 'appName', 'MEDSOURCE GROUP ERP', 1, NULL, 1558082145, 1558082145),
-(3, 'string', 'system', 'defaultTimezone', 'America/New_York', 1, NULL, 1558082145, 1558698541),
+(1, 'string', 'system', 'companyName', 'African Daily Genetic Gains - ADGG', 1, NULL, 1558082145, 1559281626),
+(2, 'string', 'system', 'appName', 'African Daily Genetic Gains - ADGG', 1, NULL, 1558082145, 1559281614),
+(3, 'string', 'system', 'defaultTimezone', 'Africa/Nairobi', 1, NULL, 1558082145, 1558944935),
 (4, 'string', 'system', 'defaultCountry', 'KE', 1, NULL, 1558082145, 1558694395),
 (5, 'string', 'system', 'defaultCurrency', 'KES', 1, NULL, 1558082145, 1558082145),
 (6, 'string', 'system', 'paginationSize', '50', 1, NULL, 1558082145, 1558255815),
 (7, 'string', 'system', 'companyEmail', 'fred@competamillman.co.ke', 1, NULL, 1558190776, 1558190776),
-(8, 'string', 'system', 'defaultTheme', 'default', 1, NULL, 1558216647, 1558790871),
+(8, 'string', 'system', 'defaultTheme', 'default', 1, NULL, 1558216647, 1558945025),
 (9, 'string', 'password', 'usePreset', '1', 1, NULL, 1558469901, 1558469901),
 (10, 'string', 'password', 'preset', 'normal', 1, NULL, 1558469901, 1558529838),
 (11, 'string', 'googleMap', 'apiKey', 'AIzaSyAwQJXjzQ82D6nQsjwHHYZ1T6tDlRJe220', 1, NULL, 1558655907, 1558655907),
-(12, 'string', 'googleMap', 'defaultMapCenter', '-1.2920659, 36.82194619999996', 1, NULL, 1558655907, 1558655907);
+(12, 'string', 'googleMap', 'defaultMapCenter', '-1.2920659, 36.82194619999996', 1, NULL, 1558655907, 1558655907),
+(13, 'string', 'admin_units', 'countryUnit1', 'Region', 1, NULL, 1560891384, 1560891405),
+(14, 'string', 'admin_units', 'countryUnit2', 'District', 1, NULL, 1560891385, 1560891410),
+(15, 'string', 'admin_units', 'countryUnit3', 'Ward', 1, NULL, 1560891385, 1560891415),
+(16, 'string', 'admin_units', 'countryUnit4', 'Village', 1, NULL, 1560891385, 1560891385);
 
 -- --------------------------------------------------------
 
@@ -1814,15 +1922,22 @@ CREATE TABLE `sys_app_session` (
 --
 
 INSERT INTO `sys_app_session` (`id`, `expire`, `data`) VALUES
+('0s6b3c53m9rqv7a09m87jfiu0c', 1560871392, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a363a222f616467672f223b),
+('1heapjoarn4vbn4h6nf3ct2gq3', 1559260906, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a363a222f616467672f223b5f757365725f74696d655a6f6e657c733a31343a224166726963612f4e6169726f6269223b5f5f69647c693a313b5f5f6578706972657c693a313535393235303130363b),
+('31tj44hknvpf7rd211qo66o6k4', 1560917322, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a39333a222f616467672f636f72652f6f7267616e697a6174696f6e2d756e6974732f696e6465783f6c6576656c3d31266f72675f69643d35396665383462312d323633362d346562362d393763662d326430353436633731386638267461623d32223b5f5f69647c693a313b5f5f6578706972657c693a313536303930363532323b5f757365725f74696d655a6f6e657c733a31343a224166726963612f4e6169726f6269223b),
 ('3ctiq9rcvu55nr03kchj3e25o7', 1558311019, 0x5f5f666c6173687c613a303a7b7d5f757365725f74696d655a6f6e657c733a31343a224166726963612f4e6169726f6269223b5f5f72657475726e55726c7c733a31313a222f6d6564736f757263652f223b5f5f69647c693a313b5f5f6578706972657c693a313535383330303231333b),
 ('4lcm3lrjgph6sd8f8ebinnp9vs', 1558239805, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a31313a222f6d6564736f757263652f223b5f5f69647c693a313b5f5f6578706972657c693a313535383232383939393b5f757365725f74696d655a6f6e657c733a31343a224166726963612f4e6169726f6269223b),
+('4nc0a6nhi36at0jqqjcav2l0q5', 1559306135, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a363a222f616467672f223b5f5f69647c693a313b5f5f6578706972657c693a313535393239353333353b5f757365725f74696d655a6f6e657c733a31343a224166726963612f4e6169726f6269223b),
 ('4ok0tjcqlpgramrnfqlkjutr2f', 1558719686, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a36323a222f6d6564736f757263652f636f72652f6f7267616e697a6174696f6e2f696e6465783f69735f6d656d6265723d3126627573696e6573735f747970653d35223b5f5f69647c693a313b5f5f6578706972657c693a313535383730383838363b5f757365725f74696d655a6f6e657c733a31343a224166726963612f4e6169726f6269223b),
+('59l561abmmq8lcbs9a9732f79t', 1560914721, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a363a222f616467672f223b5f5f69647c693a313b5f5f6578706972657c693a313536303930333932313b5f757365725f74696d655a6f6e657c733a31343a224166726963612f4e6169726f6269223b),
 ('6vq8ilolri1b4n5d397752ttk5', 1558697975, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a31313a222f6d6564736f757263652f223b5f5f69647c693a313b5f5f6578706972657c693a313535383638373137353b5f757365725f74696d655a6f6e657c733a31343a224166726963612f4e6169726f6269223b),
 ('7r9dao6mlup5dup6qmssvcaud5', 1558354703, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a31313a222f6d6564736f757263652f223b),
+('88kupchk2if71a7t8kg2s190f7', 1559061588, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a31313a222f6d6564736f757263652f223b),
 ('8s2vffrh7il0h0icorospp9g3g', 1558475301, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a32383a222f6d6564736f757263652f636f6e662f6e6f7469662f637265617465223b5f757365725f74696d655a6f6e657c733a31343a224166726963612f4e6169726f6269223b),
 ('8ubqsfio2ugp4cp767nb3vdpe1', 1558489759, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a36333a222f6d6564736f757263652f636f72652f63757272656e63792d636f6e76657273696f6e2f7570646174653f64656661756c745f63757272656e63793d434144223b),
 ('9ap0rm5oj4offt9uoc8e9e32gt', 1558531434, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a31313a222f6d6564736f757263652f223b),
 ('a9gp1hlvs9v1vgf2u1332vn8pb', 1558218313, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a34353a222f6d6564736f757263652f636f6e662f656d61696c2f696e6465783f5f746f6765656434313931663d70616765223b),
+('aate43e7tun0mopuehkgnralss', 1559163065, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a31313a222f6d6564736f757263652f223b5f757365725f74696d655a6f6e657c733a31343a224166726963612f4e6169726f6269223b),
 ('eb8v70m15luhkbodkb8qd0hpeo', 1558096546, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a31313a222f6d6564736f757263652f223b5f5f69647c693a313b5f5f6578706972657c693a313535383038353734363b5f757365725f74696d655a6f6e657c733a31343a224166726963612f4e6169726f6269223b),
 ('er847i82spnqmh8405k8fd64ig', 1558362835, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a31313a222f6d6564736f757263652f223b5f5f69647c693a313b5f5f6578706972657c693a313535383335323032393b5f757365725f74696d655a6f6e657c733a31343a224166726963612f4e6169726f6269223b),
 ('eujoli7g6hscjkg62qpvcvqhuf', 1558214006, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a31313a222f6d6564736f757263652f223b5f5f69647c693a313b5f5f6578706972657c693a313535383230333230303b5f757365725f74696d655a6f6e657c733a31343a224166726963612f4e6169726f6269223b),
@@ -1831,9 +1946,11 @@ INSERT INTO `sys_app_session` (`id`, `expire`, `data`) VALUES
 ('g9lpaovmcr5qn8h5k6ksarol2g', 1558090660, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a31313a222f6d6564736f757263652f223b5f5f69647c693a313b5f5f6578706972657c693a313535383037393836303b5f757365725f74696d655a6f6e657c733a31343a224166726963612f4e6169726f6269223b),
 ('ijbpfgfm1aq32sgdj8554mqhmo', 1558489591, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a32383a222f6d6564736f757263652f636f6e662f6e6f7469662f637265617465223b5f757365725f74696d655a6f6e657c733a31343a224166726963612f4e6169726f6269223b5f5f69647c693a313b5f5f6578706972657c693a313535383437383738353b),
 ('ilvl9eajqk54k1uad5j751bmnv', 1558805397, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a32393a222f6d6564736f757263652f636f72652f636f756e7472792f696e646578223b5f757365725f74696d655a6f6e657c733a31343a224166726963612f4e6169726f6269223b5f5f69647c693a313b5f5f6578706972657c693a313535383739343539373b),
+('j9qie0p7i6ujjt8as1smruc9f3', 1560788832, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a363a222f616467672f223b5f5f69647c693a313b5f5f6578706972657c693a313536303737383033323b5f757365725f74696d655a6f6e657c733a31343a224166726963612f4e6169726f6269223b),
 ('ki6hgqndvjfvauatr26p9f88bn', 1558436536, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a31313a222f6d6564736f757263652f223b5f5f69647c693a313b5f5f6578706972657c693a313535383432353733303b5f757365725f74696d655a6f6e657c733a31343a224166726963612f4e6169726f6269223b),
 ('l3r77h8vtkjppl3gv58dm7em9t', 1558231681, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a34353a222f6d6564736f757263652f636f6e662f656d61696c2f696e6465783f5f746f6765656434313931663d70616765223b5f5f69647c693a313b5f5f6578706972657c693a313535383232303837353b5f757365725f74696d655a6f6e657c733a31343a224166726963612f4e6169726f6269223b),
 ('l4ugpc7t3n331h4osve02t0qjq', 1558898125, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a31313a222f6d6564736f757263652f223b),
+('mtcghmbaluoc1jh4fesjl98i1r', 1559298972, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a363a222f616467672f223b5f5f69647c693a313b5f5f6578706972657c693a313535393238383137323b5f757365725f74696d655a6f6e657c733a31343a224166726963612f4e6169726f6269223b),
 ('nebqr3mq63oh2shdcps6r2pvlu', 1558239111, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a31313a222f6d6564736f757263652f223b),
 ('nt77hk7l6hhr7pdrgvehi1psev', 1558502915, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a36333a222f6d6564736f757263652f636f72652f63757272656e63792d636f6e76657273696f6e2f7570646174653f64656661756c745f63757272656e63793d434144223b5f5f69647c693a313b5f5f6578706972657c693a313535383439323130393b5f757365725f74696d655a6f6e657c733a31343a224166726963612f4e6169726f6269223b),
 ('o601dqrl16dtns53vbms00k4ml', 1558462976, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a31313a222f6d6564736f757263652f223b),
@@ -1842,9 +1959,12 @@ INSERT INTO `sys_app_session` (`id`, `expire`, `data`) VALUES
 ('p8see7h48esq3g8mld614d9ree', 1558296955, 0x5f5f666c6173687c613a303a7b7d5f757365725f74696d655a6f6e657c733a31343a224166726963612f4e6169726f6269223b5f5f72657475726e55726c7c733a33303a222f6d6564736f757263652f636f6e662f73657474696e67732f696e646578223b),
 ('pkbv4g2gdrp7e1d7ddk2ilc7t0', 1558572906, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a31313a222f6d6564736f757263652f223b5f5f69647c693a313b5f5f6578706972657c693a313535383536323130353b5f757365725f74696d655a6f6e657c733a31343a224166726963612f4e6169726f6269223b),
 ('qpl0ku7vihr6hrk42p553hljq2', 1558670116, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a36323a222f6d6564736f757263652f636f72652f6f7267616e697a6174696f6e2f696e6465783f69735f6d656d6265723d3126627573696e6573735f747970653d33223b5f5f69647c693a313b5f5f6578706972657c693a313535383635393331363b5f757365725f74696d655a6f6e657c733a31343a224166726963612f4e6169726f6269223b),
+('r1no4gplo449abemgr3qiqljfa', 1558961850, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a31313a222f6d6564736f757263652f223b),
 ('rechilf5dhh8h2egvlocv89rvc', 1558239107, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a33303a222f6d6564736f757263652f636f6e662f73657474696e67732f696e646578223b5f5f69647c693a313b5f5f6578706972657c693a313535383232383330313b5f757365725f74696d655a6f6e657c733a31343a224166726963612f4e6169726f6269223b),
 ('t3nbic080oq7nq8lka3ulsnpac', 1558231991, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a33303a222f6d6564736f757263652f636f6e662f73657474696e67732f696e646578223b),
-('umasfrlonsmtifj57assrv3neo', 1558941022, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a31313a222f6d6564736f757263652f223b);
+('uiguhnli168mcqf6r3ij7l6qc7', 1559867698, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a363a222f616467672f223b),
+('umasfrlonsmtifj57assrv3neo', 1558941022, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a31313a222f6d6564736f757263652f223b),
+('vk9rba9j3j4p15f9vvm7kemoc3', 1560954287, 0x5f5f666c6173687c613a303a7b7d5f5f72657475726e55726c7c733a363a222f616467672f223b5f5f69647c693a313b5f5f6578706972657c693a313536303934333438373b5f757365725f74696d655a6f6e657c733a31343a224166726963612f4e6169726f6269223b);
 
 -- --------------------------------------------------------
 
@@ -1913,7 +2033,31 @@ INSERT INTO `sys_queue` (`id`, `channel`, `job`, `pushed_at`, `ttr`, `delay`, `p
 (42, 'default', 0x4f3a32353a22636f6e736f6c655c6a6f62735c53656e64456d61696c4a6f62223a31343a7b733a373a226d657373616765223b733a3637383a223c703e3c7374726f6e673e3c2f7374726f6e673e3c7374726f6e673e3c2f7374726f6e673e3c7374726f6e673e3c2f7374726f6e673e0d0a3c2f703e3c703e0d0a0948656c6c6f20467265647269636b204f63686f6c612c0d0a3c2f703e3c7020223d22223e0d0a09596f7520746f6c6420757320796f7520666f72676f7420796f75722070617373776f72642e204e6f206e65656420746f2050616e6963203a290d0a3c2f703e3c7020223d22223e506c6561736520666f6c6c6f7720746869732055524c20746f20726573657420796f75722070617373776f72643a0d0a3c2f703e3c7020223d22223e3c7374726f6e673e687474703a2f2f6c6f63616c686f73742f6d6564736f757263652f617574682f617574682f72657365742d70617373776f72643f746f6b656e3d756a715953716f727766456c53564e7073467a4456745a705772634e754f6a335f313535383730323331343c2f7374726f6e673e0d0a3c2f703e3c7020223d223e546869732070617373776f7264207265736574206c696e6b2077696c6c2065787069726520696e203120686f75722e0d0a3c2f703e0d0a3c7020223e496620796f75206469646e2774206d65616e20746f20696e697469617465207468652070617373776f7264207265636f766572792070726f636573732c20646f6e277420776f7272792120596f75722070617373776f7264206973207374696c6c207361666520616e6420796f752063616e2069676e6f7265207468697320652d6d61696c2e3c2f703e3c7020223d223e546869732070617373776f7264207265736574206c696e6b2077696c6c2065787069726520696e203120686f75722e0d0a3c2f703e0d0a3c7020223e54686973206c696e6b2077696c6c20657870697265206166746572203320686f7572732e3c62723e0d0a3c2f703e223b733a373a227375626a656374223b733a31373a2250617373776f7264205265636f76657279223b733a31313a2273656e6465725f6e616d65223b733a31393a224d4544534f555243452047524f555020455250223b733a31323a2273656e6465725f656d61696c223b733a32323a226e6f7265706c79406274696d696c6c6d616e2e636f6d223b733a31353a22726563697069656e745f656d61696c223b733a31393a226d636f6e79616e676f40676d61696c2e636f6d223b733a31303a226174746163686d656e74223b4e3b733a323a226363223b4e3b733a333a22626363223b4e3b733a31313a2274656d706c6174655f6964223b733a32303a22757365725f666f72676f745f70617373776f7264223b733a363a227265665f6964223b693a313b733a31303a22637265617465645f6174223b733a31393a22323031392d30352d32342031323a35313a3534223b733a31303a22637265617465645f6279223b4e3b733a383a22617474656d707473223b693a313b733a323a226964223b4e3b7d, 1558702314, 300, 0, 1024, NULL, NULL, NULL),
 (43, 'default', 0x4f3a32353a22636f6e736f6c655c6a6f62735c53656e64456d61696c4a6f62223a31343a7b733a373a226d657373616765223b733a3637383a223c703e3c7374726f6e673e3c2f7374726f6e673e3c7374726f6e673e3c2f7374726f6e673e3c7374726f6e673e3c2f7374726f6e673e0d0a3c2f703e3c703e0d0a0948656c6c6f20467265647269636b204f63686f6c612c0d0a3c2f703e3c7020223d22223e0d0a09596f7520746f6c6420757320796f7520666f72676f7420796f75722070617373776f72642e204e6f206e65656420746f2050616e6963203a290d0a3c2f703e3c7020223d22223e506c6561736520666f6c6c6f7720746869732055524c20746f20726573657420796f75722070617373776f72643a0d0a3c2f703e3c7020223d22223e3c7374726f6e673e687474703a2f2f6c6f63616c686f73742f6d6564736f757263652f617574682f617574682f72657365742d70617373776f72643f746f6b656e3d6f3779486f3235354c4f554267345641433738437750532d6b4a5175592d5f415f313535383839373935313c2f7374726f6e673e0d0a3c2f703e3c7020223d223e546869732070617373776f7264207265736574206c696e6b2077696c6c2065787069726520696e203120686f75722e0d0a3c2f703e0d0a3c7020223e496620796f75206469646e2774206d65616e20746f20696e697469617465207468652070617373776f7264207265636f766572792070726f636573732c20646f6e277420776f7272792120596f75722070617373776f7264206973207374696c6c207361666520616e6420796f752063616e2069676e6f7265207468697320652d6d61696c2e3c2f703e3c7020223d223e546869732070617373776f7264207265736574206c696e6b2077696c6c2065787069726520696e203120686f75722e0d0a3c2f703e0d0a3c7020223e54686973206c696e6b2077696c6c20657870697265206166746572203320686f7572732e3c62723e0d0a3c2f703e223b733a373a227375626a656374223b733a31373a2250617373776f7264205265636f76657279223b733a31313a2273656e6465725f6e616d65223b733a31393a224d4544534f555243452047524f555020455250223b733a31323a2273656e6465725f656d61696c223b733a32323a226e6f7265706c79406274696d696c6c6d616e2e636f6d223b733a31353a22726563697069656e745f656d61696c223b733a31393a226d636f6e79616e676f40676d61696c2e636f6d223b733a31303a226174746163686d656e74223b4e3b733a323a226363223b4e3b733a333a22626363223b4e3b733a31313a2274656d706c6174655f6964223b733a32303a22757365725f666f72676f745f70617373776f7264223b733a363a227265665f6964223b693a313b733a31303a22637265617465645f6174223b733a31393a22323031392d30352d32362031393a31323a3331223b733a31303a22637265617465645f6279223b4e3b733a383a22617474656d707473223b693a313b733a323a226964223b4e3b7d, 1558897951, 300, 0, 1024, NULL, NULL, NULL),
 (44, 'default', 0x4f3a32353a22636f6e736f6c655c6a6f62735c53656e64456d61696c4a6f62223a31343a7b733a373a226d657373616765223b733a3637383a223c703e3c7374726f6e673e3c2f7374726f6e673e3c7374726f6e673e3c2f7374726f6e673e3c7374726f6e673e3c2f7374726f6e673e0d0a3c2f703e3c703e0d0a0948656c6c6f20467265647269636b204f63686f6c612c0d0a3c2f703e3c7020223d22223e0d0a09596f7520746f6c6420757320796f7520666f72676f7420796f75722070617373776f72642e204e6f206e65656420746f2050616e6963203a290d0a3c2f703e3c7020223d22223e506c6561736520666f6c6c6f7720746869732055524c20746f20726573657420796f75722070617373776f72643a0d0a3c2f703e3c7020223d22223e3c7374726f6e673e687474703a2f2f6c6f63616c686f73742f6d6564736f757263652f617574682f617574682f72657365742d70617373776f72643f746f6b656e3d766634333973364e705257317970396a5a6b5a2d497453337545554a5366316a5f313535383839373939383c2f7374726f6e673e0d0a3c2f703e3c7020223d223e546869732070617373776f7264207265736574206c696e6b2077696c6c2065787069726520696e203120686f75722e0d0a3c2f703e0d0a3c7020223e496620796f75206469646e2774206d65616e20746f20696e697469617465207468652070617373776f7264207265636f766572792070726f636573732c20646f6e277420776f7272792120596f75722070617373776f7264206973207374696c6c207361666520616e6420796f752063616e2069676e6f7265207468697320652d6d61696c2e3c2f703e3c7020223d223e546869732070617373776f7264207265736574206c696e6b2077696c6c2065787069726520696e203120686f75722e0d0a3c2f703e0d0a3c7020223e54686973206c696e6b2077696c6c20657870697265206166746572203320686f7572732e3c62723e0d0a3c2f703e223b733a373a227375626a656374223b733a31373a2250617373776f7264205265636f76657279223b733a31313a2273656e6465725f6e616d65223b733a31393a224d4544534f555243452047524f555020455250223b733a31323a2273656e6465725f656d61696c223b733a32323a226e6f7265706c79406274696d696c6c6d616e2e636f6d223b733a31353a22726563697069656e745f656d61696c223b733a31393a226d636f6e79616e676f40676d61696c2e636f6d223b733a31303a226174746163686d656e74223b4e3b733a323a226363223b4e3b733a333a22626363223b4e3b733a31313a2274656d706c6174655f6964223b733a32303a22757365725f666f72676f745f70617373776f7264223b733a363a227265665f6964223b693a313b733a31303a22637265617465645f6174223b733a31393a22323031392d30352d32362031393a31333a3138223b733a31303a22637265617465645f6279223b4e3b733a383a22617474656d707473223b693a313b733a323a226964223b4e3b7d, 1558897998, 300, 0, 1024, NULL, NULL, NULL),
-(45, 'default', 0x4f3a32353a22636f6e736f6c655c6a6f62735c53656e64456d61696c4a6f62223a31343a7b733a373a226d657373616765223b733a3637383a223c703e3c7374726f6e673e3c2f7374726f6e673e3c7374726f6e673e3c2f7374726f6e673e3c7374726f6e673e3c2f7374726f6e673e0d0a3c2f703e3c703e0d0a0948656c6c6f20467265647269636b204f63686f6c612c0d0a3c2f703e3c7020223d22223e0d0a09596f7520746f6c6420757320796f7520666f72676f7420796f75722070617373776f72642e204e6f206e65656420746f2050616e6963203a290d0a3c2f703e3c7020223d22223e506c6561736520666f6c6c6f7720746869732055524c20746f20726573657420796f75722070617373776f72643a0d0a3c2f703e3c7020223d22223e3c7374726f6e673e687474703a2f2f6c6f63616c686f73742f6d6564736f757263652f617574682f617574682f72657365742d70617373776f72643f746f6b656e3d4b6a6869627856334e594f5a76337a7a77555134696c4c6b752d6639667a77535f313535383839393734313c2f7374726f6e673e0d0a3c2f703e3c7020223d223e546869732070617373776f7264207265736574206c696e6b2077696c6c2065787069726520696e203120686f75722e0d0a3c2f703e0d0a3c7020223e496620796f75206469646e2774206d65616e20746f20696e697469617465207468652070617373776f7264207265636f766572792070726f636573732c20646f6e277420776f7272792120596f75722070617373776f7264206973207374696c6c207361666520616e6420796f752063616e2069676e6f7265207468697320652d6d61696c2e3c2f703e3c7020223d223e546869732070617373776f7264207265736574206c696e6b2077696c6c2065787069726520696e203120686f75722e0d0a3c2f703e0d0a3c7020223e54686973206c696e6b2077696c6c20657870697265206166746572203320686f7572732e3c62723e0d0a3c2f703e223b733a373a227375626a656374223b733a31373a2250617373776f7264205265636f76657279223b733a31313a2273656e6465725f6e616d65223b733a31393a224d4544534f555243452047524f555020455250223b733a31323a2273656e6465725f656d61696c223b733a32323a226e6f7265706c79406274696d696c6c6d616e2e636f6d223b733a31353a22726563697069656e745f656d61696c223b733a31393a226d636f6e79616e676f40676d61696c2e636f6d223b733a31303a226174746163686d656e74223b4e3b733a323a226363223b4e3b733a333a22626363223b4e3b733a31313a2274656d706c6174655f6964223b733a32303a22757365725f666f72676f745f70617373776f7264223b733a363a227265665f6964223b693a313b733a31303a22637265617465645f6174223b733a31393a22323031392d30352d32362031393a34323a3231223b733a31303a22637265617465645f6279223b4e3b733a383a22617474656d707473223b693a313b733a323a226964223b4e3b7d, 1558899741, 300, 0, 1024, NULL, NULL, NULL);
+(45, 'default', 0x4f3a32353a22636f6e736f6c655c6a6f62735c53656e64456d61696c4a6f62223a31343a7b733a373a226d657373616765223b733a3637383a223c703e3c7374726f6e673e3c2f7374726f6e673e3c7374726f6e673e3c2f7374726f6e673e3c7374726f6e673e3c2f7374726f6e673e0d0a3c2f703e3c703e0d0a0948656c6c6f20467265647269636b204f63686f6c612c0d0a3c2f703e3c7020223d22223e0d0a09596f7520746f6c6420757320796f7520666f72676f7420796f75722070617373776f72642e204e6f206e65656420746f2050616e6963203a290d0a3c2f703e3c7020223d22223e506c6561736520666f6c6c6f7720746869732055524c20746f20726573657420796f75722070617373776f72643a0d0a3c2f703e3c7020223d22223e3c7374726f6e673e687474703a2f2f6c6f63616c686f73742f6d6564736f757263652f617574682f617574682f72657365742d70617373776f72643f746f6b656e3d4b6a6869627856334e594f5a76337a7a77555134696c4c6b752d6639667a77535f313535383839393734313c2f7374726f6e673e0d0a3c2f703e3c7020223d223e546869732070617373776f7264207265736574206c696e6b2077696c6c2065787069726520696e203120686f75722e0d0a3c2f703e0d0a3c7020223e496620796f75206469646e2774206d65616e20746f20696e697469617465207468652070617373776f7264207265636f766572792070726f636573732c20646f6e277420776f7272792120596f75722070617373776f7264206973207374696c6c207361666520616e6420796f752063616e2069676e6f7265207468697320652d6d61696c2e3c2f703e3c7020223d223e546869732070617373776f7264207265736574206c696e6b2077696c6c2065787069726520696e203120686f75722e0d0a3c2f703e0d0a3c7020223e54686973206c696e6b2077696c6c20657870697265206166746572203320686f7572732e3c62723e0d0a3c2f703e223b733a373a227375626a656374223b733a31373a2250617373776f7264205265636f76657279223b733a31313a2273656e6465725f6e616d65223b733a31393a224d4544534f555243452047524f555020455250223b733a31323a2273656e6465725f656d61696c223b733a32323a226e6f7265706c79406274696d696c6c6d616e2e636f6d223b733a31353a22726563697069656e745f656d61696c223b733a31393a226d636f6e79616e676f40676d61696c2e636f6d223b733a31303a226174746163686d656e74223b4e3b733a323a226363223b4e3b733a333a22626363223b4e3b733a31313a2274656d706c6174655f6964223b733a32303a22757365725f666f72676f745f70617373776f7264223b733a363a227265665f6964223b693a313b733a31303a22637265617465645f6174223b733a31393a22323031392d30352d32362031393a34323a3231223b733a31303a22637265617465645f6279223b4e3b733a383a22617474656d707473223b693a313b733a323a226964223b4e3b7d, 1558899741, 300, 0, 1024, NULL, NULL, NULL),
+(46, 'default', 0x4f3a32353a22636f6e736f6c655c6a6f62735c53656e64456d61696c4a6f62223a31343a7b733a373a226d657373616765223b733a3437333a223c7020223d22223e4869204a6f73657068204d756b6f6b6f2c0d0a3c2f703e3c7020223d22223e0d0a09596f7572206163636f756e7420696e204d4544534f555243452047524f555020455250206973206e6f772072656164792e2054686573652061726520796f7572206c6f67696e2064657461696c733a0d0a3c2f703e3c756c3e3c6c693e557365726e616d653a203c7374726f6e673e6d756b6f6b6f3c2f7374726f6e673e3c7374726f6e673e3c2f7374726f6e673e3c2f6c693e3c6c693e50617373776f72643a3c7374726f6e673e2041646d696e31323334353c2f7374726f6e673e3c2f6c693e3c6c693e3c7374726f6e673e3c7374726f6e673e3c2f7374726f6e673e3c2f7374726f6e673e4c6f67696e204c696e6b3a3c7374726f6e673e3c7374726f6e673e203c2f7374726f6e673e687474703a2f2f6c6f63616c686f73742f6d6564736f757263652f617574682f617574682f6c6f67696e3c2f7374726f6e673e3c2f6c693e3c2f756c3e3c7020223d22223e506c65617365206c6f67696e20616e6420656e7375726520796f75206368616e676520796f75722070617373776f72642e20446f206e6f7420736861726520796f75722070617373776f7264207769746820616e796f6e652e3c2f703e223b733a373a227375626a656374223b733a31333a224c6f67696e2064657461696c73223b733a31313a2273656e6465725f6e616d65223b733a31393a224d4544534f555243452047524f555020455250223b733a31323a2273656e6465725f656d61696c223b733a32323a226e6f7265706c79406274696d696c6c6d616e2e636f6d223b733a31353a22726563697069656e745f656d61696c223b733a31363a226d756b6f6b6f40676d61696c2e636f6d223b733a31303a226174746163686d656e74223b4e3b733a323a226363223b4e3b733a333a22626363223b4e3b733a31313a2274656d706c6174655f6964223b733a31383a22757365725f6c6f67696e5f64657461696c73223b733a363a227265665f6964223b693a363b733a31303a22637265617465645f6174223b733a31393a22323031392d30352d32372030383a34373a3437223b733a31303a22637265617465645f6279223b693a313b733a383a22617474656d707473223b693a313b733a323a226964223b4e3b7d, 1558946867, 300, 0, 1024, NULL, NULL, NULL),
+(47, 'default', 0x4f3a32353a22636f6e736f6c655c6a6f62735c53656e64456d61696c4a6f62223a31343a7b733a373a226d657373616765223b733a3437333a223c7020223d22223e4869204a6f73657068204d756b6f6b6f2c0d0a3c2f703e3c7020223d22223e0d0a09596f7572206163636f756e7420696e204d4544534f555243452047524f555020455250206973206e6f772072656164792e2054686573652061726520796f7572206c6f67696e2064657461696c733a0d0a3c2f703e3c756c3e3c6c693e557365726e616d653a203c7374726f6e673e6d756b6f6b6f3c2f7374726f6e673e3c7374726f6e673e3c2f7374726f6e673e3c2f6c693e3c6c693e50617373776f72643a3c7374726f6e673e2041646d696e31323334353c2f7374726f6e673e3c2f6c693e3c6c693e3c7374726f6e673e3c7374726f6e673e3c2f7374726f6e673e3c2f7374726f6e673e4c6f67696e204c696e6b3a3c7374726f6e673e3c7374726f6e673e203c2f7374726f6e673e687474703a2f2f6c6f63616c686f73742f6d6564736f757263652f617574682f617574682f6c6f67696e3c2f7374726f6e673e3c2f6c693e3c2f756c3e3c7020223d22223e506c65617365206c6f67696e20616e6420656e7375726520796f75206368616e676520796f75722070617373776f72642e20446f206e6f7420736861726520796f75722070617373776f7264207769746820616e796f6e652e3c2f703e223b733a373a227375626a656374223b733a31333a224c6f67696e2064657461696c73223b733a31313a2273656e6465725f6e616d65223b733a31393a224d4544534f555243452047524f555020455250223b733a31323a2273656e6465725f656d61696c223b733a32323a226e6f7265706c79406274696d696c6c6d616e2e636f6d223b733a31353a22726563697069656e745f656d61696c223b733a31363a226d756b6f6b6f40676d61696c2e636f6d223b733a31303a226174746163686d656e74223b4e3b733a323a226363223b4e3b733a333a22626363223b4e3b733a31313a2274656d706c6174655f6964223b733a31383a22757365725f6c6f67696e5f64657461696c73223b733a363a227265665f6964223b693a363b733a31303a22637265617465645f6174223b733a31393a22323031392d30352d32372030383a34373a3437223b733a31303a22637265617465645f6279223b693a313b733a383a22617474656d707473223b693a313b733a323a226964223b4e3b7d, 1558946867, 300, 0, 1024, NULL, NULL, NULL),
+(48, 'default', 0x4f3a32353a22636f6e736f6c655c6a6f62735c53656e64456d61696c4a6f62223a31343a7b733a373a226d657373616765223b733a3637383a223c703e3c7374726f6e673e3c2f7374726f6e673e3c7374726f6e673e3c2f7374726f6e673e3c7374726f6e673e3c2f7374726f6e673e0d0a3c2f703e3c703e0d0a0948656c6c6f20467265647269636b204f63686f6c612c0d0a3c2f703e3c7020223d22223e0d0a09596f7520746f6c6420757320796f7520666f72676f7420796f75722070617373776f72642e204e6f206e65656420746f2050616e6963203a290d0a3c2f703e3c7020223d22223e506c6561736520666f6c6c6f7720746869732055524c20746f20726573657420796f75722070617373776f72643a0d0a3c2f703e3c7020223d22223e3c7374726f6e673e687474703a2f2f6c6f63616c686f73742f6d6564736f757263652f617574682f617574682f72657365742d70617373776f72643f746f6b656e3d42613231307a56484b66466177546d424c6741413756456745583834504830695f313535383934373435303c2f7374726f6e673e0d0a3c2f703e3c7020223d223e546869732070617373776f7264207265736574206c696e6b2077696c6c2065787069726520696e203120686f75722e0d0a3c2f703e0d0a3c7020223e496620796f75206469646e2774206d65616e20746f20696e697469617465207468652070617373776f7264207265636f766572792070726f636573732c20646f6e277420776f7272792120596f75722070617373776f7264206973207374696c6c207361666520616e6420796f752063616e2069676e6f7265207468697320652d6d61696c2e3c2f703e3c7020223d223e546869732070617373776f7264207265736574206c696e6b2077696c6c2065787069726520696e203120686f75722e0d0a3c2f703e0d0a3c7020223e54686973206c696e6b2077696c6c20657870697265206166746572203320686f7572732e3c62723e0d0a3c2f703e223b733a373a227375626a656374223b733a31373a2250617373776f7264205265636f76657279223b733a31313a2273656e6465725f6e616d65223b733a31393a224d4544534f555243452047524f555020455250223b733a31323a2273656e6465725f656d61696c223b733a32323a226e6f7265706c79406274696d696c6c6d616e2e636f6d223b733a31353a22726563697069656e745f656d61696c223b733a31393a226d636f6e79616e676f40676d61696c2e636f6d223b733a31303a226174746163686d656e74223b4e3b733a323a226363223b4e3b733a333a22626363223b4e3b733a31313a2274656d706c6174655f6964223b733a32303a22757365725f666f72676f745f70617373776f7264223b733a363a227265665f6964223b693a313b733a31303a22637265617465645f6174223b733a31393a22323031392d30352d32372030383a35373a3330223b733a31303a22637265617465645f6279223b4e3b733a383a22617474656d707473223b693a313b733a323a226964223b4e3b7d, 1558947450, 300, 0, 1024, NULL, NULL, NULL),
+(49, 'default', 0x4f3a32353a22636f6e736f6c655c6a6f62735c53656e64456d61696c4a6f62223a31343a7b733a373a226d657373616765223b733a3438343a223c7020223d22223e4869204461766964204d6f67616b612c0d0a3c2f703e3c7020223d22223e0d0a09596f7572206163636f756e7420696e204166726963616e204461696c792047656e65746963204761696e73202d2041444747206973206e6f772072656164792e2054686573652061726520796f7572206c6f67696e2064657461696c733a0d0a3c2f703e3c756c3e3c6c693e557365726e616d653a203c7374726f6e673e646d6f67616b613c2f7374726f6e673e3c7374726f6e673e3c2f7374726f6e673e3c2f6c693e3c6c693e50617373776f72643a3c7374726f6e673e2041646d696e3132333435363c2f7374726f6e673e3c2f6c693e3c6c693e3c7374726f6e673e3c7374726f6e673e3c2f7374726f6e673e3c2f7374726f6e673e4c6f67696e204c696e6b3a3c7374726f6e673e3c7374726f6e673e203c2f7374726f6e673e687474703a2f2f6c6f63616c686f73742f616467672f617574682f617574682f6c6f67696e3c2f7374726f6e673e3c2f6c693e3c2f756c3e3c7020223d22223e506c65617365206c6f67696e20616e6420656e7375726520796f75206368616e676520796f75722070617373776f72642e20446f206e6f7420736861726520796f75722070617373776f7264207769746820616e796f6e652e3c2f703e223b733a373a227375626a656374223b733a31333a224c6f67696e2064657461696c73223b733a31313a2273656e6465725f6e616d65223b733a33343a224166726963616e204461696c792047656e65746963204761696e73202d2041444747223b733a31323a2273656e6465725f656d61696c223b733a32323a226e6f7265706c79406274696d696c6c6d616e2e636f6d223b733a31353a22726563697069656e745f656d61696c223b733a31373a22646d6f67616b6140676d61696c2e636f6d223b733a31303a226174746163686d656e74223b4e3b733a323a226363223b4e3b733a333a22626363223b4e3b733a31313a2274656d706c6174655f6964223b733a31383a22757365725f6c6f67696e5f64657461696c73223b733a363a227265665f6964223b693a323b733a31303a22637265617465645f6174223b733a31393a22323031392d30352d33312030383a31393a3235223b733a31303a22637265617465645f6279223b693a313b733a383a22617474656d707473223b693a313b733a323a226964223b4e3b7d, 1559290765, 300, 0, 1024, NULL, NULL, NULL),
+(50, 'default', 0x4f3a32353a22636f6e736f6c655c6a6f62735c53656e64456d61696c4a6f62223a31343a7b733a373a226d657373616765223b733a3438343a223c7020223d22223e4869204461766964204d6f67616b612c0d0a3c2f703e3c7020223d22223e0d0a09596f7572206163636f756e7420696e204166726963616e204461696c792047656e65746963204761696e73202d2041444747206973206e6f772072656164792e2054686573652061726520796f7572206c6f67696e2064657461696c733a0d0a3c2f703e3c756c3e3c6c693e557365726e616d653a203c7374726f6e673e646d6f67616b613c2f7374726f6e673e3c7374726f6e673e3c2f7374726f6e673e3c2f6c693e3c6c693e50617373776f72643a3c7374726f6e673e2041646d696e3132333435363c2f7374726f6e673e3c2f6c693e3c6c693e3c7374726f6e673e3c7374726f6e673e3c2f7374726f6e673e3c2f7374726f6e673e4c6f67696e204c696e6b3a3c7374726f6e673e3c7374726f6e673e203c2f7374726f6e673e687474703a2f2f6c6f63616c686f73742f616467672f617574682f617574682f6c6f67696e3c2f7374726f6e673e3c2f6c693e3c2f756c3e3c7020223d22223e506c65617365206c6f67696e20616e6420656e7375726520796f75206368616e676520796f75722070617373776f72642e20446f206e6f7420736861726520796f75722070617373776f7264207769746820616e796f6e652e3c2f703e223b733a373a227375626a656374223b733a31333a224c6f67696e2064657461696c73223b733a31313a2273656e6465725f6e616d65223b733a33343a224166726963616e204461696c792047656e65746963204761696e73202d2041444747223b733a31323a2273656e6465725f656d61696c223b733a32323a226e6f7265706c79406274696d696c6c6d616e2e636f6d223b733a31353a22726563697069656e745f656d61696c223b733a31373a22646d6f67616b6140676d61696c2e636f6d223b733a31303a226174746163686d656e74223b4e3b733a323a226363223b4e3b733a333a22626363223b4e3b733a31313a2274656d706c6174655f6964223b733a31383a22757365725f6c6f67696e5f64657461696c73223b733a363a227265665f6964223b693a323b733a31303a22637265617465645f6174223b733a31393a22323031392d30352d33312030383a31393a3235223b733a31303a22637265617465645f6279223b693a313b733a383a22617474656d707473223b693a313b733a323a226964223b4e3b7d, 1559290765, 300, 0, 1024, NULL, NULL, NULL),
+(51, 'default', 0x4f3a32353a22636f6e736f6c655c6a6f62735c53656e64456d61696c4a6f62223a31343a7b733a373a226d657373616765223b733a3438383a223c7020223d22223e4869204861727269736f6e204e6a616d62612c0d0a3c2f703e3c7020223d22223e0d0a09596f7572206163636f756e7420696e204166726963616e204461696c792047656e65746963204761696e73202d2041444747206973206e6f772072656164792e2054686573652061726520796f7572206c6f67696e2064657461696c733a0d0a3c2f703e3c756c3e3c6c693e557365726e616d653a203c7374726f6e673e682e6e6a616d62613c2f7374726f6e673e3c7374726f6e673e3c2f7374726f6e673e3c2f6c693e3c6c693e50617373776f72643a3c7374726f6e673e2041646d696e3132333435363c2f7374726f6e673e3c2f6c693e3c6c693e3c7374726f6e673e3c7374726f6e673e3c2f7374726f6e673e3c2f7374726f6e673e4c6f67696e204c696e6b3a3c7374726f6e673e3c7374726f6e673e203c2f7374726f6e673e687474703a2f2f6c6f63616c686f73742f616467672f617574682f617574682f6c6f67696e3c2f7374726f6e673e3c2f6c693e3c2f756c3e3c7020223d22223e506c65617365206c6f67696e20616e6420656e7375726520796f75206368616e676520796f75722070617373776f72642e20446f206e6f7420736861726520796f75722070617373776f7264207769746820616e796f6e652e3c2f703e223b733a373a227375626a656374223b733a31333a224c6f67696e2064657461696c73223b733a31313a2273656e6465725f6e616d65223b733a33343a224166726963616e204461696c792047656e65746963204761696e73202d2041444747223b733a31323a2273656e6465725f656d61696c223b733a32323a226e6f7265706c79406274696d696c6c6d616e2e636f6d223b733a31353a22726563697069656e745f656d61696c223b733a31383a226861727269736f6e40676d61696c2e636f6d223b733a31303a226174746163686d656e74223b4e3b733a323a226363223b4e3b733a333a22626363223b4e3b733a31313a2274656d706c6174655f6964223b733a31383a22757365725f6c6f67696e5f64657461696c73223b733a363a227265665f6964223b693a333b733a31303a22637265617465645f6174223b733a31393a22323031392d30352d33312030383a32323a3035223b733a31303a22637265617465645f6279223b693a313b733a383a22617474656d707473223b693a313b733a323a226964223b4e3b7d, 1559290925, 300, 0, 1024, NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `test`
+--
+
+CREATE TABLE `test` (
+  `id` int(11) NOT NULL,
+  `latlng` point NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `test`
+--
+
+INSERT INTO `test` (`id`, `latlng`) VALUES
+(1, '\0\0\0\0\0\0\0š™™™™YL@ìQ¸…«J@');
 
 --
 -- Indexes for dumped tables
@@ -2029,6 +2173,19 @@ ALTER TABLE `conf_timezone_ref`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `core_extendable_table`
+--
+ALTER TABLE `core_extendable_table`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `core_farm`
+--
+ALTER TABLE `core_farm`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `country_id` (`country_id`);
+
+--
 -- Indexes for table `core_master_country`
 --
 ALTER TABLE `core_master_country`
@@ -2054,6 +2211,19 @@ ALTER TABLE `core_master_currency_conversion`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `core_master_list`
+--
+ALTER TABLE `core_master_list`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `list_type_id` (`list_type_id`);
+
+--
+-- Indexes for table `core_master_list_type`
+--
+ALTER TABLE `core_master_list_type`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `core_master_payment_mode`
 --
 ALTER TABLE `core_master_payment_mode`
@@ -2065,6 +2235,13 @@ ALTER TABLE `core_master_payment_mode`
 --
 ALTER TABLE `core_master_salutation`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `core_table_attributes`
+--
+ALTER TABLE `core_table_attributes`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `table_id` (`table_id`);
 
 --
 -- Indexes for table `email_outbox`
@@ -2091,18 +2268,11 @@ ALTER TABLE `organization`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `org_registration_document`
+-- Indexes for table `organization_units`
 --
-ALTER TABLE `org_registration_document`
+ALTER TABLE `organization_units`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `doc_type_id` (`doc_type_id`),
   ADD KEY `org_id` (`org_id`);
-
---
--- Indexes for table `org_registration_document_type`
---
-ALTER TABLE `org_registration_document_type`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `setting`
@@ -2152,6 +2322,12 @@ ALTER TABLE `sys_queue`
   ADD KEY `priority` (`priority`);
 
 --
+-- Indexes for table `test`
+--
+ALTER TABLE `test`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -2159,12 +2335,12 @@ ALTER TABLE `sys_queue`
 -- AUTO_INCREMENT for table `auth_audit_trail`
 --
 ALTER TABLE `auth_audit_trail`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=162;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=230;
 --
 -- AUTO_INCREMENT for table `auth_log`
 --
 ALTER TABLE `auth_log`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `auth_password_reset_history`
 --
@@ -2174,17 +2350,17 @@ ALTER TABLE `auth_password_reset_history`
 -- AUTO_INCREMENT for table `auth_permission`
 --
 ALTER TABLE `auth_permission`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 --
 -- AUTO_INCREMENT for table `auth_roles`
 --
 ALTER TABLE `auth_roles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `auth_users`
 --
 ALTER TABLE `auth_users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `conf_notif`
 --
@@ -2206,6 +2382,16 @@ ALTER TABLE `conf_numbering_format`
 ALTER TABLE `conf_timezone_ref`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=462;
 --
+-- AUTO_INCREMENT for table `core_extendable_table`
+--
+ALTER TABLE `core_extendable_table`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `core_farm`
+--
+ALTER TABLE `core_farm`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
 -- AUTO_INCREMENT for table `core_master_country`
 --
 ALTER TABLE `core_master_country`
@@ -2226,6 +2412,11 @@ ALTER TABLE `core_master_currency`
 ALTER TABLE `core_master_currency_conversion`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 --
+-- AUTO_INCREMENT for table `core_master_list`
+--
+ALTER TABLE `core_master_list`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
 -- AUTO_INCREMENT for table `core_master_payment_mode`
 --
 ALTER TABLE `core_master_payment_mode`
@@ -2236,6 +2427,11 @@ ALTER TABLE `core_master_payment_mode`
 ALTER TABLE `core_master_salutation`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 --
+-- AUTO_INCREMENT for table `core_table_attributes`
+--
+ALTER TABLE `core_table_attributes`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
 -- AUTO_INCREMENT for table `email_outbox`
 --
 ALTER TABLE `email_outbox`
@@ -2244,22 +2440,17 @@ ALTER TABLE `email_outbox`
 -- AUTO_INCREMENT for table `organization`
 --
 ALTER TABLE `organization`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 --
--- AUTO_INCREMENT for table `org_registration_document`
+-- AUTO_INCREMENT for table `organization_units`
 --
-ALTER TABLE `org_registration_document`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
---
--- AUTO_INCREMENT for table `org_registration_document_type`
---
-ALTER TABLE `org_registration_document_type`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+ALTER TABLE `organization_units`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 --
 -- AUTO_INCREMENT for table `setting`
 --
 ALTER TABLE `setting`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 --
 -- AUTO_INCREMENT for table `sms_outbox`
 --
@@ -2284,7 +2475,12 @@ ALTER TABLE `sys_form_draft`
 -- AUTO_INCREMENT for table `sys_queue`
 --
 ALTER TABLE `sys_queue`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+--
+-- AUTO_INCREMENT for table `test`
+--
+ALTER TABLE `test`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- Constraints for dumped tables
 --
@@ -2335,11 +2531,22 @@ ALTER TABLE `conf_notif`
   ADD CONSTRAINT `conf_notif_ibfk_1` FOREIGN KEY (`notif_type_id`) REFERENCES `conf_notif_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `org_registration_document`
+-- Constraints for table `core_master_list`
 --
-ALTER TABLE `org_registration_document`
-  ADD CONSTRAINT `org_registration_document_ibfk_1` FOREIGN KEY (`org_id`) REFERENCES `organization` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `org_registration_document_ibfk_2` FOREIGN KEY (`doc_type_id`) REFERENCES `org_registration_document_type` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `core_master_list`
+  ADD CONSTRAINT `core_master_list_ibfk_1` FOREIGN KEY (`list_type_id`) REFERENCES `core_master_list_type` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `core_table_attributes`
+--
+ALTER TABLE `core_table_attributes`
+  ADD CONSTRAINT `core_table_attributes_ibfk_1` FOREIGN KEY (`table_id`) REFERENCES `core_extendable_table` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Constraints for table `organization_units`
+--
+ALTER TABLE `organization_units`
+  ADD CONSTRAINT `organization_units_ibfk_1` FOREIGN KEY (`org_id`) REFERENCES `organization` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
