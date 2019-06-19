@@ -2,50 +2,33 @@
 
 namespace backend\modules\core\models;
 
-use common\helpers\Lang;
-use common\models\ActiveRecord;
-use common\models\ActiveSearchInterface;
-use common\models\ActiveSearchTrait;
+use Yii;
 
 /**
  * This is the model class for table "core_table_attributes".
  *
  * @property int $id
- * @property string $name
- * @property string $label
+ * @property string $attribute_key
+ * @property string $attribute_label
  * @property int $table_id
+ * @property int $group_id
  * @property int $data_type
- * @property int $min_length
- * @property int $max_length
- * @property int $allow_null
+ * @property int $input_type
  * @property string $default_value
  * @property int $is_active
  * @property string $created_at
  * @property int $created_by
- * @property int $is_deleted
- * @property string $deleted_at
- * @property int $deleted_by
  *
- * @property ExtendableTable $table
+ * @property CoreTableAttributesGroup $group
  */
-class TableAttributes extends ActiveRecord implements ActiveSearchInterface
+class TableAttributes extends \yii\db\ActiveRecord
 {
-    use ActiveSearchTrait;
-
-    //data types
-
-    const DATA_TYPE_INT = 1;
-    const DATA_TYPE_FLOAT = 2;
-    const DATA_TYPE_STRING = 3;
-    const DATA_TYPE_DATE = 4;
-
-
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return '{{%core_table_attributes}}';
+        return 'core_table_attributes';
     }
 
     /**
@@ -54,23 +37,13 @@ class TableAttributes extends ActiveRecord implements ActiveSearchInterface
     public function rules()
     {
         return [
-            [['name', 'label', 'table_id', 'data_type'], 'required'],
-            [['table_id', 'data_type', 'min_length', 'max_length', 'allow_null', 'is_active'], 'integer'],
+            [['attribute_key', 'attribute_label', 'table_id', 'data_type', 'input_type'], 'required'],
+            [['table_id', 'group_id', 'data_type', 'input_type', 'is_active', 'created_by'], 'integer'],
             [['default_value'], 'string'],
-            [['name'], 'string', 'max' => 128],
-            [['label'], 'string', 'max' => 255],
-            [
-                ['name'],
-                function ($attribute, $params) {
-                    //returns true / false (preg_replace returns the string with replaced matched regex)
-                    if (preg_match('/\s+/', $this->attribute)) {
-                        $this->addError($attribute, 'No white spaces allowed!');
-                    }
-                },
-            ],
-            ['name', 'unique', 'targetAttribute' => ['table_id', 'name'], 'message' => Lang::t('{attribute} already exists.')],
-            [['table_id'], 'exist', 'skipOnError' => true, 'targetClass' => ExtendableTable::class, 'targetAttribute' => ['table_id' => 'id']],
-            [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
+            [['created_at'], 'safe'],
+            [['attribute_key'], 'string', 'max' => 128],
+            [['attribute_label'], 'string', 'max' => 255],
+            [['group_id'], 'exist', 'skipOnError' => true, 'targetClass' => CoreTableAttributesGroup::className(), 'targetAttribute' => ['group_id' => 'id']],
         ];
     }
 
@@ -80,38 +53,25 @@ class TableAttributes extends ActiveRecord implements ActiveSearchInterface
     public function attributeLabels()
     {
         return [
-            'id' => Lang::t('ID'),
-            'name' => Lang::t('Name'),
-            'label' => Lang::t('Label'),
-            'table_id' => Lang::t('Table'),
-            'data_type' => Lang::t('Data Type'),
-            'min_length' => Lang::t('Min Length'),
-            'max_length' => Lang::t('Max Length'),
-            'allow_null' => Lang::t('Allow Null'),
-            'default_value' => Lang::t('Default Value'),
-            'is_active' => Lang::t('Active'),
-            'created_at' => Lang::t('Created At'),
-            'created_by' => Lang::t('Created By'),
-        ];
-    }
-
-    /**
-     *  {@inheritDoc}
-     */
-    public function searchParams()
-    {
-        return [
-            ['name', 'name'],
-            'table_id',
-            'is_active',
+            'id' => 'ID',
+            'attribute_key' => 'Attribute Key',
+            'attribute_label' => 'Attribute Label',
+            'table_id' => 'Table ID',
+            'group_id' => 'Group ID',
+            'data_type' => 'Data Type',
+            'input_type' => 'Input Type',
+            'default_value' => 'Default Value',
+            'is_active' => 'Is Active',
+            'created_at' => 'Created At',
+            'created_by' => 'Created By',
         ];
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getTable()
+    public function getGroup()
     {
-        return $this->hasOne(ExtendableTable::class, ['id' => 'table_id']);
+        return $this->hasOne(CoreTableAttributesGroup::className(), ['id' => 'group_id']);
     }
 }

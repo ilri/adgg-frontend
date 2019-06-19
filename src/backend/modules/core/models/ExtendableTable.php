@@ -1,84 +1,52 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * @author: Fred <mconyango@gmail.com>
+ * Date: 2019-06-19
+ * Time: 2:12 PM
+ */
 
 namespace backend\modules\core\models;
 
-use common\helpers\Lang;
-use common\models\ActiveRecord;
-use common\models\ActiveSearchInterface;
-use common\models\ActiveSearchTrait;
 
-/**
- * This is the model class for table "core_extendable_table".
- *
- * @property int $id
- * @property string $name
- * @property string $label
- * @property int $is_active
- * @property string $uuid
- * @property string $created_at
- * @property int $created_by
- *
- * @property TableAttributes[] $coreTableAttributes
- */
-class ExtendableTable extends ActiveRecord implements ActiveSearchInterface
+use common\helpers\Utils;
+use yii\base\InvalidArgumentException;
+
+class ExtendableTable
 {
-    use ActiveSearchTrait;
+    //tables
+    const TABLE_CLIENT = 1;
+    const TABLE_FARM = 2;
+    const TABLE_ANIMAL = 3;
 
     /**
-     * {@inheritdoc}
+     * @param int $intVal
+     * @return string
      */
-    public static function tableName()
+    public static function decodeTableId($intVal)
     {
-        return '{{%core_extendable_table}}';
+        switch ($intVal) {
+            case self::TABLE_CLIENT:
+                return 'Client/People';
+            case self::TABLE_FARM:
+                return 'Farm';
+            case self::TABLE_ANIMAL:
+                return 'Animal';
+            default:
+                throw new InvalidArgumentException();
+        }
     }
 
     /**
-     * {@inheritdoc}
+     * @param mixed $prompt
+     * @return array
      */
-    public function rules()
+    public static function tableOptions($prompt = false)
     {
-        return [
-            [['name', 'label'], 'required'],
-            [['is_active', 'created_by'], 'integer'],
-            [['name'], 'string', 'max' => 128],
-            [['label', 'uuid'], 'string', 'max' => 255],
-            [['name'], 'unique'],
-            [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function attributeLabels()
-    {
-        return [
-            'id' => Lang::t('ID'),
-            'name' => Lang::t('Name'),
-            'label' => Lang::t('Label'),
-            'is_active' => Lang::t('Active'),
-            'uuid' => Lang::t('Uuid'),
-            'created_at' => Lang::t('Created At'),
-            'created_by' => Lang::t('Created By'),
-        ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getTableAttributes()
-    {
-        return $this->hasMany(TableAttributes::class, ['table_id' => 'id']);
-    }
-
-    /**
-     *  {@inheritDoc}
-     */
-    public function searchParams()
-    {
-        return [
-            ['name', 'name'],
-            'is_active',
-        ];
+        return Utils::appendDropDownListPrompt([
+            self::TABLE_CLIENT => static::decodeTableId(self::TABLE_CLIENT),
+            self::TABLE_FARM => static::decodeTableId(self::TABLE_FARM),
+            self::TABLE_ANIMAL => static::decodeTableId(self::TABLE_ANIMAL),
+        ], $prompt);
     }
 }
