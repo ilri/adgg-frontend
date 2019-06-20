@@ -1,21 +1,20 @@
 <?php
 
-use yii\helpers\Inflector;
+use backend\modules\core\models\Farm;
 
 /* @var $this \yii\web\View */
-/* @var $model \backend\modules\core\models\Client */
+/* @var $searchModel Farm */
 /* @var $controller \backend\controllers\BackendController */
 $controller = Yii::$app->controller;
 
 $this->title = $controller->getPageTitle();
 $this->params['breadcrumbs'] = [
-    ['label' => Inflector::pluralize($controller->resourceLabel), 'url' => ['index']],
     $this->title
 ];
-
 ?>
 <div class="row">
     <div class="col-lg-12">
-        <?= $this->render('_form', ['model' => $model]) ?>
+        <?= $this->render('_filter', ['model' => $searchModel,]) ?>
+        <?= $this->render('_grid', ['model' => $searchModel]) ?>
     </div>
 </div>

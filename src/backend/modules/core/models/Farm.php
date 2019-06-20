@@ -9,7 +9,7 @@ use yii\db\Expression;
 use yii\helpers\Html;
 
 /**
- * This is the model class for table "core_client".
+ * This is the model class for table "core_farm".
  *
  * @property int $id
  * @property string $code
@@ -45,7 +45,7 @@ use yii\helpers\Html;
  *
  * @property Organization $org
  */
-class Client extends ActiveRecord implements ActiveSearchInterface, UploadExcelInterface
+class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInterface
 {
     use ActiveSearchTrait, OrganizationUnitDataTrait;
 
@@ -54,7 +54,7 @@ class Client extends ActiveRecord implements ActiveSearchInterface, UploadExcelI
      */
     public static function tableName()
     {
-        return '{{%core_client}}';
+        return '{{%core_farm}}';
     }
 
     /**

@@ -31,7 +31,7 @@ use backend\modules\core\models\Religion;
 use backend\modules\core\models\Salutation;
 use console\models\fakers\Faker;
 use backend\modules\conf\models\NumberingFormat;
-use backend\modules\core\models\Client;
+use backend\modules\core\models\Farm;
 use backend\modules\core\models\ClientBankAccount;
 use backend\modules\core\models\ClientDocument;
 use backend\modules\core\models\ClientKin;
@@ -75,7 +75,7 @@ class FakerController extends Controller
         $sql .= "TRUNCATE " . ClientResidence::tableName() . ";";
         $sql .= "TRUNCATE " . ClientWorkInformation::tableName() . ";";
         $sql .= "TRUNCATE " . ClientBankAccount::tableName() . ";";
-        $sql .= "TRUNCATE " . Client::tableName() . ";";
+        $sql .= "TRUNCATE " . Farm::tableName() . ";";
         $sql .= "TRUNCATE " . BranchArea::tableName() . ";";
         $sql .= "TRUNCATE " . OrganizationBranch::tableName() . ";";
         $sql .= "TRUNCATE " . OrganizationDocument::tableName() . ";";
@@ -101,7 +101,7 @@ class FakerController extends Controller
         $sql .= "UPDATE " . NumberingFormat::tableName() . " SET [[next_number]]=1 WHERE [[id]]=:org_number_format;";
         $sql .= "SET FOREIGN_KEY_CHECKS=1;";
         Yii::$app->db->createCommand($sql, [
-            ':client_number_format' => Client::NUMBERING_FORMAT_ID,
+            ':client_number_format' => Farm::NUMBERING_FORMAT_ID,
             ':org_number_format' => Organization::NUMBERING_FORMAT_ID,
         ])->execute();
 

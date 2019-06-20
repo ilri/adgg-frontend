@@ -3,7 +3,7 @@
 use yii\helpers\Inflector;
 
 /* @var $this \yii\web\View */
-/* @var $model \backend\modules\core\models\Client */
+/* @var $model \backend\modules\core\models\Farm */
 /* @var $controller \backend\controllers\BackendController */
 $controller = Yii::$app->controller;
 

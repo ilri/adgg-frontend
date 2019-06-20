@@ -10,7 +10,7 @@ use common\helpers\Lang;
 use yii\bootstrap4\ActiveForm;
 
 /* @var $this \yii\web\View */
-/* @var $model \backend\modules\core\forms\UploadClients */
+/* @var $model \backend\modules\core\forms\UploadFarms */
 /* @var $form ActiveForm */
 ?>
 <div class="kt-portlet">

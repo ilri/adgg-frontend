@@ -5,7 +5,7 @@ use common\helpers\Utils;
 use yii\helpers\Inflector;
 
 /* @var $this \yii\web\View */
-/* @var $model \backend\modules\core\forms\UploadClients */
+/* @var $model \backend\modules\core\forms\UploadFarms */
 /* @var $controller \backend\controllers\BackendController */
 
 $controller = Yii::$app->controller;

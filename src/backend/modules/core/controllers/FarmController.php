@@ -12,20 +12,20 @@ namespace backend\modules\core\controllers;
 use backend\modules\auth\Acl;
 use backend\modules\auth\Session;
 use backend\modules\core\Constants;
-use backend\modules\core\forms\UploadClients;
-use backend\modules\core\models\Client;
+use backend\modules\core\forms\UploadFarms;
+use backend\modules\core\models\Farm;
 use common\helpers\Lang;
 use Yii;
 use yii\db\Exception;
 use yii\helpers\Url;
 
-class ClientController extends Controller
+class FarmController extends Controller
 {
     public function init()
     {
         parent::init();
-        $this->resource = Constants::RES_CLIENT;
-        $this->resourceLabel = 'Client';
+        $this->resource = Constants::RES_FARM;
+        $this->resourceLabel = 'Farm';
     }
 
     public function actionIndex($org_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $name = null, $code = null, $phone = null, $is_head = null, $project = null, $farm_type = null, $gender_code = null, $is_active = null)
@@ -44,8 +44,8 @@ class ClientController extends Controller
         }
         $condition = '';
         $params = [];
-        list($condition, $params) = Client::appendOrgSessionIdCondition($condition, $params);
-        $searchModel = Client::searchModel([
+        list($condition, $params) = Farm::appendOrgSessionIdCondition($condition, $params);
+        $searchModel = Farm::searchModel([
             'defaultOrder' => ['name' => SORT_ASC],
             'condition' => $condition,
             'params' => $params,
@@ -72,7 +72,7 @@ class ClientController extends Controller
 
     public function actionCreate($org_id = null)
     {
-        $model = new Client(['org_id' => $org_id, 'is_active' => 1]);
+        $model = new Farm(['org_id' => $org_id, 'is_active' => 1]);
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $transaction = Yii::$app->db->beginTransaction();
             try {
@@ -120,7 +120,7 @@ class ClientController extends Controller
     {
         $this->hasPrivilege(Acl::ACTION_CREATE);
 
-        $form = new UploadClients([]);
+        $form = new UploadFarms([]);
         if ($form->load(Yii::$app->request->post())) {
             if ($form->validate() && $form->addToExcelQueue()) {
                 //process the file
@@ -151,22 +151,22 @@ class ClientController extends Controller
 
     public function actionUploadPreview()
     {
-        $form = new UploadClients();
+        $form = new UploadFarms();
         return $form->previewAction();
     }
 
     /**
      * @param $id
-     * @return Client
+     * @return Farm
      * @throws \yii\web\NotFoundHttpException
      * @throws \yii\web\ForbiddenHttpException
      */
     protected function loadModel($id)
     {
         if (is_string($id) && !is_numeric($id)) {
-            $model = Client::loadModel(['uuid' => $id]);
+            $model = Farm::loadModel(['uuid' => $id]);
         } else {
-            $model = Client::loadModel($id);
+            $model = Farm::loadModel($id);
         }
 
         return $model;

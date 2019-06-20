@@ -12,7 +12,7 @@ use common\helpers\Lang;
 use yii\bootstrap4\ActiveForm;
 
 /* @var $this \yii\web\View */
-/* @var $model \backend\modules\core\models\Client */
+/* @var $model \backend\modules\core\models\Farm */
 /* @var $form ActiveForm */
 ?>
 <div class="kt-portlet">

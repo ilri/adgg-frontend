@@ -9,7 +9,7 @@ namespace backend\modules\core\forms;
 
 
 use backend\modules\auth\models\Users;
-use backend\modules\core\models\Client;
+use backend\modules\core\models\Farm;
 use backend\modules\core\models\OrganizationUnits;
 use common\excel\ExcelReaderTrait;
 use common\excel\ImportInterface;
@@ -18,12 +18,12 @@ use common\models\Model;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use Yii;
 
-class UploadClients extends Model implements ImportInterface
+class UploadFarms extends Model implements ImportInterface
 {
     use ExcelReaderTrait;
 
     /**
-     * @var Client
+     * @var Farm
      */
     public $clientModel;
 
@@ -56,7 +56,7 @@ class UploadClients extends Model implements ImportInterface
         $this->end_column = 'Z';
 
         $this->required_columns = [];
-        $this->clientModel = new Client();
+        $this->clientModel = new Farm();
         foreach ($this->clientModel->getExcelColumns() as $column) {
             $this->file_columns['[' . $column . ']'] = $this->clientModel->getAttributeLabel($column);
         }
@@ -143,9 +143,9 @@ class UploadClients extends Model implements ImportInterface
         if (empty($data))
             return false;
 
-        $model = new Client([]);
+        $model = new Farm([]);
         foreach ($data as $n => $row) {
-            $newModel = Client::find()->andWhere([
+            $newModel = Farm::find()->andWhere([
                 'name' => $row['name'],
                 'org_id' => $row['org_id'],
                 'region_id' => $row['region_id'],
