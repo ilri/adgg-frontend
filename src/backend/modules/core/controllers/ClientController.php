@@ -16,6 +16,7 @@ use backend\modules\core\forms\UploadClients;
 use backend\modules\core\models\Client;
 use common\helpers\Lang;
 use Yii;
+use yii\db\Exception;
 use yii\helpers\Url;
 
 class ClientController extends Controller
@@ -69,6 +70,52 @@ class ClientController extends Controller
         ]);
     }
 
+    public function actionCreate($org_id = null)
+    {
+        $model = new Client(['org_id' => $org_id, 'is_active' => 1]);
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $transaction = Yii::$app->db->beginTransaction();
+            try {
+                $model->save(false);
+                $transaction->commit();
+
+                Yii::$app->session->setFlash('success', Lang::t('SUCCESS_MESSAGE'));
+
+                return $this->redirect(\common\helpers\Url::getReturnUrl(['index', 'id' => $model->id]));
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                throw new Exception($e->getMessage());
+            }
+        }
+
+        return $this->render('create', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionUpdate($id)
+    {
+        $model = $this->loadModel($id);
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $transaction = Yii::$app->db->beginTransaction();
+            try {
+                $model->save(false);
+                $transaction->commit();
+
+                Yii::$app->session->setFlash('success', Lang::t('SUCCESS_MESSAGE'));
+
+                return $this->redirect(\common\helpers\Url::getReturnUrl(['index', 'id' => $model->id]));
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                throw new Exception($e->getMessage());
+            }
+        }
+
+        return $this->render('update', [
+            'model' => $model,
+        ]);
+    }
+
     public function actionUpload()
     {
         $this->hasPrivilege(Acl::ACTION_CREATE);
@@ -83,7 +130,7 @@ class ClientController extends Controller
                     Yii::$app->session->setFlash('success', $successMsg);
                 }
                 if (count($form->getFailedRows()) > 0) {
-                    $warningMsg = '<p>' . Lang::t('{n} rows could could not be saved. See more details below:', ['n' => count($form->getFailedRows())]) . '</p>';
+                    $warningMsg = '<p>' . Lang::t('{n} rows could could not be saved.', ['n' => count($form->getFailedRows())]) . '</p>';
                     $warningMsg .= '<ul style="max-height: 200px;overflow: auto">';
                     foreach ($form->getFailedRows() as $n => $message) {
                         $warningMsg .= '<li>' . $message . '</li>';

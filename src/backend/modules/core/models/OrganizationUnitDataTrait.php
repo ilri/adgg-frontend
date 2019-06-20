@@ -160,4 +160,44 @@ trait OrganizationUnitDataTrait
     {
         return $this->hasOne(OrganizationUnits::class, ['id' => 'village_id']);
     }
+
+    /**
+     * @return bool
+     */
+    public function showCountryField(): bool
+    {
+        return !Session::isOrganization();
+    }
+
+    /**
+     * @return bool
+     */
+    public function showRegionField(): bool
+    {
+        return !Session::isOrganization() || Session::isCountryUser();
+    }
+
+    /**
+     * @return bool
+     */
+    public function showDistrictField(): bool
+    {
+        return !Session::isOrganization() || Session::isCountryUser() || Session::isRegionUser();
+    }
+
+    /**
+     * @return bool
+     */
+    public function showWardField(): bool
+    {
+        return !Session::isOrganization() || Session::isCountryUser() || Session::isRegionUser() || Session::isDistrictUser();
+    }
+
+    /**
+     * @return bool
+     */
+    public function showVillageField(): bool
+    {
+        return !Session::isOrganization() || Session::isCountryUser() || Session::isRegionUser() || Session::isDistrictUser() || Session::isWardUser();
+    }
 }

@@ -145,12 +145,24 @@ class UploadClients extends Model implements ImportInterface
 
         $model = new Client([]);
         foreach ($data as $n => $row) {
-            $newModel = clone $model;
+            $newModel = Client::find()->andWhere([
+                'name' => $row['name'],
+                'org_id' => $row['org_id'],
+                'region_id' => $row['region_id'],
+                'district_id' => $row['district_id'],
+                'ward_id' => $row['ward_id'],
+                'village_id' => $row['village_id'],
+            ])->one();
+
+            if (null === $newModel) {
+                $newModel = clone $model;
+            }
             foreach ($row as $k => $v) {
                 if ($newModel->hasAttribute($k)) {
                     $newModel->{$k} = $v;
                 }
             }
+            $newModel->enableAuditTrail = false;
             if ($newModel->save()) {
                 $this->_savedRows[$n] = $n;
             } else {
@@ -231,6 +243,7 @@ class UploadClients extends Model implements ImportInterface
         $id = OrganizationUnits::getScalar('id', $condition);
         if (empty($id) && !is_numeric($name)) {
             $model = new OrganizationUnits(['org_id' => $this->org_id, 'level' => $level, 'name' => $name, 'parent_id' => $parentId]);
+            $model->enableAuditTrail = false;
             $model->save();
             $id = $model->id;
         }

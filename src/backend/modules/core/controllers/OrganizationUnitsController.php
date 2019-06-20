@@ -93,4 +93,14 @@ class OrganizationUnitsController extends Controller
 
         return $model;
     }
+
+    public function actionGetList($level, $org_id = null, $parent_id = null)
+    {
+        if ($level == OrganizationUnits::LEVEL_REGION) {
+            $data = OrganizationUnits::getListData('id', 'name', true, ['org_id' => $org_id, 'level' => $level]);
+        } else {
+            $data = OrganizationUnits::getListData('id', 'name', true, ['parent_id' => $parent_id, 'level' => $level]);
+        }
+        return json_encode($data);
+    }
 }

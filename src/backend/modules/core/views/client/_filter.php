@@ -5,6 +5,7 @@ use backend\modules\core\models\LookupList;
 use backend\modules\core\models\Organization;
 use backend\modules\core\models\OrganizationUnits;
 use common\helpers\Lang;
+use common\helpers\Url;
 use common\widgets\select2\Select2;
 use yii\bootstrap4\Html;
 
@@ -23,7 +24,7 @@ use yii\bootstrap4\Html;
             <div class="card-body">
                 <?= Html::beginForm(['index'], 'get', ['class' => '', 'id' => 'grid-filter-form', 'data-grid' => $model->getPjaxWidgetId()]) ?>
                 <div class="form-row align-items-center">
-                    <?php if (!Session::isOrganization()): ?>
+                    <?php if ($model->showCountryField()): ?>
                         <div class="col-lg-2">
                             <?= Html::label($model->getAttributeLabel('org_id')) ?>
                             <?= Select2::widget([
@@ -32,7 +33,10 @@ use yii\bootstrap4\Html;
                                 'data' => Organization::getListData(),
                                 'options' => [
                                     'placeholder' => "",
-                                    'class' => 'form-control select2',
+                                    'class' => 'form-control select2 parent-depdropdown',
+                                    'data-child-selectors' => [
+                                        '#' . Html::getInputId($model, 'region_id'),
+                                    ],
                                 ],
                                 'pluginOptions' => [
                                     'allowClear' => true
@@ -40,7 +44,7 @@ use yii\bootstrap4\Html;
                             ]); ?>
                         </div>
                     <?php endif; ?>
-                    <?php if (!Session::isOrganization() || Session::isCountryUser()): ?>
+                    <?php if ($model->showRegionField()): ?>
                         <div class="col-lg-2">
                             <?= Html::label($model->getAttributeLabel('region_id')) ?>
                             <?= Select2::widget([
@@ -48,8 +52,14 @@ use yii\bootstrap4\Html;
                                 'value' => $model->region_id,
                                 'data' => OrganizationUnits::getListData('id', 'name', false, ['org_id' => $model->org_id, 'level' => OrganizationUnits::LEVEL_REGION]),
                                 'options' => [
+                                    'id' => Html::getInputId($model, 'region_id'),
                                     'placeholder' => "",
-                                    'class' => 'form-control select2',
+                                    'class' => 'form-control select2 parent-depdropdown',
+                                    'data-url' => Url::to(['organization-units/get-list', 'org_id' => 'idV', 'level' => OrganizationUnits::LEVEL_REGION]),
+                                    'data-selected' => $model->region_id,
+                                    'data-child-selectors' => [
+                                        '#' . Html::getInputId($model, 'district_id'),
+                                    ],
                                 ],
                                 'pluginOptions' => [
                                     'allowClear' => true
@@ -57,7 +67,7 @@ use yii\bootstrap4\Html;
                             ]); ?>
                         </div>
                     <?php endif; ?>
-                    <?php if (!Session::isOrganization() || Session::isCountryUser() || Session::isRegionUser()): ?>
+                    <?php if ($model->showDistrictField()): ?>
                         <div class="col-lg-2">
                             <?= Html::label($model->getAttributeLabel('district_id')) ?>
                             <?= Select2::widget([
@@ -65,8 +75,14 @@ use yii\bootstrap4\Html;
                                 'value' => $model->district_id,
                                 'data' => OrganizationUnits::getListData('id', 'name', false, ['parent_id' => $model->region_id, 'level' => OrganizationUnits::LEVEL_DISTRICT]),
                                 'options' => [
+                                    'id' => Html::getInputId($model, 'district_id'),
                                     'placeholder' => "",
-                                    'class' => 'form-control select2',
+                                    'class' => 'form-control select2 parent-depdropdown',
+                                    'data-url' => Url::to(['organization-units/get-list', 'parent_id' => 'idV', 'level' => OrganizationUnits::LEVEL_DISTRICT]),
+                                    'data-selected' => $model->district_id,
+                                    'data-child-selectors' => [
+                                        '#' . Html::getInputId($model, 'ward_id'),
+                                    ],
                                 ],
                                 'pluginOptions' => [
                                     'allowClear' => true
@@ -74,7 +90,7 @@ use yii\bootstrap4\Html;
                             ]); ?>
                         </div>
                     <?php endif; ?>
-                    <?php if (!Session::isOrganization() || Session::isCountryUser() || Session::isRegionUser() || Session::isDistrictUser()): ?>
+                    <?php if ($model->showWardField()): ?>
                         <div class="col-lg-2">
                             <?= Html::label($model->getAttributeLabel('ward_id')) ?>
                             <?= Select2::widget([
@@ -82,8 +98,14 @@ use yii\bootstrap4\Html;
                                 'value' => $model->ward_id,
                                 'data' => OrganizationUnits::getListData('id', 'name', false, ['parent_id' => $model->district_id, 'level' => OrganizationUnits::LEVEL_WARD]),
                                 'options' => [
+                                    'id' => Html::getInputId($model, 'ward_id'),
                                     'placeholder' => "",
-                                    'class' => 'form-control select2',
+                                    'class' => 'form-control select2 parent-depdropdown',
+                                    'data-url' => Url::to(['organization-units/get-list', 'parent_id' => 'idV', 'level' => OrganizationUnits::LEVEL_WARD]),
+                                    'data-selected' => $model->ward_id,
+                                    'data-child-selectors' => [
+                                        '#' . Html::getInputId($model, 'village_id'),
+                                    ],
                                 ],
                                 'pluginOptions' => [
                                     'allowClear' => true
@@ -91,7 +113,7 @@ use yii\bootstrap4\Html;
                             ]); ?>
                         </div>
                     <?php endif; ?>
-                    <?php if (!Session::isOrganization() || Session::isCountryUser() || Session::isRegionUser() || Session::isDistrictUser() || Session::isWardUser()): ?>
+                    <?php if ($model->showVillageField()): ?>
                         <div class="col-lg-2">
                             <?= Html::label($model->getAttributeLabel('village_id')) ?>
                             <?= Select2::widget([
@@ -99,8 +121,11 @@ use yii\bootstrap4\Html;
                                 'value' => $model->village_id,
                                 'data' => OrganizationUnits::getListData('id', 'name', false, ['parent_id' => $model->ward_id, 'level' => OrganizationUnits::LEVEL_VILLAGE]),
                                 'options' => [
+                                    'id' => Html::getInputId($model, 'village_id'),
                                     'placeholder' => "",
                                     'class' => 'form-control select2',
+                                    'data-url' => Url::to(['organization-units/get-list', 'parent_id' => 'idV', 'level' => OrganizationUnits::LEVEL_VILLAGE]),
+                                    'data-selected' => $model->village_id,
                                 ],
                                 'pluginOptions' => [
                                     'allowClear' => true

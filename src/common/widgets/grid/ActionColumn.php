@@ -13,6 +13,7 @@ use common\models\ActiveRecord;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 class ActionColumn extends \kartik\grid\ActionColumn
 {
@@ -55,6 +56,11 @@ class ActionColumn extends \kartik\grid\ActionColumn
                 $options = $this->updateOptions;
                 if (!isset($options['modal'])) {
                     $options['modal'] = true;
+                }
+                $useUuid = ArrayHelper::getValue($options, 'data-use-uuid', false);
+                if ($useUuid && $model->hasAttribute('uuid')) {
+                    $route = !empty($this->controller) ? $this->controller . '/update' : 'update';
+                    $url = Url::to([$route, 'id' => $model->uuid]);
                 }
                 $title = Lang::t('Update');
                 $icon = '<i class="fas fa-edit"></i>';
