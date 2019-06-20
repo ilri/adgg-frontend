@@ -4,7 +4,6 @@ use backend\modules\auth\models\Users;
 use backend\modules\core\models\Organization;
 use backend\modules\core\models\OrganizationUnits;
 use common\forms\ActiveField;
-use common\helpers\DateUtils;
 use common\widgets\select2\Select2;
 use yii\bootstrap\Html;
 use common\helpers\Url;
@@ -12,7 +11,7 @@ use common\helpers\Lang;
 use yii\bootstrap4\ActiveForm;
 
 /* @var $this \yii\web\View */
-/* @var $model \backend\modules\core\models\Farm */
+/* @var $model \backend\modules\core\models\Client */
 /* @var $form ActiveForm */
 ?>
 <div class="kt-portlet">
@@ -23,7 +22,7 @@ use yii\bootstrap4\ActiveForm;
     </div>
     <?php
     $form = ActiveForm::begin([
-        'id' => 'farm-form',
+        'id' => 'client-form-form',
         'layout' => 'horizontal',
         'options' => ['class' => 'kt-form kt-form--label-right'],
         'fieldClass' => ActiveField::class,
@@ -127,6 +126,9 @@ use yii\bootstrap4\ActiveForm;
                                     'placeholder' => '[select one]',
                                     'data-url' => Url::to(['organization-units/get-list', 'parent_id' => 'idV', 'level' => OrganizationUnits::LEVEL_VILLAGE]),
                                     'data-selected' => $model->village_id,
+                                    'data-child-selectors' => [
+                                        '#' . Html::getInputId($model, 'farm_id'),
+                                    ],
                                 ],
                                 'pluginOptions' => [
                                     'allowClear' => false
@@ -135,13 +137,23 @@ use yii\bootstrap4\ActiveForm;
                         </div>
                     <?php endif; ?>
                     <div class="col-md-4">
+                        <?= $form->field($model, 'farm_id')->widget(Select2::class, [
+                            'data' => [],
+                            'options' => [
+                                'placeholder' => '[select one]',
+                                'data-url' => Url::to(['farm/get-list', 'village_id' => 'idV']),
+                                'data-selected' => $model->farm_id,
+                            ],
+                            'pluginOptions' => [
+                                'allowClear' => false
+                            ],
+                        ]) ?>
+                    </div>
+                    <div class="col-md-4">
                         <?= $form->field($model, 'code') ?>
                     </div>
                     <div class="col-md-4">
                         <?= $form->field($model, 'name') ?>
-                    </div>
-                    <div class="col-md-4">
-                        <?= $form->field($model, 'reg_date')->textInput(['class' => 'form-control show-datepicker', 'data-max-date' => DateUtils::getToday()]) ?>
                     </div>
                     <div class="col-md-4">
                         <?= $form->field($model, 'phone') ?>
@@ -150,22 +162,8 @@ use yii\bootstrap4\ActiveForm;
                         <?= $form->field($model, 'email') ?>
                     </div>
                     <div class="col-md-4">
-                        <?= $form->field($model, 'total_cattle')->textInput(['type' => 'number']) ?>
-                    </div>
-                    <div class="col-md-4">
                         <?= $form->field($model, 'field_agent_id')->widget(Select2::class, [
                             'data' => Users::getListData('id', 'name', false, []),
-                            'options' => [
-                                'placeholder' => '[select one]',
-                            ],
-                            'pluginOptions' => [
-                                'allowClear' => false
-                            ],
-                        ]) ?>
-                    </div>
-                    <div class="col-md-4">
-                        <?= $form->field($model, 'farm_type')->widget(Select2::class, [
-                            'data' => \backend\modules\core\models\LookupList::getFarmTypeListData(),
                             'options' => [
                                 'placeholder' => '[select one]',
                             ],
@@ -186,36 +184,10 @@ use yii\bootstrap4\ActiveForm;
                         ]) ?>
                     </div>
                     <div class="col-md-4">
-                        <?= $form->field($model, 'project')->widget(Select2::class, [
-                            'data' => \backend\modules\core\models\LookupList::getProjectListData(),
-                            'options' => [
-                                'placeholder' => '[select one]',
-                            ],
-                            'pluginOptions' => [
-                                'allowClear' => false
-                            ],
-                        ]) ?>
+                        <?= $form->field($model, 'is_head')->checkbox() ?>
                     </div>
                     <div class="col-md-4">
                         <?= $form->field($model, 'is_active')->checkbox() ?>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="offset-md-1 col-md-7">
-                        <?= \common\widgets\gmap\GmapGeocode::widget([
-                            'model' => $model,
-                            'geocodeUrl' => Url::to(['/helper/gmap-geocode']),
-                            'latitudeAttribute' => 'latitude',
-                            'longitudeAttribute' => 'longitude',
-                            'addressAttribute' => 'map_address',
-                            'showLatitudeLabel' => true,
-                            'showLongitudeLabel' => true,
-                            'mapWrapperHtmlOptions' => ['style' => 'height:300px;'],
-                            'showAddressLabel' => false,
-                            'latitude' => $model->latitude,
-                            'longitude' => $model->longitude,
-                        ])
-                        ?>
                     </div>
                 </div>
             </div>

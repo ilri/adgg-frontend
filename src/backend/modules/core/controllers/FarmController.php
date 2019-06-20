@@ -28,7 +28,7 @@ class FarmController extends Controller
         $this->resourceLabel = 'Farm';
     }
 
-    public function actionIndex($org_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $name = null, $code = null, $phone = null, $is_head = null, $project = null, $farm_type = null, $gender_code = null, $is_active = null)
+    public function actionIndex($org_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $name = null, $code = null, $phone = null, $project = null, $farm_type = null, $gender_code = null, $is_active = null)
     {
         if (Session::isOrganization()) {
             $org_id = Session::getOrgId();
@@ -59,7 +59,6 @@ class FarmController extends Controller
         $searchModel->name = $name;
         $searchModel->code = $code;
         $searchModel->phone = $phone;
-        $searchModel->is_head = $is_head;
         $searchModel->project = $project;
         $searchModel->farm_type = $farm_type;
         $searchModel->gender_code = $gender_code;
@@ -153,6 +152,12 @@ class FarmController extends Controller
     {
         $form = new UploadFarms();
         return $form->previewAction();
+    }
+
+    public function actionGetList($village_id = null)
+    {
+        $data = Farm::getListData('id', 'name', true, ['village_id' => $village_id]);
+        return json_encode($data);
     }
 
     /**

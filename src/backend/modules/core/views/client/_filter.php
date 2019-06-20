@@ -1,6 +1,5 @@
 <?php
 
-use backend\modules\auth\Session;
 use backend\modules\core\models\LookupList;
 use backend\modules\core\models\Organization;
 use backend\modules\core\models\OrganizationUnits;
@@ -9,7 +8,7 @@ use common\helpers\Url;
 use common\widgets\select2\Select2;
 use yii\bootstrap4\Html;
 
-/* @var $model \backend\modules\core\models\Farm */
+/* @var $model \backend\modules\core\models\Client */
 ?>
 
 <div class="accordion mb-5" id="accordion">
@@ -146,41 +145,26 @@ use yii\bootstrap4\Html;
                         <?= Html::textInput('phone', $model->phone, ['class' => 'form-control']) ?>
                     </div>
                     <div class="col-lg-2">
-                        <?= Html::label($model->getAttributeLabel('project')) ?>
-                        <?= Select2::widget([
-                            'name' => 'project',
-                            'value' => $model->project,
-                            'data' => LookupList::getProjectListData(),
-                            'options' => [
-                                'placeholder' => "",
-                                'class' => 'form-control select2',
-                            ],
-                            'pluginOptions' => [
-                                'allowClear' => true
-                            ],
-                        ]); ?>
-                    </div>
-                    <div class="col-lg-2">
-                        <?= Html::label($model->getAttributeLabel('farm_type')) ?>
-                        <?= Select2::widget([
-                            'name' => 'farm_type',
-                            'value' => $model->farm_type,
-                            'data' => LookupList::getFarmTypeListData(),
-                            'options' => [
-                                'placeholder' => "",
-                                'class' => 'form-control select2',
-                            ],
-                            'pluginOptions' => [
-                                'allowClear' => true
-                            ],
-                        ]); ?>
-                    </div>
-                    <div class="col-lg-2">
                         <?= Html::label($model->getAttributeLabel('gender_code')) ?>
                         <?= Select2::widget([
                             'name' => 'gender_code',
                             'value' => $model->gender_code,
                             'data' => LookupList::getGenderListData(),
+                            'options' => [
+                                'placeholder' => "",
+                                'class' => 'form-control select2',
+                            ],
+                            'pluginOptions' => [
+                                'allowClear' => true
+                            ],
+                        ]); ?>
+                    </div>
+                    <div class="col-lg-2">
+                        <?= Html::label($model->getAttributeLabel('is_head')) ?>
+                        <?= Select2::widget([
+                            'name' => 'is_head',
+                            'value' => $model->is_head,
+                            'data' => \common\helpers\Utils::booleanOptions(),
                             'options' => [
                                 'placeholder' => "",
                                 'class' => 'form-control select2',

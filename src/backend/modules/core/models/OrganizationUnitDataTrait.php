@@ -116,7 +116,7 @@ trait OrganizationUnitDataTrait
      */
     public static function getListData($valueColumn = 'id', $textColumn = 'name', $prompt = false, $condition = '', $params = [], $options = [])
     {
-        list($condition, $params) = static::appendOrgSessionIdCondition($condition, $params, true);
+        list($condition, $params) = static::appendOrgSessionIdCondition($condition, $params, false);
 
         return parent::getListData($valueColumn, $textColumn, $prompt, $condition, $params, $options);
     }

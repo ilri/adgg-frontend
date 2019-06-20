@@ -142,6 +142,6 @@ class LookupList extends ActiveRecord implements ActiveSearchInterface
      */
     public static function getGenderListData($prompt = false, $condition = '', $params = [], $options = [])
     {
-        return static::getList(ListType::LIST_TYPE_PROJECT, $prompt, $condition, $params, $options);
+        return static::getList(ListType::LIST_TYPE_GENDER, $prompt, $condition, $params, $options);
     }
 }

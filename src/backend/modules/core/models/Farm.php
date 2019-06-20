@@ -25,7 +25,6 @@ use yii\helpers\Html;
  * @property int $total_cattle
  * @property int $field_agent_id
  * @property string $field_agent_name
- * @property int $is_head
  * @property string $project
  * @property string $farm_type
  * @property string $gender_code
@@ -64,7 +63,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     {
         return [
             [['name', 'org_id', 'region_id', 'district_id', 'ward_id'], 'required'],
-            [['org_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'total_cattle', 'field_agent_id', 'is_head', 'is_active',], 'integer'],
+            [['org_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'total_cattle', 'field_agent_id', 'is_active',], 'integer'],
             [['reg_date'], 'date', 'format' => 'Y-m-d'],
             [['latitude', 'latitude'], 'number'],
             [['code', 'name', 'project', 'field_agent_name'], 'string', 'max' => 128],
@@ -86,23 +85,22 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     {
         return [
             'id' => 'ID',
-            'code' => 'Client Code',
-            'name' => 'Name',
+            'code' => 'Code',
+            'name' => 'Farm Name',
             'org_id' => 'Country',
             'region_id' => $this->org !== null ? Html::encode($this->org->unit1_name) : 'Region',
             'district_id' => $this->org !== null ? Html::encode($this->org->unit2_name) : 'District',
             'ward_id' => $this->org !== null ? Html::encode($this->org->unit3_name) : 'Ward',
             'village_id' => $this->org !== null ? Html::encode($this->org->unit4_name) : 'Village',
             'reg_date' => 'Reg Date',
-            'phone' => 'Phone No.',
-            'email' => 'Email Address',
+            'phone' => 'Farmer Phone No.',
+            'email' => 'Farmer Email',
             'total_cattle' => 'Total Cattle Owned',
             'field_agent_id' => 'Field Agent',
             'field_agent_name' => 'AI Tech',
-            'is_head' => 'Is Household Head',
             'project' => 'Project',
             'farm_type' => 'Farm Type',
-            'gender_code' => 'Gender Code',
+            'gender_code' => 'Farmer Gender',
             'is_active' => 'Active',
             'latitude' => 'Latitude',
             'longitude' => 'Longitude',
@@ -132,7 +130,6 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             'ward_id',
             'village_id',
             'field_agent_id',
-            'is_head',
             'farm_type',
             'gender_code',
             'is_active',
@@ -149,6 +146,34 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             return true;
         }
         return false;
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+        if ($insert) {
+            $this->addClient();
+        }
+    }
+
+    protected function addClient()
+    {
+        $model = new Client([
+            'farm_id' => $this->id,
+            'name' => $this->name,
+            'org_id' => $this->org_id,
+            'region_id' => $this->region_id,
+            'district_id' => $this->district_id,
+            'ward_id' => $this->ward_id,
+            'village_id' => $this->village_id,
+            'phone' => $this->phone,
+            'email' => $this->email,
+            'field_agent_id' => $this->field_agent_id,
+            'is_head' => 1,
+            'gender_code' => $this->gender_code,
+        ]);
+        $model->enableAuditTrail = false;
+        $model->save();
     }
 
 
