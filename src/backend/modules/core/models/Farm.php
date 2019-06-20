@@ -20,6 +20,7 @@ use yii\helpers\Html;
  * @property int $ward_id
  * @property int $village_id
  * @property string $reg_date
+ * @property string $farmer_name
  * @property string $phone
  * @property string $email
  * @property int $total_cattle
@@ -43,6 +44,7 @@ use yii\helpers\Html;
  * @property int $deleted_by
  *
  * @property Organization $org
+ * @property FarmAttributeValue[] $attributeValues
  */
 class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInterface
 {
@@ -62,11 +64,11 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     public function rules()
     {
         return [
-            [['name', 'org_id', 'region_id', 'district_id', 'ward_id'], 'required'],
+            [['name', 'org_id', 'region_id', 'district_id', 'ward_id', 'farmer_name'], 'required'],
             [['org_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'total_cattle', 'field_agent_id', 'is_active',], 'integer'],
             [['reg_date'], 'date', 'format' => 'Y-m-d'],
             [['latitude', 'latitude'], 'number'],
-            [['code', 'name', 'project', 'field_agent_name'], 'string', 'max' => 128],
+            [['code', 'name', 'project', 'field_agent_name', 'farmer_name'], 'string', 'max' => 128],
             [['phone'], 'string', 'max' => 20],
             [['email', 'map_address'], 'string', 'max' => 255],
             [['farm_type'], 'string', 'max' => 30],
@@ -92,6 +94,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             'district_id' => $this->org !== null ? Html::encode($this->org->unit2_name) : 'District',
             'ward_id' => $this->org !== null ? Html::encode($this->org->unit3_name) : 'Ward',
             'village_id' => $this->org !== null ? Html::encode($this->org->unit4_name) : 'Village',
+            'farmer_name' => 'Farmer Name',
             'reg_date' => 'Reg Date',
             'phone' => 'Farmer Phone No.',
             'email' => 'Farmer Email',
@@ -124,6 +127,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             ['name', 'name'],
             ['phone', 'phone'],
             ['project', 'project'],
+            ['farmer_name', 'farmer_name'],
             'org_id',
             'region_id',
             'district_id',
@@ -141,6 +145,9 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
         if (parent::beforeSave($insert)) {
             if (!empty($this->latitude) && !empty($this->longitude)) {
                 $this->latlng = new Expression("ST_GeomFromText('POINT({$this->latitude} {$this->longitude})')");
+            }
+            if (empty($this->farmer_name)) {
+                $this->farmer_name = $this->name;
             }
 
             return true;
@@ -160,7 +167,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     {
         $model = new Client([
             'farm_id' => $this->id,
-            'name' => $this->name,
+            'name' => $this->farmer_name,
             'org_id' => $this->org_id,
             'region_id' => $this->region_id,
             'district_id' => $this->district_id,
@@ -203,5 +210,27 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
         //@todo add dynamically defined fields
 
         return $columns;
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getAttributeValues()
+    {
+        return $this->hasMany(FarmAttributeValue::class, ['farm_id' => 'id']);
+    }
+
+    public function getAdditionalAttributeValues()
+    {
+        $attributes = TableAttribute::getTableAttributes(ExtendableTable::TABLE_FARM);
+        return $attributes;
+    }
+
+    public function setAdditionalProperties()
+    {
+        if($this->canSetProperty('name')){
+            //$this->canSetProperty()
+        }
+        //$foo->createProperty('hello', 'something');
     }
 }

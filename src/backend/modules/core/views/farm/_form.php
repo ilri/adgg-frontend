@@ -43,6 +43,7 @@ use yii\bootstrap4\ActiveForm;
         <?= Html::errorSummary($model, ['class' => 'alert alert-warning', 'header' => '']); ?>
         <div class="kt-section kt-section--first">
             <div class="kt-section__body">
+                <h3 class="kt-section__title kt-section__title-lg"><?= Lang::t('Farm details') ?></h3>
                 <div class="row">
                     <?php if ($model->showCountryField()): ?>
                         <div class="col-md-4">
@@ -144,12 +145,6 @@ use yii\bootstrap4\ActiveForm;
                         <?= $form->field($model, 'reg_date')->textInput(['class' => 'form-control show-datepicker', 'data-max-date' => DateUtils::getToday()]) ?>
                     </div>
                     <div class="col-md-4">
-                        <?= $form->field($model, 'phone') ?>
-                    </div>
-                    <div class="col-md-4">
-                        <?= $form->field($model, 'email') ?>
-                    </div>
-                    <div class="col-md-4">
                         <?= $form->field($model, 'total_cattle')->textInput(['type' => 'number']) ?>
                     </div>
                     <div class="col-md-4">
@@ -175,17 +170,6 @@ use yii\bootstrap4\ActiveForm;
                         ]) ?>
                     </div>
                     <div class="col-md-4">
-                        <?= $form->field($model, 'gender_code')->widget(Select2::class, [
-                            'data' => \backend\modules\core\models\LookupList::getGenderListData(),
-                            'options' => [
-                                'placeholder' => '[select one]',
-                            ],
-                            'pluginOptions' => [
-                                'allowClear' => false
-                            ],
-                        ]) ?>
-                    </div>
-                    <div class="col-md-4">
                         <?= $form->field($model, 'project')->widget(Select2::class, [
                             'data' => \backend\modules\core\models\LookupList::getProjectListData(),
                             'options' => [
@@ -200,6 +184,40 @@ use yii\bootstrap4\ActiveForm;
                         <?= $form->field($model, 'is_active')->checkbox() ?>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <div class="kt-section">
+            <div class="kt-section__body">
+                <h3 class="kt-section__title kt-section__title-lg"><?= Lang::t('Farmer/Client details') ?></h3>
+                <div class="row">
+                    <div class="col-md-4">
+                        <?= $form->field($model, 'farmer_name') ?>
+                    </div>
+                    <div class="col-md-4">
+                        <?= $form->field($model, 'phone') ?>
+                    </div>
+                    <div class="col-md-4">
+                        <?= $form->field($model, 'email') ?>
+                    </div>
+                    <div class="col-md-4">
+                        <?= $form->field($model, 'gender_code')->widget(Select2::class, [
+                            'data' => \backend\modules\core\models\LookupList::getGenderListData(),
+                            'options' => [
+                                'placeholder' => '[select one]',
+                            ],
+                            'pluginOptions' => [
+                                'allowClear' => false
+                            ],
+                        ]) ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="kt-section kt-section--last">
+            <div class="kt-section__body">
+                <h3 class="kt-section__title kt-section__title-lg"><?= Lang::t('Location details') ?></h3>
                 <div class="row">
                     <div class="offset-md-1 col-md-7">
                         <?= \common\widgets\gmap\GmapGeocode::widget([

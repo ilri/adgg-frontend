@@ -34,7 +34,7 @@ use yii\helpers\Url;
             <li class="kt-menu__item kt-menu__item--submenu">
                 <a href="<?= Url::to(['/core/client/index']) ?>" class="kt-menu__link">
                     <i class="kt-menu__link-icon far fa-users"></i>
-                    <span class="kt-menu__link-text">CLIENTS/PEOPLE</span>
+                    <span class="kt-menu__link-text">CLIENTS/FARMERS</span>
                 </a>
             </li>
             <li class="kt-menu__item kt-menu__item--submenu">

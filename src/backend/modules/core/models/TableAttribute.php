@@ -2,6 +2,7 @@
 
 namespace backend\modules\core\models;
 
+use common\helpers\Lang;
 use common\helpers\Utils;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
@@ -59,7 +60,7 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
             [['attribute_key'], 'string', 'max' => 128],
             [['attribute_label'], 'string', 'max' => 255],
             [['group_id'], 'exist', 'skipOnError' => true, 'targetClass' => TableAttributesGroup::class, 'targetAttribute' => ['group_id' => 'id']],
-            ['attribute_key', 'unique', 'targetAttribute' => ['attribute_key', 'table_id']],
+            ['attribute_key', 'unique', 'targetAttribute' => ['attribute_key', 'table_id'], 'message' => Lang::t('{attribute} already exists.')],
             [
                 ['attribute_key'],
                 function ($attribute, $params) {
@@ -189,6 +190,15 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
     public function getDecodedInputType()
     {
         return static::decodeInputType($this->input_type);
+    }
+
+    /**
+     * @param int $table_id
+     * @return array|TableAttribute[]|\yii\db\ActiveRecord[]
+     */
+    public static function getTableAttributes($table_id)
+    {
+        return static::find()->andWhere(['table_id' => $table_id, 'is_active' => 1])->orderBy(['group_id' => SORT_ASC, 'id' => SORT_ASC])->all();
     }
 
 

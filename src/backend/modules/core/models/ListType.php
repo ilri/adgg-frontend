@@ -29,6 +29,10 @@ class ListType extends ActiveRecord implements ActiveSearchInterface
     const LIST_TYPE_PROJECT = 1;
     const LIST_TYPE_FARM_TYPE = 2;
     const LIST_TYPE_GENDER = 3;
+    const LIST_TYPE_PERSON_AGE_GROUP = 4;
+    const LIST_TYPE_EDUCATION_LEVEL = 5;
+    const LIST_TYPE_LANGUAGE = 6;
+    const LIST_TYPE_PERSON_RELATIONSHIP = 7;
 
 
     /**
