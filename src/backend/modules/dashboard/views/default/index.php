@@ -4,11 +4,16 @@ use common\helpers\Lang;
 
 /* @var $this yii\web\View */
 /* @var $controller \backend\controllers\BackendController */
+/* @var $graphFilterOptions array */
 $controller = Yii::$app->controller;
-
 $this->title = Lang::t('Dashboard');
-$this->params['breadcrumbs'][] = ['label' => Lang::t('Dashboards'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => 'Member Dashboard', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
-
+$this->params['breadcrumbs'] = [
+    $this->title,
+];
 ?>
+
+<div class="row">
+    <div class="col-md-12">
+        <?= $this->render('graph/_graph', ['graphFilterOptions' => $graphFilterOptions]) ?>
+    </div>
+</div>

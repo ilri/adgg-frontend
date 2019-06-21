@@ -24,6 +24,9 @@ class NPMAsset extends AssetBundle
     ];
 
     public $js = [
+        'highcharts/highcharts.js',
+        'highcharts/highcharts-3d.js',
+        'highcharts/modules/exporting.js',
         'js-cookie/src/js.cookie.js',
         'moment/min/moment.min.js',
         'tooltip.js/dist/umd/tooltip.min.js',

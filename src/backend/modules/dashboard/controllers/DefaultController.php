@@ -9,7 +9,6 @@
 namespace backend\modules\dashboard\controllers;
 
 
-
 class DefaultController extends Controller
 {
     /**
@@ -22,11 +21,20 @@ class DefaultController extends Controller
 
     public function actionIndex()
     {
-        return $this->render('index');
+        return $this->render('index', [
+            'graphFilterOptions' => [
+            ],
+        ]);
     }
 
-    public function actionGraph($graphType = null, $dateRange = null)
+    public function actionGraph($graphType = null, $dateRange = null, $org_id = null)
     {
-        return $this->renderPartial('graph/graph', ['graphType' => $graphType, 'dateRange' => $dateRange]);
+        return $this->renderPartial('graph/_widget', [
+            'graphType' => $graphType,
+            'dateRange' => $dateRange,
+            'graphFilterOptions' => [
+                'org_id' => $org_id,
+            ]
+        ]);
     }
 }
