@@ -21,7 +21,11 @@ class QueryParamAuth extends AuthMethod
     public $tokenParam = 'token';
 
     /**
-     * @inheritdoc
+     * @param \yii\web\User $user
+     * @param \yii\web\Request $request
+     * @param \yii\web\Response $response
+     * @return \yii\web\IdentityInterface|null
+     * @throws UnauthorizedHttpException
      */
     public function authenticate($user, $request, $response)
     {

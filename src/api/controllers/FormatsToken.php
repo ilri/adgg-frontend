@@ -8,6 +8,8 @@
 
 namespace api\controllers;
 
+use common\helpers\Str;
+
 trait FormatsToken
 {
     /**
@@ -17,7 +19,7 @@ trait FormatsToken
     private function formatToken($token)
     {
         // incase we have a bearer...skip that part
-        if (str_contains($token, 'Bearer')) {
+        if (Str::contains($token, 'Bearer')) {
             $token = substr($token, strlen('Bearer '));
         }
         return $token;

@@ -13,7 +13,7 @@ class UserController extends ActiveController
 {
     public function init()
     {
-        $this->modelClass = Users::className();
+        $this->modelClass = Users::class;
         parent::init();
     }
 

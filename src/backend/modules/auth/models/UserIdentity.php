@@ -86,7 +86,7 @@ abstract class UserIdentity extends ActiveRecord implements IdentityInterface
     /**
      * Finds an identity by the given ID.
      *
-     * @param  int|string $id The user id.
+     * @param int|string $id The user id.
      * @return IdentityInterface|static
      */
     public static function findIdentity($id)
@@ -97,8 +97,8 @@ abstract class UserIdentity extends ActiveRecord implements IdentityInterface
     /**
      * Finds an identity by the given access token.
      *
-     * @param  mixed $token
-     * @param  null $type
+     * @param mixed $token
+     * @param null $type
      * @return void|IdentityInterface
      *
      * @throws NotSupportedException
@@ -135,7 +135,7 @@ abstract class UserIdentity extends ActiveRecord implements IdentityInterface
     /**
      * Validates the given auth key.
      *
-     * @param  string $authKey The given auth key.
+     * @param string $authKey The given auth key.
      * @return boolean          Whether the given auth key is valid.
      */
     public function validateAuthKey($authKey)
@@ -154,7 +154,7 @@ abstract class UserIdentity extends ActiveRecord implements IdentityInterface
     /**
      * Validates password.
      *
-     * @param  string $password
+     * @param string $password
      * @return bool
      *
      */
@@ -177,7 +177,7 @@ abstract class UserIdentity extends ActiveRecord implements IdentityInterface
     /**
      * Generates password hash from password and sets it to the model.
      *
-     * @param  string $password
+     * @param string $password
      *
      * @throws \yii\base\Exception
      */
@@ -212,7 +212,7 @@ abstract class UserIdentity extends ActiveRecord implements IdentityInterface
     /**
      * Finds user by username.
      *
-     * @param  string $username
+     * @param string $username
      * @return $this
      */
     public static function findByUsername($username)
@@ -223,7 +223,7 @@ abstract class UserIdentity extends ActiveRecord implements IdentityInterface
     /**
      * Finds user by email.
      *
-     * @param  string $email
+     * @param string $email
      * @return $this
      */
     public static function findByEmail($email)
@@ -234,7 +234,7 @@ abstract class UserIdentity extends ActiveRecord implements IdentityInterface
     /**
      * Finds user by password reset token.
      *
-     * @param  string $token Password reset token.
+     * @param string $token Password reset token.
      * @return $this
      */
     public static function findByPasswordResetToken($token)
@@ -252,7 +252,7 @@ abstract class UserIdentity extends ActiveRecord implements IdentityInterface
     /**
      * Finds user by account activation token.
      *
-     * @param  string $token Account activation token.
+     * @param string $token Account activation token.
      * @return $this
      * @throws \yii\web\NotFoundHttpException
      */
@@ -264,7 +264,7 @@ abstract class UserIdentity extends ActiveRecord implements IdentityInterface
     /**
      * Finds out if password reset token is valid.
      *
-     * @param  string $token Password reset token.
+     * @param string $token Password reset token.
      * @return bool
      */
     public static function isPasswordResetTokenValid($token)
@@ -295,9 +295,9 @@ abstract class UserIdentity extends ActiveRecord implements IdentityInterface
      * user's email and password combo, otherwise we check username/password.
      * NOTE: used in LoginForm model.
      *
-     * @param  string $username Can be either username or email based on scenario.
-     * @param  string $password
-     * @param  string $scenario
+     * @param string $username Can be either username or email based on scenario.
+     * @param string $password
+     * @param string $scenario
      * @return bool|static
      */
     public static function userExists($username, $password, $scenario)
@@ -455,7 +455,8 @@ abstract class UserIdentity extends ActiveRecord implements IdentityInterface
         return [
             'password',
             function () {
-                $limit = 5;//@todo define in settings
+                $limit = 5;
+                //@todo define in settings
                 $passwordHistory = PasswordResetHistory::getColumnData('old_password_hash', ['user_id' => $this->id], [], ['orderBy' => ['id' => SORT_DESC], 'limit' => $limit]);
                 foreach ($passwordHistory as $p) {
                     if (Yii::$app->security->validatePassword($this->password, $p)) {

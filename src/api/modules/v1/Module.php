@@ -17,7 +17,7 @@ class Module extends \yii\base\Module
     {
         return [
             'corsFilter' => [
-                'class' => Cors::className(),
+                'class' => Cors::class,
                 'cors' => [
                     'Access-Control-Allow-Methods' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
                     'Access-Control-Allow-Headers' => ['Content-Type', 'Cache-Control', 'Pragma', 'Authorization', 'X-Requested-With', 'accept', 'Origin', 'Access-Control-Request-Method', 'Access-Control-Request-Headers'],

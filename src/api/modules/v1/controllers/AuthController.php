@@ -38,6 +38,7 @@ class AuthController extends Controller
      * @return LoginForm|ResponseObject
      * @throws ForbiddenHttpException
      * @throws HttpException
+     * @throws \yii\base\InvalidConfigException
      */
     public function actionAuthorize()
     {
@@ -67,10 +68,14 @@ class AuthController extends Controller
      * Change password
      *
      * @return ChangePassword|ResponseObject
+     * @throws ForbiddenHttpException
+     * @throws \yii\base\Exception
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\web\UnauthorizedHttpException
      */
     public function actionChangePassword()
     {
-        /* @var $user Users*/
+        /* @var $user Users */
         $user = $this->getAuthToken()->getIdentity();
         $model = new ChangePassword();
         $model->username = $user->username;
@@ -91,6 +96,7 @@ class AuthController extends Controller
      * Send a password reset link to a user's email address
      *
      * @throws NotFoundHttpException
+     * @throws \yii\base\InvalidConfigException
      */
     public function actionBeginResetPassword()
     {
@@ -112,6 +118,8 @@ class AuthController extends Controller
      * Complete password reset
      * @return ResetPassword|ResponseObject
      * @throws NotFoundHttpException
+     * @throws \yii\base\Exception
+     * @throws \yii\base\InvalidConfigException
      */
     public function actionCompleteResetPassword()
     {

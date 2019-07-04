@@ -7,5 +7,5 @@ return [
         'text/html' => yii\web\Response::FORMAT_HTML,
     ],
     'JWT_EXPIRE' => 86400,
-    'JWT_SECRET' => 'd6492856a4a4c104681de4f3a2e0f9891'
+    'JWT_SECRET' => 'd6492856a4a4c104681de4f3a2e0f9891291010M'
 ];

@@ -11,6 +11,7 @@ return [
         'controller' => [
             'users' => 'v1/user',
             'settings' => 'v1/settings',
+            'odk-json' => 'v1/odk-json',
         ],
         'tokens' => [
             '{id}' => '<id:\\w+>',

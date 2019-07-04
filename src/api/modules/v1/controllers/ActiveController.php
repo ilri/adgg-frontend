@@ -5,6 +5,7 @@ namespace api\modules\v1\controllers;
 use api\controllers\AuthTrait;
 use api\controllers\SendsResponse;
 use api\modules\v1\DataArraySerializer;
+use common\helpers\Str;
 use League\Fractal\Manager;
 use Yii;
 
@@ -59,7 +60,7 @@ class ActiveController extends \api\controllers\ActiveController
         $this->manager->parseIncludes(Yii::$app->request->get());
         $inc = Yii::$app->request->get('include');
         if (!empty($inc)) {
-            if (str_contains($inc, ',')) {
+            if (Str::contains($inc, ',')) {
                 $with = explode(',', $inc);
             } else {
                 $with = $inc;

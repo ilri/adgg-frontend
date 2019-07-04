@@ -3,6 +3,7 @@
 namespace api\controllers;
 
 use api\modules\v1\pojo\ResponseObject;
+use Illuminate\Support\Arr;
 use League\Fractal\Manager;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\Item;
@@ -50,8 +51,8 @@ trait SendsResponse
      */
     protected function sendError($params)
     {
-        if (array_has($params, 'code')) {
-            Yii::$app->response->setStatusCode(array_pull($params, 'code', 500));
+        if (Arr::has($params, 'code')) {
+            Yii::$app->response->setStatusCode(Arr::pull($params, 'code', 500));
         }
         return $this->sendMessage($params);
     }

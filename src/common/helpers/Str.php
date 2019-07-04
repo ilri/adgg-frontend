@@ -8,7 +8,7 @@
 namespace common\helpers;
 
 
-class Str
+class Str extends \Illuminate\Support\Str
 {
     /**
      * @param string $string

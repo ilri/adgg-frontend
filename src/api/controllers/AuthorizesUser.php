@@ -70,7 +70,7 @@ trait AuthorizesUser
     }
 
     /**
-     * @return \backend\modules\auth\models\UserIdentity
+     * @return UserIdentity
      * @throws ForbiddenHttpException
      */
     public function getLoggedInAdmin()

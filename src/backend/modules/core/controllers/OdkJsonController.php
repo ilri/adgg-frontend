@@ -61,6 +61,7 @@ class OdkJsonController extends Controller
     public function actionCreate()
     {
         $model = new OdkJsonQueue([]);
+        $model->setScenario(OdkJsonQueue::SCENARIO_UPLOAD);
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $transaction = Yii::$app->db->beginTransaction();
@@ -82,28 +83,10 @@ class OdkJsonController extends Controller
         ]);
     }
 
-    public function actionUpdate($id)
+    public function actionDelete($id)
     {
         $model = $this->loadModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $transaction = Yii::$app->db->beginTransaction();
-            try {
-                $model->save(false);
-                $transaction->commit();
-
-                Yii::$app->session->setFlash('success', Lang::t('SUCCESS_MESSAGE'));
-
-                return $this->redirect(Url::getReturnUrl(['index']));
-            } catch (\Exception $e) {
-                $transaction->rollBack();
-                throw new Exception($e->getMessage());
-            }
-        }
-
-        return $this->render('update', [
-            'model' => $model,
-        ]);
+        return OdkJsonQueue::softDelete($model->id);
     }
 
     /**

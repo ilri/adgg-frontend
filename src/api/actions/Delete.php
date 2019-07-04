@@ -18,6 +18,8 @@ class Delete extends Action
      * Deletes a model.
      * @param mixed $id id of the model to be deleted.
      * @throws ServerErrorHttpException on failure.
+     * @throws \Throwable
+     * @throws \yii\web\NotFoundHttpException
      */
     public function run($id)
     {

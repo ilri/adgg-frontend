@@ -8,6 +8,7 @@ use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
 use Yii;
+use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "core_odk_json_queue".
@@ -29,6 +30,14 @@ class OdkJsonQueue extends ActiveRecord implements ActiveSearchInterface
 {
     use ActiveSearchTrait, OrganizationDataTrait;
 
+    const SCENARIO_UPLOAD = 'upload';
+    const SCENARIO_API_PUSH = 'api_push';
+
+    /**
+     * @var UploadedFile
+     */
+    public $jsonFile;
+
     /**
      * @var string
      */
@@ -48,11 +57,12 @@ class OdkJsonQueue extends ActiveRecord implements ActiveSearchInterface
     public function rules()
     {
         return [
-            [['tmp_file', 'uuid'], 'required'],
+            [['uuid', 'tmp_file'], 'required'],
             [['is_processed', 'org_id', 'has_errors', 'is_locked'], 'integer'],
             [['error_message', 'file_contents'], 'string'],
             [['uuid', 'file'], 'string', 'max' => 255],
             [['uuid'], 'unique', 'message' => Lang::t('{attribute} already exists.')],
+            [['jsonFile'], 'file', 'skipOnEmpty' => true, 'extensions' => ['json','xml'],'checkExtensionByMimeType' => false, 'on' => self::SCENARIO_API_PUSH],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
     }
@@ -104,15 +114,24 @@ class OdkJsonQueue extends ActiveRecord implements ActiveSearchInterface
     {
         if (parent::beforeValidate()) {
             if (!empty($this->tmp_file)) {
-                $jsonStr = file_get_contents($this->tmp_file);
-                $json = json_decode($jsonStr, true);
-                $this->uuid = $json['_uuid'];
-                $this->file_contents = json_encode($json);
+                $this->setJsonAttributes($this->tmp_file);
             }
 
             return true;
         }
         return false;
+    }
+
+    /**
+     * @param string $file
+     * @return void
+     */
+    protected function setJsonAttributes($file)
+    {
+        $jsonStr = file_get_contents($file);
+        $json = json_decode($jsonStr, true);
+        $this->uuid = $json['_uuid'];
+        $this->file_contents = json_encode($json);
     }
 
 
@@ -138,9 +157,9 @@ class OdkJsonQueue extends ActiveRecord implements ActiveSearchInterface
         if (empty($this->tmp_file))
             return false;
 
-        $ext = $ext = pathinfo($this->tmp_file, PATHINFO_EXTENSION);
+        $ext = pathinfo($this->tmp_file, PATHINFO_EXTENSION);
         $file_name = $this->uuid . '.' . $ext;
-        $temp_dir = dirname($this->tmp_file);
+        $temp_dir = $this->scenario === self::SCENARIO_API_PUSH ? $this->tmp_file : dirname($this->tmp_file);
         $new_path = $this->getDir() . DIRECTORY_SEPARATOR . $file_name;
         if (copy($this->tmp_file, $new_path)) {
             $this->file = $file_name;
