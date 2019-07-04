@@ -31,12 +31,18 @@ class ActionColumn extends \kartik\grid\ActionColumn
     {
         if (!isset($this->buttons['view'])) {
             $this->buttons['view'] = function ($url, $model) {
+                /* @var $model ActiveRecord */
                 $options = $this->viewOptions;
                 if (isset($this->viewOptions['visible']) && $this->viewOptions['visible'] === false) {
                     return '';
                 }
                 if (!isset($options['class'])) {
                     //$options['class'] = 'btn btn-sm btn-clean btn-icon btn-icon-md';
+                }
+                $useUuid = ArrayHelper::getValue($options, 'data-use-uuid', false);
+                if ($useUuid && $model->hasAttribute('uuid')) {
+                    $route = !empty($this->controller) ? $this->controller . '/view' : 'view';
+                    $url = Url::to([$route, 'id' => $model->uuid]);
                 }
                 $title = Lang::t('View');
                 $icon = '<i class="fas fa-eye"></i>';

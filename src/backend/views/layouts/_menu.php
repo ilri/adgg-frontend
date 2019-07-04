@@ -72,6 +72,12 @@ use yii\helpers\Url;
                     <span class="kt-menu__link-text">SETTINGS</span>
                 </a>
             </li>
+            <li class="kt-menu__item kt-menu__item--submenu">
+                <a href="<?= Url::to(['/core/odk-json/index']) ?>" class="kt-menu__link">
+                    <i class="kt-menu__link-icon far fa-file-alt"></i>
+                    <span class="kt-menu__link-text">ODK JSON FILES</span>
+                </a>
+            </li>
         </ul>
     </div>
 </div>

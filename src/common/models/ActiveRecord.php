@@ -178,7 +178,7 @@ abstract class ActiveRecord extends AR
                     $this->updated_at = DateUtils::mysqlTimestamp();
                 }
                 //uuid
-                if ($this->hasAttribute('uuid')) {
+                if ($this->hasAttribute('uuid') && empty($this->uuid)) {
                     $this->uuid = \common\helpers\Str::generateUUID();
                 }
             } else {
