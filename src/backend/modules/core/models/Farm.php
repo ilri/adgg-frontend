@@ -46,9 +46,9 @@ use yii\helpers\Html;
  * @property Organization $org
  * @property FarmAttributeValue[] $attributeValues
  */
-class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInterface
+class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInterface, TableAttributeInterface
 {
-    use ActiveSearchTrait, OrganizationUnitDataTrait;
+    use ActiveSearchTrait, OrganizationUnitDataTrait, TableAttributeTrait;
 
     /**
      * {@inheritdoc}
@@ -64,7 +64,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     public function rules()
     {
         return [
-            [['name', 'org_id', 'region_id', 'district_id', 'ward_id' ], 'required'],
+            [['name', 'org_id', 'region_id', 'district_id', 'ward_id'], 'required'],
             [['org_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'total_cattle', 'field_agent_id', 'is_active',], 'integer'],
             [['reg_date'], 'date', 'format' => 'Y-m-d'],
             [['latitude', 'latitude'], 'number'],
@@ -143,6 +143,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
+            $this->ignoreAdditionalAttributes = true;
             if (!empty($this->latitude) && !empty($this->longitude)) {
                 $this->latlng = new Expression("ST_GeomFromText('POINT({$this->latitude} {$this->longitude})')");
             }
@@ -158,6 +159,14 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
+        $this->ignoreAdditionalAttributes = false;
+
+        foreach ($this->getAttributes() as $attribute => $val) {
+            if ($this->isAdditionalAttribute($attribute)) {
+                $this->saveAdditionalAttributeValue($attribute);
+            }
+        }
+
         if ($insert) {
             $this->addClient();
         }
@@ -228,9 +237,44 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
 
     public function setAdditionalProperties()
     {
-        if($this->canSetProperty('name')){
+        if ($this->canSetProperty('name')) {
             //$this->canSetProperty()
         }
         //$foo->createProperty('hello', 'something');
+    }
+
+    /**
+     * @return int
+     */
+    public static function getDefinedTableId(): int
+    {
+        return ExtendableTable::TABLE_FARM;
+    }
+
+    /**
+     * @return int
+     */
+    public static function getDefinedType(): int
+    {
+        return TableAttribute::TYPE_ATTRIBUTE;
+    }
+
+    /**
+     * @param string $attribute
+     * @return bool
+     * @throws \Exception
+     */
+    public function saveAdditionalAttributeValue(string $attribute): bool
+    {
+        if (null === $this->{$attribute}) {
+            return false;
+        }
+        $attributeId = TableAttribute::getAttributeId(static::getDefinedTableId(), $attribute);
+        $model = FarmAttributeValue::find()->andWhere(['farm_id' => $this->id, 'attribute_id' => $attributeId])->one();
+        if (null === $model) {
+            $model = new FarmAttributeValue(['farm_id' => $this->id, 'attribute_id' => $attributeId]);
+        }
+        $model->attribute_value = $this->{$attribute};
+       return $model->save(false);
     }
 }

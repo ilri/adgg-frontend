@@ -260,5 +260,27 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
         ], $prompt);
     }
 
+    /**
+     * @param int $tableId
+     * @param int $type
+     * @return mixed
+     * @throws \Exception
+     */
+    public static function getDefinedAttributes($tableId, $type)
+    {
+        return static::getColumnData('attribute_key', ['table_id' => $tableId, 'type' => $type, 'is_active' => 1]);
+    }
+
+    /**
+     * @param int $tableId
+     * @param string $attributeKey
+     * @return string
+     * @throws \Exception
+     */
+    public static function getAttributeId($tableId, $attributeKey)
+    {
+        return static::getScalar('id', ['table_id' => $tableId, 'attribute_key' => $attributeKey]);
+    }
+
 
 }
