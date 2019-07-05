@@ -3,12 +3,13 @@
 namespace backend\modules\core\models;
 
 use common\models\ActiveRecord;
+use Yii;
 
 /**
- * This is the model class for table "core_farm_attribute_value".
+ * This is the model class for table "core_client_attribute_value".
  *
  * @property int $id
- * @property int $farm_id
+ * @property int $client_id
  * @property int $attribute_id
  * @property string $attribute_value
  * @property string $created_at
@@ -16,10 +17,10 @@ use common\models\ActiveRecord;
  * @property string $updated_at
  * @property int $updated_by
  *
- * @property Farm $farm
+ * @property Client $client
  * @property TableAttribute $tableAttribute
  */
-class FarmAttributeValue extends ActiveRecord
+class ClientAttributeValue extends ActiveRecord
 {
     use TableAttributeValueTrait;
 
@@ -28,7 +29,7 @@ class FarmAttributeValue extends ActiveRecord
      */
     public static function tableName()
     {
-        return '{{%core_farm_attribute_value}}';
+        return '{{%core_client_attribute_value}}';
     }
 
     /**
@@ -37,10 +38,11 @@ class FarmAttributeValue extends ActiveRecord
     public function rules()
     {
         return [
-            [['farm_id', 'attribute_id', 'attribute_value'], 'required'],
-            [['farm_id', 'attribute_id'], 'integer'],
+            [['client_id', 'attribute_id', 'attribute_value'], 'required'],
+            [['client_id', 'attribute_id', 'created_by', 'updated_by'], 'integer'],
+            [['created_at', 'updated_at'], 'safe'],
             [['attribute_value'], 'string', 'max' => 1000],
-            [['farm_id'], 'exist', 'skipOnError' => true, 'targetClass' => Farm::class, 'targetAttribute' => ['farm_id' => 'id']],
+            [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => Client::class, 'targetAttribute' => ['client_id' => 'id']],
             [['attribute_id'], 'exist', 'skipOnError' => true, 'targetClass' => TableAttribute::class, 'targetAttribute' => ['attribute_id' => 'id']],
         ];
     }
@@ -52,7 +54,7 @@ class FarmAttributeValue extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'farm_id' => 'Farm ID',
+            'client_id' => 'Client ID',
             'attribute_id' => 'Attribute ID',
             'attribute_value' => 'Attribute Value',
             'created_at' => 'Created At',
@@ -65,8 +67,8 @@ class FarmAttributeValue extends ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getFarm()
+    public function getClient()
     {
-        return $this->hasOne(Farm::class, ['id' => 'farm_id']);
+        return $this->hasOne(Client::class, ['id' => 'client_id']);
     }
 }

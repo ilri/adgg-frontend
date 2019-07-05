@@ -20,6 +20,8 @@ use yii\base\InvalidArgumentException;
  * @property int $input_type
  * @property string $default_value
  * @property int $list_type_id
+ * @property int $type
+ * @property int $event_type
  * @property int $is_active
  * @property string $created_at
  * @property int $created_by
@@ -39,6 +41,16 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
     const INPUT_TYPE_SELECT = 5;
     const INPUT_TYPE_TEXTAREA = 6;
     const INPUT_TYPE_DATE = 7;
+    //type
+    const TYPE_ATTRIBUTE = 1;
+    const TYPE_EVENT = 2;
+
+
+    public function init()
+    {
+        parent::init();
+    }
+
 
     /**
      * {@inheritdoc}
@@ -55,12 +67,12 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
     {
         return [
             [['attribute_key', 'attribute_label', 'table_id', 'input_type'], 'required'],
-            [['table_id', 'group_id', 'input_type', 'list_type_id', 'is_active'], 'integer'],
+            [['table_id', 'group_id', 'input_type', 'list_type_id', 'is_active', 'type', 'event_type'], 'integer'],
             [['default_value'], 'string'],
             [['attribute_key'], 'string', 'max' => 128],
             [['attribute_label'], 'string', 'max' => 255],
             [['group_id'], 'exist', 'skipOnError' => true, 'targetClass' => TableAttributesGroup::class, 'targetAttribute' => ['group_id' => 'id']],
-            ['attribute_key', 'unique', 'targetAttribute' => ['attribute_key', 'table_id'], 'message' => Lang::t('{attribute} already exists.')],
+            ['attribute_key', 'unique', 'message' => Lang::t('{attribute} already exists.')],
             [
                 ['attribute_key'],
                 function ($attribute, $params) {
@@ -90,6 +102,8 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
             'input_type' => 'Input Type',
             'list_type_id' => 'List Type',
             'default_value' => 'Default Value',
+            'type' => 'Type',
+            'event_type' => 'Animal Event Type',
             'is_active' => 'Active',
             'created_at' => 'Created At',
             'created_by' => 'Created By',
@@ -122,6 +136,8 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
             ['attribute_label', 'attribute_label'],
             'table_id',
             'group_id',
+            'type',
+            'event_type',
             'is_active',
         ];
     }
@@ -129,10 +145,25 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
+            $this->setDefaultValues();
             $this->default_value = serialize($this->default_value);
             return true;
         }
         return false;
+    }
+
+    public function setDefaultValues()
+    {
+        if (empty($this->type)) {
+            $eventTables = [
+                ExtendableTable::TABLE_ANIMAL_EVENTS,
+            ];
+            if (in_array($this->table_id, $eventTables)) {
+                $this->type = self::TYPE_EVENT;
+            } else {
+                $this->type = self::TYPE_ATTRIBUTE;
+            }
+        }
     }
 
     public function afterFind()
@@ -199,6 +230,34 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
     public static function getTableAttributes($table_id)
     {
         return static::find()->andWhere(['table_id' => $table_id, 'is_active' => 1])->orderBy(['group_id' => SORT_ASC, 'id' => SORT_ASC])->all();
+    }
+
+    /**
+     * @param int $intVal
+     * @return string
+     */
+    public static function decodeType($intVal)
+    {
+        switch ($intVal) {
+            case self::TYPE_ATTRIBUTE:
+                return 'ATTRIBUTE';
+            case self::TYPE_EVENT:
+                return 'EVENT';
+            default:
+                throw new InvalidArgumentException();
+        }
+    }
+
+    /**
+     * @param mixed $prompt
+     * @return array
+     */
+    public static function typeOptions($prompt = false)
+    {
+        return Utils::appendDropDownListPrompt([
+            self::TYPE_ATTRIBUTE => static::decodeType(self::TYPE_ATTRIBUTE),
+            self::TYPE_EVENT => static::decodeType(self::TYPE_EVENT),
+        ], $prompt);
     }
 
 

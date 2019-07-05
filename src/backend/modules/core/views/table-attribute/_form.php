@@ -43,6 +43,14 @@ $form = ActiveForm::begin([
 
 <div class="modal-body">
     <div class="hidden" id="my-modal-notif"></div>
+    <?= $form->field($model, 'event_type')->widget(Select2::class, [
+        'data' => \backend\modules\core\models\ListType::getListData(),
+        'modal' => true,
+        'options' => ['placeholder' => '[select one]'],
+        'pluginOptions' => [
+            'allowClear' => false
+        ],
+    ]) ?>
     <?= $form->field($model, 'attribute_key', []) ?>
     <?= $form->field($model, 'attribute_label', []) ?>
     <?= \common\widgets\smartSelect\SmartSelect::widget([

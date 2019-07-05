@@ -17,7 +17,8 @@ class ExtendableTable
     //tables
     const TABLE_CLIENT = 1;
     const TABLE_FARM = 2;
-    const TABLE_ANIMAL = 3;
+    const TABLE_ANIMAL_ATTRIBUTES = 3;
+    const TABLE_ANIMAL_EVENTS = 4;
 
     /**
      * @param int $intVal
@@ -27,11 +28,13 @@ class ExtendableTable
     {
         switch ($intVal) {
             case self::TABLE_CLIENT:
-                return 'Client/People';
+                return 'Client/People Attributes';
             case self::TABLE_FARM:
-                return 'Farm';
-            case self::TABLE_ANIMAL:
-                return 'Animal';
+                return 'Farm Attributes';
+            case self::TABLE_ANIMAL_ATTRIBUTES:
+                return 'Animal Attributes';
+            case self::TABLE_ANIMAL_EVENTS:
+                return 'Animal Events';
             default:
                 throw new InvalidArgumentException();
         }
@@ -46,7 +49,8 @@ class ExtendableTable
         return Utils::appendDropDownListPrompt([
             self::TABLE_CLIENT => static::decodeTableId(self::TABLE_CLIENT),
             self::TABLE_FARM => static::decodeTableId(self::TABLE_FARM),
-            self::TABLE_ANIMAL => static::decodeTableId(self::TABLE_ANIMAL),
+            self::TABLE_ANIMAL_ATTRIBUTES => static::decodeTableId(self::TABLE_ANIMAL_ATTRIBUTES),
+            self::TABLE_ANIMAL_EVENTS => static::decodeTableId(self::TABLE_ANIMAL_EVENTS),
         ], $prompt);
     }
 }

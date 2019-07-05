@@ -19,6 +19,7 @@ class TableAttributeController extends MasterDataController
     public function init()
     {
         parent::init();
+        $this->activeSubMenu = null;
         $this->resourceLabel = 'Attribute';
     }
 
@@ -26,6 +27,7 @@ class TableAttributeController extends MasterDataController
     public function actionCreate($table_id)
     {
         $model = new TableAttribute(['is_active' => 1, 'table_id' => $table_id]);
+        $model->setDefaultValues();
         return $model->simpleAjaxSave('_form', 'extendable-table/index', ['table_id' => $model->table_id]);
     }
 

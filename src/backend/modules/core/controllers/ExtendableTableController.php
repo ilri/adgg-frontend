@@ -21,6 +21,7 @@ class ExtendableTableController extends MasterDataController
     public function init()
     {
         parent::init();
+        $this->activeSubMenu = null;
         $this->resourceLabel = 'Extendable Table';
     }
 
