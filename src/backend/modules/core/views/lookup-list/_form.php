@@ -48,6 +48,7 @@ $form = ActiveForm::begin([
     ]) ?>
     <?= $form->field($model, 'value', []) ?>
     <?= $form->field($model, 'label', []) ?>
+    <?= $form->field($model, 'description', []) ?>
     <?php if (!$model->isNewRecord): ?>
         <?= $form->field($model, 'is_active', [])->checkbox() ?>
     <?php endif; ?>

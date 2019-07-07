@@ -38,4 +38,13 @@ interface TableAttributeInterface
      * @return bool
      */
     public function isAdditionalAttribute(string $attribute): bool;
+
+    /**
+     * @param string $attributeValueModelClass
+     * @param string $foreignKeyAttribute
+     * @return mixed
+     */
+    public function loadAdditionalAttributeValues(string $attributeValueModelClass, string $foreignKeyAttribute);
+
+
 }

@@ -2,6 +2,7 @@
 
 namespace backend\modules\core\models;
 
+use common\helpers\Str;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
@@ -172,6 +173,13 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
         }
     }
 
+    public function afterFind()
+    {
+        parent::afterFind();
+        $this->loadAdditionalAttributeValues(FarmAttributeValue::class, 'farm_id');
+    }
+
+
     protected function addClient()
     {
         $model = new Client([
@@ -229,20 +237,6 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
         return $this->hasMany(FarmAttributeValue::class, ['farm_id' => 'id']);
     }
 
-    public function getAdditionalAttributeValues()
-    {
-        $attributes = TableAttribute::getTableAttributes(ExtendableTable::TABLE_FARM);
-        return $attributes;
-    }
-
-    public function setAdditionalProperties()
-    {
-        if ($this->canSetProperty('name')) {
-            //$this->canSetProperty()
-        }
-        //$foo->createProperty('hello', 'something');
-    }
-
     /**
      * @return int
      */
@@ -275,6 +269,6 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             $model = new FarmAttributeValue(['farm_id' => $this->id, 'attribute_id' => $attributeId]);
         }
         $model->attribute_value = $this->{$attribute};
-       return $model->save(false);
+        return $model->save(false);
     }
 }

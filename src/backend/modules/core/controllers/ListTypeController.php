@@ -37,7 +37,8 @@ class ListTypeController extends MasterDataController
     public function actionCreate()
     {
         $model = new ListType(['is_active' => 1]);
-        return $model->simpleAjaxSave();
+        $model->id = (int)ListType::getScalar('max([[id]])') + 1;
+        return $model->simpleAjaxSave('_form', 'lookup-list/index', [], null, true, 'list_type_id');
     }
 
     public function actionUpdate($id)

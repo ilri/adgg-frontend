@@ -14,6 +14,7 @@ use common\models\ActiveSearchTrait;
  * @property int $id
  * @property string $value
  * @property string $label
+ * @property string $description
  * @property int $list_type_id
  * @property int $is_active
  * @property string $created_at
@@ -44,8 +45,8 @@ class LookupList extends ActiveRecord implements ActiveSearchInterface
         return [
             [['value', 'label', 'list_type_id'], 'required'],
             [['list_type_id', 'is_active'], 'integer'],
-            [['value'], 'string', 'max' => 128],
-            [['label'], 'string', 'max' => 255],
+            [['value', 'label'], 'string', 'max' => 128],
+            [['description'], 'string', 'max' => 255],
             [['list_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => ListType::class, 'targetAttribute' => ['list_type_id' => 'id']],
             ['value', 'unique', 'targetAttribute' => ['list_type_id', 'value'], 'message' => Lang::t('{attribute} already exists.')],
             ['label', 'unique', 'targetAttribute' => ['list_type_id', 'label'], 'message' => Lang::t('{attribute} already exists.')],
@@ -62,6 +63,7 @@ class LookupList extends ActiveRecord implements ActiveSearchInterface
             'id' => 'ID',
             'value' => 'Value',
             'label' => 'Label',
+            'description' => 'Description',
             'list_type_id' => 'List Type',
             'is_active' => 'Active',
             'created_at' => 'Created At',

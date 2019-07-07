@@ -25,10 +25,11 @@ trait ControllerActionTrait
      * @param array $redirect_params
      * @param string|null $success_msg
      * @param bool $forceRedirect
+     * @param string $idParam
      * @return bool|string
      * @throws \yii\base\ExitException
      */
-    public function simpleAjaxSave($view = '_form', $redirect_route = 'index', $redirect_params = [], $success_msg = null, $forceRedirect = false)
+    public function simpleAjaxSave($view = '_form', $redirect_route = 'index', $redirect_params = [], $success_msg = null, $forceRedirect = false, $idParam = 'id')
     {
         if (empty($success_msg))
             $success_msg = Lang::t('SUCCESS_MESSAGE');
@@ -40,7 +41,7 @@ trait ControllerActionTrait
                 $transaction->commit();
 
                 $primary_key_field = static::getPrimaryKeyColumn();
-                $redirect_url = Url::to(array_merge([$redirect_route, 'id' => $this->{$primary_key_field}], (array)$redirect_params));
+                $redirect_url = Url::to(array_merge([$redirect_route, $idParam => $this->{$primary_key_field}], (array)$redirect_params));
                 return Json::encode(['success' => true, 'message' => $success_msg, 'redirectUrl' => Url::getReturnUrl($redirect_url), 'forceRedirect' => $forceRedirect]);
             } catch (\Exception $e) {
                 $transaction->rollBack();

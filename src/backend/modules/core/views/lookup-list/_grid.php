@@ -29,6 +29,9 @@ use common\widgets\grid\GridView;
             'attribute' => 'label',
         ],
         [
+            'attribute' => 'description',
+        ],
+        [
             'attribute' => 'is_active',
             'value' => function (LookupList $model) {
                 return Utils::decodeBoolean($model->is_active);

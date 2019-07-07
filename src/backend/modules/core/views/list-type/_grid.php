@@ -3,6 +3,7 @@
 use backend\modules\core\models\ListType;
 use common\helpers\Utils;
 use common\widgets\grid\GridView;
+use yii\bootstrap4\Html;
 
 /* @var $this yii\web\View */
 /* @var $filterOptions array */
@@ -34,7 +35,13 @@ use common\widgets\grid\GridView;
         ],
         [
             'class' => common\widgets\grid\ActionColumn::class,
-            'template' => '{update}',
+            'template' => '{update}{view-list}',
+            'width' => '200px;',
+            'buttons' => [
+                'view-list' => function ($url, ListType $model) {
+                    return Html::a('View Lists', ['lookup-list/index', 'list_type_id' => $model->id], ['data-pjax' => 0]);
+                }
+            ]
         ],
     ],
 ]);

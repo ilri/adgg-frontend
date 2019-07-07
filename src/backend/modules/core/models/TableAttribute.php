@@ -88,6 +88,34 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
         ];
     }
 
+    public function validateAttributeKeyUnique()
+    {
+        if ($this->hasErrors()) {
+            return false;
+        }
+        $parentModel = null;
+        switch ($this->table_id) {
+            case ExtendableTable::TABLE_CLIENT:
+                $parentModel = new Client();
+                break;
+            case ExtendableTable::TABLE_FARM:
+                $parentModel = new Farm();
+                break;
+            case ExtendableTable::TABLE_ANIMAL_EVENTS:
+                $parentModel = new Client();
+                break;
+            case ExtendableTable::TABLE_CLIENT:
+                $parentModel = new Client();
+                break;
+        }
+
+        if ($parentModel->hasAttribute($this->attribute_key)) {
+            $this->addError('attribute_key', Lang::t('{attribute_key_label} already defined in the primary table.', [
+                'attribute_key_label' => $this->getAttributeLabel('attribute_key'),
+            ]));
+        }
+    }
+
     /**
      * {@inheritdoc}
      */

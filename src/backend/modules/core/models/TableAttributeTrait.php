@@ -66,4 +66,19 @@ trait TableAttributeTrait
     {
         return in_array($attribute, $this->getAdditionalAttributes());
     }
+
+    /**
+     * @param string $attributeValueModelClass
+     * @param string $foreignKeyAttribute
+     * @return mixed
+     * @throws \Exception
+     */
+    public function loadAdditionalAttributeValues(string $attributeValueModelClass, string $foreignKeyAttribute)
+    {
+        foreach ($this->getAdditionalAttributes() as $attribute) {
+            $attributeId = TableAttribute::getAttributeId(static::getDefinedTableId(), $attribute);
+            $value = $attributeValueModelClass::getScalar('attribute_value', [$foreignKeyAttribute => $this->id, 'attribute_id' => $attributeId]);
+            $this->{$attribute} = $value !== false ? $value : null;
+        }
+    }
 }

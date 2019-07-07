@@ -22,22 +22,23 @@ class LookupListController extends MasterDataController
         $this->resourceLabel = 'Lookup List';
     }
 
-    public function actionIndex()
+    public function actionIndex($list_type_id = null)
     {
         $searchModel = LookupList::searchModel([
             'defaultOrder' => ['id' => SORT_ASC],
             'with' => ['listType'],
         ]);
         $searchModel->is_active = 1;
+        $searchModel->list_type_id = $list_type_id;
 
         return $this->render('index', [
             'searchModel' => $searchModel,
         ]);
     }
 
-    public function actionCreate()
+    public function actionCreate($list_type_id = null)
     {
-        $model = new LookupList(['is_active' => 1]);
+        $model = new LookupList(['is_active' => 1, 'list_type_id' => $list_type_id]);
         return $model->simpleAjaxSave();
     }
 
