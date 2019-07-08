@@ -7,6 +7,7 @@ use common\helpers\Lang;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
+use console\jobs\ProcessODKJson;
 use Yii;
 use yii\web\UploadedFile;
 
@@ -62,7 +63,7 @@ class OdkJsonQueue extends ActiveRecord implements ActiveSearchInterface
             [['is_processed', 'org_id', 'has_errors', 'is_locked'], 'integer'],
             [['error_message', 'file_contents'], 'string'],
             [['uuid', 'file'], 'string', 'max' => 255],
-            [['uuid'], 'unique', 'message' => Lang::t('{attribute} already exists.')],
+            //[['uuid'], 'unique', 'message' => Lang::t('{attribute} already exists.')],
             [['jsonFile'], 'file', 'skipOnEmpty' => true, 'extensions' => ['json', 'xml'], 'checkExtensionByMimeType' => false, 'on' => self::SCENARIO_API_PUSH],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
@@ -110,6 +111,16 @@ class OdkJsonQueue extends ActiveRecord implements ActiveSearchInterface
         }
         return false;
     }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+
+        if ($insert) {
+            ProcessODKJson::push(['queueId' => $this->id]);
+        }
+    }
+
 
     public function beforeValidate()
     {

@@ -183,6 +183,11 @@ use yii\bootstrap4\ActiveForm;
                     <div class="col-md-4">
                         <?= $form->field($model, 'is_active')->checkbox() ?>
                     </div>
+                    <?php foreach ($model->getAdditionalAttributes() as $attribute): ?>
+                        <div class="col-md-4">
+                            <?= $model->renderAdditionalAttribute($form, $attribute) ?>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
             </div>
         </div>

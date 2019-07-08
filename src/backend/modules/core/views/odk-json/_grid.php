@@ -4,6 +4,7 @@ use backend\modules\core\models\OdkJsonQueue;
 use common\helpers\Utils;
 use common\widgets\grid\GridView;
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 /* @var $this \yii\web\View */
 /* @var $model OdkJsonQueue */
@@ -33,6 +34,10 @@ use yii\helpers\Html;
             'filter' => false,
         ],
         [
+            'attribute' => 'error_message',
+            'filter' => false,
+        ],
+        [
             'attribute' => 'created_at',
             'value' => function (OdkJsonQueue $model) {
                 return \common\helpers\DateUtils::formatToLocalDate($model->created_at);
@@ -42,6 +47,12 @@ use yii\helpers\Html;
             'class' => common\widgets\grid\ActionColumn::class,
             'template' => '{process}{view}{delete}',
             'viewOptions' => ['data-pjax' => 0, 'title' => 'View details', 'data-use-uuid' => true],
+            'width' => '200px;',
+            'buttons' => [
+                'process' => function ($url, OdkJsonQueue $model) {
+                    return Html::a('Process JSON', '#', ['data-pjax' => 0, 'class' => 'grid-update', 'data-grid' => $model->getPjaxWidgetId(), 'data-href' => Url::to(['odk-json/process', 'id' => $model->id])]);
+                }
+            ]
         ],
     ],
 ]);

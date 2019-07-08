@@ -13,8 +13,10 @@ use backend\modules\core\Constants;
 use backend\modules\core\models\OdkJsonQueue;
 use common\helpers\Lang;
 use common\helpers\Url;
+use console\jobs\ProcessODKJson;
 use Yii;
 use yii\base\Exception;
+use yii\web\ForbiddenHttpException;
 
 class OdkJsonController extends Controller
 {
@@ -104,5 +106,15 @@ class OdkJsonController extends Controller
         }
 
         return $model;
+    }
+
+    public function actionProcess($id)
+    {
+        if (!Yii::$app->request->isPost) {
+            throw new ForbiddenHttpException();
+        }
+
+        $model = OdkJsonQueue::loadModel($id);
+        ProcessODKJson::push(['queueId' => $model->id]);
     }
 }

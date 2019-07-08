@@ -55,6 +55,7 @@ class Controller extends BackendController
                             'quick-create',
                             'typeahead-list',
                             'change-status',
+                            'process',
                         ],
                         'allow' => true,
                         'roles' => ['@'],
@@ -65,6 +66,7 @@ class Controller extends BackendController
                 'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['post'],
+                    'process' => ['post'],
                 ],
             ],
         ];
