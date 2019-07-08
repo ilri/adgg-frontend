@@ -140,4 +140,19 @@ trait TableAttributeTrait
 
         return $fieldHtml;
     }
+
+    /**
+     * @return array
+     */
+    public function getOriginalAttributesListData()
+    {
+        $this->ignoreAdditionalAttributes = true;
+        $attributes = $this->getAttributes();
+        $this->ignoreAdditionalAttributes = false;
+        $formattedAttributes = [];
+        foreach ($attributes as $attribute => $v) {
+            $formattedAttributes[$attribute] = $this->getAttributeLabel($attribute) . ' (' . $attribute . ')';
+        }
+        return $formattedAttributes;
+    }
 }

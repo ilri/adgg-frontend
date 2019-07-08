@@ -67,7 +67,7 @@ use yii\helpers\Url;
         ],
         [
             'class' => common\widgets\grid\ActionColumn::class,
-            'template' => '{update}',
+            'template' => '{update}{delete}',
             'controller' => 'table-attribute',
         ],
     ],

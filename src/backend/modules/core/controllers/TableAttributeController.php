@@ -36,4 +36,9 @@ class TableAttributeController extends MasterDataController
         $model = TableAttribute::loadModel($id);
         return $model->simpleAjaxSave('_form', 'extendable-table/index', ['table_id' => $model->table_id]);
     }
+
+    public function actionDelete($id)
+    {
+        return TableAttribute::softDelete($id);
+    }
 }

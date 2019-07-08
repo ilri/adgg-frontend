@@ -57,12 +57,13 @@ class OdkJsonQueue extends ActiveRecord implements ActiveSearchInterface
     public function rules()
     {
         return [
-            [['uuid', 'tmp_file'], 'required'],
+            [['uuid'], 'required'],
+            ['tmp_file', 'required', 'on' => [self::SCENARIO_UPLOAD, self::SCENARIO_API_PUSH]],
             [['is_processed', 'org_id', 'has_errors', 'is_locked'], 'integer'],
             [['error_message', 'file_contents'], 'string'],
             [['uuid', 'file'], 'string', 'max' => 255],
             [['uuid'], 'unique', 'message' => Lang::t('{attribute} already exists.')],
-            [['jsonFile'], 'file', 'skipOnEmpty' => true, 'extensions' => ['json','xml'],'checkExtensionByMimeType' => false, 'on' => self::SCENARIO_API_PUSH],
+            [['jsonFile'], 'file', 'skipOnEmpty' => true, 'extensions' => ['json', 'xml'], 'checkExtensionByMimeType' => false, 'on' => self::SCENARIO_API_PUSH],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
     }

@@ -2,6 +2,7 @@
 
 namespace backend\modules\core\models;
 
+use Codeception\Module\Cli;
 use common\helpers\Lang;
 use common\helpers\Utils;
 use common\models\ActiveRecord;
@@ -23,6 +24,8 @@ use yii\base\InvalidArgumentException;
  * @property int $type
  * @property int $event_type
  * @property int $is_active
+ * @property int $is_alias
+ * @property string $alias_to
  * @property string $created_at
  * @property int $created_by
  *
@@ -67,9 +70,9 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
     {
         return [
             [['attribute_key', 'attribute_label', 'table_id', 'input_type'], 'required'],
-            [['table_id', 'group_id', 'input_type', 'list_type_id', 'is_active', 'type', 'event_type'], 'integer'],
+            [['table_id', 'group_id', 'input_type', 'list_type_id', 'is_active', 'type', 'event_type', 'is_alias'], 'integer'],
             [['default_value'], 'string'],
-            [['attribute_key'], 'string', 'max' => 128],
+            [['attribute_key', 'alias_to'], 'string', 'max' => 128],
             [['attribute_label'], 'string', 'max' => 255],
             [['group_id'], 'exist', 'skipOnError' => true, 'targetClass' => TableAttributesGroup::class, 'targetAttribute' => ['group_id' => 'id']],
             ['attribute_key', 'unique', 'message' => Lang::t('{attribute} already exists.')],
@@ -134,6 +137,8 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
             'type' => 'Type',
             'event_type' => 'Animal Event Type',
             'is_active' => 'Active',
+            'is_alias' => 'Is Alias',
+            'alias_to' => 'Alias to',
             'created_at' => 'Created At',
             'created_by' => 'Created By',
         ];
@@ -312,6 +317,33 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
     public static function getAttributeId($tableId, $attributeKey)
     {
         return static::getScalar('id', ['table_id' => $tableId, 'attribute_key' => $attributeKey]);
+    }
+
+    /**
+     * @return array
+     */
+    public function getAliasToList()
+    {
+        $model = null;
+        switch ($this->table_id) {
+            case ExtendableTable::TABLE_CLIENT:
+                $model = new Client();
+                break;
+            case ExtendableTable::TABLE_FARM:
+                $model = new Farm();
+                break;
+            case ExtendableTable::TABLE_ANIMAL_ATTRIBUTES:
+                $model = new Animal();
+                break;
+            case ExtendableTable::TABLE_ANIMAL_EVENTS:
+                $model = new AnimalEvent();
+                break;
+        }
+
+        if (null === $model) {
+            return [];
+        }
+        return $model->getOriginalAttributesListData();
     }
 
 
