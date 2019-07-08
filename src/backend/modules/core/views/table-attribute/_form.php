@@ -43,14 +43,16 @@ $form = ActiveForm::begin([
 
 <div class="modal-body">
     <div class="hidden" id="my-modal-notif"></div>
-    <?= $form->field($model, 'event_type')->widget(Select2::class, [
-        'data' => \backend\modules\core\models\ListType::getListData(),
-        'modal' => true,
-        'options' => ['placeholder' => '[select one]'],
-        'pluginOptions' => [
-            'allowClear' => false
-        ],
-    ]) ?>
+    <?php if ($model->table_id == ExtendableTable::TABLE_ANIMAL_EVENTS): ?>
+        <?= $form->field($model, 'event_type')->widget(Select2::class, [
+            'data' => \backend\modules\core\models\ListType::getListData(),
+            'modal' => true,
+            'options' => ['placeholder' => '[select one]'],
+            'pluginOptions' => [
+                'allowClear' => false
+            ],
+        ]) ?>
+    <?php endif ?>
     <?= $form->field($model, 'attribute_key', []) ?>
     <?= $form->field($model, 'attribute_label', []) ?>
     <?= \common\widgets\smartSelect\SmartSelect::widget([

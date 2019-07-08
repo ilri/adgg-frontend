@@ -9,6 +9,9 @@
 namespace backend\modules\core\models;
 
 
+use common\widgets\select2\Select2;
+use yii\bootstrap4\ActiveForm;
+
 trait TableAttributeTrait
 {
     /**
@@ -80,5 +83,61 @@ trait TableAttributeTrait
             $value = $attributeValueModelClass::getScalar('attribute_value', [$foreignKeyAttribute => $this->id, 'attribute_id' => $attributeId]);
             $this->{$attribute} = $value !== false ? $value : null;
         }
+    }
+
+    /**
+     * @param ActiveForm $form
+     * @param $attribute
+     * @param array $options
+     * @return \yii\widgets\ActiveField
+     * @throws \Exception
+     */
+    public function renderAdditionalAttribute(ActiveForm $form, $attribute, $options = [])
+    {
+        $attributeModel = TableAttribute::find()->andWhere(['attribute_key' => $attribute, 'table_id' => static::getDefinedTableId()])->one();
+        if ($attributeModel === null) {
+            return null;
+        }
+        if ($attributeModel->default_value) {
+            $this->{$attribute} = $attributeModel->default_value;
+        }
+        $fieldHtml = null;
+        switch ($attributeModel->input_type) {
+            case TableAttribute::INPUT_TYPE_TEXT:
+                $fieldHtml = $form->field($this, $attribute)->textInput($options);
+                break;
+            case TableAttribute::INPUT_TYPE_NUMBER:
+                $options['type'] = 'number';
+                $fieldHtml = $form->field($this, $attribute)->textInput($options);
+                break;
+            case TableAttribute::INPUT_TYPE_EMAIL:
+                $options['type'] = 'email';
+                $fieldHtml = $form->field($this, $attribute)->textInput($options);
+                break;
+            case TableAttribute::INPUT_TYPE_CHECKBOX:
+                $fieldHtml = $form->field($this, $attribute)->checkbox($options);
+                break;
+            case TableAttribute::INPUT_TYPE_SELECT:
+                $fieldHtml = $form->field($this, $attribute)->widget(Select2::class, [
+                    'data' => LookupList::getList($attributeModel->list_type_id),
+                    'options' => [
+                        'placeholder' => '[select one]',
+                    ],
+                    'pluginOptions' => [
+                        'allowClear' => false
+                    ],
+                ]);
+                break;
+            case TableAttribute::INPUT_TYPE_TEXTAREA:
+                $fieldHtml = $form->field($this, $attribute)->textarea($options);
+                break;
+            case TableAttribute::INPUT_TYPE_DATE:
+                $options['class'] = 'form-control show-datepicker';
+                $fieldHtml = $form->field($this, $attribute)->textInput($options);
+                break;
+
+        }
+
+        return $fieldHtml;
     }
 }

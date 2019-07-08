@@ -73,24 +73,23 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
             [['attribute_label'], 'string', 'max' => 255],
             [['group_id'], 'exist', 'skipOnError' => true, 'targetClass' => TableAttributesGroup::class, 'targetAttribute' => ['group_id' => 'id']],
             ['attribute_key', 'unique', 'message' => Lang::t('{attribute} already exists.')],
-            [
-                ['attribute_key'],
-                function ($attribute, $params) {
-                    if (preg_match("/[^a-zA-Z]+/", $this->{$attribute})) {
-                        $this->addError($attribute, 'No special characters or white spaces allowed!');
-                    }
-                },
-            ],
             ['list_type_id', 'required', 'when' => function (self $model) {
                 return $model->input_type == self::INPUT_TYPE_SELECT;
             }],
+            ['attribute_key', 'validateAttributeKey'],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
     }
 
-    public function validateAttributeKeyUnique()
+    public function validateAttributeKey()
     {
         if ($this->hasErrors()) {
+            return false;
+        }
+        if (!preg_match("/^[A-Za-z0-9_]*$/", $this->attribute_key)) {
+            $this->addError('attribute_key', Lang::t('{attribute_key_label} must only have alphanumeric characters and underscore.', [
+                'attribute_key_label' => $this->getAttributeLabel('attribute_key'),
+            ]));
             return false;
         }
         $parentModel = null;
@@ -101,19 +100,21 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
             case ExtendableTable::TABLE_FARM:
                 $parentModel = new Farm();
                 break;
-            case ExtendableTable::TABLE_ANIMAL_EVENTS:
-                $parentModel = new Client();
+            case ExtendableTable::TABLE_ANIMAL_ATTRIBUTES:
+                $parentModel = new Animal();
                 break;
-            case ExtendableTable::TABLE_CLIENT:
-                $parentModel = new Client();
+            case ExtendableTable::TABLE_ANIMAL_EVENTS:
+                $parentModel = new AnimalEvent();
                 break;
         }
 
-        if ($parentModel->hasAttribute($this->attribute_key)) {
+        $parentModel->ignoreAdditionalAttributes = true;
+        if ($parentModel !== null && $parentModel->hasAttribute($this->attribute_key)) {
             $this->addError('attribute_key', Lang::t('{attribute_key_label} already defined in the primary table.', [
                 'attribute_key_label' => $this->getAttributeLabel('attribute_key'),
             ]));
         }
+        $parentModel->ignoreAdditionalAttributes = false;
     }
 
     /**
@@ -175,6 +176,9 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
         if (parent::beforeSave($insert)) {
             $this->setDefaultValues();
             $this->default_value = serialize($this->default_value);
+            if ($this->input_type != self::INPUT_TYPE_SELECT) {
+                $this->list_type_id = null;
+            }
             return true;
         }
         return false;

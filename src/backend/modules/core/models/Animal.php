@@ -2,18 +2,21 @@
 
 namespace backend\modules\core\models;
 
+use backend\modules\conf\models\NumberingFormat;
 use common\helpers\DateUtils;
+use common\helpers\FileManager;
 use common\helpers\Lang;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
+use Yii;
 use yii\db\Expression;
 
 /**
  * This is the model class for table "core_animal".
  *
  * @property int $id
- * @property string $mistro_code
+ * @property string $code
  * @property string $name
  * @property int $farm_id
  * @property int $org_id
@@ -31,9 +34,9 @@ use yii\db\Expression;
  * @property string $color
  * @property string $animal_type
  * @property string $birthdate
- * @property string $age_estimate
- * @property int $body_condition_score
- * @property array $deformities
+ * @property string $estimate_age
+ * @property double $body_condition_score
+ * @property array|string $deformities
  * @property string $udder_support
  * @property int $udder_attachment
  * @property int $udder_teat_placement
@@ -76,6 +79,8 @@ use yii\db\Expression;
  * @property int $deleted_by
  *
  * @property Farm $farm
+ * @property Animal $sire
+ * @property Animal $dam
  */
 class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttributeInterface
 {
@@ -89,6 +94,15 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
      * @var string
      */
     public $tmp_animal_photo;
+
+    const NUMBERING_FORMAT_ID = 'animal_code';
+    const ANIMAL_TYPE_HEIFER = 1;
+    const ANIMAL_TYPE_COW = 2;
+    const ANIMAL_TYPE_MALE_CALF = 3;
+    const ANIMAL_TYPE_FEMALE_CALF = 4;
+    const ANIMAL_TYPE_BULL = 5;
+    const ANIMAL_TYPE_AI_STRAW = 6;
+
 
     /**
      * {@inheritdoc}
@@ -104,11 +118,11 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     public function rules()
     {
         return [
-            [['name', 'farm_id', 'org_id'], 'required'],
+            [['name', 'farm_id'], 'required'],
             ['tag_id', 'unique', 'targetAttribute' => ['org_id', 'tag_id'], 'message' => '{attribute} already exists.'],
             ['tag_id', 'number'],
             ['tag_id', 'string', 'max' => 16],
-            ['mistro_code', 'unique', 'targetAttribute' => ['org_id', 'tag_id'], 'message' => '{attribute} already exists.'],
+            ['code', 'unique', 'targetAttribute' => ['org_id', 'tag_id'], 'message' => '{attribute} already exists.'],
             [
                 [
                     'farm_id', 'org_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'is_active', 'udder_attachment', 'udder_teat_placement', 'sire_type', 'sire_registered',
@@ -117,7 +131,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
                 ],
                 'integer'
             ],
-            ['body_condition_score', 'integer', 'min' => 1, 'max' => 5],
+            ['body_condition_score', 'number', 'min' => 1, 'max' => 5],
             ['parity_number', 'integer', 'min' => 1, 'max' => 12],
             [['latitude', 'longitude', 'purchase_cost'], 'number'],
             [['average_daily_milk', 'peak_milk'], 'number', 'min' => 0.5, 'max' => 35],
@@ -130,8 +144,8 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             ['dry_date', 'validateDryDate'],
             ['entry_date', 'validateEntryDate'],
             ['first_calv_age', 'number', 'min' => 1.5, 'max' => 5],
-            [['deformities'], 'string'],
-            [['mistro_code', 'name', 'age_estimate', 'udder_support'], 'string', 'max' => 128],
+            [['deformities'], 'safe'],
+            [['code', 'name', 'estimate_age', 'udder_support'], 'string', 'max' => 128],
             [['map_address', 'uuid', 'tmp_ear_tag_photo', 'tmp_animal_photo'], 'string', 'max' => 255],
             [['color'], 'string', 'max' => 30],
             [['animal_type'], 'string', 'max' => 20],
@@ -267,7 +281,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     {
         return [
             'id' => 'ID',
-            'mistro_code' => 'Mistro Code',
+            'code' => 'Animal ID',
             'name' => 'Name',
             'farm_id' => 'Farm',
             'org_id' => 'Country',
@@ -284,7 +298,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'color' => 'Color',
             'animal_type' => 'Animal Type',
             'birthdate' => 'Birth Date',
-            'age_estimate' => 'Age Estimate',
+            'estimate_age' => 'Estimate Age',
             'body_condition_score' => 'Body Condition Score',
             'deformities' => 'Deformities',
             'udder_support' => 'Udder Support',
@@ -292,9 +306,9 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'udder_teat_placement' => 'Udder Teat Placement',
             'sire_type' => 'Sire Type',
             'sire_registered' => 'Sire Registered',
-            'sire_id' => 'Sire ID',
+            'sire_id' => 'Sire',
             'dam_registered' => 'Dam Registered',
-            'dam_id' => 'Dam ID',
+            'dam_id' => 'Dam',
             'main_breed' => 'Main Breed',
             'breed_composition' => 'Breed Composition',
             'secondary_breed' => 'Secondary Breed',
@@ -338,12 +352,28 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     }
 
     /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSire()
+    {
+        return $this->hasOne(Animal::class, ['id' => 'sire_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDam()
+    {
+        return $this->hasOne(Animal::class, ['id' => 'dam_id']);
+    }
+
+    /**
      *  {@inheritDoc}
      */
     public function searchParams()
     {
         return [
-            ['mistro_code', 'mistro_code'],
+            ['code', 'code'],
             ['tag_id', 'tag_id'],
             ['name', 'name'],
             ['color', 'color'],
@@ -366,9 +396,25 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     {
         if (parent::beforeSave($insert)) {
             $this->ignoreAdditionalAttributes = true;
+            if (empty($this->code)) {
+                $this->code = NumberingFormat::getNextFormattedNumber(self::NUMBERING_FORMAT_ID);
+            }
             if (!empty($this->latitude) && !empty($this->longitude)) {
                 $this->latlng = new Expression("ST_GeomFromText('POINT({$this->latitude} {$this->longitude})')");
             }
+            $this->setImage('ear_tag_photo');
+            $this->setImage('animal_photo');
+
+            $this->org_id = $this->farm->org_id;
+            $this->region_id = $this->farm->region_id;
+            $this->district_id = $this->farm->district_id;
+            $this->ward_id = $this->farm->ward_id;
+            $this->village_id = $this->farm->village_id;
+            if (empty($this->deformities)) {
+                $this->deformities = [];
+            }
+            $this->deformities = json_encode($this->deformities);
+
             return true;
         }
         return false;
@@ -390,6 +436,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     {
         parent::afterFind();
         $this->loadAdditionalAttributeValues(AnimalAttributeValue::class, 'animal_id');
+        $this->deformities = json_decode($this->deformities, true);
     }
 
     /**
@@ -425,5 +472,76 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
         }
         $model->attribute_value = $this->{$attribute};
         return $model->save(false);
+    }
+
+    /**
+     *
+     * @return string
+     */
+    public function getDir()
+    {
+        return FileManager::createDir($this->getBaseDir() . DIRECTORY_SEPARATOR . $this->uuid);
+    }
+
+    /**
+     * @return string
+     */
+    public function getBaseDir()
+    {
+        return FileManager::createDir(FileManager::getUploadsDir() . DIRECTORY_SEPARATOR . 'animals');
+    }
+
+    protected function setImage(string $imageAttribute)
+    {
+        $tmpField = 'tmp_' . $imageAttribute;
+        if (empty($this->{$tmpField}))
+            return false;
+
+        $ext = $ext = pathinfo($this->{$tmpField}, PATHINFO_EXTENSION);
+        $file_name = $imageAttribute . '.' . $ext;
+        $temp_dir = dirname($this->{$tmpField});
+        $new_path = $this->getDir() . DIRECTORY_SEPARATOR . $file_name;
+        if (copy($this->{$tmpField}, $new_path)) {
+            $this->{$imageAttribute} = $file_name;
+            $this->{$tmpField} = null;
+
+            if (!empty($temp_dir)) {
+                FileManager::deleteDirOrFile($temp_dir);
+            }
+        }
+    }
+
+    /**
+     * @param string $imageAttribute
+     * @return mixed
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function getImageUrl(string $imageAttribute)
+    {
+        $file_path = $this->getImagePath($imageAttribute);
+        if (empty($file_path)) {
+            return null;
+        }
+        $asset = Yii::$app->getAssetManager()->publish($file_path);
+
+        return $asset[1];
+    }
+
+    /**
+     * @param string $imageAttribute
+     * @return null|string
+     */
+    public function getImagePath(string $imageAttribute)
+    {
+        $path = null;
+        if (empty($this->{$imageAttribute}))
+            return null;
+
+        $file = $this->getDir() . DIRECTORY_SEPARATOR . $this->{$imageAttribute};
+        if (file_exists($file)) {
+            $path = $file;
+        }
+
+        return $path;
     }
 }
