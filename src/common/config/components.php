@@ -8,6 +8,7 @@ return [
     ],
     'cache' => [
         'class' => yii\caching\FileCache::class,
+        'defaultDuration' => 60 * 5,
     ],
     'urlManager' => [
         'class' => yii\web\UrlManager::class,
