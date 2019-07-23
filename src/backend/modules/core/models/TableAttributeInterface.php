@@ -28,9 +28,11 @@ interface TableAttributeInterface
 
     /**
      * @param string $attribute
+     * @param string $attributeValueModelClass
+     * @param string $foreignKeyAttribute
      * @return bool
      */
-    public function saveAdditionalAttributeValue(string $attribute): bool;
+    public function saveAdditionalAttributeValue(string $attribute, string $attributeValueModelClass, string $foreignKeyAttribute);
 
 
     /**

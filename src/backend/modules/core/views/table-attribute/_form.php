@@ -72,7 +72,7 @@ $form = ActiveForm::begin([
         'modal' => true,
         'options' => [
             'placeholder' => '[select one]',
-            'data-show-list-type' => TableAttribute::INPUT_TYPE_SELECT,
+            'data-show-list-type' => [TableAttribute::INPUT_TYPE_SELECT, TableAttribute::INPUT_TYPE_MULTI_SELECT],
         ],
         'pluginOptions' => [
             'allowClear' => false

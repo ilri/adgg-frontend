@@ -42,8 +42,9 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
     const INPUT_TYPE_EMAIL = 3;
     const INPUT_TYPE_CHECKBOX = 4;
     const INPUT_TYPE_SELECT = 5;
-    const INPUT_TYPE_TEXTAREA = 6;
-    const INPUT_TYPE_DATE = 7;
+    const INPUT_TYPE_MULTI_SELECT = 6;
+    const INPUT_TYPE_TEXTAREA = 7;
+    const INPUT_TYPE_DATE = 8;
     //type
     const TYPE_ATTRIBUTE = 1;
     const TYPE_EVENT = 2;
@@ -181,7 +182,7 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
         if (parent::beforeSave($insert)) {
             $this->setDefaultValues();
             $this->default_value = serialize($this->default_value);
-            if ($this->input_type != self::INPUT_TYPE_SELECT) {
+            if (!in_array($this->input_type, [self::INPUT_TYPE_SELECT, self::INPUT_TYPE_MULTI_SELECT])) {
                 $this->list_type_id = null;
             }
             return true;
@@ -226,6 +227,8 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
                 return 'CHECKBOX';
             case self::INPUT_TYPE_SELECT:
                 return 'SELECT';
+            case self::INPUT_TYPE_MULTI_SELECT:
+                return 'MULTI SELECT';
             case self::INPUT_TYPE_TEXTAREA:
                 return 'TEXTAREA';
             case self::INPUT_TYPE_DATE:
@@ -248,6 +251,7 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
             self::INPUT_TYPE_DATE => static::decodeInputType(self::INPUT_TYPE_DATE),
             self::INPUT_TYPE_CHECKBOX => static::decodeInputType(self::INPUT_TYPE_CHECKBOX),
             self::INPUT_TYPE_SELECT => static::decodeInputType(self::INPUT_TYPE_SELECT),
+            self::INPUT_TYPE_MULTI_SELECT => static::decodeInputType(self::INPUT_TYPE_MULTI_SELECT),
             self::INPUT_TYPE_TEXTAREA => static::decodeInputType(self::INPUT_TYPE_TEXTAREA),
         ], $prompt);
     }

@@ -15,6 +15,8 @@ use common\models\ActiveSearchTrait;
  * @property string $forbidden_items
  * @property integer $parent_id
  * @property integer $is_active
+ *
+ * @property UserLevels $parent
  */
 class UserLevels extends ActiveRecord implements ActiveSearchInterface
 {
@@ -121,6 +123,14 @@ class UserLevels extends ActiveRecord implements ActiveSearchInterface
         }
 
         return $forbidden_items;
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getParent()
+    {
+        return $this->hasOne(static::class, ['id' => 'parent_id']);
     }
 
 

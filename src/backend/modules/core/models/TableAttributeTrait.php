@@ -9,6 +9,7 @@
 namespace backend\modules\core\models;
 
 
+use common\models\ActiveRecord;
 use common\widgets\select2\Select2;
 use yii\bootstrap4\ActiveForm;
 
@@ -79,9 +80,64 @@ trait TableAttributeTrait
     public function loadAdditionalAttributeValues(string $attributeValueModelClass, string $foreignKeyAttribute)
     {
         foreach ($this->getAdditionalAttributes() as $attribute) {
-            $attributeId = TableAttribute::getAttributeId(static::getDefinedTableId(), $attribute);
-            $value = $attributeValueModelClass::getScalar('attribute_value', [$foreignKeyAttribute => $this->id, 'attribute_id' => $attributeId]);
-            $this->{$attribute} = $value !== false ? $value : null;
+            $this->loadAttributeValue($attribute, $attributeValueModelClass, $foreignKeyAttribute);
+        }
+    }
+
+    /**
+     * @param string $attribute
+     * @param string $attributeValueModelClass
+     * @param string $foreignKeyAttribute
+     * @return mixed
+     * @throws \Exception
+     */
+    public function loadAttributeValue(string $attribute, string $attributeValueModelClass, string $foreignKeyAttribute)
+    {
+        /* @var $attributeValueModelClass ActiveRecord */
+        $attributeId = TableAttribute::getAttributeId(static::getDefinedTableId(), $attribute);
+        $value = $attributeValueModelClass::getColumnData('attribute_value', [$foreignKeyAttribute => $this->id, 'attribute_id' => $attributeId]);
+        if (!empty($value)) {
+            if (count($value) > 1) {
+                //multiple select
+            } else {
+                $value = $value[0];
+            }
+        } else {
+            $value = null;
+        }
+        $this->{$attribute} = $value;
+    }
+
+    /**
+     * @param string $attribute
+     * @param string $attributeValueModelClass
+     * @param string $foreignKeyAttribute
+     * @return bool|void
+     * @throws \Exception
+     */
+    public function saveAdditionalAttributeValue(string $attribute, string $attributeValueModelClass, string $foreignKeyAttribute)
+    {
+        if (null === $this->{$attribute}) {
+            return false;
+        }
+        /* @var $attributeValueModelClass ActiveRecord */
+        $attributeId = TableAttribute::getAttributeId(static::getDefinedTableId(), $attribute);
+        $model = new $attributeValueModelClass([$foreignKeyAttribute => $this->id, 'attribute_id' => $attributeId]);
+        $valueAttribute = 'attribute_value';
+        if (is_array($this->{$attribute})) {
+            $attributeValueModelClass::deleteAll([$foreignKeyAttribute => $this->id, 'attribute_id' => $attributeId]);
+            foreach ($this->{$attribute} as $attrVal) {
+                $newModel = clone $model;
+                $newModel->{$valueAttribute} = $attrVal;
+                $newModel->save(false);
+            }
+        } else {
+            $newModel = $attributeValueModelClass::find()->andWhere([$foreignKeyAttribute => $this->id, 'attribute_id' => $attributeId])->one();
+            if (null === $newModel) {
+                $newModel = clone $model;
+            }
+            $newModel->{$valueAttribute} = $this->{$attribute};
+            $newModel->save(false);
         }
     }
 
@@ -122,6 +178,18 @@ trait TableAttributeTrait
                     'data' => LookupList::getList($attributeModel->list_type_id),
                     'options' => [
                         'placeholder' => '[select one]',
+                    ],
+                    'pluginOptions' => [
+                        'allowClear' => false
+                    ],
+                ]);
+                break;
+            case TableAttribute::INPUT_TYPE_MULTI_SELECT:
+                $fieldHtml = $form->field($this, $attribute)->widget(Select2::class, [
+                    'data' => LookupList::getList($attributeModel->list_type_id),
+                    'options' => [
+                        'placeholder' => '[select]',
+                        'multiple' => true,
                     ],
                     'pluginOptions' => [
                         'allowClear' => false

@@ -29,7 +29,8 @@ class UserLevelController extends Controller
     public function actionIndex()
     {
         $searchModel = UserLevels::searchModel([
-            'defaultOrder' => ['id' => SORT_ASC]
+            'defaultOrder' => ['id' => SORT_ASC],
+            'with'=>['parent'],
         ]);
         $searchModel->is_active = 1;
         return $this->render('index', [

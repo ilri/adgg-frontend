@@ -21,9 +21,9 @@ MyApp.modules.core = {};
         let $this = this;
         let _toggle = function (elem) {
             let showListTypes = $(elem).data('show-list-type'),
-                val = $(elem).val(),
+                val = parseInt($(elem).val()),
                 listTypeField = $($this.options.listTypeIdFieldSelector);
-            if (showListTypes == val) {
+            if (showListTypes.includes(val)) {
                 listTypeField.closest('.form-group').show();
             } else {
                 listTypeField.closest('.form-group').hide();

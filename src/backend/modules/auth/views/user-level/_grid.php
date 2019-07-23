@@ -21,10 +21,15 @@ use common\widgets\grid\GridView;
             'attribute' => 'name',
         ],
         [
-            'attribute' => 'is_active',
+            'attribute' => 'parent_id',
             'value' => function (UserLevels $model) {
-                return Utils::decodeBoolean($model->is_active);
+                return $model->getRelationAttributeValue('parent', 'name');
             },
+            'filter' => false,
+        ],
+        [
+            'attribute' => 'is_active',
+            'format' => 'boolean',
             'filter' => Utils::booleanOptions(),
         ],
         [

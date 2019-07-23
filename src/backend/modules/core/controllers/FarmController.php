@@ -46,7 +46,7 @@ class FarmController extends Controller
         $params = [];
         list($condition, $params) = Farm::appendOrgSessionIdCondition($condition, $params);
         $searchModel = Farm::searchModel([
-            'defaultOrder' => ['name' => SORT_ASC],
+            'defaultOrder' => ['id' => SORT_DESC],
             'condition' => $condition,
             'params' => $params,
             'with' => ['org', 'region', 'district', 'ward', 'village'],

@@ -132,7 +132,7 @@ class Utils
      */
     public static function decodeBoolean($bool)
     {
-        return Lang::t($bool ? 'YES' : 'NO');
+        return Lang::t($bool ? 'Yes' : 'No');
     }
 
     /**

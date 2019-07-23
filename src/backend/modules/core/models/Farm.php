@@ -2,7 +2,6 @@
 
 namespace backend\modules\core\models;
 
-use common\helpers\Str;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
@@ -76,6 +75,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             [['gender_code'], 'string', 'max' => 10],
             [['email'], 'email'],
             [['org_id'], 'exist', 'skipOnError' => true, 'targetClass' => Organization::class, 'targetAttribute' => ['org_id' => 'id']],
+            [$this->getAdditionalAttributes(), 'safe'],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
 
         ];
@@ -164,7 +164,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
 
         foreach ($this->getAttributes() as $attribute => $val) {
             if ($this->isAdditionalAttribute($attribute)) {
-                $this->saveAdditionalAttributeValue($attribute);
+                $this->saveAdditionalAttributeValue($attribute, FarmAttributeValue::class, 'farm_id');
             }
         }
 
@@ -251,24 +251,5 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     public static function getDefinedType(): int
     {
         return TableAttribute::TYPE_ATTRIBUTE;
-    }
-
-    /**
-     * @param string $attribute
-     * @return bool
-     * @throws \Exception
-     */
-    public function saveAdditionalAttributeValue(string $attribute): bool
-    {
-        if (null === $this->{$attribute}) {
-            return false;
-        }
-        $attributeId = TableAttribute::getAttributeId(static::getDefinedTableId(), $attribute);
-        $model = FarmAttributeValue::find()->andWhere(['farm_id' => $this->id, 'attribute_id' => $attributeId])->one();
-        if (null === $model) {
-            $model = new FarmAttributeValue(['farm_id' => $this->id, 'attribute_id' => $attributeId]);
-        }
-        $model->attribute_value = $this->{$attribute};
-        return $model->save(false);
     }
 }
