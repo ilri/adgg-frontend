@@ -30,7 +30,7 @@ use yii\helpers\Html;
  * @property Organization $org
  * @property OrganizationUnits $parent
  */
-class OrganizationUnits extends ActiveRecord implements ActiveSearchInterface
+class OrganizationUnits extends ActiveRecord implements ActiveSearchInterface, UploadExcelInterface
 {
     use ActiveSearchTrait;
 
@@ -53,17 +53,16 @@ class OrganizationUnits extends ActiveRecord implements ActiveSearchInterface
     public function rules()
     {
         return [
-            [['name', 'level', 'org_id'], 'required'],
+            [['code', 'name', 'level', 'org_id'], 'required'],
             [['level', 'org_id', 'parent_id', 'is_active'], 'integer'],
             [['code', 'contact_name'], 'string', 'max' => 128],
             [['name', 'contact_email'], 'string', 'max' => 255],
             [['contact_phone'], 'string', 'min' => 8, 'max' => 20],
-            [['code'], 'unique'],
-            ['name', 'unique', 'targetAttribute' => ['org_id', 'level', 'name'], 'message' => Lang::t('{attribute} already exists.')],
+            ['code', 'unique', 'targetAttribute' => ['org_id', 'level', 'code'], 'message' => Lang::t('{attribute} already exists.')],
             [['org_id'], 'exist', 'skipOnError' => true, 'targetClass' => Organization::class, 'targetAttribute' => ['org_id' => 'id']],
             ['contact_email', 'email'],
             ['parent_id', 'required', 'when' => function (self $model) {
-                return $model->level > self::LEVEL_REGION;
+                return $model->level != self::LEVEL_REGION;
             }],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
@@ -79,7 +78,7 @@ class OrganizationUnits extends ActiveRecord implements ActiveSearchInterface
             'code' => 'Code',
             'name' => 'Name',
             'level' => 'Level',
-            'org_id' => 'Org ID',
+            'org_id' => 'Country',
             'contact_name' => 'Contact Name',
             'contact_phone' => 'Contact Phone',
             'contact_email' => 'Contact Email',
@@ -106,6 +105,7 @@ class OrganizationUnits extends ActiveRecord implements ActiveSearchInterface
             }
         }
         $labels['parent_id'] = $parentIdLabel;
+        $labels['parent_code'] = $parentIdLabel . ' Code';
 
         return $labels;
     }
@@ -139,5 +139,19 @@ class OrganizationUnits extends ActiveRecord implements ActiveSearchInterface
             'parent_id',
             'is_active',
         ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getExcelColumns()
+    {
+        $columns = [
+            'code',
+            'name',
+            'parent_code',
+        ];
+
+        return $columns;
     }
 }

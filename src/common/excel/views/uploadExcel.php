@@ -74,7 +74,7 @@ $offset_class = 'offset-md-' . $label_size;
     <div class="<?= $offset_class . ' ' . $input_class ?>">
         <div class="accordion" id="accordion">
             <div class="card">
-                <div class="card-header" id="headingOne">
+                <div class="card-header" id="headingOne" style="padding: 0.75rem 1.25rem;">
                     <h6>
                         <a role="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
                            aria-controls="collapseOne">

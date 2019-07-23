@@ -5,3 +5,7 @@
 .hidden {
     display: none!important;
 }
+
+.btn-space {
+    margin-right: 10px;
+}

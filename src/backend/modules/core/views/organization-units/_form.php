@@ -39,6 +39,7 @@ $form = ActiveForm::begin([
 
 <div class="modal-body">
     <div class="hidden" id="my-modal-notif"></div>
+    <?= $form->field($model, 'code', []) ?>
     <?= $form->field($model, 'name', []) ?>
     <?php if ($model->level > OrganizationUnits::LEVEL_REGION): ?>
         <?= $form->field($model, 'parent_id')->widget(Select2::class, [

@@ -1,9 +1,11 @@
 <?php
 
 use backend\modules\core\models\OrganizationUnits;
+use common\helpers\Lang;
 use common\helpers\Utils;
 use common\widgets\grid\GridView;
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 /* @var $this \yii\web\View */
 /* @var $model OrganizationUnits */
@@ -12,7 +14,13 @@ use yii\helpers\Html;
     'searchModel' => $model,
     'filterModel' => $model,
     'createButton' => ['visible' => Yii::$app->user->canCreate(), 'modal' => true],
+    'toolbarButtons' => [
+        Yii::$app->user->canCreate() ? '<a class="btn btn-brand btn-bold btn-upper btn-font-sm btn-space" href="' . Url::to(['upload', 'org_id' => $model->org_id, 'level' => $model->level]) . '" data-pjax="0"><i class="fa fa-file-excel-o"></i> ' . Lang::t('Upload Excel/CSV') . '</a> ' : '',
+    ],
     'columns' => [
+        [
+            'attribute' => 'code',
+        ],
         [
             'attribute' => 'name',
         ],

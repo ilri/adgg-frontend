@@ -9,11 +9,17 @@
 namespace backend\modules\core\controllers;
 
 
+use backend\modules\auth\Acl;
+use backend\modules\auth\Session;
 use backend\modules\core\Constants;
+use backend\modules\core\forms\UploadOrganizationUnits;
 use backend\modules\core\models\Organization;
 use backend\modules\core\models\OrganizationUnits;
+use common\helpers\Lang;
+use Yii;
 use yii\base\InvalidArgumentException;
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 class OrganizationUnitsController extends Controller
 {
@@ -102,5 +108,50 @@ class OrganizationUnitsController extends Controller
             $data = OrganizationUnits::getListData('id', 'name', true, ['parent_id' => $parent_id, 'level' => $level]);
         }
         return json_encode($data);
+    }
+
+    public function actionUpload($level, $org_id = null)
+    {
+        if (Session::isOrganization()) {
+            $org_id = Session::getOrgId();
+        }
+        $orgModel = Organization::loadModel($org_id);
+        $this->setResourceLabel($orgModel, $level);
+        $this->hasPrivilege(Acl::ACTION_CREATE);
+
+        $form = new UploadOrganizationUnits(['org_id' => $orgModel->id, 'level' => $level]);
+        if ($form->load(Yii::$app->request->post())) {
+            if ($form->validate() && $form->addToExcelQueue()) {
+                //process the file
+                $form->saveExcelData();
+                if (count($form->getSavedRows()) > 0) {
+                    $successMsg = Lang::t('{n} rows successfully uploaded.', ['n' => count($form->getSavedRows())]);
+                    Yii::$app->session->setFlash('success', $successMsg);
+                }
+                if (count($form->getFailedRows()) > 0) {
+                    $warningMsg = '<p>' . Lang::t('{n} rows could could not be saved.', ['n' => count($form->getFailedRows())]) . '</p>';
+                    $warningMsg .= '<ul style="max-height: 200px;overflow: auto">';
+                    foreach ($form->getFailedRows() as $n => $message) {
+                        $warningMsg .= '<li>' . $message . '</li>';
+                    }
+                    $warningMsg .= '</ul>';
+                    Yii::$app->session->setFlash('warning', $warningMsg);
+                }
+                return json_encode(['success' => true, 'savedRows' => $form->getSavedRows(), 'failedRows' => $form->getFailedRows(), 'redirectUrl' => Url::to(['index', 'org_id' => $orgModel->uuid, 'level' => $level])]);
+            } else {
+                return json_encode(['success' => false, 'message' => $form->getErrors()]);
+            }
+        }
+
+        return $this->render('upload', [
+            'model' => $form,
+            'orgModel' => $orgModel,
+        ]);
+    }
+
+    public function actionUploadPreview($level, $org_id)
+    {
+        $form = new UploadOrganizationUnits(['level' => $level, 'org_id' => $org_id]);
+        return $form->previewAction();
     }
 }

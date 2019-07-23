@@ -5,6 +5,7 @@ namespace common\excel;
 use common\helpers\FileManager;
 use common\helpers\Lang;
 use common\helpers\Utils;
+use common\models\ActiveRecord;
 use Yii;
 use yii\base\Exception;
 
@@ -451,5 +452,29 @@ trait ExcelReaderTrait
     public function getFailedRows()
     {
         return $this->_failedRows;
+    }
+
+    /**
+     * @param ActiveRecord $model
+     * @param array $rowData
+     * @param integer $rowNumber
+     * @return bool
+     */
+    public function saveExcelRaw(ActiveRecord $model, $rowData, $rowNumber)
+    {
+        foreach ($rowData as $k => $v) {
+            if ($model->hasAttribute($k) || property_exists($model, $k)) {
+                $model->{$k} = $v;
+            }
+        }
+        $model->enableAuditTrail = false;
+        if ($model->save()) {
+            $this->_savedRows[$rowNumber] = $rowNumber;
+            return true;
+        } else {
+            $errors = $model->getFirstErrors();
+            $this->_failedRows[$rowNumber] = Lang::t('Row {n}: {error}', ['n' => $rowNumber, 'error' => implode(', ', $errors)]);
+            return false;
+        }
     }
 }
