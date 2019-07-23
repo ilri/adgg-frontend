@@ -36,7 +36,7 @@ trait TableAttributeTrait
         if ($this->ignoreAdditionalAttributes) {
             return $attributes;
         }
-        $additionalAttributes = $this->getAdditionalAttributes();
+        $additionalAttributes = (array)$this->getAdditionalAttributes();
 
         return array_merge($attributes, $additionalAttributes);
     }
@@ -106,6 +106,23 @@ trait TableAttributeTrait
             $value = null;
         }
         $this->{$attribute} = $value;
+    }
+
+    /**
+     * @param string $attributeValueModelClass
+     * @param string $foreignKeyAttribute
+     * @throws \Exception
+     */
+    protected function saveAdditionalAttributes(string $attributeValueModelClass, string $foreignKeyAttribute)
+    {
+        $this->ignoreAdditionalAttributes = false;
+
+        foreach ($this->getAttributes() as $attribute => $val) {
+            if ($this->isAdditionalAttribute($attribute)) {
+                $this->saveAdditionalAttributeValue($attribute, $attributeValueModelClass, $foreignKeyAttribute);
+            }
+        }
+
     }
 
     /**

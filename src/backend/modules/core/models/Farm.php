@@ -160,13 +160,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
-        $this->ignoreAdditionalAttributes = false;
-
-        foreach ($this->getAttributes() as $attribute => $val) {
-            if ($this->isAdditionalAttribute($attribute)) {
-                $this->saveAdditionalAttributeValue($attribute, FarmAttributeValue::class, 'farm_id');
-            }
-        }
+        $this->saveAdditionalAttributes(FarmAttributeValue::class, 'farm_id');
 
         if ($insert) {
             $this->addClient();

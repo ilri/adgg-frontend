@@ -2,7 +2,7 @@
 
 namespace backend\modules\core\models;
 
-use Codeception\Module\Cli;
+use backend\modules\auth\models\Users;
 use common\helpers\Lang;
 use common\helpers\Utils;
 use common\models\ActiveRecord;
@@ -76,7 +76,7 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
             [['attribute_key', 'alias_to'], 'string', 'max' => 128],
             [['attribute_label'], 'string', 'max' => 255],
             [['group_id'], 'exist', 'skipOnError' => true, 'targetClass' => TableAttributesGroup::class, 'targetAttribute' => ['group_id' => 'id']],
-            ['attribute_key', 'unique', 'message' => Lang::t('{attribute} already exists.')],
+            ['attribute_key', 'unique', 'targetAttribute' => ['table_id', 'attribute_key'], 'message' => Lang::t('{attribute} already exists.')],
             ['list_type_id', 'required', 'when' => function (self $model) {
                 return $model->input_type == self::INPUT_TYPE_SELECT;
             }],
@@ -109,6 +109,18 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
                 break;
             case ExtendableTable::TABLE_ANIMAL_EVENTS:
                 $parentModel = new AnimalEvent();
+                break;
+            case ExtendableTable::TABLE_ANIMAL_REPEATS:
+                //@todo add table
+                break;
+            case ExtendableTable::TABLE_FARM_REPEATS:
+                //@todo add table
+                break;
+            case ExtendableTable::TABLE_CLIENT_REPEATS:
+                //@todo add table
+                break;
+            case ExtendableTable::TABLE_USERS:
+                $parentModel = new Users();
                 break;
         }
 
@@ -341,6 +353,18 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
                 break;
             case ExtendableTable::TABLE_ANIMAL_EVENTS:
                 $model = new AnimalEvent();
+                break;
+            case ExtendableTable::TABLE_ANIMAL_REPEATS:
+                //@todo add table
+                break;
+            case ExtendableTable::TABLE_FARM_REPEATS:
+                //@todo add table
+                break;
+            case ExtendableTable::TABLE_CLIENT_REPEATS:
+                //@todo add table
+                break;
+            case ExtendableTable::TABLE_USERS:
+                $model = new Users();
                 break;
         }
 

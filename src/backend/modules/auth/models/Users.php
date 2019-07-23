@@ -5,9 +5,14 @@ namespace backend\modules\auth\models;
 
 use backend\modules\auth\Session;
 use backend\modules\conf\settings\SystemSettings;
+use backend\modules\core\models\ExtendableTable;
 use backend\modules\core\models\Organization;
 use backend\modules\core\models\OrganizationUnitDataTrait;
 use backend\modules\core\models\OrganizationUnits;
+use backend\modules\core\models\TableAttribute;
+use backend\modules\core\models\TableAttributeInterface;
+use backend\modules\core\models\TableAttributeTrait;
+use backend\modules\core\models\UploadExcelInterface;
 use common\helpers\DbUtils;
 use common\helpers\FileManager;
 use common\helpers\Lang;
@@ -28,6 +33,7 @@ use yii\web\NotFoundHttpException;
  * @property int $district_id
  * @property int $ward_id
  * @property int $village_id
+ * @property string $odk_code
  *
  * @property Organization $org
  * @property OrganizationUnits $region
@@ -35,9 +41,9 @@ use yii\web\NotFoundHttpException;
  * @property OrganizationUnits $ward
  * @property OrganizationUnits $village
  */
-class Users extends UserIdentity implements ActiveSearchInterface
+class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelInterface, TableAttributeInterface
 {
-    use ActiveSearchTrait, OrganizationUnitDataTrait, UserNotificationTrait;
+    use ActiveSearchTrait, OrganizationUnitDataTrait, UserNotificationTrait, TableAttributeTrait;
 
     /**
      *
@@ -118,6 +124,8 @@ class Users extends UserIdentity implements ActiveSearchInterface
             static::passwordValidator(),
             $this->passwordHistoryValidator(),
             [['region_id', 'district_id', 'ward_id', 'village_id'], 'safe'],
+            [$this->getAdditionalAttributes(), 'safe'],
+            ['odk_code', 'unique', 'targetAttribute' => ['org_id', 'odk_code'], 'message' => '{attribute} already exists.'],
         ];
     }
 
@@ -149,7 +157,8 @@ class Users extends UserIdentity implements ActiveSearchInterface
             'org_id' => Lang::t('Organization'),
             'auto_generate_password' => Lang::t('Auto Generate Password'),
             'branch_id' => Lang::t('Branch'),
-            'require_password_change' => Lang::t('Force password change on login')
+            'require_password_change' => Lang::t('Force password change on login'),
+            'odk_code' => 'ODK Code',
         ];
     }
 
@@ -192,8 +201,16 @@ class Users extends UserIdentity implements ActiveSearchInterface
         if ($this->scenario === self::SCENARIO_CREATE) {
             $this->sendLoginDetailsEmail();
         }
+        $this->saveAdditionalAttributes(UserAttributeValue::class, 'user_id');
         parent::afterSave($insert, $changedAttributes);
     }
+
+    public function afterFind()
+    {
+        parent::afterFind();
+        $this->loadAdditionalAttributeValues(UserAttributeValue::class, 'user_id');
+    }
+
 
     /**
      * @inheritdoc
@@ -418,5 +435,29 @@ class Users extends UserIdentity implements ActiveSearchInterface
     public function getDecodedStatus()
     {
         return static::decodeStatus($this->status);
+    }
+
+    /**
+     * @return int
+     */
+    public static function getDefinedTableId(): int
+    {
+        return ExtendableTable::TABLE_USERS;
+    }
+
+    /**
+     * @return int
+     */
+    public static function getDefinedType(): int
+    {
+        return TableAttribute::TYPE_ATTRIBUTE;
+    }
+
+    /**
+     * @return array
+     */
+    public function getExcelColumns()
+    {
+        // TODO: Implement getExcelColumns() method.
     }
 }
