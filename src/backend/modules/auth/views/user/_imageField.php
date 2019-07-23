@@ -14,8 +14,7 @@ $alertId = $fileAttribute . '_upload-alert';
 
 ?>
 <div class="form-group row">
-    <?= Html::activeLabel($model, $tmpFileAttribute, ['class' => 'col-lg-3 col-form-label']) ?>
-    <div class="col-lg-9">
+    <div class="offset-md-2 col-lg-9">
         <?= Html::activeHiddenInput($model, $tmpFileAttribute) ?>
         <div>
             <?= Fineuploader::widget([

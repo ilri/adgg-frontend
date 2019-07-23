@@ -199,7 +199,7 @@ MyApp.modules.auth = {};
     let FORM = function (options) {
         let defaultOptions = {
             autoGeneratePasswordFieldSelector: '#users-auto_generate_password',
-            passwordFieldsWrapper: '#password-fields-wrapper'
+            passwordFieldsWrapper: '.password-fields-wrapper'
         };
         this.options = $.extend({}, defaultOptions, options || {});
     }
@@ -235,24 +235,65 @@ MyApp.modules.auth = {};
         let defaultOptions = {
             organizationWrapperSelector: '#organization-id-wrapper',
             levelIdFieldSelector: '#users-level_id',
-            orgIdFieldSelector: '#users-org_id'
+            orgIdFieldSelector: '#users-org_id',
+            regionIdFieldSelector: '#users-region_id',
+            districtIdFieldSelector: '#users-district_id',
+            wardIdFieldSelector: '#users-ward_id',
+            villageIdFieldSelector: '#users-village_id',
         }
         this.options = $.extend({}, defaultOptions, options || {});
     }
 
     FORM.prototype = {
-        toggleOrganization: function () {
+        toggleFields: function () {
             let $this = this,
                 selector = $this.options.levelIdFieldSelector;
             let _toggle = function (e) {
                 let val = $(e).val(),
-                    showOrganizationFlags = $(e).data('show-organization'),
-                    orgSelect = $($this.options.orgIdFieldSelector);
+                    showOrganizationFlags = $(e).data('show-country'),
+                    orgSelect = $($this.options.orgIdFieldSelector),
+                    orgSelectWrapper = $('#org-id-wrapper'),
+                    showRegionFlags = $(e).data('show-region'),
+                    regionSelect = $($this.options.regionIdFieldSelector),
+                    regionSelectWrapper = $('#region-id-wrapper'),
+                    showDistrictFlags = $(e).data('show-district'),
+                    districtSelect = $($this.options.districtIdFieldSelector),
+                    districtSelectWrapper = $('#district-id-wrapper'),
+                    showWardFlags = $(e).data('show-ward'),
+                    wardSelect = $($this.options.wardIdFieldSelector),
+                    wardSelectWrapper = $('#ward-id-wrapper'),
+                    showVillageFlags = $(e).data('show-village'),
+                    villageSelect = $($this.options.villageIdFieldSelector),
+                    villageSelectWrapper = $('#village-id-wrapper');
                 if (showOrganizationFlags.includes(parseInt(val))) {
-                    orgSelect.removeAttr("disabled");
+                    orgSelectWrapper.show();
                 } else {
-                    orgSelect.select2("enable", false);
+                    orgSelectWrapper.hide();
                     orgSelect.val('').trigger('change');
+                }
+                if (showRegionFlags.includes(parseInt(val))) {
+                    regionSelectWrapper.show();
+                } else {
+                    regionSelectWrapper.hide();
+                    regionSelect.val('').trigger('change');
+                }
+                if (showDistrictFlags.includes(parseInt(val))) {
+                    districtSelectWrapper.show();
+                } else {
+                    districtSelectWrapper.hide();
+                    districtSelect.val('').trigger('change');
+                }
+                if (showWardFlags.includes(parseInt(val))) {
+                    wardSelectWrapper.show();
+                } else {
+                    wardSelectWrapper.hide();
+                    wardSelect.val('').trigger('change');
+                }
+                if (showVillageFlags.includes(parseInt(val))) {
+                    villageSelectWrapper.show();
+                } else {
+                    villageSelectWrapper.hide();
+                    villageSelect.val('').trigger('change');
                 }
             }
             //on page load
@@ -264,9 +305,9 @@ MyApp.modules.auth = {};
         }
     };
 
-    MyApp.modules.auth.toggleOrganization = function (options) {
+    MyApp.modules.auth.toggleFields = function (options) {
         let obj = new FORM(options);
-        obj.toggleOrganization();
+        obj.toggleFields();
     }
 }(jQuery));
 
@@ -274,43 +315,9 @@ MyApp.modules.auth = {};
 (function ($) {
     "use strict";
     MyApp.modules.auth.initUserForm = function (options) {
-        MyApp.modules.auth.toggleOrganization(options);
+        MyApp.modules.auth.toggleFields(options);
         MyApp.modules.auth.autoGeneratePassword(options);
     }
-}(jQuery));
-
-//carousel
-//$('.carousel').carousel()
-(function ($) {
-    "use strict";
-
-    function changeBackground(i) {
-        let element = $('#kt-login-v1-body');
-        let images = element.data('images');
-        let imagesCount = images.length;
-        let index = i || 0;
-        if (typeof i !== 'undefined') {
-            element.stop().animate({opacity: 0.7}, 1000, function () {
-                $(this).css('background-image', 'url(' + images[i] + ')').animate({opacity: 1}, {duration: 1000});
-            });
-        }
-
-        $.fn.preloadImages = function () {
-            this.each(function () {
-                $('<img/>')[0].src = this;
-            });
-        }
-        $([images[0], images[1], images[2], images[3]]).preloadImages();
-        setTimeout(function () {
-            let i = index + 1;
-            if (i > (imagesCount - 1)) {
-                i = 0;
-            }
-            changeBackground(i);
-        }, 10000);
-    }
-
-    changeBackground();
 }(jQuery));
 
 //dynamic form after add

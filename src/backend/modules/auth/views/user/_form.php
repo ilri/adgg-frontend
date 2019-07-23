@@ -3,6 +3,7 @@
 use backend\modules\auth\models\UserLevels;
 use backend\modules\auth\models\Users;
 use backend\modules\auth\Session;
+use backend\modules\core\models\OrganizationUnits;
 use common\forms\ActiveField;
 use common\helpers\Lang;
 use common\helpers\Url;
@@ -44,66 +45,136 @@ use yii\helpers\Json;
         ?>
         <div class="kt-portlet__body">
             <?= Html::errorSummary($model, ['class' => 'alert alert-warning', 'header' => '']); ?>
-            <?php if ($model->checkPermission(false, true)) : ?>
-                <div class="row">
-                    <div class="col-md-4">
-                        <?= $form->field($model, 'level_id')->widget(Select2::class, [
-                            'data' => Users::levelIdListData(),
-                            'theme' => Select2::THEME_BOOTSTRAP,
-                            'options' => [
-                                'class' => 'form-control parent-depdropdown',
-                                'data-child-selectors' => [
-                                    '#' . Html::getInputId($model, 'role_id'),
-                                ],
-                                'data-show-organization' => [UserLevels::LEVEL_COUNTRY]
-                            ],
-                            'pluginOptions' => [
-                                'allowClear' => false
-                            ],
-                        ]) ?>
-                    </div>
-                    <?php if (!Session::isOrganization()): ?>
-                        <div class="col-md-4" id="organization-id-wrapper">
-                            <?= $form->field($model, 'org_id')->widget(Select2::class, [
-                                'data' => \backend\modules\core\models\Organization::getListData(),
-                                'theme' => Select2::THEME_BOOTSTRAP,
-                                'pluginOptions' => [
-                                    'allowClear' => false
-                                ],
-                            ]) ?>
-                        </div>
-                    <?php endif; ?>
-                    <div class="col-md-4">
-                        <?= $form->field($model, 'role_id')->widget(Select2::class, [
-                            'data' => \backend\modules\auth\models\Roles::getListData('id', 'name', false, Session::isOrganization() ? ['level_id' => UserLevels::LEVEL_COUNTRY] : []),
-                            'theme' => Select2::THEME_BOOTSTRAP,
-                            'options' => [
-                                'data-url' => Url::to(['role/get-list', 'level_id' => 'idV']),
-                                'data-selected' => $model->role_id,
-                            ],
-                            'pluginOptions' => [
-                                'allowClear' => false
-                            ],
-                        ]) ?>
-                    </div>
-                </div>
-                <hr/>
-            <?php endif; ?>
-            <div class="row">
-                <div class="col-md-8">
+            <div class="kt-section kt-section--first">
+                <div class="kt-section__body">
+                    <h3 class="kt-section__title kt-section__title-lg"><?= Lang::t('User details') ?></h3>
                     <div class="row">
-                        <div class="col-md-6">
+                        <?php if ($model->checkPermission(false, true)) : ?>
+                            <div class="col-md-4">
+                                <?= $form->field($model, 'level_id')->widget(Select2::class, [
+                                    'data' => Users::levelIdListData(),
+                                    'theme' => Select2::THEME_BOOTSTRAP,
+                                    'options' => [
+                                        'class' => 'form-control parent-depdropdown',
+                                        'data-child-selectors' => [
+                                            '#' . Html::getInputId($model, 'role_id'),
+                                        ],
+                                        'data-show-country' => [UserLevels::LEVEL_COUNTRY, UserLevels::LEVEL_REGION, UserLevels::LEVEL_DISTRICT, UserLevels::LEVEL_WARD, UserLevels::LEVEL_VILLAGE],
+                                        'data-show-region' => [UserLevels::LEVEL_REGION, UserLevels::LEVEL_DISTRICT, UserLevels::LEVEL_WARD, UserLevels::LEVEL_VILLAGE],
+                                        'data-show-district' => [UserLevels::LEVEL_DISTRICT, UserLevels::LEVEL_WARD, UserLevels::LEVEL_VILLAGE],
+                                        'data-show-ward' => [UserLevels::LEVEL_WARD, UserLevels::LEVEL_VILLAGE],
+                                        'data-show-village' => [UserLevels::LEVEL_VILLAGE],
+                                    ],
+                                    'pluginOptions' => [
+                                        'allowClear' => false
+                                    ],
+                                ]) ?>
+                            </div>
+                            <?php if (!Session::isOrganization()): ?>
+                                <div class="col-md-4" id="org-id-wrapper">
+                                    <?= $form->field($model, 'org_id')->widget(Select2::class, [
+                                        'data' => \backend\modules\core\models\Organization::getListData(),
+                                        'theme' => Select2::THEME_BOOTSTRAP,
+                                        'options' => [
+                                            'class' => 'form-control parent-depdropdown',
+                                            'data-child-selectors' => [
+                                                '#' . Html::getInputId($model, 'region_id'),
+                                            ],
+                                        ],
+                                        'pluginOptions' => [
+                                            'allowClear' => false
+                                        ],
+                                    ]) ?>
+                                </div>
+                                <div class="col-md-4" id="region-id-wrapper">
+                                    <?= $form->field($model, 'region_id')->widget(Select2::class, [
+                                        'data' => OrganizationUnits::getListData('id', 'name', true, ['org_id' => $model->org_id, 'level' => OrganizationUnits::LEVEL_REGION]),
+                                        'theme' => Select2::THEME_BOOTSTRAP,
+                                        'options' => [
+                                            'class' => 'form-control parent-depdropdown',
+                                            'data-url' => Url::to(['/core/organization-units/get-list', 'org_id' => 'idV', 'level' => OrganizationUnits::LEVEL_REGION]),
+                                            'data-selected' => $model->region_id,
+                                            'data-child-selectors' => [
+                                                '#' . Html::getInputId($model, 'district_id'),
+                                            ],
+                                        ],
+                                        'pluginOptions' => [
+                                            'allowClear' => false
+                                        ],
+                                    ]) ?>
+                                </div>
+                                <div class="col-md-4" id="district-id-wrapper">
+                                    <?= $form->field($model, 'district_id')->widget(Select2::class, [
+                                        'data' => OrganizationUnits::getListData('id', 'name', true, ['org_id' => $model->org_id, 'level' => OrganizationUnits::LEVEL_DISTRICT, 'parent_id' => $model->region_id]),
+                                        'theme' => Select2::THEME_BOOTSTRAP,
+                                        'options' => [
+                                            'class' => 'form-control parent-depdropdown',
+                                            'data-url' => Url::to(['/core/organization-units/get-list', 'org_id' => $model->org_id, 'parent_id' => 'idV', 'level' => OrganizationUnits::LEVEL_DISTRICT]),
+                                            'data-selected' => $model->district_id,
+                                            'data-child-selectors' => [
+                                                '#' . Html::getInputId($model, 'ward_id'),
+                                            ],
+                                        ],
+                                        'pluginOptions' => [
+                                            'allowClear' => false
+                                        ],
+                                    ]) ?>
+                                </div>
+                                <div class="col-md-4" id="ward-id-wrapper">
+                                    <?= $form->field($model, 'ward_id')->widget(Select2::class, [
+                                        'data' => OrganizationUnits::getListData('id', 'name', true, ['org_id' => $model->org_id, 'level' => OrganizationUnits::LEVEL_WARD, 'parent_id' => $model->district_id]),
+                                        'theme' => Select2::THEME_BOOTSTRAP,
+                                        'options' => [
+                                            'class' => 'form-control parent-depdropdown',
+                                            'data-url' => Url::to(['/core/organization-units/get-list', 'org_id' => $model->org_id, 'parent_id' => 'idV', 'level' => OrganizationUnits::LEVEL_WARD]),
+                                            'data-selected' => $model->ward_id,
+                                            'data-child-selectors' => [
+                                                '#' . Html::getInputId($model, 'village_id'),
+                                            ],
+                                        ],
+                                        'pluginOptions' => [
+                                            'allowClear' => false
+                                        ],
+                                    ]) ?>
+                                </div>
+                                <div class="col-md-4" id="village-id-wrapper">
+                                    <?= $form->field($model, 'village_id')->widget(Select2::class, [
+                                        'data' => OrganizationUnits::getListData('id', 'name', true, ['org_id' => $model->org_id, 'level' => OrganizationUnits::LEVEL_VILLAGE, 'parent_id' => $model->ward_id]),
+                                        'theme' => Select2::THEME_BOOTSTRAP,
+                                        'options' => [
+                                            'data-url' => Url::to(['/core/organization-units/get-list', 'org_id' => $model->org_id, 'parent_id' => 'idV', 'level' => OrganizationUnits::LEVEL_VILLAGE]),
+                                            'data-selected' => $model->village_id,
+                                        ],
+                                        'pluginOptions' => [
+                                            'allowClear' => false
+                                        ],
+                                    ]) ?>
+                                </div>
+                            <?php endif; ?>
+                            <div class="col-md-4">
+                                <?= $form->field($model, 'role_id')->widget(Select2::class, [
+                                    'data' => \backend\modules\auth\models\Roles::getListData('id', 'name', false, Session::isOrganization() ? ['level_id' => UserLevels::LEVEL_COUNTRY] : []),
+                                    'theme' => Select2::THEME_BOOTSTRAP,
+                                    'options' => [
+                                        'data-url' => Url::to(['role/get-list', 'level_id' => 'idV']),
+                                        'data-selected' => $model->role_id,
+                                    ],
+                                    'pluginOptions' => [
+                                        'allowClear' => false
+                                    ],
+                                ]) ?>
+                            </div>
+                        <?php endif; ?>
+                        <div class="col-md-4">
                             <?= $form->field($model, 'name') ?>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <?= $form->field($model, 'email') ?>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <?= $form->field($model, 'phone') ?>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <?= $form->field($model, 'timezone')->widget(Select2::class, [
                                 'data' => \backend\modules\conf\models\Timezone::getListData(),
                                 'theme' => Select2::THEME_BOOTSTRAP,
@@ -112,44 +183,64 @@ use yii\helpers\Json;
                                 ],
                             ]) ?>
                         </div>
+                        <?php foreach ($model->getAdditionalAttributes() as $attribute): ?>
+                            <div class="col-md-4">
+                                <?= $model->renderAdditionalAttribute($form, $attribute) ?>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
+                </div>
+            </div>
+            <div class="kt-section">
+                <div class="kt-section__body">
+                    <h3 class="kt-section__title kt-section__title-lg"><?= Lang::t('Login details') ?></h3>
+                </div>
+                <div class="row">
+                    <?php if ($model->isNewRecord): ?>
+                        <div class="col-md-4">
+                            <?= $form->field($model, 'auto_generate_password')->checkbox() ?>
+                        </div>
+                        <div class="col-md-4">
+                            <?= $form->field($model, 'require_password_change')->checkbox() ?>
+                        </div>
+                        <div class="col-md-4">
+                            <?= $form->field($model, 'send_email')->checkbox() ?>
+                        </div>
+                    <?php endif; ?>
+                    <div class="col-md-4">
+                        <?= $form->field($model, 'username') ?>
+                    </div>
+                    <?php if ($model->isNewRecord): ?>
+                        <div class="col-md-4 password-fields-wrapper">
+                            <?= $form->field($model, 'password', [
+                                'template' => "{label}\n{beginWrapper}\n{input}\n{hint}\n{error}\n{endWrapper}",
+                            ])->widget(PasswordInput::class, [
+                                'pluginOptions' => [
+                                    'showMeter' => true,
+                                    'toggleMask' => true,
+                                ],
+                                'options' => ['class' => 'form-control']
+                            ]) ?>
+
+                        </div>
+                        <div class="col-md-4 password-fields-wrapper">
+                            <?= $form->field($model, 'confirm')->widget(PasswordInput::class, [
+                                'pluginOptions' => [
+                                    'showMeter' => false,
+                                    'toggleMask' => true,
+                                ],
+                                'options' => ['class' => 'form-control']
+                            ]) ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <div class="kt-section kt-section--last">
+                <div class="kt-section__body">
+                    <h3 class="kt-section__title kt-section__title-lg"><?= Lang::t('Profile Image') ?></h3>
                     <div class="row">
                         <div class="col-md-6">
                             <?= $this->render('_imageField', ['model' => $model]) ?>
-                        </div>
-                        <div class="col-md-6">
-                            <?= $form->field($model, 'require_password_change')->checkbox() ?>
-                            <?php if ($model->isNewRecord): ?>
-                                <?= $form->field($model, 'send_email')->checkbox() ?>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <?= $form->field($model, 'username') ?>
-                            <?php if ($model->isNewRecord): ?>
-                                <?= $form->field($model, 'auto_generate_password')->checkbox() ?>
-                                <div id="password-fields-wrapper">
-                                    <?= $form->field($model, 'password', [
-                                        'template' => "{label}\n{beginWrapper}\n{input}\n{hint}\n{error}\n{endWrapper}",
-                                    ])->widget(PasswordInput::class, [
-                                        'pluginOptions' => [
-                                            'showMeter' => true,
-                                            'toggleMask' => true,
-                                        ],
-                                        'options' => ['class' => 'form-control']
-                                    ]) ?>
-                                    <?= $form->field($model, 'confirm')->widget(PasswordInput::class, [
-                                        'pluginOptions' => [
-                                            'showMeter' => false,
-                                            'toggleMask' => true,
-                                        ],
-                                        'options' => ['class' => 'form-control']
-                                    ]) ?>
-                                </div>
-                            <?php endif; ?>
                         </div>
                     </div>
                 </div>

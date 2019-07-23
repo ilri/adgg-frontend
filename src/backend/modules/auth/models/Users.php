@@ -20,6 +20,7 @@ use common\helpers\Utils;
 use common\models\ActiveSearchTrait;
 use common\models\ActiveSearchInterface;
 use Yii;
+use yii\helpers\Html;
 use yii\imagine\Image;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
@@ -154,11 +155,15 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
             'updated_at' => Lang::t('Updated At'),
             'last_login' => Lang::t('Last Login'),
             'send_email' => Lang::t('Email the login details to the user.'),
-            'org_id' => Lang::t('Organization'),
+            'org_id' => Lang::t('Country'),
             'auto_generate_password' => Lang::t('Auto Generate Password'),
             'branch_id' => Lang::t('Branch'),
             'require_password_change' => Lang::t('Force password change on login'),
             'odk_code' => 'ODK Code',
+            'region_id' => $this->org !== null ? Html::encode($this->org->unit1_name) : 'Region',
+            'district_id' => $this->org !== null ? Html::encode($this->org->unit2_name) : 'District',
+            'ward_id' => $this->org !== null ? Html::encode($this->org->unit3_name) : 'Ward',
+            'village_id' => $this->org !== null ? Html::encode($this->org->unit4_name) : 'Village',
         ];
     }
 
