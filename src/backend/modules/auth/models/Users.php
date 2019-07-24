@@ -60,6 +60,8 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
 
     public $verifyCode;
 
+    const SCENARIO_UPLOAD = 'upload';
+
     /**
      * @inheritdoc
      */
@@ -78,7 +80,8 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
     public function rules()
     {
         return [
-            [['name', 'username', 'email', 'level_id'], 'required', 'on' => [self::SCENARIO_CREATE, self::SCENARIO_UPDATE]],
+            [['name', 'username', 'level_id'], 'required', 'on' => [self::SCENARIO_CREATE, self::SCENARIO_UPDATE]],
+            [['email'], 'required', 'except' => [self::SCENARIO_UPLOAD]],
             ['email', 'email'],
             [['level_id', 'role_id', 'org_id', 'auto_generate_password', 'branch_id'], 'integer'],
             [['name', 'profile_image'], 'string', 'max' => 128],
@@ -109,7 +112,8 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
             ['email', 'unique', 'message' => 'This Email address has already been taken.'],
             [['timezone'], 'string', 'max' => 60],
             [['send_email', 'tmp_profile_image'], 'safe'],
-            [['phone'], 'string', 'max' => 15],
+            [['phone'], 'string', 'min' => 8, 'max' => 13],
+            [['phone'], 'number'],
             [['currentPassword'], 'required', 'on' => self::SCENARIO_CHANGE_PASSWORD],
             [
                 ['currentPassword'],
@@ -160,7 +164,7 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
             'branch_id' => Lang::t('Branch'),
             'require_password_change' => Lang::t('Force password change on login'),
             'odk_code' => 'ODK Code',
-            'region_id' => $this->org !== null ? Html::encode($this->org->unit1_name) : 'Region',
+            'region_id' => $this->org !== null ? Html::encode($this->org->unit1_name) : 'Regi.on',
             'district_id' => $this->org !== null ? Html::encode($this->org->unit2_name) : 'District',
             'ward_id' => $this->org !== null ? Html::encode($this->org->unit3_name) : 'Ward',
             'village_id' => $this->org !== null ? Html::encode($this->org->unit4_name) : 'Village',
@@ -191,10 +195,16 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
      */
     public function beforeSave($insert)
     {
-        if ($this->level_id == UserLevels::LEVEL_DEV || $this->level_id == UserLevels::LEVEL_SUPER_ADMIN || $this->level_id == UserLevels::LEVEL_ADMIN) {
-            $this->org_id = null;
+        if (parent::beforeSave($insert)) {
+            $this->ignoreAdditionalAttributes = true;
+            if ($this->level_id == UserLevels::LEVEL_DEV || $this->level_id == UserLevels::LEVEL_SUPER_ADMIN || $this->level_id == UserLevels::LEVEL_ADMIN) {
+                $this->org_id = null;
+            }
+
+            return true;
         }
-        return parent::beforeSave($insert);
+
+        return false;
     }
 
     /**
@@ -463,6 +473,15 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
      */
     public function getExcelColumns()
     {
-        // TODO: Implement getExcelColumns() method.
+        $columns = [
+            'name',
+            'username',
+            'email',
+            'phone',
+            'region_code',
+            'district_code',
+        ];
+
+        return array_merge($columns, $this->getAdditionalAttributes());
     }
 }

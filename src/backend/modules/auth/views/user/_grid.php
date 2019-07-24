@@ -1,6 +1,8 @@
 <?php
 
+use backend\modules\auth\models\UserLevels;
 use backend\modules\auth\Session;
+use common\helpers\Lang;
 use common\widgets\grid\GridView;
 use backend\modules\auth\models\Users;
 use yii\helpers\Url;
@@ -11,6 +13,9 @@ use yii\helpers\Url;
 <?= GridView::widget([
     'searchModel' => $model,
     'createButton' => ['visible' => Yii::$app->user->canCreate(), 'modal' => false],
+    'toolbarButtons' => [
+        Yii::$app->user->canCreate() ? '<a class="btn btn-brand btn-bold btn-upper btn-font-sm btn-space" href="' . Url::to(['upload', 'org_id' => $model->org_id, 'level_id' => UserLevels::LEVEL_DISTRICT]) . '" data-pjax="0"><i class="fa fa-file-excel-o"></i> ' . Lang::t('Upload Enumerators/AITech') . '</a> ' : '',
+    ],
     'rowOptions' => function (Users $model) {
         return ["class" => "linkable", "data-href" => Url::to(['view', "id" => $model->id])];
     },

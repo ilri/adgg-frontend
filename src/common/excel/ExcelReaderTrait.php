@@ -393,6 +393,9 @@ trait ExcelReaderTrait
             $column_name = isset($this->placeholders[$k]) ? $this->placeholders[$k] : Utils::numToLetter($i, true);
             $column = str_replace(['[', ']'], '', $k);
             $columns[$column] = isset($excel_row[$column_name]) ? trim($excel_row[$column_name]) : null;
+            if (strtolower($columns[$column]) === 'null') {
+                $columns[$column] = null;
+            }
             $i++;
         }
 

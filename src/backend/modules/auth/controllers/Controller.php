@@ -53,6 +53,8 @@ class Controller extends BackendController
                             'filter',
                             'get-list',
                             'register',
+                            'upload',
+                            'upload-preview',
                         ],
                         'allow' => true,
                         'roles' => ['@'],
