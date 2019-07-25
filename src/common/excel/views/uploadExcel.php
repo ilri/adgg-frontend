@@ -83,7 +83,7 @@ $offset_class = 'offset-md-' . $label_size;
                     </h6>
                 </div>
                 <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
-                    <div class="card-body">
+                    <div class="card-body" style="max-height: 500px;overflow: auto;">
                         <fieldset>
                             <p>Get Data From:</p>
                             <div class="form-group row">
@@ -106,7 +106,7 @@ $offset_class = 'offset-md-' . $label_size;
                                 <label class="<?= $label_class ?> col-form-label"><?= Lang::t('Column:') ?></label>
 
                                 <div class="col-md-3">
-                                    <?= Html::activeTextInput($model, 'start_column', ['class' => 'form-control', 'placeholder' => $model->getAttributeLabel('start_column'), 'maxlength' => 1]) ?>
+                                    <?= Html::activeTextInput($model, 'start_column', ['class' => 'form-control', 'placeholder' => $model->getAttributeLabel('start_column')]) ?>
                                 </div>
 
                                 <div class="col-md-2">
@@ -114,7 +114,7 @@ $offset_class = 'offset-md-' . $label_size;
                                 </div>
 
                                 <div class="col-md-3">
-                                    <?= Html::activeTextInput($model, 'end_column', ['class' => 'form-control', 'placeholder' => $model->getAttributeLabel('end_column'), 'maxlength' => 1]) ?>
+                                    <?= Html::activeTextInput($model, 'end_column', ['class' => 'form-control', 'placeholder' => $model->getAttributeLabel('end_column')]) ?>
                                 </div>
                             </div>
                         </fieldset>

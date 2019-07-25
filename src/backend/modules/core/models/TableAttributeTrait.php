@@ -9,6 +9,7 @@
 namespace backend\modules\core\models;
 
 
+use common\helpers\Str;
 use common\models\ActiveRecord;
 use common\widgets\select2\Select2;
 use yii\bootstrap4\ActiveForm;
@@ -69,6 +70,17 @@ trait TableAttributeTrait
     public function isAdditionalAttribute(string $attribute): bool
     {
         return in_array($attribute, $this->getAdditionalAttributes());
+    }
+
+    /**
+     * @param int $tableId
+     * @param string $attribute
+     * @return bool
+     * @throws \Exception
+     */
+    public static function isMultiSelectAttribute($tableId, string $attribute): bool
+    {
+        return TableAttribute::exists(['table_id' => $tableId, 'attribute_key' => $attribute, 'input_type' => TableAttribute::INPUT_TYPE_MULTI_SELECT]);
     }
 
     /**
@@ -141,20 +153,29 @@ trait TableAttributeTrait
         $attributeId = TableAttribute::getAttributeId(static::getDefinedTableId(), $attribute);
         $model = new $attributeValueModelClass([$foreignKeyAttribute => $this->id, 'attribute_id' => $attributeId]);
         $valueAttribute = 'attribute_value';
-        if (is_array($this->{$attribute})) {
+        $attributeValue = $this->{$attribute};
+        if (static::isMultiSelectAttribute(static::getDefinedTableId(), $attribute)) {
             $attributeValueModelClass::deleteAll([$foreignKeyAttribute => $this->id, 'attribute_id' => $attributeId]);
-            foreach ($this->{$attribute} as $attrVal) {
-                $newModel = clone $model;
-                $newModel->{$valueAttribute} = $attrVal;
-                $newModel->save(false);
+            if (!is_array($attributeValue)) {
+                $attributeValue = array_map('trim', explode(' ', $attributeValue));
+            }
+            $attributeValue = array_unique($attributeValue);
+            foreach ($attributeValue as $attrVal) {
+                if (!Str::isEmpty($attrVal)) {
+                    $newModel = clone $model;
+                    $newModel->{$valueAttribute} = $attrVal;
+                    $newModel->save(false);
+                }
             }
         } else {
-            $newModel = $attributeValueModelClass::find()->andWhere([$foreignKeyAttribute => $this->id, 'attribute_id' => $attributeId])->one();
-            if (null === $newModel) {
-                $newModel = clone $model;
+            if (!Str::isEmpty($attributeValue)) {
+                $newModel = $attributeValueModelClass::find()->andWhere([$foreignKeyAttribute => $this->id, 'attribute_id' => $attributeId])->one();
+                if (null === $newModel) {
+                    $newModel = clone $model;
+                }
+                $newModel->{$valueAttribute} = $attributeValue;
+                $newModel->save(false);
             }
-            $newModel->{$valueAttribute} = $this->{$attribute};
-            $newModel->save(false);
         }
     }
 
@@ -239,5 +260,14 @@ trait TableAttributeTrait
             $formattedAttributes[$attribute] = $this->getAttributeLabel($attribute) . ' (' . $attribute . ')';
         }
         return $formattedAttributes;
+    }
+
+    /**
+     * @return array
+     * @throws \Exception
+     */
+    protected function getOtherAttributeLabels()
+    {
+        return TableAttribute::getListData('attribute_key', 'attribute_label', false, ['table_id' => static::getDefinedTableId()]);
     }
 }

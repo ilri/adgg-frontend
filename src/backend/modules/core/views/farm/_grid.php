@@ -78,18 +78,6 @@ use yii\helpers\Url;
             'attribute' => 'field_agent_name',
         ],
         [
-            'attribute' => 'total_cattle',
-            'hidden' => true,
-        ],
-        [
-            'attribute' => 'latitude',
-            'hidden' => true,
-        ],
-        [
-            'attribute' => 'longitude',
-            'hidden' => true,
-        ],
-        [
             'attribute' => 'farm_type',
             'hidden' => false,
         ],
@@ -103,9 +91,7 @@ use yii\helpers\Url;
         ],
         [
             'attribute' => 'is_active',
-            'value' => function (Farm $model) {
-                return \common\helpers\Utils::decodeBoolean($model->is_active);
-            },
+            'format' => 'boolean',
         ],
         [
             'class' => common\widgets\grid\ActionColumn::class,

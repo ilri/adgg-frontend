@@ -9,7 +9,6 @@ return [
     '@reportsModule' => '@backend/modules/reports',
     '@dashboardModule' => '@backend/modules/dashboard',
     '@helpModule' => '@backend/modules/help',
-    '@accountingModule' => '@backend/modules/accounting',
     // other paths
     '@redactor' => '@uploads/redactor',
     '@redactorFiles' => '@redactor/files',

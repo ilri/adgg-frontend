@@ -61,8 +61,8 @@ class ExtendableTable
         return Utils::appendDropDownListPrompt([
             self::TABLE_FARM => static::decodeTableId(self::TABLE_FARM),
             self::TABLE_FARM_REPEATS => static::decodeTableId(self::TABLE_FARM_REPEATS),
-            self::TABLE_CLIENT => static::decodeTableId(self::TABLE_CLIENT),
-            self::TABLE_CLIENT_REPEATS => static::decodeTableId(self::TABLE_CLIENT_REPEATS),
+            //self::TABLE_CLIENT => static::decodeTableId(self::TABLE_CLIENT),
+            //self::TABLE_CLIENT_REPEATS => static::decodeTableId(self::TABLE_CLIENT_REPEATS),
             self::TABLE_ANIMAL_ATTRIBUTES => static::decodeTableId(self::TABLE_ANIMAL_ATTRIBUTES),
             self::TABLE_ANIMAL_EVENTS => static::decodeTableId(self::TABLE_ANIMAL_EVENTS),
             self::TABLE_ANIMAL_REPEATS => static::decodeTableId(self::TABLE_ANIMAL_REPEATS),

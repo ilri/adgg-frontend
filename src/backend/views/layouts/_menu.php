@@ -31,16 +31,10 @@ use yii\helpers\Url;
                     <span class="kt-menu__link-text">FARMS</span>
                 </a>
             </li>
-            <li class="kt-menu__item kt-menu__item--submenu">
+            <li class="kt-menu__item kt-menu__item--submenu hidden">
                 <a href="<?= Url::to(['/core/client/index']) ?>" class="kt-menu__link">
                     <i class="kt-menu__link-icon far fa-users"></i>
                     <span class="kt-menu__link-text">CLIENTS/FARMERS</span>
-                </a>
-            </li>
-            <li class="kt-menu__item kt-menu__item--submenu">
-                <a href="#" class="kt-menu__link">
-                    <i class="kt-menu__link-icon far fa-calendar-day"></i>
-                    <span class="kt-menu__link-text">ANIMAL EVENTS</span>
                 </a>
             </li>
             <li class="kt-menu__item kt-menu__item--submenu">

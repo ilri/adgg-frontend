@@ -85,7 +85,7 @@ trait ExcelReaderTrait
      * Delete file after processing
      * @var
      */
-    public $delete_file = true;
+    public $delete_file = false;
 
     /**
      * @var
@@ -146,9 +146,11 @@ trait ExcelReaderTrait
         $temp_path = $this->file;
         $this->file = time() . '_' . $this->original_file_name;
         $new_path = static::getDir() . DIRECTORY_SEPARATOR . $this->file;
-        if (copy($temp_path, $new_path))
-            FileManager::deleteDirOrFile(dirname($temp_path));
-        else
+        if (copy($temp_path, $new_path)) {
+            if ($this->delete_file) {
+                FileManager::deleteDirOrFile(dirname($temp_path));
+            }
+        } else
             throw new Exception('Could not copy the file to the new location.');
     }
 

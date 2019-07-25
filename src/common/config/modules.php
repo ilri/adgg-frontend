@@ -34,9 +34,6 @@ $modules = [
     'help' => [
         'class' => \backend\modules\help\Module::class,
     ],
-    'accounting' => [
-        'class' => \backend\modules\accounting\Module::class,
-    ],
 ];
 
 if (YII_ENV_DEV) {

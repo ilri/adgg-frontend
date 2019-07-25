@@ -23,12 +23,12 @@ use yii\helpers\Html;
  * @property string $farmer_name
  * @property string $phone
  * @property string $email
- * @property int $total_cattle
  * @property int $field_agent_id
  * @property string $field_agent_name
  * @property string $project
  * @property string $farm_type
  * @property string $gender_code
+ * @property int $farmer_is_hh_head
  * @property int $is_active
  * @property string $latitude
  * @property string $longitude
@@ -50,6 +50,8 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
 {
     use ActiveSearchTrait, OrganizationUnitDataTrait, TableAttributeTrait;
 
+    const SCENARIO_UPLOAD = 'upload';
+
     /**
      * {@inheritdoc}
      */
@@ -64,16 +66,16 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     public function rules()
     {
         return [
-            [['name', 'org_id', 'region_id', 'district_id', 'ward_id'], 'required'],
-            [['org_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'total_cattle', 'field_agent_id', 'is_active',], 'integer'],
-            [['reg_date'], 'date', 'format' => 'Y-m-d'],
+            [['farmer_name', 'org_id', 'region_id', 'district_id', 'ward_id'], 'required'],
+            [['name'], 'required', 'except' => [self::SCENARIO_UPLOAD]],
+            [['org_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'field_agent_id', 'is_active', 'farmer_is_hh_head'], 'safe'],
             [['latitude', 'latitude'], 'number'],
             [['code', 'name', 'project', 'field_agent_name', 'farmer_name'], 'string', 'max' => 128],
-            [['phone'], 'string', 'max' => 20],
+            [['phone'], 'string', 'max' => 20, 'except' => [self::SCENARIO_UPLOAD]],
             [['email', 'map_address'], 'string', 'max' => 255],
             [['farm_type'], 'string', 'max' => 30],
             [['gender_code'], 'string', 'max' => 10],
-            [['email'], 'email'],
+            [['reg_date'], 'date', 'format' => 'Y-m-d', 'except' => self::SCENARIO_UPLOAD],
             [['org_id'], 'exist', 'skipOnError' => true, 'targetClass' => Organization::class, 'targetAttribute' => ['org_id' => 'id']],
             [$this->getAdditionalAttributes(), 'safe'],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
@@ -86,7 +88,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
      */
     public function attributeLabels()
     {
-        return [
+        $labels = [
             'id' => 'ID',
             'code' => 'Code',
             'name' => 'Farm Name',
@@ -99,12 +101,13 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             'reg_date' => 'Reg Date',
             'phone' => 'Farmer Phone No.',
             'email' => 'Farmer Email',
-            'total_cattle' => 'Total Cattle Owned',
-            'field_agent_id' => 'Field Agent',
-            'field_agent_name' => 'AI Tech',
+            'field_agent_id' => 'AITech/PRA Id',
+            'field_agent_name' => 'AITech/PRA Name',
+            'field_agent_code' => 'AITech/PRA Code',
             'project' => 'Project',
             'farm_type' => 'Farm Type',
             'gender_code' => 'Farmer Gender',
+            'farmer_is_hh_head' => 'Farmer Is Household Head',
             'is_active' => 'Active',
             'latitude' => 'Latitude',
             'longitude' => 'Longitude',
@@ -116,6 +119,8 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             'updated_at' => 'Updated At',
             'updated_by' => 'Updated By',
         ];
+
+        return array_merge($labels, $this->getOtherAttributeLabels());
     }
 
     /**
@@ -138,6 +143,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             'farm_type',
             'gender_code',
             'is_active',
+            'farmer_is_hh_head',
         ];
     }
 
@@ -145,11 +151,14 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     {
         if (parent::beforeSave($insert)) {
             $this->ignoreAdditionalAttributes = true;
+            if (null === $this->farmer_is_hh_head) {
+                $this->farmer_is_hh_head = 0;
+            }
             if (!empty($this->latitude) && !empty($this->longitude)) {
                 $this->latlng = new Expression("ST_GeomFromText('POINT({$this->latitude} {$this->longitude})')");
             }
-            if (empty($this->farmer_name)) {
-                $this->farmer_name = $this->name;
+            if (empty($this->name)) {
+                $this->name = $this->farmer_name;
             }
 
             return true;
@@ -161,10 +170,6 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     {
         parent::afterSave($insert, $changedAttributes);
         $this->saveAdditionalAttributes(FarmAttributeValue::class, 'farm_id');
-
-        if ($insert) {
-            $this->addClient();
-        }
     }
 
     public function afterFind()
@@ -173,28 +178,6 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
         $this->loadAdditionalAttributeValues(FarmAttributeValue::class, 'farm_id');
     }
 
-
-    protected function addClient()
-    {
-        $model = new Client([
-            'farm_id' => $this->id,
-            'name' => $this->farmer_name,
-            'org_id' => $this->org_id,
-            'region_id' => $this->region_id,
-            'district_id' => $this->district_id,
-            'ward_id' => $this->ward_id,
-            'village_id' => $this->village_id,
-            'phone' => $this->phone,
-            'email' => $this->email,
-            'field_agent_id' => $this->field_agent_id,
-            'is_head' => 1,
-            'gender_code' => $this->gender_code,
-        ]);
-        $model->enableAuditTrail = false;
-        $model->save();
-    }
-
-
     /**
      * @return array
      */
@@ -202,25 +185,71 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     {
         $columns = [
             'code',
-            'reg_date',
-            'region',
-            'district',
-            'ward',
-            'village',
-            'field_agent_name',
             'name',
+            'reg_date',
+            'region_code',
+            'district_code',
+            'ward_code',
+            'village_code',
+            'field_agent_name',
+            'farmer_name',
             'phone',
-            'total_cattle',
+            'email',
+            'gender_code',
+            'farmer_is_hh_head',
+            'field_agent_code',
+            'field_agent_name',
+            'project',
+            'farm_type',
             'latitude',
             'longitude',
-            'farm_type',
-            'gender_code',
-            'project',
         ];
 
-        //@todo add dynamically defined fields
+        $columns = array_merge($columns, $this->getAdditionalAttributes());
 
-        return $columns;
+        return [
+            'survey_id',
+            'start_time',
+            'end_time',
+            'device_id',
+            'reg_date',
+            'field_agent_code',
+            'region_code',
+            'district_code',
+            'ward_code',
+            'village_code',
+            'farmer_name',
+            'code',
+            'phone',
+            'gender_code',
+            'farmer_age',
+            'farmer_age_range',
+            'farmer_is_hh_head',
+            'farmer_relationship_to_hhh',
+            'farmer_relationship_to_hhh_other',
+            'hhh_name',
+            'hhh_mobile',
+            'hhh_gender',
+            'hhh_age',
+            'hhh_age_range',
+            'nmale0to5',
+            'nfemale0to5',
+            'nmale6to14',
+            'nfemale6to14',
+            'nmale15to64',
+            'nfemale15to64',
+            'nmaleo64',
+            'nfemaleo64',
+            'c_parcelno',
+            'livestock_in_hh',
+            'total_cattle_owned',
+            'total_cattle_owned_by_male',
+            'total_cattle_owned_by_female',
+            'total_cattle_owned_joint',
+            'animcatowned',
+            'hhproblems',
+            'hhproblems_other',
+        ];
     }
 
     /**

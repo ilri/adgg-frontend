@@ -13,7 +13,9 @@ use backend\modules\core\models\Farm;
 use backend\modules\core\models\OrganizationUnits;
 use common\excel\ExcelReaderTrait;
 use common\excel\ImportInterface;
+use common\helpers\DateUtils;
 use common\helpers\Lang;
+use common\helpers\Msisdn;
 use common\models\Model;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use Yii;
@@ -25,40 +27,24 @@ class UploadFarms extends Model implements ImportInterface
     /**
      * @var Farm
      */
-    public $clientModel;
+    private $_model;
 
     /**
      * @var int
      */
     public $org_id;
-    /**
-     * @var int
-     */
-    public $region_id;
-    /**
-     * @var int
-     */
-    public $district_id;
-    /**
-     * @var int
-     */
-    public $ward_id;
-    /**
-     * @var int
-     */
-    public $village_id;
 
     /**
      * @inheritdoc
      */
     public function init()
     {
-        $this->end_column = 'Z';
+        $this->end_column = 'AZ';
 
         $this->required_columns = [];
-        $this->clientModel = new Farm();
-        foreach ($this->clientModel->getExcelColumns() as $column) {
-            $this->file_columns['[' . $column . ']'] = $this->clientModel->getAttributeLabel($column);
+        $this->_model = new Farm(['org_id' => $this->org_id]);
+        foreach ($this->_model->getExcelColumns() as $column) {
+            $this->file_columns['[' . $column . ']'] = $this->_model->getAttributeLabel($column);
         }
         parent::init();
     }
@@ -70,7 +56,6 @@ class UploadFarms extends Model implements ImportInterface
     {
         return array_merge($this->excelValidationRules(), [
             [['org_id'], 'required'],
-            [['region_id', 'district_id', 'ward_id', 'village_id'], 'safe'],
         ]);
     }
 
@@ -100,31 +85,35 @@ class UploadFarms extends Model implements ImportInterface
 
         foreach ($batch as $k => $excel_row) {
             $row = $this->getExcelRowColumns($excel_row, $columns);
+            Yii::info($row);
             if (empty($row))
                 continue;
-            if (!empty($row['reg_date']) && is_numeric($row['reg_date'])) {
-                $row['reg_date'] = Date::excelToDateTimeObject($row['reg_date'])->format('Y-m-d');
+            if (!empty($row['reg_date'])) {
+                if (is_numeric($row['reg_date'])) {
+                    $row['reg_date'] = Date::excelToDateTimeObject($row['reg_date'])->format('Y-m-d');
+                } else {
+                    $row['reg_date'] = DateUtils::formatDate($row['reg_date'], 'Y-m-d', 'UTC');
+                }
             }
             $row['org_id'] = $this->org_id;
-            $row['region_id'] = $this->region_id;
-            $row['district_id'] = $this->district_id;
-            $row['ward_id'] = $this->ward_id;
-            $row['village_id'] = $this->village_id;
 
-            if (empty($this->region_id) && !empty($row['region'])) {
-                $row['region_id'] = $this->getRegionId($row['region']);
+            if (!empty($row['region_code'])) {
+                $row['region_id'] = $this->getRegionId($row['region_code']);
             }
-            if (empty($this->district_id) && !empty($row['district'])) {
-                $row['district_id'] = $this->getDistrictId($row['district'], $row['region_id']);
+            if (!empty($row['district_code'])) {
+                $row['district_id'] = $this->getDistrictId($row['district_code'], $row['region_id']);
             }
-            if (empty($this->ward_id) && !empty($row['ward'])) {
-                $row['ward_id'] = $this->getWardId($row['ward'], $row['district_id']);
+            if (!empty($row['ward_code'])) {
+                $row['ward_id'] = $this->getWardId($row['ward_code'], $row['district_id']);
             }
-            if (empty($this->village_id) && !empty($row['village'])) {
-                $row['village_id'] = $this->getVillageId($row['village'], $row['ward_id']);
+            if (!empty($row['village_code'])) {
+                $row['village_id'] = $this->getVillageId($row['village_code'], $row['ward_id']);
             }
-            if (!empty($row['field_agent_name'])) {
-                $row['field_agent_id'] = $this->getFieldAgentId($row['field_agent_name']);
+            if (!empty($row['field_agent_code'])) {
+                $row['field_agent_id'] = $this->getFieldAgentId($row['field_agent_code']);
+            }
+            if (!empty($row['phone'])) {
+                $row['phone'] = $this->cleanPhoneNumber($row['phone']);
             }
 
             $insert_data[$k] = $row;
@@ -143,32 +132,18 @@ class UploadFarms extends Model implements ImportInterface
         if (empty($data))
             return false;
 
-        $model = new Farm([]);
+        $model = clone $this->_model;
         foreach ($data as $n => $row) {
             $newModel = Farm::find()->andWhere([
-                'name' => $row['name'],
+                'code' => $row['code'],
                 'org_id' => $row['org_id'],
-                'region_id' => $row['region_id'],
-                'district_id' => $row['district_id'],
-                'ward_id' => $row['ward_id'],
-                'village_id' => $row['village_id'],
             ])->one();
 
             if (null === $newModel) {
                 $newModel = clone $model;
             }
-            foreach ($row as $k => $v) {
-                if ($newModel->hasAttribute($k)) {
-                    $newModel->{$k} = $v;
-                }
-            }
-            $newModel->enableAuditTrail = false;
-            if ($newModel->save()) {
-                $this->_savedRows[$n] = $n;
-            } else {
-                $errors = $newModel->getFirstErrors();
-                $this->_failedRows[$n] = Lang::t('Row {n}: {error}', ['n' => $n, 'error' => implode(', ', $errors)]);
-            }
+            $newModel->setScenario(Farm::SCENARIO_UPLOAD);
+            $this->saveExcelRaw($newModel, $row, $n);
         }
 
         if (!empty($this->_failedRows)) {
@@ -252,25 +227,21 @@ class UploadFarms extends Model implements ImportInterface
     }
 
     /**
-     * @param int|string $name
+     * @param int|string $code
      * @return string
      * @throws \Exception
      */
-    public function getFieldAgentId($name)
+    public function getFieldAgentId($code)
     {
-        $name = trim($name);
-        if (empty($name)) {
-            return null;
-        }
-        $attributes = explode('-', $name);
-        $phone = trim($attributes[0]);
-        $name = $attributes[1] ?? null;
-        $name = trim($name);
-        $condition = ['phone' => $phone, 'name' => $name];
-        $id = Users::getScalar('id', $condition);
+        $id = Users::getScalar('id', ['org_id' => $this->org_id, 'username' => $code]);
         if (empty($id)) {
             return null;
         }
         return $id;
+    }
+
+    protected function cleanPhoneNumber($number)
+    {
+        return Msisdn::format($number, '255');
     }
 }

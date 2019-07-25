@@ -145,9 +145,6 @@ use yii\bootstrap4\ActiveForm;
                         <?= $form->field($model, 'reg_date')->textInput(['class' => 'form-control show-datepicker', 'data-max-date' => DateUtils::getToday()]) ?>
                     </div>
                     <div class="col-md-4">
-                        <?= $form->field($model, 'total_cattle')->textInput(['type' => 'number']) ?>
-                    </div>
-                    <div class="col-md-4">
                         <?= $form->field($model, 'field_agent_id')->widget(Select2::class, [
                             'data' => Users::getListData('id', 'name', false, []),
                             'options' => [
