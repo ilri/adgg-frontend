@@ -82,7 +82,7 @@ use yii\db\Expression;
  * @property Animal $sire
  * @property Animal $dam
  */
-class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttributeInterface
+class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttributeInterface, UploadExcelInterface
 {
     use ActiveSearchTrait, OrganizationUnitDataTrait, TableAttributeTrait;
 
@@ -423,13 +423,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
-        $this->ignoreAdditionalAttributes = false;
-
-        foreach ($this->getAttributes() as $attribute => $val) {
-            if ($this->isAdditionalAttribute($attribute)) {
-                $this->saveAdditionalAttributeValue($attribute);
-            }
-        }
+        $this->saveAdditionalAttributes(AnimalAttributeValue::class, 'animal_id');
     }
 
     public function afterFind()
@@ -453,25 +447,6 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     public static function getDefinedType(): int
     {
         return TableAttribute::TYPE_ATTRIBUTE;
-    }
-
-    /**
-     * @param string $attribute
-     * @return bool
-     * @throws \Exception
-     */
-    public function saveAdditionalAttributeValue(string $attribute): bool
-    {
-        if (null === $this->{$attribute}) {
-            return false;
-        }
-        $attributeId = TableAttribute::getAttributeId(static::getDefinedTableId(), $attribute);
-        $model = AnimalAttributeValue::find()->andWhere(['animal_id' => $this->id, 'attribute_id' => $attributeId])->one();
-        if (null === $model) {
-            $model = new AnimalAttributeValue(['animal_id' => $this->id, 'attribute_id' => $attributeId]);
-        }
-        $model->attribute_value = $this->{$attribute};
-        return $model->save(false);
     }
 
     /**
@@ -543,5 +518,14 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
         }
 
         return $path;
+    }
+
+    /**
+     * @return array
+     */
+    public function getExcelColumns()
+    {
+        $columns = array_merge($this->safeAttributes(), $this->getAdditionalAttributes());
+        return $columns;
     }
 }
