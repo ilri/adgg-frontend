@@ -24,7 +24,7 @@ class OdkJsonController extends ActiveController
 
     public function getUnAuthenticatedActions()
     {
-        return ['index', 'create'];
+        return ['create'];
     }
 
     public function actionIndex()
