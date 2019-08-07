@@ -331,7 +331,7 @@ trait ExcelReaderTrait
         if (count($sheetData) <= $max_insert_batch)
             $insert_batches = [$sheetData];
         else
-            $insert_batches = array_chunk($sheetData, $max_insert_batch);
+            $insert_batches = array_chunk($sheetData, $max_insert_batch, true);
 
         return $insert_batches;
     }
