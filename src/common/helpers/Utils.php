@@ -9,6 +9,7 @@ namespace common\helpers;
 
 
 use Carbon\Carbon;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use NumberFormatter;
 use Ramsey\Uuid\Uuid;
@@ -62,7 +63,7 @@ class Utils
      * Checks if a string is a valid timestamp.
      * https://gist.github.com/sepehr/6351385
      *
-     * @param  string $timestamp Timestamp to validate.
+     * @param string $timestamp Timestamp to validate.
      *
      * @return bool
      */
@@ -102,10 +103,10 @@ class Utils
     public static function getDateFilterParams(array $params)
     {
         $start_date = Carbon::now();
-        $end_date = array_get($params, 'end_date');
-        $date_field = array_get($params, 'date_created');
-        if (array_has($params, 'enforce_defaults')) {
-            if (empty(array_get($params, 'start_date'))) {
+        $end_date = Arr::get($params, 'end_date');
+        $date_field = Arr::get($params, 'date_created');
+        if (Arr::has($params, 'enforce_defaults')) {
+            if (empty(Arr::get($params, 'start_date'))) {
                 $start_date = date('Y-m-d', strtotime('first day of last month'));
                 $end_date = date('Y-m-d', strtotime('last day of last month'));
             }
@@ -320,7 +321,7 @@ class Utils
 
     /**
      * Takes a number and converts it to a-z,aa-zz,aaa-zzz, etc with uppercase option
-     * @param    int    number to convert
+     * @param int    number to convert
      * @param bool $uppercase
      * @return string letters from number input
      * @internal param case $boolean the letter on return?
@@ -373,6 +374,7 @@ class Utils
     /**
      * Generates UUID
      * @return string
+     * @throws \Exception
      */
     public static function uuid()
     {
@@ -384,6 +386,7 @@ class Utils
      * This method depends of the GMP php extension/module
      * @param string|null $string
      * @return string
+     * @throws \Exception
      */
     public static function createIntFromString($string = null)
     {
@@ -395,6 +398,7 @@ class Utils
     /**
      * This function generates a random string that can be used as salt
      * @return string
+     * @throws \Exception
      */
     public static function generateSalt()
     {
