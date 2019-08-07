@@ -3,7 +3,6 @@
 namespace backend\modules\core\models;
 
 use common\helpers\FileManager;
-use common\helpers\Lang;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;

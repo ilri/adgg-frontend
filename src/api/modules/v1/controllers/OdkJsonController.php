@@ -39,7 +39,8 @@ class OdkJsonController extends ActiveController
         $model = new OdkJsonQueue([]);
         $model->setScenario(OdkJsonQueue::SCENARIO_API_PUSH);
         $model->jsonFile = UploadedFile::getInstanceByName('json_file');
-        if (!$model->validate(['jsonFile'])) {
+        if (null === $model->jsonFile) {
+            $model->addError('jsonFile', Lang::t('Please upload a JSON file'));
             return $model;
         }
         $model->tmp_file = FileManager::getTempDir() . DIRECTORY_SEPARATOR . $model->jsonFile->name;
@@ -48,8 +49,9 @@ class OdkJsonController extends ActiveController
 
         if ($model->save()) {
             return $this->sendMessage([
-                'status' => 'success',
-                'message' => Lang::t('JSON File queued. We will notify you when the file is processed.'),
+                'status' => 200,
+                'statusMessage' => 'success',
+                'description' => Lang::t('JSON File queued. We will notify you when the file is processed.'),
             ]);
         }
 
