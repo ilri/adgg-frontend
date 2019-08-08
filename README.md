@@ -1,4 +1,4 @@
-# how to set-up & run the project
+sudo how to set-up & run the project
 The following will guide you through setting up the project on your local PC. If you already have the project on your PC, check the #Other setup section below
 # pre-requisites
 + php version 7.0+
@@ -75,7 +75,7 @@ git checkout develop
 ### install/update dependencies
 ```sh
 composer update
-bower update
+yarn install
 ```
 
 ### update the database data
