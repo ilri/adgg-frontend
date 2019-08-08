@@ -43,7 +43,7 @@
     "league/fractal": "^0.16.0",
     "markrogoyski/math-php": "0.*",
     "msheng/yii2-jwt": "^1.0",
-    "nesbot/carbon": "~1.14",
+    "nesbot/carbon": "^2.16",
     "php-amqplib/php-amqplib": "*",
     "phpoffice/phpspreadsheet": "^1.2",
     "picqer/php-barcode-generator": "^0.2.1",
