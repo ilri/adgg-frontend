@@ -14,7 +14,7 @@ use backend\modules\conf\models\Notif;
 use backend\modules\conf\models\NotifTypes;
 use backend\modules\conf\models\SmsTemplate;
 use backend\modules\conf\settings\SystemSettings;
-use backend\modules\core\models\Organization;
+use backend\modules\core\models\OdkJsonQueue;
 use backend\modules\core\models\OrganizationNotifSettings;
 use Yii;
 use yii\queue\Queue;
@@ -28,12 +28,13 @@ class ODKJsonNotification extends BaseNotification implements JobInterface, Noti
      * @param Queue $queue which pushed and is handling the job
      * @return void|mixed result of the job execution
      * @throws \yii\web\NotFoundHttpException
+     * @throws \yii\web\ForbiddenHttpException
      */
     public function execute($queue)
     {
-        $model = Organization::loadModel($this->item_id, false);
+        $model = OdkJsonQueue::loadModel($this->item_id, false);
         if ($model !== null) {
-            $settings = OrganizationNotifSettings::getSettings($model->id, $this->notif_type_id);
+            $settings = OrganizationNotifSettings::getSettings(10, $this->notif_type_id);
             Notif::pushNotif($this->notif_type_id, $this->item_id, $settings->users, $this->created_by, $settings->enable_internal_notification, $settings->enable_email_notification, $settings->enable_sms_notification);
         }
     }
@@ -51,6 +52,7 @@ class ODKJsonNotification extends BaseNotification implements JobInterface, Noti
      *
      * @return array|bool
      * @throws \yii\web\NotFoundHttpException
+     * @throws \yii\web\ForbiddenHttpException
      */
     public static function processInternalTemplate($template, $item_id, $notif_type_id)
     {
@@ -66,6 +68,7 @@ class ODKJsonNotification extends BaseNotification implements JobInterface, Noti
      * @param string $itemId
      * @return array|bool
      * @throws \yii\web\NotFoundHttpException
+     * @throws \yii\web\ForbiddenHttpException
      */
     public static function processEmailTemplate($notifType, $itemId)
     {
@@ -92,6 +95,7 @@ class ODKJsonNotification extends BaseNotification implements JobInterface, Noti
      * @param string $itemId
      * @return array|bool
      * @throws \yii\web\NotFoundHttpException
+     * @throws \yii\web\ForbiddenHttpException
      */
     public static function processSmsTemplate($notifType, $itemId)
     {
@@ -108,31 +112,28 @@ class ODKJsonNotification extends BaseNotification implements JobInterface, Noti
      * @param null|string $subjectTemplate
      * @return array|bool
      * @throws \yii\web\NotFoundHttpException
+     * @throws \yii\web\ForbiddenHttpException
      */
     private static function processTemplate($itemId, $messageTemplate, $subjectTemplate = null)
     {
-        //placeholders:{organization_name},{business_type},{contact_person},{contact_phone}
-        $model = Organization::loadModel($itemId, false);
+        //placeholders:{status},{url}
+        $model = OdkJsonQueue::loadModel($itemId, false);
         if ($model === null)
             return false;
 
-        $url = Yii::$app->getUrlManager()->createAbsoluteUrl(['/core/organization/view', 'id' => $model->uuid]);
-
+        $url = Yii::$app->getUrlManager()->createAbsoluteUrl(['/core/odk-json/index']);
+        $status = $model->has_errors ? 'Has Errors' : 'Success';
         $message = strtr($messageTemplate, [
-            '{organization_name}' => $model->name,
-            '{business_type}' => $model->businessType->name,
-            '{contact_person}' => $model->getFullContactName(),
-            '{contact_phone}' => $model->contact_phone,
+            '{uuid}' => $model->uuid,
+            '{status}' => $status,
             '{url}' => $url,
         ]);
 
         $subject = null;
         if (!empty($subjectTemplate)) {
             $subject = strtr($subjectTemplate, [
-                '{organization_name}' => $model->name,
-                '{business_type}' => $model->businessType->name,
-                '{contact_person}' => $model->getFullContactName(),
-                '{contact_phone}' => $model->contact_phone,
+                '{uuid}' => $model->uuid,
+                '{status}' => $status,
             ]);
         }
 

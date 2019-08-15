@@ -56,6 +56,8 @@ class ProcessODKJson extends BaseObject implements JobInterface
             $this->_model->is_processed = 1;
             $this->_model->processed_at = DateUtils::mysqlTimestamp();
             $this->_model->save(false);
+
+            ODKJsonNotification::createManualNotifications(ODKJsonNotification::NOTIF_ODK_JSON, $this->_model->id);
         } catch (\Exception $e) {
             Yii::error($e->getMessage());
         }
