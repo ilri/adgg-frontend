@@ -8,6 +8,8 @@
 namespace console\jobs;
 
 
+use backend\modules\conf\models\NotifTypes;
+
 interface NotifInterface
 {
     public static function createSystemNotifications();
@@ -30,18 +32,16 @@ interface NotifInterface
     public static function processInternalTemplate($template, $item_id, $notif_type_id);
 
     /**
-     * @param string $template_id
-     * @param string $item_id
-     * @param string $notif_type_id
+     * @param NotifTypes $notifType
+     * @param string $itemId
      * @return array
      */
-    public static function processEmailTemplate($template_id, $item_id, $notif_type_id);
+    public static function processEmailTemplate($notifType, $itemId);
 
     /**
-     * @param string $template_id
-     * @param string $item_id
-     * @param string $notif_type_id
+     * @param NotifTypes $notifType
+     * @param  string $itemId
      * @return array
      */
-    public static function processSmsTemplate($template_id, $item_id, $notif_type_id);
+    public static function processSmsTemplate($notifType, $itemId);
 }

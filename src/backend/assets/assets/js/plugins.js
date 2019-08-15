@@ -197,12 +197,12 @@ MyApp.plugin = {};
     var NOTIF = function (options) {
         var defaultDefault = {
             checkDelay: 15000, //15 secs
-            selector: '#activity',
+            selector: '#button-show-notifications',
             check_notif_url: null,
             mark_as_seen_url: null,
             mark_as_read_url: null,
             mark_all_as_read_id: 'mark_all_notif_as_read',
-            notif_item_selector: '.notification-body .notif-item',
+            notif_item_selector: '#ajax-notifications .kt-notification__item',
             refresh_notif_selector: '#refresh_notif'
         };
         this.options = $.extend({}, defaultDefault, options || {});
@@ -219,10 +219,10 @@ MyApp.plugin = {};
         }
     };
 
-    var loadUrl = function (url, container, show_loading) {
-        var $this = this;
-        var show_bubble = function (unseen) {
-            var bubble = $('#activity').find('.badge');
+    let loadUrl = function (url, container, show_loading) {
+        let $this = this;
+        let show_bubble = function (unseen) {
+            let bubble = $('#button-show-notifications').find('.kt-badge--notify');
             if (parseInt(unseen) > 0) {
                 bubble.text(unseen).addClass("bg-color-red bounceIn animated");
                 bubble.removeClass('hidden');
@@ -231,7 +231,7 @@ MyApp.plugin = {};
             }
         };
 
-        var update_total_notif = function (total) {
+        let update_total_notif = function (total) {
             $('span.total-notif').text('(' + total + ')');
         };
 
@@ -246,7 +246,7 @@ MyApp.plugin = {};
             beforeSend: function () {
                 // cog placed
                 if (show_loading) {
-                    container.html('<h1 class="text-center" style="margin-top:50px;"><i class="fa fa-spinner fa-spin"></i> Loading...</h1>');
+                    container.html('<h1 class="text-center text-muted" style="margin-top:50px;"><i class="fas fa-spinner fa-spin"></i> Loading...</h1>');
                 }
             },
             success: function (data) {
@@ -273,25 +273,16 @@ MyApp.plugin = {};
     };
 
     NOTIF.prototype.show = function () {
-        var $this = this
+        let $this = this
             , selector = $this.options.selector;
 
-        var mark_as_seen = function (e) {
-            var $elem = $(e);
-
-            if ($elem.find('.badge').hasClass('bg-color-red')) {
-                $elem.find('.badge').removeClassPrefix('bg-color-');
-                $elem.find('.badge').addClass('hidden');
+        let mark_as_seen = function (e) {
+            let button = $(e).find('.kt-badge--notify');
+            if (button.hasClass('bg-color-red')) {
+                button.removeClassPrefix('bg-color-');
+                button.addClass('hidden');
             }
-
-            if (!$elem.next('.ajax-dropdown').is(':visible')) {
-                //$elem.next('.ajax-dropdown').fadeIn(150);
-                $elem.addClass('active');
-            } else {
-                // $elem.next('.ajax-dropdown').fadeOut(150);
-                $elem.removeClass('active')
-            }
-            var url = $(e).data('mark-as-seen-url');
+            let url = $(e).data('mark-as-seen-url');
             $.ajax({
                 type: "GET",
                 url: url,
@@ -307,16 +298,16 @@ MyApp.plugin = {};
 
     NOTIF.prototype.get = function () {
         var $this = this
-            , container = $('.ajax-notifications')
+            , container = $('#ajax-notifications')
             , url = $($this.options.selector).data('check-notif-url');
         loadUrl.call($this, url, container);
     };
 
     NOTIF.prototype.markAsRead = function () {
-        var $this = this
+        let $this = this
             , selector = $this.options.notif_item_selector + '.unread';
-        var mark_as_read = function (e) {
-            var notif_item = $(e)
+        let mark_as_read = function (e) {
+            let notif_item = $(e)
                 , url = notif_item.data('mark-as-read-url')
                 , target_url = $(e).find('a').attr('href');
 
@@ -331,17 +322,16 @@ MyApp.plugin = {};
             });
         };
 
-        $('#header').on('click.myapp.notif', selector, function (e) {
+        $(document.body).on('click.myapp.notif', selector, function (e) {
             e.preventDefault();
             mark_as_read(this);
         });
     };
 
     NOTIF.prototype.markAllAsRead = function () {
-        var $this = this;
-
-        var mark_all_as_read = function (e) {
-            var url = $(e).data('href');
+        let $this = this;
+        let mark_all_as_read = function (e) {
+            let url = $(e).data('href');
             $.ajax({
                 type: "GET",
                 url: url,

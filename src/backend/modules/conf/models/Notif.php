@@ -4,10 +4,12 @@ namespace backend\modules\conf\models;
 
 use backend\modules\auth\models\UserLevels;
 use backend\modules\auth\models\Users;
+use backend\modules\auth\models\UsersNotificationSettings;
 use common\helpers\DateUtils;
 use common\helpers\Lang;
 use common\models\ActiveRecord;
-use console\jobs\SendEmailJob;
+use console\jobs\SendEmail;
+use console\jobs\SendSmsJob;
 use Yii;
 use yii\db\Expression;
 
@@ -62,103 +64,174 @@ class Notif extends ActiveRecord
 
     /**
      * Pushes a new notification
-     * @param string $notif_type_id
-     * @param int $item_id
-     * @param array $user_ids
-     * @param integer $created_by
+     * @param string $notifTypeId
+     * @param int $itemId
+     * @param array $userIds
+     * @param integer $createdBy
+     * @param bool $enableInternalNotif
+     * @param bool $enableEmailNotif
+     * @param bool $enableSmsNotif
      * @return bool
+     */
+    public static function pushNotif($notifTypeId, $itemId, $userIds = [], $createdBy = null, $enableInternalNotif = null, $enableEmailNotif = null, $enableSmsNotif = null)
+    {
+        try {
+            $notifType = NotifTypes::loadModel(['id' => $notifTypeId, 'is_active' => 1], false);
+            if (null === $notifType) {
+                Yii::warning(strtr('notif_type_id {id} does not exist', ['{id}' => $notifTypeId]));
+                return false;
+            }
+            $globalUserIds = static::getNotifUsers($notifTypeId);
+            $userIds = array_merge($globalUserIds, $userIds);
+            Yii::info($userIds);
+            if (is_null($enableInternalNotif) || $enableInternalNotif) {
+                $enableInternalNotif = $notifType->enable_internal_notification;
+            }
+            if (is_null($enableEmailNotif) || $enableEmailNotif) {
+                $enableEmailNotif = $notifType->enable_email_notification;
+            }
+            if (is_null($enableSmsNotif) || $enableSmsNotif) {
+                $enableSmsNotif = $notifType->enable_sms_notification;
+            }
+            //process email internal
+            if ($enableInternalNotif) {
+                self::processInternal($notifType, $userIds, $itemId, $createdBy);
+            }
+            //process email
+            if ($enableEmailNotif) {
+                self::processEmail($notifType, $userIds, $itemId, $createdBy);
+            }
+            //process sms
+            if ($enableSmsNotif) {
+                self::processSms($notifType, $userIds, $itemId, $createdBy);
+            }
+        } catch (\Exception $e) {
+            Yii::error($e->getTraceAsString());
+        }
+    }
+
+    /**
+     *
+     * @param NotifTypes $notifType
+     * @param array $userIds
+     * @param string $itemId
+     * @param int|null $createdBy
+     * @return void
      * @throws \yii\db\Exception
      */
-    public static function pushNotif($notif_type_id, $item_id, $user_ids = [], $created_by = null)
+    private static function processInternal($notifType, $userIds, $itemId, $createdBy = null)
     {
-        if (!NotifTypes::exists(['id' => $notif_type_id, 'is_active' => 1])) {
-            Yii::warning(strtr('notif_type_id {id} does not exist', ['{id}' => $notif_type_id]));
-            return false;
-        }
-        $user_ids = array_merge(static::getNotifUsers($notif_type_id), $user_ids);
-        if (!empty($user_ids)) {
-            $notif_data = [];
-            $created_at = new Expression('NOW()');
-            foreach ($user_ids as $user_id) {
-                if ($user_id == $created_by)
-                    continue;
-
-                $notif_data[] = [
-                    'notif_type_id' => $notif_type_id,
-                    'user_id' => $user_id,
-                    'item_id' => $item_id,
-                    'created_at' => $created_at,
-                ];
+        $notif_data = [];
+        $created_at = new Expression('NOW()');
+        foreach ($userIds as $k => $userId) {
+            if (!UsersNotificationSettings::isInternalNotifEnabled($userId, $notifType->id)) {
+                continue;
             }
-
-            static::insertMultiple($notif_data);
+            if (!YII_DEBUG && $userId == $createdBy) {
+                //continue;
+            }
+            $notif_data[] = [
+                'notif_type_id' => $notifType->id,
+                'user_id' => $userId,
+                'item_id' => $itemId,
+                'created_at' => $created_at,
+            ];
         }
-        //process email
-        static::processEmail($notif_type_id, $user_ids, $item_id);
-        //process sms
-        //static::processSms($notif_type_id, $user_ids, $item_id);
+
+        static::insertMultiple($notif_data);
     }
 
     /**
      *
-     * @param string $notif_type_id
-     * @param array $user_ids
-     * @param string $item_id
+     * @param NotifTypes $notifType
+     * @param array $userIds
+     * @param string $itemId
+     * @param int|null $createdBy
      * @return bool
+     * @throws \Exception
      */
-    private static function processEmail($notif_type_id, $user_ids, $item_id)
+    private static function processEmail($notifType, $userIds, $itemId, $createdBy = null)
     {
-        if (empty($user_ids))
+        if (empty($userIds))
             return false;
+        foreach ($userIds as $k => $userId) {
+            if (!UsersNotificationSettings::isEmailNotifEnabled($userId, $notifType->id)) {
+                unset($userIds[$k]);
+                continue;
+            }
+            if (!YII_DEBUG && $userId == $createdBy) {
+                //unset($userIds[$k]);
+            }
+        }
 
-        $notif_type = NotifTypes::getOneRow(['enable_email_notification', 'email_template_id', 'model_class_name', 'email'], ['id' => $notif_type_id]);
-        if (!$notif_type['enable_email_notification'])
-            return false;
-
-        $model_class_name = $notif_type['model_class_name'];
+        $model_class_name = $notifType->model_class_name;
         /* @var $model \console\jobs\NotifInterface */
         $model = new $model_class_name();
-        $emailParams = $model->processEmailTemplate($notif_type['email_template_id'], $item_id, $notif_type_id);
+        $emailParams = $model->processEmailTemplate($notifType, $itemId);
 
         if (!empty($emailParams)) {
-            static::sendEmail($emailParams, $user_ids, $notif_type['email']);
+            static::sendEmail($emailParams, $userIds, $notifType->email);
         }
     }
 
     /**
      *
-     * @param string $notif_type_id
-     * @param array $user_ids
-     * @param string $item_id
+     * @param NotifTypes $notifType
+     * @param array $userIds
+     * @param string $itemId
+     * @param int|null $createdBy
      * @return bool
+     * @throws \Exception
      */
-    private static function processSms($notif_type_id, $user_ids, $item_id)
+    private static function processSms($notifType, $userIds, $itemId, $createdBy = null)
     {
-        if (empty($user_ids))
-            return FALSE;
-
-        $notif_type = NotifTypes::getOneRow(['enable_sms_notification', 'sms_template_id', 'model_class_name'], ['id' => $notif_type_id]);
-        if (!$notif_type['enable_sms_notification'])
-            return FALSE;
-
-        $model_class_name = $notif_type['model_class_name'];
+        if (empty($userIds))
+            return false;
+        foreach ($userIds as $k => $userId) {
+            if (!UsersNotificationSettings::isSmsNotifEnabled($userId, $notifType->id)) {
+                unset($userIds[$k]);
+                continue;
+            }
+            if (!YII_DEBUG && $userId == $createdBy) {
+                //unset($userIds[$k]);
+            }
+        }
+        $model_class_name = $notifType->model_class_name;
         /* @var $model \console\jobs\NotifInterface */
         $model = new $model_class_name();
-        $template = $model->processSmsTemplate($notif_type['sms_template_id'], $item_id, $notif_type_id);
+        $template = $model->processSmsTemplate($notifType, $itemId);
         if (!empty($template)) {
-            static::sendSms($user_ids, $template['text'], $item_id);
+            static::sendSms($userIds, $template['message']);
         }
     }
 
     /**
      * Send notification as an sms
-     * @param array $user_ids
+     * @param array $userIds
      * @param string $message
-     * @param string $item_id
+     * @param null|array $msisdns
+     * @throws \Exception
      */
-    private static function sendSms($user_ids, $message, $item_id)
+    private static function sendSms($userIds, $message, $msisdns = [])
     {
-        //@vendor specific and only implemented on demand
+        if (!empty($msisdns) && is_string($msisdns)) {
+            $msisdns = explode(',', $msisdns);
+        }
+
+        if (!empty($userIds)) {
+            $msisdns = array_merge((array)$msisdns, Users::getColumnData('phone', ['id' => $userIds]));
+        }
+
+        if (!empty($msisdns)) {
+            $msisdns = array_unique($msisdns);
+            foreach ($msisdns as $msisdn) {
+                $sms = [
+                    'message' => $message,
+                    'msisdn' => $msisdn,
+                ];
+                SendSmsJob::push($sms);
+            }
+        }
     }
 
     /**
@@ -200,6 +273,7 @@ class Notif extends ActiveRecord
      * Get users who are supposed to receive a notification
      * @param string $notif_type_id
      * @return array $users
+     * @throws \Exception
      */
     public static function getNotifUsers($notif_type_id)
     {
@@ -211,12 +285,19 @@ class Notif extends ActiveRecord
         $users = NotifTypes::getScalar('users', ['id' => $notif_type_id]);
         if (!empty($users)) {
             $users = unserialize($users);
+            if (!is_array($users)) {
+                $users = explode(',', $users);
+            }
         } else {
             $users = [];
         }
         $roles = NotifTypes::getScalar('roles', ['id' => $notif_type_id]);
         if (!empty($roles)) {
-            $users = array_merge($users, Users::getColumnData('id', ['role_id' => unserialize($roles)]));
+            $roles = unserialize($roles);
+            if (!is_array($roles)) {
+                $roles = explode(',', $roles);
+            }
+            $users = array_merge($users, Users::getColumnData('id', ['role_id' => $roles]));
         }
         return array_unique($users);
     }
@@ -224,25 +305,26 @@ class Notif extends ActiveRecord
     /**
      * Send notification as an email
      * @param array $emailParams
-     * @param array $user_ids
-     * @param array|string $email_addresses
+     * @param array $userIds
+     * @param array|string $emailAddresses
+     * @throws \Exception
      */
-    private static function sendEmail($emailParams, $user_ids, $email_addresses = null)
+    private static function sendEmail($emailParams, $userIds, $emailAddresses = null)
     {
-        if (!empty($email_addresses) && is_string($email_addresses)) {
-            $email_addresses = explode(',', $email_addresses);
+        if (!empty($emailAddresses) && is_string($emailAddresses)) {
+            $emailAddresses = explode(',', $emailAddresses);
         }
 
-        if (!empty($user_ids)) {
-            $email_addresses = array_merge((array)$email_addresses, Users::getColumnData('email', ['id' => $user_ids]));
+        if (!empty($userIds)) {
+            $emailAddresses = array_merge((array)$emailAddresses, Users::getColumnData('email', ['id' => $userIds]));
         }
 
-        if (!empty($email_addresses)) {
-            $email_addresses = array_unique($email_addresses);
-            foreach ($email_addresses as $e) {
+        if (!empty($emailAddresses)) {
+            $emailAddresses = array_unique($emailAddresses);
+            foreach ($emailAddresses as $e) {
                 $email = $emailParams;
                 $email['recipient_email'] = trim($e);
-                SendEmailJob::push($email);
+                SendEmail::push($email);
             }
         }
     }
@@ -251,6 +333,7 @@ class Notif extends ActiveRecord
      * Fetch notification
      * @param string $user_id
      * @return array
+     * @throws \Exception
      */
     public static function fetchNotif($user_id = NULL)
     {
@@ -263,6 +346,7 @@ class Notif extends ActiveRecord
      *
      * @param string $user_id
      * @return int
+     * @throws \Exception
      */
     public static function getTotalUnSeenNotif($user_id = NULL)
     {
@@ -276,10 +360,11 @@ class Notif extends ActiveRecord
      * @param string $notif_type_id
      * @param string $item_id
      * @return array|bool $processed_template
+     * @throws \Exception
      */
     public static function processTemplate($notif_type_id, $item_id)
     {
-        $notif_type = NotifTypes::getOneRow('template,model_class_name', ['id' => $notif_type_id]);
+        $notif_type = NotifTypes::getOneRow(['template', 'model_class_name'], ['id' => $notif_type_id]);
         if (empty($notif_type))
             return false;
         $model_class_name = $notif_type['model_class_name'];

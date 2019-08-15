@@ -11,7 +11,7 @@ namespace backend\modules\auth\models;
 
 use backend\modules\conf\models\EmailTemplate;
 use backend\modules\conf\settings\SystemSettings;
-use console\jobs\SendEmailJob;
+use console\jobs\SendEmail;
 use Yii;
 
 trait UserNotificationTrait
@@ -38,7 +38,7 @@ trait UserNotificationTrait
             '{{password}}' => $this->password,
         ]);
 
-        SendEmailJob::push([
+        SendEmail::push([
             'message' => $body,
             'subject' => $template->subject,
             'sender_name' => $app_name,
@@ -71,7 +71,7 @@ trait UserNotificationTrait
             '{{password}}' => $this->password,
         ]);
 
-        SendEmailJob::push([
+        SendEmail::push([
             'message' => $body,
             'subject' => $template->subject,
             'sender_name' => $app_name,

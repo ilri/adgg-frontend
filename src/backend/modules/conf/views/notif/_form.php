@@ -62,11 +62,18 @@ use yii\helpers\Json;
                     <?php endif ?>
                     <?= $form->field($model, 'enable_internal_notification')->checkbox(['class' => 'checkbox']); ?>
                     <?= $form->field($model, 'template')->textarea(['rows' => 3])->hint(
-                        'Template for displaying notification within this system<br>Please do not remove placeholders (terms enclosed in {{}})'
+                        'Template for displaying notification within this system<br>Please do not remove placeholders (terms enclosed in {})'
                     ); ?>
                     <?= $form->field($model, 'enable_email_notification')->checkbox(); ?>
                     <?= $form->field($model, 'email_template_id')->widget(Select2::class, [
                         'data' => \backend\modules\conf\models\EmailTemplate::getListData('id', 'name'),
+                        'pluginOptions' => [
+                            'allowClear' => false
+                        ],
+                    ]) ?>
+                    <?= $form->field($model, 'enable_sms_notification')->checkbox(); ?>
+                    <?= $form->field($model, 'sms_template_id')->widget(Select2::class, [
+                        'data' => \backend\modules\conf\models\SmsTemplate::getListData('id', 'name'),
                         'pluginOptions' => [
                             'allowClear' => false
                         ],

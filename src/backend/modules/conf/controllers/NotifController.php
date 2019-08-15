@@ -8,7 +8,6 @@
 namespace backend\modules\conf\controllers;
 
 
-use backend\modules\auth\Acl;
 use backend\modules\auth\Session;
 use backend\modules\conf\models\Notif;
 use backend\modules\conf\models\NotifTypes;

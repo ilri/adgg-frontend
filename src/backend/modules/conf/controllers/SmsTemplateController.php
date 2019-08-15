@@ -11,6 +11,7 @@ namespace backend\modules\conf\controllers;
 
 use backend\modules\conf\Constants;
 use backend\modules\conf\models\SmsTemplate;
+use backend\modules\conf\settings\SmsSettings;
 
 class SmsTemplateController extends Controller
 {
@@ -29,8 +30,8 @@ class SmsTemplateController extends Controller
         return [
             'settings' => [
                 'class' => \yii2mod\settings\actions\SettingsAction::class,
-                'modelClass' => \backend\modules\conf\settings\SmsSettings::class,
-                'sectionName' => \backend\modules\conf\settings\SmsSettings::SECTION_SMS,
+                'modelClass' => SmsSettings::class,
+                'sectionName' => SmsSettings::SECTION_SMS,
                 'view' => 'settings',
             ],
         ];

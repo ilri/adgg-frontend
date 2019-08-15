@@ -58,7 +58,7 @@ class NotifQueue extends ActiveRecord
                 'notifications_count' => 1,
             ]);
         } else {
-            if ($model->notifications_count == $model->max_notifications) {
+            if ($model->notifications_count >= $model->max_notifications) {
                 return false;
             }
             //At most 1 notification per day

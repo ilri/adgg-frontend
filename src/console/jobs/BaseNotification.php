@@ -27,6 +27,11 @@ class BaseNotification extends BaseObject
     public $item_id;
 
     /**
+     * @var integer
+     */
+    public $created_by;
+
+    /**
      * @param mixed $params
      * @return mixed
      */
@@ -59,6 +64,7 @@ class BaseNotification extends BaseObject
                     static::push([
                         'notif_type_id' => $notif_type_id,
                         'item_id' => $item_id,
+                        'created_by' => null,
                     ]);
                 }
             }
@@ -78,6 +84,7 @@ class BaseNotification extends BaseObject
             static::push([
                 'notif_type_id' => $notif_type_id,
                 'item_id' => $item_id,
+                'created_by' => Yii::$app instanceof \yii\web\Application && !Yii::$app->user->isGuest ? Yii::$app->user->id : null,
             ]);
         }
     }

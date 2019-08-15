@@ -100,29 +100,7 @@ $user = Yii::$app->user->identity;
     <!-- begin:: Header Topbar -->
     <div class="kt-header__topbar">
         <!--begin: Notifications -->
-        <div class="kt-header__topbar-item dropdown">
-            <div class="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="30px, 0px"
-                 aria-expanded="true">
-									<span class="kt-header__topbar-icon">
-										<i class="flaticon2-bell-alarm-symbol"></i>
-										<span class="kt-badge kt-badge--dot kt-badge--notify kt-badge--sm kt-badge--brand">22</span>
-									</span>
-            </div>
-            <div class="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-top-unround dropdown-menu-lg">
-                <form>
-                    <div class="kt-head"
-                         style="background-image: url(<?= Yii::$app->view->theme->baseUrl . '/assets/img/head_bg_sm.jpg' ?>)">
-                        <h3 class="kt-head__title">User Notifications</h3>
-                        <div class="kt-head__sub"><span class="kt-head__desc">0 new notifications</span>
-                        </div>
-                    </div>
-                    <div class="kt-notification kt-margin-t-30 kt-margin-b-20 kt-scroll" data-scroll="true"
-                         data-height="270" data-mobile-height="220">
-                    </div>
-                </form>
-            </div>
-        </div>
-
+        <?= $this->render('@confModule/views/notif/notif2') ?>
         <!--end: Notifications -->
 
         <!--begin: Quick Actions -->
