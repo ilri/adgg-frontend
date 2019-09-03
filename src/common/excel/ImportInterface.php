@@ -1,6 +1,9 @@
 <?php
 
 namespace common\excel;
+
+use common\models\ActiveRecord;
+
 /**
  * @author Fred <mconyango@gmail.com>
  * Date: 7/23/15
@@ -23,4 +26,12 @@ interface ImportInterface
      * @return mixed
      */
     public function processExcelBatchData($batch);
+
+    /**
+     * @param ActiveRecord $model
+     * @param array $rowData
+     * @param integer $rowNumber
+     * @return bool
+     */
+    public function saveExcelRaw(ActiveRecord $model, $rowData, $rowNumber);
 }

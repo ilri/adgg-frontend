@@ -27,3 +27,7 @@ form .required label::after {
 .form-control, .input-group-text, .select2-container--bootstrap .select2-selection {
     border-color: #a9abae;
 }
+.custom-control-label::before {
+    background-color: transparent !important;
+    border: none !important;
+}

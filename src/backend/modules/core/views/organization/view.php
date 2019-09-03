@@ -62,6 +62,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         'visible' => false,
                     ],
                     [
+                        'attribute' => 'dialing_code',
+                    ],
+                    [
                         'attribute' => 'contact_person',
                     ],
                     [

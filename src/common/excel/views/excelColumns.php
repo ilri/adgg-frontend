@@ -2,6 +2,7 @@
 use common\helpers\Lang;
 use yii\helpers\Html;
 /* @var $model \common\models\ActiveRecord*/
+/* @var array $columns*/
 $model_class_name = $model->shortClassName();
 ?>
 <fieldset>

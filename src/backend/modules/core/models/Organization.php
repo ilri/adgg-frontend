@@ -25,6 +25,7 @@ use common\models\ActiveSearchTrait;
  * @property string $unit2_name
  * @property string $unit3_name
  * @property string $unit4_name
+ * @property string $dialing_code
  * @property string $created_at
  * @property int $created_by
  * @property string $updated_at
@@ -64,10 +65,12 @@ class Organization extends ActiveRecord implements ActiveSearchInterface
     public function rules()
     {
         return [
-            [['country', 'unit1_name', 'unit2_name', 'unit3_name', 'unit4_name'], 'required'],
+            [['country', 'unit1_name', 'unit2_name', 'unit3_name', 'unit4_name', 'dialing_code'], 'required'],
             [['is_active'], 'safe'],
             [['code'], 'string', 'max' => 128],
             [['name', 'contact_email', 'uuid'], 'string', 'max' => 255],
+            [['dialing_code'], 'string', 'min' => 3, 'max' => 3],
+            [['dialing_code'], 'number', 'min' => 0],
             [['country'], 'string', 'max' => 3],
             [['country'], 'unique'],
             [['contact_person', 'unit1_name', 'unit2_name', 'unit3_name', 'unit4_name'], 'string', 'max' => 30],
@@ -97,6 +100,7 @@ class Organization extends ActiveRecord implements ActiveSearchInterface
             'unit2_name' => 'District Level Name',
             'unit3_name' => 'Ward Level Name',
             'unit4_name' => 'Village Level Name',
+            'dialing_code'=>'Dialing Code',
             'created_at' => 'Created At',
             'created_by' => 'Created By',
             'updated_at' => 'Updated At',
@@ -130,6 +134,7 @@ class Organization extends ActiveRecord implements ActiveSearchInterface
             ['name', 'name'],
             ['country', 'country'],
             'is_active',
+            'dialing_code',
         ];
     }
 

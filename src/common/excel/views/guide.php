@@ -1,5 +1,5 @@
 <?php
-/* @var $sampleUrl string*/
+/* @var $sampleUrl string */
 ?>
 
 <div class="card">
@@ -18,12 +18,15 @@
                 3. Go to the Advanced Excel Options to set the following:
             <ul>
                 <li>
-                    Set the Row to start reading data from. If first row (Row 1) has column names, then set to row 2 to skip row
+                    Set the Row to start reading data from. If first row (Row 1) has column names, then set to row 2 to
+                    skip row
                     1 with the column names
                 </li>
                 <li>
-                    Set the column range to read. By default this has been set from Column A to Column J (10 columns). Usually
-                    this will work unless you have many columns you are exporting in which case you can increase the range from
+                    Set the column range to read. By default this has been set from Column A to Column J (10 columns).
+                    Usually
+                    this will work unless you have many columns you are exporting in which case you can increase the
+                    range from
                     A to J to A to Z
                 </li>
             </ul>

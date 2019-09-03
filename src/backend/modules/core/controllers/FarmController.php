@@ -15,9 +15,9 @@ use backend\modules\core\Constants;
 use backend\modules\core\forms\UploadFarms;
 use backend\modules\core\models\Farm;
 use common\helpers\Lang;
+use common\helpers\Url;
 use Yii;
 use yii\db\Exception;
-use yii\helpers\Url;
 
 class FarmController extends Controller
 {
@@ -72,19 +72,9 @@ class FarmController extends Controller
     public function actionCreate($org_id = null)
     {
         $model = new Farm(['org_id' => $org_id, 'is_active' => 1]);
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $transaction = Yii::$app->db->beginTransaction();
-            try {
-                $model->save(false);
-                $transaction->commit();
-
-                Yii::$app->session->setFlash('success', Lang::t('SUCCESS_MESSAGE'));
-
-                return $this->redirect(\common\helpers\Url::getReturnUrl(['index', 'id' => $model->id]));
-            } catch (\Exception $e) {
-                $transaction->rollBack();
-                throw new Exception($e->getMessage());
-            }
+        if ($this->handlePostedData($model)) {
+            Yii::$app->session->setFlash('success', Lang::t('SUCCESS_MESSAGE'));
+            return $this->redirect(Url::getReturnUrl(['index', 'id' => $model->id]));
         }
 
         return $this->render('create', [
@@ -95,19 +85,9 @@ class FarmController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->loadModel($id);
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $transaction = Yii::$app->db->beginTransaction();
-            try {
-                $model->save(false);
-                $transaction->commit();
-
-                Yii::$app->session->setFlash('success', Lang::t('SUCCESS_MESSAGE'));
-
-                return $this->redirect(\common\helpers\Url::getReturnUrl(['index', 'id' => $model->id]));
-            } catch (\Exception $e) {
-                $transaction->rollBack();
-                throw new Exception($e->getMessage());
-            }
+        if ($this->handlePostedData($model)) {
+            Yii::$app->session->setFlash('success', Lang::t('SUCCESS_MESSAGE'));
+            return $this->redirect(Url::getReturnUrl(['index', 'id' => $model->id]));
         }
 
         return $this->render('update', [
@@ -115,29 +95,31 @@ class FarmController extends Controller
         ]);
     }
 
+    protected function handlePostedData(Farm &$model)
+    {
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $transaction = Yii::$app->db->beginTransaction();
+            try {
+                $model->save(false);
+                $transaction->commit();
+                return true;
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                throw new Exception($e->getMessage());
+            }
+        }
+        return false;
+    }
+
     public function actionUpload()
     {
         $this->hasPrivilege(Acl::ACTION_CREATE);
 
-        $form = new UploadFarms([]);
+        $form = new UploadFarms(Farm::class);
         if ($form->load(Yii::$app->request->post())) {
             if ($form->validate() && $form->addToExcelQueue()) {
-                //process the file
-                $form->saveExcelData();
-                if (count($form->getSavedRows()) > 0) {
-                    $successMsg = Lang::t('{n} rows successfully uploaded.', ['n' => count($form->getSavedRows())]);
-                    Yii::$app->session->setFlash('success', $successMsg);
-                }
-                if (count($form->getFailedRows()) > 0) {
-                    $warningMsg = '<p>' . Lang::t('{n} rows could could not be saved.', ['n' => count($form->getFailedRows())]) . '</p>';
-                    $warningMsg .= '<ul style="max-height: 200px;overflow: auto">';
-                    foreach ($form->getFailedRows() as $n => $message) {
-                        $warningMsg .= '<li>' . $message . '</li>';
-                    }
-                    $warningMsg .= '</ul>';
-                    Yii::$app->session->setFlash('warning', $warningMsg);
-                }
-                return json_encode(['success' => true, 'savedRows' => $form->getSavedRows(), 'failedRows' => $form->getFailedRows(), 'redirectUrl' => Url::to(['index'])]);
+                Yii::$app->session->setFlash('success', Lang::t('File queued for processing. You will get notification once the file processing is completed.'));
+                return json_encode(['success' => true, 'redirectUrl' => Url::to(['index'])]);
             } else {
                 return json_encode(['success' => false, 'message' => $form->getErrors()]);
             }
@@ -150,7 +132,7 @@ class FarmController extends Controller
 
     public function actionUploadPreview()
     {
-        $form = new UploadFarms();
+        $form = new UploadFarms(Farm::class);
         return $form->previewAction();
     }
 

@@ -106,7 +106,7 @@ $offset_class = 'offset-md-' . $label_size;
                                 <label class="<?= $label_class ?> col-form-label"><?= Lang::t('Column:') ?></label>
 
                                 <div class="col-md-3">
-                                    <?= Html::activeTextInput($model, 'start_column', ['class' => 'form-control', 'placeholder' => $model->getAttributeLabel('start_column')]) ?>
+                                    <?= Html::activeTextInput($model, 'start_column', ['class' => 'form-control', 'placeholder' => $model->getAttributeLabel('start_column'), 'maxlength' => 2]) ?>
                                 </div>
 
                                 <div class="col-md-2">
@@ -114,7 +114,7 @@ $offset_class = 'offset-md-' . $label_size;
                                 </div>
 
                                 <div class="col-md-3">
-                                    <?= Html::activeTextInput($model, 'end_column', ['class' => 'form-control', 'placeholder' => $model->getAttributeLabel('end_column')]) ?>
+                                    <?= Html::activeTextInput($model, 'end_column', ['class' => 'form-control', 'placeholder' => $model->getAttributeLabel('end_column'), 'maxlength' => 2]) ?>
                                 </div>
                             </div>
                         </fieldset>

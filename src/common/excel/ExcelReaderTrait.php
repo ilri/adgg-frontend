@@ -6,12 +6,15 @@ use common\helpers\FileManager;
 use common\helpers\Lang;
 use common\helpers\Utils;
 use common\models\ActiveRecord;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Yii;
 use yii\base\Exception;
 
 /**
  * Description of MyExcelProcessor
  * @author Fred <mconyango@gmail.com>
+ *
+ * @method array getExcelColumns()
  */
 trait ExcelReaderTrait
 {
@@ -85,7 +88,7 @@ trait ExcelReaderTrait
      * Delete file after processing
      * @var
      */
-    public $delete_file = false;
+    public $delete_file = true;
 
     /**
      * @var
@@ -146,11 +149,9 @@ trait ExcelReaderTrait
         $temp_path = $this->file;
         $this->file = time() . '_' . $this->original_file_name;
         $new_path = static::getDir() . DIRECTORY_SEPARATOR . $this->file;
-        if (copy($temp_path, $new_path)) {
-            if ($this->delete_file) {
-                FileManager::deleteDirOrFile(dirname($temp_path));
-            }
-        } else
+        if (copy($temp_path, $new_path))
+            FileManager::deleteDirOrFile(dirname($temp_path));
+        else
             throw new Exception('Could not copy the file to the new location.');
     }
 
@@ -194,16 +195,34 @@ trait ExcelReaderTrait
         if (!$this->validate(['file', 'start_row', 'end_row', 'start_column', 'end_column']))
             return false;
 
+        if (empty($this->start_column)) {
+            $this->start_column = 'A';
+        }
+        if (empty($this->end_column)) {
+            $this->start_column = 'A';
+            $this->end_column = 'Z';
+        }
+        if (empty($this->start_row)) {
+            $this->start_row = 1;
+        }
+        $this->end_row = $this->start_row;
         $this->setObjReader();
         //$this->recipients_count = $this->getRecipientsCount();
         $chunkFilter = $this->getChunkFilter();
         $sheetData = $this->getSheetData($chunkFilter, 1);
-        if (isset($sheetData[$this->start_row]))
-            $data = $sheetData[$this->start_row];
-        else
-            $data = static::getColumnRange($this->start_column, $this->end_column);
-        $this->setPlaceholderColumns($data);
+        $columnRange = static::getColumnRange($this->start_column, $this->end_column);
 
+        if (isset($sheetData[$this->start_row])) {
+            $dataSet = $sheetData[$this->start_row];
+            $data = [];
+            foreach ($columnRange as $column) {
+                $data[$column] = $dataSet[$column] ?? null;
+            }
+        } else {
+            $data = static::getColumnRange($this->start_column, $this->end_column);
+        }
+        unset($sheetData);
+        $this->setPlaceholderColumns($data);
         return $data;
     }
 
@@ -215,7 +234,7 @@ trait ExcelReaderTrait
         $columns = array_keys($this->file_columns);
         foreach ($data as $k => $v) {
             if (empty($this->placeholder_columns[$k])) {
-                $i = Utils::lettersToNum($k) - 1;
+                $i = static::excelColumnToNumber($k) - 1;
                 $this->placeholder_columns[$k] = isset($columns[$i]) ? $columns[$i] : null;
             }
         }
@@ -276,8 +295,8 @@ trait ExcelReaderTrait
     {
         $chunkFilter->setRows($this->start_row, $chunkSize);
         $this->setObjSpreadsheet();
-        $sheetData = $this->_objSpreadsheet->getActiveSheet()->toArray(null, true, true, true);
-
+        $activeSheet = $this->_objSpreadsheet->getActiveSheet();
+        $sheetData = $this->getSheetDataToArray($activeSheet, null, true, true, true);
         foreach ($sheetData as $k => $row) {
             if ($k < $this->start_row) {
                 unset($sheetData[$k]);
@@ -287,6 +306,22 @@ trait ExcelReaderTrait
             }
         }
         return $sheetData;
+    }
+
+
+    protected function getSheetDataToArray(Worksheet $activeSheet, $nullValue = null, $calculateFormulas = true, $formatData = true, $returnCellRef = false)
+    {
+        // Garbage collect...
+        $activeSheet->garbageCollect();
+
+        //    Identify the range that we need to extract from the worksheet
+        $minCol = $this->start_column;
+        $minRow = !empty($this->start_row) ? $this->start_row : 1;
+        $maxCol = $this->end_column;
+        $maxRow = !empty($this->end_row) ? $this->end_row : $activeSheet->getHighestRow();
+
+        // Return
+        return $activeSheet->rangeToArray($minCol . $minRow . ':' . $maxCol . $maxRow, $nullValue, $calculateFormulas, $formatData, $returnCellRef);
     }
 
     /**
@@ -328,10 +363,11 @@ trait ExcelReaderTrait
      */
     protected function getExcelInsertBatches($sheetData, $max_insert_batch = 500)
     {
-        if (count($sheetData) <= $max_insert_batch)
+        if (count($sheetData) <= $max_insert_batch) {
             $insert_batches = [$sheetData];
-        else
+        } else {
             $insert_batches = array_chunk($sheetData, $max_insert_batch, true);
+        }
 
         return $insert_batches;
     }
@@ -392,12 +428,9 @@ trait ExcelReaderTrait
     {
         $i = 1;
         foreach ($this->file_columns as $k => $v) {
-            $column_name = isset($this->placeholders[$k]) ? $this->placeholders[$k] : Utils::numToLetter($i, true);
+            $column_name = isset($this->placeholders[$k]) ? $this->placeholders[$k] : static::numberToExcelColumn($i, true);
             $column = str_replace(['[', ']'], '', $k);
             $columns[$column] = isset($excel_row[$column_name]) ? trim($excel_row[$column_name]) : null;
-            if (strtolower($columns[$column]) === 'null') {
-                $columns[$column] = null;
-            }
             $i++;
         }
 
@@ -481,5 +514,67 @@ trait ExcelReaderTrait
             $this->_failedRows[$rowNumber] = Lang::t('Row {n}: {error}', ['n' => $rowNumber, 'error' => implode(', ', $errors)]);
             return false;
         }
+    }
+
+    /**
+     * @param string $booleanString
+     * @return int
+     */
+    public static function encodeBoolean($booleanString): int
+    {
+        $booleanString = strtolower($booleanString);
+        if ($booleanString === 'yes' || $booleanString === 'y') {
+            $booleanString = 1;
+        } else {
+            $booleanString = 0;
+        }
+        return $booleanString;
+    }
+
+
+    /**
+     * @param int $number
+     * @param bool $toUpper
+     * @return string
+     */
+    public static function numberToExcelColumn(int $number, $toUpper = true)
+    {
+        $number = intval($number);
+        if ($number <= 0) return '';
+
+        $letter = '';
+
+        while ($number != 0) {
+            $p = ($number - 1) % 26;
+            $number = intval(($number - $p) / 26);
+            $letter = chr(65 + $p) . $letter;
+        }
+
+        if ($toUpper) {
+            return strtoupper($letter);
+        }
+        return $letter;
+    }
+
+    /**
+     * Takes a letter and converts it to number
+     * @access    public
+     * @param $string
+     * @return int number from letter input
+     */
+    public static function excelColumnToNumber(string $string)
+    {
+        $num = 0;
+        $string = strtolower($string);
+        $string = str_split($string);
+        $exp = count($string) - 1;
+        foreach ($string as $char) {
+            $digit = ord($char) - 96;
+            $num += $digit * pow(26, $exp);
+
+            $exp--;
+        }
+
+        return $num;
     }
 }

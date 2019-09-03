@@ -7,8 +7,7 @@ use common\helpers\Utils;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
-use console\jobs\SendEmailJob;
-use Yii;
+use console\jobs\SendEmail;
 
 /**
  * This is the model class for table "email_outbox".
@@ -100,13 +99,13 @@ class EmailOutbox extends ActiveRecord implements ActiveSearchInterface
      */
     public static function decodeStatus($intValue)
     {
-        $stringValue=null;
-        switch ($intValue){
+        $stringValue = null;
+        switch ($intValue) {
             case self::STATUS_SUCCESS:
-                $stringValue='SUCCESS';
+                $stringValue = 'SUCCESS';
                 break;
             case self::STATUS_FAILED:
-                $stringValue='FAILED';
+                $stringValue = 'FAILED';
                 break;
         }
 
@@ -117,29 +116,30 @@ class EmailOutbox extends ActiveRecord implements ActiveSearchInterface
      * @param bool|string $tip
      * @return array
      */
-    public static function statusOptions($tip=false)
+    public static function statusOptions($tip = false)
     {
         return Utils::appendDropDownListPrompt([
-            self::STATUS_SUCCESS=>static::decodeStatus(self::STATUS_SUCCESS),
-            self::STATUS_FAILED=>static::decodeStatus(self::STATUS_FAILED),
-        ],$tip);
+            self::STATUS_SUCCESS => static::decodeStatus(self::STATUS_SUCCESS),
+            self::STATUS_FAILED => static::decodeStatus(self::STATUS_FAILED),
+        ], $tip);
     }
 
-    public function resendEmail($id){
-        $model=static::loadModel($id);
+    public function resendEmail($id)
+    {
+        $model = static::loadModel($id);
 
 
-        SendEmailJob::push([
+        SendEmail::push([
             'sender_email' => $model->sender_email,
             'sender_name' => $model->sender_name,
             'message' => $model->message,
             'recipient_email' => $model->recipient_email,
-            'cc'=>$model->cc,
-            'bcc'=>$model->bcc,
-            'attachment'=>$model->attachment,
-            'subject'=>$model->subject,
-            'template_id'=>$model->template_id,
-            'ref_id'=>$model->ref_id,
-            ]);
+            'cc' => $model->cc,
+            'bcc' => $model->bcc,
+            'attachment' => $model->attachment,
+            'subject' => $model->subject,
+            'template_id' => $model->template_id,
+            'ref_id' => $model->ref_id,
+        ]);
     }
 }

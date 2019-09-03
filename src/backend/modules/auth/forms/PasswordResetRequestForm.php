@@ -6,7 +6,7 @@ use backend\modules\auth\models\Users;
 use backend\modules\conf\models\EmailTemplate;
 use backend\modules\conf\settings\SystemSettings;
 use common\models\Model;
-use console\jobs\SendEmailJob;
+use console\jobs\SendEmail;
 use Yii;
 
 /**
@@ -82,7 +82,7 @@ class PasswordResetRequestForm extends Model
             '{{url}}' => Yii::$app->getUrlManager()->createAbsoluteUrl(['/auth/auth/reset-password', 'token' => $user->password_reset_token]),
         ]);
 
-        return SendEmailJob::push([
+        return SendEmail::push([
             'message' => $message,
             'subject' => $template['subject'],
             'sender_name' => $app_name,

@@ -9,43 +9,48 @@ namespace backend\modules\core\forms;
 
 
 use backend\modules\auth\models\Users;
+use backend\modules\auth\Session;
+use backend\modules\core\models\ExcelImport;
 use backend\modules\core\models\Farm;
+use backend\modules\core\models\Organization;
 use backend\modules\core\models\OrganizationUnits;
-use common\excel\ExcelReaderTrait;
+use common\excel\ExcelUploadForm;
 use common\excel\ImportInterface;
 use common\helpers\DateUtils;
 use common\helpers\Lang;
 use common\helpers\Msisdn;
-use common\models\Model;
+use common\helpers\Utils;
+use console\jobs\JobInterface;
+use console\jobs\JobTrait;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use Yii;
+use yii\base\Exception;
+use yii\queue\Queue;
 
-class UploadFarms extends Model implements ImportInterface
+class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterface
 {
-    use ExcelReaderTrait;
 
-    /**
-     * @var Farm
-     */
-    private $_model;
-
+    use JobTrait;
     /**
      * @var int
      */
     public $org_id;
 
     /**
+     * @var Organization
+     */
+    public $orgModel;
+
+    /**
+     * @var int
+     */
+    public $itemId;
+
+    /**
      * @inheritdoc
      */
     public function init()
     {
-        $this->end_column = 'AZ';
-
-        $this->required_columns = [];
-        $this->_model = new Farm(['org_id' => $this->org_id]);
-        foreach ($this->_model->getExcelColumns() as $column) {
-            $this->file_columns['[' . $column . ']'] = $this->_model->getAttributeLabel($column);
-        }
         parent::init();
     }
 
@@ -82,6 +87,7 @@ class UploadFarms extends Model implements ImportInterface
     {
         $columns = [];
         $insert_data = [];
+        $this->orgModel = Organization::loadModel($this->org_id);
 
         foreach ($batch as $k => $excel_row) {
             $row = $this->getExcelRowColumns($excel_row, $columns);
@@ -132,7 +138,7 @@ class UploadFarms extends Model implements ImportInterface
         if (empty($data))
             return false;
 
-        $model = clone $this->_model;
+        $model = new Farm(['org_id' => $this->org_id]);
         foreach ($data as $n => $row) {
             $newModel = Farm::find()->andWhere([
                 'code' => $row['code'],
@@ -146,8 +152,8 @@ class UploadFarms extends Model implements ImportInterface
             $this->saveExcelRaw($newModel, $row, $n);
         }
 
-        if (!empty($this->_failedRows)) {
-            foreach ($this->_failedRows as $log) {
+        if (!empty($this->getFailedRows())) {
+            foreach ($this->getFailedRows() as $log) {
                 Yii::warning($log);
             }
         }
@@ -242,6 +248,46 @@ class UploadFarms extends Model implements ImportInterface
 
     protected function cleanPhoneNumber($number)
     {
-        return Msisdn::format($number, '255');
+        return Msisdn::format($number, $this->orgModel->dialing_code);
     }
+
+    /**
+     * @param Queue $queue which pushed and is handling the job
+     * @return void|mixed result of the job execution
+     * @throws \yii\web\NotFoundHttpException
+     */
+    public function execute($queue)
+    {
+        $time_start = microtime(true);
+        $this->saveExcelData();
+        $time_end = microtime(true);
+        $executionTime = round($time_end - $time_start, 2);
+
+        $queueModel = ExcelImport::loadModel($this->itemId);
+        $queueModel->is_processed = 1;
+        $queueModel->processed_at = DateUtils::mysqlTimestamp();
+        $queueModel->has_errors = !empty($this->getFailedRows());
+        $queueModel->error_message = $this->getFailedRows();
+        $queueModel->success_message = $this->getSavedRows();
+        $queueModel->processing_duration_seconds = $executionTime;
+        $queueModel->save(false);
+    }
+
+    public function addToExcelQueue()
+    {
+        try {
+            /* @var $queue \yii\queue\cli\Queue */
+            $this->saveFile();
+            $queue = Yii::$app->queue;
+            $importQueue = ExcelImport::addToQueue(ExcelImport::TYPE_FARM_DATA, $this->file, $this->org_id);
+            $this->itemId = $importQueue->id;
+            $this->created_by = $importQueue->created_by;
+            $id = $queue->push($this);
+
+            return $id;
+        } catch (Exception $e) {
+            Yii::error($e->getMessage());
+        }
+    }
+
 }
