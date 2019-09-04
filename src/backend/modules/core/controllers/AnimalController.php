@@ -9,8 +9,10 @@
 namespace backend\modules\core\controllers;
 
 
+use backend\modules\auth\Acl;
 use backend\modules\auth\Session;
 use backend\modules\core\Constants;
+use backend\modules\core\forms\UploadAnimals;
 use backend\modules\core\models\Animal;
 use common\helpers\Lang;
 use common\helpers\Url;
@@ -26,7 +28,7 @@ class AnimalController extends Controller
         $this->resourceLabel = 'Animal';
     }
 
-    public function actionIndex($animal_type = null, $org_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $name = null, $tag_id = null)
+    public function actionIndex($type = null, $animal_type = null, $org_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $name = null, $tag_id = null)
     {
         if (Session::isOrganization()) {
             $org_id = Session::getOrgId();
@@ -40,6 +42,9 @@ class AnimalController extends Controller
         } elseif (Session::isVillageUser()) {
             $village_id = Session::getVillageId();
         }
+        if (empty($type)) {
+            $type = Animal::TYPE_COW;
+        }
         $condition = '';
         $params = [];
         list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
@@ -49,6 +54,7 @@ class AnimalController extends Controller
             'params' => $params,
             'with' => ['farm', 'region', 'district', 'ward', 'village', 'sire', 'dam'],
         ]);
+        $searchModel->type = $type;
         $searchModel->org_id = $org_id;
         $searchModel->region_id = $region_id;
         $searchModel->district_id = $district_id;
@@ -63,22 +69,22 @@ class AnimalController extends Controller
         ]);
     }
 
+
+    public function actionView($id)
+    {
+        $model = Animal::loadModel($id);
+
+        return $this->render('view', [
+            'model' => $model,
+        ]);
+    }
+
     public function actionCreate($farm_id = null, $animal_type = null)
     {
         $model = new Animal(['farm_id' => $farm_id, 'animal_type' => $animal_type]);
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $transaction = Yii::$app->db->beginTransaction();
-            try {
-                $model->save(false);
-                $transaction->commit();
-
-                Yii::$app->session->setFlash('success', Lang::t('SUCCESS_MESSAGE'));
-
-                return $this->redirect(Url::getReturnUrl(['index', 'id' => $model->id]));
-            } catch (\Exception $e) {
-                $transaction->rollBack();
-                throw new Exception($e->getMessage());
-            }
+        if ($this->handlePostedData($model)) {
+            Yii::$app->session->setFlash('success', Lang::t('SUCCESS_MESSAGE'));
+            return $this->redirect(Url::getReturnUrl(['index', 'id' => $model->id]));
         }
 
         return $this->render('create', [
@@ -89,24 +95,58 @@ class AnimalController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->loadModel($id);
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $transaction = Yii::$app->db->beginTransaction();
-            try {
-                $model->save(false);
-                $transaction->commit();
-
-                Yii::$app->session->setFlash('success', Lang::t('SUCCESS_MESSAGE'));
-
-                return $this->redirect(Url::getReturnUrl(['index', 'id' => $model->id]));
-            } catch (\Exception $e) {
-                $transaction->rollBack();
-                throw new Exception($e->getMessage());
-            }
+        if ($this->handlePostedData($model)) {
+            Yii::$app->session->setFlash('success', Lang::t('SUCCESS_MESSAGE'));
+            return $this->redirect(Url::getReturnUrl(['index', 'id' => $model->id]));
         }
 
         return $this->render('update', [
             'model' => $model,
         ]);
+    }
+
+    protected function handlePostedData(Animal &$model)
+    {
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $transaction = Yii::$app->db->beginTransaction();
+            try {
+                $model->save(false);
+                $transaction->commit();
+                return true;
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                throw new Exception($e->getMessage());
+            }
+        }
+        return false;
+    }
+
+    public function actionUpload($type = null)
+    {
+        $this->hasPrivilege(Acl::ACTION_CREATE);
+        if (empty($type)) {
+            $type = Animal::TYPE_COW;
+        }
+
+        $form = new UploadAnimals(Animal::class, ['type' => $type]);
+        if ($form->load(Yii::$app->request->post())) {
+            if ($form->validate() && $form->addToExcelQueue()) {
+                Yii::$app->session->setFlash('success', Lang::t('File queued for processing. You will get notification once the file processing is completed.'));
+                return json_encode(['success' => true, 'redirectUrl' => Url::to(['index', 'type' => $type])]);
+            } else {
+                return json_encode(['success' => false, 'message' => $form->getErrors()]);
+            }
+        }
+
+        return $this->render('upload', [
+            'model' => $form,
+        ]);
+    }
+
+    public function actionUploadPreview()
+    {
+        $form = new UploadAnimals(Animal::class);
+        return $form->previewAction();
     }
 
     public function actionDelete($id)

@@ -55,6 +55,15 @@ use yii\helpers\Url;
             'filter' => false,
         ],
         [
+            'attribute' => 'type',
+            'value' => function (Animal $model) {
+                return $model->getDecodedType();
+            }
+        ],
+        [
+            'attribute' => 'animal_category',
+        ],
+        [
             'class' => common\widgets\grid\ActionColumn::class,
             'template' => '{update}{view}',
             'visibleButtons' => [

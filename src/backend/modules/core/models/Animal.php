@@ -6,10 +6,12 @@ use backend\modules\conf\models\NumberingFormat;
 use common\helpers\DateUtils;
 use common\helpers\FileManager;
 use common\helpers\Lang;
+use common\helpers\Utils;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
 use Yii;
+use yii\base\InvalidArgumentException;
 use yii\db\Expression;
 
 /**
@@ -143,13 +145,12 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             [['tag_id', 'farm_id'], 'required'],
             [['type'], 'required', 'on' => self::SCENARIO_UPLOAD],
             ['tag_id', 'unique', 'targetAttribute' => ['org_id', 'tag_id'], 'message' => '{attribute} already exists.'],
-            ['tag_id', 'number'],
-            ['tag_id', 'string', 'max' => 16],
+            // ['tag_id', 'string', 'max' => 16],
             ['code', 'unique', 'targetAttribute' => ['org_id', 'tag_id'], 'message' => '{attribute} already exists.'],
             [
                 [
                     'farm_id', 'org_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'is_active', 'udder_attachment', 'udder_teat_placement', 'sire_type', 'sire_registered',
-                    'sire_id', 'dam_registered', 'dam_id', 'main_breed', 'breed_composition', 'secondary_breed', 'is_genotyped', 'genotype_id', 'result_genotype', 'first_calv_method',
+                    'sire_id', 'dam_registered', 'dam_id', 'is_genotyped', 'genotype_id', 'result_genotype', 'first_calv_method',
                     'first_calv_type', 'latest_calv_type', 'is_still_lactating', 'is_pregnant', 'entry_type', 'herd_id', 'gender',
                 ],
                 'integer'
@@ -318,7 +319,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'longitude' => 'Longitude',
             'map_address' => 'Map Address',
             'uuid' => 'Uuid',
-            'tag_id' => 'Ear Tag ID',
+            'tag_id' => 'Tag ID',
             'color' => 'Color',
             'animal_type' => 'Animal Type',
             'birthdate' => 'Birth Date',
@@ -607,5 +608,37 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'gprs_accuracy',
             'animal_category',
         ];
+    }
+
+    public static function decodeType($intVal)
+    {
+        switch ($intVal) {
+            case self::TYPE_COW:
+                return 'Cow';
+            case self::TYPE_SIRE:
+                return 'Sire';
+            case self::TYPE_DAM:
+                return 'Dam';
+            default:
+                throw new InvalidArgumentException();
+        }
+    }
+
+    public function getDecodedType()
+    {
+        return static::decodeType($this->type);
+    }
+
+    /**
+     * @param mixed $prompt
+     * @return array
+     */
+    public static function typeOptions($prompt = false)
+    {
+        return Utils::appendDropDownListPrompt([
+            self::TYPE_COW => static::decodeType(self::TYPE_COW),
+            self::TYPE_SIRE => static::decodeType(self::TYPE_SIRE),
+            self::TYPE_DAM => static::decodeType(self::TYPE_DAM),
+        ], $prompt);
     }
 }
