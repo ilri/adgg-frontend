@@ -5,7 +5,7 @@
 {filter_form}
 <hr/>
 <div class="row">
-    <div class="col-md-2" id="farms-summary-stats">
+    <div class="col-md-2" id="animal-summary-stats">
         <?= $this->render('_stats', ['filters' => $filterOptions]) ?>
     </div>
     <div class="col-md-10">

@@ -3,6 +3,7 @@
 namespace backend\modules\core\models;
 
 use backend\modules\conf\models\NumberingFormat;
+use backend\modules\reports\Constants;
 use common\helpers\DateUtils;
 use common\helpers\DbUtils;
 use common\helpers\FileManager;
@@ -11,9 +12,12 @@ use common\helpers\Utils;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
+use common\widgets\highchart\HighChart;
+use common\widgets\highchart\HighChartInterface;
 use Yii;
 use yii\base\InvalidArgumentException;
 use yii\db\Expression;
+use yii\helpers\Inflector;
 
 /**
  * This is the model class for table "core_animal".
@@ -98,7 +102,7 @@ use yii\db\Expression;
  * @property Animal $dam
  * @property AnimalHerd $herd
  */
-class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttributeInterface, UploadExcelInterface
+class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttributeInterface, UploadExcelInterface, HighChartInterface
 {
     use ActiveSearchTrait, OrganizationUnitDataTrait, TableAttributeTrait;
 
@@ -701,5 +705,46 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             }
         }
         return static::getStats($durationType, $condition, $params, $sum, $dateField, $from, $to);
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public static function highChartOptions($graphType, $queryOptions)
+    {
+        $condition = '';
+        $params = [];
+        list($condition, $params) = static::appendOrgSessionIdCondition($condition, $params, false);
+        $series = [];
+        if ($graphType == HighChart::GRAPH_PIE && empty($queryOptions['filters']['member_id'])) {
+            $types = static::typeOptions(false);
+            foreach ($types as $type => $label) {
+                list($newCondition, $newParams) = DbUtils::appendCondition('type', $type, $condition, $params);
+                $series[] = [
+                    'name' => Lang::t('{type}', ['type' => Inflector::pluralize($label)]),
+                    'condition' => $newCondition,
+                    'params' => $newParams,
+                    'sum' => false,
+                ];
+            }
+        } else {
+            $series = [
+                [
+                    'name' => Lang::t('Animals added'),
+                    'condition' => $condition,
+                    'params' => $params,
+                    'sum' => false,
+                ],
+            ];
+        }
+        if ($graphType !== HighChart::GRAPH_PIE) {
+            return $series;
+        } else {
+            return [
+                [
+                    'data' => $series,
+                ]
+            ];
+        }
     }
 }
