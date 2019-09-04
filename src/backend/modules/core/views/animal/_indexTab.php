@@ -14,9 +14,9 @@ $tab = Yii::$app->request->get('type', Animal::TYPE_COW);
     <?php foreach (Animal::typeOptions(false) as $id => $label): ?>
         <li class="nav-item">
             <a class="nav-link<?= $tab == $id ? ' active' : '' ?>"
-               href="<?= Url::to(['index', 'animal_type' => $id, 'type' => $id]) ?>">
+               href="<?= Url::to(['index', 'type' => $id]) ?>">
                 <?= strtoupper(Html::encode(Inflector::pluralize($label))) ?>
-                <span class="badge badge-light badge-pill">
+                <span class="badge badge-dark badge-pill">
                 <?= number_format(Animal::getCount(['type' => $id])) ?>
             </span>
             </a>

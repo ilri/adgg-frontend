@@ -28,7 +28,7 @@ class AnimalController extends Controller
         $this->resourceLabel = 'Animal';
     }
 
-    public function actionIndex($type = null, $animal_type = null, $org_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $name = null, $tag_id = null)
+    public function actionIndex($type = null, $org_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $name = null, $tag_id = null)
     {
         if (Session::isOrganization()) {
             $org_id = Session::getOrgId();
@@ -62,7 +62,6 @@ class AnimalController extends Controller
         $searchModel->village_id = $village_id;
         $searchModel->name = $name;
         $searchModel->tag_id = $tag_id;
-        $searchModel->animal_type = $animal_type;
 
         return $this->render('index', [
             'searchModel' => $searchModel,
