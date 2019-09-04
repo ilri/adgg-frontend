@@ -94,6 +94,7 @@ class ListType extends ActiveRecord implements ActiveSearchInterface
     const LIST_TYPE_EDUCATION_LEVEL = 66;
     const LIST_TYPE_YESNO = 67;
     const LIST_TYPE_ADMIN_AREAS = 68;
+    const LIST_TYPE_ANIMAL_ENTRY_TYPE = 69;
 
     /**
      * {@inheritdoc}

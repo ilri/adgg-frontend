@@ -306,7 +306,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
         return [
             'id' => 'ID',
             'code' => 'Animal ID',
-            'name' => 'Name',
+            'name' => 'Animal Name',
             'farm_id' => 'Farm',
             'org_id' => 'Country',
             'region_id' => 'Region',
@@ -640,5 +640,40 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             self::TYPE_SIRE => static::decodeType(self::TYPE_SIRE),
             self::TYPE_DAM => static::decodeType(self::TYPE_DAM),
         ], $prompt);
+    }
+
+    /**
+     * @return string|null
+     * @throws \Exception
+     */
+    public function getFormattedDeformities()
+    {
+        if (empty($this->deformities)) {
+            return null;
+        }
+        $arr = [];
+        foreach ($this->deformities as $deformity) {
+            $def = LookupList::getScalar('label', ['list_type_id' => ListType::LIST_TYPE_CALVE_DEFORMITY, 'value' => $deformity]);
+            if ($def) {
+                $arr[] = $def;
+            }
+        }
+
+        return implode(', ', $arr);
+    }
+
+    /**
+     * @param $attribute
+     * @param $listTypeId
+     * @return string|null
+     * @throws \Exception
+     */
+    public function getListValueLabel($attribute, $listTypeId)
+    {
+        $label = LookupList::getScalar('label', ['list_type_id' => $listTypeId, 'value' => $this->{$attribute}]);
+        if ($label) {
+            return $label;
+        }
+        return null;
     }
 }
