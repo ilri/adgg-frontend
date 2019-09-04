@@ -9,10 +9,12 @@
 namespace common\excel;
 
 
-use backend\modules\core\models\Product;
+use backend\modules\core\models\ExcelImport;
+use common\helpers\DateUtils;
 use common\models\ActiveRecord;
 use common\models\Model;
 use yii\base\InvalidConfigException;
+use yii\queue\Queue;
 
 class ExcelUploadForm extends Model
 {
@@ -49,5 +51,27 @@ class ExcelUploadForm extends Model
             $this->file_columns['[' . $column . ']'] = $this->_model->getAttributeLabel($column);
         }
         $this->end_column = static::numberToExcelColumn(count($this->file_columns), true);
+    }
+
+    /**
+     * @param Queue $queue which pushed and is handling the job
+     * @return void|mixed result of the job execution
+     * @throws \yii\web\NotFoundHttpException
+     */
+    public function execute($queue)
+    {
+        $time_start = microtime(true);
+        $this->saveExcelData();
+        $time_end = microtime(true);
+        $executionTime = round($time_end - $time_start, 2);
+
+        $queueModel = ExcelImport::loadModel($this->itemId);
+        $queueModel->is_processed = 1;
+        $queueModel->processed_at = DateUtils::mysqlTimestamp();
+        $queueModel->has_errors = !empty($this->getFailedRows());
+        $queueModel->error_message = $this->getFailedRows();
+        $queueModel->success_message = $this->getSavedRows();
+        $queueModel->processing_duration_seconds = $executionTime;
+        $queueModel->save(false);
     }
 }

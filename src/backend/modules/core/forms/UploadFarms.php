@@ -19,7 +19,6 @@ use common\excel\ImportInterface;
 use common\helpers\DateUtils;
 use common\helpers\Lang;
 use common\helpers\Msisdn;
-use common\helpers\Utils;
 use console\jobs\JobInterface;
 use console\jobs\JobTrait;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
@@ -91,9 +90,9 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterfa
 
         foreach ($batch as $k => $excel_row) {
             $row = $this->getExcelRowColumns($excel_row, $columns);
-            Yii::info($row);
-            if (empty($row))
+            if (empty($row)){
                 continue;
+            }
             if (!empty($row['reg_date'])) {
                 if (is_numeric($row['reg_date'])) {
                     $row['reg_date'] = Date::excelToDateTimeObject($row['reg_date'])->format('Y-m-d');
@@ -249,28 +248,6 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterfa
     protected function cleanPhoneNumber($number)
     {
         return Msisdn::format($number, $this->orgModel->dialing_code);
-    }
-
-    /**
-     * @param Queue $queue which pushed and is handling the job
-     * @return void|mixed result of the job execution
-     * @throws \yii\web\NotFoundHttpException
-     */
-    public function execute($queue)
-    {
-        $time_start = microtime(true);
-        $this->saveExcelData();
-        $time_end = microtime(true);
-        $executionTime = round($time_end - $time_start, 2);
-
-        $queueModel = ExcelImport::loadModel($this->itemId);
-        $queueModel->is_processed = 1;
-        $queueModel->processed_at = DateUtils::mysqlTimestamp();
-        $queueModel->has_errors = !empty($this->getFailedRows());
-        $queueModel->error_message = $this->getFailedRows();
-        $queueModel->success_message = $this->getSavedRows();
-        $queueModel->processing_duration_seconds = $executionTime;
-        $queueModel->save(false);
     }
 
     public function addToExcelQueue()

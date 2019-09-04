@@ -77,6 +77,7 @@ return [
         'tableName' => '{{%sys_queue}}',
         'channel' => 'default',
         'mutex' => \yii\mutex\MysqlMutex::class, // Mutex used to sync queries
+        'ttr' => 60 * 60 * 6,
         //'class' => \yii\queue\amqp_interop\Queue::class,
         //'port' => 5672,
         //'user' => 'guest',

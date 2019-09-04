@@ -76,7 +76,6 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             [['farm_type'], 'string', 'max' => 30],
             [['gender_code'], 'string', 'max' => 10],
             [['reg_date'], 'date', 'format' => 'Y-m-d', 'except' => self::SCENARIO_UPLOAD],
-            [['org_id'], 'exist', 'skipOnError' => true, 'targetClass' => Organization::class, 'targetAttribute' => ['org_id' => 'id']],
             [$this->getAdditionalAttributes(), 'safe'],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
 

@@ -18,7 +18,6 @@ use yii\db\Expression;
  * @property int $id
  * @property string $code
  * @property string $name
- * @property $type
  * @property int $farm_id
  * @property int $org_id
  * @property int $region_id
@@ -28,31 +27,23 @@ use yii\db\Expression;
  * @property int $is_active
  * @property string $latitude
  * @property string $longitude
- * @property string $altitude
- * @property float $gprs_accuracy
  * @property string $map_address
  * @property string $latlng
  * @property string $uuid
  * @property string $tag_id
  * @property string $color
  * @property string $animal_type
- * @property string $derived_birthdate
  * @property string $birthdate
  * @property string $estimate_age
  * @property double $body_condition_score
- * @property array $deformities
+ * @property array|string $deformities
  * @property string $udder_support
  * @property int $udder_attachment
  * @property int $udder_teat_placement
  * @property int $sire_type
  * @property int $sire_registered
  * @property int $sire_id
- * @property string $sire_tag_id
- * @property string $sire_name
- * @property string $bull_straw_id
  * @property int $dam_registered
- * @property string $dam_tag_id
- * @property string $dam_name
  * @property int $dam_id
  * @property int $main_breed
  * @property int $breed_composition
@@ -79,9 +70,6 @@ use yii\db\Expression;
  * @property string $purchase_cost
  * @property string $ear_tag_photo
  * @property string $animal_photo
- * @property int $herd_id
- * @property int $gender
- * @property string $animal_category
  * @property string $created_at
  * @property int $created_by
  * @property string $updated_at
@@ -93,13 +81,10 @@ use yii\db\Expression;
  * @property Farm $farm
  * @property Animal $sire
  * @property Animal $dam
- * @property AnimalHerd $herd
  */
-class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttributeInterface, UploadExcelInterface
+class AnimalOld extends ActiveRecord implements ActiveSearchInterface, TableAttributeInterface, UploadExcelInterface
 {
     use ActiveSearchTrait, OrganizationUnitDataTrait, TableAttributeTrait;
-
-    const SCENARIO_UPLOAD = 'Upload';
 
     /**
      * @var string
@@ -118,13 +103,6 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     const ANIMAL_TYPE_BULL = 5;
     const ANIMAL_TYPE_AI_STRAW = 6;
 
-    public $country;
-
-    //types
-    const TYPE_COW = 1;
-    const TYPE_SIRE = 2;
-    const TYPE_DAM = 3;
-
 
     /**
      * {@inheritdoc}
@@ -140,8 +118,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     public function rules()
     {
         return [
-            [['tag_id', 'farm_id'], 'required'],
-            [['type'], 'required', 'on' => self::SCENARIO_UPLOAD],
+            [['name', 'farm_id'], 'required'],
             ['tag_id', 'unique', 'targetAttribute' => ['org_id', 'tag_id'], 'message' => '{attribute} already exists.'],
             ['tag_id', 'number'],
             ['tag_id', 'string', 'max' => 16],
@@ -150,15 +127,15 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
                 [
                     'farm_id', 'org_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'is_active', 'udder_attachment', 'udder_teat_placement', 'sire_type', 'sire_registered',
                     'sire_id', 'dam_registered', 'dam_id', 'main_breed', 'breed_composition', 'secondary_breed', 'is_genotyped', 'genotype_id', 'result_genotype', 'first_calv_method',
-                    'first_calv_type', 'latest_calv_type', 'is_still_lactating', 'is_pregnant', 'entry_type', 'herd_id', 'gender',
+                    'first_calv_type', 'latest_calv_type', 'is_still_lactating', 'is_pregnant', 'entry_type',
                 ],
                 'integer'
             ],
             ['body_condition_score', 'number', 'min' => 1, 'max' => 5],
             ['parity_number', 'integer', 'min' => 1, 'max' => 12],
-            [['latitude', 'longitude', 'altitude', 'purchase_cost', 'gprs_accuracy'], 'number'],
+            [['latitude', 'longitude', 'purchase_cost'], 'number'],
             [['average_daily_milk', 'peak_milk'], 'number', 'min' => 0.5, 'max' => 35],
-            [['birthdate', 'derived_birthdate', 'first_calv_date', 'first_calv_date_estimate', 'latest_calv_date', 'latest_calv_date_estimate', 'dry_date', 'entry_date'], 'date', 'format' => 'Y-m-d'],
+            [['birthdate', 'first_calv_date', 'first_calv_date_estimate', 'latest_calv_date', 'latest_calv_date_estimate', 'dry_date', 'entry_date'], 'date', 'format' => 'Y-m-d'],
             ['birthdate', 'validateBirthDate'],
             ['first_calv_date', 'validateFirstCalvDate'],
             ['first_calv_date_estimate', 'validateFirstCalvDateEstimate'],
@@ -171,8 +148,8 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             [['code', 'name', 'estimate_age', 'udder_support'], 'string', 'max' => 128],
             [['map_address', 'uuid', 'tmp_ear_tag_photo', 'tmp_animal_photo'], 'string', 'max' => 255],
             [['color'], 'string', 'max' => 30],
-            [['animal_type', 'animal_category'], 'string', 'max' => 20],
-            [['sire_tag_id', 'sire_name', 'bull_straw_id', 'dam_tag_id', 'dam_name'], 'string', 'max' => 128],
+            [['animal_type'], 'string', 'max' => 20],
+            [['farm_id'], 'exist', 'skipOnError' => true, 'targetClass' => Farm::class, 'targetAttribute' => ['farm_id' => 'id']],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
     }
@@ -313,7 +290,6 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'ward_id' => 'Ward',
             'village_id' => 'Village',
             'is_active' => 'Active',
-            'herd_id' => 'Herd',
             'latitude' => 'Latitude',
             'longitude' => 'Longitude',
             'map_address' => 'Map Address',
@@ -331,13 +307,8 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'sire_type' => 'Sire Type',
             'sire_registered' => 'Sire Registered',
             'sire_id' => 'Sire',
-            'sire_tag_id' => 'Sire Tag Id',
-            'sire_name' => 'Sire Name',
-            'bull_straw_id' => 'BullStraw Id',
             'dam_registered' => 'Dam Registered',
             'dam_id' => 'Dam',
-            'dam_tag_id' => 'Dam Tag Id',
-            'dam_name' => 'Dam Name',
             'main_breed' => 'Main Breed',
             'breed_composition' => 'Breed Composition',
             'secondary_breed' => 'Secondary Breed',
@@ -365,8 +336,6 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'animal_photo' => 'Animal Photo',
             'tmp_ear_tag_photo' => 'Ear Tag Photo',
             'tmp_animal_photo' => 'Animal Photo',
-            'gender' => 'Gender',
-            'animal_category' => 'Animal Category',
             'created_at' => 'Created At',
             'created_by' => 'Created By',
             'updated_at' => 'Updated At',
@@ -380,14 +349,6 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     public function getFarm()
     {
         return $this->hasOne(Farm::class, ['id' => 'farm_id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getHerd()
-    {
-        return $this->hasOne(AnimalHerd::class, ['id' => 'herd_id']);
     }
 
     /**
@@ -416,12 +377,6 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             ['tag_id', 'tag_id'],
             ['name', 'name'],
             ['color', 'color'],
-            ['sire_name', 'sire_name'],
-            ['bull_straw_id', 'bull_straw_id'],
-            ['sire_tag_id', 'sire_tag_id'],
-            ['dam_tag_id', 'dam_tag_id'],
-            ['dam_name', 'dam_name'],
-            'type',
             'farm_id',
             'org_id',
             'region_id',
@@ -434,9 +389,6 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'dam_id',
             'is_pregnant',
             'sire_id',
-            'herd_id',
-            'gender',
-            'animal_category',
         ];
     }
 
@@ -461,6 +413,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             if (empty($this->deformities)) {
                 $this->deformities = [];
             }
+            $this->deformities = json_encode($this->deformities);
 
             return true;
         }
@@ -477,6 +430,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     {
         parent::afterFind();
         $this->loadAdditionalAttributeValues(AnimalAttributeValue::class, 'animal_id');
+        $this->deformities = json_decode($this->deformities, true);
     }
 
     /**
@@ -572,40 +526,6 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     public function getExcelColumns()
     {
         $columns = array_merge($this->safeAttributes(), $this->getAdditionalAttributes());
-
-        return [
-            'country',
-            'farm_id',
-            //'herd_id',
-            'tag_id',
-            'tag_prefix',
-            'tag_sec',
-            'name',
-            'color',
-            'derived_birthdate',
-            'birthdate',
-            'estimate_age',
-            'deformities',
-            'sire_type',
-            'sire_registered',
-            'sire_tag_id',
-            'sire_name',
-            'bull_straw_id',
-            'dam_registered',
-            'dam_tag_id',
-            'dam_name',
-            'main_breed',
-            'breed_composition',
-            'secondary_breed',
-            'entry_type',
-            'entry_date',
-            'purchase_cost',
-            'animal_photo',
-            'latitude',
-            'longitude',
-            'altitude',
-            'gprs_accuracy',
-            'animal_category',
-        ];
+        return $columns;
     }
 }

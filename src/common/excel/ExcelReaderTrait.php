@@ -2,10 +2,12 @@
 
 namespace common\excel;
 
+use common\helpers\DateUtils;
 use common\helpers\FileManager;
 use common\helpers\Lang;
 use common\helpers\Utils;
 use common\models\ActiveRecord;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Yii;
 use yii\base\Exception;
@@ -430,7 +432,8 @@ trait ExcelReaderTrait
         foreach ($this->file_columns as $k => $v) {
             $column_name = isset($this->placeholders[$k]) ? $this->placeholders[$k] : static::numberToExcelColumn($i, true);
             $column = str_replace(['[', ']'], '', $k);
-            $columns[$column] = isset($excel_row[$column_name]) ? trim($excel_row[$column_name]) : null;
+            $data = isset($excel_row[$column_name]) ? trim($excel_row[$column_name]) : null;
+            $columns[$column] = strtolower($data) === 'null' ? null : $data;
             $i++;
         }
 
@@ -576,5 +579,24 @@ trait ExcelReaderTrait
         }
 
         return $num;
+    }
+
+    /**
+     * @param string $data
+     * @return string|null
+     * @throws \Exception
+     */
+    public static function getDateColumnData($data)
+    {
+        if (empty($data)) {
+            return null;
+        }
+        if (is_numeric($data)) {
+            $data = Date::excelToDateTimeObject($data)->format('Y-m-d');
+        } else {
+            $data = DateUtils::formatDate($data, 'Y-m-d', 'UTC');
+        }
+
+        return $data;
     }
 }
