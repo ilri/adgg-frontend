@@ -2,6 +2,7 @@
 
 namespace backend\modules\core\models;
 
+use common\helpers\DbUtils;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
@@ -273,5 +274,30 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     public static function getDefinedType(): int
     {
         return TableAttribute::TYPE_ATTRIBUTE;
+    }
+
+    /**
+     * @param integer $durationType
+     * @param bool|string $sum
+     * @param array $filters array key=>$value pair where key is the attribute name and value is the attribute value
+     * @param string $dateField
+     * @param null|string $from
+     * @param null|string $to
+     * @return int
+     * @throws \yii\base\NotSupportedException
+     */
+    public static function getDashboardStats($durationType, $sum = false, $filters = [], $dateField = 'created_at', $from = null, $to = null)
+    {
+        $condition = '';
+        $params = [];
+        list($condition, $params) = static::appendOrgSessionIdCondition($condition, $params, false);
+        if (!empty($filters)) {
+            foreach ($filters as $k => $v) {
+                if (!(empty($v) && strlen($v) == 0)) {
+                    list($condition, $params) = DbUtils::appendCondition($k, $v, $condition, $params);
+                }
+            }
+        }
+        return static::getStats($durationType, $condition, $params, $sum, $dateField, $from, $to);
     }
 }

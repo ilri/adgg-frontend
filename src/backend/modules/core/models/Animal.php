@@ -4,6 +4,7 @@ namespace backend\modules\core\models;
 
 use backend\modules\conf\models\NumberingFormat;
 use common\helpers\DateUtils;
+use common\helpers\DbUtils;
 use common\helpers\FileManager;
 use common\helpers\Lang;
 use common\helpers\Utils;
@@ -675,5 +676,30 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             return $label;
         }
         return null;
+    }
+
+    /**
+     * @param integer $durationType
+     * @param bool|string $sum
+     * @param array $filters array key=>$value pair where key is the attribute name and value is the attribute value
+     * @param string $dateField
+     * @param null|string $from
+     * @param null|string $to
+     * @return int
+     * @throws \yii\base\NotSupportedException
+     */
+    public static function getDashboardStats($durationType, $sum = false, $filters = [], $dateField = 'created_at', $from = null, $to = null)
+    {
+        $condition = '';
+        $params = [];
+        list($condition, $params) = static::appendOrgSessionIdCondition($condition, $params, false);
+        if (!empty($filters)) {
+            foreach ($filters as $k => $v) {
+                if (!(empty($v) && strlen($v) == 0)) {
+                    list($condition, $params) = DbUtils::appendCondition($k, $v, $condition, $params);
+                }
+            }
+        }
+        return static::getStats($durationType, $condition, $params, $sum, $dateField, $from, $to);
     }
 }
