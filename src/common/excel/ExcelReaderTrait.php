@@ -583,18 +583,20 @@ trait ExcelReaderTrait
 
     /**
      * @param string $data
+     * @param string $format
+     * @param string $timezone
      * @return string|null
      * @throws \Exception
      */
-    public static function getDateColumnData($data)
+    public static function getDateColumnData($data, $format = 'Y-m-d',$timezone='UTC')
     {
         if (empty($data)) {
             return null;
         }
         if (is_numeric($data)) {
-            $data = Date::excelToDateTimeObject($data)->format('Y-m-d');
+            $data = Date::excelToDateTimeObject($data)->format($format);
         } else {
-            $data = DateUtils::formatDate($data, 'Y-m-d', 'UTC');
+            $data = DateUtils::formatDate($data, $format, $timezone);
         }
 
         return $data;
