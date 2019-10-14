@@ -23,7 +23,7 @@ trait UploadExcelTrait
      * @param array $redirectUrlParams
      * @return false|string
      */
-    public function uploadExcel(ExcelUploadForm $form, $redirectUrlRoute = 'index', $redirectUrlParams = [])
+    public function uploadExcelWeb(ExcelUploadForm $form, $redirectUrlRoute = 'index', $redirectUrlParams = [])
     {
         if ($form->load(Yii::$app->request->post())) {
             if ($form->validate() && $form->addToExcelQueue()) {
@@ -49,5 +49,18 @@ trait UploadExcelTrait
             }
         }
         return false;
+    }
+
+    public function uploadExcelConsole(ExcelUploadForm $form, $redirectUrlRoute = 'index', $redirectUrlParams = [])
+    {
+        if ($form->load(Yii::$app->request->post())) {
+            if ($form->validate() && $form->addToExcelQueue()) {
+                Yii::$app->session->setFlash('success', Lang::t('File queued for processing. You will get notification once the file processing is completed.'));
+                $redirectUrl = ArrayHelper::merge([$redirectUrlRoute], $redirectUrlParams);
+                return json_encode(['success' => true, 'redirectUrl' => Url::to($redirectUrl)]);
+            } else {
+                return json_encode(['success' => false, 'message' => $form->getErrors()]);
+            }
+        }
     }
 }

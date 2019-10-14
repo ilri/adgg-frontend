@@ -12,6 +12,7 @@ namespace backend\modules\core\models;
 use backend\modules\auth\Session;
 use common\helpers\DbUtils;
 use common\helpers\Utils;
+use yii\db\Expression;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 
@@ -24,6 +25,9 @@ use yii\web\NotFoundHttpException;
  * @property int $district_id
  * @property int $ward_id
  * @property int $village_id
+ * @property float $latitude
+ * @property float $longitude
+ * @property string $latlng
  * @property Organization $org
  * @property OrganizationUnits $region
  * @property OrganizationUnits $district
@@ -199,5 +203,12 @@ trait OrganizationUnitDataTrait
     public function showVillageField(): bool
     {
         return !Session::isOrganization() || Session::isCountryUser() || Session::isRegionUser() || Session::isDistrictUser() || Session::isWardUser();
+    }
+
+    protected function setLocationData()
+    {
+        if (($this->hasAttribute('latitude') && !empty($this->latitude)) && ($this->hasAttribute('longitude') && !empty($this->longitude))) {
+            $this->latlng = new Expression("ST_GeomFromText('POINT({$this->latitude} {$this->longitude})')");
+        }
     }
 }

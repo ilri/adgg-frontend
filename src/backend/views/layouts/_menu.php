@@ -26,6 +26,12 @@ use yii\helpers\Url;
                 </a>
             </li>
             <li class="kt-menu__item kt-menu__item--submenu">
+                <a href="<?= Url::to(['/core/herd/index']) ?>" class="kt-menu__link">
+                    <i class="kt-menu__link-icon far fa-cow"></i>
+                    <span class="kt-menu__link-text">HERDS</span>
+                </a>
+            </li>
+            <li class="kt-menu__item kt-menu__item--submenu">
                 <a href="<?= Url::to(['/core/farm/index']) ?>" class="kt-menu__link">
                     <i class="kt-menu__link-icon far fa-tractor"></i>
                     <span class="kt-menu__link-text">FARMS</span>

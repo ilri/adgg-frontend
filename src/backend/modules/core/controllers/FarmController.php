@@ -14,6 +14,7 @@ use backend\modules\auth\Session;
 use backend\modules\core\Constants;
 use backend\modules\core\forms\UploadFarms;
 use backend\modules\core\models\Farm;
+use common\controllers\UploadExcelTrait;
 use common\helpers\Lang;
 use common\helpers\Url;
 use Yii;
@@ -21,6 +22,8 @@ use yii\db\Exception;
 
 class FarmController extends Controller
 {
+    use UploadExcelTrait;
+
     public function init()
     {
         parent::init();
@@ -116,13 +119,9 @@ class FarmController extends Controller
         $this->hasPrivilege(Acl::ACTION_CREATE);
 
         $form = new UploadFarms(Farm::class);
-        if ($form->load(Yii::$app->request->post())) {
-            if ($form->validate() && $form->addToExcelQueue()) {
-                Yii::$app->session->setFlash('success', Lang::t('File queued for processing. You will get notification once the file processing is completed.'));
-                return json_encode(['success' => true, 'redirectUrl' => Url::to(['index'])]);
-            } else {
-                return json_encode(['success' => false, 'message' => $form->getErrors()]);
-            }
+        $resp = $this->uploadExcelConsole($form, 'index', []);
+        if ($resp !== false) {
+            return $resp;
         }
 
         return $this->render('upload', [

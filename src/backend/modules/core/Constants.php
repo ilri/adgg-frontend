@@ -21,6 +21,7 @@ class Constants
     const RES_VILLAGE = 'VILLAGE';
     const RES_CLIENT = 'CLIENT';
     const RES_FARM = 'FARM';
+    const RES_HERD = 'HERD';
     const RES_ANIMAL = 'ANIMAL';
     const RES_ANIMAL_EVENTS = 'ANIMAL_EVENTS';
     const RES_ODK_JSON = 'ODK_JSON';
