@@ -67,10 +67,10 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     public function rules()
     {
         return [
-            [['farmer_name', 'org_id', 'region_id', 'district_id', 'ward_id'], 'required'],
+            [['farmer_name', 'org_id'], 'required'],
             [['name'], 'required', 'except' => [self::SCENARIO_UPLOAD]],
             [['org_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'field_agent_id', 'is_active', 'farmer_is_hh_head'], 'safe'],
-            [['latitude', 'latitude'], 'number'],
+            [['latitude', 'latitude','phone'], 'number'],
             [['code', 'name', 'project', 'field_agent_name', 'farmer_name'], 'string', 'max' => 128],
             [['phone'], 'string', 'max' => 20, 'except' => [self::SCENARIO_UPLOAD]],
             [['email', 'map_address'], 'string', 'max' => 255],

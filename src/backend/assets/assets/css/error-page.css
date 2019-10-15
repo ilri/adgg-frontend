@@ -1,0 +1,25 @@
+#error-unit {
+    padding: 30px 0;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 13em;
+    text-align: center;
+    color: #212529;
+}
+
+#error-unit i {
+    color: #5b206e;
+}
+
+#error-unit h1 {
+    font-size: 36px;
+    line-height: 42px;
+}
+
+#error-unit a{
+    color: #38997a;
+}
+
+#error-unit .text-gradient{
+    color: #38997a;
+}

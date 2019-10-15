@@ -9,12 +9,15 @@
 namespace backend\modules\core\controllers;
 
 
+use backend\modules\auth\Acl;
 use backend\modules\core\Constants;
+use backend\modules\core\forms\UploadHerds;
 use backend\modules\core\models\AnimalHerd;
+use common\controllers\UploadExcelTrait;
 
 class HerdController extends Controller
 {
-    use SessionTrait;
+    use SessionTrait, UploadExcelTrait;
 
     public function init()
     {
@@ -43,6 +46,27 @@ class HerdController extends Controller
         return $this->render('index', [
             'searchModel' => $searchModel,
         ]);
+    }
+
+    public function actionUpload()
+    {
+        $this->hasPrivilege(Acl::ACTION_CREATE);
+
+        $form = new UploadHerds(AnimalHerd::class);
+        $resp = $this->uploadExcelConsole($form, 'index', []);
+        if ($resp !== false) {
+            return $resp;
+        }
+
+        return $this->render('upload', [
+            'model' => $form,
+        ]);
+    }
+
+    public function actionUploadPreview()
+    {
+        $form = new UploadHerds(AnimalHerd::class);
+        return $form->previewAction();
     }
 
 }

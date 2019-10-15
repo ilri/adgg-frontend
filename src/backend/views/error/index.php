@@ -10,7 +10,7 @@ use yii\helpers\Html;
 $this->title = $name;
 /* @var $this \yii\web\View */
 /* @var $content string */
-\backend\assets\ModulesAsset::register($this);
+\backend\assets\ErrorPageAsset::register($this);
 
 
 if ($exception instanceof \yii\web\HttpException) {
@@ -34,9 +34,11 @@ if ($exception instanceof \yii\web\HttpException) {
     <?php $this->beginBody() ?>
     <div class="main-container">
         <div id="error-unit">
-            <i class="fa fa-frown-o"></i>
+            <i class="fa fa-frown"></i>
 
-            <h1><?= Html::encode($name) ?></h1>
+            <h1 style="font-size: 5rem;font-weight: 700;margin-bottom: 2rem;">
+                ERROR <span class="text-gradient"><?= $code ?></span>
+            </h1>
 
             <h3 class="uk-animation-slide-right">
                 <?php if ($code == 404): ?>
@@ -48,12 +50,19 @@ if ($exception instanceof \yii\web\HttpException) {
                 <?php else: ?>
                     Oops,something wrong happened. Our engineers will fix this as soon as possible.
                 <?php endif; ?>
-                <br/><br/><a href="<?= Yii::$app->homeUrl ?>">Go Back Home</a>
+                <br/><br/>
+                <a class="" href="<?= Yii::$app->homeUrl ?>">Go Back Home</a>
             </h3>
             <?php if (YII_DEBUG): ?>
-                <code>
-                    <pre><?= nl2br(Html::encode($exception->getTraceAsString())) ?></pre>
-                </code>
+                <div class="card" style="font-size: 1rem;">
+                    <div class="card-body" style="max-height: 30rem;overflow: auto">
+                        <pre style="text-align: left;">
+                            <code>
+                                <?= nl2br(Html::encode($exception->getTraceAsString())) ?>
+                            </code>
+                        </pre>
+                    </div>
+                </div>
             <?php endif; ?>
         </div>
     </div>

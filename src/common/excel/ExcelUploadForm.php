@@ -13,12 +13,26 @@ use backend\modules\core\models\ExcelImport;
 use common\helpers\DateUtils;
 use common\models\ActiveRecord;
 use common\models\Model;
+use console\jobs\JobTrait;
+use Yii;
+use yii\base\Exception;
 use yii\base\InvalidConfigException;
+use yii\queue\JobInterface;
 use yii\queue\Queue;
 
-class ExcelUploadForm extends Model
+/**
+ * Class ExcelUploadForm
+ * @package common\excel
+ */
+class ExcelUploadForm extends Model implements JobInterface
 {
     use ExcelReaderTrait;
+    use JobTrait;
+
+    /**
+     * @var string|int
+     */
+    public $_uploadType;
 
     /**
      * @var string|ActiveRecord
@@ -64,7 +78,6 @@ class ExcelUploadForm extends Model
         $this->saveExcelData();
         $time_end = microtime(true);
         $executionTime = round($time_end - $time_start, 2);
-
         $queueModel = ExcelImport::loadModel($this->itemId);
         $queueModel->is_processed = 1;
         $queueModel->processed_at = DateUtils::mysqlTimestamp();
@@ -73,5 +86,31 @@ class ExcelUploadForm extends Model
         $queueModel->success_message = $this->getSavedRows();
         $queueModel->processing_duration_seconds = $executionTime;
         $queueModel->save(false);
+    }
+
+    public function addToExcelQueue()
+    {
+        try {
+            /* @var $queue \yii\queue\cli\Queue */
+            $this->saveFile();
+            $queue = Yii::$app->queue;
+            $this->setUploadType();
+            $importQueue = ExcelImport::addToQueue($this->_uploadType, $this->file, $this->org_id ?? null);
+            $this->itemId = $importQueue->id;
+            $this->created_by = $importQueue->created_by;
+            $id = $queue->push($this);
+
+            return $id;
+        } catch (Exception $e) {
+            Yii::error($e->getMessage());
+        }
+    }
+
+    /**
+     * @param int $nRow
+     */
+    protected function updateCurrentProcessedRow($nRow)
+    {
+        ExcelImport::updateAll(['current_processed_row' => $nRow], ['id' => $this->itemId]);
     }
 }

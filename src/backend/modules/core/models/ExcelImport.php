@@ -6,7 +6,6 @@ use common\helpers\Lang;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
-use Yii;
 
 /**
  * This is the model class for table "core_excel_import".
@@ -24,6 +23,7 @@ use Yii;
  * @property float $processing_duration_seconds
  * @property string $created_at
  * @property int $created_by
+ * @property int $current_processed_row
  */
 class ExcelImport extends ActiveRecord implements ActiveSearchInterface
 {
@@ -31,6 +31,8 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
 
     const TYPE_FARM_DATA = 1;
     const TYPE_ANIMAL_DATA = 10;
+    const TYPE_HERD_DATA = 20;
+    const TYPE_ANIMAL_EVENT_MILK = 30;
 
     /**
      * {@inheritdoc}

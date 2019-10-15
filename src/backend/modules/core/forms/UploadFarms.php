@@ -9,7 +9,6 @@ namespace backend\modules\core\forms;
 
 
 use backend\modules\auth\models\Users;
-use backend\modules\auth\Session;
 use backend\modules\core\models\ExcelImport;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\Organization;
@@ -20,16 +19,11 @@ use common\helpers\DateUtils;
 use common\helpers\Lang;
 use common\helpers\Msisdn;
 use console\jobs\JobInterface;
-use console\jobs\JobTrait;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use Yii;
-use yii\base\Exception;
-use yii\queue\Queue;
 
 class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterface
 {
-
-    use JobTrait;
     /**
      * @var int
      */
@@ -90,7 +84,7 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterfa
 
         foreach ($batch as $k => $excel_row) {
             $row = $this->getExcelRowColumns($excel_row, $columns);
-            if (empty($row)){
+            if (empty($row)) {
                 continue;
             }
             if (!empty($row['reg_date'])) {
@@ -250,21 +244,11 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterfa
         return Msisdn::format($number, $this->orgModel->dialing_code);
     }
 
-    public function addToExcelQueue()
+    /**
+     * @return string|int
+     */
+    public function setUploadType()
     {
-        try {
-            /* @var $queue \yii\queue\cli\Queue */
-            $this->saveFile();
-            $queue = Yii::$app->queue;
-            $importQueue = ExcelImport::addToQueue(ExcelImport::TYPE_FARM_DATA, $this->file, $this->org_id);
-            $this->itemId = $importQueue->id;
-            $this->created_by = $importQueue->created_by;
-            $id = $queue->push($this);
-
-            return $id;
-        } catch (Exception $e) {
-            Yii::error($e->getMessage());
-        }
+        $this->_uploadType = ExcelImport::TYPE_FARM_DATA;
     }
-
 }

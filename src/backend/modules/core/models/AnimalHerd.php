@@ -2,6 +2,7 @@
 
 namespace backend\modules\core\models;
 
+use common\excel\ImportActiveRecordInterface;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
@@ -12,6 +13,7 @@ use common\models\ActiveSearchTrait;
  * @property int $id
  * @property string $name
  * @property string $herd_id
+ * @property string $herd_code
  * @property int $farm_id
  * @property string $uuid
  * @property int $org_id
@@ -27,12 +29,21 @@ use common\models\ActiveSearchTrait;
  * @property int $created_by
  * @property string $updated_at
  * @property int $updated_by
+ * @property string $reg_date
+ * @property string $project
  *
  * @property Farm $farm
  */
-class AnimalHerd extends ActiveRecord implements ActiveSearchInterface
+class AnimalHerd extends ActiveRecord implements ActiveSearchInterface, ImportActiveRecordInterface
 {
     use ActiveSearchTrait, OrganizationUnitDataTrait;
+
+    public $farmerName;
+    public $farmerPhone;
+    public $farmerEmail;
+
+    const SCENARIO_UPLOAD = 'upload';
+
 
     /**
      * {@inheritdoc}
@@ -48,12 +59,15 @@ class AnimalHerd extends ActiveRecord implements ActiveSearchInterface
     public function rules()
     {
         return [
-            [['herd_id', 'farm_id'], 'required'],
+            [['herd_id', 'farm_id', 'name'], 'required'],
             [['farm_id', 'org_id', 'region_id', 'district_id', 'ward_id', 'village_id'], 'integer'],
             [['name', 'map_address'], 'string', 'max' => 255],
-            [['herd_id'], 'string', 'max' => 128],
+            [['herd_id', 'project'], 'string', 'max' => 128],
             [['latitude', 'longitude'], 'number'],
             [['farm_id'], 'exist', 'skipOnError' => true, 'targetClass' => Farm::class, 'targetAttribute' => ['farm_id' => 'id']],
+            [['reg_date'], 'date', 'format' => 'php:Y-m-d'],
+            [['herd_id'], 'unique', 'targetAttribute' => ['org_id', 'herd_id'], 'message' => '{attribute} already exists.'],
+            [['herd_code'], 'unique', 'targetAttribute' => ['org_id', 'herd_code'], 'message' => '{attribute} already exists.'],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
     }
@@ -65,15 +79,16 @@ class AnimalHerd extends ActiveRecord implements ActiveSearchInterface
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
+            'name' => 'Herd Name',
             'herd_id' => 'Herd ID',
+            'herd_code' => 'Herd Code',
             'farm_id' => 'Farm ID',
             'uuid' => 'Uuid',
-            'org_id' => 'Org ID',
-            'region_id' => 'Region ID',
-            'district_id' => 'District ID',
-            'ward_id' => 'Ward ID',
-            'village_id' => 'Village ID',
+            'org_id' => 'Country',
+            'region_id' => 'Region',
+            'district_id' => 'District',
+            'ward_id' => 'Ward',
+            'village_id' => 'Village',
             'latitude' => 'Latitude',
             'longitude' => 'Longitude',
             'map_address' => 'Map Address',
@@ -82,6 +97,11 @@ class AnimalHerd extends ActiveRecord implements ActiveSearchInterface
             'created_by' => 'Created By',
             'updated_at' => 'Updated At',
             'updated_by' => 'Updated By',
+            'reg_date' => 'Registration date',
+            'project' => 'Project',
+            'farmerName' => 'Farmer Name',
+            'farmerPhone' => 'Farmer Phone',
+            'farmerEmail' => 'Farmer Email',
         ];
     }
 
@@ -101,6 +121,8 @@ class AnimalHerd extends ActiveRecord implements ActiveSearchInterface
         return [
             ['name', 'name'],
             ['herd_id', 'herd_id'],
+            ['herd_code', 'herd_code'],
+            ['project', 'project'],
             'org_id',
             'region_id',
             'district_id',
@@ -123,5 +145,25 @@ class AnimalHerd extends ActiveRecord implements ActiveSearchInterface
             return true;
         }
         return false;
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getExcelColumns()
+    {
+        return [
+            'herd_id',
+            'herd_code',
+            'name',
+            'reg_date',
+            'farmerName',
+            'farmerPhone',
+            'farmerEmail',
+            'project',
+            'latitude',
+            'longitude',
+        ];
     }
 }

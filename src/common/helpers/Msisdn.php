@@ -20,6 +20,9 @@ class Msisdn
     {
         //removes all non-numeric characters
         $phone = Str::removeNonNumericCharacters($phone);
+        if (empty($phone)) {
+            return null;
+        }
         //removes any leading zero
         $phone = (int)$phone;
         //25407....

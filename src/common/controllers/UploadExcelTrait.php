@@ -62,5 +62,7 @@ trait UploadExcelTrait
                 return json_encode(['success' => false, 'message' => $form->getErrors()]);
             }
         }
+
+        return false;
     }
 }

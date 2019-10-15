@@ -21,7 +21,6 @@ use common\helpers\Lang;
 use console\jobs\JobInterface;
 use console\jobs\JobTrait;
 use Yii;
-use yii\base\Exception;
 
 class UploadAnimals extends ExcelUploadForm implements ImportInterface, JobInterface
 {
@@ -66,23 +65,6 @@ class UploadAnimals extends ExcelUploadForm implements ImportInterface, JobInter
             'org_id' => Lang::t('Country'),
             'type' => Lang::t('Type'),
         ]);
-    }
-
-    public function addToExcelQueue()
-    {
-        try {
-            /* @var $queue \yii\queue\cli\Queue */
-            $this->saveFile();
-            $queue = Yii::$app->queue;
-            $importQueue = ExcelImport::addToQueue(ExcelImport::TYPE_ANIMAL_DATA, $this->file, $this->org_id);
-            $this->itemId = $importQueue->id;
-            $this->created_by = $importQueue->created_by;
-            $id = $queue->push($this);
-
-            return $id;
-        } catch (Exception $e) {
-            Yii::error($e->getMessage());
-        }
     }
 
     /**
@@ -196,5 +178,13 @@ class UploadAnimals extends ExcelUploadForm implements ImportInterface, JobInter
                 Yii::warning($log);
             }
         }
+    }
+
+    /**
+     * @return string|int
+     */
+    public function setUploadType()
+    {
+       $this->_uploadType=ExcelImport::TYPE_ANIMAL_DATA;
     }
 }

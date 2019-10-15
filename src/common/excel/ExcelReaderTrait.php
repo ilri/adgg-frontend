@@ -5,8 +5,8 @@ namespace common\excel;
 use common\helpers\DateUtils;
 use common\helpers\FileManager;
 use common\helpers\Lang;
-use common\helpers\Utils;
 use common\models\ActiveRecord;
+use DateTime;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Yii;
@@ -295,10 +295,11 @@ trait ExcelReaderTrait
      */
     protected function getSheetData($chunkFilter, $chunkSize)
     {
+        $endRow = ($this->start_row + $chunkSize) - 1;
         $chunkFilter->setRows($this->start_row, $chunkSize);
         $this->setObjSpreadsheet();
         $activeSheet = $this->_objSpreadsheet->getActiveSheet();
-        $sheetData = $this->getSheetDataToArray($activeSheet, null, true, true, true);
+        $sheetData = $this->getSheetDataToArray($activeSheet, $endRow, null, true, true, true);
         foreach ($sheetData as $k => $row) {
             if ($k < $this->start_row) {
                 unset($sheetData[$k]);
@@ -311,7 +312,7 @@ trait ExcelReaderTrait
     }
 
 
-    protected function getSheetDataToArray(Worksheet $activeSheet, $nullValue = null, $calculateFormulas = true, $formatData = true, $returnCellRef = false)
+    protected function getSheetDataToArray(Worksheet $activeSheet, $endRow, $nullValue = null, $calculateFormulas = true, $formatData = true, $returnCellRef = false)
     {
         // Garbage collect...
         $activeSheet->garbageCollect();
@@ -320,8 +321,7 @@ trait ExcelReaderTrait
         $minCol = $this->start_column;
         $minRow = !empty($this->start_row) ? $this->start_row : 1;
         $maxCol = $this->end_column;
-        $maxRow = !empty($this->end_row) ? $this->end_row : $activeSheet->getHighestRow();
-
+        $maxRow = !empty($endRow) ? $endRow : $activeSheet->getHighestRow();
         // Return
         return $activeSheet->rangeToArray($minCol . $minRow . ':' . $maxCol . $maxRow, $nullValue, $calculateFormulas, $formatData, $returnCellRef);
     }
@@ -387,7 +387,11 @@ trait ExcelReaderTrait
         for ($this->start_row; $this->start_row <= $this->end_row; $this->start_row += $batch_size) {
             $sheetData = $this->getSheetData($chunkFilter, $batch_size);
             foreach ($this->getExcelInsertBatches($sheetData) as $batch) {
-                $this->processExcelBatchData($batch);
+                try {
+                    $this->processExcelBatchData($batch);
+                } catch (\Exception $e) {
+                    Yii::$app->controller->stdout("{$e->getMessage()}\n");
+                }
             }
             if (count($sheetData) < $batch_size)
                 break;
@@ -503,6 +507,7 @@ trait ExcelReaderTrait
      */
     public function saveExcelRaw(ActiveRecord $model, $rowData, $rowNumber)
     {
+        Yii::$app->controller->stdout("Processing row {$rowNumber}\n");
         foreach ($rowData as $k => $v) {
             if ($model->hasAttribute($k) || property_exists($model, $k)) {
                 $model->{$k} = $v;
@@ -511,10 +516,13 @@ trait ExcelReaderTrait
         $model->enableAuditTrail = false;
         if ($model->save()) {
             $this->_savedRows[$rowNumber] = $rowNumber;
+            Yii::$app->controller->stdout("Row {$rowNumber} saved successfully\n");
             return true;
         } else {
             $errors = $model->getFirstErrors();
-            $this->_failedRows[$rowNumber] = Lang::t('Row {n}: {error}', ['n' => $rowNumber, 'error' => implode(', ', $errors)]);
+            $error = implode(', ', $errors);
+            $this->_failedRows[$rowNumber] = Lang::t('Row {n}: {error}', ['n' => $rowNumber, 'error' => $error]);
+            Yii::$app->controller->stdout("Row {$rowNumber} failed. Error: {$error} \n");
             return false;
         }
     }
@@ -582,23 +590,29 @@ trait ExcelReaderTrait
     }
 
     /**
-     * @param string $data
+     * @param string $dateString
      * @param string $format
      * @param string $timezone
+     * @param null|string $createDateFromFormat
      * @return string|null
      * @throws \Exception
      */
-    public static function getDateColumnData($data, $format = 'Y-m-d',$timezone='UTC')
+    public static function getDateColumnData($dateString, $format = 'Y-m-d', $timezone = 'UTC', $createDateFromFormat = null)
     {
-        if (empty($data)) {
+        if (empty($dateString)) {
             return null;
         }
-        if (is_numeric($data)) {
-            $data = Date::excelToDateTimeObject($data)->format($format);
+        if (is_numeric($dateString)) {
+            $dateString = Date::excelToDateTimeObject($dateString)->format($format);
         } else {
-            $data = DateUtils::formatDate($data, $format, $timezone);
+            if (!empty($createDateFromFormat)) {
+                $date = DateTime::createFromFormat($createDateFromFormat, $dateString);
+                $dateString = $date->format($format);
+            } else {
+                $dateString = DateUtils::formatDate($dateString, $format, $timezone);
+            }
         }
 
-        return $data;
+        return $dateString;
     }
 }

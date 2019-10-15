@@ -34,4 +34,9 @@ interface ImportInterface
      * @return bool
      */
     public function saveExcelRaw(ActiveRecord $model, $rowData, $rowNumber);
+
+    /**
+     * @return string|int
+     */
+    public function setUploadType();
 }
