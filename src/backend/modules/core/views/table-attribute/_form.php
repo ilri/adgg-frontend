@@ -45,7 +45,7 @@ $form = ActiveForm::begin([
     <div class="hidden" id="my-modal-notif"></div>
     <?php if ($model->table_id == ExtendableTable::TABLE_ANIMAL_EVENTS): ?>
         <?= $form->field($model, 'event_type')->widget(Select2::class, [
-            'data' => \backend\modules\core\models\ListType::getListData(),
+            'data' => \backend\modules\core\models\AnimalEvent::eventTypeOptions(false),
             'modal' => true,
             'options' => ['placeholder' => '[select one]'],
             'pluginOptions' => [

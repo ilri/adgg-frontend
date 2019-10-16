@@ -30,6 +30,11 @@ class ExcelUploadForm extends Model implements JobInterface
     use JobTrait;
 
     /**
+     * @var string
+     */
+    public $itemId;
+
+    /**
      * @var string|int
      */
     public $_uploadType;
@@ -42,7 +47,7 @@ class ExcelUploadForm extends Model implements JobInterface
     /**
      * @var ActiveRecord|ImportActiveRecordInterface
      */
-    private $_model;
+    public $targetModel;
 
     /**
      * UploadProductExcel constructor.
@@ -60,9 +65,9 @@ class ExcelUploadForm extends Model implements JobInterface
 
         $this->required_columns = [];
         $className = $this->activeRecordModelClass;
-        $this->_model = new $className();
-        foreach ($this->_model->getExcelColumns() as $column) {
-            $this->file_columns['[' . $column . ']'] = $this->_model->getAttributeLabel($column);
+        $this->targetModel = new $className();
+        foreach ($this->targetModel->getExcelColumns() as $column) {
+            $this->file_columns['[' . $column . ']'] = $this->targetModel->getAttributeLabel($column);
         }
         $this->end_column = static::numberToExcelColumn(count($this->file_columns), true);
     }

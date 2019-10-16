@@ -161,6 +161,7 @@ class UploadAnimals extends ExcelUploadForm implements ImportInterface, JobInter
             return false;
 
         $model = new Animal(['org_id' => $this->org_id, 'type' => $this->type]);
+        $nMax = 0;
         foreach ($data as $n => $row) {
             $newModel = Animal::find()->andWhere([
                 'tag_id' => $row['tag_id'],
@@ -171,13 +172,10 @@ class UploadAnimals extends ExcelUploadForm implements ImportInterface, JobInter
             }
             $newModel->setScenario(Animal::SCENARIO_UPLOAD);
             $this->saveExcelRaw($newModel, $row, $n);
+            $nMax = $n;
         }
 
-        if (!empty($this->getFailedRows())) {
-            foreach ($this->getFailedRows() as $log) {
-                Yii::warning($log);
-            }
-        }
+        $this->updateCurrentProcessedRow($nMax);
     }
 
     /**
@@ -185,6 +183,6 @@ class UploadAnimals extends ExcelUploadForm implements ImportInterface, JobInter
      */
     public function setUploadType()
     {
-       $this->_uploadType=ExcelImport::TYPE_ANIMAL_DATA;
+        $this->_uploadType = ExcelImport::TYPE_ANIMAL_DATA;
     }
 }

@@ -23,9 +23,9 @@ class Constants
     const RES_FARM = 'FARM';
     const RES_HERD = 'HERD';
     const RES_ANIMAL = 'ANIMAL';
-    const RES_ANIMAL_EVENTS = 'ANIMAL_EVENTS';
+    const RES_ANIMAL_EVENTS = 'ANIMAL_EVENT';
     const RES_ODK_JSON = 'ODK_JSON';
+    const RES_EXCEL_FILE = 'EXCEL_UPLOADS';
     //tabs
     const TAB_ALL = 'all';
-
 }

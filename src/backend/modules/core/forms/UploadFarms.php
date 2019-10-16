@@ -34,10 +34,6 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterfa
      */
     public $orgModel;
 
-    /**
-     * @var int
-     */
-    public $itemId;
 
     /**
      * @inheritdoc
@@ -132,6 +128,7 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterfa
             return false;
 
         $model = new Farm(['org_id' => $this->org_id]);
+        $nMax = 0;
         foreach ($data as $n => $row) {
             $newModel = Farm::find()->andWhere([
                 'code' => $row['code'],
@@ -143,13 +140,10 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterfa
             }
             $newModel->setScenario(Farm::SCENARIO_UPLOAD);
             $this->saveExcelRaw($newModel, $row, $n);
+            $nMax = $n;
         }
 
-        if (!empty($this->getFailedRows())) {
-            foreach ($this->getFailedRows() as $log) {
-                Yii::warning($log);
-            }
-        }
+        $this->updateCurrentProcessedRow($nMax);
     }
 
     /**

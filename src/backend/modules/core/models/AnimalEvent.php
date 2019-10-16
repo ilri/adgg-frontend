@@ -2,9 +2,11 @@
 
 namespace backend\modules\core\models;
 
+use common\helpers\Utils;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
+use yii\base\InvalidArgumentException;
 use yii\db\Expression;
 
 /**
@@ -29,12 +31,30 @@ use yii\db\Expression;
  * @property string $updated_at
  * @property int $updated_by
  *
+ * @property float $milkmor
+ * @property float $milkeve
+ * @property float $milkday
+ * @property float $mlkfat
+ * @property float $mlkprot
+ * @property float $milklact
+ * @property float $mlksmc
+ * @property float $milkurea
+ *
  * @property Animal $animal
  * @property AnimalEventValue[] $animalEventValues
  */
 class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAttributeInterface
 {
     use ActiveSearchTrait, OrganizationUnitDataTrait, TableAttributeTrait;
+
+    const EVENT_TYPE_MILKING = 1;
+    const EVENT_TYPE_AI = 2;
+    const EVENT_TYPE_PREGNANCY_DIAGNOSIS = 3;
+    const EVENT_TYPE_SYNCHRONIZATION = 4;
+    const EVENT_TYPE_WEIGHTS = 5;
+    const EVENT_TYPE_HEALTH = 6;
+
+    public $animalTagId;
 
     /**
      * {@inheritdoc}
@@ -52,7 +72,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
         return [
             [['animal_id', 'event_type'], 'required'],
             [['animal_id', 'event_type', 'org_id', 'region_id', 'district_id', 'ward_id', 'village_id'], 'integer'],
-            [['event_date'], 'date', 'format' => 'Y-m-d'],
+            [['event_date'], 'date', 'format' => 'php:Y-m-d'],
             [['latitude', 'longitude'], 'number'],
             [['map_address', 'uuid'], 'string', 'max' => 255],
             [['animal_id'], 'exist', 'skipOnError' => true, 'targetClass' => Animal::class, 'targetAttribute' => ['animal_id' => 'id']],
@@ -65,15 +85,15 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
      */
     public function attributeLabels()
     {
-        return [
+        $labels = [
             'id' => 'ID',
-            'animal_id' => 'Animal ID',
+            'animal_id' => 'Animal Tag',
             'event_type' => 'Event Type',
-            'org_id' => 'Org ID',
-            'region_id' => 'Region ID',
-            'district_id' => 'District ID',
-            'ward_id' => 'Ward ID',
-            'village_id' => 'Village ID',
+            'org_id' => 'Country',
+            'region_id' => 'Region',
+            'district_id' => 'District',
+            'ward_id' => 'Ward',
+            'village_id' => 'Village',
             'event_date' => 'Event Date',
             'latitude' => 'Latitude',
             'longitude' => 'Longitude',
@@ -84,7 +104,10 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             'created_by' => 'Created By',
             'updated_at' => 'Updated At',
             'updated_by' => 'Updated By',
+            'animalTagId' => 'Animal Tag Id',
         ];
+
+        return array_merge($labels, $this->getOtherAttributeLabels());
     }
 
     /**
@@ -123,9 +146,13 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     {
         if (parent::beforeSave($insert)) {
             $this->ignoreAdditionalAttributes = true;
-            if (!empty($this->latitude) && !empty($this->longitude)) {
-                $this->latlng = new Expression("ST_GeomFromText('POINT({$this->latitude} {$this->longitude})')");
-            }
+            $this->setLocationData();
+            $this->org_id = $this->animal->org_id;
+            $this->region_id = $this->animal->region_id;
+            $this->district_id = $this->animal->district_id;
+            $this->ward_id = $this->animal->ward_id;
+            $this->village_id = $this->animal->village_id;
+
             return true;
         }
         return false;
@@ -138,7 +165,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
 
         foreach ($this->getAttributes() as $attribute => $val) {
             if ($this->isAdditionalAttribute($attribute)) {
-                $this->saveAdditionalAttributeValue($attribute);
+                $this->saveAdditionalAttributes(AnimalEventValue::class, 'event_id');
             }
         }
     }
@@ -146,7 +173,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     public function afterFind()
     {
         parent::afterFind();
-        $this->loadAdditionalAttributeValues(AnimalAttributeValue::class, 'animal_id');
+        $this->loadAdditionalAttributeValues(AnimalEventValue::class, 'event_id');
     }
 
     /**
@@ -166,21 +193,42 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     }
 
     /**
-     * @param string $attribute
-     * @return bool
-     * @throws \Exception
+     * @param int $int
+     * @return string
      */
-    public function saveAdditionalAttributeValue(string $attribute): bool
+    public static function decodeEventType($int): string
     {
-        if (null === $this->{$attribute}) {
-            return false;
+        switch ($int) {
+            case self::EVENT_TYPE_MILKING:
+                return 'Milking';
+            case self::EVENT_TYPE_AI:
+                return 'Insemination';
+            case self::EVENT_TYPE_PREGNANCY_DIAGNOSIS:
+                return 'Pregnancy Diagnosis';
+            case self::EVENT_TYPE_SYNCHRONIZATION:
+                return 'Synchronization';
+            case self::EVENT_TYPE_WEIGHTS:
+                return 'Weights';
+            case self::EVENT_TYPE_HEALTH:
+                return 'Health';
+            default:
+                throw new InvalidArgumentException();
         }
-        $attributeId = TableAttribute::getAttributeId(static::getDefinedTableId(), $attribute);
-        $model = AnimalEventValue::find()->andWhere(['event_id' => $this->id, 'attribute_id' => $attributeId])->one();
-        if (null === $model) {
-            $model = new AnimalEventValue(['event_id' => $this->id, 'attribute_id' => $attributeId]);
-        }
-        $model->attribute_value = $this->{$attribute};
-        return $model->save(false);
+    }
+
+    /**
+     * @param mixed $prompt
+     * @return array
+     */
+    public static function eventTypeOptions($prompt = false)
+    {
+        return Utils::appendDropDownListPrompt([
+            self::EVENT_TYPE_MILKING => static::decodeEventType(self::EVENT_TYPE_MILKING),
+            self::EVENT_TYPE_AI => static::decodeEventType(self::EVENT_TYPE_AI),
+            self::EVENT_TYPE_PREGNANCY_DIAGNOSIS => static::decodeEventType(self::EVENT_TYPE_PREGNANCY_DIAGNOSIS),
+            self::EVENT_TYPE_SYNCHRONIZATION => static::decodeEventType(self::EVENT_TYPE_SYNCHRONIZATION),
+            self::EVENT_TYPE_WEIGHTS => static::decodeEventType(self::EVENT_TYPE_WEIGHTS),
+            self::EVENT_TYPE_HEALTH => static::decodeEventType(self::EVENT_TYPE_HEALTH),
+        ], $prompt);
     }
 }

@@ -2,10 +2,13 @@
 
 namespace backend\modules\core\models;
 
+use common\helpers\FileManager;
 use common\helpers\Lang;
+use common\helpers\Utils;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
+use yii\base\InvalidArgumentException;
 
 /**
  * This is the model class for table "core_excel_import".
@@ -24,6 +27,7 @@ use common\models\ActiveSearchTrait;
  * @property string $created_at
  * @property int $created_by
  * @property int $current_processed_row
+ * @property string $error_csv
  */
 class ExcelImport extends ActiveRecord implements ActiveSearchInterface
 {
@@ -73,6 +77,9 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
             'success_message' => 'Success Message',
             'created_at' => 'Created At',
             'created_by' => 'Created By',
+            'current_processed_row' => 'Current Processed Row',
+            'processing_duration_seconds' => 'Processing Duration (Sec)',
+
         ];
     }
 
@@ -130,5 +137,95 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
         $warningMsg .= '</ul>';
 
         return $warningMsg;
+    }
+
+    /**
+     * @param int $intVal
+     * @return string
+     */
+    public static function decodeType($intVal): string
+    {
+        switch ($intVal) {
+            case self::TYPE_FARM_DATA:
+                return 'Farm Data';
+            case self::TYPE_ANIMAL_DATA:
+                return 'Animal Data';
+            case self::TYPE_HERD_DATA:
+                return 'Herd Data';
+            case self::TYPE_ANIMAL_EVENT_MILK:
+                return 'Milking Data';
+            default:
+                throw new InvalidArgumentException();
+
+        }
+    }
+
+    /**
+     * @param mixed $prompt
+     * @return array
+     */
+    public static function typeOptions($prompt = false)
+    {
+        return Utils::appendDropDownListPrompt([
+            self::TYPE_FARM_DATA => static::decodeType(self::TYPE_FARM_DATA),
+            self::TYPE_ANIMAL_DATA => static::decodeType(self::TYPE_ANIMAL_DATA),
+            self::TYPE_HERD_DATA => static::decodeType(self::TYPE_HERD_DATA),
+            self::TYPE_ANIMAL_EVENT_MILK => static::decodeType(self::TYPE_ANIMAL_EVENT_MILK),
+        ], $prompt);
+    }
+
+    /**
+     * @return string
+     */
+    public function getDecodedType()
+    {
+        return static::decodeType($this->type);
+    }
+
+    public function getErrorCsvBaseDir()
+    {
+        return FileManager::createDir(FileManager::getUploadsDir() . DIRECTORY_SEPARATOR . 'excel-upload-errors');
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getCSVErrorFilePath()
+    {
+        $path = null;
+        if (empty($this->error_csv))
+            return null;
+
+        $file = $this->getErrorCsvBaseDir() . DIRECTORY_SEPARATOR . $this->error_csv;
+        if (file_exists($file)) {
+            $path = $file;
+        }
+
+        return $path;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBaseDir()
+    {
+        return FileManager::createDir(FileManager::getUploadsDir() . DIRECTORY_SEPARATOR . 'excel-uploads');
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getFilePath()
+    {
+        $path = null;
+        if (empty($this->file_name))
+            return null;
+
+        $file = $this->getBaseDir() . DIRECTORY_SEPARATOR . $this->file_name;
+        if (file_exists($file)) {
+            $path = $file;
+        }
+
+        return $path;
     }
 }

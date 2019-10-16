@@ -2,6 +2,7 @@
 
 namespace common\excel;
 
+use backend\modules\core\models\ExcelImport;
 use common\helpers\DateUtils;
 use common\helpers\FileManager;
 use common\helpers\Lang;
@@ -90,7 +91,7 @@ trait ExcelReaderTrait
      * Delete file after processing
      * @var
      */
-    public $delete_file = true;
+    public $delete_file = false;
 
     /**
      * @var
@@ -162,7 +163,7 @@ trait ExcelReaderTrait
      */
     public static function getBaseDir()
     {
-        return FileManager::getTempDir();
+        return FileManager::createDir(FileManager::getUploadsDir() . DIRECTORY_SEPARATOR . 'excel-uploads');
     }
 
     /**
@@ -397,6 +398,8 @@ trait ExcelReaderTrait
                 break;
         }
 
+        $this->createErrorCSV();
+
         if ($this->delete_file)
             @unlink($this->file);
     }
@@ -521,7 +524,7 @@ trait ExcelReaderTrait
         } else {
             $errors = $model->getFirstErrors();
             $error = implode(', ', $errors);
-            $this->_failedRows[$rowNumber] = Lang::t('Row {n}: {error}', ['n' => $rowNumber, 'error' => $error]);
+            $this->_failedRows[$rowNumber] = ['error' => Lang::t('{error}', ['error' => $error]), 'rowData' => $rowData, 'rowNumber' => $rowNumber];
             Yii::$app->controller->stdout("Row {$rowNumber} failed. Error: {$error} \n");
             return false;
         }
@@ -614,5 +617,48 @@ trait ExcelReaderTrait
         }
 
         return $dateString;
+    }
+
+    protected function createErrorCSV()
+    {
+        try {
+            $model = ExcelImport::loadModel($this->itemId);
+            $baseDir = $model->getErrorCsvBaseDir();
+            $failedRows = $this->getFailedRows();
+            if (count($failedRows) > 0) {
+                $failedData = [];
+                $header = [];
+                foreach ($this->targetModel->getExcelColumns() as $column) {
+                    $header[$column] = $this->targetModel->getAttributeLabel($column);
+                }
+                $header['_error_'] = 'Error Message';
+                $failedData[] = $header;
+                foreach ($failedRows as $n => $data) {
+                    $rowData = $data['rowData'];
+                    foreach ($rowData as $k => $v) {
+                        if (!key_exists($k, $header)) {
+                            unset($rowData[$k]);
+                        }
+                    }
+                    $rowData['_error_' . $n] = $data['error'];
+                    $failedData[] = $rowData;
+                }
+
+                $fileName = $model->uuid . '.csv';
+                $filePath = $baseDir . DIRECTORY_SEPARATOR . $fileName;
+                $fp = fopen($filePath, 'wb');
+
+                foreach ($failedData as $fields) {
+                    fputcsv($fp, $fields);
+                }
+
+                fclose($fp);
+
+                $model->error_csv = $fileName;
+                $model->save(false);
+            }
+        } catch (\Exception $e) {
+            Yii::$app->controller->stdout("{$e->getMessage()} \n");
+        }
     }
 }

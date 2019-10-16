@@ -56,6 +56,8 @@ class Controller extends BackendController
                             'typeahead-list',
                             'change-status',
                             'process',
+                            'download-file',
+                            'download-error',
                         ],
                         'allow' => true,
                         'roles' => ['@'],

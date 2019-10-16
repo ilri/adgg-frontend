@@ -134,7 +134,10 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         [
                             'attribute' => 'sire_name',
-                        ]
+                        ],
+                        [
+                            'attribute' => 'bull_straw_id',
+                        ],
                     ],
                 ]) ?>
             </div>
@@ -169,9 +172,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ],
                                 [
                                     'attribute' => 'dam_name',
-                                ],
-                                [
-                                    'attribute' => 'bull_straw_id',
                                 ],
                             ],
                         ]) ?>

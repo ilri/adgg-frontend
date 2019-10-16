@@ -17,9 +17,8 @@ use common\excel\ExcelUploadForm;
 use common\excel\ImportInterface;
 use common\helpers\Lang;
 use common\helpers\Msisdn;
-use console\jobs\JobInterface;
 
-class UploadHerds extends ExcelUploadForm implements ImportInterface, JobInterface
+class UploadHerds extends ExcelUploadForm implements ImportInterface
 {
     /**
      * @var int
@@ -30,11 +29,6 @@ class UploadHerds extends ExcelUploadForm implements ImportInterface, JobInterfa
      * @var Organization
      */
     public $orgModel;
-
-    /**
-     * @var int
-     */
-    public $itemId;
 
     /**
      * @inheritdoc
