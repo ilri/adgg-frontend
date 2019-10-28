@@ -200,6 +200,8 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     public static function decodeEventType($int): string
     {
         switch ($int) {
+            case self::EVENT_TYPE_CALVING:
+                return 'Calving';
             case self::EVENT_TYPE_MILKING:
                 return 'Milking';
             case self::EVENT_TYPE_AI:
@@ -224,6 +226,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     public static function eventTypeOptions($prompt = false)
     {
         return Utils::appendDropDownListPrompt([
+            self::EVENT_TYPE_CALVING => static::decodeEventType(self::EVENT_TYPE_CALVING),
             self::EVENT_TYPE_MILKING => static::decodeEventType(self::EVENT_TYPE_MILKING),
             self::EVENT_TYPE_AI => static::decodeEventType(self::EVENT_TYPE_AI),
             self::EVENT_TYPE_PREGNANCY_DIAGNOSIS => static::decodeEventType(self::EVENT_TYPE_PREGNANCY_DIAGNOSIS),

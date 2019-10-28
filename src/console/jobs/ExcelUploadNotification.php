@@ -50,7 +50,7 @@ class ExcelUploadNotification extends BaseNotification implements JobInterface, 
         if (null === $notifModel) {
             return false;
         }
-        return self::processTemplate($item_id, $template, $notifModel->name);
+        return static::processTemplate($item_id, $template, $notifModel->name);
     }
 
     /**
@@ -60,7 +60,7 @@ class ExcelUploadNotification extends BaseNotification implements JobInterface, 
      * @return array|bool
      * @throws \yii\web\NotFoundHttpException
      */
-    private static function processTemplate($itemId, $messageTemplate, $subjectTemplate = null)
+    public static function processTemplate($itemId, $messageTemplate, $subjectTemplate = null)
     {
         //placeholders:{admin},{file_name},{url}
         $model = ExcelImport::loadModel($itemId);

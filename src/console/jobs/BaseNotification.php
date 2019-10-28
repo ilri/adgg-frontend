@@ -131,7 +131,7 @@ class BaseNotification extends BaseObject
         if (null === $smsTemplateModel) {
             return false;
         }
-        return self::processTemplate($itemId, $smsTemplateModel->template);
+        return static::processTemplate($itemId, $smsTemplateModel->template);
     }
 
     /**
@@ -149,6 +149,6 @@ class BaseNotification extends BaseObject
         if (null === $notifModel) {
             return false;
         }
-        return self::processTemplate($item_id, $template, $notifModel->name);
+        return static::processTemplate($item_id, $template, $notifModel->name);
     }
 }

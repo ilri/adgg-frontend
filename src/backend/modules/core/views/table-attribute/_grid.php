@@ -1,5 +1,7 @@
 <?php
 
+use backend\modules\core\models\AnimalEvent;
+use backend\modules\core\models\ExtendableTable;
 use backend\modules\core\models\TableAttribute;
 use backend\modules\core\models\TableAttributesGroup;
 use common\helpers\Lang;
@@ -28,6 +30,14 @@ use yii\helpers\Url;
         ],
         [
             'attribute' => 'attribute_label',
+        ],
+        [
+            'attribute' => 'event_type',
+            'value' => function (TableAttribute $model) {
+                return AnimalEvent::decodeEventType($model->event_type);
+            },
+            'filter' => AnimalEvent::eventTypeOptions(),
+            'visible' => ExtendableTable::TABLE_ANIMAL_EVENTS,
         ],
         [
             'attribute' => 'group_id',

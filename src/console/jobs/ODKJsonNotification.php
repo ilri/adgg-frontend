@@ -48,7 +48,7 @@ class ODKJsonNotification extends BaseNotification implements JobInterface, Noti
      * @throws \yii\web\NotFoundHttpException
      * @throws \yii\web\ForbiddenHttpException
      */
-    private static function processTemplate($itemId, $messageTemplate, $subjectTemplate = null)
+    public static function processTemplate($itemId, $messageTemplate, $subjectTemplate = null)
     {
         //placeholders:{status},{url}
         $model = OdkJsonQueue::loadModel($itemId, false);
