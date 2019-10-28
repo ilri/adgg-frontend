@@ -27,6 +27,11 @@ abstract class UploadAnimalEvent extends ExcelUploadForm
     public $event_type;
 
     /**
+     * @var string
+     */
+    public $sampleExcelFileName;
+
+    /**
      * @inheritdoc
      */
     public function init()
@@ -40,7 +45,7 @@ abstract class UploadAnimalEvent extends ExcelUploadForm
     public function rules()
     {
         return array_merge($this->excelValidationRules(), [
-            [['org_id', 'event_type'], 'required'],
+            [['org_id', 'event_type','sampleExcelFileName'], 'required'],
         ]);
     }
 

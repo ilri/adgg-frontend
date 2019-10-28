@@ -33,8 +33,34 @@ trait AnimalEventTrait
         $searchModel->_dateFilterTo = $dateFilter['to'];
         $searchModel = $this->setSessionData($searchModel, $org_id, $region_id, $district_id, $ward_id, $village_id);
 
-        return $this->render('index', [
+        $grid = null;
+        switch ($event_type) {
+            case AnimalEvent::EVENT_TYPE_CALVING:
+                $grid = 'calving';
+                break;
+            case AnimalEvent::EVENT_TYPE_MILKING:
+                $grid = 'milking';
+                break;
+            case AnimalEvent::EVENT_TYPE_AI:
+                $grid = 'ai';
+                break;
+            case AnimalEvent::EVENT_TYPE_PREGNANCY_DIAGNOSIS:
+                $grid = 'pregnancy_diagnosis';
+                break;
+            case AnimalEvent::EVENT_TYPE_SYNCHRONIZATION:
+                $grid = 'synchronization';
+                break;
+            case AnimalEvent::EVENT_TYPE_WEIGHTS:
+                $grid = 'weights';
+                break;
+            case AnimalEvent::EVENT_TYPE_HEALTH:
+                $grid = 'health';
+                break;
+        }
+
+        return $this->render('@coreModule/views/animal-event/index', [
             'searchModel' => $searchModel,
+            'grid' => $grid,
         ]);
     }
 }

@@ -19,6 +19,7 @@ class UploadMilkEvent extends UploadAnimalEvent implements ImportInterface
     {
         parent::init();
         $this->event_type = AnimalEvent::EVENT_TYPE_MILKING;
+        $this->sampleExcelFileName = 'milking-event.xlsx';
     }
 
 

@@ -10,7 +10,7 @@ use common\helpers\Lang;
 use yii\bootstrap4\ActiveForm;
 
 /* @var $this \yii\web\View */
-/* @var $model \backend\modules\core\forms\UploadMilkEvent */
+/* @var $model \backend\modules\core\forms\UploadAnimalEvent */
 /* @var $form ActiveForm */
 ?>
 <div class="kt-portlet">
@@ -20,7 +20,7 @@ use yii\bootstrap4\ActiveForm;
         </div>
     </div>
     <?php
-    $formId = 'upload-milking-data-form';
+    $formId = 'upload-animal-event-data-form';
     $form = ActiveForm::begin([
         'id' => $formId,
         'layout' => 'horizontal',
@@ -56,7 +56,7 @@ use yii\bootstrap4\ActiveForm;
                         <?= $this->render('@common/excel/views/uploadExcel', ['model' => $model, 'form_id' => $formId, 'previewUrl' => Url::to(['upload-preview'])]); ?>
                     </div>
                     <div class="col-md-4">
-                        <?= $this->render('@common/excel/views/guide', ['model' => $model, 'sampleUrl' => Url::to(['/helper/download-excel-sample', 'route' => 'herds.xlsx']),]); ?>
+                        <?= $this->render('@common/excel/views/guide', ['model' => $model, 'sampleUrl' => Url::to(['/helper/download-excel-sample', 'route' => $model->sampleExcelFileName]),]); ?>
                     </div>
                 </div>
             </div>
@@ -70,7 +70,8 @@ use yii\bootstrap4\ActiveForm;
                     <button type="submit" class="btn btn-success">
                         <?= Lang::t('Upload') ?>
                     </button>
-                    <a class="btn btn-secondary" href="<?= Url::getReturnUrl(Url::to(['index'])) ?>">
+                    <a class="btn btn-secondary"
+                       href="<?= Url::getReturnUrl(Url::to(['index', 'event_type' => $model->event_type])) ?>">
                         <?= Lang::t('Cancel') ?>
                     </a>
                 </div>

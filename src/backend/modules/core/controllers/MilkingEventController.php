@@ -38,12 +38,12 @@ class MilkingEventController extends Controller
         $this->hasPrivilege(Acl::ACTION_CREATE);
 
         $form = new UploadMilkEvent(MilkingEvent::class);
-        $resp = $this->uploadExcelConsole($form, 'index', []);
+        $resp = $this->uploadExcelConsole($form, 'milking-event/index', []);
         if ($resp !== false) {
             return $resp;
         }
 
-        return $this->render('upload', [
+        return $this->render('@coreModule/views/animal-event/upload', [
             'model' => $form,
         ]);
     }
