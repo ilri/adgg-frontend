@@ -13,6 +13,7 @@ use backend\modules\core\models\ExcelImport;
 use common\helpers\DateUtils;
 use common\models\ActiveRecord;
 use common\models\Model;
+use console\jobs\ExcelUploadNotification;
 use console\jobs\JobTrait;
 use Yii;
 use yii\base\Exception;
@@ -91,6 +92,7 @@ class ExcelUploadForm extends Model implements JobInterface
         $queueModel->success_message = $this->getSavedRows();
         $queueModel->processing_duration_seconds = $executionTime;
         $queueModel->save(false);
+        ExcelUploadNotification::createManualNotifications(ExcelUploadNotification::NOTIF_EXCEL_UPLOAD_COMPLETION, $this->itemId);
     }
 
     public function addToExcelQueue()
@@ -117,5 +119,57 @@ class ExcelUploadForm extends Model implements JobInterface
     protected function updateCurrentProcessedRow($nRow)
     {
         ExcelImport::updateAll(['current_processed_row' => $nRow], ['id' => $this->itemId]);
+    }
+
+    /**
+     * @param array $data
+     * @param ActiveRecord $targetModel
+     * @param bool $updateExisting
+     * @param string $existingCondition
+     * @param array $existingParams
+     * @return bool
+     */
+    public function save(array $data, ActiveRecord $targetModel, $updateExisting = true, $existingCondition = '', $existingParams = [])
+    {
+        if (empty($data)) {
+            return false;
+        }
+
+        $nMax = 0;
+        foreach ($data as $n => $row) {
+            $newModel = null;
+            if ($updateExisting) {
+                $condition = $existingCondition;
+                $params = $existingParams;
+                if (is_array($condition)) {
+                    $condition = self::prepareInternalExistCondition($condition, $row);
+                }
+                if (is_array($params) && !empty($params)) {
+                    $params = self::prepareInternalExistCondition($params, $row);
+                }
+                $newModel = $targetModel::find()->andWhere($condition, $params)->one();
+            }
+            if (null === $newModel) {
+                $newModel = clone $targetModel;
+            }
+            $this->saveExcelRaw($newModel, $row, $n);
+
+            $nMax = $n;
+        }
+
+        $this->updateCurrentProcessedRow($nMax);
+    }
+
+    private static function prepareInternalExistCondition(array $condition, array $rowData)
+    {
+        foreach ($condition as $k => $v) {
+            $pattern = '/{\K[^}]*(?=})/m';
+            preg_match($pattern, $v, $match);
+            if (!empty($match[0])) {
+                $condition[$k] = $rowData[$match[0]] ?? null;
+            }
+        }
+
+        return $condition;
     }
 }

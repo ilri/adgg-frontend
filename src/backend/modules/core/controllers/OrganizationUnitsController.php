@@ -15,14 +15,14 @@ use backend\modules\core\Constants;
 use backend\modules\core\forms\UploadOrganizationUnits;
 use backend\modules\core\models\Organization;
 use backend\modules\core\models\OrganizationUnits;
-use common\helpers\Lang;
-use Yii;
+use common\controllers\UploadExcelTrait;
 use yii\base\InvalidArgumentException;
 use yii\helpers\Html;
-use yii\helpers\Url;
 
 class OrganizationUnitsController extends Controller
 {
+    use UploadExcelTrait;
+
     public function init()
     {
         parent::init();
@@ -119,28 +119,10 @@ class OrganizationUnitsController extends Controller
         $this->setResourceLabel($orgModel, $level);
         $this->hasPrivilege(Acl::ACTION_CREATE);
 
-        $form = new UploadOrganizationUnits(['org_id' => $orgModel->id, 'level' => $level]);
-        if ($form->load(Yii::$app->request->post())) {
-            if ($form->validate() && $form->addToExcelQueue()) {
-                //process the file
-                $form->saveExcelData();
-                if (count($form->getSavedRows()) > 0) {
-                    $successMsg = Lang::t('{n} rows successfully uploaded.', ['n' => count($form->getSavedRows())]);
-                    Yii::$app->session->setFlash('success', $successMsg);
-                }
-                if (count($form->getFailedRows()) > 0) {
-                    $warningMsg = '<p>' . Lang::t('{n} rows could could not be saved.', ['n' => count($form->getFailedRows())]) . '</p>';
-                    $warningMsg .= '<ul style="max-height: 200px;overflow: auto">';
-                    foreach ($form->getFailedRows() as $n => $message) {
-                        $warningMsg .= '<li>' . $message . '</li>';
-                    }
-                    $warningMsg .= '</ul>';
-                    Yii::$app->session->setFlash('warning', $warningMsg);
-                }
-                return json_encode(['success' => true, 'savedRows' => $form->getSavedRows(), 'failedRows' => $form->getFailedRows(), 'redirectUrl' => Url::to(['index', 'org_id' => $orgModel->uuid, 'level' => $level])]);
-            } else {
-                return json_encode(['success' => false, 'message' => $form->getErrors()]);
-            }
+        $form = new UploadOrganizationUnits(OrganizationUnits::class, ['org_id' => $orgModel->id, 'level' => $level]);
+        $resp = $this->uploadExcelConsole($form, 'index', ['org_id' => $orgModel->uuid, 'level' => $level]);
+        if ($resp !== false) {
+            return $resp;
         }
 
         return $this->render('upload', [
@@ -151,7 +133,7 @@ class OrganizationUnitsController extends Controller
 
     public function actionUploadPreview($level, $org_id)
     {
-        $form = new UploadOrganizationUnits(['level' => $level, 'org_id' => $org_id]);
+        $form = new UploadOrganizationUnits(OrganizationUnits::class, ['level' => $level, 'org_id' => $org_id]);
         return $form->previewAction();
     }
 }

@@ -79,37 +79,8 @@ class UploadHerds extends ExcelUploadForm implements ImportInterface
             $insert_data[$k] = $row;
         }
 
-        $this->save($insert_data);
-    }
-
-
-    /**
-     * @param array $data
-     * @return bool
-     */
-    public function save($data)
-    {
-        if (empty($data)) {
-            return false;
-        }
-
         $model = new AnimalHerd(['org_id' => $this->org_id]);
-        $nMax = 0;
-        foreach ($data as $n => $row) {
-            $newModel = AnimalHerd::find()->andWhere([
-                'herd_code' => $row['herd_code'],
-                'org_id' => $row['org_id'],
-            ])->one();
-
-            if (null === $newModel) {
-                $newModel = clone $model;
-                $newModel->farm_id = $this->getFarmId($row);
-            }
-            $this->saveExcelRaw($newModel, $row, $n);
-            $nMax = $n;
-        }
-
-        $this->updateCurrentProcessedRow($nMax);
+        $this->save($insert_data, $model, true, ['herd_code' => '{herd_code}', 'org_id' => $this->org_id]);
     }
 
     protected function getFarmId($row)

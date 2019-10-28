@@ -60,6 +60,10 @@ use yii\helpers\Html;
                 return \common\helpers\DateUtils::formatToLocalDate($model->created_at);
             },
         ],
+        [
+            'class' => common\widgets\grid\ActionColumn::class,
+            'template' => '{delete}',
+        ],
     ],
 ]);
 ?>

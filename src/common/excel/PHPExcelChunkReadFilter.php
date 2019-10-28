@@ -1,6 +1,6 @@
 <?php
-namespace common\excel;
 
+namespace common\excel;
 /**
  * Description of PHPExcelHelper
  *

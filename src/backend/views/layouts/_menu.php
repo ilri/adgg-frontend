@@ -38,6 +38,13 @@ use yii\helpers\Url;
                             <span class="kt-menu__link"><span class="kt-menu__link-text">EVENTS</span></span>
                         </li>
                         <li class="kt-menu__item">
+                            <a href="<?= Url::to(['/core/calving-event/index']) ?>"
+                               class="kt-menu__link ">
+                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                <span class="kt-menu__link-text">Calving</span>
+                            </a>
+                        </li>
+                        <li class="kt-menu__item">
                             <a href="<?= Url::to(['/core/milking-event/index']) ?>"
                                class="kt-menu__link ">
                                 <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
@@ -77,13 +84,6 @@ use yii\helpers\Url;
                                class="kt-menu__link ">
                                 <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
                                 <span class="kt-menu__link-text">Health</span>
-                            </a>
-                        </li>
-                        <li class="kt-menu__item">
-                            <a href="<?= Url::to(['/core/milking-event/index']) ?>"
-                               class="kt-menu__link ">
-                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                <span class="kt-menu__link-text">Calving</span>
                             </a>
                         </li>
                     </ul>
@@ -143,7 +143,7 @@ use yii\helpers\Url;
                 </a>
             </li>
             <li class="kt-menu__item kt-menu__item--submenu">
-                <a href="<?= Url::to(['/core/excel-import/index']) ?>" class="kt-menu__link">
+                <a href="<?= Url::to(['/core/excel-upload-status/index']) ?>" class="kt-menu__link">
                     <i class="kt-menu__link-icon far fa-file-alt"></i>
                     <span class="kt-menu__link-text">EXCEL/CSV FILES</span>
                 </a>

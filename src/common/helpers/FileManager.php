@@ -91,7 +91,6 @@ class FileManager
      * @param string $file_path
      * @param string $download_name
      * @param string $mime_type
-     * @throws \yii\base\ExitException
      */
     public static function downloadFile($file_path, $download_name = null, $mime_type = null)
     {
@@ -112,7 +111,7 @@ class FileManager
             ob_clean();
             flush();
             readfile($file_path);
-            Yii::$app->end();
+            exit();
         }
     }
 

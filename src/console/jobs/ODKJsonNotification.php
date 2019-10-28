@@ -9,11 +9,7 @@
 namespace console\jobs;
 
 
-use backend\modules\conf\models\EmailTemplate;
 use backend\modules\conf\models\Notif;
-use backend\modules\conf\models\NotifTypes;
-use backend\modules\conf\models\SmsTemplate;
-use backend\modules\conf\settings\SystemSettings;
 use backend\modules\core\models\OdkJsonQueue;
 use backend\modules\core\models\OrganizationNotifSettings;
 use Yii;
@@ -42,68 +38,6 @@ class ODKJsonNotification extends BaseNotification implements JobInterface, Noti
     public static function createSystemNotifications()
     {
         return false;
-    }
-
-    /**
-     *
-     * @param string $template
-     * @param string $item_id
-     * @param string $notif_type_id
-     *
-     * @return array|bool
-     * @throws \yii\web\NotFoundHttpException
-     * @throws \yii\web\ForbiddenHttpException
-     */
-    public static function processInternalTemplate($template, $item_id, $notif_type_id)
-    {
-        $notifModel = NotifTypes::loadModel($notif_type_id, false);
-        if (null === $notifModel) {
-            return false;
-        }
-        return self::processTemplate($item_id, $template, $notifModel->name);
-    }
-
-    /**
-     * @param NotifTypes $notifType
-     * @param string $itemId
-     * @return array|bool
-     * @throws \yii\web\NotFoundHttpException
-     * @throws \yii\web\ForbiddenHttpException
-     */
-    public static function processEmailTemplate($notifType, $itemId)
-    {
-        $emailTemplateModel = EmailTemplate::loadModel($notifType->email_template_id, false);
-        if (null === $emailTemplateModel) {
-            return false;
-        }
-
-        $emailParams = [
-            'sender_name' => SystemSettings::getAppName(),
-            'sender_email' => $emailTemplateModel->sender,
-            'template_id' => $notifType->email_template_id,
-            'ref_id' => $itemId,
-        ];
-        $params = self::processTemplate($itemId, $emailTemplateModel->body, $emailTemplateModel->subject);
-        $emailParams['subject'] = $params['subject'];
-        $emailParams['message'] = $params['message'];
-
-        return $emailParams;
-    }
-
-    /**
-     * @param NotifTypes $notifType
-     * @param string $itemId
-     * @return array|bool
-     * @throws \yii\web\NotFoundHttpException
-     * @throws \yii\web\ForbiddenHttpException
-     */
-    public static function processSmsTemplate($notifType, $itemId)
-    {
-        $smsTemplateModel = SmsTemplate::loadModel($notifType->sms_template_id, false);
-        if (null === $smsTemplateModel) {
-            return false;
-        }
-        return self::processTemplate($itemId, $smsTemplateModel->template);
     }
 
     /**

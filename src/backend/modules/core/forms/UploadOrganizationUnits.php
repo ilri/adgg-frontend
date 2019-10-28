@@ -9,16 +9,14 @@
 namespace backend\modules\core\forms;
 
 
+use backend\modules\core\models\ExcelImport;
 use backend\modules\core\models\OrganizationUnits;
-use common\excel\ExcelReaderTrait;
+use common\excel\ExcelUploadForm;
 use common\excel\ImportInterface;
-use common\models\Model;
-use Yii;
 use yii\base\InvalidArgumentException;
 
-class UploadOrganizationUnits extends Model implements ImportInterface
+class UploadOrganizationUnits extends ExcelUploadForm implements ImportInterface
 {
-    use ExcelReaderTrait;
 
     /**
      * @var int
@@ -31,24 +29,13 @@ class UploadOrganizationUnits extends Model implements ImportInterface
     public $level;
 
     /**
-     * @var OrganizationUnits
-     */
-    public $_model;
-
-    /**
      * @inheritdoc
      */
     public function init()
     {
-        $this->end_column = 'Z';
-
-        $this->required_columns = [];
-        $this->_model = new OrganizationUnits(['org_id' => $this->org_id, 'level' => $this->level]);
-        foreach ($this->_model->getExcelColumns() as $column) {
-            $this->file_columns['[' . $column . ']'] = $this->_model->getAttributeLabel($column);
-        }
         parent::init();
     }
+
 
     /**
      * @inheritdoc
@@ -66,8 +53,8 @@ class UploadOrganizationUnits extends Model implements ImportInterface
     public function attributeLabels()
     {
         return array_merge($this->excelAttributeLabels(), [
-            'org_id' => $this->_model->getAttributeLabel('org_id'),
-            'level' => $this->_model->getAttributeLabel('level'),
+            'org_id' => 'Country',
+            'level' => 'Level',
         ]);
     }
 
@@ -96,7 +83,8 @@ class UploadOrganizationUnits extends Model implements ImportInterface
             $insert_data[$k] = $row;
         }
 
-        $this->save($insert_data);
+        $model = new OrganizationUnits(['org_id' => $this->org_id, 'level' => $this->level]);
+        $this->save($insert_data, $model, true, ['code' => '{code}', 'org_id' => $this->org_id, 'level' => $this->level]);
     }
 
     /**
@@ -132,33 +120,10 @@ class UploadOrganizationUnits extends Model implements ImportInterface
     }
 
     /**
-     * @param array $data
-     * @return bool
+     * @return string|int
      */
-    public function save($data)
+    public function setUploadType()
     {
-        if (empty($data))
-            return false;
-
-        $model = clone $this->_model;
-        foreach ($data as $n => $row) {
-            $newModel = OrganizationUnits::find()->andWhere([
-                'code' => $row['code'],
-                'org_id' => $row['org_id'],
-                'level' => $row['level'],
-            ])->one();
-
-            if (null === $newModel) {
-                $newModel = clone $model;
-            }
-
-            $this->saveExcelRaw($newModel, $row, $n);
-        }
-
-        if (!empty($this->_failedRows)) {
-            foreach ($this->_failedRows as $log) {
-                Yii::warning($log);
-            }
-        }
+        $this->_uploadType = ExcelImport::TYPE_ORGANIZATION_UNITS;
     }
 }

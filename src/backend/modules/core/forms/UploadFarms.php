@@ -20,7 +20,6 @@ use common\helpers\Lang;
 use common\helpers\Msisdn;
 use console\jobs\JobInterface;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
-use Yii;
 
 class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterface
 {
@@ -113,37 +112,8 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterfa
 
             $insert_data[$k] = $row;
         }
-
-        $this->save($insert_data);
-    }
-
-
-    /**
-     * @param array $data
-     * @return bool
-     */
-    public function save($data)
-    {
-        if (empty($data))
-            return false;
-
         $model = new Farm(['org_id' => $this->org_id]);
-        $nMax = 0;
-        foreach ($data as $n => $row) {
-            $newModel = Farm::find()->andWhere([
-                'code' => $row['code'],
-                'org_id' => $row['org_id'],
-            ])->one();
-
-            if (null === $newModel) {
-                $newModel = clone $model;
-            }
-            $newModel->setScenario(Farm::SCENARIO_UPLOAD);
-            $this->saveExcelRaw($newModel, $row, $n);
-            $nMax = $n;
-        }
-
-        $this->updateCurrentProcessedRow($nMax);
+        $this->save($insert_data, $model, true, ['code' => '{code}', 'org_id' => $this->org_id]);
     }
 
     /**

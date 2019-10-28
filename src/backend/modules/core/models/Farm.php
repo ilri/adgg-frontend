@@ -51,8 +51,6 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
 {
     use ActiveSearchTrait, OrganizationUnitDataTrait, TableAttributeTrait;
 
-    const SCENARIO_UPLOAD = 'upload';
-
     /**
      * {@inheritdoc}
      */

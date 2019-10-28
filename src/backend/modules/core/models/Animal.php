@@ -105,9 +105,6 @@ use yii\helpers\Inflector;
 class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttributeInterface, UploadExcelInterface, HighChartInterface
 {
     use ActiveSearchTrait, OrganizationUnitDataTrait, TableAttributeTrait;
-
-    const SCENARIO_UPLOAD = 'Upload';
-
     /**
      * @var string
      */

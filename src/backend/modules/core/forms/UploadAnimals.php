@@ -103,8 +103,8 @@ class UploadAnimals extends ExcelUploadForm implements ImportInterface, JobInter
             }
             $insert_data[$k] = $row;
         }
-
-        $this->save($insert_data);
+        $targetModel = new Animal(['org_id' => $this->org_id, 'type' => $this->type]);
+        $this->save($insert_data, $targetModel, true, ['tag_id' => '{tag_id}']);
     }
 
     /**
@@ -148,34 +148,6 @@ class UploadAnimals extends ExcelUploadForm implements ImportInterface, JobInter
         }
 
         return $value;
-    }
-
-
-    /**
-     * @param array $data
-     * @return bool
-     */
-    public function save($data)
-    {
-        if (empty($data))
-            return false;
-
-        $model = new Animal(['org_id' => $this->org_id, 'type' => $this->type]);
-        $nMax = 0;
-        foreach ($data as $n => $row) {
-            $newModel = Animal::find()->andWhere([
-                'tag_id' => $row['tag_id'],
-            ])->one();
-
-            if (null === $newModel) {
-                $newModel = clone $model;
-            }
-            $newModel->setScenario(Animal::SCENARIO_UPLOAD);
-            $this->saveExcelRaw($newModel, $row, $n);
-            $nMax = $n;
-        }
-
-        $this->updateCurrentProcessedRow($nMax);
     }
 
     /**

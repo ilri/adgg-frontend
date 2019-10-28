@@ -14,17 +14,17 @@ use backend\modules\core\models\ExcelImport;
 use common\helpers\FileManager;
 use common\helpers\Str;
 
-class ExcelImportController extends Controller
+class ExcelUploadStatusController extends Controller
 {
     public function init()
     {
         parent::init();
-        $this->resource = Constants::RES_EXCEL_FILE;
-        $this->resourceLabel = 'Excel Upload';
+        $this->resource = Constants::RES_EXCEL_UPLOAD_STATUS;
+        $this->resourceLabel = 'Excel Upload Status';
     }
 
 
-    public function actionIndex()
+    public function actionIndex($id = null)
     {
         $condition = '';
         $params = [];
@@ -34,6 +34,12 @@ class ExcelImportController extends Controller
             'params' => $params,
             'with' => [],
         ]);
+
+        if (is_numeric($id)) {
+            $searchModel->id = $id;
+        } elseif (is_string($id)) {
+            $searchModel->uuid = $id;
+        }
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -49,15 +55,12 @@ class ExcelImportController extends Controller
     public function actionDownloadError($id)
     {
         $model = ExcelImport::loadModel($id);
-
         $fileName = Str::removeWhitespace($model->error_csv);
-        header('HTTP/1.1 200 OK');
-        header('Cache-Control: no-cache, must-revalidate');
-        header("Pragma: no-cache");
-        header("Expires: 0");
-        header("Content-type: text/csv");
-        header("Content-Disposition: attachment; filename=$fileName");
-        readfile($model->getCSVErrorFilePath());
-        \Yii::$app->end();
+        FileManager::downloadFile($model->getCSVErrorFilePath(), $fileName, 'application/csv');
+    }
+
+    public function actionDelete($id)
+    {
+        return ExcelImport::softDelete($id);
     }
 }

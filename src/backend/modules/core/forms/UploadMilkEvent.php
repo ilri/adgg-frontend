@@ -9,47 +9,18 @@
 namespace backend\modules\core\forms;
 
 
-use backend\modules\core\models\Animal;
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\ExcelImport;
-use common\excel\ExcelUploadForm;
 use common\excel\ImportInterface;
-use common\helpers\Lang;
 
-class UploadMilkEvent extends ExcelUploadForm implements ImportInterface
+class UploadMilkEvent extends UploadAnimalEvent implements ImportInterface
 {
-    /**
-     * @var int
-     */
-    public $org_id;
-
-    /**
-     * @inheritdoc
-     */
     public function init()
     {
         parent::init();
+        $this->event_type = AnimalEvent::EVENT_TYPE_MILKING;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function rules()
-    {
-        return array_merge($this->excelValidationRules(), [
-            [['org_id'], 'required'],
-        ]);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function attributeLabels()
-    {
-        return array_merge($this->excelAttributeLabels(), [
-            'org_id' => Lang::t('Country'),
-        ]);
-    }
 
     /**
      * @param $batch
@@ -71,40 +42,8 @@ class UploadMilkEvent extends ExcelUploadForm implements ImportInterface
             $row['animal_id'] = $this->getAnimalId($row['animalTagId']);
             $insert_data[$k] = $row;
         }
-
-        $this->save($insert_data);
-    }
-
-
-    /**
-     * @param array $data
-     * @return bool
-     */
-    public function save($data)
-    {
-        if (empty($data)) {
-            return false;
-        }
-
-        $model = new AnimalEvent(['org_id' => $this->org_id, 'event_type' => AnimalEvent::EVENT_TYPE_MILKING]);
-        $nMax = 0;
-        foreach ($data as $n => $row) {
-            $newModel = clone $model;
-            $this->saveExcelRaw($newModel, $row, $n);
-            $nMax = $n;
-        }
-
-        $this->updateCurrentProcessedRow($nMax);
-    }
-
-    protected function getAnimalId($tagId)
-    {
-        $tagId = trim($tagId);
-        $animalId = Animal::getScalar('id', ['org_id' => $this->org_id, 'tag_id' => $tagId]);
-        if (empty($animalId)) {
-            return null;
-        }
-        return $animalId;
+        $model = new AnimalEvent(['org_id' => $this->org_id, 'event_type' => $this->event_type]);
+        $this->save($insert_data, $model);
     }
 
     /**

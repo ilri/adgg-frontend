@@ -93,6 +93,8 @@ trait ExcelReaderTrait
      */
     public $delete_file = false;
 
+    public $deleteTmpFile = false;
+
     /**
      * @var
      */
@@ -152,10 +154,13 @@ trait ExcelReaderTrait
         $temp_path = $this->file;
         $this->file = time() . '_' . $this->original_file_name;
         $new_path = static::getDir() . DIRECTORY_SEPARATOR . $this->file;
-        if (copy($temp_path, $new_path))
-            FileManager::deleteDirOrFile(dirname($temp_path));
-        else
+        if (copy($temp_path, $new_path)) {
+            if ($this->deleteTmpFile) {
+                FileManager::deleteDirOrFile(dirname($temp_path));
+            }
+        } else {
             throw new Exception('Could not copy the file to the new location.');
+        }
     }
 
     /**
@@ -376,32 +381,32 @@ trait ExcelReaderTrait
     }
 
     /**
-     * @throws \PhpOffice\PhpSpreadsheet\Exception
-     * @throws \PhpOffice\PhpSpreadsheet\Reader\Exception
      */
     public function processExcelFile()
     {
-        $this->setFile();
-        $this->setPlaceholders();
-        $chunkFilter = $this->getChunkFilter();
-        $batch_size = 1000;
-        for ($this->start_row; $this->start_row <= $this->end_row; $this->start_row += $batch_size) {
-            $sheetData = $this->getSheetData($chunkFilter, $batch_size);
-            foreach ($this->getExcelInsertBatches($sheetData) as $batch) {
-                try {
+        try {
+            $this->setFile();
+            $this->setPlaceholders();
+            $chunkFilter = $this->getChunkFilter();
+            $batch_size = 1000;
+            for ($this->start_row; $this->start_row <= $this->end_row; $this->start_row += $batch_size) {
+                $sheetData = $this->getSheetData($chunkFilter, $batch_size);
+                foreach ($this->getExcelInsertBatches($sheetData) as $batch) {
                     $this->processExcelBatchData($batch);
-                } catch (\Exception $e) {
-                    Yii::$app->controller->stdout("{$e->getMessage()}\n");
+                }
+                if (count($sheetData) < $batch_size) {
+                    break;
                 }
             }
-            if (count($sheetData) < $batch_size)
-                break;
+
+            $this->createErrorCSV();
+
+            if ($this->delete_file) {
+                @unlink($this->file);
+            }
+        } catch (\Exception $e) {
+            Yii::$app->controller->stdout("{$e->getMessage()}\n");
         }
-
-        $this->createErrorCSV();
-
-        if ($this->delete_file)
-            @unlink($this->file);
     }
 
     public function excelValidationRules()
@@ -510,13 +515,13 @@ trait ExcelReaderTrait
      */
     public function saveExcelRaw(ActiveRecord $model, $rowData, $rowNumber)
     {
-        Yii::$app->controller->stdout("Processing row {$rowNumber}\n");
         foreach ($rowData as $k => $v) {
             if ($model->hasAttribute($k) || property_exists($model, $k)) {
                 $model->{$k} = $v;
             }
         }
         $model->enableAuditTrail = false;
+        $model->setScenario($model::SCENARIO_UPLOAD);
         if ($model->save()) {
             $this->_savedRows[$rowNumber] = $rowNumber;
             Yii::$app->controller->stdout("Row {$rowNumber} saved successfully\n");
@@ -539,7 +544,7 @@ trait ExcelReaderTrait
         $booleanString = strtolower($booleanString);
         if ($booleanString === 'yes' || $booleanString === 'y') {
             $booleanString = 1;
-        } else {
+        } elseif ($booleanString === 'no' || $booleanString === 'n') {
             $booleanString = 0;
         }
         return $booleanString;

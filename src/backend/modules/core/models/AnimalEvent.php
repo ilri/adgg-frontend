@@ -47,12 +47,13 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
 {
     use ActiveSearchTrait, OrganizationUnitDataTrait, TableAttributeTrait;
 
-    const EVENT_TYPE_MILKING = 1;
-    const EVENT_TYPE_AI = 2;
-    const EVENT_TYPE_PREGNANCY_DIAGNOSIS = 3;
-    const EVENT_TYPE_SYNCHRONIZATION = 4;
-    const EVENT_TYPE_WEIGHTS = 5;
-    const EVENT_TYPE_HEALTH = 6;
+    const EVENT_TYPE_CALVING = 1;
+    const EVENT_TYPE_MILKING = 2;
+    const EVENT_TYPE_AI = 3;
+    const EVENT_TYPE_PREGNANCY_DIAGNOSIS = 4;
+    const EVENT_TYPE_SYNCHRONIZATION = 5;
+    const EVENT_TYPE_WEIGHTS = 6;
+    const EVENT_TYPE_HEALTH = 7;
 
     public $animalTagId;
 

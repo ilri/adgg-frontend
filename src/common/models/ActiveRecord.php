@@ -2,8 +2,8 @@
 
 namespace common\models;
 
-use api\modules\v1\models\Users;
 use backend\modules\auth\models\AuditTrail;
+use backend\modules\auth\models\Users;
 use common\helpers\DateUtils;
 use common\helpers\DbUtils;
 use common\helpers\Utils;
@@ -51,6 +51,7 @@ abstract class ActiveRecord extends AR
     const SCENARIO_INSERT = 'insert';
     const SCENARIO_UPDATE = 'update';
     const SEARCH_FIELD = '_searchField';
+    const SCENARIO_UPLOAD = 'Upload';
 
     //audit trail
     /**
