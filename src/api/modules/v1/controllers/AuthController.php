@@ -7,76 +7,51 @@
 
 namespace api\modules\v1\controllers;
 
-use api\controllers\AuthTrait;
 use api\controllers\Controller;
-use api\controllers\SendsResponse;
-use api\modules\v1\Config;
+use api\controllers\JwtAuthTrait;
 use api\modules\v1\forms\ChangePassword;
 use api\modules\v1\forms\LoginForm;
 use api\modules\v1\forms\ProvideEmail;
 use api\modules\v1\forms\ResetPassword;
-use api\modules\v1\GoogleAccountChecker;
-use api\modules\v1\models\Users;
-use api\modules\v1\pojo\ResponseObject;
-use backend\modules\auth\models\UserLevels;
+use api\modules\v1\models\User;
 use Yii;
 use yii\web\ForbiddenHttpException;
-use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
 
 class AuthController extends Controller
 {
-    use AuthTrait, GoogleAccountChecker, SendsResponse;
-
+    use JwtAuthTrait;
 
     public function getUnAuthenticatedActions()
     {
-        return ['authorize', 'beginResetPassword', 'finishResetPassword'];
+        return ['login', 'beginResetPassword', 'finishResetPassword'];
     }
 
-    /**
-     * @return LoginForm|ResponseObject
-     * @throws ForbiddenHttpException
-     * @throws HttpException
-     * @throws \yii\base\InvalidConfigException
-     */
-    public function actionAuthorize()
+    public function actionLogin()
     {
         $model = new LoginForm();
-        if (!$model->load(Yii::$app->request->getBodyParams(), '') || !$model->validate()) {
+        $model->load(Yii::$app->request->getBodyParams(), '');
+        if (!$model->validate()) {
             // validation errs
             return $model;
         }
-        $username = $model->username;
         $password = $model->password;
 
-        /* @var $user Users */
-        $user = Users::findByUsername($username);
-        if ($user == null) {
+        /* @var $user User */
+        $user = User::findByUsername($model->username);
+        if ($user === null || !$user->validatePassword($password)) {
             throw new ForbiddenHttpException("Invalid credentials.");
         }
-        if (!$user->validatePassword($password)) {
-            throw new ForbiddenHttpException('Invalid credentials.');
-        }
 
-        return $this->sendMessage([
+        return [
             'token' => $user->getToken(),
-        ]);
+        ];
     }
 
-    /**
-     * Change password
-     *
-     * @return ChangePassword|ResponseObject
-     * @throws ForbiddenHttpException
-     * @throws \yii\base\Exception
-     * @throws \yii\base\InvalidConfigException
-     * @throws \yii\web\UnauthorizedHttpException
-     */
     public function actionChangePassword()
     {
-        /* @var $user Users */
-        $user = $this->getAuthToken()->getIdentity();
+        /* @var $user User */
+        $user = Yii::$app->user->identity;
         $model = new ChangePassword();
         $model->username = $user->username;
         if ($model->load(Yii::$app->request->getBodyParams(), '') && $model->validate()) {
@@ -84,7 +59,10 @@ class AuthController extends Controller
                 $user->setPasswordHash($model->new_password);
                 $user->require_password_change = false;
                 $user->save(false);
-                return $this->sendMessage(['message' => 'password changed successfully', 'token' => $user->getToken()]);
+                return $this->asJson([
+                    'message' => 'password changed successfully',
+                    'token' => $user->getToken()
+                ]);
             } else {
                 $model->addError('old_password', 'The password is incorrect.');
             }
@@ -92,35 +70,24 @@ class AuthController extends Controller
         return $model;
     }
 
-    /**
-     * Send a password reset link to a user's email address
-     *
-     * @throws NotFoundHttpException
-     * @throws \yii\base\InvalidConfigException
-     */
     public function actionBeginResetPassword()
     {
         $model = new ProvideEmail();
         if ($model->load(Yii::$app->request->getBodyParams(), '') && $model->validate()) {
             // find user by email
-            if ($user = Users::findByEmail($model->email)) {
+            if ($user = User::findByEmail($model->email)) {
                 $user->password_reset_token = $user->generatePasswordResetToken();
                 $user->save(false);
 
-                return $this->sendMessage(['message' => 'Reset link sent successfully to ' . $model->email]);
+                return $this->asJson([
+                    'message' => 'Reset link sent successfully to ' . $model->email,
+                ]);
             }
             throw new NotFoundHttpException('User with email ' . $model->email . ' not found.');
         }
         return $model;
     }
 
-    /**
-     * Complete password reset
-     * @return ResetPassword|ResponseObject
-     * @throws NotFoundHttpException
-     * @throws \yii\base\Exception
-     * @throws \yii\base\InvalidConfigException
-     */
     public function actionCompleteResetPassword()
     {
         $form = new ResetPassword();
@@ -129,14 +96,15 @@ class AuthController extends Controller
 
         if ($form->validate()) {
 
-            $user = Users::findByPasswordResetToken($token);
+            $user = User::findByPasswordResetToken($token);
             if ($user !== null) {
-                $status = Users::isPasswordResetTokenValid($token);
+                $status = User::isPasswordResetTokenValid($token);
                 if ($status) {
                     $user->setPasswordHash($form->password);
                     $user->password_reset_token = null;
                     $user->save(false);
-                    return $this->sendMessage(['message' => 'password reset.']);
+
+                    return ['message' => 'password reset.'];
                 } else {
                     throw new NotFoundHttpException('The token has expired.');
                 }

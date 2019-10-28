@@ -2,7 +2,6 @@
 
 namespace api\modules\v1\forms;
 
-use api\modules\v1\models\Users;
 use common\models\Model;
 
 class ChangePassword extends Model
@@ -17,7 +16,6 @@ class ChangePassword extends Model
     {
         return [
             [['old_password', 'new_password'], 'required'],
-            Users::passwordValidator(),
         ];
     }
 }

@@ -19,10 +19,7 @@ class ActiveController extends \yii\rest\ActiveController
      */
     protected $resource;
 
-    /**
-     * @inheritdoc
-     */
-    public function actions()
+    protected function defaultActions()
     {
         return [
             'index' => [
@@ -51,5 +48,35 @@ class ActiveController extends \yii\rest\ActiveController
                 'class' => \yii\rest\OptionsAction::class,
             ],
         ];
+    }
+
+    public function actions()
+    {
+        $actions = $this->defaultActions();
+        foreach (array_merge($this->actionsToOverride(), $this->actionsToHide()) as $item) {
+            unset($actions[$item]);
+        }
+        return $actions;
+    }
+
+    /**
+     * Actions that should be overridden
+     * By default, we override all.
+     * If a custom implementation isn't supplied, a 404 error will be triggered
+     *
+     * @return array
+     */
+    protected function actionsToOverride()
+    {
+        return ['index', 'create', 'update', 'delete', 'view'];
+    }
+
+    /**
+     * Actions that should be hidden. A 404 will be triggered if the actions are triggered
+     * @return array
+     */
+    protected function actionsToHide()
+    {
+        return [];
     }
 }

@@ -9,9 +9,7 @@ return [
         'class' => \yii\rest\UrlRule::class,
         'pluralize' => false,
         'controller' => [
-            'users' => 'v1/user',
-            'settings' => 'v1/settings',
-            'odk-json' => 'v1/odk-json',
+            'farmers' => 'v1/farmers',
         ],
         'tokens' => [
             '{id}' => '<id:\\w+>',
@@ -27,11 +25,23 @@ return [
             'auth' => 'v1/auth',
         ],
         'extraPatterns' => [
-            'POST authorize' => 'authorize',
+            'POST login' => 'login',
             'POST change-password' => 'change-password',
             'POST reset-password/begin' => 'begin-reset-password',
             'POST reset-password/finish' => 'complete-reset-password',
             'POST reset-password/finish/{token}' => 'complete-reset-password',
+            'OPTIONS <action>' => 'options',
+        ],
+    ],
+    [
+        'class' => \yii\rest\UrlRule::class,
+        'pluralize' => false,
+        'controller' => [
+            'odk-web-hook' => 'v1/odk-web-hook',
+        ],
+        'extraPatterns' => [
+            'GET receive' => 'receive',
+            'POST receive' => 'receive',
             'OPTIONS <action>' => 'options',
         ],
     ],
