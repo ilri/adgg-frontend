@@ -49,7 +49,7 @@ use common\widgets\grid\GridView;
         ],
         [
             'class' => common\widgets\grid\ActionColumn::class,
-            'template' => '{update}',
+            'template' => '{update}{delete}',
         ],
     ],
 ]);
