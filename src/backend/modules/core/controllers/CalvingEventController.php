@@ -9,8 +9,11 @@
 namespace backend\modules\core\controllers;
 
 
+use backend\modules\auth\Acl;
 use backend\modules\core\Constants;
+use backend\modules\core\forms\UploadCalvingEvent;
 use backend\modules\core\models\AnimalEvent;
+use backend\modules\core\models\CalvingEvent;
 use common\controllers\UploadExcelTrait;
 
 class CalvingEventController extends Controller
@@ -34,20 +37,20 @@ class CalvingEventController extends Controller
     {
         $this->hasPrivilege(Acl::ACTION_CREATE);
 
-        $form = new UploadMilkEvent(MilkingEvent::class);
-        $resp = $this->uploadExcelConsole($form, 'index', []);
+        $form = new UploadCalvingEvent(CalvingEvent::class);
+        $resp = $this->uploadExcelConsole($form, 'calving-event/index', []);
         if ($resp !== false) {
             return $resp;
         }
 
-        return $this->render('upload', [
+        return $this->render('@coreModule/views/animal-event/upload', [
             'model' => $form,
         ]);
     }
 
     public function actionUploadPreview()
     {
-        $form = new UploadMilkEvent(MilkingEvent::class);
+        $form = new UploadCalvingEvent(CalvingEvent::class);
         return $form->previewAction();
     }
 }
