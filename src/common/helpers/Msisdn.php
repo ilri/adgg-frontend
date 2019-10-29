@@ -37,6 +37,6 @@ class Msisdn
         if (strlen($phone) === 9)
             return $country_code . $phone;
 
-        return $phone;
+        return (string)$phone;
     }
 }
