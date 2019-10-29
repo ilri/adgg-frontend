@@ -39,6 +39,8 @@ class OrganizationUnits extends ActiveRecord implements ActiveSearchInterface, U
     const LEVEL_WARD = 3;
     const LEVEL_VILLAGE = 4;
 
+    public $parent_code;
+
     /**
      * {@inheritdoc}
      */
@@ -66,6 +68,14 @@ class OrganizationUnits extends ActiveRecord implements ActiveSearchInterface, U
             }],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
+    }
+
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        $scenarios[self::SCENARIO_UPLOAD] = ['code', 'name', 'parent_code'];
+
+        return $scenarios;
     }
 
     /**

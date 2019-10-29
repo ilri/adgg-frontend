@@ -158,6 +158,8 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
                 return 'Calving Data';
             case self::TYPE_ANIMAL_EVENT_MILK:
                 return 'Milking Data';
+            case self::TYPE_ORGANIZATION_UNITS:
+                return 'Country Administrative Units';
             default:
                 throw new InvalidArgumentException();
 
@@ -176,6 +178,7 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
             self::TYPE_HERD_DATA => static::decodeType(self::TYPE_HERD_DATA),
             self::TYPE_ANIMAL_EVENT_CALVING => static::decodeType(self::TYPE_ANIMAL_EVENT_CALVING),
             self::TYPE_ANIMAL_EVENT_MILK => static::decodeType(self::TYPE_ANIMAL_EVENT_MILK),
+            self::TYPE_ORGANIZATION_UNITS => static::decodeType(self::TYPE_ORGANIZATION_UNITS),
         ], $prompt);
     }
 
