@@ -70,7 +70,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             [['org_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'field_agent_id', 'is_active', 'farmer_is_hh_head'], 'safe'],
             [['latitude', 'latitude', 'phone'], 'number'],
             [['code', 'name', 'project', 'field_agent_name', 'farmer_name'], 'string', 'max' => 128],
-            [['phone'], 'string', 'max' => 20, 'except' => [self::SCENARIO_UPLOAD]],
+            [['phone'], 'string', 'min' => 9, 'max' => 13],
             [['email', 'map_address'], 'string', 'max' => 255],
             [['farm_type'], 'string', 'max' => 30],
             [['gender_code'], 'string', 'max' => 10],
