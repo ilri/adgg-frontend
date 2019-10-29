@@ -101,6 +101,7 @@ use yii\helpers\Inflector;
  * @property Animal $sire
  * @property Animal $dam
  * @property AnimalHerd $herd
+ * @property AnimalAttributeValue[] $attributeValues
  */
 class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttributeInterface, UploadExcelInterface, HighChartInterface
 {
@@ -410,6 +411,14 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     }
 
     /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getAttributeValues()
+    {
+        return $this->hasMany(AnimalAttributeValue::class, ['animal_id' => 'id']);
+    }
+
+    /**
      *  {@inheritDoc}
      */
     public function searchParams()
@@ -479,7 +488,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     public function afterFind()
     {
         parent::afterFind();
-        $this->loadAdditionalAttributeValues(AnimalAttributeValue::class, 'animal_id');
+        $this->loadAdditionalAttributeValues($this->attributeValues);
     }
 
     /**

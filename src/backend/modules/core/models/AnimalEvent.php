@@ -174,7 +174,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     public function afterFind()
     {
         parent::afterFind();
-        $this->loadAdditionalAttributeValues(AnimalEventValue::class, 'event_id');
+        $this->loadAdditionalAttributeValues($this->animalEventValues);
     }
 
     /**

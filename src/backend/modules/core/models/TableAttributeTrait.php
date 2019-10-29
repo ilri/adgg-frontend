@@ -9,7 +9,6 @@
 namespace backend\modules\core\models;
 
 
-use common\helpers\Str;
 use common\models\ActiveRecord;
 use common\widgets\select2\Select2;
 use yii\bootstrap4\ActiveForm;
@@ -20,6 +19,16 @@ trait TableAttributeTrait
      * @var array
      */
     private $_additionalAttributes;
+
+    /**
+     * @var array
+     */
+    private $_additionalAttributeIds;
+
+    /**
+     * @var array
+     */
+    private $_additionalAttributesInputTypes;
 
     /**
      * @var array
@@ -51,15 +60,45 @@ trait TableAttributeTrait
         return $this->_additionalAttributes;
     }
 
+    public function getAdditionalAttributeIds(): array
+    {
+        if (empty($this->_additionalAttributeIds)) {
+            $this->setAdditionalAttributes();
+        }
+
+        return $this->_additionalAttributeIds;
+    }
+
+    public function getAdditionalAttributesInputTypes(): array
+    {
+        if (empty($this->_additionalAttributesInputTypes)) {
+            $this->setAdditionalAttributes();
+        }
+
+        return $this->_additionalAttributesInputTypes;
+    }
+
     protected function setAdditionalAttributes()
     {
         $tableId = static::getDefinedTableId();
         $type = static::getDefinedType();
         $attributes = TableAttribute::getDefinedAttributes($tableId, $type);
         if (!empty($attributes)) {
-            $this->_additionalAttributes = $attributes;
+            $attributeKeys = [];
+            $attributeIds = [];
+            $attributesInputTypes = [];
+            foreach ($attributes as $v) {
+                $attributeKeys[] = $v['attribute_key'];
+                $attributeIds[$v['attribute_key']] = $v['id'];
+                $attributesInputTypes[$v['attribute_key']] = $v['input_type'];
+            }
+            $this->_additionalAttributes = $attributeKeys;
+            $this->_additionalAttributeIds = $attributeIds;
+            $this->_additionalAttributesInputTypes = $attributesInputTypes;
         } else {
             $this->_additionalAttributes = [];
+            $this->_additionalAttributeIds = [];
+            $this->_additionalAttributesInputTypes = [];
         }
     }
 
@@ -73,26 +112,27 @@ trait TableAttributeTrait
     }
 
     /**
-     * @param int $tableId
      * @param string $attribute
      * @return bool
-     * @throws \Exception
      */
-    public static function isMultiSelectAttribute($tableId, string $attribute): bool
+    public function isMultiSelectAttribute(string $attribute): bool
     {
-        return TableAttribute::exists(['table_id' => $tableId, 'attribute_key' => $attribute, 'input_type' => TableAttribute::INPUT_TYPE_MULTI_SELECT]);
+        $inputTypes = $this->getAdditionalAttributesInputTypes();
+        return $inputTypes[$attribute] == TableAttribute::INPUT_TYPE_MULTI_SELECT;
     }
 
     /**
-     * @param string $attributeValueModelClass
-     * @param string $foreignKeyAttribute
+     * @param ActiveRecord[] $valueModels
      * @return mixed
-     * @throws \Exception
      */
-    public function loadAdditionalAttributeValues(string $attributeValueModelClass, string $foreignKeyAttribute)
+    public function loadAdditionalAttributeValues($valueModels)
     {
-        foreach ($this->getAdditionalAttributes() as $attribute) {
-            $this->loadAttributeValue($attribute, $attributeValueModelClass, $foreignKeyAttribute);
+        $additionalAttributes = array_flip($this->getAdditionalAttributeIds());
+        foreach ($valueModels as $model) {
+            $attribute = $additionalAttributes[$model->attribute_id] ?? null;
+            $isMultiSelectField = $this->isMultiSelectAttribute($attribute);
+            $valueAttribute = $isMultiSelectField ? 'attribute_value_json' : 'attribute_value';
+            $this->{$attribute} = $model->{$valueAttribute};
         }
     }
 
@@ -106,8 +146,9 @@ trait TableAttributeTrait
     public function loadAttributeValue(string $attribute, string $attributeValueModelClass, string $foreignKeyAttribute)
     {
         /* @var $attributeValueModelClass ActiveRecord */
-        $attributeId = TableAttribute::getAttributeId(static::getDefinedTableId(), $attribute);
-        $isMultiSelectField = static::isMultiSelectAttribute(static::getDefinedTableId(), $attribute);
+        $additionalAttributeIds = $this->getAdditionalAttributeIds();
+        $attributeId = $additionalAttributeIds[$attribute];
+        $isMultiSelectField = $this->isMultiSelectAttribute($attribute);
         $valueAttribute = $isMultiSelectField ? 'attribute_value_json' : 'attribute_value';
         $value = $attributeValueModelClass::getScalar($valueAttribute, [$foreignKeyAttribute => $this->id, 'attribute_id' => $attributeId]);
         if (empty($value)) {
@@ -119,16 +160,24 @@ trait TableAttributeTrait
     /**
      * @param string $attributeValueModelClass
      * @param string $foreignKeyAttribute
-     * @throws \Exception
+     * @param bool $insert
+     * @throws \yii\db\Exception
      */
-    protected function saveAdditionalAttributes(string $attributeValueModelClass, string $foreignKeyAttribute)
+    protected function saveAdditionalAttributes(string $attributeValueModelClass, string $foreignKeyAttribute, $insert = true)
     {
         $this->ignoreAdditionalAttributes = false;
 
+        $attributes = [];
         foreach ($this->getAttributes() as $attribute => $val) {
             if ($this->isAdditionalAttribute($attribute)) {
-                $this->saveAdditionalAttributeValue($attribute, $attributeValueModelClass, $foreignKeyAttribute);
+                $columns = $this->saveAdditionalAttributeValue($attribute, $attributeValueModelClass, $foreignKeyAttribute, $insert);
+                if (is_array($columns)) {
+                    $attributes[] = $columns;
+                }
             }
+        }
+        if (!empty($attributes)) {
+            FarmAttributeValue::insertMultiple($attributes);
         }
 
     }
@@ -137,18 +186,20 @@ trait TableAttributeTrait
      * @param string $attribute
      * @param string $attributeValueModelClass
      * @param string $foreignKeyAttribute
-     * @return bool|void
+     * @param bool $insert
+     * @return bool|array
      * @throws \Exception
      */
-    public function saveAdditionalAttributeValue(string $attribute, string $attributeValueModelClass, string $foreignKeyAttribute)
+    public function saveAdditionalAttributeValue(string $attribute, string $attributeValueModelClass, string $foreignKeyAttribute, $insert = true)
     {
         if (null === $this->{$attribute}) {
             return false;
         }
         /* @var $attributeValueModelClass ActiveRecord */
-        $attributeId = TableAttribute::getAttributeId(static::getDefinedTableId(), $attribute);
+        $additionalAttributeIds = $this->getAdditionalAttributeIds();
+        $attributeId = $additionalAttributeIds[$attribute];
         $model = new $attributeValueModelClass([$foreignKeyAttribute => $this->id, 'attribute_id' => $attributeId]);
-        $isMultiSelectField = static::isMultiSelectAttribute(static::getDefinedTableId(), $attribute);
+        $isMultiSelectField = $this->isMultiSelectAttribute($attribute);
         $valueAttribute = 'attribute_value';
         if ($isMultiSelectField) {
             $valueAttribute = 'attribute_value_json';
@@ -160,13 +211,20 @@ trait TableAttributeTrait
             }
             $attributeValue = array_unique($attributeValue);
         }
+        if ($insert) {
+            return [
+                $foreignKeyAttribute => $this->id,
+                $valueAttribute => $attributeValue,
+                'attribute_id' => $attributeId,
+            ];
+        }
 
         $newModel = $attributeValueModelClass::find()->andWhere([$foreignKeyAttribute => $this->id, 'attribute_id' => $attributeId])->one();
         if (null === $newModel) {
             $newModel = clone $model;
         }
         $newModel->{$valueAttribute} = $attributeValue;
-        $newModel->save(false);
+        return $newModel->save(false);
     }
 
     /**

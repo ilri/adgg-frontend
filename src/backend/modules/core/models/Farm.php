@@ -74,7 +74,8 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             [['email', 'map_address'], 'string', 'max' => 255],
             [['farm_type'], 'string', 'max' => 30],
             [['gender_code'], 'string', 'max' => 10],
-            [['reg_date'], 'date', 'format' => 'Y-m-d', 'except' => self::SCENARIO_UPLOAD],
+            [['reg_date'], 'date', 'format' => 'Y-m-d'],
+            [['code'], 'unique', 'targetAttribute' => ['org_id', 'code'], 'message' => '{attribute} already exists'],
             [$this->getAdditionalAttributes(), 'safe'],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
 
@@ -168,13 +169,13 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
-        $this->saveAdditionalAttributes(FarmAttributeValue::class, 'farm_id');
+        $this->saveAdditionalAttributes(FarmAttributeValue::class, 'farm_id', $insert);
     }
 
     public function afterFind()
     {
         parent::afterFind();
-        $this->loadAdditionalAttributeValues(FarmAttributeValue::class, 'farm_id');
+        $this->loadAdditionalAttributeValues($this->attributeValues);
     }
 
     /**

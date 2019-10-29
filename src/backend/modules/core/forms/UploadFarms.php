@@ -15,11 +15,9 @@ use backend\modules\core\models\Organization;
 use backend\modules\core\models\OrganizationUnits;
 use common\excel\ExcelUploadForm;
 use common\excel\ImportInterface;
-use common\helpers\DateUtils;
 use common\helpers\Lang;
 use common\helpers\Msisdn;
 use console\jobs\JobInterface;
-use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterface
 {
@@ -32,6 +30,23 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterfa
      * @var Organization
      */
     public $orgModel;
+
+    /**
+     * @var array
+     */
+    private $_regions;
+    /**
+     * @var array
+     */
+    private $_districts;
+    /**
+     * @var array
+     */
+    private $_wards;
+    /**
+     * @var array
+     */
+    private $_villages;
 
 
     /**
@@ -66,6 +81,34 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterfa
         ]);
     }
 
+    protected function setRegions()
+    {
+        if (null === $this->_regions) {
+            $this->_regions = OrganizationUnits::getData(['id', 'code'], ['org_id' => $this->org_id, 'level' => OrganizationUnits::LEVEL_REGION]);
+        }
+    }
+
+    protected function setDistricts()
+    {
+        if (null === $this->_districts) {
+            $this->_districts = OrganizationUnits::getData(['id', 'code'], ['org_id' => $this->org_id, 'level' => OrganizationUnits::LEVEL_DISTRICT]);
+        }
+    }
+
+    protected function setWards()
+    {
+        if (null === $this->_wards) {
+            $this->_wards = OrganizationUnits::getData(['id', 'code'], ['org_id' => $this->org_id, 'level' => OrganizationUnits::LEVEL_WARD]);
+        }
+    }
+
+    protected function setVillages()
+    {
+        if (null === $this->_villages) {
+            $this->_villages = OrganizationUnits::getData(['id', 'code'], ['org_id' => $this->org_id, 'level' => OrganizationUnits::LEVEL_VILLAGE]);
+        }
+    }
+
     /**
      * @param $batch
      * @return mixed
@@ -76,6 +119,10 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterfa
         $columns = [];
         $insert_data = [];
         $this->orgModel = Organization::loadModel($this->org_id);
+        $this->setRegions();
+        $this->setDistricts();
+        $this->setWards();
+        $this->setVillages();
 
         foreach ($batch as $k => $excel_row) {
             $row = $this->getExcelRowColumns($excel_row, $columns);
@@ -85,9 +132,9 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterfa
             $row['org_id'] = $this->org_id;
             $row['reg_date'] = static::getDateColumnData($row['reg_date'], 'Y-m-d', null);
             $row['region_id'] = $this->getRegionId($row['region_code']);
-            $row['district_id'] = $this->getDistrictId($row['district_code'], $row['region_id']);
-            $row['ward_id'] = $this->getWardId($row['ward_code'], $row['district_id']);
-            $row['village_id'] = $this->getVillageId($row['village_code'], $row['ward_id']);
+            $row['district_id'] = $this->getDistrictId($row['district_code']);
+            $row['ward_id'] = $this->getWardId($row['ward_code']);
+            $row['village_id'] = $this->getVillageId($row['village_code']);
             $row['field_agent_id'] = $this->getFieldAgentId($row['field_agent_code'], $row['field_agent_code2']);
             $row['code'] = $row['phone'];
             if (!empty($row['phone'])) {
@@ -112,60 +159,59 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterfa
 
     /**
      * @param $name
-     * @param int $regionId
      * @return int|string|null
      * @throws \Exception
      */
-    protected function getDistrictId($name, $regionId)
+    protected function getDistrictId($name)
     {
-        return $this->getAdminUnitId($name, OrganizationUnits::LEVEL_DISTRICT, $regionId);
+        return $this->getAdminUnitId($name, OrganizationUnits::LEVEL_DISTRICT);
     }
 
     /**
      * @param $name
-     * @param int $districtId
      * @return int|string|null
      * @throws \Exception
      */
-    protected function getWardId($name, $districtId)
+    protected function getWardId($name)
     {
-        return $this->getAdminUnitId($name, OrganizationUnits::LEVEL_WARD, $districtId);
+        return $this->getAdminUnitId($name, OrganizationUnits::LEVEL_WARD);
     }
 
     /**
      * @param $name
-     * @param int $wardId
      * @return int|string|null
      * @throws \Exception
      */
-    protected function getVillageId($name, $wardId)
+    protected function getVillageId($name)
     {
-        return $this->getAdminUnitId($name, OrganizationUnits::LEVEL_VILLAGE, $wardId);
+        return $this->getAdminUnitId($name, OrganizationUnits::LEVEL_VILLAGE);
     }
 
     /**
      * @param int|string $code
      * @param int $level
-     * @param null $parentId
      * @return string
      * @throws \Exception
      */
-    public function getAdminUnitId($code, $level, $parentId = null)
+    public function getAdminUnitId($code, $level)
     {
-        $code = trim($code);
-        if (empty($code)) {
-            return null;
+        $data = [];
+        switch ($level) {
+            case OrganizationUnits::LEVEL_REGION:
+                $data = $this->_regions;
+                break;
+            case OrganizationUnits::LEVEL_DISTRICT:
+                $data = $this->_districts;
+                break;
+            case OrganizationUnits::LEVEL_WARD:
+                $data = $this->_wards;
+                break;
+            case OrganizationUnits::LEVEL_VILLAGE:
+                $data = $this->_villages;
+                break;
         }
-        $condition = ['org_id' => $this->org_id, 'level' => $level, 'code' => $code];
-        if (!empty($parentId)) {
-            $condition['parent_id'] = $parentId;
-        }
-        $id = OrganizationUnits::getScalar('id', $condition);
-        if (empty($id) && !is_numeric($code)) {
-            return null;
-        }
-
-        return $id;
+        $search = \common\helpers\ArrayHelper::search($data, 'code', $code);
+        return $search['id'] ?? null;
     }
 
     /**
@@ -189,7 +235,7 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterfa
 
     protected function cleanPhoneNumber($number)
     {
-        return Msisdn::format($number, $this->orgModel->dialing_code);
+        return (string)Msisdn::format($number, $this->orgModel->dialing_code);
     }
 
     /**
