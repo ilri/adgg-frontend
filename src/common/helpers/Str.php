@@ -32,7 +32,7 @@ class Str extends \Illuminate\Support\Str
     }
 
     /**
-     * @param string $string
+     * @param mixed $string
      * @return bool
      */
     public static function isEmpty($string): bool

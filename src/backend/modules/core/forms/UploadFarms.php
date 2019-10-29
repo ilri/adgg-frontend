@@ -144,7 +144,7 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterfa
             $insert_data[$k] = $row;
         }
         $model = new Farm(['org_id' => $this->org_id]);
-        $this->save($insert_data, $model, true, ['code' => '{code}', 'org_id' => $this->org_id]);
+        $this->save($insert_data, $model, false);
     }
 
     /**

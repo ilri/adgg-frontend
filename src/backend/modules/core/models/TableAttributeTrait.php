@@ -9,6 +9,7 @@
 namespace backend\modules\core\models;
 
 
+use common\helpers\Str;
 use common\models\ActiveRecord;
 use common\widgets\select2\Select2;
 use yii\bootstrap4\ActiveForm;
@@ -212,9 +213,13 @@ trait TableAttributeTrait
             $attributeValue = array_unique($attributeValue);
         }
         if ($insert) {
+            if (Str::isEmpty($attributeValue)) {
+                return false;
+            }
             return [
                 $foreignKeyAttribute => $this->id,
-                $valueAttribute => $attributeValue,
+                'attribute_value' => !$isMultiSelectField ? $attributeValue : null,
+                'attribute_value_json' => $isMultiSelectField ? json_encode($attributeValue) : null,
                 'attribute_id' => $attributeId,
             ];
         }
