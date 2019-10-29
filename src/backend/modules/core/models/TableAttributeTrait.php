@@ -107,14 +107,10 @@ trait TableAttributeTrait
     {
         /* @var $attributeValueModelClass ActiveRecord */
         $attributeId = TableAttribute::getAttributeId(static::getDefinedTableId(), $attribute);
-        $value = $attributeValueModelClass::getColumnData('attribute_value', [$foreignKeyAttribute => $this->id, 'attribute_id' => $attributeId]);
-        if (!empty($value)) {
-            if (count($value) > 1) {
-                //multiple select
-            } else {
-                $value = $value[0];
-            }
-        } else {
+        $isMultiSelectField = static::isMultiSelectAttribute(static::getDefinedTableId(), $attribute);
+        $valueAttribute = $isMultiSelectField ? 'attribute_value_json' : 'attribute_value';
+        $value = $attributeValueModelClass::getScalar($valueAttribute, [$foreignKeyAttribute => $this->id, 'attribute_id' => $attributeId]);
+        if (empty($value)) {
             $value = null;
         }
         $this->{$attribute} = $value;
@@ -152,31 +148,25 @@ trait TableAttributeTrait
         /* @var $attributeValueModelClass ActiveRecord */
         $attributeId = TableAttribute::getAttributeId(static::getDefinedTableId(), $attribute);
         $model = new $attributeValueModelClass([$foreignKeyAttribute => $this->id, 'attribute_id' => $attributeId]);
+        $isMultiSelectField = static::isMultiSelectAttribute(static::getDefinedTableId(), $attribute);
         $valueAttribute = 'attribute_value';
+        if ($isMultiSelectField) {
+            $valueAttribute = 'attribute_value_json';
+        }
         $attributeValue = $this->{$attribute};
-        if (static::isMultiSelectAttribute(static::getDefinedTableId(), $attribute)) {
-            $attributeValueModelClass::deleteAll([$foreignKeyAttribute => $this->id, 'attribute_id' => $attributeId]);
+        if ($isMultiSelectField) {
             if (!is_array($attributeValue)) {
                 $attributeValue = array_map('trim', explode(' ', $attributeValue));
             }
             $attributeValue = array_unique($attributeValue);
-            foreach ($attributeValue as $attrVal) {
-                if (!Str::isEmpty($attrVal)) {
-                    $newModel = clone $model;
-                    $newModel->{$valueAttribute} = $attrVal;
-                    $newModel->save(false);
-                }
-            }
-        } else {
-            if (!Str::isEmpty($attributeValue)) {
-                $newModel = $attributeValueModelClass::find()->andWhere([$foreignKeyAttribute => $this->id, 'attribute_id' => $attributeId])->one();
-                if (null === $newModel) {
-                    $newModel = clone $model;
-                }
-                $newModel->{$valueAttribute} = $attributeValue;
-                $newModel->save(false);
-            }
         }
+
+        $newModel = $attributeValueModelClass::find()->andWhere([$foreignKeyAttribute => $this->id, 'attribute_id' => $attributeId])->one();
+        if (null === $newModel) {
+            $newModel = clone $model;
+        }
+        $newModel->{$valueAttribute} = $attributeValue;
+        $newModel->save(false);
     }
 
     /**

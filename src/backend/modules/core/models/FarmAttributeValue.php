@@ -11,6 +11,7 @@ use common\models\ActiveRecord;
  * @property int $farm_id
  * @property int $attribute_id
  * @property string $attribute_value
+ * @property array $attribute_value_json
  * @property string $created_at
  * @property int $created_by
  * @property string $updated_at
@@ -40,6 +41,7 @@ class FarmAttributeValue extends ActiveRecord
             [['farm_id', 'attribute_id', 'attribute_value'], 'required'],
             [['farm_id', 'attribute_id'], 'integer'],
             [['attribute_value'], 'string', 'max' => 1000],
+            [['attribute_value_json'], 'safe'],
             [['farm_id'], 'exist', 'skipOnError' => true, 'targetClass' => Farm::class, 'targetAttribute' => ['farm_id' => 'id']],
             [['attribute_id'], 'exist', 'skipOnError' => true, 'targetClass' => TableAttribute::class, 'targetAttribute' => ['attribute_id' => 'id']],
         ];

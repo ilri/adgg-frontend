@@ -11,6 +11,7 @@ use common\models\ActiveRecord;
  * @property int $animal_id
  * @property int $attribute_id
  * @property string $attribute_value
+ * @property array $attribute_value_json
  * @property string $created_at
  * @property int $created_by
  * @property string $updated_at
@@ -38,6 +39,7 @@ class AnimalAttributeValue extends ActiveRecord
             [['animal_id', 'attribute_id', 'created_by', 'updated_by'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['attribute_value'], 'string', 'max' => 1000],
+            [['attribute_value_json'], 'safe'],
             [['animal_id'], 'exist', 'skipOnError' => true, 'targetClass' => Animal::class, 'targetAttribute' => ['animal_id' => 'id']],
         ];
     }
