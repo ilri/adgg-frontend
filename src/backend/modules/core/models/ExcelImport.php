@@ -79,7 +79,7 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
             'success_message' => 'Success Message',
             'created_at' => 'Created At',
             'created_by' => 'Created By',
-            'current_processed_row' => 'Current Processed Row',
+            'current_processed_row' => 'Processed Rows',
             'processing_duration_seconds' => 'Processing Duration (Sec)',
 
         ];

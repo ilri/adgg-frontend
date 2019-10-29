@@ -49,6 +49,7 @@ use yii\helpers\Html;
         [
             'attribute' => 'processing_duration_seconds',
             'format' => ['decimal'],
+            'visible' => false,
         ],
         [
             'attribute' => 'current_processed_row',
