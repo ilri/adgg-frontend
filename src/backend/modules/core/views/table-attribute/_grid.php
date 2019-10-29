@@ -36,8 +36,8 @@ use yii\helpers\Url;
             'value' => function (TableAttribute $model) {
                 return AnimalEvent::decodeEventType($model->event_type);
             },
-            'filter' => AnimalEvent::eventTypeOptions(),
             'visible' => ExtendableTable::TABLE_ANIMAL_EVENTS,
+            'filter' => AnimalEvent::eventTypeOptions(),
         ],
         [
             'attribute' => 'group_id',

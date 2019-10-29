@@ -82,30 +82,14 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterfa
             if (empty($row)) {
                 continue;
             }
-            if (!empty($row['reg_date'])) {
-                if (is_numeric($row['reg_date'])) {
-                    $row['reg_date'] = Date::excelToDateTimeObject($row['reg_date'])->format('Y-m-d');
-                } else {
-                    $row['reg_date'] = DateUtils::formatDate($row['reg_date'], 'Y-m-d', 'UTC');
-                }
-            }
             $row['org_id'] = $this->org_id;
-
-            if (!empty($row['region_code'])) {
-                $row['region_id'] = $this->getRegionId($row['region_code']);
-            }
-            if (!empty($row['district_code'])) {
-                $row['district_id'] = $this->getDistrictId($row['district_code'], $row['region_id']);
-            }
-            if (!empty($row['ward_code'])) {
-                $row['ward_id'] = $this->getWardId($row['ward_code'], $row['district_id']);
-            }
-            if (!empty($row['village_code'])) {
-                $row['village_id'] = $this->getVillageId($row['village_code'], $row['ward_id']);
-            }
-            if (!empty($row['field_agent_code'])) {
-                $row['field_agent_id'] = $this->getFieldAgentId($row['field_agent_code']);
-            }
+            $row['reg_date'] = static::getDateColumnData($row['reg_date'], 'Y-m-d', null);
+            $row['region_id'] = $this->getRegionId($row['region_code']);
+            $row['district_id'] = $this->getDistrictId($row['district_code'], $row['region_id']);
+            $row['ward_id'] = $this->getWardId($row['ward_code'], $row['district_id']);
+            $row['village_id'] = $this->getVillageId($row['village_code'], $row['ward_id']);
+            $row['field_agent_id'] = $this->getFieldAgentId($row['field_agent_code'], $row['field_agent_code2']);
+            $row['code'] = $row['phone'];
             if (!empty($row['phone'])) {
                 $row['phone'] = $this->cleanPhoneNumber($row['phone']);
             }
@@ -160,30 +144,25 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterfa
     }
 
     /**
-     * @param int|string $name
+     * @param int|string $code
      * @param int $level
      * @param null $parentId
      * @return string
      * @throws \Exception
      */
-    public function getAdminUnitId($name, $level, $parentId = null)
+    public function getAdminUnitId($code, $level, $parentId = null)
     {
-        $name = trim($name);
-        if (empty($name)) {
+        $code = trim($code);
+        if (empty($code)) {
             return null;
         }
-        $condition = ['org_id' => $this->org_id, 'level' => $level];
-        if (is_numeric($name)) {
-            $condition = ['id' => $name];
-        } else {
-            $condition['name'] = $name;
+        $condition = ['org_id' => $this->org_id, 'level' => $level, 'code' => $code];
+        if (!empty($parentId)) {
+            $condition['parent_id'] = $parentId;
         }
         $id = OrganizationUnits::getScalar('id', $condition);
-        if (empty($id) && !is_numeric($name)) {
-            $model = new OrganizationUnits(['org_id' => $this->org_id, 'level' => $level, 'name' => $name, 'parent_id' => $parentId]);
-            $model->enableAuditTrail = false;
-            $model->save();
-            $id = $model->id;
+        if (empty($id) && !is_numeric($code)) {
+            return null;
         }
 
         return $id;
@@ -191,12 +170,17 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterfa
 
     /**
      * @param int|string $code
+     * @param int|string $code2
      * @return string
      * @throws \Exception
      */
-    public function getFieldAgentId($code)
+    public function getFieldAgentId($code, $code2)
     {
-        $id = Users::getScalar('id', ['org_id' => $this->org_id, 'username' => $code]);
+        if (!empty($code)) {
+            $id = Users::getScalar('id', ['org_id' => $this->org_id, 'username' => $code]);
+        } else {
+            $id = Users::getScalar('id', ['org_id' => $this->org_id, 'username' => $code2]);
+        }
         if (empty($id)) {
             return null;
         }

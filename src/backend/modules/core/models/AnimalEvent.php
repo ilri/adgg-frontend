@@ -215,7 +215,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             case self::EVENT_TYPE_HEALTH:
                 return 'Health';
             default:
-                throw new InvalidArgumentException();
+                return '';
         }
     }
 

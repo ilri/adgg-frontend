@@ -8,11 +8,6 @@
 namespace console\controllers;
 
 
-use backend\modules\auth\models\AuditTrail;
-use backend\modules\conf\models\EmailOutbox;
-use backend\modules\conf\models\Notif;
-use backend\modules\conf\models\NotifQueue;
-use backend\modules\conf\models\SmsOutbox;
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\AnimalAttributeValue;
 use backend\modules\core\models\AnimalEvent;
@@ -20,11 +15,7 @@ use backend\modules\core\models\AnimalEventValue;
 use backend\modules\core\models\AnimalHerd;
 use backend\modules\core\models\Client;
 use backend\modules\core\models\ClientAttributeValue;
-use backend\modules\core\models\ExcelImport;
 use backend\modules\core\models\FarmAttributeValue;
-use backend\modules\core\models\OdkJsonQueue;
-use backend\modules\core\models\Organization;
-use backend\modules\core\models\OrganizationUnits;
 use backend\modules\conf\models\NumberingFormat;
 use backend\modules\core\models\Farm;
 use Yii;
@@ -56,15 +47,15 @@ class FakerController extends Controller
     protected function clearFakeData()
     {
         $sql = "SET FOREIGN_KEY_CHECKS=0;";
-        $sql .= "TRUNCATE  `sys_queue`;TRUNCATE  `sys_app_session`;TRUNCATE `auth_log`;";
-        $sql .= "TRUNCATE " . SmsOutbox::tableName() . ";";
-        $sql .= "TRUNCATE " . EmailOutbox::tableName() . ";";
-        $sql .= "TRUNCATE " . OrganizationUnits::tableName() . ";";
-        $sql .= "TRUNCATE " . ExcelImport::tableName() . ";";
-        $sql .= "TRUNCATE " . OdkJsonQueue::tableName() . ";";
-        $sql .= "TRUNCATE " . Notif::tableName() . ";";
-        $sql .= "TRUNCATE " . NotifQueue::tableName() . ";";
-        $sql .= "TRUNCATE " . AuditTrail::tableName() . ";";
+        //$sql .= "TRUNCATE  `sys_queue`;TRUNCATE  `sys_app_session`;TRUNCATE `auth_log`;";
+        //$sql .= "TRUNCATE " . SmsOutbox::tableName() . ";";
+        //$sql .= "TRUNCATE " . EmailOutbox::tableName() . ";";
+        //$sql .= "TRUNCATE " . OrganizationUnits::tableName() . ";";
+        //$sql .= "TRUNCATE " . ExcelImport::tableName() . ";";
+        //$sql .= "TRUNCATE " . OdkJsonQueue::tableName() . ";";
+        //$sql .= "TRUNCATE " . Notif::tableName() . ";";
+        //$sql .= "TRUNCATE " . NotifQueue::tableName() . ";";
+        //$sql .= "TRUNCATE " . AuditTrail::tableName() . ";";
         $sql .= "TRUNCATE " . AnimalEventValue::tableName() . ";";
         $sql .= "TRUNCATE " . AnimalEvent::tableName() . ";";
         $sql .= "TRUNCATE " . AnimalAttributeValue::tableName() . ";";
@@ -75,11 +66,10 @@ class FakerController extends Controller
         $sql .= "TRUNCATE " . FarmAttributeValue::tableName() . ";";
         $sql .= "TRUNCATE " . Farm::tableName() . ";";
 
-        $sql .= "UPDATE " . NumberingFormat::tableName() . " SET [[next_number]]=1 WHERE [[id]]=:organization_account_no;";
-        $sql .= "UPDATE " . NumberingFormat::tableName() . " SET [[next_number]]=1 WHERE [[id]]=:animal_code;";
+        //$sql .= "UPDATE " . NumberingFormat::tableName() . " SET [[next_number]]=1 WHERE [[id]]=:organization_account_no;";
+        $sql .= "UPDATE " . NumberingFormat::tableName() . " SET [[next_number]]=1 WHERE [[code]]=:animal_code;";
         $sql .= "SET FOREIGN_KEY_CHECKS=1;";
         Yii::$app->db->createCommand($sql, [
-            ':organization_account_no' => Organization::NUMBERING_FORMAT_ID,
             ':animal_code' => Animal::NUMBERING_FORMAT_ID,
         ])->execute();
     }
