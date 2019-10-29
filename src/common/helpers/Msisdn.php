@@ -28,14 +28,14 @@ class Msisdn
         //25407....
         $country_code_length = strlen($country_code);
         if (substr($phone, 0, $country_code_length) == $country_code) {
-            if (substr($phone, $country_code_length, 1) == "0")
+            if (substr($phone, $country_code_length, 1) == "0") {
                 $phone = (int)substr($phone, $country_code_length);
-            else
-                return $phone;
+            }
         }
 
-        if (strlen($phone) === 9)
-            return $country_code . $phone;
+        if (strlen($phone) === 9) {
+            $phone = $country_code . $phone;
+        }
 
         return (string)$phone;
     }
