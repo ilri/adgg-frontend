@@ -137,13 +137,9 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterfa
             $row['village_id'] = $this->getVillageId($row['village_code']);
             $row['field_agent_id'] = $this->getFieldAgentId($row['field_agent_code'], $row['field_agent_code2']);
             $row['code'] = $row['phone'];
-            if (!empty($row['phone'])) {
-                $row['phone'] = $this->cleanPhoneNumber($row['phone']);
-            }
-
             $insert_data[$k] = $row;
         }
-        $model = new Farm(['org_id' => $this->org_id]);
+        $model = new Farm(['org_id' => $this->org_id, 'countryDialingCode' => $this->orgModel->dialing_code]);
         $this->save($insert_data, $model, false);
     }
 
@@ -231,11 +227,6 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterfa
             return null;
         }
         return $id;
-    }
-
-    protected function cleanPhoneNumber($number)
-    {
-        return (string)Msisdn::format($number, $this->orgModel->dialing_code);
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace backend\modules\core\models;
 
 use common\helpers\DbUtils;
+use common\helpers\Msisdn;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
@@ -50,6 +51,11 @@ use yii\helpers\Html;
 class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInterface, TableAttributeInterface
 {
     use ActiveSearchTrait, OrganizationUnitDataTrait, TableAttributeTrait;
+
+    /**
+     * @var
+     */
+    public $countryDialingCode;
 
     /**
      * {@inheritdoc}
@@ -160,7 +166,9 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             if (empty($this->name)) {
                 $this->name = $this->farmer_name;
             }
-
+            if (!empty($this->phone)) {
+                $this->phone = (string)Msisdn::format($this->phone, !empty($this->countryDialingCode) ? $this->countryDialingCode : $this->org->dialing_code);
+            }
             return true;
         }
         return false;
