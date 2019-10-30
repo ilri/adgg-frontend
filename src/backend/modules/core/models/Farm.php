@@ -76,7 +76,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             [['org_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'field_agent_id', 'is_active', 'farmer_is_hh_head'], 'safe'],
             [['latitude', 'latitude', 'phone'], 'number'],
             [['code', 'name', 'project', 'field_agent_name', 'farmer_name'], 'string', 'max' => 128],
-            [['phone'], 'string', 'min' => 9, 'max' => 13],
+            [['phone'], 'string', 'min' => 9, 'max' => 12, 'message' => '{attribute} should contain between 9 and 12 digits'],
             [['email', 'map_address'], 'string', 'max' => 255],
             [['farm_type'], 'string', 'max' => 30],
             [['gender_code'], 'string', 'max' => 10],
@@ -95,7 +95,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     {
         $labels = [
             'id' => 'ID',
-            'code' => 'Code',
+            'code' => 'Farmer Phone No.',
             'name' => 'Farm Name',
             'org_id' => 'Country',
             'region_id' => $this->org !== null ? Html::encode($this->org->unit1_name) : 'Region',
@@ -153,6 +153,18 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
         ];
     }
 
+    public function beforeValidate()
+    {
+        if (parent::beforeValidate()) {
+            if (!empty($this->phone)) {
+                $this->phone = (string)Msisdn::format($this->phone, !empty($this->countryDialingCode) ? $this->countryDialingCode : $this->org->dialing_code);
+            }
+            return true;
+        }
+        return false;
+    }
+
+
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
@@ -165,9 +177,6 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             }
             if (empty($this->name)) {
                 $this->name = $this->farmer_name;
-            }
-            if (!empty($this->phone)) {
-                $this->phone = (string)Msisdn::format($this->phone, !empty($this->countryDialingCode) ? $this->countryDialingCode : $this->org->dialing_code);
             }
             return true;
         }
@@ -228,7 +237,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             'ward_code',
             'village_code',
             'farmer_name',
-            'phone',
+            'code',//Farmer Phone No.
             'gender_code',
             'farmer_age',
             //'farmer_age_range',

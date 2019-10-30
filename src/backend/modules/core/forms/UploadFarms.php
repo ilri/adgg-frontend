@@ -136,7 +136,7 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterfa
             $row['ward_id'] = $this->getWardId($row['ward_code']);
             $row['village_id'] = $this->getVillageId($row['village_code']);
             $row['field_agent_id'] = $this->getFieldAgentId($row['field_agent_code'], $row['field_agent_code2']);
-            $row['code'] = $row['phone'];
+            $row['phone'] = $row['code'];
             $insert_data[$k] = $row;
         }
         $model = new Farm(['org_id' => $this->org_id, 'countryDialingCode' => $this->orgModel->dialing_code]);
