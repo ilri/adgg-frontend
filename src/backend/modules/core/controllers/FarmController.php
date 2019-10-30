@@ -52,7 +52,7 @@ class FarmController extends Controller
             'defaultOrder' => ['id' => SORT_DESC],
             'condition' => $condition,
             'params' => $params,
-            'with' => ['org', 'region', 'district', 'ward', 'village','attributeValues'],
+            'with' => ['org', 'region', 'district', 'ward', 'village','attributeValues','fieldAgent'],
         ]);
         $searchModel->org_id = $org_id;
         $searchModel->region_id = $region_id;

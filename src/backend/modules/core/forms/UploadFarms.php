@@ -16,7 +16,6 @@ use backend\modules\core\models\OrganizationUnits;
 use common\excel\ExcelUploadForm;
 use common\excel\ImportInterface;
 use common\helpers\Lang;
-use common\helpers\Msisdn;
 use console\jobs\JobInterface;
 
 class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterface
@@ -48,6 +47,9 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterfa
      */
     private $_villages;
 
+    public $farm_type;
+    public $project;
+
 
     /**
      * @inheritdoc
@@ -64,6 +66,7 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterfa
     {
         return array_merge($this->excelValidationRules(), [
             [['org_id'], 'required'],
+            [['farm_type', 'project'], 'safe'],
         ]);
     }
 
@@ -78,6 +81,8 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterfa
             'district_id' => Lang::t('District'),
             'ward_id' => Lang::t('Ward'),
             'village_id' => Lang::t('Village'),
+            'farm_type' => Lang::t('Farm Type'),
+            'project' => Lang::t('Project'),
         ]);
     }
 
@@ -139,7 +144,7 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterfa
             $row['phone'] = $row['code'];
             $insert_data[$k] = $row;
         }
-        $model = new Farm(['org_id' => $this->org_id, 'countryDialingCode' => $this->orgModel->dialing_code]);
+        $model = new Farm(['org_id' => $this->org_id, 'farm_type' => $this->farm_type, 'project' => $this->project, 'countryDialingCode' => $this->orgModel->dialing_code]);
         $this->save($insert_data, $model, false);
     }
 

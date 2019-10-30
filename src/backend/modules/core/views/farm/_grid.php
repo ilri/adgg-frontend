@@ -75,7 +75,10 @@ use yii\helpers\Url;
             'hidden' => false,
         ],
         [
-            'attribute' => 'field_agent_name',
+            'attribute' => 'field_agent_id',
+            'value' => function (Farm $model) {
+                return $model->getRelationAttributeValue('fieldAgent', 'name');
+            }
         ],
         [
             'attribute' => 'farm_type',

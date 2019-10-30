@@ -2,6 +2,7 @@
 
 namespace backend\modules\core\models;
 
+use backend\modules\auth\models\Users;
 use common\helpers\DbUtils;
 use common\helpers\Msisdn;
 use common\models\ActiveRecord;
@@ -47,6 +48,7 @@ use yii\helpers\Html;
  *
  * @property Organization $org
  * @property FarmAttributeValue[] $attributeValues
+ * @property Users $fieldAgent
  */
 class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInterface, TableAttributeInterface
 {
@@ -316,5 +318,13 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             }
         }
         return static::getStats($durationType, $condition, $params, $sum, $dateField, $from, $to);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFieldAgent()
+    {
+        return $this->hasOne(Users::class, ['id' => 'field_agent_id']);
     }
 }
