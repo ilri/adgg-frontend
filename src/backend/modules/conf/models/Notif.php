@@ -364,13 +364,18 @@ class Notif extends ActiveRecord
      */
     public static function processTemplate($notif_type_id, $item_id)
     {
-        $notif_type = NotifTypes::getOneRow(['template', 'model_class_name'], ['id' => $notif_type_id]);
-        if (empty($notif_type))
+        try {
+            $notif_type = NotifTypes::getOneRow(['template', 'model_class_name'], ['id' => $notif_type_id]);
+            if (empty($notif_type))
+                return false;
+            $model_class_name = $notif_type['model_class_name'];
+            /* @var $model \console\jobs\NotifInterface */
+            $model = new $model_class_name();
+            return $model::processInternalTemplate($notif_type['template'], $item_id, $notif_type_id);
+        } catch (\Exception $e) {
+            Yii::error($e->getMessage());
             return false;
-        $model_class_name = $notif_type['model_class_name'];
-        /* @var $model \console\jobs\NotifInterface */
-        $model = new $model_class_name();
-        return $model::processInternalTemplate($notif_type['template'], $item_id, $notif_type_id);
+        }
     }
 
     /**

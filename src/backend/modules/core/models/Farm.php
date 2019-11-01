@@ -4,7 +4,6 @@ namespace backend\modules\core\models;
 
 use backend\modules\auth\models\Users;
 use common\helpers\DbUtils;
-use common\helpers\Msisdn;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
@@ -45,6 +44,7 @@ use yii\helpers\Html;
  * @property int $is_deleted
  * @property string $deleted_at
  * @property int $deleted_by
+ * @property string $odk_code
  *
  * @property Organization $org
  * @property FarmAttributeValue[] $attributeValues
@@ -78,13 +78,15 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             [['org_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'field_agent_id', 'is_active', 'farmer_is_hh_head'], 'safe'],
             [['latitude', 'latitude', 'phone'], 'number'],
             [['code', 'name', 'project', 'field_agent_name', 'farmer_name'], 'string', 'max' => 128],
-            [['phone'], 'string', 'min' => 9, 'max' => 12, 'message' => '{attribute} should contain between 9 and 12 digits'],
+            [['phone'], 'string', 'min' => 9, 'max' => 12, 'message' => '{attribute} should contain between 9 and 12 digits','except' => self::SCENARIO_UPLOAD],
             [['email', 'map_address'], 'string', 'max' => 255],
             [['farm_type'], 'string', 'max' => 30],
             [['gender_code'], 'string', 'max' => 10],
             [['reg_date'], 'date', 'format' => 'Y-m-d'],
-            [['code'], 'unique', 'targetAttribute' => ['org_id', 'code'], 'message' => '{attribute} already exists'],
+            [['code'], 'unique', 'targetAttribute' => ['org_id', 'code'], 'message' => '{attribute} already exists', 'except' => self::SCENARIO_UPLOAD],
             [$this->getAdditionalAttributes(), 'safe'],
+            ['odk_code', 'unique', 'targetAttribute' => ['org_id', 'odk_code'], 'message' => '{attribute} already exists.', 'on' => self::SCENARIO_UPLOAD],
+            [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
 
         ];
@@ -126,6 +128,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             'created_by' => 'Created By',
             'updated_at' => 'Updated At',
             'updated_by' => 'Updated By',
+            'odk_code' => 'Farmer Code',
         ];
 
         return array_merge($labels, $this->getOtherAttributeLabels());
@@ -142,6 +145,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             ['phone', 'phone'],
             ['project', 'project'],
             ['farmer_name', 'farmer_name'],
+            ['odk_code', 'odk_code'],
             'org_id',
             'region_id',
             'district_id',
@@ -158,9 +162,6 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     public function beforeValidate()
     {
         if (parent::beforeValidate()) {
-            if (!empty($this->phone)) {
-                $this->phone = (string)Msisdn::format($this->phone, !empty($this->countryDialingCode) ? $this->countryDialingCode : $this->org->dialing_code);
-            }
             return true;
         }
         return false;
@@ -202,30 +203,6 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
      */
     public function getExcelColumns()
     {
-        $columns = [
-            'code',
-            'name',
-            'reg_date',
-            'region_code',
-            'district_code',
-            'ward_code',
-            'village_code',
-            'field_agent_name',
-            'farmer_name',
-            'phone',
-            'email',
-            'gender_code',
-            'farmer_is_hh_head',
-            'field_agent_code',
-            'field_agent_name',
-            'project',
-            'farm_type',
-            'latitude',
-            'longitude',
-        ];
-
-        $columns = array_merge($columns, $this->getAdditionalAttributes());
-
         return [
             'survey_id',
             'start_time',
@@ -239,8 +216,9 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             'ward_code',
             'village_code',
             'farmer_name',
-            'code',//Farmer Phone No.
+            'phone',
             'gender_code',
+            'odk_code',//Farmer Phone No.
             'farmer_age',
             //'farmer_age_range',
             'farmer_is_hh_head',

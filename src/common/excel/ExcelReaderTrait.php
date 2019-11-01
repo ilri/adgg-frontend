@@ -115,7 +115,7 @@ trait ExcelReaderTrait
     /**
      * @var array
      */
-    private $_failedRows = [];
+    protected $_failedRows = [];
     /**
      * @var array
      */
@@ -522,16 +522,20 @@ trait ExcelReaderTrait
         }
         $model->enableAuditTrail = false;
         $model->setScenario($model::SCENARIO_UPLOAD);
-        if ($model->save()) {
-            $this->_savedRows[$rowNumber] = $rowNumber;
-            Yii::$app->controller->stdout("Row {$rowNumber} saved successfully\n");
-            return true;
-        } else {
-            $errors = $model->getFirstErrors();
-            $error = implode(', ', $errors);
-            $this->_failedRows[$rowNumber] = ['error' => Lang::t('{error}', ['error' => $error]), 'rowData' => $rowData, 'rowNumber' => $rowNumber];
-            Yii::$app->controller->stdout("Row {$rowNumber} failed. Error: {$error} \n");
-            return false;
+        try {
+            if ($model->save()) {
+                $this->_savedRows[$rowNumber] = $rowNumber;
+                Yii::$app->controller->stdout("Row {$rowNumber} saved successfully\n");
+                return true;
+            } else {
+                $errors = $model->getFirstErrors();
+                $error = implode(', ', $errors);
+                $this->_failedRows[$rowNumber] = ['error' => Lang::t('{error}', ['error' => $error]), 'rowData' => $rowData, 'rowNumber' => $rowNumber];
+                Yii::$app->controller->stdout("Row {$rowNumber} failed. Error: {$error} \n");
+                return false;
+            }
+        } catch (\Exception $e) {
+            $this->_failedRows[$rowNumber] = ['error' => $e->getMessage(), 'rowData' => $rowData, 'rowNumber' => $rowNumber];
         }
     }
 
@@ -616,8 +620,6 @@ trait ExcelReaderTrait
             if (!empty($createDateFromFormat)) {
                 $date = DateTime::createFromFormat($createDateFromFormat, $dateString);
                 $dateString = $date->format($format);
-            } else {
-                $dateString = DateUtils::formatDate($dateString, $format, $timezone);
             }
         }
 

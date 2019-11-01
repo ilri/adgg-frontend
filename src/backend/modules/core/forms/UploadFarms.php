@@ -16,6 +16,7 @@ use backend\modules\core\models\OrganizationUnits;
 use common\excel\ExcelUploadForm;
 use common\excel\ImportInterface;
 use common\helpers\Lang;
+use common\helpers\Msisdn;
 use console\jobs\JobInterface;
 
 class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterface
@@ -135,13 +136,13 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterfa
                 continue;
             }
             $row['org_id'] = $this->org_id;
-            $row['reg_date'] = static::getDateColumnData($row['reg_date'], 'Y-m-d', null);
+            $row['reg_date'] = static::getDateColumnData($row['reg_date'], 'Y-m-d');
             $row['region_id'] = $this->getRegionId($row['region_code']);
             $row['district_id'] = $this->getDistrictId($row['district_code']);
             $row['ward_id'] = $this->getWardId($row['ward_code']);
             $row['village_id'] = $this->getVillageId($row['village_code']);
             $row['field_agent_id'] = $this->getFieldAgentId($row['field_agent_code'], $row['field_agent_code2']);
-            $row['phone'] = $row['code'];
+            $row['phone'] = $this->preparePhoneNumber($row['phone']);
             $insert_data[$k] = $row;
         }
         $model = new Farm(['org_id' => $this->org_id, 'farm_type' => $this->farm_type, 'project' => $this->project, 'countryDialingCode' => $this->orgModel->dialing_code]);
@@ -240,5 +241,16 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterfa
     public function setUploadType()
     {
         $this->_uploadType = ExcelImport::TYPE_FARM_DATA;
+    }
+
+    protected function preparePhoneNumber($phone)
+    {
+        if (empty($phone)) {
+            return null;
+        }
+
+        $phone = explode('_', $phone);
+        $phone = $phone[0];
+        return (string)Msisdn::format($phone, $this->orgModel->dialing_code);
     }
 }
