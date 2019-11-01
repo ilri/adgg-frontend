@@ -651,7 +651,8 @@ trait ExcelReaderTrait
                     $failedData[] = $rowData;
                 }
 
-                $fileName = $model->uuid . '.csv';
+                $fileName = pathinfo($model->getFilePath(), PATHINFO_FILENAME);
+                $fileName = $fileName . '_error.csv';
                 $filePath = $baseDir . DIRECTORY_SEPARATOR . $fileName;
                 $fp = fopen($filePath, 'wb');
 
