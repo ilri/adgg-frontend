@@ -138,6 +138,10 @@ use yii\bootstrap4\Html;
                         <?= Html::textInput('name', $model->name, ['class' => 'form-control']) ?>
                     </div>
                     <div class="col-lg-2">
+                        <?= Html::label($model->getAttributeLabel('odk_code')) ?>
+                        <?= Html::textInput('odk_code', $model->odk_code, ['class' => 'form-control']) ?>
+                    </div>
+                    <div class="col-lg-2">
                         <?= Html::label($model->getAttributeLabel('code')) ?>
                         <?= Html::textInput('code', $model->code, ['class' => 'form-control']) ?>
                     </div>

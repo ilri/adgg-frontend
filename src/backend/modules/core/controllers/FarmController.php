@@ -31,7 +31,7 @@ class FarmController extends Controller
         $this->resourceLabel = 'Farm';
     }
 
-    public function actionIndex($org_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $name = null, $code = null, $phone = null, $project = null, $farm_type = null, $gender_code = null, $is_active = null)
+    public function actionIndex($org_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $name = null, $code = null, $phone = null, $project = null, $farm_type = null, $gender_code = null, $is_active = null,$odk_code=null)
     {
         if (Session::isOrganization()) {
             $org_id = Session::getOrgId();
@@ -66,6 +66,7 @@ class FarmController extends Controller
         $searchModel->farm_type = $farm_type;
         $searchModel->gender_code = $gender_code;
         $searchModel->is_active = $is_active;
+        $searchModel->odk_code=$odk_code;
 
         return $this->render('index', [
             'searchModel' => $searchModel,
