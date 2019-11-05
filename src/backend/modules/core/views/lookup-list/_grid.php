@@ -16,7 +16,7 @@ use common\widgets\grid\GridView;
     'showExportButton' => false,
     'columns' => [
         [
-            'id',
+            'attribute' => 'id',
         ],
         [
             'attribute' => 'list_type_id',
