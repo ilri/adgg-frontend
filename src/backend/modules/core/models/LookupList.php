@@ -60,7 +60,7 @@ class LookupList extends ActiveRecord implements ActiveSearchInterface
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
+            'id' => '#',
             'value' => 'Value',
             'label' => 'Label',
             'description' => 'Description',

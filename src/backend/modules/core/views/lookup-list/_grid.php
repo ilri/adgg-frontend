@@ -16,6 +16,9 @@ use common\widgets\grid\GridView;
     'showExportButton' => false,
     'columns' => [
         [
+            'id',
+        ],
+        [
             'attribute' => 'list_type_id',
             'value' => function (LookupList $model) {
                 return $model->getRelationAttributeValue('listType', 'name');
