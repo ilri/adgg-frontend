@@ -103,7 +103,8 @@ class LookupList extends ActiveRecord implements ActiveSearchInterface
      */
     public static function getList($listType, $prompt = false, $condition = '', $params = [], $options = [])
     {
-        $options['orderBy'] = ['value' => SORT_ASC];
+
+        $options['orderBy'] = $options['orderBy'] ?? ['id' => SORT_ASC];
         list($condition, $params) = DbUtils::appendCondition('list_type_id', $listType, $condition, $params);
         return parent::getListData('value', 'label', $prompt, $condition, $params, $options);
     }

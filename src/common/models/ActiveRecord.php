@@ -468,8 +468,8 @@ abstract class ActiveRecord extends AR
      */
     public static function getListData($valueColumn = 'id', $textColumn = 'name', $prompt = false, $condition = '', $params = [], $options = [])
     {
-        $valueFieldAlias = 'id';
-        $textFieldAlias = 'name';
+        $valueFieldAlias = 'list_data_value';
+        $textFieldAlias = 'list_data_label';
         $columns = [
             "[[{$valueColumn}]] as [[{$valueFieldAlias}]]",
             !strpos($textColumn, '(') ? "[[{$textColumn}]] as [[{$textFieldAlias}]]" : "{$textColumn} as [[{$textFieldAlias}]]",
@@ -484,8 +484,9 @@ abstract class ActiveRecord extends AR
             $options['orderBy'] = ArrayHelper::getValue($options, 'orderBy', $textFieldAlias);
         }
 
+        $primaryKeyField = static::getPrimaryKeyColumn();
+        $columns[] = '[[' . $primaryKeyField . ']]';
         list($condition, $params) = static::appendDefaultConditions($condition, $params, ['is_active' => 1, 'is_deleted' => 0]);
-
         $data = static::getData($columns, $condition, $params, $options);
         if ($prompt !== false && null !== $prompt) {
             $prompt = $prompt === true ? "[select one]" : $prompt;
