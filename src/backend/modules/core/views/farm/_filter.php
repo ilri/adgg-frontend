@@ -16,10 +16,10 @@ use yii\bootstrap4\Html;
         <div class="card-header">
             <div class="card-title" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
                  aria-controls="collapseOne">
-                <i class="fas fa-chevron-right"></i> <?= Lang::t('Filters') ?>:
+                <i class="fas fa-chevron-down"></i> <?= Lang::t('Filters') ?>:
             </div>
         </div>
-        <div id="collapseOne" class="collapse" data-parent="#accordion">
+        <div id="collapseOne" class="collapse show" data-parent="#accordion">
             <div class="card-body">
                 <?= Html::beginForm(['index'], 'get', ['class' => '', 'id' => 'grid-filter-form', 'data-grid' => $model->getPjaxWidgetId()]) ?>
                 <div class="form-row align-items-center">
