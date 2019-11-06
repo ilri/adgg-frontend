@@ -7,7 +7,7 @@ use common\helpers\Url;
 use common\widgets\select2\Select2;
 use yii\bootstrap4\Html;
 
-/* @var $model \backend\modules\core\models\Animal */
+/* @var $model \backend\modules\core\models\Animal*/
 ?>
 
 <div class="accordion mb-5" id="accordion">

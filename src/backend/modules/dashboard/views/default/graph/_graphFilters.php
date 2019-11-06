@@ -1,6 +1,9 @@
 <?php
 
-use backend\modules\core\models\Animal;
+use backend\modules\core\models\ListType;
+use backend\modules\core\models\LookupList;
+use backend\modules\core\models\Organization;
+use common\widgets\highchart\HighChart;
 use common\widgets\select2\Select2;
 
 /* @var $this \yii\web\View */
@@ -10,12 +13,12 @@ $idPrefix = 'animal-g-filter-';
 <div class="row">
     <div class="col-md-2">
         <?= Select2::widget([
-            'name' => 'type',
-            'value' => $filterOptions['type'] ?? null,
-            'data' => Animal::typeOptions('--All animals-'),
+            'name' => 'animal_type',
+            'value' => $filterOptions['animal_type'] ?? null,
+            'data' => LookupList::getList(ListType::LIST_TYPE_ANIMAL_TYPES, '--All animals-'),
             'theme' => Select2::THEME_BOOTSTRAP,
             'options' => [
-                'id' => $idPrefix . 'type',
+                'id' => $idPrefix . 'animal_type',
             ],
             'pluginOptions' => [
                 'allowClear' => false
@@ -26,7 +29,7 @@ $idPrefix = 'animal-g-filter-';
         <?= Select2::widget([
             'name' => 'org_id',
             'value' => $filterOptions['org_id'] ?? null,
-            'data' => \backend\modules\core\models\Organization::getListData('id','name','--All Countries--'),
+            'data' => Organization::getListData('id', 'name', '--All Countries--'),
             'theme' => Select2::THEME_BOOTSTRAP,
             'options' => [
                 'id' => $idPrefix . 'org_id',
@@ -38,9 +41,9 @@ $idPrefix = 'animal-g-filter-';
     </div>
     <div class="col-sm-2">
         <?= Select2::widget([
-            'name' => \common\widgets\highchart\HighChart::GET_PARAM_GRAPH_TYPE,
+            'name' => HighChart::GET_PARAM_GRAPH_TYPE,
             'value' => $graphType,
-            'data' => \common\widgets\highchart\HighChart::graphTypeOptions(false, []),
+            'data' => HighChart::graphTypeOptions(false, []),
             'theme' => Select2::THEME_BOOTSTRAP,
             'options' => [
                 'id' => $idPrefix . 'graph-type',

@@ -6,8 +6,6 @@ use common\helpers\Utils;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
-use yii\base\InvalidArgumentException;
-use yii\db\Expression;
 
 /**
  * This is the model class for table "core_animal_event".

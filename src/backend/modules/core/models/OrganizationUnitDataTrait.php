@@ -93,7 +93,11 @@ trait OrganizationUnitDataTrait
      */
     public static function loadModel($condition, $throwException = true)
     {
-        $model = parent::loadModel($condition, false);
+        if (is_string($condition) && !is_numeric($condition)) {
+            $model = parent::loadModel(['uuid' => $condition], false);
+        } else {
+            $model = parent::loadModel($condition, false);
+        }
         if ($model === null) {
             if ($throwException) {
                 throw new NotFoundHttpException('The requested resource was not found.');

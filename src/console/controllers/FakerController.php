@@ -12,12 +12,6 @@ use backend\modules\core\models\Animal;
 use backend\modules\core\models\AnimalAttributeValue;
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\AnimalEventValue;
-use backend\modules\core\models\AnimalHerd;
-use backend\modules\core\models\Client;
-use backend\modules\core\models\ClientAttributeValue;
-use backend\modules\core\models\FarmAttributeValue;
-use backend\modules\conf\models\NumberingFormat;
-use backend\modules\core\models\Farm;
 use Yii;
 use yii\console\Controller;
 
@@ -60,18 +54,15 @@ class FakerController extends Controller
         $sql .= "TRUNCATE " . AnimalEvent::tableName() . ";";
         $sql .= "TRUNCATE " . AnimalAttributeValue::tableName() . ";";
         $sql .= "TRUNCATE " . Animal::tableName() . ";";
-        $sql .= "TRUNCATE " . AnimalHerd::tableName() . ";";
-        $sql .= "TRUNCATE " . ClientAttributeValue::tableName() . ";";
-        $sql .= "TRUNCATE " . Client::tableName() . ";";
-        $sql .= "TRUNCATE " . FarmAttributeValue::tableName() . ";";
-        $sql .= "TRUNCATE " . Farm::tableName() . ";";
+        //$sql .= "TRUNCATE " . AnimalHerd::tableName() . ";";
+        //$sql .= "TRUNCATE " . ClientAttributeValue::tableName() . ";";
+        //$sql .= "TRUNCATE " . Client::tableName() . ";";
+        //$sql .= "TRUNCATE " . FarmAttributeValue::tableName() . ";";
+        //$sql .= "TRUNCATE " . Farm::tableName() . ";";
 
         //$sql .= "UPDATE " . NumberingFormat::tableName() . " SET [[next_number]]=1 WHERE [[id]]=:organization_account_no;";
-        $sql .= "UPDATE " . NumberingFormat::tableName() . " SET [[next_number]]=1 WHERE [[code]]=:animal_code;";
         $sql .= "SET FOREIGN_KEY_CHECKS=1;";
-        Yii::$app->db->createCommand($sql, [
-            ':animal_code' => Animal::NUMBERING_FORMAT_ID,
-        ])->execute();
+        Yii::$app->db->createCommand($sql, [])->execute();
     }
 
     protected function canExecuteFaker()

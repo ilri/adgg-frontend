@@ -1,6 +1,5 @@
 <?php
 
-use backend\modules\auth\Session;
 use backend\modules\core\models\LookupList;
 use backend\modules\core\models\Organization;
 use backend\modules\core\models\OrganizationUnits;

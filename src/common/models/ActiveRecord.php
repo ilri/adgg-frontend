@@ -34,7 +34,7 @@ use yii\web\NotFoundHttpException;
  */
 abstract class ActiveRecord extends AR
 {
-    use ControllerActionTrait;
+    use ControllerActionTrait, ReportsTrait;
 
     //used by getStats() function
     const STATS_TODAY = '1';
@@ -220,6 +220,7 @@ abstract class ActiveRecord extends AR
 
     public function afterFind()
     {
+        $this->hasAttribute();
         $this->oldDbAttributes = $this->attributes;
         parent::afterFind();
     }

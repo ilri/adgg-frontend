@@ -53,11 +53,10 @@ use yii\bootstrap4\ActiveForm;
                                 ],
                             ]) ?>
                         <?php endif; ?>
-                        <?= Html::activeHiddenInput($model, 'type') ?>
                         <?= $this->render('@common/excel/views/uploadExcel', ['model' => $model, 'form_id' => $formId, 'previewUrl' => Url::to(['upload-preview'])]); ?>
                     </div>
                     <div class="col-md-4">
-                        <?= $this->render('@common/excel/views/guide', ['model' => $model, 'sampleUrl' => Url::to(['/helper/download-excel-sample', 'route' => 'client.xlsx']),]); ?>
+                        <?= $this->render('@common/excel/views/guide', ['model' => $model, 'sampleUrl' => Url::to(['/helper/download-excel-sample', 'route' => 'animal.xlsx']),]); ?>
                     </div>
                 </div>
             </div>
@@ -72,7 +71,7 @@ use yii\bootstrap4\ActiveForm;
                         <?= Lang::t('Upload') ?>
                     </button>
                     <a class="btn btn-secondary"
-                       href="<?= Url::getReturnUrl(Url::to(['index', 'type' => $model->type])) ?>">
+                       href="<?= Url::getReturnUrl(Url::to(['index'])) ?>">
                         <?= Lang::t('Cancel') ?>
                     </a>
                 </div>

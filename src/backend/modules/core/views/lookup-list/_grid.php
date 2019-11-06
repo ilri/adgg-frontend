@@ -17,6 +17,7 @@ use common\widgets\grid\GridView;
     'columns' => [
         [
             'attribute' => 'id',
+            'visible' => false,
         ],
         [
             'attribute' => 'list_type_id',

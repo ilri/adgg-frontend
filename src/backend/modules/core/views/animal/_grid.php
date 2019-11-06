@@ -17,7 +17,7 @@ use yii\helpers\Url;
         return ["class" => "linkable", "data-href" => Url::to(['view', "id" => $model->uuid])];
     },
     'toolbarButtons' => [
-        Yii::$app->user->canCreate() ? '<a class="btn btn-brand btn-bold btn-upper btn-font-sm btn-space" href="' . Url::to(array_merge(['upload','type'=>$model->type], Yii::$app->request->queryParams)) . '" data-pjax="0"><i class="fa fa-file-excel-o"></i> ' . Lang::t('Upload Excel/CSV') . '</a> ' : '',
+        Yii::$app->user->canCreate() ? '<a class="btn btn-brand btn-bold btn-upper btn-font-sm btn-space" href="' . Url::to(array_merge(['upload', 'type' => $model->type], Yii::$app->request->queryParams)) . '" data-pjax="0"><i class="fa fa-file-excel-o"></i> ' . Lang::t('Upload Excel/CSV') . '</a> ' : '',
     ],
     'columns' => [
         [
@@ -55,9 +55,9 @@ use yii\helpers\Url;
             'filter' => false,
         ],
         [
-            'attribute' => 'type',
+            'attribute' => 'animal_type',
             'value' => function (Animal $model) {
-                return $model->getDecodedType();
+                return $model->animal_type;
             }
         ],
         [

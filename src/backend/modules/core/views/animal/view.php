@@ -12,7 +12,7 @@ use yii\widgets\DetailView;
 /* @var $controller \backend\controllers\BackendController */
 $controller = Yii::$app->controller;
 $this->title = Html::encode($model->name);
-$this->params['breadcrumbs'][] = ['label' => Inflector::pluralize($controller->resourceLabel), 'url' => ['index', 'type' => $model->type]];
+$this->params['breadcrumbs'][] = ['label' => Inflector::pluralize($controller->resourceLabel), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 

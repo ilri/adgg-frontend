@@ -25,7 +25,7 @@ class LookupListController extends MasterDataController
     public function actionIndex($list_type_id = null)
     {
         $searchModel = LookupList::searchModel([
-            'defaultOrder' => ['value' => SORT_ASC],
+            'defaultOrder' => ['id' => SORT_ASC],
             'with' => ['listType'],
         ]);
         $searchModel->is_active = 1;

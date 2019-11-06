@@ -14,6 +14,7 @@ use backend\modules\auth\Session;
 use backend\modules\core\Constants;
 use backend\modules\core\forms\UploadAnimals;
 use backend\modules\core\models\Animal;
+use common\controllers\UploadExcelTrait;
 use common\helpers\Lang;
 use common\helpers\Url;
 use Yii;
@@ -21,6 +22,8 @@ use yii\db\Exception;
 
 class AnimalController extends Controller
 {
+    use UploadExcelTrait;
+
     public function init()
     {
         parent::init();
@@ -28,33 +31,21 @@ class AnimalController extends Controller
         $this->resourceLabel = 'Animal';
     }
 
-    public function actionIndex($type = null, $org_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $name = null, $tag_id = null)
+    public function actionIndex($org_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $animal_type = null, $name = null, $tag_id = null, $sire_tag_id = null, $dam_tag_id = null)
     {
-        if (Session::isOrganization()) {
-            $org_id = Session::getOrgId();
-        }
-        if (Session::isRegionUser()) {
-            $region_id = Session::getRegionId();
-        } elseif (Session::isDistrictUser()) {
-            $district_id = Session::getDistrictId();
-        } elseif (Session::isWardUser()) {
-            $ward_id = Session::getWardId();
-        } elseif (Session::isVillageUser()) {
-            $village_id = Session::getVillageId();
-        }
-        if (empty($type)) {
-            $type = Animal::TYPE_COW;
-        }
+        $org_id = Session::getOrgId($org_id);
+        $region_id = Session::getRegionId($region_id);
+        $district_id = Session::getDistrictId($district_id);
+        $ward_id = Session::getWardId($ward_id);
+        $village_id = Session::getVillageId($village_id);
         $condition = '';
         $params = [];
-        list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
         $searchModel = Animal::searchModel([
             'defaultOrder' => ['id' => SORT_ASC],
             'condition' => $condition,
             'params' => $params,
             'with' => ['farm', 'region', 'district', 'ward', 'village', 'sire', 'dam'],
         ]);
-        $searchModel->type = $type;
         $searchModel->org_id = $org_id;
         $searchModel->region_id = $region_id;
         $searchModel->district_id = $district_id;
@@ -62,6 +53,9 @@ class AnimalController extends Controller
         $searchModel->village_id = $village_id;
         $searchModel->name = $name;
         $searchModel->tag_id = $tag_id;
+        $searchModel->animal_type = $animal_type;
+        $searchModel->sire_tag_id = $sire_tag_id;
+        $searchModel->dam_tag_id = $dam_tag_id;
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -93,7 +87,7 @@ class AnimalController extends Controller
 
     public function actionUpdate($id)
     {
-        $model = $this->loadModel($id);
+        $model = Animal::loadModel($id);
         if ($this->handlePostedData($model)) {
             Yii::$app->session->setFlash('success', Lang::t('SUCCESS_MESSAGE'));
             return $this->redirect(Url::getReturnUrl(['index', 'id' => $model->id]));
@@ -123,18 +117,11 @@ class AnimalController extends Controller
     public function actionUpload($type = null)
     {
         $this->hasPrivilege(Acl::ACTION_CREATE);
-        if (empty($type)) {
-            $type = Animal::TYPE_COW;
-        }
 
-        $form = new UploadAnimals(Animal::class, ['type' => $type]);
-        if ($form->load(Yii::$app->request->post())) {
-            if ($form->validate() && $form->addToExcelQueue()) {
-                Yii::$app->session->setFlash('success', Lang::t('File queued for processing. You will get notification once the file processing is completed.'));
-                return json_encode(['success' => true, 'redirectUrl' => Url::to(['index', 'type' => $type])]);
-            } else {
-                return json_encode(['success' => false, 'message' => $form->getErrors()]);
-            }
+        $form = new UploadAnimals(Animal::class);
+        $resp = $this->uploadExcelConsole($form, 'index', []);
+        if ($resp !== false) {
+            return $resp;
         }
 
         return $this->render('upload', [
@@ -150,25 +137,6 @@ class AnimalController extends Controller
 
     public function actionDelete($id)
     {
-        $model = $this->loadModel($id);
-        return Animal::softDelete($model->id);
-    }
-
-
-    /**
-     * @param $id
-     * @return Animal
-     * @throws \yii\web\NotFoundHttpException
-     * @throws \yii\web\ForbiddenHttpException
-     */
-    protected function loadModel($id)
-    {
-        if (is_string($id) && !is_numeric($id)) {
-            $model = Animal::loadModel(['uuid' => $id]);
-        } else {
-            $model = Animal::loadModel($id);
-        }
-
-        return $model;
+        return Animal::softDelete($id);
     }
 }

@@ -117,43 +117,63 @@ class Session
     }
 
     /**
+     * @param null|string|int $default
      * @return mixed
      */
-    public static function getOrgId()
+    public static function getOrgId($default = null)
     {
-        return Yii::$app->user->identity->org_id ?? null;
+        if (static::isOrganization()) {
+            return Yii::$app->user->identity->org_id ?? null;
+        }
+        return $default;
     }
 
     /**
+     * @param null|string|int $default
      * @return mixed
      */
-    public static function getRegionId()
+    public static function getRegionId($default = null)
     {
-        return Yii::$app->user->identity->region_id ?? null;
+        if (static::isRegionUser()) {
+            return Yii::$app->user->identity->region_id ?? null;
+        }
+        return $default;
     }
 
     /**
+     * @param null|string|int $default
      * @return mixed
      */
-    public static function getDistrictId()
+    public static function getDistrictId($default = null)
     {
-        return Yii::$app->user->identity->district_id ?? null;
+        if (static::isDistrictUser()) {
+            return Yii::$app->user->identity->district_id ?? null;
+        }
+        return $default;
     }
 
     /**
+     * @param null|string|int $default
      * @return mixed
      */
-    public static function getWardId()
+    public static function getWardId($default = null)
     {
-        return Yii::$app->user->identity->ward_id ?? null;
+        if (static::isWardUser()) {
+            return Yii::$app->user->identity->ward_id ?? null;
+        }
+        return $default;
     }
 
     /**
+     * @param null|string|int $default
      * @return mixed
      */
-    public static function getVillageId()
+    public static function getVillageId($default = null)
     {
-        return Yii::$app->user->identity->village_id ?? null;
+        if (static::isVillageUser()) {
+            return Yii::$app->user->identity->village_id ?? null;
+        }
+        return $default;
     }
 
     /**

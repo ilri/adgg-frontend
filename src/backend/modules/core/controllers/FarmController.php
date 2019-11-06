@@ -31,28 +31,20 @@ class FarmController extends Controller
         $this->resourceLabel = 'Farm';
     }
 
-    public function actionIndex($org_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $name = null, $code = null, $phone = null, $project = null, $farm_type = null, $gender_code = null, $is_active = null,$odk_code=null)
+    public function actionIndex($org_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $name = null, $code = null, $phone = null, $project = null, $farm_type = null, $gender_code = null, $is_active = null, $odk_code = null)
     {
-        if (Session::isOrganization()) {
-            $org_id = Session::getOrgId();
-        }
-        if (Session::isRegionUser()) {
-            $region_id = Session::getRegionId();
-        } elseif (Session::isDistrictUser()) {
-            $district_id = Session::getDistrictId();
-        } elseif (Session::isWardUser()) {
-            $ward_id = Session::getWardId();
-        } elseif (Session::isVillageUser()) {
-            $village_id = Session::getVillageId();
-        }
+        $org_id = Session::getOrgId($org_id);
+        $region_id = Session::getRegionId($region_id);
+        $district_id = Session::getDistrictId($district_id);
+        $ward_id = Session::getWardId($ward_id);
+        $village_id = Session::getVillageId($village_id);
         $condition = '';
         $params = [];
-        list($condition, $params) = Farm::appendOrgSessionIdCondition($condition, $params);
         $searchModel = Farm::searchModel([
             'defaultOrder' => ['id' => SORT_DESC],
             'condition' => $condition,
             'params' => $params,
-            'with' => ['org', 'region', 'district', 'ward', 'village','attributeValues','fieldAgent'],
+            'with' => ['org', 'region', 'district', 'ward', 'village', 'attributeValues', 'fieldAgent'],
         ]);
         $searchModel->org_id = $org_id;
         $searchModel->region_id = $region_id;
@@ -66,7 +58,7 @@ class FarmController extends Controller
         $searchModel->farm_type = $farm_type;
         $searchModel->gender_code = $gender_code;
         $searchModel->is_active = $is_active;
-        $searchModel->odk_code=$odk_code;
+        $searchModel->odk_code = $odk_code;
 
         return $this->render('index', [
             'searchModel' => $searchModel,
