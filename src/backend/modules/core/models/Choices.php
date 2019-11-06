@@ -7,6 +7,7 @@ use common\helpers\Lang;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
+use Yii;
 
 /**
  * This is the model class for table "core_master_list".
@@ -23,9 +24,9 @@ use common\models\ActiveSearchTrait;
  * @property string $deleted_at
  * @property int $deleted_by
  *
- * @property ListType $listType
+ * @property ChoiceTypes $listType
  */
-class LookupList extends ActiveRecord implements ActiveSearchInterface
+class Choices extends ActiveRecord implements ActiveSearchInterface
 {
     use ActiveSearchTrait;
 
@@ -47,7 +48,7 @@ class LookupList extends ActiveRecord implements ActiveSearchInterface
             [['list_type_id', 'is_active'], 'integer'],
             [['value', 'label'], 'string', 'max' => 128],
             [['description'], 'string', 'max' => 255],
-            [['list_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => ListType::class, 'targetAttribute' => ['list_type_id' => 'id']],
+            [['list_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => ChoiceTypes::class, 'targetAttribute' => ['list_type_id' => 'id']],
             ['value', 'unique', 'targetAttribute' => ['list_type_id', 'value'], 'message' => Lang::t('{attribute} already exists.')],
             ['label', 'unique', 'targetAttribute' => ['list_type_id', 'label'], 'message' => Lang::t('{attribute} already exists.')],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
@@ -76,7 +77,7 @@ class LookupList extends ActiveRecord implements ActiveSearchInterface
      */
     public function getListType()
     {
-        return $this->hasOne(ListType::class, ['id' => 'list_type_id']);
+        return $this->hasOne(ChoiceTypes::class, ['id' => 'list_type_id']);
     }
 
     /**
@@ -119,7 +120,7 @@ class LookupList extends ActiveRecord implements ActiveSearchInterface
      */
     public static function getProjectListData($prompt = false, $condition = '', $params = [], $options = [])
     {
-        return static::getList(ListType::LIST_TYPE_PROJECT, $prompt, $condition, $params, $options);
+        return static::getList(ChoiceTypes::CHOICE_TYPE_PROJECT, $prompt, $condition, $params, $options);
     }
 
     /**
@@ -132,7 +133,7 @@ class LookupList extends ActiveRecord implements ActiveSearchInterface
      */
     public static function getFarmTypeListData($prompt = false, $condition = '', $params = [], $options = [])
     {
-        return static::getList(ListType::LIST_TYPE_FARM_TYPE, $prompt, $condition, $params, $options);
+        return static::getList(ChoiceTypes::CHOICE_TYPE_FARM_TYPE, $prompt, $condition, $params, $options);
     }
 
     /**
@@ -145,6 +146,18 @@ class LookupList extends ActiveRecord implements ActiveSearchInterface
      */
     public static function getGenderListData($prompt = false, $condition = '', $params = [], $options = [])
     {
-        return static::getList(ListType::LIST_TYPE_GENDER, $prompt, $condition, $params, $options);
+        return static::getList(ChoiceTypes::CHOICE_TYPE_GENDER, $prompt, $condition, $params, $options);
+    }
+
+    /**
+     * @param int $choiceTypeId
+     * @param string $value
+     * @return string
+     */
+    public static function getLabel($choiceTypeId, $value)
+    {
+        /* @var $choicesComponent \common\components\Choices */
+        $choicesComponent = Yii::$app->choices;
+        return $choicesComponent->getLabel($choiceTypeId, $value);
     }
 }

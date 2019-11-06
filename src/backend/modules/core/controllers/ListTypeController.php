@@ -9,7 +9,7 @@
 namespace backend\modules\core\controllers;
 
 
-use backend\modules\core\models\ListType;
+use backend\modules\core\models\ChoiceTypes;
 
 class ListTypeController extends MasterDataController
 {
@@ -24,7 +24,7 @@ class ListTypeController extends MasterDataController
 
     public function actionIndex()
     {
-        $searchModel = ListType::searchModel([
+        $searchModel = ChoiceTypes::searchModel([
             'defaultOrder' => ['id' => SORT_ASC],
         ]);
         $searchModel->is_active = 1;
@@ -36,19 +36,19 @@ class ListTypeController extends MasterDataController
 
     public function actionCreate()
     {
-        $model = new ListType(['is_active' => 1]);
-        $model->id = (int)ListType::getScalar('max([[id]])') + 1;
+        $model = new ChoiceTypes(['is_active' => 1]);
+        $model->id = (int)ChoiceTypes::getScalar('max([[id]])') + 1;
         return $model->simpleAjaxSave('_form', 'lookup-list/index', [], null, true, 'list_type_id');
     }
 
     public function actionUpdate($id)
     {
-        $model = ListType::loadModel($id);
+        $model = ChoiceTypes::loadModel($id);
         return $model->simpleAjaxSave();
     }
 
     public function actionDelete($id)
     {
-        return ListType::softDelete($id);
+        return ChoiceTypes::softDelete($id);
     }
 }

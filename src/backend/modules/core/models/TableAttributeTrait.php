@@ -266,7 +266,7 @@ trait TableAttributeTrait
                 break;
             case TableAttribute::INPUT_TYPE_SELECT:
                 $fieldHtml = $form->field($this, $attribute)->widget(Select2::class, [
-                    'data' => LookupList::getList($attributeModel->list_type_id),
+                    'data' => Choices::getList($attributeModel->list_type_id),
                     'options' => [
                         'placeholder' => '[select one]',
                     ],
@@ -277,7 +277,7 @@ trait TableAttributeTrait
                 break;
             case TableAttribute::INPUT_TYPE_MULTI_SELECT:
                 $fieldHtml = $form->field($this, $attribute)->widget(Select2::class, [
-                    'data' => LookupList::getList($attributeModel->list_type_id),
+                    'data' => Choices::getList($attributeModel->list_type_id),
                     'options' => [
                         'placeholder' => '[select]',
                         'multiple' => true,

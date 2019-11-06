@@ -79,7 +79,7 @@ $form = ActiveForm::begin([
         ],
     ]) ?>
     <?= $form->field($model, 'list_type_id')->widget(Select2::class, [
-        'data' => \backend\modules\core\models\ListType::getListData(),
+        'data' => \backend\modules\core\models\ChoiceTypes::getListData(),
         'modal' => true,
         'options' => ['placeholder' => '[select one]'],
         'pluginOptions' => [

@@ -1,6 +1,8 @@
 <?php
 
 use backend\modules\core\models\Animal;
+use backend\modules\core\models\Choices;
+use backend\modules\core\models\ChoiceTypes;
 use common\helpers\DateUtils;
 use common\helpers\Lang;
 use common\widgets\grid\GridView;
@@ -35,13 +37,16 @@ use yii\helpers\Url;
         [
             'attribute' => 'animal_type',
             'value' => function (Animal $model) {
-                return $model->animal_type;
+                return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, $model->animal_type);
             }
+        ],
+        [
+            'attribute' => 'color',
         ],
         [
             'attribute' => 'main_breed',
             'value' => function (Animal $model) {
-                return $model->main_breed;
+                return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, $model->main_breed);
             }
         ],
         [
@@ -50,7 +55,7 @@ use yii\helpers\Url;
         [
             'attribute' => 'sire_name',
             'value' => function (Animal $model) {
-                return $model->getRelationAttributeValue('sire', 'name',$model->sire_name);
+                return $model->getRelationAttributeValue('sire', 'name', $model->sire_name);
             },
             'filter' => false,
         ],
@@ -60,7 +65,7 @@ use yii\helpers\Url;
         [
             'attribute' => 'dam_name',
             'value' => function (Animal $model) {
-                return $model->getRelationAttributeValue('dam', 'name',$model->dam_name);
+                return $model->getRelationAttributeValue('dam', 'name', $model->dam_name);
             },
             'filter' => false,
         ],

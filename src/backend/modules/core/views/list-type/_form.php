@@ -7,7 +7,7 @@ use yii\helpers\Html;
 /* @var $this \yii\web\View */
 /* @var $form ActiveForm */
 /* @var $controller \backend\controllers\BackendController */
-/* @var $model \backend\modules\core\models\ListType */
+/* @var $model \backend\modules\core\models\ChoiceTypes */
 $controller = Yii::$app->controller;
 $this->title = $controller->getPageTitle();
 

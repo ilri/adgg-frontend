@@ -1,13 +1,13 @@
 <?php
 
-use backend\modules\core\models\ListType;
-use backend\modules\core\models\LookupList;
+use backend\modules\core\models\ChoiceTypes;
+use backend\modules\core\models\Choices;
 use common\helpers\Utils;
 use common\widgets\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $filterOptions array */
-/* @var $model LookupList */
+/* @var $model Choices */
 ?>
 <?= GridView::widget([
     'searchModel' => $model,
@@ -21,10 +21,10 @@ use common\widgets\grid\GridView;
         ],
         [
             'attribute' => 'list_type_id',
-            'value' => function (LookupList $model) {
+            'value' => function (Choices $model) {
                 return $model->getRelationAttributeValue('listType', 'name');
             },
-            'filter' => ListType::getListData(),
+            'filter' => ChoiceTypes::getListData(),
         ],
         [
             'attribute' => 'value',
@@ -37,7 +37,7 @@ use common\widgets\grid\GridView;
         ],
         [
             'attribute' => 'is_active',
-            'value' => function (LookupList $model) {
+            'value' => function (Choices $model) {
                 return Utils::decodeBoolean($model->is_active);
             },
             'filter' => Utils::booleanOptions(),

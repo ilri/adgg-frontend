@@ -63,6 +63,7 @@ use yii\helpers\Inflector;
  * @property Animal $dam
  * @property AnimalHerd $herd
  * @property AnimalAttributeValue[] $attributeValues
+ *
  */
 class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttributeInterface, UploadExcelInterface, HighChartInterface
 {
@@ -101,8 +102,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             [['birthdate', 'deformities', 'entry_date'], 'safe'],
             [['purchase_cost'], 'number'],
             [['birthdate', 'entry_date'], 'validateNoFutureDate'],
-            [['name', 'tag_id', 'sire_tag_id', 'sire_name', 'bull_straw_id', 'dam_tag_id', 'dam_name'], 'string', 'max' => 128],
-            [['color'], 'string', 'max' => 30],
+            [['name', 'tag_id', 'sire_tag_id', 'sire_name', 'bull_straw_id', 'dam_tag_id', 'dam_name', 'color'], 'string', 'max' => 128],
             [['animal_photo', 'map_address'], 'string', 'max' => 255],
             [['farm_id'], 'exist', 'skipOnError' => true, 'targetClass' => Farm::class, 'targetAttribute' => ['farm_id' => 'id']],
             ['tag_id', 'unique', 'targetAttribute' => ['org_id', 'tag_id'], 'message' => '{attribute} already exists.'],
@@ -409,7 +409,8 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
         }
         $arr = [];
         foreach ($this->deformities as $deformity) {
-            $def = LookupList::getScalar('label', ['list_type_id' => ListType::LIST_TYPE_CALVE_DEFORMITY, 'value' => $deformity]);
+
+            $def = Choices::getLabel(ChoiceTypes::CHOICE_TYPE_CALVE_DEFORMITY, $deformity);
             if ($def) {
                 $arr[] = $def;
             }
@@ -426,7 +427,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
      */
     public function getListValueLabel($attribute, $listTypeId)
     {
-        $label = LookupList::getScalar('label', ['list_type_id' => $listTypeId, 'value' => $this->{$attribute}]);
+        $label = Choices::getScalar('label', ['list_type_id' => $listTypeId, 'value' => $this->{$attribute}]);
         if ($label) {
             return $label;
         }
@@ -462,7 +463,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
         list($condition, $params) = static::appendOrgSessionIdCondition($condition, $params, false);
         $series = [];
         if ($graphType == HighChart::GRAPH_PIE) {
-            $animalTypes = LookupList::getList(ListType::LIST_TYPE_ANIMAL_TYPES);
+            $animalTypes = Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES);
             foreach ($animalTypes as $animalType => $label) {
                 list($newCondition, $newParams) = DbUtils::appendCondition('animal_type', $animalType, $condition, $params);
                 $series[] = [

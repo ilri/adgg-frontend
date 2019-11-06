@@ -1,7 +1,8 @@
 <?php
 
 use backend\modules\core\models\Animal;
-use backend\modules\core\models\ListType;
+use backend\modules\core\models\Choices;
+use backend\modules\core\models\ChoiceTypes;
 use common\helpers\DateUtils;
 use yii\bootstrap\Html;
 use yii\helpers\Inflector;
@@ -48,7 +49,8 @@ $this->params['breadcrumbs'][] = $this->title;
                             'attribute' => 'name',
                         ],
                         [
-                            'attribute' => 'animal_category',
+                            'attribute' => 'animal_type',
+                            'value' => Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, $model->animal_type),
                         ],
                         [
                             'attribute' => 'tag_id',
@@ -57,18 +59,8 @@ $this->params['breadcrumbs'][] = $this->title;
                             'attribute' => 'color',
                         ],
                         [
-                            'attribute' => 'color',
-                        ],
-                        [
-                            'attribute' => 'derived_birthdate',
-                            'value' => DateUtils::formatDate($model->derived_birthdate, 'd-M-Y'),
-                        ],
-                        [
                             'attribute' => 'birthdate',
                             'value' => DateUtils::formatDate($model->birthdate, 'd-M-Y'),
-                        ],
-                        [
-                            'attribute' => 'estimate_age',
                         ],
                         [
                             'attribute' => 'deformities',
@@ -76,19 +68,19 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         [
                             'attribute' => 'main_breed',
-                            'value' => $model->getListValueLabel('main_breed', ListType::LIST_TYPE_ANIMAL_BREEDS),
+                            'value' => Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, $model->main_breed)
                         ],
                         [
                             'attribute' => 'breed_composition',
-                            'value' => $model->getListValueLabel('breed_composition', ListType::LIST_TYPE_BREED_COMPOSITION),
+                            'value' => Choices::getLabel(ChoiceTypes::CHOICE_TYPE_BREED_COMPOSITION, $model->breed_composition)
                         ],
                         [
                             'attribute' => 'secondary_breed',
-                            'value' => $model->getListValueLabel('secondary_breed', ListType::LIST_TYPE_ANIMAL_BREEDS),
+                            'value' => Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, $model->secondary_breed),
                         ],
                         [
                             'attribute' => 'entry_type',
-                            'value' => $model->getListValueLabel('entry_type', ListType::LIST_TYPE_ANIMAL_ENTRY_TYPE),
+                            'value' => Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_ENTRY_TYPE, $model->entry_type)
                         ],
                         [
                             'attribute' => 'entry_date',
@@ -123,20 +115,16 @@ $this->params['breadcrumbs'][] = $this->title;
                     'attributes' => [
                         [
                             'attribute' => 'sire_type',
-                            'value' => $model->getListValueLabel('sire_type', ListType::LIST_TYPE_SIRE_TYPE),
-                        ],
-                        [
-                            'attribute' => 'sire_registered',
-                            'format' => 'boolean',
+                            'value' => Choices::getLabel(ChoiceTypes::CHOICE_TYPE_SIRE_TYPE, $model->sire_type),
                         ],
                         [
                             'attribute' => 'sire_tag_id',
                         ],
                         [
-                            'attribute' => 'sire_name',
+                            'attribute' => 'bull_straw_id',
                         ],
                         [
-                            'attribute' => 'bull_straw_id',
+                            'attribute' => 'sire_name',
                         ],
                     ],
                 ]) ?>
@@ -163,10 +151,6 @@ $this->params['breadcrumbs'][] = $this->title;
                             'model' => $model,
                             'options' => ['class' => 'table detail-view table-striped'],
                             'attributes' => [
-                                [
-                                    'attribute' => 'dam_registered',
-                                    'format' => 'boolean',
-                                ],
                                 [
                                     'attribute' => 'dam_tag_id',
                                 ],

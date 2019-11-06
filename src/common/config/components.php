@@ -85,5 +85,9 @@ return [
         //'queueName' => 'dwg-queue',
         //'driver' => yii\queue\amqp_interop\Queue::ENQUEUE_AMQP_LIB,
     ],
+    'choices' => [
+        'class' => \common\components\Choices::class,
+        'setChoicesOnInit' => true,
+    ],
 
 ];

@@ -1,8 +1,8 @@
 <?php
 
 use backend\modules\auth\Session;
-use backend\modules\core\models\ListType;
-use backend\modules\core\models\LookupList;
+use backend\modules\core\models\ChoiceTypes;
+use backend\modules\core\models\Choices;
 use backend\modules\core\models\Organization;
 use common\forms\ActiveField;
 use common\widgets\select2\Select2;
@@ -56,14 +56,14 @@ use yii\bootstrap4\ActiveForm;
                             ]) ?>
                         <?php endif; ?>
                         <?= $form->field($model, 'farm_type')->widget(Select2::class, [
-                            'data' => LookupList::getList(ListType::LIST_TYPE_FARM_TYPE, false),
+                            'data' => Choices::getList(ChoiceTypes::CHOICE_TYPE_FARM_TYPE, false),
                             'options' => ['placeholder' => '[select one]'],
                             'pluginOptions' => [
                                 'allowClear' => false
                             ],
                         ]) ?>
                         <?= $form->field($model, 'project')->widget(Select2::class, [
-                            'data' => LookupList::getList(ListType::LIST_TYPE_PROJECT, false),
+                            'data' => Choices::getList(ChoiceTypes::CHOICE_TYPE_PROJECT, false),
                             'options' => ['placeholder' => '[select one]'],
                             'pluginOptions' => [
                                 'allowClear' => false

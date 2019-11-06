@@ -1,8 +1,8 @@
 <?php
 
 use backend\modules\core\models\Animal;
-use backend\modules\core\models\ListType;
-use backend\modules\core\models\LookupList;
+use backend\modules\core\models\ChoiceTypes;
+use backend\modules\core\models\Choices;
 use common\helpers\Lang;
 use yii\helpers\Html;
 use yii\helpers\Inflector;
@@ -19,17 +19,17 @@ $animalType = Yii::$app->request->get('animal_type', null);
            href="<?= Url::to(['index', 'animal_type' => null]) ?>">
             <?= Lang::t('All Animals') ?>
             <span class="badge badge-important badge-pill">
-                <?= number_format(Animal::getCount([])) ?>
+                (<?= number_format(Animal::getCount([])) ?>)
             </span>
         </a>
     </li>
-    <?php foreach (LookupList::getList(ListType::LIST_TYPE_ANIMAL_TYPES, false) as $value => $label): ?>
+    <?php foreach (Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, false) as $value => $label): ?>
         <li class="nav-item">
             <a class="nav-link<?= $animalType == $value ? ' active' : '' ?>"
                href="<?= Url::to(['index', 'animal_type' => $value]) ?>">
                 <?= strtoupper(Html::encode(Inflector::pluralize($label))) ?>
                 <span class="badge badge-important badge-pill">
-                <?= number_format(Animal::getCount(['animal_type' => $value])) ?>
+                (<?= number_format(Animal::getCount(['animal_type' => $value])) ?>)
             </span>
             </a>
         </li>

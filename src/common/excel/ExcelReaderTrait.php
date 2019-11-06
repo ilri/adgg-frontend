@@ -6,6 +6,7 @@ use backend\modules\core\models\ExcelImport;
 use common\helpers\DateUtils;
 use common\helpers\FileManager;
 use common\helpers\Lang;
+use common\helpers\Str;
 use common\models\ActiveRecord;
 use DateTime;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
@@ -544,8 +545,11 @@ trait ExcelReaderTrait
      * @param null|int $default
      * @return int
      */
-    public static function encodeBoolean($booleanString, $default = null): int
+    public static function encodeBoolean($booleanString, $default = null)
     {
+        if (Str::isEmpty($booleanString)) {
+            return $default;
+        }
         $booleanString = strtolower($booleanString);
         if ($booleanString === 'yes' || $booleanString === 'y') {
             return 1;

@@ -9,7 +9,7 @@
 namespace backend\modules\core\controllers;
 
 
-use backend\modules\core\models\LookupList;
+use backend\modules\core\models\Choices;
 
 class LookupListController extends MasterDataController
 {
@@ -24,7 +24,7 @@ class LookupListController extends MasterDataController
 
     public function actionIndex($list_type_id = null)
     {
-        $searchModel = LookupList::searchModel([
+        $searchModel = Choices::searchModel([
             'defaultOrder' => ['id' => SORT_ASC],
             'with' => ['listType'],
         ]);
@@ -38,18 +38,18 @@ class LookupListController extends MasterDataController
 
     public function actionCreate($list_type_id = null)
     {
-        $model = new LookupList(['is_active' => 1, 'list_type_id' => $list_type_id]);
+        $model = new Choices(['is_active' => 1, 'list_type_id' => $list_type_id]);
         return $model->simpleAjaxSave();
     }
 
     public function actionUpdate($id)
     {
-        $model = LookupList::loadModel($id);
+        $model = Choices::loadModel($id);
         return $model->simpleAjaxSave();
     }
 
     public function actionDelete($id)
     {
-        return LookupList::softDelete($id);
+        return Choices::softDelete($id);
     }
 }

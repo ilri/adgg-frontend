@@ -2,8 +2,8 @@
 
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\Farm;
-use backend\modules\core\models\ListType;
-use backend\modules\core\models\LookupList;
+use backend\modules\core\models\ChoiceTypes;
+use backend\modules\core\models\Choices;
 use common\forms\ActiveField;
 use common\helpers\DateUtils;
 use common\widgets\select2\Select2;
@@ -67,7 +67,7 @@ use yii\bootstrap4\ActiveForm;
                     </div>
                     <div class="col-md-4">
                         <?= $form->field($model, 'animal_type')->widget(Select2::class, [
-                            'data' => LookupList::getList(ListType::LIST_TYPE_ANIMAL_TYPES),
+                            'data' => Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES),
                             'options' => [
                                 'placeholder' => '[select one]',
                             ],
@@ -78,7 +78,7 @@ use yii\bootstrap4\ActiveForm;
                     </div>
                     <div class="col-md-4">
                         <?= $form->field($model, 'estimate_age')->widget(Select2::class, [
-                            'data' => LookupList::getList(ListType::LIST_TYPE_ANIMAL_KNOWN_DATE_OF_BIRTH),
+                            'data' => Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_KNOWN_DATE_OF_BIRTH),
                             'options' => [
                                 'placeholder' => '[select one]',
                             ],
@@ -95,7 +95,7 @@ use yii\bootstrap4\ActiveForm;
                     </div>
                     <div class="col-md-4">
                         <?= $form->field($model, 'deformities')->widget(Select2::class, [
-                            'data' => LookupList::getList(ListType::LIST_TYPE_CALVE_DEFORMITY),
+                            'data' => Choices::getList(ChoiceTypes::CHOICE_TYPE_CALVE_DEFORMITY),
                             'options' => [
                                 'placeholder' => '[select one]',
                                 'multiple' => true,
@@ -107,7 +107,7 @@ use yii\bootstrap4\ActiveForm;
                     </div>
                     <div class="col-md-4">
                         <?= $form->field($model, 'udder_support')->widget(Select2::class, [
-                            'data' => LookupList::getList(ListType::LIST_TYPE_UDDER_SCORE),
+                            'data' => Choices::getList(ChoiceTypes::CHOICE_TYPE_UDDER_SCORE),
                             'options' => [
                                 'placeholder' => '[select one]',
                             ],
@@ -118,7 +118,7 @@ use yii\bootstrap4\ActiveForm;
                     </div>
                     <div class="col-md-4">
                         <?= $form->field($model, 'udder_attachment')->widget(Select2::class, [
-                            'data' => LookupList::getList(ListType::LIST_TYPE_UDDER_SCORE),
+                            'data' => Choices::getList(ChoiceTypes::CHOICE_TYPE_UDDER_SCORE),
                             'options' => [
                                 'placeholder' => '[select one]',
                             ],
@@ -129,7 +129,7 @@ use yii\bootstrap4\ActiveForm;
                     </div>
                     <div class="col-md-4">
                         <?= $form->field($model, 'udder_teat_placement')->widget(Select2::class, [
-                            'data' => LookupList::getList(ListType::LIST_TYPE_UDDER_SCORE),
+                            'data' => Choices::getList(ChoiceTypes::CHOICE_TYPE_UDDER_SCORE),
                             'options' => [
                                 'placeholder' => '[select one]',
                             ],
@@ -140,7 +140,7 @@ use yii\bootstrap4\ActiveForm;
                     </div>
                     <div class="col-md-4">
                         <?= $form->field($model, 'sire_registered')->widget(Select2::class, [
-                            'data' => LookupList::getList(ListType::LIST_TYPE_YESNO),
+                            'data' => Choices::getList(ChoiceTypes::CHOICE_TYPE_YESNO),
                             'options' => [
                                 'placeholder' => '[select one]',
                             ],
@@ -151,7 +151,7 @@ use yii\bootstrap4\ActiveForm;
                     </div>
                     <div class="col-md-4">
                         <?= $form->field($model, 'sire_type')->widget(Select2::class, [
-                            'data' => LookupList::getList(ListType::LIST_TYPE_SIRE_TYPE),
+                            'data' => Choices::getList(ChoiceTypes::CHOICE_TYPE_SIRE_TYPE),
                             'options' => [
                                 'placeholder' => '[select one]',
                             ],
@@ -173,7 +173,7 @@ use yii\bootstrap4\ActiveForm;
                     </div>
                     <div class="col-md-4">
                         <?= $form->field($model, 'dam_registered')->widget(Select2::class, [
-                            'data' => LookupList::getList(ListType::LIST_TYPE_YESNO),
+                            'data' => Choices::getList(ChoiceTypes::CHOICE_TYPE_YESNO),
                             'options' => [
                                 'placeholder' => '[select one]',
                             ],
@@ -195,7 +195,7 @@ use yii\bootstrap4\ActiveForm;
                     </div>
                     <div class="col-md-4">
                         <?= $form->field($model, 'main_breed')->widget(Select2::class, [
-                            'data' => LookupList::getList(ListType::LIST_TYPE_ANIMAL_BREEDS),
+                            'data' => Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS),
                             'options' => [
                                 'placeholder' => '[select one]',
                             ],
@@ -206,7 +206,7 @@ use yii\bootstrap4\ActiveForm;
                     </div>
                     <div class="col-md-4">
                         <?= $form->field($model, 'breed_composition')->widget(Select2::class, [
-                            'data' => LookupList::getList(ListType::LIST_TYPE_BREED_COMPOSITION),
+                            'data' => Choices::getList(ChoiceTypes::CHOICE_TYPE_BREED_COMPOSITION),
                             'options' => [
                                 'placeholder' => '[select one]',
                             ],
@@ -217,7 +217,7 @@ use yii\bootstrap4\ActiveForm;
                     </div>
                     <div class="col-md-4">
                         <?= $form->field($model, 'secondary_breed')->widget(Select2::class, [
-                            'data' => LookupList::getList(ListType::LIST_TYPE_ANIMAL_BREEDS),
+                            'data' => Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS),
                             'options' => [
                                 'placeholder' => '[select one]',
                             ],
@@ -228,7 +228,7 @@ use yii\bootstrap4\ActiveForm;
                     </div>
                     <div class="col-md-4">
                         <?= $form->field($model, 'is_genotyped')->widget(Select2::class, [
-                            'data' => LookupList::getList(ListType::LIST_TYPE_YESNO),
+                            'data' => Choices::getList(ChoiceTypes::CHOICE_TYPE_YESNO),
                             'options' => [
                                 'placeholder' => '[select one]',
                             ],
@@ -254,7 +254,7 @@ use yii\bootstrap4\ActiveForm;
                     </div>
                     <div class="col-md-4">
                         <?= $form->field($model, 'first_calv_method')->widget(Select2::class, [
-                            'data' => LookupList::getList(ListType::LIST_TYPE_CALVING_METHOD),
+                            'data' => Choices::getList(ChoiceTypes::CHOICE_TYPE_CALVING_METHOD),
                             'options' => [
                                 'placeholder' => '[select one]',
                             ],
@@ -265,7 +265,7 @@ use yii\bootstrap4\ActiveForm;
                     </div>
                     <div class="col-md-4">
                         <?= $form->field($model, 'first_calv_type')->widget(Select2::class, [
-                            'data' => LookupList::getList(ListType::LIST_TYPE_CALVING_TYPE),
+                            'data' => Choices::getList(ChoiceTypes::CHOICE_TYPE_CALVING_TYPE),
                             'options' => [
                                 'placeholder' => '[select one]',
                             ],
@@ -282,7 +282,7 @@ use yii\bootstrap4\ActiveForm;
                     </div>
                     <div class="col-md-4">
                         <?= $form->field($model, 'latest_calv_type')->widget(Select2::class, [
-                            'data' => LookupList::getList(ListType::LIST_TYPE_CALVING_TYPE),
+                            'data' => Choices::getList(ChoiceTypes::CHOICE_TYPE_CALVING_TYPE),
                             'options' => [
                                 'placeholder' => '[select one]',
                             ],
@@ -302,7 +302,7 @@ use yii\bootstrap4\ActiveForm;
                     </div>
                     <div class="col-md-4">
                         <?= $form->field($model, 'is_still_lactating')->widget(Select2::class, [
-                            'data' => LookupList::getList(ListType::LIST_TYPE_YESNO),
+                            'data' => Choices::getList(ChoiceTypes::CHOICE_TYPE_YESNO),
                             'options' => [
                                 'placeholder' => '[select one]',
                             ],
@@ -316,7 +316,7 @@ use yii\bootstrap4\ActiveForm;
                     </div>
                     <div class="col-md-4">
                         <?= $form->field($model, 'is_pregnant')->widget(Select2::class, [
-                            'data' => LookupList::getList(ListType::LIST_TYPE_YESNO),
+                            'data' => Choices::getList(ChoiceTypes::CHOICE_TYPE_YESNO),
                             'options' => [
                                 'placeholder' => '[select one]',
                             ],
@@ -330,7 +330,7 @@ use yii\bootstrap4\ActiveForm;
                     </div>
                     <div class="col-md-4">
                         <?= $form->field($model, 'entry_type')->widget(Select2::class, [
-                            'data' => LookupList::getList(99),
+                            'data' => Choices::getList(99),
                             'options' => [
                                 'placeholder' => '[select one]',
                             ],

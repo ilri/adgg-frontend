@@ -1,7 +1,7 @@
 <?php
 
-use backend\modules\core\models\ListType;
-use backend\modules\core\models\LookupList;
+use backend\modules\core\models\ChoiceTypes;
+use backend\modules\core\models\Choices;
 use backend\modules\core\models\Organization;
 use backend\modules\core\models\OrganizationUnits;
 use common\helpers\Lang;
@@ -138,7 +138,7 @@ use yii\bootstrap4\Html;
                         <?= Select2::widget([
                             'name' => 'animal_type',
                             'value' => $model->animal_type,
-                            'data' => LookupList::getList(ListType::LIST_TYPE_ANIMAL_TYPES, false),
+                            'data' => Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, false),
                             'options' => [
                                 'placeholder' => "--All animals--",
                                 'class' => 'form-control select2',
@@ -153,7 +153,7 @@ use yii\bootstrap4\Html;
                         <?= Select2::widget([
                             'name' => 'main_breed',
                             'value' => $model->main_breed,
-                            'data' => LookupList::getList(ListType::LIST_TYPE_ANIMAL_BREEDS, false),
+                            'data' => Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, false),
                             'options' => [
                                 'placeholder' => "--All breeds--",
                                 'class' => 'form-control select2',

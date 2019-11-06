@@ -30,7 +30,7 @@ use yii\base\InvalidArgumentException;
  * @property int $created_by
  *
  * @property TableAttributesGroup $group
- * @property ListType $listType
+ * @property ChoiceTypes $listType
  */
 class TableAttribute extends ActiveRecord implements ActiveSearchInterface
 {
@@ -170,7 +170,7 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
      */
     public function getListType()
     {
-        return $this->hasOne(ListType::class, ['id' => 'list_type_id']);
+        return $this->hasOne(ChoiceTypes::class, ['id' => 'list_type_id']);
     }
 
     /**

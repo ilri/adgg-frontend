@@ -1,7 +1,7 @@
 <?php
 
-use backend\modules\core\models\ListType;
-use backend\modules\core\models\LookupList;
+use backend\modules\core\models\ChoiceTypes;
+use backend\modules\core\models\Choices;
 use backend\modules\core\models\Organization;
 use common\widgets\highchart\HighChart;
 use common\widgets\select2\Select2;
@@ -15,7 +15,7 @@ $idPrefix = 'animal-g-filter-';
         <?= Select2::widget([
             'name' => 'animal_type',
             'value' => $filterOptions['animal_type'] ?? null,
-            'data' => LookupList::getList(ListType::LIST_TYPE_ANIMAL_TYPES, '--All animals-'),
+            'data' => Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, '--All animals-'),
             'theme' => Select2::THEME_BOOTSTRAP,
             'options' => [
                 'id' => $idPrefix . 'animal_type',

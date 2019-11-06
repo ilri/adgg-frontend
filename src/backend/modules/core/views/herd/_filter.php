@@ -1,6 +1,6 @@
 <?php
 
-use backend\modules\core\models\LookupList;
+use backend\modules\core\models\Choices;
 use backend\modules\core\models\Organization;
 use backend\modules\core\models\OrganizationUnits;
 use common\helpers\Lang;
@@ -145,7 +145,7 @@ use yii\bootstrap4\Html;
                         <?= Select2::widget([
                             'name' => 'project',
                             'value' => $model->project,
-                            'data' => LookupList::getProjectListData(),
+                            'data' => Choices::getProjectListData(),
                             'options' => [
                                 'placeholder' => "",
                                 'class' => 'form-control select2',

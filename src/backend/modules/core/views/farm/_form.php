@@ -157,7 +157,7 @@ use yii\bootstrap4\ActiveForm;
                     </div>
                     <div class="col-md-4">
                         <?= $form->field($model, 'farm_type')->widget(Select2::class, [
-                            'data' => \backend\modules\core\models\LookupList::getFarmTypeListData(),
+                            'data' => \backend\modules\core\models\Choices::getFarmTypeListData(),
                             'options' => [
                                 'placeholder' => '[select one]',
                             ],
@@ -168,7 +168,7 @@ use yii\bootstrap4\ActiveForm;
                     </div>
                     <div class="col-md-4">
                         <?= $form->field($model, 'project')->widget(Select2::class, [
-                            'data' => \backend\modules\core\models\LookupList::getProjectListData(),
+                            'data' => \backend\modules\core\models\Choices::getProjectListData(),
                             'options' => [
                                 'placeholder' => '[select one]',
                             ],
@@ -204,7 +204,7 @@ use yii\bootstrap4\ActiveForm;
                     </div>
                     <div class="col-md-4">
                         <?= $form->field($model, 'gender_code')->widget(Select2::class, [
-                            'data' => \backend\modules\core\models\LookupList::getGenderListData(),
+                            'data' => \backend\modules\core\models\Choices::getGenderListData(),
                             'options' => [
                                 'placeholder' => '[select one]',
                             ],

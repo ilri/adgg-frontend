@@ -36,7 +36,7 @@ class UploadAnimals extends ExcelUploadForm implements ImportInterface, JobInter
     public function rules()
     {
         return array_merge($this->excelValidationRules(), [
-            [['org_id', 'type'], 'required'],
+            [['org_id'], 'required'],
         ]);
     }
 
@@ -68,7 +68,6 @@ class UploadAnimals extends ExcelUploadForm implements ImportInterface, JobInter
             }
             $row['org_id'] = $this->org_id;
             $row['farm_id'] = $this->getFarmId($row['odkFarmCode']);
-
             $row['derivedBirthdate'] = static::getDateColumnData($row['derivedBirthdate'] ?? null);
             $row['birthdate'] = static::getDateColumnData($row['birthdate'] ?? null);
             $row['entry_date'] = static::getDateColumnData($row['entry_date'] ?? null);
@@ -76,12 +75,13 @@ class UploadAnimals extends ExcelUploadForm implements ImportInterface, JobInter
                 $row['birthdate'] = $row['derivedBirthdate'];
                 $row['is_derived_birthdate'] = 1;
             }
-
             if (!empty($row['deformities'])) {
                 $row['deformities'] = array_map('trim', explode(' ', $row['deformities']));
             }
-            $row['animal_sireknown']=static::encodeBoolean($row['animal_sireknown']);
-            $row['animal_damknown']=static::encodeBoolean($row['animal_damknown']);
+            //\Yii::$app->controller->stdout("Here\n");
+            $row['animal_sireknown'] = static::encodeBoolean($row['animal_sireknown']);
+            $row['animal_damknown'] = static::encodeBoolean($row['animal_damknown']);
+            //\Yii::$app->controller->stdout("Here now\n");
             $insert_data[$k] = $row;
         }
         $targetModel = new Animal(['org_id' => $this->org_id]);
@@ -95,7 +95,7 @@ class UploadAnimals extends ExcelUploadForm implements ImportInterface, JobInter
      */
     protected function getFarmId($farmCode)
     {
-        $condition = '([[odk_code]]=:code';
+        $condition = '[[odk_code]]=:code';
         $params = [':code' => $farmCode];
         $farmId = Farm::getScalar('id', $condition, $params);
 

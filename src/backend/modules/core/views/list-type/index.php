@@ -4,7 +4,7 @@ use common\helpers\Lang;
 use yii\helpers\Inflector;
 
 /* @var $this \yii\web\View */
-/* @var $searchModel backend\modules\core\models\ListType */
+/* @var $searchModel backend\modules\core\models\ChoiceTypes */
 /* @var $controller \backend\controllers\BackendController */
 $controller = Yii::$app->controller;
 $this->title = Lang::t(Inflector::pluralize($controller->resourceLabel));

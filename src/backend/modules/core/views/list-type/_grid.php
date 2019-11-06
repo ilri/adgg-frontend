@@ -1,13 +1,13 @@
 <?php
 
-use backend\modules\core\models\ListType;
+use backend\modules\core\models\ChoiceTypes;
 use common\helpers\Utils;
 use common\widgets\grid\GridView;
 use yii\bootstrap4\Html;
 
 /* @var $this yii\web\View */
 /* @var $filterOptions array */
-/* @var $model ListType */
+/* @var $model ChoiceTypes */
 ?>
 <?= GridView::widget([
     'searchModel' => $model,
@@ -28,7 +28,7 @@ use yii\bootstrap4\Html;
         ],
         [
             'attribute' => 'is_active',
-            'value' => function (ListType $model) {
+            'value' => function (ChoiceTypes $model) {
                 return Utils::decodeBoolean($model->is_active);
             },
             'filter' => Utils::booleanOptions(),
@@ -38,7 +38,7 @@ use yii\bootstrap4\Html;
             'template' => '{update}{view-list}',
             'width' => '200px;',
             'buttons' => [
-                'view-list' => function ($url, ListType $model) {
+                'view-list' => function ($url, ChoiceTypes $model) {
                     return Html::a('View Lists', ['lookup-list/index', 'list_type_id' => $model->id], ['data-pjax' => 0]);
                 }
             ]

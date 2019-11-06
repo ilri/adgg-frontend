@@ -8,7 +8,7 @@ use yii\helpers\Html;
 /* @var $this \yii\web\View */
 /* @var $form ActiveForm */
 /* @var $controller \backend\controllers\BackendController */
-/* @var $model \backend\modules\core\models\LookupList */
+/* @var $model \backend\modules\core\models\Choices */
 $controller = Yii::$app->controller;
 $this->title = $controller->getPageTitle();
 
@@ -39,7 +39,7 @@ $form = ActiveForm::begin([
 <div class="modal-body">
     <div class="hidden" id="my-modal-notif"></div>
     <?= $form->field($model, 'list_type_id')->widget(Select2::class, [
-        'data' => \backend\modules\core\models\ListType::getListData(),
+        'data' => \backend\modules\core\models\ChoiceTypes::getListData(),
         'modal' => true,
         'options' => ['placeholder' => '[select one]'],
         'pluginOptions' => [

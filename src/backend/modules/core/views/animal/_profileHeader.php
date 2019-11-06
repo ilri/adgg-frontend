@@ -1,6 +1,8 @@
 <?php
 
 use backend\modules\core\models\Animal;
+use backend\modules\core\models\Choices;
+use backend\modules\core\models\ChoiceTypes;
 use common\helpers\DateUtils;
 use common\helpers\Lang;
 use yii\bootstrap4\Html;
@@ -20,8 +22,8 @@ use yii\helpers\Url;
                     </div>
                     <div class="kt-profile__main-info">
                         <div class="kt-profile__main-info-name"><?= Html::encode($model->name) ?></div>
-                        <div class="kt-profile__main-info-position"><?= $model->getDecodedType() ?></div>
-                        <div class="kt-profile__main-info-position"><?= $model->animal_category ?></div>
+                        <div class="kt-profile__main-info-position"><?= Html::encode($model->tag_id) ?></div>
+                        <div class="kt-profile__main-info-position"><?= Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, $model->animal_type) ?></div>
                     </div>
                 </div>
             </div>
