@@ -1,5 +1,7 @@
 <?php
 
+use backend\modules\core\models\ListType;
+use backend\modules\core\models\LookupList;
 use backend\modules\core\models\Organization;
 use backend\modules\core\models\OrganizationUnits;
 use common\helpers\Lang;
@@ -7,7 +9,7 @@ use common\helpers\Url;
 use common\widgets\select2\Select2;
 use yii\bootstrap4\Html;
 
-/* @var $model \backend\modules\core\models\Animal*/
+/* @var $model \backend\modules\core\models\Animal */
 ?>
 
 <div class="accordion mb-5" id="accordion">
@@ -15,21 +17,13 @@ use yii\bootstrap4\Html;
         <div class="card-header">
             <div class="card-title" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
                  aria-controls="collapseOne">
-                <i class="fas fa-chevron-right"></i> <?= Lang::t('Filters') ?>:
+                <i class="fas fa-chevron-down"></i> <?= Lang::t('Filters') ?>:
             </div>
         </div>
-        <div id="collapseOne" class="collapse" data-parent="#accordion">
+        <div id="collapseOne" class="collapse show" data-parent="#accordion">
             <div class="card-body">
                 <?= Html::beginForm(['index'], 'get', ['class' => '', 'id' => 'grid-filter-form', 'data-grid' => $model->getPjaxWidgetId()]) ?>
                 <div class="form-row align-items-center">
-                    <div class="col-lg-2">
-                        <?= Html::label($model->getAttributeLabel('tag_id')) ?>
-                        <?= Html::textInput('tag_id', $model->tag_id, ['class' => 'form-control']) ?>
-                    </div>
-                    <div class="col-lg-2">
-                        <?= Html::label($model->getAttributeLabel('name')) ?>
-                        <?= Html::textInput('name', $model->name, ['class' => 'form-control']) ?>
-                    </div>
                     <?php if ($model->showCountryField()): ?>
                         <div class="col-lg-2">
                             <?= Html::label($model->getAttributeLabel('org_id')) ?>
@@ -139,7 +133,52 @@ use yii\bootstrap4\Html;
                             ]); ?>
                         </div>
                     <?php endif; ?>
-
+                    <div class="col-lg-2">
+                        <?= Html::label($model->getAttributeLabel('animal_type')) ?>
+                        <?= Select2::widget([
+                            'name' => 'animal_type',
+                            'value' => $model->animal_type,
+                            'data' => LookupList::getList(ListType::LIST_TYPE_ANIMAL_TYPES, false),
+                            'options' => [
+                                'placeholder' => "--All animals--",
+                                'class' => 'form-control select2',
+                            ],
+                            'pluginOptions' => [
+                                'allowClear' => true
+                            ],
+                        ]); ?>
+                    </div>
+                    <div class="col-lg-2">
+                        <?= Html::label($model->getAttributeLabel('main_breed')) ?>
+                        <?= Select2::widget([
+                            'name' => 'main_breed',
+                            'value' => $model->main_breed,
+                            'data' => LookupList::getList(ListType::LIST_TYPE_ANIMAL_BREEDS, false),
+                            'options' => [
+                                'placeholder' => "--All breeds--",
+                                'class' => 'form-control select2',
+                            ],
+                            'pluginOptions' => [
+                                'allowClear' => true
+                            ],
+                        ]); ?>
+                    </div>
+                    <div class="col-lg-2">
+                        <?= Html::label($model->getAttributeLabel('tag_id')) ?>
+                        <?= Html::textInput('tag_id', $model->tag_id, ['class' => 'form-control']) ?>
+                    </div>
+                    <div class="col-lg-2">
+                        <?= Html::label($model->getAttributeLabel('name')) ?>
+                        <?= Html::textInput('name', $model->name, ['class' => 'form-control']) ?>
+                    </div>
+                    <div class="col-lg-2">
+                        <?= Html::label($model->getAttributeLabel('sire_tag_id')) ?>
+                        <?= Html::textInput('sire_tag_id', $model->sire_tag_id, ['class' => 'form-control']) ?>
+                    </div>
+                    <div class="col-lg-2">
+                        <?= Html::label($model->getAttributeLabel('dam_tag_id')) ?>
+                        <?= Html::textInput('dam_tag_id', $model->dam_tag_id, ['class' => 'form-control']) ?>
+                    </div>
                     <div class="col-lg-2">
                         <br>
                         <button class="btn btn-primary pull-left" type="submit"><?= Lang::t('Go') ?></button>

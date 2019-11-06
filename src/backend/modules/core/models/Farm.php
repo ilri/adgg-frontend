@@ -3,7 +3,6 @@
 namespace backend\modules\core\models;
 
 use backend\modules\auth\models\Users;
-use common\helpers\DbUtils;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
@@ -78,7 +77,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             [['org_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'field_agent_id', 'is_active', 'farmer_is_hh_head'], 'safe'],
             [['latitude', 'latitude', 'phone'], 'number'],
             [['code', 'name', 'project', 'field_agent_name', 'farmer_name'], 'string', 'max' => 128],
-            [['phone'], 'string', 'min' => 9, 'max' => 12, 'message' => '{attribute} should contain between 9 and 12 digits','except' => self::SCENARIO_UPLOAD],
+            [['phone'], 'string', 'min' => 9, 'max' => 12, 'message' => '{attribute} should contain between 9 and 12 digits', 'except' => self::SCENARIO_UPLOAD],
             [['email', 'map_address'], 'string', 'max' => 255],
             [['farm_type'], 'string', 'max' => 30],
             [['gender_code'], 'string', 'max' => 10],
@@ -280,22 +279,15 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
      * @param string $dateField
      * @param null|string $from
      * @param null|string $to
+     * @param mixed $condition
+     * @param array $params
      * @return int
-     * @throws \yii\base\NotSupportedException
+     * @throws \Exception
      */
-    public static function getDashboardStats($durationType, $sum = false, $filters = [], $dateField = 'created_at', $from = null, $to = null)
+    public static function getDashboardStats($durationType, $sum = false, $filters = [], $dateField = 'created_at', $from = null, $to = null, $condition = '', $params = [])
     {
-        $condition = '';
-        $params = [];
         list($condition, $params) = static::appendOrgSessionIdCondition($condition, $params, false);
-        if (!empty($filters)) {
-            foreach ($filters as $k => $v) {
-                if (!(empty($v) && strlen($v) == 0)) {
-                    list($condition, $params) = DbUtils::appendCondition($k, $v, $condition, $params);
-                }
-            }
-        }
-        return static::getStats($durationType, $condition, $params, $sum, $dateField, $from, $to);
+        return parent::getDashboardStats($durationType, $sum, $filters, $dateField, $from, $to, $condition, $params);
     }
 
     /**

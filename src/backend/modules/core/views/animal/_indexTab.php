@@ -18,7 +18,7 @@ $animalType = Yii::$app->request->get('animal_type', null);
         <a class="nav-link<?= empty($animalType) ? ' active' : '' ?>"
            href="<?= Url::to(['index', 'animal_type' => null]) ?>">
             <?= Lang::t('All Animals') ?>
-            <span class="badge badge-dark badge-pill">
+            <span class="badge badge-important badge-pill">
                 <?= number_format(Animal::getCount([])) ?>
             </span>
         </a>
@@ -28,7 +28,7 @@ $animalType = Yii::$app->request->get('animal_type', null);
             <a class="nav-link<?= $animalType == $value ? ' active' : '' ?>"
                href="<?= Url::to(['index', 'animal_type' => $value]) ?>">
                 <?= strtoupper(Html::encode(Inflector::pluralize($label))) ?>
-                <span class="badge badge-dark badge-pill">
+                <span class="badge badge-important badge-pill">
                 <?= number_format(Animal::getCount(['animal_type' => $value])) ?>
             </span>
             </a>

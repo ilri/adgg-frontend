@@ -11,13 +11,12 @@ use yii\helpers\Url;
 ?>
 <?= GridView::widget([
     'searchModel' => $model,
-    'filterModel' => $model,
     'createButton' => ['visible' => Yii::$app->user->canCreate(), 'modal' => false],
     'rowOptions' => function (Animal $model) {
         return ["class" => "linkable", "data-href" => Url::to(['view', "id" => $model->uuid])];
     },
     'toolbarButtons' => [
-        Yii::$app->user->canCreate() ? '<a class="btn btn-brand btn-bold btn-upper btn-font-sm btn-space" href="' . Url::to(array_merge(['upload', 'type' => $model->type], Yii::$app->request->queryParams)) . '" data-pjax="0"><i class="fa fa-file-excel-o"></i> ' . Lang::t('Upload Excel/CSV') . '</a> ' : '',
+        Yii::$app->user->canCreate() ? '<a class="btn btn-brand btn-bold btn-upper btn-font-sm btn-space" href="' . Url::to(array_merge(['upload'], Yii::$app->request->queryParams)) . '" data-pjax="0"><i class="fa fa-file-excel-o"></i> ' . Lang::t('Upload Excel/CSV') . '</a> ' : '',
     ],
     'columns' => [
         [
@@ -34,16 +33,34 @@ use yii\helpers\Url;
             'filter' => false,
         ],
         [
-            'attribute' => 'sire_id',
+            'attribute' => 'animal_type',
             'value' => function (Animal $model) {
-                return $model->getRelationAttributeValue('sire', 'name');
+                return $model->animal_type;
+            }
+        ],
+        [
+            'attribute' => 'main_breed',
+            'value' => function (Animal $model) {
+                return $model->main_breed;
+            }
+        ],
+        [
+            'attribute' => 'sire_tag_id',
+        ],
+        [
+            'attribute' => 'sire_name',
+            'value' => function (Animal $model) {
+                return $model->getRelationAttributeValue('sire', 'name',$model->sire_name);
             },
             'filter' => false,
         ],
         [
-            'attribute' => 'dam_id',
+            'attribute' => 'dam_tag_id',
+        ],
+        [
+            'attribute' => 'dam_name',
             'value' => function (Animal $model) {
-                return $model->getRelationAttributeValue('dam', 'name');
+                return $model->getRelationAttributeValue('dam', 'name',$model->dam_name);
             },
             'filter' => false,
         ],
@@ -55,17 +72,8 @@ use yii\helpers\Url;
             'filter' => false,
         ],
         [
-            'attribute' => 'animal_type',
-            'value' => function (Animal $model) {
-                return $model->animal_type;
-            }
-        ],
-        [
-            'attribute' => 'animal_category',
-        ],
-        [
             'class' => common\widgets\grid\ActionColumn::class,
-            'template' => '{update}{view}',
+            'template' => '{view}',
             'visibleButtons' => [
                 'update' => function (Animal $model) {
                     return Yii::$app->user->canUpdate();

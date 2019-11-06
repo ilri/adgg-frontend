@@ -220,7 +220,6 @@ abstract class ActiveRecord extends AR
 
     public function afterFind()
     {
-        $this->hasAttribute();
         $this->oldDbAttributes = $this->attributes;
         parent::afterFind();
     }
