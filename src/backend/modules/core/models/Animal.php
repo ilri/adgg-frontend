@@ -368,7 +368,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'odkFarmCode',
             'tag_id',
             'animal_tagprefix',
-            'animal_tagprefix',
+            'animal_tagsequence',
             'name',
             'color',
             'derivedBirthdate',

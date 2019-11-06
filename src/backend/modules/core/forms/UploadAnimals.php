@@ -12,19 +12,14 @@ namespace backend\modules\core\forms;
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\ExcelImport;
 use backend\modules\core\models\Farm;
-use backend\modules\core\models\ListType;
-use backend\modules\core\models\LookupList;
 use backend\modules\core\models\Organization;
 use common\excel\ExcelUploadForm;
 use common\excel\ImportInterface;
 use common\helpers\Lang;
 use console\jobs\JobInterface;
-use console\jobs\JobTrait;
-use Yii;
 
 class UploadAnimals extends ExcelUploadForm implements ImportInterface, JobInterface
 {
-    use JobTrait;
     /**
      * @var int
      */
@@ -36,23 +31,12 @@ class UploadAnimals extends ExcelUploadForm implements ImportInterface, JobInter
     public $orgModel;
 
     /**
-     * @var int
-     */
-    public $itemId;
-
-    /**
-     * @var string
-     */
-    public $type;
-
-    /**
      * @inheritdoc
      */
     public function rules()
     {
         return array_merge($this->excelValidationRules(), [
             [['org_id', 'type'], 'required'],
-            [['type'], 'safe'],
         ]);
     }
 
@@ -63,7 +47,6 @@ class UploadAnimals extends ExcelUploadForm implements ImportInterface, JobInter
     {
         return array_merge($this->excelAttributeLabels(), [
             'org_id' => Lang::t('Country'),
-            'type' => Lang::t('Type'),
         ]);
     }
 
@@ -83,27 +66,25 @@ class UploadAnimals extends ExcelUploadForm implements ImportInterface, JobInter
             if (empty($row)) {
                 continue;
             }
-            if (!empty($row['farm_id'])) {
-                $row['farm_id'] = $this->getFarmId($row['farm_id']);
-            }
+            $row['org_id'] = $this->org_id;
+            $row['farm_id'] = $this->getFarmId($row['odkFarmCode']);
 
-            $row['derived_birthdate'] = static::getDateColumnData($row['derived_birthdate'] ?? null);
+            $row['derivedBirthdate'] = static::getDateColumnData($row['derivedBirthdate'] ?? null);
             $row['birthdate'] = static::getDateColumnData($row['birthdate'] ?? null);
             $row['entry_date'] = static::getDateColumnData($row['entry_date'] ?? null);
-
+            if (empty($row['birthdate']) && !empty($row['derivedBirthdate'])) {
+                $row['birthdate'] = $row['derivedBirthdate'];
+                $row['is_derived_birthdate'] = 1;
+            }
 
             if (!empty($row['deformities'])) {
                 $row['deformities'] = array_map('trim', explode(' ', $row['deformities']));
             }
-            try {
-                $row['main_breed'] = $this->getBreedId($row['main_breed'] ?? null);
-                $row['secondary_breed'] = $this->getBreedId($row['secondary_breed'] ?? null);
-            } catch (\Exception $e) {
-                Yii::info($e->getMessage());
-            }
+            $row['animal_sireknown']=static::encodeBoolean($row['animal_sireknown']);
+            $row['animal_damknown']=static::encodeBoolean($row['animal_damknown']);
             $insert_data[$k] = $row;
         }
-        $targetModel = new Animal(['org_id' => $this->org_id, 'type' => $this->type]);
+        $targetModel = new Animal(['org_id' => $this->org_id]);
         $this->save($insert_data, $targetModel, true, ['tag_id' => '{tag_id}']);
     }
 
@@ -114,40 +95,14 @@ class UploadAnimals extends ExcelUploadForm implements ImportInterface, JobInter
      */
     protected function getFarmId($farmCode)
     {
-        $farmCode = trim($farmCode);
-        $farmCode = ltrim($farmCode, '0');
-        $condition = '([[code]]=:code1 OR [[code]]=:code2)';
-        $params = [':code1' => $farmCode, ':code2' => '0' . $farmCode];
+        $condition = '([[odk_code]]=:code';
+        $params = [':code' => $farmCode];
         $farmId = Farm::getScalar('id', $condition, $params);
 
-        if ($farmId) {
+        if (!empty($farmId)) {
             return $farmId;
         }
         return null;
-    }
-
-    /**
-     * @param $name
-     * @return string
-     * @throws \Exception
-     */
-    protected function getBreedId($name)
-    {
-        $name = trim($name);
-        if (empty($name)) {
-            return null;
-        }
-        //ListType::get
-        $value = LookupList::getScalar('value', ['list_type_id' => ListType::LIST_TYPE_ANIMAL_BREEDS, 'label' => $name]);
-        if (!$value) {
-            $nextValue = (int)LookupList::getScalar('max([[value]])', ['list_type_id' => ListType::LIST_TYPE_ANIMAL_BREEDS]);
-            $nextValue += 1;
-            $model = new LookupList(['value' => $nextValue, 'label' => $name, 'list_type_id' => ListType::LIST_TYPE_ANIMAL_BREEDS]);
-            $model->save(false);
-            return $model->value;
-        }
-
-        return $value;
     }
 
     /**

@@ -541,17 +541,18 @@ trait ExcelReaderTrait
 
     /**
      * @param string $booleanString
+     * @param null|int $default
      * @return int
      */
-    public static function encodeBoolean($booleanString): int
+    public static function encodeBoolean($booleanString, $default = null): int
     {
         $booleanString = strtolower($booleanString);
         if ($booleanString === 'yes' || $booleanString === 'y') {
-            $booleanString = 1;
+            return 1;
         } elseif ($booleanString === 'no' || $booleanString === 'n') {
-            $booleanString = 0;
+            return 0;
         }
-        return $booleanString;
+        return $default !== null ? $default : $booleanString;
     }
 
 
@@ -618,7 +619,7 @@ trait ExcelReaderTrait
             $dateString = Date::excelToDateTimeObject($dateString)->format($format);
         } else {
             if (!empty($createDateFromFormat)) {
-                $date = DateTime::createFromFormat($createDateFromFormat, $dateString);
+                $date = DateTime::createFromFormat($createDateFromFormat, $dateString, $timezone);
                 $dateString = $date->format($format);
             }
         }
