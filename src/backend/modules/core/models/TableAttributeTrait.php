@@ -162,7 +162,7 @@ trait TableAttributeTrait
      * @param string $attributeValueModelClass
      * @param string $foreignKeyAttribute
      * @param bool $insert
-     * @throws \yii\db\Exception
+     * @throws \Exception
      */
     protected function saveAdditionalAttributes(string $attributeValueModelClass, string $foreignKeyAttribute, $insert = true)
     {
@@ -178,7 +178,7 @@ trait TableAttributeTrait
             }
         }
         if (!empty($attributes)) {
-            FarmAttributeValue::insertMultiple($attributes);
+            $attributeValueModelClass::insertMultiple($attributes);
         }
 
     }
