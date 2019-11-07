@@ -71,21 +71,12 @@ class UploadAnimals extends ExcelUploadForm implements ImportInterface, JobInter
             $row['derivedBirthdate'] = static::getDateColumnData($row['derivedBirthdate'] ?? null);
             $row['birthdate'] = static::getDateColumnData($row['birthdate'] ?? null);
             $row['entry_date'] = static::getDateColumnData($row['entry_date'] ?? null);
-            if (empty($row['birthdate']) && !empty($row['derivedBirthdate'])) {
-                $row['birthdate'] = $row['derivedBirthdate'];
-                $row['is_derived_birthdate'] = 1;
-            }
-            if (!empty($row['deformities'])) {
-                $row['deformities'] = array_map('trim', explode(' ', $row['deformities']));
-            }
-            //\Yii::$app->controller->stdout("Here\n");
             $row['animal_sireknown'] = static::encodeBoolean($row['animal_sireknown']);
             $row['animal_damknown'] = static::encodeBoolean($row['animal_damknown']);
-            //\Yii::$app->controller->stdout("Here now\n");
             $insert_data[$k] = $row;
         }
         $targetModel = new Animal(['org_id' => $this->org_id]);
-        $this->save($insert_data, $targetModel, true, ['tag_id' => '{tag_id}']);
+        $this->save($insert_data, $targetModel, false);
     }
 
     /**

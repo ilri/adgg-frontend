@@ -21,6 +21,8 @@ use common\models\ActiveRecord;
  */
 class AnimalAttributeValue extends ActiveRecord
 {
+    use TableAttributeValueTrait;
+
     /**
      * {@inheritdoc}
      */

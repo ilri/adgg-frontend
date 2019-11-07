@@ -250,8 +250,16 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             $this->district_id = $this->farm->district_id;
             $this->ward_id = $this->farm->ward_id;
             $this->village_id = $this->farm->village_id;
-            if (empty($this->deformities)) {
+            if (!empty($this->deformities)) {
+                if (is_string($this->deformities)) {
+                    $this->deformities = array_map('trim', explode(' ', $this->deformities));
+                }
+            } else {
                 $this->deformities = [];
+            }
+            if (empty($this->birthdate) && !empty($this->derivedBirthdate)) {
+                $this->birthdate = $this->derivedBirthdate;
+                $this->is_derived_birthdate = 1;
             }
 
             return true;
@@ -262,7 +270,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
-        $this->saveAdditionalAttributes(AnimalAttributeValue::class, 'animal_id');
+        $this->saveAdditionalAttributes(AnimalAttributeValue::class, 'animal_id', $insert);
     }
 
     public function afterFind()

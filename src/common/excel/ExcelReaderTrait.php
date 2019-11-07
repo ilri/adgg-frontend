@@ -406,7 +406,8 @@ trait ExcelReaderTrait
                 @unlink($this->file);
             }
         } catch (\Exception $e) {
-            Yii::$app->controller->stdout("{$e->getMessage()}\n");
+            Yii::error($e->getTrace());
+            Yii::$app->controller->stdout("{$e->getTraceAsString()}\n");
         }
     }
 
@@ -536,6 +537,8 @@ trait ExcelReaderTrait
                 return false;
             }
         } catch (\Exception $e) {
+            Yii::$app->controller->stdout("ERROR:{$e->getMessage()}, TRACE:  {$e->getTraceAsString()}\n");
+            Yii::error($e->getTrace());
             $this->_failedRows[$rowNumber] = ['error' => $e->getMessage(), 'rowData' => $rowData, 'rowNumber' => $rowNumber];
         }
     }
@@ -671,7 +674,7 @@ trait ExcelReaderTrait
                 $model->save(false);
             }
         } catch (\Exception $e) {
-            Yii::$app->controller->stdout("{$e->getMessage()} \n");
+            Yii::$app->controller->stdout("{$e->getTraceAsString()} \n");
         }
     }
 }
