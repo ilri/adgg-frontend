@@ -13,7 +13,7 @@ use common\widgets\grid\GridView;
     'searchModel' => $model,
     'filterModel' => $model,
     'createButton' => ['visible' => Yii::$app->user->canCreate(), 'modal' => true],
-    'showExportButton' => false,
+    'showExportButton' => true,
     'columns' => [
         [
             'attribute' => 'id',
