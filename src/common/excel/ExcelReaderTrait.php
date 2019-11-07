@@ -3,7 +3,6 @@
 namespace common\excel;
 
 use backend\modules\core\models\ExcelImport;
-use common\helpers\DateUtils;
 use common\helpers\FileManager;
 use common\helpers\Lang;
 use common\helpers\Str;
@@ -389,7 +388,7 @@ trait ExcelReaderTrait
             $this->setFile();
             $this->setPlaceholders();
             $chunkFilter = $this->getChunkFilter();
-            $batch_size = 1000;
+            $batch_size = 5000;
             for ($this->start_row; $this->start_row <= $this->end_row; $this->start_row += $batch_size) {
                 $sheetData = $this->getSheetData($chunkFilter, $batch_size);
                 foreach ($this->getExcelInsertBatches($sheetData) as $batch) {
