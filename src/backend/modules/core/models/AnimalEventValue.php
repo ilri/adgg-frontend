@@ -22,6 +22,7 @@ use common\models\ActiveRecord;
  */
 class AnimalEventValue extends ActiveRecord
 {
+    use TableAttributeValueTrait;
     /**
      * {@inheritdoc}
      */

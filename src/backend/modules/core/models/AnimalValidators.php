@@ -23,7 +23,7 @@ trait AnimalValidators
             $dateDiff = DateUtils::getDateDiff($this->birthdate, $this->{$attribute});
             $minDays = 660;
             if ($dateDiff->days <= $minDays) {
-                $this->addError($attribute, Lang::t("{attribute} must be > {minDays} days after {birthdate_label}", [
+                $this->addError($attribute, Lang::t("{attribute} must be greater than {minDays} days after {birthdate_label}", [
                     'attribute' => $this->getAttributeLabel($attribute),
                     'minDays' => $minDays,
                     'birthdate_label' => $this->getAttributeLabel('birthdate'),

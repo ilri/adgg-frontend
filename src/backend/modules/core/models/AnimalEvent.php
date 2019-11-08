@@ -6,6 +6,7 @@ use common\helpers\Utils;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
+use common\models\CustomValidationsTrait;
 
 /**
  * This is the model class for table "core_animal_event".
@@ -29,21 +30,12 @@ use common\models\ActiveSearchTrait;
  * @property string $updated_at
  * @property int $updated_by
  *
- * @property float $milkmor
- * @property float $milkeve
- * @property float $milkday
- * @property float $mlkfat
- * @property float $mlkprot
- * @property float $milklact
- * @property float $mlksmc
- * @property float $milkurea
- *
  * @property Animal $animal
  * @property AnimalEventValue[] $animalEventValues
  */
 class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAttributeInterface
 {
-    use ActiveSearchTrait, OrganizationUnitDataTrait, TableAttributeTrait;
+    use ActiveSearchTrait, OrganizationUnitDataTrait, TableAttributeTrait, CustomValidationsTrait, AnimalEventValidators;
 
     const EVENT_TYPE_CALVING = 1;
     const EVENT_TYPE_MILKING = 2;
@@ -69,12 +61,14 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     public function rules()
     {
         return [
-            [['animal_id', 'event_type'], 'required'],
+            [['animal_id', 'event_type', 'event_date'], 'required'],
             [['animal_id', 'event_type', 'org_id', 'region_id', 'district_id', 'ward_id', 'village_id'], 'integer'],
             [['event_date'], 'date', 'format' => 'php:Y-m-d'],
             [['latitude', 'longitude'], 'number'],
             [['map_address', 'uuid'], 'string', 'max' => 255],
             [['animal_id'], 'exist', 'skipOnError' => true, 'targetClass' => Animal::class, 'targetAttribute' => ['animal_id' => 'id']],
+            ['event_date', 'validateNoFutureDate'],
+            ['event_date', 'unique', 'targetAttribute' => ['org_id', 'animal_id', 'event_type'], 'message' => '{attribute} should be unique per animal'],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
     }
@@ -232,5 +226,16 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             self::EVENT_TYPE_WEIGHTS => static::decodeEventType(self::EVENT_TYPE_WEIGHTS),
             self::EVENT_TYPE_HEALTH => static::decodeEventType(self::EVENT_TYPE_HEALTH),
         ], $prompt);
+    }
+
+    /**
+     * @param int $animalId
+     * @param int $eventType
+     * @return AnimalEvent|null
+     */
+    public static function getLastAnimalEvent($animalId, $eventType)
+    {
+        $model = static::find()->andWhere(['animal_id' => $animalId, 'event_type' => $eventType])->orderBy(['event_date' => SORT_DESC])->one();
+        return $model;
     }
 }

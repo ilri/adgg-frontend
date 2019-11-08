@@ -10,9 +10,20 @@ namespace backend\modules\core\models;
 
 
 use common\excel\ImportActiveRecordInterface;
+use common\helpers\ArrayHelper;
 
+/**
+ * Class CalvingEvent
+ * @package backend\modules\core\models
+ *
+ */
 class CalvingEvent extends AnimalEvent implements ImportActiveRecordInterface
 {
+    public function rules()
+    {
+        return ArrayHelper::merge(parent::rules(), [
+        ]);
+    }
     /**
      * @return array
      */
