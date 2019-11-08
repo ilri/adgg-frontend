@@ -30,6 +30,8 @@ class Choices extends ActiveRecord implements ActiveSearchInterface
 {
     use ActiveSearchTrait;
 
+    const CHOICES_OTHERS_SPECIFY = '-66';
+
     /**
      * {@inheritdoc}
      */
@@ -159,5 +161,26 @@ class Choices extends ActiveRecord implements ActiveSearchInterface
         /* @var $choicesComponent \common\components\Choices */
         $choicesComponent = Yii::$app->choices;
         return $choicesComponent->getLabel($choiceTypeId, $value);
+    }
+
+    /**
+     * @param array $values
+     * @param int $choiceTypeId
+     * @return string|null
+     */
+    public static function getMultiSelectLabel($values, $choiceTypeId)
+    {
+        if (empty($values)) {
+            return null;
+        }
+        $arr = [];
+        foreach ($values as $value) {
+            $def = static::getLabel($choiceTypeId, $value);
+            if ($def) {
+                $arr[] = $def;
+            }
+        }
+
+        return implode(', ', $arr);
     }
 }

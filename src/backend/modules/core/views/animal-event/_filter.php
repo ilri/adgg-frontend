@@ -131,6 +131,10 @@ use yii\bootstrap4\Html;
                             ]); ?>
                         </div>
                     <?php endif; ?>
+                    <div class="col-lg-2">
+                        <?= Html::label('Animal Tag ID') ?>
+                        <?= Html::textInput('animal_tag_id', Yii::$app->request->get('animal_tag_id'), ['class' => 'form-control']) ?>
+                    </div>
                     <div class="col-lg-1">
                         <?= Html::label($model->getAttributeLabel('From')) ?>
                         <?= Html::textInput('from', $model->_dateFilterFrom, ['class' => 'form-control show-datepicker', 'placeholder' => 'From']) ?>

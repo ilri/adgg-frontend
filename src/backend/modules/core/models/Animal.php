@@ -407,27 +407,6 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     }
 
     /**
-     * @return string|null
-     * @throws \Exception
-     */
-    public function getFormattedDeformities()
-    {
-        if (empty($this->deformities)) {
-            return null;
-        }
-        $arr = [];
-        foreach ($this->deformities as $deformity) {
-
-            $def = Choices::getLabel(ChoiceTypes::CHOICE_TYPE_CALVE_DEFORMITY, $deformity);
-            if ($def) {
-                $arr[] = $def;
-            }
-        }
-
-        return implode(', ', $arr);
-    }
-
-    /**
      * @param $attribute
      * @param $listTypeId
      * @return string|null

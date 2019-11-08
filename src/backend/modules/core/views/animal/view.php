@@ -64,7 +64,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         [
                             'attribute' => 'deformities',
-                            'value' => $model->getFormattedDeformities(),
+                            'value' => Choices::getMultiSelectLabel($model->deformities, ChoiceTypes::CHOICE_TYPE_CALVE_DEFORMITY),
                         ],
                         [
                             'attribute' => 'main_breed',

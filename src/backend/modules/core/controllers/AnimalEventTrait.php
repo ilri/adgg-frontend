@@ -9,8 +9,10 @@
 namespace backend\modules\core\controllers;
 
 
+use backend\modules\core\models\Animal;
 use backend\modules\core\models\AnimalEvent;
 use common\helpers\DateUtils;
+use Yii;
 
 trait AnimalEventTrait
 {
@@ -27,6 +29,10 @@ trait AnimalEventTrait
             'params' => $params,
             'with' => ['animal'],
         ]);
+        $animalTagId = Yii::$app->request->get('animal_tag_id', null);
+        if (!empty($animalTagId)) {
+            $animal_id = Animal::getScalar('id', ['tag_id' => $animalTagId]);
+        }
         $searchModel->animal_id = $animal_id;
         $searchModel->event_type = $event_type;
         $searchModel->_dateFilterFrom = $dateFilter['from'];

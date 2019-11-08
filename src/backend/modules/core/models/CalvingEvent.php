@@ -16,6 +16,16 @@ use common\helpers\ArrayHelper;
  * Class CalvingEvent
  * @package backend\modules\core\models
  *
+ * @property string $calvtype
+ * @property string $easecalv
+ * @property string $birthtyp
+ * @property string $calfsex
+ * @property string $calfsiretype
+ * @property string $aiprov
+ * @property string $aiprov_other
+ * @property string|array $calfdeformities
+ * @property string $intuse
+ *
  */
 class CalvingEvent extends AnimalEvent implements ImportActiveRecordInterface
 {

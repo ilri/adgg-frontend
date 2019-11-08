@@ -1,6 +1,8 @@
 <?php
 
 use backend\modules\core\models\AnimalEvent;
+use backend\modules\core\models\Choices;
+use backend\modules\core\models\ChoiceTypes;
 use common\helpers\Lang;
 use common\widgets\grid\GridView;
 use yii\helpers\Url;
@@ -35,27 +37,50 @@ use yii\helpers\Url;
         ],
         [
             'attribute' => 'calvtype',
+            'value' => function (AnimalEvent $model) {
+                return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_CALVING_TYPE, $model->calvtype);
+            }
         ],
         [
             'attribute' => 'easecalv',
+            'value' => function (AnimalEvent $model) {
+                return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_EASE_OF_CALVING, $model->easecalv);
+            }
         ],
         [
             'attribute' => 'birthtyp',
+            'value' => function (AnimalEvent $model) {
+                return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_BIRTH_TYPE, $model->birthtyp);
+            }
         ],
         [
             'attribute' => 'calfsex',
+            'value' => function (AnimalEvent $model) {
+                return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_GENDER, $model->calfsex);
+            }
+
         ],
         [
             'attribute' => 'calfsiretype',
+            'value' => function (AnimalEvent $model) {
+                return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_SIRE_TYPE, $model->calfsiretype);
+            }
         ],
         [
             'attribute' => 'aiprov',
-        ],
-        [
-            'attribute' => 'bull_id',
+            'value' => function (AnimalEvent $model) {
+                if ($model->aiprov == Choices::CHOICES_OTHERS_SPECIFY) {
+                    return $model->aiprov_other;
+                } else {
+                    return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_AI_PROVIDER, $model->aiprov);
+                }
+            }
         ],
         [
             'attribute' => 'calfdeformities',
+            'value' => function (AnimalEvent $model) {
+                return Choices::getMultiSelectLabel($model->calfdeformities, ChoiceTypes::CHOICE_TYPE_CALVE_DEFORMITY);
+            }
         ],
         [
             'attribute' => 'calfweight',
@@ -68,12 +93,20 @@ use yii\helpers\Url;
         ],
         [
             'attribute' => 'intuse',
+            'value' => function (AnimalEvent $model) {
+                return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_CALVE_USE, $model->intuse);
+            }
         ],
         [
             'attribute' => 'calvdatedead',
+            'visible' => false,
         ],
         [
             'attribute' => 'whydead',
+            'value' => function (AnimalEvent $model) {
+                return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_WHY_DEAD, $model->whydead);
+            },
+            'visible' => false,
         ],
         [
             'attribute' => 'calfname',
@@ -83,9 +116,6 @@ use yii\helpers\Url;
         ],
         [
             'attribute' => 'calfcolor',
-        ],
-        [
-            'attribute' => 'tag_id',
         ],
     ],
 ]);
