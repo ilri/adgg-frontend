@@ -45,7 +45,7 @@ abstract class UploadAnimalEvent extends ExcelUploadForm
     public function rules()
     {
         return array_merge($this->excelValidationRules(), [
-            [['org_id', 'event_type','sampleExcelFileName'], 'required'],
+            [['org_id', 'event_type', 'sampleExcelFileName'], 'required'],
         ]);
     }
 
@@ -68,5 +68,18 @@ abstract class UploadAnimalEvent extends ExcelUploadForm
             return null;
         }
         return $animalId;
+    }
+
+    /**
+     * @param array $row
+     * @return array
+     * @throws \Exception
+     */
+    protected function setDefaultAttributes(array $row)
+    {
+        $row['org_id'] = $this->org_id;
+        $row['event_date'] = static::getDateColumnData($row['event_date']);
+        $row['animal_id'] = $this->getAnimalId($row['animalTagId']);
+        return $row;
     }
 }

@@ -33,7 +33,7 @@ interface ImportInterface
      * @param integer $rowNumber
      * @return bool
      */
-    public function saveExcelRaw(ActiveRecord $model, $rowData, $rowNumber);
+    public function saveExcelRow(ActiveRecord $model, $rowData, $rowNumber);
 
     /**
      * @return string|int

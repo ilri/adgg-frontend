@@ -388,7 +388,7 @@ trait ExcelReaderTrait
             $this->setFile();
             $this->setPlaceholders();
             $chunkFilter = $this->getChunkFilter();
-            $batch_size = 5000;
+            $batch_size = 2000;
             for ($this->start_row; $this->start_row <= $this->end_row; $this->start_row += $batch_size) {
                 $sheetData = $this->getSheetData($chunkFilter, $batch_size);
                 foreach ($this->getExcelInsertBatches($sheetData) as $batch) {
@@ -514,7 +514,7 @@ trait ExcelReaderTrait
      * @param integer $rowNumber
      * @return bool
      */
-    public function saveExcelRaw(ActiveRecord $model, $rowData, $rowNumber)
+    public function saveExcelRow(ActiveRecord $model, $rowData, $rowNumber)
     {
         foreach ($rowData as $k => $v) {
             if ($model->hasAttribute($k) || property_exists($model, $k)) {
@@ -536,6 +536,7 @@ trait ExcelReaderTrait
                 return false;
             }
         } catch (\Exception $e) {
+            \Yii::$app->controller->stdout("Exception: {$e->getMessage()} \n");
             Yii::error($e->getTrace());
             $this->_failedRows[$rowNumber] = ['error' => $e->getMessage(), 'rowData' => $rowData, 'rowNumber' => $rowNumber];
         }

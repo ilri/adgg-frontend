@@ -22,8 +22,10 @@ class CalvingEvent extends AnimalEvent implements ImportActiveRecordInterface
     public function rules()
     {
         return ArrayHelper::merge(parent::rules(), [
+            ['event_date', 'validateCalvingDate'],
         ]);
     }
+
     /**
      * @return array
      */
@@ -38,14 +40,18 @@ class CalvingEvent extends AnimalEvent implements ImportActiveRecordInterface
             'calfsex',
             'calfsiretype',
             'aiprov',
-            'bull_id',
+            'aiprov_other',
+            'intuse',
+            'intuseoth',
             'calfdeformities',
+            'calfdeformitiesoth',
+            'calfweightknown',
             'calfweight',
             'calfhgirth',
             'calfbodyscore',
-            'intuse',
             'calvdatedead',
             'whydead',
+            'whydeadoth',
             'calfname',
             'calftagprefix',
             'calftagsec',

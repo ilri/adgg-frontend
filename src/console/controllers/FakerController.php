@@ -8,8 +8,6 @@
 namespace console\controllers;
 
 
-use backend\modules\core\models\Animal;
-use backend\modules\core\models\AnimalAttributeValue;
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\AnimalEventValue;
 use Yii;
@@ -52,8 +50,8 @@ class FakerController extends Controller
         //$sql .= "TRUNCATE " . AuditTrail::tableName() . ";";
         $sql .= "TRUNCATE " . AnimalEventValue::tableName() . ";";
         $sql .= "TRUNCATE " . AnimalEvent::tableName() . ";";
-        $sql .= "TRUNCATE " . AnimalAttributeValue::tableName() . ";";
-        $sql .= "TRUNCATE " . Animal::tableName() . ";";
+        //$sql .= "TRUNCATE " . AnimalAttributeValue::tableName() . ";";
+        //$sql .= "TRUNCATE " . Animal::tableName() . ";";
         //$sql .= "TRUNCATE " . AnimalHerd::tableName() . ";";
         //$sql .= "TRUNCATE " . ClientAttributeValue::tableName() . ";";
         //$sql .= "TRUNCATE " . Client::tableName() . ";";

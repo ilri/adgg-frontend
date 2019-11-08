@@ -16,9 +16,8 @@ use backend\modules\core\models\Organization;
 use common\excel\ExcelUploadForm;
 use common\excel\ImportInterface;
 use common\helpers\Lang;
-use console\jobs\JobInterface;
 
-class UploadAnimals extends ExcelUploadForm implements ImportInterface, JobInterface
+class UploadAnimals extends ExcelUploadForm implements ImportInterface
 {
     /**
      * @var int

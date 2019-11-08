@@ -133,7 +133,7 @@ class UploadUsers extends Model implements ImportInterface
                 $newModel = clone $model;
             }
             $newModel->setScenario(Users::SCENARIO_UPLOAD);
-            $this->saveExcelRaw($newModel, $row, $n);
+            $this->saveExcelRow($newModel, $row, $n);
         }
 
         if (!empty($this->_failedRows)) {

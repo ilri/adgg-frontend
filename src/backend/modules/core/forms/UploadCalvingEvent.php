@@ -10,6 +10,7 @@ namespace backend\modules\core\forms;
 
 
 use backend\modules\core\models\AnimalEvent;
+use backend\modules\core\models\CalvingEvent;
 use backend\modules\core\models\ExcelImport;
 use common\excel\ImportInterface;
 
@@ -37,14 +38,13 @@ class UploadCalvingEvent extends UploadAnimalEvent implements ImportInterface
             if (empty($row)) {
                 continue;
             }
-            $row['org_id'] = $this->org_id;
-            $row['event_date'] = static::getDateColumnData($row['event_date'], 'Y-m-d', 'UTC', 'd/m/Y');
-            $row['animal_id'] = $this->getAnimalId($row['animalTagId']);
-            $row['calvdatedead'] = static::getDateColumnData($row['calvdatedead'], 'Y-m-d', 'UTC', 'd/m/Y');
+            $row = $this->setDefaultAttributes($row);
+            $row['calfweightknown'] = static::encodeBoolean($row['calfweightknown']);
+            $row['calvdatedead'] = static::getDateColumnData($row['calvdatedead']);
             $insert_data[$k] = $row;
         }
-        $model = new AnimalEvent(['org_id' => $this->org_id, 'event_type' => $this->event_type]);
-        $this->save($insert_data, $model);
+        $model = new CalvingEvent(['org_id' => $this->org_id, 'event_type' => $this->event_type]);
+        $this->save($insert_data, $model,false);
     }
 
     /**

@@ -152,7 +152,7 @@ class ExcelUploadForm extends Model implements JobInterface
             if (null === $newModel) {
                 $newModel = clone $targetModel;
             }
-            $this->saveExcelRaw($newModel, $row, $n);
+            $this->saveExcelRow($newModel, $row, $n);
 
             $nMax = $n;
         }

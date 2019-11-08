@@ -17,9 +17,8 @@ use common\excel\ExcelUploadForm;
 use common\excel\ImportInterface;
 use common\helpers\Lang;
 use common\helpers\Msisdn;
-use console\jobs\JobInterface;
 
-class UploadFarms extends ExcelUploadForm implements ImportInterface, JobInterface
+class UploadFarms extends ExcelUploadForm implements ImportInterface
 {
     /**
      * @var int

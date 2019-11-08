@@ -8,7 +8,6 @@ use common\models\ActiveRecord;
  * This is the model class for table "core_animal_event_value".
  *
  * @property int $id
- * @property int $animal_id
  * @property int $event_id
  * @property int $attribute_id
  * @property string $attribute_value
@@ -38,7 +37,7 @@ class AnimalEventValue extends ActiveRecord
     {
         return [
             [['event_id', 'attribute_id', 'attribute_value'], 'required'],
-            [['animal_id', 'event_id', 'attribute_id'], 'integer'],
+            [['event_id', 'attribute_id'], 'integer'],
             [['attribute_value'], 'string', 'max' => 1000],
             [['attribute_value_json'], 'safe'],
             [['event_id'], 'exist', 'skipOnError' => true, 'targetClass' => AnimalEvent::class, 'targetAttribute' => ['event_id' => 'id']],
@@ -52,7 +51,6 @@ class AnimalEventValue extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'animal_id' => 'Animal ID',
             'event_id' => 'Event ID',
             'attribute_id' => 'Attribute ID',
             'attribute_value' => 'Attribute Value',
@@ -74,9 +72,6 @@ class AnimalEventValue extends ActiveRecord
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
-            if ($insert) {
-                $this->animal_id = $this->event->animal_id;
-            }
             return true;
         }
         return false;
