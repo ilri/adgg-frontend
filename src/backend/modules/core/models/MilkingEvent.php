@@ -41,6 +41,7 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface
             [['milksmc'], 'number', 'min' => 30000, 'max' => 99999999999],
             ['milkurea', 'number', 'min' => 8, 'max' => 25],
             ['milklact', 'number', 'min' => 3, 'max' => 7],
+            ['event_date', 'validateMilkingDate'],
         ]);
     }
 

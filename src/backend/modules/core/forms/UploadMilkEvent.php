@@ -11,6 +11,7 @@ namespace backend\modules\core\forms;
 
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\ExcelImport;
+use backend\modules\core\models\MilkingEvent;
 use common\excel\ImportInterface;
 
 class UploadMilkEvent extends UploadAnimalEvent implements ImportInterface
@@ -38,13 +39,13 @@ class UploadMilkEvent extends UploadAnimalEvent implements ImportInterface
             if (empty($row)) {
                 continue;
             }
-            $row['org_id'] = $this->org_id;
-            $row['event_date'] = static::getDateColumnData($row['event_date'], 'Y-m-d', 'UTC', 'd/m/Y');
-            $row['animal_id'] = $this->getAnimalId($row['animalTagId']);
+            $row = $this->setDefaultAttributes($row);
+            $row['milk_qty_tested'] = static::encodeBoolean($row['milk_qty_tested'], $row['milk_qty_tested']);
             $insert_data[$k] = $row;
         }
-        $model = new AnimalEvent(['org_id' => $this->org_id, 'event_type' => $this->event_type]);
-        $this->save($insert_data, $model);
+
+        $model = new MilkingEvent(['org_id' => $this->org_id, 'event_type' => $this->event_type]);
+        $this->save($insert_data, $model, false);
     }
 
     /**
