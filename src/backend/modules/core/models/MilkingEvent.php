@@ -18,12 +18,15 @@ use common\helpers\ArrayHelper;
  *
  * @property float $milkmor
  * @property float $milkeve
+ * @property float $milkmid
  * @property float $milkday
- * @property float $mlkfat
- * @property float $mlkprot
+ * @property float $milkfat
+ * @property float $milkprot
  * @property float $milklact
- * @property float $mlksmc
+ * @property float $milksmc
  * @property float $milkurea
+ * @property int $milk_qty_tested
+ * @property int $milk_sample_type
  *
  */
 class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface
@@ -31,6 +34,20 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface
     public function rules()
     {
         return ArrayHelper::merge(parent::rules(), [
+            [['milkmor', 'milkmid', 'milkmid'], 'number', 'min' => 0, 'max' => 30],
+            [['milkday'], 'number', 'min' => 0, 'max' => 60],
+            [['milkfat'], 'number', 'min' => 1.5, 'max' => 9],
+            [['milkprot'], 'number', 'min' => 1.5, 'max' => 5],
+            [['milksmc'], 'number', 'min' => 30000, 'max' => 99999999999],
+            ['milkurea', 'number', 'min' => 8, 'max' => 25],
+            ['milklact', 'number', 'min' => 3, 'max' => 7],
+        ]);
+    }
+
+    public function attributeLabels()
+    {
+        return ArrayHelper::merge(parent::attributeLabels(), [
+            'event_date' => 'Milk Date',
         ]);
     }
 
@@ -46,6 +63,8 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface
             'milkmor',
             'milkmid',
             'milkeve',
+            'milk_qty_tested',
+            'milk_sample_tested',
             'mlkfat',
             'mlkprot',
             'mlksmc',
