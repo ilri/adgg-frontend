@@ -66,9 +66,8 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             [['event_date'], 'date', 'format' => 'php:Y-m-d'],
             [['latitude', 'longitude'], 'number'],
             [['map_address', 'uuid'], 'string', 'max' => 255],
-            [['animal_id'], 'exist', 'skipOnError' => true, 'targetClass' => Animal::class, 'targetAttribute' => ['animal_id' => 'id']],
             ['event_date', 'validateNoFutureDate'],
-            ['event_date', 'unique', 'targetAttribute' => ['org_id', 'animal_id', 'event_type'], 'message' => '{attribute} should be unique per animal'],
+            ['event_date', 'unique', 'targetAttribute' => ['org_id', 'animal_id', 'event_type', 'event_date'], 'message' => '{attribute} should be unique per animal'],
             [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
