@@ -1,6 +1,8 @@
 <?php
 
 use backend\modules\core\models\AnimalEvent;
+use backend\modules\core\models\Choices;
+use backend\modules\core\models\ChoiceTypes;
 use common\helpers\Lang;
 use common\widgets\grid\GridView;
 use yii\helpers\Url;
@@ -43,19 +45,32 @@ use yii\helpers\Url;
             'attribute' => 'milkday',
         ],
         [
-            'attribute' => 'mlkfat',
+            'attribute' => 'milkfat',
         ],
         [
-            'attribute' => 'mlkprot',
+            'attribute' => 'milkprot',
         ],
         [
             'attribute' => 'milklact',
         ],
         [
-            'attribute' => 'mlksmc',
+            'attribute' => 'milksmc',
         ],
         [
             'attribute' => 'milkurea',
+        ],
+        [
+            'attribute' => 'milkurea',
+        ],
+        [
+            'attribute' => 'milk_qty_is_tested',
+            'format' => 'boolean'
+        ],
+        [
+            'attribute' => 'milk_sample_type',
+            'value' => function (AnimalEvent $model) {
+                return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_MILK_SAMPLE_TYPE, $model->milk_sample_type);
+            }
         ],
     ],
 ]);

@@ -154,13 +154,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
-        $this->ignoreAdditionalAttributes = false;
-
-        foreach ($this->getAttributes() as $attribute => $val) {
-            if ($this->isAdditionalAttribute($attribute)) {
-                $this->saveAdditionalAttributes(AnimalEventValue::class, 'event_id');
-            }
-        }
+        $this->saveAdditionalAttributes(AnimalEventValue::class, 'event_id', $insert);
     }
 
     public function afterFind()

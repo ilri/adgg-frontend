@@ -64,11 +64,11 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface
             'milkmor',
             'milkmid',
             'milkeve',
-            'milk_qty_tested',
-            'milk_sample_tested',
-            'mlkfat',
-            'mlkprot',
-            'mlksmc',
+            'milk_qty_is_tested',
+            'milk_sample_type',
+            'milkfat',
+            'milkprot',
+            'milksmc',
             'milkurea',
         ];
     }
@@ -76,13 +76,15 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
+            $this->ignoreAdditionalAttributes = false;
             if (empty($this->milkday)) {
                 $this->milkday = ((float)$this->milkmor + (float)$this->milkeve + (float)$this->milkmid);
             }
+            $this->ignoreAdditionalAttributes = true;
+
             return true;
         }
         return false;
     }
-
 
 }
