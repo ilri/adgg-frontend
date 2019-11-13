@@ -8,7 +8,7 @@ use yii\helpers\Url;
     <div id="kt_aside_menu" class="kt-aside-menu " data-ktmenu-vertical="1" data-ktmenu-scroll="1"
          data-ktmenu-dropdown-timeout="500">
         <ul class="kt-menu__nav ">
-            <li class="kt-menu__item  kt-menu__item--submenu kt-menu__item--open kt-menu__item--here">
+            <li class="kt-menu__item  kt-menu__item--submenu">
                 <a href="<?= Yii::$app->homeUrl ?>" class="kt-menu__link kt-menu__toggle">
                     <i class="kt-menu__link-icon fas fa-home"></i>
                     <span class="kt-menu__link-text">DASHBOARD</span>

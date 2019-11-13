@@ -9,3 +9,12 @@
 .btn-space {
     margin-right: 10px;
 }
+
+.list-group-item.active {
+    color: #fff;
+    background-color: #38997a;
+    border-color: #38997a;
+    border-top-color: #38997a;
+    border-right-color: #38997a;
+    border-left-color: #38997a;
+}

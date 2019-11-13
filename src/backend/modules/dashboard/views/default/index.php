@@ -18,104 +18,96 @@ $this->params['breadcrumbs'] = [
 
 <div class="row">
     <div class="col-md-3">
-        <div class="card" style="width: 18rem;">
-            <div class="card-header">
-                Farm Stats
-            </div>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item">
-                    Added This Week
-                    <strong><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_THIS_WEEK)) ?></strong>
-                </li>
-                <li class="list-group-item">
-                    Added This Month
-                    <strong><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_THIS_MONTH)) ?></strong>
-                </li>
-                <li class="list-group-item">
-                    Added This Year
-                    <strong><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_THIS_YEAR)) ?></strong>
-                </li>
-                <li class="list-group-item">
-                    All Time
-                    <strong><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME)) ?></strong>
-                </li>
-            </ul>
-        </div>
+        <ul class="list-group">
+            <li class="list-group-item active">
+                Farms Summary
+            </li>
+            <li class="list-group-item">
+                Added This Week
+                <strong><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_THIS_WEEK)) ?></strong>
+            </li>
+            <li class="list-group-item">
+                Added This Month
+                <strong><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_THIS_MONTH)) ?></strong>
+            </li>
+            <li class="list-group-item">
+                Added This Year
+                <strong><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_THIS_YEAR)) ?></strong>
+            </li>
+            <li class="list-group-item">
+                All Time
+                <strong><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME)) ?></strong>
+            </li>
+        </ul>
     </div>
     <div class="col-md-3">
-        <div class="card" style="width: 18rem;">
-            <div class="card-header">
-                Animal Stats
-            </div>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item">
-                    Added This Week
-                    <strong><?= Yii::$app->formatter->asDecimal(Animal::getDashboardStats(Animal::STATS_THIS_WEEK)) ?></strong>
-                </li>
-                <li class="list-group-item">
-                    Added This Month
-                    <strong><?= Yii::$app->formatter->asDecimal(Animal::getDashboardStats(Animal::STATS_THIS_MONTH)) ?></strong>
-                </li>
-                <li class="list-group-item">
-                    Added This Year
-                    <strong><?= Yii::$app->formatter->asDecimal(Animal::getDashboardStats(Animal::STATS_THIS_YEAR)) ?></strong>
-                </li>
-                <li class="list-group-item">
-                    All Time
-                    <strong><?= Yii::$app->formatter->asDecimal(Animal::getDashboardStats(Animal::STATS_ALL_TIME)) ?></strong>
-                </li>
-            </ul>
-        </div>
+        <ul class="list-group">
+            <li class="list-group-item active">
+                Animals Summary
+            </li>
+            <li class="list-group-item">
+                Added This Week
+                <strong><?= Yii::$app->formatter->asDecimal(Animal::getDashboardStats(Animal::STATS_THIS_WEEK)) ?></strong>
+            </li>
+            <li class="list-group-item">
+                Added This Month
+                <strong><?= Yii::$app->formatter->asDecimal(Animal::getDashboardStats(Animal::STATS_THIS_MONTH)) ?></strong>
+            </li>
+            <li class="list-group-item">
+                Added This Year
+                <strong><?= Yii::$app->formatter->asDecimal(Animal::getDashboardStats(Animal::STATS_THIS_YEAR)) ?></strong>
+            </li>
+            <li class="list-group-item">
+                All Time
+                <strong><?= Yii::$app->formatter->asDecimal(Animal::getDashboardStats(Animal::STATS_ALL_TIME)) ?></strong>
+            </li>
+        </ul>
     </div>
     <div class="col-md-3">
-        <div class="card" style="width: 18rem;">
-            <div class="card-header">
-                Calving Records
-            </div>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item">
-                    This Week
-                    <strong><?= Yii::$app->formatter->asDecimal(CalvingEvent::getDashboardStats(CalvingEvent::STATS_THIS_WEEK)) ?></strong>
-                </li>
-                <li class="list-group-item">
-                    This Month
-                    <strong><?= Yii::$app->formatter->asDecimal(CalvingEvent::getDashboardStats(CalvingEvent::STATS_THIS_MONTH)) ?></strong>
-                </li>
-                <li class="list-group-item">
-                    This Year
-                    <strong><?= Yii::$app->formatter->asDecimal(CalvingEvent::getDashboardStats(CalvingEvent::STATS_THIS_YEAR)) ?></strong>
-                </li>
-                <li class="list-group-item">
-                    All Time
-                    <strong><?= Yii::$app->formatter->asDecimal(CalvingEvent::getDashboardStats(CalvingEvent::STATS_ALL_TIME)) ?></strong>
-                </li>
-            </ul>
-        </div>
+        <ul class="list-group">
+            <li class="list-group-item active">
+                Calving Records Summary
+            </li>
+            <li class="list-group-item">
+                This Week
+                <strong><?= Yii::$app->formatter->asDecimal(CalvingEvent::getDashboardStats(CalvingEvent::STATS_THIS_WEEK)) ?></strong>
+            </li>
+            <li class="list-group-item">
+                This Month
+                <strong><?= Yii::$app->formatter->asDecimal(CalvingEvent::getDashboardStats(CalvingEvent::STATS_THIS_MONTH)) ?></strong>
+            </li>
+            <li class="list-group-item">
+                This Year
+                <strong><?= Yii::$app->formatter->asDecimal(CalvingEvent::getDashboardStats(CalvingEvent::STATS_THIS_YEAR)) ?></strong>
+            </li>
+            <li class="list-group-item">
+                All Time
+                <strong><?= Yii::$app->formatter->asDecimal(CalvingEvent::getDashboardStats(CalvingEvent::STATS_ALL_TIME)) ?></strong>
+            </li>
+        </ul>
     </div>
     <div class="col-md-3">
-        <div class="card" style="width: 18rem;">
-            <div class="card-header">
-                Milking Records
-            </div>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item">
-                    This Week
-                    <strong><?= Yii::$app->formatter->asDecimal(MilkingEvent::getDashboardStats(MilkingEvent::STATS_THIS_WEEK)) ?></strong>
-                </li>
-                <li class="list-group-item">
-                    This Month
-                    <strong><?= Yii::$app->formatter->asDecimal(MilkingEvent::getDashboardStats(MilkingEvent::STATS_THIS_MONTH)) ?></strong>
-                </li>
-                <li class="list-group-item">
-                    This Year
-                    <strong><?= Yii::$app->formatter->asDecimal(MilkingEvent::getDashboardStats(MilkingEvent::STATS_THIS_YEAR)) ?></strong>
-                </li>
-                <li class="list-group-item">
-                    All Time
-                    <strong><?= Yii::$app->formatter->asDecimal(MilkingEvent::getDashboardStats(MilkingEvent::STATS_ALL_TIME)) ?></strong>
-                </li>
-            </ul>
-        </div>
+        <ul class="list-group">
+            <li class="list-group-item active">
+                Milking Records Summary
+            </li>
+            <li class="list-group-item">
+                This Week
+                <strong><?= Yii::$app->formatter->asDecimal(MilkingEvent::getDashboardStats(MilkingEvent::STATS_THIS_WEEK)) ?></strong>
+            </li>
+            <li class="list-group-item">
+                This Month
+                <strong><?= Yii::$app->formatter->asDecimal(MilkingEvent::getDashboardStats(MilkingEvent::STATS_THIS_MONTH)) ?></strong>
+            </li>
+            <li class="list-group-item">
+                This Year
+                <strong><?= Yii::$app->formatter->asDecimal(MilkingEvent::getDashboardStats(MilkingEvent::STATS_THIS_YEAR)) ?></strong>
+            </li>
+            <li class="list-group-item">
+                All Time
+                <strong><?= Yii::$app->formatter->asDecimal(MilkingEvent::getDashboardStats(MilkingEvent::STATS_ALL_TIME)) ?></strong>
+            </li>
+        </ul>
     </div>
 </div>
 <br/>
