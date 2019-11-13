@@ -620,10 +620,11 @@ class HighChart extends Widget
         $previous_formatted = [];
         $x_axis_dates = [];
         foreach ($dates as $date) {
-            $formatted = DateUtils::formatToLocalDate($date, $format);
+            $localDate = DateUtils::formatToLocalDate($date, 'Y-m-d');
+            $formatted = DateUtils::formatDate($localDate, $format);
             if (!in_array($formatted, $previous_formatted)) {
                 array_push($x_axis_dates, [
-                    'date' => $date,
+                    'date' => $localDate,
                     'label' => $formatted,
                 ]);
             }

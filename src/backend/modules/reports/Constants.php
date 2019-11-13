@@ -8,6 +8,8 @@
 namespace backend\modules\reports;
 
 
+use common\helpers\Utils;
+
 class Constants
 {
     //resource
@@ -23,4 +25,34 @@ class Constants
     const REPORT_IMPORT_CORRIDOR = 5;
     const REPORT_TAX_STATEMENT = 6;
     const REPORT_BOND_STATUS = 7;
+    //ANIMAL GRAPH GROUP BY
+    const ANIMAL_GRAPH_GROUP_BY_ANIMAL_TYPES = 1;
+    const ANIMAL_GRAPH_GROUP_BY_BREEDS = 2;
+
+    /**
+     * @param int $intVal
+     * @return string
+     */
+    public static function decodeAnimalGraphGroupBy($intVal)
+    {
+        switch ($intVal) {
+            case self::ANIMAL_GRAPH_GROUP_BY_ANIMAL_TYPES:
+                return 'Group by Animal Types';
+            case self::ANIMAL_GRAPH_GROUP_BY_BREEDS:
+                return 'Group by Animal Breeds';
+        }
+    }
+
+    /**
+     * @param mixed $prompt
+     * @return array
+     */
+    public static function animalGraphGroupByOptions($prompt = false)
+    {
+        $values = [
+            self::ANIMAL_GRAPH_GROUP_BY_ANIMAL_TYPES => static::decodeAnimalGraphGroupBy(self::ANIMAL_GRAPH_GROUP_BY_ANIMAL_TYPES),
+            self::ANIMAL_GRAPH_GROUP_BY_BREEDS => static::decodeAnimalGraphGroupBy(self::ANIMAL_GRAPH_GROUP_BY_BREEDS),
+        ];
+        return Utils::appendDropDownListPrompt($values, $prompt);
+    }
 }

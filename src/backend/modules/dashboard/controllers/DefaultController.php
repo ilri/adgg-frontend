@@ -27,13 +27,14 @@ class DefaultController extends Controller
         ]);
     }
 
-    public function actionGraph($graphType = null, $dateRange = null, $type = null, $org_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null)
+    public function actionGraph($graphType = null, $dateRange = null, $animal_type = null, $main_breed = null, $org_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null)
     {
         return $this->renderPartial('graph/_widget', [
             'graphType' => $graphType,
             'dateRange' => $dateRange,
             'graphFilterOptions' => [
-                'type' => $type,
+                'animal_type' => $animal_type,
+                'main_breed' => $main_breed,
                 'org_id' => $org_id,
                 'region_id' => $region_id,
                 'district_id' => $district_id,

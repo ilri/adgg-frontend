@@ -12,3 +12,7 @@
     line-height: 10px;
     cursor: pointer;
 }
+.kv-drp-dropdown .left-ind, .kv-drp-dropdown .right-ind {
+    position: absolute;
+    top: 14px;
+}

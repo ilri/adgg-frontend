@@ -1,6 +1,7 @@
 <?php
 
 use backend\modules\core\models\Animal;
+use backend\modules\reports\Constants;
 use common\widgets\highchart\HighChart;
 
 /* @var $this \yii\web\View */
@@ -8,6 +9,7 @@ use common\widgets\highchart\HighChart;
 
 $graphType = $graphType ?? HighChart::GRAPH_LINE;
 $dateRange = $dateRange ?? HighChart::getDefaultDateRange('Y/m/d');
+$groupBy = $groupBy ?? array_key_first(Constants::animalGraphGroupByOptions(false));
 ?>
 
 <?= HighChart::widget([
@@ -34,6 +36,7 @@ $dateRange = $dateRange ?? HighChart::getDefaultDateRange('Y/m/d');
         'filters' => $graphFilterOptions,
         'dateField' => 'created_at',
         'dateRange' => $dateRange,//date range of query eg '2015-01-01 - 2015-12-31'
+        'groupBy' => Yii::$app->request->get('groupBy', $groupBy),
         'sum' => false,
         'enforceDate' => false,
     ],

@@ -2,6 +2,7 @@
 
 namespace backend\modules\core\models;
 
+use backend\modules\reports\Constants;
 use common\helpers\DbUtils;
 use common\helpers\FileManager;
 use common\helpers\Lang;
@@ -448,22 +449,51 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
         $condition = '';
         $params = [];
         list($condition, $params) = static::appendOrgSessionIdCondition($condition, $params, false);
+        $groupBy = $queryOptions['groupBy'] ?? array_key_first(Constants::animalGraphGroupByOptions(false));
+        $breed = $queryOptions['filters']['main_breed'] ?? null;
+        $animalType = $queryOptions['filters']['animal_type'] ?? null;
         $series = [];
-        if ($graphType == HighChart::GRAPH_PIE) {
-            $animalTypes = Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES);
-            foreach ($animalTypes as $animalType => $label) {
-                list($newCondition, $newParams) = DbUtils::appendCondition('animal_type', $animalType, $condition, $params);
-                $series[] = [
-                    'name' => Lang::t('{animalType}', ['animalType' => Inflector::pluralize($label)]),
-                    'condition' => $newCondition,
-                    'params' => $newParams,
-                    'sum' => false,
-                ];
+        if ($graphType == HighChart::GRAPH_PIE && empty($breed) && empty($animalType)) {
+            if ($groupBy == Constants::ANIMAL_GRAPH_GROUP_BY_BREEDS) {
+                $breeds = Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS);
+                foreach ($breeds as $breed => $label) {
+                    list($newCondition, $newParams) = DbUtils::appendCondition('main_breed', $breed, $condition, $params);
+                    $series[] = [
+                        'name' => Lang::t('{breed}', ['breed' => $label]),
+                        'condition' => $newCondition,
+                        'params' => $newParams,
+                        'sum' => false,
+                    ];
+                }
+            } else {
+                $animalTypes = Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES);
+                foreach ($animalTypes as $animalType => $label) {
+                    list($newCondition, $newParams) = DbUtils::appendCondition('animal_type', $animalType, $condition, $params);
+                    $series[] = [
+                        'name' => Lang::t('{animalType}', ['animalType' => Inflector::pluralize($label)]),
+                        'condition' => $newCondition,
+                        'params' => $newParams,
+                        'sum' => false,
+                    ];
+                }
             }
         } else {
+            if (!empty($breed) && !empty($animalType)) {
+                $nameTemplate = '{breed}, {animal_type}';
+            } elseif (!empty($breed)) {
+                $nameTemplate = '{breed}';
+            } elseif (!empty($animalType)) {
+                $nameTemplate = '{animal_type}';
+            } else {
+                $nameTemplate = 'Animals';
+            }
+            $name = strtr($nameTemplate, [
+                '{breed}' => Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, $breed),
+                '{animal_type}' => Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, $animalType),
+            ]);
             $series = [
                 [
-                    'name' => Lang::t('Animals'),
+                    'name' => $name,
                     'condition' => $condition,
                     'params' => $params,
                     'sum' => false,
