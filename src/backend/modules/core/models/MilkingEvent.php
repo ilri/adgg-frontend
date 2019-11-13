@@ -11,6 +11,7 @@ namespace backend\modules\core\models;
 
 use common\excel\ImportActiveRecordInterface;
 use common\helpers\ArrayHelper;
+use common\helpers\DbUtils;
 
 /**
  * Class MilkingEvent
@@ -85,6 +86,24 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface
             return true;
         }
         return false;
+    }
+
+    /**
+     * @param integer $durationType
+     * @param bool|string $sum
+     * @param array $filters array key=>$value pair where key is the attribute name and value is the attribute value
+     * @param string $dateField
+     * @param null|string $from
+     * @param null|string $to
+     * @param mixed $condition
+     * @param array $params
+     * @return int
+     * @throws \Exception
+     */
+    public static function getDashboardStats($durationType, $sum = false, $filters = [], $dateField = 'event_date', $from = null, $to = null, $condition = '', $params = [])
+    {
+        list($condition, $params) = DbUtils::appendCondition('event_type', self::EVENT_TYPE_MILKING, $condition, $params);
+        return parent::getDashboardStats($durationType, $sum, $filters, $dateField, $from, $to, $condition, $params);
     }
 
 }

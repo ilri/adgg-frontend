@@ -232,4 +232,22 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
         $model = static::find()->andWhere(['animal_id' => $animalId, 'event_type' => $eventType])->orderBy(['event_date' => SORT_DESC])->one();
         return $model;
     }
+
+    /**
+     * @param integer $durationType
+     * @param bool|string $sum
+     * @param array $filters array key=>$value pair where key is the attribute name and value is the attribute value
+     * @param string $dateField
+     * @param null|string $from
+     * @param null|string $to
+     * @param mixed $condition
+     * @param array $params
+     * @return int
+     * @throws \Exception
+     */
+    public static function getDashboardStats($durationType, $sum = false, $filters = [], $dateField = 'event_date', $from = null, $to = null, $condition = '', $params = [])
+    {
+        list($condition, $params) = static::appendOrgSessionIdCondition($condition, $params, false);
+        return parent::getDashboardStats($durationType, $sum, $filters, $dateField, $from, $to, $condition, $params);
+    }
 }
