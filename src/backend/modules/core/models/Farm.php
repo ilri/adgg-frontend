@@ -48,6 +48,8 @@ use yii\helpers\Html;
  * @property Organization $org
  * @property FarmAttributeValue[] $attributeValues
  * @property Users $fieldAgent
+ * @property Animal [] $animals
+ * @property AnimalHerd [] $herds
  */
 class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInterface, TableAttributeInterface
 {
@@ -254,6 +256,19 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     public function getAttributeValues()
     {
         return $this->hasMany(FarmAttributeValue::class, ['farm_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getAnimals()
+    {
+        return $this->hasMany(Animal::class, ['farm_id' => 'id']);
+    }
+
+    public function getHerds()
+    {
+        return $this->hasMany(AnimalHerd::class, ['farm_id' => 'id']);
     }
 
     /**

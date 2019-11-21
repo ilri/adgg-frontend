@@ -78,6 +78,15 @@ class FarmController extends Controller
         ]);
     }
 
+    public function actionView($id)
+    {
+        $model = Farm::loadModel($id);
+
+        return $this->render('view', [
+            'model' => $model,
+        ]);
+    }
+
     public function actionUpdate($id)
     {
         $model = $this->loadModel($id);

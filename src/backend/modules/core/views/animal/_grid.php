@@ -78,8 +78,11 @@ use yii\helpers\Url;
         ],
         [
             'class' => common\widgets\grid\ActionColumn::class,
-            'template' => '{view}',
+            'template' => '{update}{view}',
             'visibleButtons' => [
+                'view' => function (Animal $model) {
+                    return Yii::$app->user->canView();
+                },
                 'update' => function (Animal $model) {
                     return Yii::$app->user->canUpdate();
                 }

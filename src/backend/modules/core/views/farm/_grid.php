@@ -15,7 +15,7 @@ use yii\helpers\Url;
         Yii::$app->user->canCreate() ? '<a class="btn btn-brand btn-bold btn-upper btn-font-sm btn-space" href="' . Url::to(array_merge(['upload'], Yii::$app->request->queryParams)) . '" data-pjax="0"><i class="fa fa-file-excel-o"></i> ' . Lang::t('Upload Excel/CSV') . '</a> ' : '',
     ],
     'rowOptions' => function (Farm $model) {
-        //return ["class" => "linkable", "data-href" => Url::to(['view', "id" => $model->uuid])];
+        return ["class" => "linkable", "data-href" => Url::to(['view', "id" => $model->uuid])];
     },
     'columns' => [
         [
@@ -101,10 +101,9 @@ use yii\helpers\Url;
             'template' => '{update}{view}',
             'visibleButtons' => [
                 'view' => function (Farm $model) {
-                    return false;
+                    return Yii::$app->user->canView();
                 },
                 'update' => function (Farm $model) {
-                    return false;
                     return Yii::$app->user->canUpdate();
                 }
             ],

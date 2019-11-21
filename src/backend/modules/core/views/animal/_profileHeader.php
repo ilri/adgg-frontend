@@ -1,6 +1,7 @@
 <?php
 
 use backend\modules\core\models\Animal;
+use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\Choices;
 use backend\modules\core\models\ChoiceTypes;
 use common\helpers\DateUtils;
@@ -75,11 +76,6 @@ use yii\helpers\Url;
     <div class="kt-profile__nav">
         <ul class="nav nav-tabs nav-tabs-line my-nav" role="tablist">
             <li class="nav-item">
-                <a class="nav-link" href="<?= Url::to(['organization/view', 'id' => $model->id]) ?>" role="tab">
-                    <?= Lang::t('Animal details') ?>
-                </a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link" href="<?= Url::to(['#']) ?>"
                    role="tab">
                     <?= Lang::t('Calving') ?>
@@ -106,28 +102,38 @@ use yii\helpers\Url;
                     </span>
                 </a>
             </li>
-
             <li class="nav-item">
-                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
-                   aria-expanded="false"><?= Lang::t('More Options') ?></a>
-                <div class="dropdown-menu" x-placement="bottom-start">
-
-                    <a class="dropdown-item" href="<?= Url::to(['update', 'id' => $model->uuid]) ?>">
-                        <?= Lang::t('Update details') ?>
-                    </a>
-                    <a class="dropdown-item" href="#"
-                       data-href="<?= Url::to(['#']) ?>"
-                       data-toggle="modal">
-                        <?= Lang::t('Other Event 1') ?>
-                    </a>
-                    <a class="dropdown-item" href="#"
-                       data-href="<?= Url::to(['#']) ?>"
-                       data-toggle="modal">
-                        <?= Lang::t('Other Event 2') ?>
-                    </a>
-                    <div class="dropdown-divider"></div>
+                <a class="nav-link" href="<?= Url::to(['animal/update', 'id' => $model->id]) ?>" role="tab">
+                    <?= Lang::t('Update Details') ?>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" role="tab">
+                    <?= Lang::t('Number of Events') ?>
+                    <span class="badge badge-secondary badge-pill">
+                        <?= AnimalEvent::getCount(['animal_id' => $model->id]) ?>
+                    </span>
+                </a>
+            </li>
+            <?php if ((int)AnimalEvent::getCount(['animal_id' => $model->id]) !== 0): ?>
+            <li class="nav-item">
+                <a class="nav-link dropdown-toggle " data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
+                   aria-expanded="true"><?= Lang::t('Events List') ?></a>
+                <div class="dropdown-menu overflow-auto">
+                    <ul class="overflow-auto">
+                        <?php foreach ($model->events as $event): ?>
+                            <?php if ($model->id == $event->animal_id): ?>
+                                <a class="button"
+                                   href="<?= \common\helpers\Url::to(['animal-event/view', 'id' => $event->id]) ?>"
+                                   title="Click To View Details">
+                                    <h4> <?= $event::decodeEventType($event->event_type) . '<br>' . '<div class="dropdown-divider"></div>' ?></h4>
+                                </a>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </ul>
                 </div>
             </li>
+            <?php endif; ?>
         </ul>
     </div>
 </div>

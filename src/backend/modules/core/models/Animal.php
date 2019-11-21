@@ -64,6 +64,7 @@ use yii\helpers\Inflector;
  * @property Animal $dam
  * @property AnimalHerd $herd
  * @property AnimalAttributeValue[] $attributeValues
+ * @property AnimalEvent [] $events
  *
  */
 class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttributeInterface, UploadExcelInterface, HighChartInterface
@@ -207,6 +208,14 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     public function getAttributeValues()
     {
         return $this->hasMany(AnimalAttributeValue::class, ['animal_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEvents()
+    {
+        return $this->hasMany(AnimalEvent::class, ['animal_id' => 'id']);
     }
 
     /**

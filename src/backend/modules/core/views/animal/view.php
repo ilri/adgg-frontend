@@ -42,7 +42,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         [
                             'attribute' => 'farm_id',
-                            'value' => Html::a($model->farm->name . ' <i class="far fa-external-link"></i>', ['farm/view', 'id' => $model->id], ['target' => '_blank']),
+                            'value' => Html::a($model->farm->name . ' <i class="far fa-external-link"></i>', ['farm/view', 'id' => $model->farm_id], ['target' => '_blank']),
                             'format' => 'raw',
                         ],
                         [
