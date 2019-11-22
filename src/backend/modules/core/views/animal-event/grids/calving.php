@@ -29,6 +29,7 @@ use yii\helpers\Url;
             'value' => function (AnimalEvent $model) {
                 return $model->animal->name;
             },
+
         ],
         [
             'attribute' => 'event_date',
@@ -39,32 +40,38 @@ use yii\helpers\Url;
             'attribute' => 'calvtype',
             'value' => function (AnimalEvent $model) {
                 return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_CALVING_TYPE, $model->calvtype);
-            }
+            },
+            'enableSorting' => false,
         ],
         [
             'attribute' => 'easecalv',
             'value' => function (AnimalEvent $model) {
                 return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_EASE_OF_CALVING, $model->easecalv);
-            }
+            },
+            'enableSorting' => false,
+
         ],
         [
             'attribute' => 'birthtyp',
             'value' => function (AnimalEvent $model) {
                 return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_BIRTH_TYPE, $model->birthtyp);
-            }
+            },
+            'enableSorting' => false,
         ],
         [
             'attribute' => 'calfsex',
             'value' => function (AnimalEvent $model) {
                 return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_GENDER, $model->calfsex);
-            }
+            },
+            'enableSorting' => false,
 
         ],
         [
             'attribute' => 'calfsiretype',
             'value' => function (AnimalEvent $model) {
                 return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_SIRE_TYPE, $model->calfsiretype);
-            }
+            },
+            'enableSorting' => false,
         ],
         [
             'attribute' => 'aiprov',
@@ -74,32 +81,41 @@ use yii\helpers\Url;
                 } else {
                     return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_AI_PROVIDER, $model->aiprov);
                 }
-            }
+            },
+            'enableSorting' => false,
         ],
         [
             'attribute' => 'calfdeformities',
             'value' => function (AnimalEvent $model) {
                 return Choices::getMultiSelectLabel($model->calfdeformities, ChoiceTypes::CHOICE_TYPE_CALVE_DEFORMITY);
-            }
+            },
+            'enableSorting' => false,
         ],
         [
             'attribute' => 'calfweight',
+            'enableSorting' => false,
         ],
         [
             'attribute' => 'calfhgirth',
+            'enableSorting' => false,
+
         ],
         [
             'attribute' => 'calfbodyscore',
+            'enableSorting' => false,
+
         ],
         [
             'attribute' => 'intuse',
             'value' => function (AnimalEvent $model) {
                 return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_CALVE_USE, $model->intuse);
-            }
+            },
+            'enableSorting' => false,
         ],
         [
             'attribute' => 'calvdatedead',
             'visible' => false,
+            'enableSorting' => false,
         ],
         [
             'attribute' => 'whydead',
@@ -107,15 +123,18 @@ use yii\helpers\Url;
                 return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_WHY_DEAD, $model->whydead);
             },
             'visible' => false,
+            'enableSorting' => false,
         ],
         [
             'attribute' => 'calfname',
+            'enableSorting' => false,
         ],
         [
             'attribute' => 'tag_id',
         ],
         [
             'attribute' => 'calfcolor',
+            'enableSorting' => false,
         ],
     ],
 ]);
