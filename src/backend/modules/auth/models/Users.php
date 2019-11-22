@@ -165,7 +165,7 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
             'branch_id' => Lang::t('Branch'),
             'require_password_change' => Lang::t('Force password change on login'),
             'odk_code' => 'ODK Code',
-            'region_id' => $this->org !== null ? Html::encode($this->org->unit1_name) : 'Regi.on',
+            'region_id' => $this->org !== null ? Html::encode($this->org->unit1_name) : 'Region',
             'district_id' => $this->org !== null ? Html::encode($this->org->unit2_name) : 'District',
             'ward_id' => $this->org !== null ? Html::encode($this->org->unit3_name) : 'Ward',
             'village_id' => $this->org !== null ? Html::encode($this->org->unit4_name) : 'Village',
