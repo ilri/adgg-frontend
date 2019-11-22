@@ -37,40 +37,51 @@ use yii\helpers\Url;
         ],
         [
             'attribute' => 'milkmor',
+            'enableSorting' => false,
         ],
         [
             'attribute' => 'milkeve',
+            'enableSorting' => false,
         ],
         [
             'attribute' => 'milkday',
+            'enableSorting' => false,
         ],
         [
             'attribute' => 'milkfat',
+            'enableSorting' => false,
         ],
         [
             'attribute' => 'milkprot',
+            'enableSorting' => false,
         ],
         [
             'attribute' => 'milklact',
+            'enableSorting' => false,
         ],
         [
             'attribute' => 'milksmc',
+            'enableSorting' => false,
         ],
         [
             'attribute' => 'milkurea',
+            'enableSorting' => false,
         ],
         [
             'attribute' => 'milkurea',
+            'enableSorting' => false,
         ],
         [
             'attribute' => 'milk_qty_is_tested',
-            'format' => 'boolean'
+            'format' => 'boolean',
+            'enableSorting' => false,
         ],
         [
             'attribute' => 'milk_sample_type',
             'value' => function (AnimalEvent $model) {
                 return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_MILK_SAMPLE_TYPE, $model->milk_sample_type);
-            }
+            },
+            'enableSorting' => false,
         ],
     ],
 ]);

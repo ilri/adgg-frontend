@@ -52,7 +52,7 @@ use yii\helpers\Url;
                             </a>
                         </li>
                         <li class="kt-menu__item">
-                            <a href="#"
+                            <a href="<?= Url::to(['/core/insemination-event/index']) ?>"
                                class="kt-menu__link ">
                                 <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
                                 <span class="kt-menu__link-text">Insemination</span>
