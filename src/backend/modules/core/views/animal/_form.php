@@ -310,9 +310,6 @@ use yii\bootstrap4\ActiveForm;
                         <?= $form->field($model, 'map_address')->textInput() ?>
                     </div>
                     <div class="col-md-4">
-                        <?= $form->field($model, 'latlng')->textInput() ?>
-                    </div>
-                    <div class="col-md-4">
                         <?= $form->field($model, 'purchase_cost')->textInput() ?>
                     </div>
                     <?php foreach ($model->getAdditionalAttributes() as $attribute): ?>
@@ -324,6 +321,29 @@ use yii\bootstrap4\ActiveForm;
                         <?= $this->render('_photoField', ['model' => $model]) ?>
                     </div>
 
+                </div>
+            </div>
+        </div>
+        <div class="kt-section kt-section--last">
+            <div class="kt-section__body">
+                <h3 class="kt-section__title kt-section__title-lg"><?= Lang::t('Location details') ?></h3>
+                <div class="row">
+                    <div class="offset-md-1 col-md-7">
+                        <?= \common\widgets\gmap\GmapGeocode::widget([
+                            'model' => $model,
+                            'geocodeUrl' => Url::to(['/helper/gmap-geocode']),
+                            'latitudeAttribute' => 'latitude',
+                            'longitudeAttribute' => 'longitude',
+                            'addressAttribute' => 'map_address',
+                            'showLatitudeLabel' => true,
+                            'showLongitudeLabel' => true,
+                            'mapWrapperHtmlOptions' => ['style' => 'height:300px;'],
+                            'showAddressLabel' => false,
+                            'latitude' => $model->latitude,
+                            'longitude' => $model->longitude,
+                        ])
+                        ?>
+                    </div>
                 </div>
             </div>
         </div>

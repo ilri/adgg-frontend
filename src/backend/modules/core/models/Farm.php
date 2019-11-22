@@ -266,6 +266,9 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
         return $this->hasMany(Animal::class, ['farm_id' => 'id']);
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getHerds()
     {
         return $this->hasMany(AnimalHerd::class, ['farm_id' => 'id']);

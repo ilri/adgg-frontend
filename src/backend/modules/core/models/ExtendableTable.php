@@ -42,7 +42,7 @@ class ExtendableTable
             case self::TABLE_ANIMAL_REPEATS:
                 return 'Animal Repeats';
             case self::TABLE_FARM_REPEATS:
-                return 'Animal Repeats';
+                return 'Farm Repeats';
             case self::TABLE_CLIENT_REPEATS:
                 return 'Client/Person Repeats';
             case self::TABLE_USERS:
@@ -64,8 +64,8 @@ class ExtendableTable
             //self::TABLE_CLIENT => static::decodeTableId(self::TABLE_CLIENT),
             //self::TABLE_CLIENT_REPEATS => static::decodeTableId(self::TABLE_CLIENT_REPEATS),
             self::TABLE_ANIMAL_ATTRIBUTES => static::decodeTableId(self::TABLE_ANIMAL_ATTRIBUTES),
-            self::TABLE_ANIMAL_EVENTS => static::decodeTableId(self::TABLE_ANIMAL_EVENTS),
             self::TABLE_ANIMAL_REPEATS => static::decodeTableId(self::TABLE_ANIMAL_REPEATS),
+            self::TABLE_ANIMAL_EVENTS => static::decodeTableId(self::TABLE_ANIMAL_EVENTS),
             self::TABLE_USERS => static::decodeTableId(self::TABLE_USERS),
         ], $prompt);
     }
