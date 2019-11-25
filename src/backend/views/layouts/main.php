@@ -119,11 +119,11 @@ $controller = Yii::$app->controller;
         </div>
         <div class="kt-offcanvas-panel__body">
             <div class="kt-grid-nav-v2">
-                <a href="#" class="kt-grid-nav-v2__item">
+                <a href="<?= Url::to(['/core/animal/index']) ?>" class="kt-grid-nav-v2__item">
                     <div class="kt-grid-nav-v2__item-icon"><i class="far fa-cow"></i></div>
                     <div class="kt-grid-nav-v2__item-title">Animals</div>
                 </a>
-                <a href="#" class="kt-grid-nav-v2__item">
+                <a href="<?= Url::to(['/core/farm/index']) ?>" class="kt-grid-nav-v2__item">
                     <div class="kt-grid-nav-v2__item-icon"><i class="far fa-tractor"></i></div>
                     <div class="kt-grid-nav-v2__item-title">Farms</div>
                 </a>
