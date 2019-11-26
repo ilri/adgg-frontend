@@ -135,6 +135,11 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
         ];
     }
 
+    public function fields()
+    {
+        return $this->apiResourceFields();
+    }
+
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {

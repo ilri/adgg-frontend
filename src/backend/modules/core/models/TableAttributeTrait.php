@@ -123,6 +123,54 @@ trait TableAttributeTrait
     }
 
     /**
+     * @param string $attribute
+     * @return bool
+     */
+    public function isSingleSelectAttribute(string $attribute): bool
+    {
+        $inputTypes = $this->getAdditionalAttributesInputTypes();
+        return $inputTypes[$attribute] == TableAttribute::INPUT_TYPE_SELECT;
+    }
+
+    /**
+     * @return array|false
+     */
+    public function apiResourceFields()
+    {
+        $fields = parent::fields();
+        //all additional fields here
+        foreach ($this->getAdditionalAttributes() as $attribute) {
+            if (!isset($fields[$attribute])) {
+                $fields[$attribute] = function () use ($attribute) {
+                    return $this->{$attribute};
+                };
+            }
+        }
+        //all the relations
+        //country
+        $fields['org'] = function () {
+            return $this->org;
+        };
+        //region
+        $fields['region'] = function () {
+            return $this->region;
+        };
+        //district
+        $fields['district'] = function () {
+            return $this->district;
+        };
+        //ward
+        $fields['ward'] = function () {
+            return $this->ward;
+        };
+        //village
+        $fields['village'] = function () {
+            return $this->village;
+        };
+
+        return $fields;
+    }
+    /**
      * @param ActiveRecord[] $valueModels
      * @return mixed
      */
@@ -314,7 +362,6 @@ trait TableAttributeTrait
         }
         return $formattedAttributes;
     }
-
     /**
      * @return array
      * @throws \Exception

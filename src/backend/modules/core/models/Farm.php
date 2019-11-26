@@ -45,7 +45,6 @@ use yii\helpers\Html;
  * @property int $deleted_by
  * @property string $odk_code
  *
- * @property Organization $org
  * @property FarmAttributeValue[] $attributeValues
  * @property Users $fieldAgent
  * @property Animal [] $animals
@@ -77,7 +76,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             [['farmer_name', 'org_id'], 'required'],
             [['name'], 'required', 'except' => [self::SCENARIO_UPLOAD]],
             [['org_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'field_agent_id', 'is_active', 'farmer_is_hh_head'], 'safe'],
-            [['latitude', 'latitude', 'phone'], 'number'],
+            [['latitude', 'longitude', 'phone'], 'number'],
             [['code', 'name', 'project', 'field_agent_name', 'farmer_name'], 'string', 'max' => 128],
             [['phone'], 'string', 'min' => 9, 'max' => 12, 'message' => '{attribute} should contain between 9 and 12 digits', 'except' => self::SCENARIO_UPLOAD],
             [['email', 'map_address'], 'string', 'max' => 255],
@@ -160,6 +159,11 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
         ];
     }
 
+    public function fields()
+    {
+        return $this->apiResourceFields();
+    }
+
     public function beforeValidate()
     {
         if (parent::beforeValidate()) {
@@ -167,7 +171,6 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
         }
         return false;
     }
-
 
     public function beforeSave($insert)
     {

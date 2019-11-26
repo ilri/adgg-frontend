@@ -15,6 +15,7 @@ use common\widgets\highchart\HighChartInterface;
 use Yii;
 use yii\db\Expression;
 use yii\helpers\Inflector;
+use function foo\func;
 
 /**
  * This is the model class for table "core_animal".
@@ -217,7 +218,6 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     {
         return $this->hasMany(AnimalEvent::class, ['animal_id' => 'id']);
     }
-
     /**
      *  {@inheritDoc}
      */
@@ -245,6 +245,20 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'entry_type',
             'main_breed',
         ];
+    }
+
+    public function fields()
+    {
+        //excluded fields
+        $fields = $this->apiResourceFields();
+        $excludedFields = ['latlng'];
+        foreach ($excludedFields as $f) {
+            if (isset($fields[$f])) {
+                unset($fields[$f]);
+            }
+        }
+        return $fields;
+
     }
 
     public function beforeSave($insert)
