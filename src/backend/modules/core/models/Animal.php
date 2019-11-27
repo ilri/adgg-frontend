@@ -15,7 +15,6 @@ use common\widgets\highchart\HighChartInterface;
 use Yii;
 use yii\db\Expression;
 use yii\helpers\Inflector;
-use function foo\func;
 
 /**
  * This is the model class for table "core_animal".

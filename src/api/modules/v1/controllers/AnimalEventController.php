@@ -6,7 +6,6 @@ namespace api\modules\v1\controllers;
 use api\controllers\ActiveController;
 use api\controllers\JwtAuthTrait;
 use backend\modules\core\models\AnimalEvent;
-use backend\modules\core\models\Country;
 
 class AnimalEventController extends ActiveController
 {
