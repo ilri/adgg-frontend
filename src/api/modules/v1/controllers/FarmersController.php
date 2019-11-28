@@ -32,6 +32,8 @@ class FarmersController extends ActiveController
             'defaultOrder' => ['id' => SORT_ASC],
             'condition' => $condition,
             'params' => $params,
+            'enablePagination' => true,
+            'limit' => 50,
         ]);
 
         return $searchModel->search();

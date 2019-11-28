@@ -23,6 +23,8 @@ class AnimalEventController extends ActiveController
     {
         $searchModel = AnimalEvent::searchModel([
             'defaultOrder' => ['id' => SORT_ASC],
+            'enablePagination' => true,
+            'limit' => 50,
         ]);
 
         return $searchModel->search();
