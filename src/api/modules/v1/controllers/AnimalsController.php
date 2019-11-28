@@ -27,6 +27,7 @@ class AnimalsController extends ActiveController
             'condition' => $condition,
             'params' => $params,
             'enablePagination' => true,
+            'pageSize' => 10,
         ]);
         return $searchModel->search();
     }
