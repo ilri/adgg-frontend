@@ -31,7 +31,7 @@ class AnimalController extends Controller
         $this->resourceLabel = 'Animal';
     }
 
-    public function actionIndex($org_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $animal_type = null,$main_breed=null, $name = null, $tag_id = null, $sire_tag_id = null, $dam_tag_id = null)
+    public function actionIndex($org_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $animal_type = null, $farm_id = null, $main_breed = null, $name = null, $tag_id = null, $sire_tag_id = null, $dam_tag_id = null)
     {
         $org_id = Session::getOrgId($org_id);
         $region_id = Session::getRegionId($region_id);
@@ -54,6 +54,7 @@ class AnimalController extends Controller
         $searchModel->name = $name;
         $searchModel->tag_id = $tag_id;
         $searchModel->animal_type = $animal_type;
+        $searchModel->farm_id = $farm_id;
         $searchModel->sire_tag_id = $sire_tag_id;
         $searchModel->dam_tag_id = $dam_tag_id;
         $searchModel->main_breed=$main_breed;
@@ -78,7 +79,7 @@ class AnimalController extends Controller
         $model = new Animal(['farm_id' => $farm_id, 'animal_type' => $animal_type]);
         if ($this->handlePostedData($model)) {
             Yii::$app->session->setFlash('success', Lang::t('SUCCESS_MESSAGE'));
-            return $this->redirect(Url::getReturnUrl(['index', 'id' => $model->id]));
+            return $this->redirect(Url::getReturnUrl(['view', 'id' => $model->id]));
         }
 
         return $this->render('create', [
@@ -91,7 +92,7 @@ class AnimalController extends Controller
         $model = Animal::loadModel($id);
         if ($this->handlePostedData($model)) {
             Yii::$app->session->setFlash('success', Lang::t('SUCCESS_MESSAGE'));
-            return $this->redirect(Url::getReturnUrl(['index', 'id' => $model->id]));
+            return $this->redirect(Url::getReturnUrl(['view', 'id' => $model->id]));
         }
 
         return $this->render('update', [

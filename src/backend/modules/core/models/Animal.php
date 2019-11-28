@@ -248,8 +248,13 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
 
     public function fields()
     {
-        //excluded fields
         $fields = $this->apiResourceFields();
+
+        //farm attribute without the relations
+        $fields['farm'] = function () {
+            return $this->farm->attributes;
+        };
+        //excluded fields
         $excludedFields = ['latlng'];
         foreach ($excludedFields as $f) {
             if (isset($fields[$f])) {

@@ -16,7 +16,7 @@ use yii\helpers\Url;
 <div class="kt-portlet kt-profile">
     <div class="kt-profile__content">
         <div class="row">
-            <div class="col-md-12 col-lg-5 col-xl-4">
+            <div class="col-md-12 col-lg-5 col-xl-3">
                 <div class="kt-profile__main">
                     <div class="kt-profile__main-pic">
                         <i class="far fa-cow fa-4x"></i>
@@ -28,7 +28,18 @@ use yii\helpers\Url;
                     </div>
                 </div>
             </div>
-            <div class="col-md-12 col-lg-4 col-xl-4">
+            <div class="col-md-12 col-lg-4 col-xl-3">
+                <div class="kt-profile__main">
+                    <div class="kt-profile__main-pic">
+                        <i class="far fa-tractor fa-3x"></i>
+                    </div>
+                    <div class="kt-profile__main-info">
+                        <div class="kt-profile__main-info-name"><?= Html::encode($model->farm->name) ?></div>
+                        <div class="kt-profile__main-info-position"><?= Html::encode($model->farm->farm_type) ?></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 col-lg-4 col-xl-3">
                 <div class="kt-profile__contact">
                     <a href="#" class="kt-profile__contact-item">
                         <span class="kt-profile__contact-item-icon kt-profile__contact-item-icon-twitter">
@@ -51,7 +62,7 @@ use yii\helpers\Url;
                     <?php endif; ?>
                 </div>
             </div>
-            <div class="col-md-12 col-lg-3 col-xl-4">
+            <div class="col-md-12 col-lg-3 col-xl-3">
                 <div class="kt-profile__stats">
                     <div class="kt-profile__stats-item">
                         <div class="kt-profile__stats-item-label">Last Calving Date</div>
@@ -76,64 +87,87 @@ use yii\helpers\Url;
     <div class="kt-profile__nav">
         <ul class="nav nav-tabs nav-tabs-line my-nav" role="tablist">
             <li class="nav-item">
-                <a class="nav-link" href="<?= Url::to(['#']) ?>"
+                <a class="nav-link" title="Click To View"
+                   href="<?= Url::to(['animal-event/index', 'animal_id' => $model->id, 'event_type' => AnimalEvent::EVENT_TYPE_CALVING]) ?>"
                    role="tab">
                     <?= Lang::t('Calving') ?>
                     <span class="badge badge-secondary badge-pill">
-                        <?= 0 ?>
+                        <?= AnimalEvent::getCount(['animal_id' => $model->id, 'event_type' => AnimalEvent::EVENT_TYPE_CALVING]) ?>
                     </span>
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="#" role="tab">
+                <a class="nav-link" title="Click To View"
+                   href="<?= Url::to(['animal-event/index', 'animal_id' => $model->id, 'event_type' => AnimalEvent::EVENT_TYPE_MILKING]) ?>"
+                   role="tab">
                     <?= Lang::t('Milk Collection') ?>
                     <span class="badge badge-secondary badge-pill">
-                        <?= 0 ?>
+                        <?= AnimalEvent::getCount(['animal_id' => $model->id, 'event_type' => AnimalEvent::EVENT_TYPE_MILKING]) ?>
                     </span>
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="#" role="tab">
+                <a class="nav-link" title="Click To View"
+                   href="<?= Url::to(['animal-event/index', 'animal_id' => $model->id, 'event_type' => AnimalEvent::EVENT_TYPE_AI]) ?>"
+                   role="tab">
                     <?= Lang::t('AI') ?>
                     <span class="badge badge-secondary badge-pill">
-                        <?= 0 ?>
+                        <?= AnimalEvent::getCount(['animal_id' => $model->id, 'event_type' => AnimalEvent::EVENT_TYPE_AI]) ?>
                     </span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="<?= Url::to(['animal/update', 'id' => $model->id]) ?>" role="tab">
-                    <?= Lang::t('Update Details') ?>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#" role="tab">
-                    <?= Lang::t('Number of Events') ?>
+                <a class="nav-link" title="Click To View"
+                   href="<?= Url::to(['animal-event/index', 'animal_id' => $model->id, 'event_type' => AnimalEvent::EVENT_TYPE_PREGNANCY_DIAGNOSIS]) ?>"
+                   role="tab">
+                    <?= Lang::t('Pregnancy Diagnosis') ?>
                     <span class="badge badge-secondary badge-pill">
-                        <?= AnimalEvent::getCount(['animal_id' => $model->id]) ?>
+                        <?= AnimalEvent::getCount(['animal_id' => $model->id, 'event_type' => AnimalEvent::EVENT_TYPE_PREGNANCY_DIAGNOSIS]) ?>
                     </span>
                 </a>
             </li>
-            <?php if ((int)AnimalEvent::getCount(['animal_id' => $model->id]) !== 0): ?>
             <li class="nav-item">
-                <a class="nav-link dropdown-toggle " data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
-                   aria-expanded="true"><?= Lang::t('Events List') ?></a>
-                <div class="dropdown-menu overflow-auto">
-                    <ul class="overflow-auto">
-                        <?php foreach ($model->events as $event): ?>
-                            <?php if ($model->id == $event->animal_id): ?>
-                                <a class="button"
-                                   href="<?= \common\helpers\Url::to(['animal-event/view', 'id' => $event->id]) ?>"
-                                   title="Click To View Details">
-                                    <h4> <?= $event::decodeEventType($event->event_type) . '<br>' . '<div class="dropdown-divider"></div>' ?></h4>
-                                </a>
-                            <?php endif; ?>
-                        <?php endforeach; ?>
-                    </ul>
+                <a class="nav-link" title="Click To View"
+                   href="<?= Url::to(['animal-event/index', 'animal_id' => $model->id, 'event_type' => AnimalEvent::EVENT_TYPE_SYNCHRONIZATION]) ?>"
+                   role="tab">
+                    <?= Lang::t('Synchronization') ?>
+                    <span class="badge badge-secondary badge-pill">
+                        <?= AnimalEvent::getCount(['animal_id' => $model->id, 'event_type' => AnimalEvent::EVENT_TYPE_SYNCHRONIZATION]) ?>
+                    </span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
+                   aria-expanded="false"><?= Lang::t('More Events') ?></a>
+                <div class="dropdown-menu" x-placement="bottom-start">
+                    <a class="dropdown-item" title="Click To View"
+                       href="<?= Url::to(['animal-event/index', 'animal_id' => $model->id, 'event_type' => AnimalEvent::EVENT_TYPE_WEIGHTS]) ?>">
+                        <?= Lang::t('Weights') ?>
+                        <span class="badge badge-secondary badge-pill">
+                        <?= AnimalEvent::getCount(['animal_id' => $model->id, 'event_type' => AnimalEvent::EVENT_TYPE_WEIGHTS]) ?>
+                    </span>
+
+                    </a>
+                    <a class="dropdown-item" title="Click To View"
+                       href="<?= Url::to(['animal-event/index', 'animal_id' => $model->id, 'event_type' => AnimalEvent::EVENT_TYPE_HEALTH]) ?>">
+                        <?= Lang::t('Health') ?>
+                        <span class="badge badge-secondary badge-pill">
+                        <?= AnimalEvent::getCount(['animal_id' => $model->id, 'event_type' => AnimalEvent::EVENT_TYPE_HEALTH]) ?>
+                    </span>
+                    </a>
                 </div>
             </li>
-            <?php endif; ?>
+            <li class="nav-item">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
+                   aria-expanded="false"><?= Lang::t('Actions') ?></a>
+                <div class="dropdown-menu" x-placement="bottom-start">
+                    <a class="dropdown-item" href="<?= Url::to(['animal/update', 'id' => $model->id]) ?>">
+                        <i class="fa fa-pencil text-success"></i><?= Lang::t('Update Details') ?>
+                    </a>
+                </div>
+            </li>
         </ul>
     </div>
 </div>

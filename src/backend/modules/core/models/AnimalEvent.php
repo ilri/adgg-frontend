@@ -80,7 +80,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     {
         $labels = [
             'id' => 'ID',
-            'animal_id' => 'Animal Tag',
+            'animal_id' => 'Animal',
             'event_type' => 'Event Type',
             'org_id' => 'Country',
             'region_id' => 'Region',
@@ -137,7 +137,14 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
 
     public function fields()
     {
-        return $this->apiResourceFields();
+        $fields = $this->apiResourceFields();
+        $fields['animal'] = function () {
+            $attributes = $this->animal->attributes;
+            unset($attributes['latlng']);
+            return $attributes;
+        };
+
+        return $fields;
     }
 
     public function beforeSave($insert)

@@ -92,7 +92,7 @@ class FarmController extends Controller
         $model = $this->loadModel($id);
         if ($this->handlePostedData($model)) {
             Yii::$app->session->setFlash('success', Lang::t('SUCCESS_MESSAGE'));
-            return $this->redirect(Url::getReturnUrl(['index', 'id' => $model->id]));
+            return $this->redirect(Url::getReturnUrl(['view', 'id' => $model->id]));
         }
 
         return $this->render('update', [

@@ -34,6 +34,11 @@ trait TableAttributeTrait
     /**
      * @var array
      */
+    private $_additionalAttributesListTypeIds;
+
+    /**
+     * @var array
+     */
     public $ignoreAdditionalAttributes = false;
 
     /**
@@ -79,6 +84,15 @@ trait TableAttributeTrait
         return $this->_additionalAttributesInputTypes;
     }
 
+    public function getAdditionalAttributesListTypeIds(): array
+    {
+        if (empty($this->_additionalAttributesListTypeIds)) {
+            $this->setAdditionalAttributes();
+        }
+
+        return $this->_additionalAttributesListTypeIds;
+    }
+
     protected function setAdditionalAttributes()
     {
         $tableId = static::getDefinedTableId();
@@ -88,18 +102,24 @@ trait TableAttributeTrait
             $attributeKeys = [];
             $attributeIds = [];
             $attributesInputTypes = [];
+            $attributeListTypeIds = [];
             foreach ($attributes as $v) {
                 $attributeKeys[] = $v['attribute_key'];
                 $attributeIds[$v['attribute_key']] = $v['id'];
                 $attributesInputTypes[$v['attribute_key']] = $v['input_type'];
+                if (!empty($v['list_type_id'])) {
+                    $attributeListTypeIds[$v['attribute_key']] = $v['list_type_id'];
+                }
             }
             $this->_additionalAttributes = $attributeKeys;
             $this->_additionalAttributeIds = $attributeIds;
             $this->_additionalAttributesInputTypes = $attributesInputTypes;
+            $this->_additionalAttributesListTypeIds = $attributeListTypeIds;
         } else {
             $this->_additionalAttributes = [];
             $this->_additionalAttributeIds = [];
             $this->_additionalAttributesInputTypes = [];
+            $this->_additionalAttributesListTypeIds = [];
         }
     }
 
@@ -145,31 +165,58 @@ trait TableAttributeTrait
                     return $this->{$attribute};
                 };
             }
+            if ($this->isSingleSelectAttribute($attribute) || $this->isMultiSelectAttribute($attribute)) {
+                $fields['decoded_' . $attribute] = function () use ($attribute) {
+                    $listTypeIds = $this->getAdditionalAttributesListTypeIds();
+                    $listTypeId = $listTypeIds[$attribute] ?? null;
+                    if (null === $listTypeId) {
+                        return $this->{$attribute};
+                    }
+                    if ($this->isMultiSelectAttribute($attribute)) {
+                        return Choices::getMultiSelectLabel($this->{$attribute}, $listTypeId);
+                    } else {
+                        return Choices::getLabel($listTypeId, $this->{$attribute});
+                    }
+                };
+
+            }
         }
         //all the relations
         //country
-        $fields['org'] = function () {
-            return $this->org;
-        };
+        if (isset($this->org)) {
+            $fields['org'] = function () {
+                return $this->org;
+            };
+        }
         //region
-        $fields['region'] = function () {
-            return $this->region;
-        };
+        if (isset($this->region)) {
+            $fields['region'] = function () {
+                return $this->region;
+            };
+        }
         //district
-        $fields['district'] = function () {
-            return $this->district;
-        };
+        if (isset($this->district)) {
+            $fields['district'] = function () {
+                return $this->district;
+            };
+        }
         //ward
-        $fields['ward'] = function () {
-            return $this->ward;
-        };
+        if (isset($this->ward)) {
+            $fields['ward'] = function () {
+                return $this->ward;
+            };
+        }
         //village
-        $fields['village'] = function () {
-            return $this->village;
-        };
+        if (isset($this->village)) {
+            $fields['village'] = function () {
+                return $this->village;
+            };
+        }
+
 
         return $fields;
     }
+
     /**
      * @param ActiveRecord[] $valueModels
      * @return mixed

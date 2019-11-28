@@ -47,7 +47,7 @@ use yii\helpers\Html;
  *
  * @property FarmAttributeValue[] $attributeValues
  * @property Users $fieldAgent
- * @property Animal [] $animals
+ * @property Animal $animals
  * @property AnimalHerd [] $herds
  */
 class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInterface, TableAttributeInterface
