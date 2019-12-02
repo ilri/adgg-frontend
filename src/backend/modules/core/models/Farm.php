@@ -161,7 +161,14 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
 
     public function fields()
     {
-        return $this->apiResourceFields();
+        $fields = $this->apiResourceFields();
+        $excludedFields = ['latlng'];
+        foreach ($excludedFields as $f) {
+            if (isset($fields[$f])) {
+                unset($fields[$f]);
+            }
+        }
+        return $fields;
     }
 
     public function beforeValidate()
