@@ -7,8 +7,7 @@ use backend\modules\auth\models\Users;
 use common\models\Model;
 use Yii;
 use yii\db\Expression;
-use yii2tech\authlog\AuthLogLoginFormBehavior;
-
+use backend\modules\auth\authLog\AuthLogLoginFormBehavior;
 /**
  * LoginForm is the model behind the login form.
  */
@@ -61,6 +60,12 @@ class LoginForm extends Model
             // email and password are required on 'lwe' (login with email) scenario
             [['email', 'password'], 'required', 'on' => 'lwe'],
             ['verifyCode', 'safe'],
+            ['verifyCode', 'captcha', 'captchaAction' => '/auth/auth/captcha', 'when' => function () {
+                if ($this->hasErrors() && $this->getIsVerifyRobotRequired()) {
+                    return true;
+                }
+                return false;
+            }],
         ];
     }
 
