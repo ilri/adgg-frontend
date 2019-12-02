@@ -67,16 +67,28 @@ use yii\helpers\Url;
                     <div class="kt-profile__stats-item">
                         <div class="kt-profile__stats-item-label">Last Calving Date</div>
                         <div class="kt-profile__stats-item-chart">
-                            <span><?= DateUtils::formatToLocalDate($model->latest_calv_date ?? 'None') ?></span>
+                            <span><?= AnimalEvent::getEventLastDate($model->id, AnimalEvent::EVENT_TYPE_CALVING) ?></span>
+                            <canvas id="kt_profile_mini_chart_1" width="50" height="40"
+                                    style="display: block;"></canvas>
+                        </div>
+                        <div class="kt-profile__stats-item-label">Earliest Calving Date</div>
+                        <div class="kt-profile__stats-item-chart">
+                            <span><?= AnimalEvent::getEventEarlyDate($model->id, AnimalEvent::EVENT_TYPE_CALVING) ?></span>
                             <canvas id="kt_profile_mini_chart_1" width="50" height="40"
                                     style="display: block;"></canvas>
                         </div>
                     </div>
                     <div class="kt-profile__stats-item">
-                        <div class="kt-profile__stats-item-label">Last Milk Collection</div>
+                        <div class="kt-profile__stats-item-label">Last Milking Date</div>
                         <div class="kt-profile__stats-item-chart">
-                            <span><?= DateUtils::formatToLocalDate($model->latest_calv_type ?? 'None') ?></span>
+                            <span><?= AnimalEvent::getEventLastDate($model->id, AnimalEvent::EVENT_TYPE_MILKING) ?></span>
                             <canvas id="kt_profile_mini_chart_2" width="50" height="40"
+                                    style="display: block;"></canvas>
+                        </div>
+                        <div class="kt-profile__stats-item-label">Earliest Milking Date</div>
+                        <div class="kt-profile__stats-item-chart">
+                            <span><?= AnimalEvent::getEventEarlyDate($model->id, AnimalEvent::EVENT_TYPE_MILKING) ?></span>
+                            <canvas id="kt_profile_mini_chart_1" width="50" height="40"
                                     style="display: block;"></canvas>
                         </div>
                     </div>
@@ -171,3 +183,4 @@ use yii\helpers\Url;
         </ul>
     </div>
 </div>
+<?php

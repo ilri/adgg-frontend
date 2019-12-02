@@ -2,6 +2,7 @@
 
 namespace backend\modules\core\models;
 
+use Carbon\Traits\Date;
 use common\helpers\Utils;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
@@ -237,12 +238,33 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     /**
      * @param int $animalId
      * @param int $eventType
-     * @return AnimalEvent|null
+     * @return Date|null
      */
-    public static function getLastAnimalEvent($animalId, $eventType)
+    public static function getEventLastDate($animalId, $eventType)
     {
-        $model = static::find()->andWhere(['animal_id' => $animalId, 'event_type' => $eventType])->orderBy(['event_date' => SORT_DESC])->one();
-        return $model;
+        $models = static::find()->andWhere(['animal_id' => $animalId, 'event_type' => $eventType])->orderBy(['id' => SORT_DESC])->all();
+        $dates = [];
+        foreach ($models as $model) {
+            $dates[] = strtotime($model->event_date);
+        }
+        $latestDate = max($dates);
+        return date('d/m/Y', $latestDate);
+    }
+
+    /**
+     * @param int $animalId
+     * @param int $eventType
+     * @return Date
+     */
+    public static function getEventEarlyDate($animalId, $eventType)
+    {
+        $models = static::find()->andWhere(['animal_id' => $animalId, 'event_type' => $eventType])->orderBy(['id' => SORT_DESC])->all();
+        $dates = [];
+        foreach ($models as $model) {
+            $dates[] = strtotime($model->event_date);
+        }
+        $earliestDate = min($dates);
+        return date('d/m/Y', $earliestDate);
     }
 
     /**
