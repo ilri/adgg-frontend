@@ -238,7 +238,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     /**
      * @param int $animalId
      * @param int $eventType
-     * @return Date|null
+     * @return bool
      */
     public static function getEventLastDate($animalId, $eventType)
     {
@@ -247,6 +247,10 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
         foreach ($models as $model) {
             $dates[] = strtotime($model->event_date);
         }
+
+        if ($dates == null) {
+            return 'None';
+        }
         $latestDate = max($dates);
         return date('d/m/Y', $latestDate);
     }
@@ -254,7 +258,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     /**
      * @param int $animalId
      * @param int $eventType
-     * @return Date
+     * @return bool
      */
     public static function getEventEarlyDate($animalId, $eventType)
     {
@@ -262,6 +266,9 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
         $dates = [];
         foreach ($models as $model) {
             $dates[] = strtotime($model->event_date);
+        }
+        if ($dates == null) {
+            return 'None';
         }
         $earliestDate = min($dates);
         return date('d/m/Y', $earliestDate);
