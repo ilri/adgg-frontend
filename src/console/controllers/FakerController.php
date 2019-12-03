@@ -8,14 +8,7 @@
 namespace console\controllers;
 
 
-use backend\modules\auth\models\UserAttributeValue;
-use backend\modules\auth\models\Users;
-use backend\modules\core\models\Animal;
-use backend\modules\core\models\AnimalAttributeValue;
 use backend\modules\core\models\AnimalEvent;
-use backend\modules\core\models\AnimalEventValue;
-use backend\modules\core\models\Farm;
-use backend\modules\core\models\FarmAttributeValue;
 use Yii;
 use yii\console\Controller;
 
@@ -39,10 +32,10 @@ class FakerController extends Controller
     public function actionReset()
     {
         $time_start = microtime(true);
-        $this->resetAttributeValues(Users::class, UserAttributeValue::class, 'user_id');
-        $this->resetAttributeValues(Farm::class, FarmAttributeValue::class, 'farm_id');
-        $this->resetAttributeValues(Animal::class, AnimalAttributeValue::class, 'animal_id');
-        $this->resetAttributeValues(AnimalEvent::class, AnimalEventValue::class, 'event_id');
+        //$this->resetAttributeValues(Users::class, UserAttributeValue::class, 'user_id');
+        //$this->resetAttributeValues(Farm::class, FarmAttributeValue::class, 'farm_id');
+        //$this->resetAttributeValues(Animal::class, AnimalAttributeValue::class, 'animal_id');
+        //$this->resetAttributeValues(AnimalEvent::class, AnimalEventValue::class, 'event_id');
         $time_end = microtime(true);
         $executionTime = round($time_end - $time_start, 2);
         $this->stdout("FAKER EXECUTED IN {$executionTime} SECONDS\n");
@@ -91,14 +84,9 @@ class FakerController extends Controller
         //$sql .= "TRUNCATE " . Notif::tableName() . ";";
         //$sql .= "TRUNCATE " . NotifQueue::tableName() . ";";
         //$sql .= "TRUNCATE " . AuditTrail::tableName() . ";";
-        $sql .= "TRUNCATE " . AnimalEventValue::tableName() . ";";
         $sql .= "TRUNCATE " . AnimalEvent::tableName() . ";";
-        //$sql .= "TRUNCATE " . AnimalAttributeValue::tableName() . ";";
         //$sql .= "TRUNCATE " . Animal::tableName() . ";";
         //$sql .= "TRUNCATE " . AnimalHerd::tableName() . ";";
-        //$sql .= "TRUNCATE " . ClientAttributeValue::tableName() . ";";
-        //$sql .= "TRUNCATE " . Client::tableName() . ";";
-        //$sql .= "TRUNCATE " . FarmAttributeValue::tableName() . ";";
         //$sql .= "TRUNCATE " . Farm::tableName() . ";";
 
         //$sql .= "UPDATE " . NumberingFormat::tableName() . " SET [[next_number]]=1 WHERE [[id]]=:organization_account_no;";

@@ -32,7 +32,6 @@ use common\models\CustomValidationsTrait;
  * @property string|array $additional_attributes
  *
  * @property Animal $animal
- * @property AnimalEventValue[] $animalEventValues
  */
 class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAttributeInterface
 {
@@ -109,14 +108,6 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     public function getAnimal()
     {
         return $this->hasOne(Animal::class, ['id' => 'animal_id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getAnimalEventValues()
-    {
-        return $this->hasMany(AnimalEventValue::class, ['event_id' => 'id']);
     }
 
     /**

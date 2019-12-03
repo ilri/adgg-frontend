@@ -42,7 +42,7 @@ use yii\web\NotFoundHttpException;
  * @property OrganizationUnits $district
  * @property OrganizationUnits $ward
  * @property OrganizationUnits $village
- * @property UserAttributeValue[] $attributeValues
+ *
  */
 class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelInterface, TableAttributeInterface
 {
@@ -484,13 +484,5 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
         ];
 
         return array_merge($columns, $this->getAdditionalAttributes());
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getAttributeValues()
-    {
-        return $this->hasMany(UserAttributeValue::class, ['user_id' => 'id']);
     }
 }

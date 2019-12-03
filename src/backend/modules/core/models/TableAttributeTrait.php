@@ -265,8 +265,6 @@ trait TableAttributeTrait
 
     protected function setAdditionalAttributesValues()
     {
-        return false;
-
         $this->ignoreAdditionalAttributes = false;
 
         $attributes = [];

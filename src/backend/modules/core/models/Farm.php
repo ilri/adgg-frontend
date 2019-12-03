@@ -46,7 +46,6 @@ use yii\helpers\Html;
  * @property string $odk_code
  * @property string|array $additional_attributes
  *
- * @property FarmAttributeValue[] $attributeValues
  * @property Users $fieldAgent
  * @property Animal $animals
  * @property AnimalHerd [] $herds
@@ -261,14 +260,6 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             'hhproblems',
             'hhproblems_other',
         ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getAttributeValues()
-    {
-        return $this->hasMany(FarmAttributeValue::class, ['farm_id' => 'id']);
     }
 
     /**
