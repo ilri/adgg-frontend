@@ -39,9 +39,9 @@ class FakerController extends Controller
     public function actionReset()
     {
         $time_start = microtime(true);
-        //$this->resetAttributeValues(Users::class, UserAttributeValue::class, 'user_id');
-        //$this->resetAttributeValues(Farm::class, FarmAttributeValue::class, 'farm_id');
-        //$this->resetAttributeValues(Animal::class, AnimalAttributeValue::class, 'animal_id');
+        $this->resetAttributeValues(Users::class, UserAttributeValue::class, 'user_id');
+        $this->resetAttributeValues(Farm::class, FarmAttributeValue::class, 'farm_id');
+        $this->resetAttributeValues(Animal::class, AnimalAttributeValue::class, 'animal_id');
         $this->resetAttributeValues(AnimalEvent::class, AnimalEventValue::class, 'event_id');
         $time_end = microtime(true);
         $executionTime = round($time_end - $time_start, 2);
