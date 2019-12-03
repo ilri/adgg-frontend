@@ -16,7 +16,7 @@ use yii\helpers\Url;
     <div class="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-top-unround dropdown-menu-lg">
         <form>
             <div class="kt-head"
-                 style="background-color: #004730">
+                 style="background-color: #5b206e">
                 <h3 class="kt-head__title">Notifications</h3>
                 <div class="kt-head__sub"><span class="kt-head__desc"><span
                                 class="total-notif">0</span> notifications</span>

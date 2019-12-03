@@ -47,7 +47,7 @@ $user = Yii::$app->user->identity;
             </div>
             <div class="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-top-unround dropdown-menu-sm">
                 <div class="kt-user-card kt-margin-b-40 kt-margin-b-30-tablet-and-mobile"
-                     style="background-image: url(<?= Yii::$app->view->theme->baseUrl . '/assets/img/head_bg_sm.jpg' ?>)">
+                     style="background-color: #5b206e">
                     <div class="kt-user-card__wrapper">
                         <div class="kt-user-card__pic">
                             <img alt="Avator" src="<?= $user->getProfileImageUrl(32) ?>"/>
