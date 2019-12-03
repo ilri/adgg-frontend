@@ -35,6 +35,7 @@ use yii\web\NotFoundHttpException;
  * @property int $ward_id
  * @property int $village_id
  * @property string $odk_code
+ * @property string|array $additional_attributes
  *
  * @property Organization $org
  * @property OrganizationUnits $region
@@ -129,7 +130,7 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
             ],
             static::passwordValidator(),
             $this->passwordHistoryValidator(),
-            [['region_id', 'district_id', 'ward_id', 'village_id'], 'safe'],
+            [['region_id', 'district_id', 'ward_id', 'village_id', 'additional_attributes'], 'safe'],
             [$this->getAdditionalAttributes(), 'safe'],
             ['odk_code', 'unique', 'targetAttribute' => ['org_id', 'odk_code'], 'message' => '{attribute} already exists.'],
         ];
@@ -201,7 +202,7 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
             if ($this->level_id == UserLevels::LEVEL_DEV || $this->level_id == UserLevels::LEVEL_SUPER_ADMIN || $this->level_id == UserLevels::LEVEL_ADMIN) {
                 $this->org_id = null;
             }
-
+            $this->setAdditionalAttributesValues();
             return true;
         }
 
@@ -217,14 +218,13 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
         if ($this->scenario === self::SCENARIO_CREATE) {
             $this->sendLoginDetailsEmail();
         }
-        $this->saveAdditionalAttributes(UserAttributeValue::class, 'user_id');
         parent::afterSave($insert, $changedAttributes);
     }
 
     public function afterFind()
     {
         parent::afterFind();
-        $this->loadAdditionalAttributeValues($this->attributeValues);
+        $this->loadAdditionalAttributeValues();
     }
 
 

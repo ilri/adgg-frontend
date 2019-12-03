@@ -32,7 +32,7 @@ class ExtendableTableController extends MasterDataController
         $this->setDefaultPageTitles($this->action);
     }
 
-    public function actionIndex($table_id = ExtendableTable::TABLE_CLIENT)
+    public function actionIndex($table_id = ExtendableTable::TABLE_FARM)
     {
         $this->setResourceLabel($table_id);
         $searchModel = TableAttribute::searchModel([
