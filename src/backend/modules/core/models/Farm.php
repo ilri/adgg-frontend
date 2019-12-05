@@ -99,7 +99,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     {
         $labels = [
             'id' => 'ID',
-            'code' => 'Farmer Phone No.',
+            'code' => 'Code.',
             'name' => 'Farm Name',
             'org_id' => 'Country',
             'region_id' => $this->org !== null ? Html::encode($this->org->unit1_name) : 'Region',
