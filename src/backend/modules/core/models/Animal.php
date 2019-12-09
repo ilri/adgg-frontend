@@ -59,12 +59,12 @@ use yii\helpers\Inflector;
  * @property int $created_by
  * @property string $updated_at
  * @property int $updated_by
+ * @property string|array $additional_attributes
  *
  * @property Farm $farm
  * @property Animal $sire
  * @property Animal $dam
  * @property AnimalHerd $herd
- * @property AnimalAttributeValue[] $attributeValues
  * @property AnimalEvent [] $events
  *
  */
@@ -112,7 +112,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             [['sire_tag_id', 'dam_tag_id'], 'validateSireOrDam'],
             ['sire_tag_id', 'validateSireBisexual'],
             ['dam_tag_id', 'validateDamBisexual'],
-            ['tmp_animal_photo', 'safe'],
+            [['tmp_animal_photo', 'additional_attributes'], 'safe'],
             [$this->getAdditionalAttributes(), 'safe'],
             [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
@@ -206,18 +206,11 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getAttributeValues()
-    {
-        return $this->hasMany(AnimalAttributeValue::class, ['animal_id' => 'id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
     public function getEvents()
     {
         return $this->hasMany(AnimalEvent::class, ['animal_id' => 'id']);
     }
+
     /**
      *  {@inheritDoc}
      */
@@ -284,6 +277,8 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
                 $this->is_derived_birthdate = 1;
             }
 
+            $this->setAdditionalAttributesValues();
+
             return true;
         }
         return false;
@@ -291,13 +286,12 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
-        $this->saveAdditionalAttributes(AnimalAttributeValue::class, 'animal_id', $insert);
     }
 
     public function afterFind()
     {
         parent::afterFind();
-        $this->loadAdditionalAttributeValues($this->attributeValues);
+        $this->loadAdditionalAttributeValues();
     }
 
     /**

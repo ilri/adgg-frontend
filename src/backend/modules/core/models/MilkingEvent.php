@@ -43,6 +43,7 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface
             ['milkurea', 'number', 'min' => 8, 'max' => 25],
             ['milklact', 'number', 'min' => 3, 'max' => 7],
             ['event_date', 'validateMilkingDate'],
+            [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
         ]);
     }
 

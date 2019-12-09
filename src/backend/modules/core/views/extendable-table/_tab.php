@@ -4,7 +4,7 @@ use backend\modules\core\models\ExtendableTable;
 use common\helpers\Lang;
 use yii\helpers\Url;
 
-$table_id = Yii::$app->request->get('table_id', ExtendableTable::TABLE_CLIENT);
+$table_id = Yii::$app->request->get('table_id', ExtendableTable::TABLE_FARM);
 ?>
 <ul class="nav nav-tabs" role="tablist">
     <?php foreach (ExtendableTable::tableOptions(false) as $id => $label): ?>

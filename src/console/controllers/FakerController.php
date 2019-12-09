@@ -9,7 +9,6 @@ namespace console\controllers;
 
 
 use backend\modules\core\models\AnimalEvent;
-use backend\modules\core\models\AnimalEventValue;
 use Yii;
 use yii\console\Controller;
 
@@ -30,6 +29,43 @@ class FakerController extends Controller
         $this->clearFakeData();
     }
 
+    public function actionReset()
+    {
+        $time_start = microtime(true);
+        //$this->resetAttributeValues(Users::class, UserAttributeValue::class, 'user_id');
+        //$this->resetAttributeValues(Farm::class, FarmAttributeValue::class, 'farm_id');
+        //$this->resetAttributeValues(Animal::class, AnimalAttributeValue::class, 'animal_id');
+        //$this->resetAttributeValues(AnimalEvent::class, AnimalEventValue::class, 'event_id');
+        $time_end = microtime(true);
+        $executionTime = round($time_end - $time_start, 2);
+        $this->stdout("FAKER EXECUTED IN {$executionTime} SECONDS\n");
+    }
+
+    protected function resetAttributeValues($primaryModelClass, $secondaryModelClass, $foreignKeyAttribute)
+    {
+        $query = $primaryModelClass::find()->andWhere([]);
+        $n = 1;
+        foreach ($query->batch(1000) as $i => $models) {
+            foreach ($models as $model) {
+                $this->stdout("{$primaryModelClass}: Processing Record {$n}\n");
+                $attributes = [];
+                $data = $secondaryModelClass::getData(['attribute_id', 'attribute_value', 'attribute_value_json'], [$foreignKeyAttribute => $model->id]);
+                foreach ($data as $row) {
+                    if (!empty($row['attribute_value'])) {
+                        $attributes[$row['attribute_id']] = $row['attribute_value'];
+                    } elseif (!empty($row['attribute_value_json'])) {
+                        $attributes[$row['attribute_id']] = json_decode($row['attribute_value_json'], true);
+                    }
+                }
+                $model->additional_attributes = $attributes;
+                if (!empty($model->additional_attributes)) {
+                    $model->save(false);
+                }
+                $n++;
+            }
+        }
+    }
+
     protected function loadFakeData()
     {
         $this->canExecuteFaker();
@@ -48,14 +84,9 @@ class FakerController extends Controller
         //$sql .= "TRUNCATE " . Notif::tableName() . ";";
         //$sql .= "TRUNCATE " . NotifQueue::tableName() . ";";
         //$sql .= "TRUNCATE " . AuditTrail::tableName() . ";";
-        $sql .= "TRUNCATE " . AnimalEventValue::tableName() . ";";
         $sql .= "TRUNCATE " . AnimalEvent::tableName() . ";";
-        //$sql .= "TRUNCATE " . AnimalAttributeValue::tableName() . ";";
         //$sql .= "TRUNCATE " . Animal::tableName() . ";";
         //$sql .= "TRUNCATE " . AnimalHerd::tableName() . ";";
-        //$sql .= "TRUNCATE " . ClientAttributeValue::tableName() . ";";
-        //$sql .= "TRUNCATE " . Client::tableName() . ";";
-        //$sql .= "TRUNCATE " . FarmAttributeValue::tableName() . ";";
         //$sql .= "TRUNCATE " . Farm::tableName() . ";";
 
         //$sql .= "UPDATE " . NumberingFormat::tableName() . " SET [[next_number]]=1 WHERE [[id]]=:organization_account_no;";

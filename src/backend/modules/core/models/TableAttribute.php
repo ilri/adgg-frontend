@@ -81,7 +81,7 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
                 return $model->input_type == self::INPUT_TYPE_SELECT;
             }],
             ['attribute_key', 'validateAttributeKey'],
-            [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
+            [[self::SEARCH_FIELD,'id'], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
     }
 
@@ -98,9 +98,6 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
         }
         $parentModel = null;
         switch ($this->table_id) {
-            case ExtendableTable::TABLE_CLIENT:
-                $parentModel = new Client();
-                break;
             case ExtendableTable::TABLE_FARM:
                 $parentModel = new Farm();
                 break;
@@ -186,6 +183,7 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
             'type',
             'event_type',
             'is_active',
+            'id',
         ];
     }
 
@@ -321,7 +319,7 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
      */
     public static function getDefinedAttributes($tableId, $type)
     {
-        return static::getData(['id', 'attribute_key','input_type'], ['table_id' => $tableId, 'type' => $type, 'is_active' => 1]);
+        return static::getData(['id', 'attribute_key', 'input_type'], ['table_id' => $tableId, 'type' => $type, 'is_active' => 1]);
     }
 
     /**
@@ -331,9 +329,6 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
     {
         $model = null;
         switch ($this->table_id) {
-            case ExtendableTable::TABLE_CLIENT:
-                $model = new Client();
-                break;
             case ExtendableTable::TABLE_FARM:
                 $model = new Farm();
                 break;

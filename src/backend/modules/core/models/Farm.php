@@ -45,8 +45,8 @@ use yii\helpers\Html;
  * @property string $deleted_at
  * @property int $deleted_by
  * @property string $odk_code
+ * @property string|array $additional_attributes
  *
- * @property FarmAttributeValue[] $attributeValues
  * @property Users $fieldAgent
  * @property Animal $animals
  * @property AnimalHerd [] $herds
@@ -86,6 +86,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             [['reg_date'], 'date', 'format' => 'Y-m-d'],
             [['code'], 'unique', 'targetAttribute' => ['org_id', 'code'], 'message' => '{attribute} already exists', 'except' => self::SCENARIO_UPLOAD],
             [$this->getAdditionalAttributes(), 'safe'],
+            [['additional_attributes'], 'safe'],
             ['odk_code', 'unique', 'targetAttribute' => ['org_id', 'odk_code'], 'message' => '{attribute} already exists.', 'on' => self::SCENARIO_UPLOAD],
             [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
@@ -190,6 +191,8 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             if (empty($this->name)) {
                 $this->name = $this->farmer_name;
             }
+            $this->setAdditionalAttributesValues();
+
             return true;
         }
         return false;
@@ -198,13 +201,12 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
-        $this->saveAdditionalAttributes(FarmAttributeValue::class, 'farm_id', $insert);
     }
 
     public function afterFind()
     {
         parent::afterFind();
-        $this->loadAdditionalAttributeValues($this->attributeValues);
+        $this->loadAdditionalAttributeValues();
     }
 
     /**
@@ -256,14 +258,6 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             'hhproblems',
             'hhproblems_other',
         ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getAttributeValues()
-    {
-        return $this->hasMany(FarmAttributeValue::class, ['farm_id' => 'id']);
     }
 
     /**
