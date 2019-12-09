@@ -13,6 +13,7 @@ use common\models\CustomValidationsTrait;
 use common\widgets\highchart\HighChart;
 use common\widgets\highchart\HighChartInterface;
 use Yii;
+use yii\base\InvalidArgumentException;
 use yii\db\Expression;
 use yii\helpers\Inflector;
 
@@ -249,20 +250,13 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     public function fields()
     {
         $fields = $this->apiResourceFields();
-
-        //farm attribute without the relations
-        $fields['farm'] = function () {
-            return $this->farm->attributes;
+        $fields['animal_type'] = function () {
+            return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, $this->animal_type);
         };
-        //excluded fields
-        $excludedFields = ['latlng'];
-        foreach ($excludedFields as $f) {
-            if (isset($fields[$f])) {
-                unset($fields[$f]);
-            }
-        }
+        $fields['sire_type'] = function () {
+            return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_SIRE_TYPE, $this->sire_type);
+        };
         return $fields;
-
     }
 
     public function beforeSave($insert)
@@ -294,7 +288,6 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
         }
         return false;
     }
-
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);

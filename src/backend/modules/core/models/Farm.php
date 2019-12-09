@@ -6,6 +6,7 @@ use backend\modules\auth\models\Users;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
+use phpDocumentor\Reflection\Types\Boolean;
 use yii\db\Expression;
 use yii\helpers\Html;
 
@@ -162,12 +163,9 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     public function fields()
     {
         $fields = $this->apiResourceFields();
-        $excludedFields = ['latlng'];
-        foreach ($excludedFields as $f) {
-            if (isset($fields[$f])) {
-                unset($fields[$f]);
-            }
-        }
+        $fields['gender_code'] = function () {
+            return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_GENDER, $this->gender_code);
+        };
         return $fields;
     }
 

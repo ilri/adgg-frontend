@@ -139,12 +139,9 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     public function fields()
     {
         $fields = $this->apiResourceFields();
-        $fields['animal'] = function () {
-            $attributes = $this->animal->attributes;
-            unset($attributes['latlng']);
-            return $attributes;
+        $fields['event_type'] = function () {
+            return static::decodeEventType($this->event_type);
         };
-
         return $fields;
     }
 

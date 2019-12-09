@@ -181,7 +181,21 @@ trait TableAttributeTrait
 
             }
         }
-        //all the relations
+        //all the relations here
+        //animal
+        if (isset($this->animal)) {
+            $fields['animal'] = function () {
+                $attributes = $this->animal->attributes;
+                unset($attributes['latlng']);
+                return $attributes;
+            };
+        }
+        //farm attributes without the relations
+        if (isset($this->farm)) {
+            $fields['farm'] = function () {
+                return $this->farm->attributes;
+            };
+        }
         //country
         if (isset($this->org)) {
             $fields['org'] = function () {
@@ -212,8 +226,21 @@ trait TableAttributeTrait
                 return $this->village;
             };
         }
-
-
+        //fieldAgent
+        if (isset($this->fieldAgent)) {
+            $fields['fieldAgent'] = function () {
+                return $this->fieldAgent;
+            };
+        }
+        //excluded fields
+        if ($this->hasAttribute('latlng')) {
+            $excludedFields = ['latlng'];
+            foreach ($excludedFields as $f) {
+                if (isset($fields[$f])) {
+                    unset($fields[$f]);
+                }
+            }
+        }
         return $fields;
     }
 
@@ -409,6 +436,7 @@ trait TableAttributeTrait
         }
         return $formattedAttributes;
     }
+
     /**
      * @return array
      * @throws \Exception
