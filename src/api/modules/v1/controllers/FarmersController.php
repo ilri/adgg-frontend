@@ -11,6 +11,7 @@ namespace api\modules\v1\controllers;
 
 use api\controllers\ActiveController;
 use api\controllers\JwtAuthTrait;
+use backend\modules\conf\settings\SystemSettings;
 use backend\modules\core\models\Farm;
 
 class FarmersController extends ActiveController
@@ -32,7 +33,7 @@ class FarmersController extends ActiveController
             'defaultOrder' => ['id' => SORT_ASC],
             'condition' => $condition,
             'params' => $params,
-            'pageSize' => 10,
+            'pageSize' => SystemSettings::getPaginationSize(),
             'enablePagination' => true,
         ]);
 

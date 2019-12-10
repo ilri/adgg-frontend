@@ -5,6 +5,7 @@ namespace api\modules\v1\controllers;
 
 use api\controllers\ActiveController;
 use api\controllers\JwtAuthTrait;
+use backend\modules\conf\settings\SystemSettings;
 use backend\modules\core\models\Animal;
 
 class AnimalsController extends ActiveController
@@ -27,7 +28,7 @@ class AnimalsController extends ActiveController
             'condition' => $condition,
             'params' => $params,
             'enablePagination' => true,
-            'pageSize' => 10,
+            'pageSize' => SystemSettings::getPaginationSize(),
         ]);
         return $searchModel->search();
     }

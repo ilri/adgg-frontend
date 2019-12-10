@@ -3,6 +3,7 @@
 namespace backend\modules\core\models;
 
 use backend\modules\auth\models\Users;
+use common\helpers\Utils;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
@@ -166,6 +167,12 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
         $fields = $this->apiResourceFields();
         $fields['gender_code'] = function () {
             return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_GENDER, $this->gender_code);
+        };
+        $fields['farmer_is_hh_head'] = function () {
+            return Utils::decodeBoolean($this->farmer_is_hh_head);
+        };
+        $fields['is_active'] = function () {
+            return Utils::decodeBoolean($this->is_active);
         };
         return $fields;
     }

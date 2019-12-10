@@ -183,7 +183,6 @@ trait TableAttributeTrait
                         return Choices::getLabel($listTypeId, $this->{$attribute});
                     }
                 };
-
             }
         }
         //all the relations here
@@ -191,14 +190,16 @@ trait TableAttributeTrait
         if (isset($this->animal)) {
             $fields['animal'] = function () {
                 $attributes = $this->animal->attributes;
-                unset($attributes['latlng']);
+                unset($attributes['latlng'], $attributes['additional_attributes']);
                 return $attributes;
             };
         }
         //farm attributes without the relations
         if (isset($this->farm)) {
             $fields['farm'] = function () {
-                return $this->farm->attributes;
+                $attributes = $this->farm->attributes;
+                unset($attributes['additional_attributes']);
+                return $attributes;
             };
         }
         //country
@@ -234,7 +235,9 @@ trait TableAttributeTrait
         //fieldAgent
         if (isset($this->fieldAgent)) {
             $fields['fieldAgent'] = function () {
-                return $this->fieldAgent;
+                $attributes = $this->fieldAgent->attributes;
+                unset($attributes['additional_attributes']);
+                return $attributes;
             };
         }
         //excluded fields
@@ -246,6 +249,15 @@ trait TableAttributeTrait
                 }
             }
         }
+        if ($this->hasAttribute('additional_attributes')) {
+            $excludedFields = ['additional_attributes'];
+            foreach ($excludedFields as $f) {
+                if (isset($fields[$f])) {
+                    unset($fields[$f]);
+                }
+            }
+        }
+
         return $fields;
     }
 

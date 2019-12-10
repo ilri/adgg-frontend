@@ -6,6 +6,7 @@ use backend\modules\reports\Constants;
 use common\helpers\DbUtils;
 use common\helpers\FileManager;
 use common\helpers\Lang;
+use common\helpers\Utils;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
@@ -246,8 +247,25 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
         $fields['animal_type'] = function () {
             return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, $this->animal_type);
         };
+        /**
+         * @return string
+         */
         $fields['sire_type'] = function () {
             return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_SIRE_TYPE, $this->sire_type);
+
+        };
+        /**
+         * @return array
+         */
+        $fields['deformities'] = function () {
+            $decoded = [];
+            foreach ($this->deformities as $key => $value) {
+                $decoded[] = Choices::getLabel(ChoiceTypes::CHOICE_TYPE_CALVE_DEFORMITY, $value);
+            };
+            return $decoded;
+        };
+        $fields['is_derived_birthdate'] = function () {
+            return Utils::decodeBoolean($this->is_derived_birthdate);
         };
         return $fields;
     }

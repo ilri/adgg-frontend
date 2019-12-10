@@ -5,6 +5,7 @@ namespace api\modules\v1\controllers;
 
 use api\controllers\ActiveController;
 use api\controllers\JwtAuthTrait;
+use backend\modules\conf\settings\SystemSettings;
 use backend\modules\core\models\AnimalEvent;
 
 class AnimalEventController extends ActiveController
@@ -24,7 +25,7 @@ class AnimalEventController extends ActiveController
         $searchModel = AnimalEvent::searchModel([
             'defaultOrder' => ['id' => SORT_ASC],
             'enablePagination' => true,
-            'pageSize' => 10,
+            'pageSize' => SystemSettings::getPaginationSize(),
         ]);
 
         return $searchModel->search();
