@@ -29,9 +29,9 @@ use common\models\CustomValidationsTrait;
  * @property int $created_by
  * @property string $updated_at
  * @property int $updated_by
+ * @property string|array $additional_attributes
  *
  * @property Animal $animal
- * @property AnimalEventValue[] $animalEventValues
  */
 class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAttributeInterface
 {
@@ -68,7 +68,6 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             [['map_address', 'uuid'], 'string', 'max' => 255],
             ['event_date', 'validateNoFutureDate'],
             ['event_date', 'unique', 'targetAttribute' => ['org_id', 'animal_id', 'event_type', 'event_date'], 'message' => '{attribute} should be unique per animal'],
-            [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
     }
@@ -80,7 +79,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     {
         $labels = [
             'id' => 'ID',
-            'animal_id' => 'Animal Tag',
+            'animal_id' => 'Animal',
             'event_type' => 'Event Type',
             'org_id' => 'Country',
             'region_id' => 'Region',
@@ -112,14 +111,6 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     }
 
     /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getAnimalEventValues()
-    {
-        return $this->hasMany(AnimalEventValue::class, ['event_id' => 'id']);
-    }
-
-    /**
      * {@inheritDoc}
      */
     public function searchParams()
@@ -135,6 +126,15 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
         ];
     }
 
+    public function fields()
+    {
+        $fields = $this->apiResourceFields();
+        $fields['event_type'] = function () {
+            return static::decodeEventType($this->event_type);
+        };
+        return $fields;
+    }
+
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
@@ -145,7 +145,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             $this->district_id = $this->animal->district_id;
             $this->ward_id = $this->animal->ward_id;
             $this->village_id = $this->animal->village_id;
-
+            $this->setAdditionalAttributesValues();
             return true;
         }
         return false;
@@ -154,13 +154,12 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
-        $this->saveAdditionalAttributes(AnimalEventValue::class, 'event_id', $insert);
     }
 
     public function afterFind()
     {
         parent::afterFind();
-        $this->loadAdditionalAttributeValues($this->animalEventValues);
+        $this->loadAdditionalAttributeValues();
     }
 
     /**
@@ -225,12 +224,40 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     /**
      * @param int $animalId
      * @param int $eventType
-     * @return AnimalEvent|null
+     * @return bool
      */
-    public static function getLastAnimalEvent($animalId, $eventType)
+    public static function getEventLastDate($animalId, $eventType)
     {
-        $model = static::find()->andWhere(['animal_id' => $animalId, 'event_type' => $eventType])->orderBy(['event_date' => SORT_DESC])->one();
-        return $model;
+        $models = static::find()->andWhere(['animal_id' => $animalId, 'event_type' => $eventType])->orderBy(['id' => SORT_DESC])->all();
+        $dates = [];
+        foreach ($models as $model) {
+            $dates[] = strtotime($model->event_date);
+        }
+
+        if ($dates == null) {
+            return 'None';
+        }
+        $latestDate = max($dates);
+        return date('d/m/Y', $latestDate);
+    }
+
+    /**
+     * @param int $animalId
+     * @param int $eventType
+     * @return bool
+     */
+    public static function getEventEarlyDate($animalId, $eventType)
+    {
+        $models = static::find()->andWhere(['animal_id' => $animalId, 'event_type' => $eventType])->orderBy(['id' => SORT_DESC])->all();
+        $dates = [];
+        foreach ($models as $model) {
+            $dates[] = strtotime($model->event_date);
+        }
+        if ($dates == null) {
+            return 'None';
+        }
+        $earliestDate = min($dates);
+        return date('d/m/Y', $earliestDate);
     }
 
     /**

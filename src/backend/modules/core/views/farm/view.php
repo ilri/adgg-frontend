@@ -1,93 +1,24 @@
 <?php
 
 use backend\modules\core\models\Animal;
-use backend\modules\core\models\AnimalHerd;
 use backend\modules\core\models\Farm;
-use common\helpers\Lang;
-use common\helpers\Url;
+use common\widgets\gmap\SingleViewWidget;
 use yii\bootstrap\Html;
 use yii\helpers\Inflector;
 use yii\widgets\DetailView;
 
 /* @var $this \yii\web\View */
 /* @var $model Farm */
+/* @var $animal Animal */
+
+
 /* @var $controller \backend\controllers\BackendController */
 $controller = Yii::$app->controller;
 $this->title = Html::encode($model->name);
 $this->params['breadcrumbs'][] = ['label' => Inflector::pluralize($controller->resourceLabel), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="kt-portlet kt-profile">
-    <div class="kt-profile__nav">
-        <ul class="nav nav-tabs nav-tabs-line my-nav" role="tablist">
-            <?php if (Yii::$app->user->canUpdate()): ?>
-                <li class="nav-item">
-                    <a class="nav-link" href="<?= Url::to(['farm/update', 'id' => $model->id]) ?>" role="tab">
-                        <?= Lang::t('Update Farm Details') ?>
-                    </a>
-                </li>
-            <?php endif; ?>
-            <li class="nav-item">
-                <a class="nav-link" role="tab">
-                    <?= Lang::t('Number Of Herds') ?>
-                    <span class="badge badge-secondary badge-pill">
-                        <?= AnimalHerd::getCount(['farm_id' => $model->id]) ?>
-                    </span>
-                </a>
-            </li>
-            <?php if ((int)AnimalHerd::getCount(['farm_id' => $model->id !== 0])): ?>
-                <li class="nav-item">
-                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button"
-                       aria-haspopup="true"
-                       aria-expanded="false">
-                        <?= Lang::t('Herd List') ?>
-                    </a>
-                    <div class="dropdown-menu">
-                        <ul>
-                            <?php foreach ($model->herds as $herd): ?>
-                                <?php if ($model->id == $herd->farm_id): ?>
-                                    <a class="button" href="<?= Url::to(['herd/view', 'id' => $herd->id]) ?>"
-                                       title="Click To View Details">
-                                        <h4> <?= $herd->name . '<br>' . '<div class="dropdown-divider"></div>' ?></h4>
-                                    </a>
-                                <?php endif; ?>
-                            <?php endforeach; ?>
-                        </ul>
-                    </div>
-                </li>
-            <?php endif; ?>
-            <li class="nav-item">
-                <a class="nav-link" role="tab">
-                    <?= Lang::t('Number of Animals') ?>
-                    <span class="badge badge-secondary badge-pill">
-                        <?= Animal::getCount(['farm_id' => $model->id]) ?>
-                    </span>
-                    <a>
-            </li>
-            <?php if ((int)Animal::getCount(['farm_id' => $model->id !== 0])): ?>
-                <li class="nav-item">
-                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button"
-                       aria-haspopup="true"
-                       aria-expanded="false">
-                        <?= Lang::t('Animals List') ?>
-                    </a>
-                    <div class="dropdown-menu">
-                        <ul>
-                            <?php foreach ($model->animals as $animal): ?>
-                                <?php if ($model->id == $animal->farm_id): ?>
-                                    <a class="button" href="<?= Url::to(['animal/view', 'id' => $animal->id]) ?>"
-                                       title="Click To View Details">
-                                        <h4> <?= $animal->name . '<br>' . '<div class="dropdown-divider"></div>' ?></h4>
-                                    </a>
-                                <?php endif; ?>
-                            <?php endforeach; ?>
-                        </ul>
-                    </div>
-                </li>
-            <?php endif; ?>
-        </ul>
-    </div>
-</div>
+<?= $this->render('_profileHeader', ['model' => $model]) ?>
 <div class="accordion accordion-outline" id="accordion1">
     <div class="card">
         <div class="card-header" id="headingOne">
@@ -105,11 +36,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     'options' => ['class' => 'table detail-view table-striped'],
                     'attributes' => [
                         [
-                            'attribute' => 'org_id',
-                            'value' => $model->org->name,
+                            'attribute' => 'name',
                         ],
                         [
-                            'attribute' => 'name',
+                            'attribute' => 'farm_type',
+                        ],
+                        [
+                            'attribute' => 'org_id',
+                            'value' => $model->org->name,
                         ],
                         [
                             'attribute' => 'region_id',
@@ -143,41 +77,15 @@ $this->params['breadcrumbs'][] = $this->title;
                             'attribute' => 'reg_date',
                         ],
                         [
-                            'attribute' => 'farmer_name',
-                        ],
-                        [
-                            'attribute' => 'email',
-                        ],
-                        [
-                            'attribute' => 'field_agent_id',
-                            'value' => function (Farm $model) {
-                                return $model->getRelationAttributeValue('fieldAgent', 'name');
-                            }
-                        ],
-                        [
-                            'attribute' => 'field_agent_name',
-                        ],
-                        [
                             'attribute' => 'project',
-                        ],
-                        [
-                            'attribute' => 'farm_type',
-                        ],
-                        [
-                            'attribute' => 'farmer_is_hh_head',
-                            'format' => 'boolean',
                         ],
                         [
                             'attribute' => 'map_address',
                         ],
                         [
-                            'attribute' => 'odk_code',
-                        ],
-                        [
                             'attribute' => 'is_active',
                             'format' => 'boolean',
                         ],
-
                     ],
                 ])
                 ?>
@@ -185,12 +93,13 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 </div>
+<br>
 <div class="accordion accordion-outline" id="accordion2">
     <div class="card">
         <div class="card-header" id="headingTwo">
             <div class="card-title collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false"
                  aria-controls="collapseTwo">
-                Location
+                Farmer Details
             </div>
         </div>
         <div id="collapseTwo" class="card-body-wrapper collapse" aria-labelledby="headingTwo"
@@ -199,7 +108,230 @@ $this->params['breadcrumbs'][] = $this->title;
                 <br/>
                 <div class="row">
                     <div class="col-lg-12">
-                        <?= \common\widgets\gmap\SingleViewWidget::widget([
+                        <?= DetailView::widget([
+                            'model' => $model,
+                            'options' => ['class' => 'table detail-view table-striped'],
+                            'attributes' => [
+                                [
+                                    'attribute' => 'farmer_name',
+                                ],
+                                [
+                                    'attribute' => 'farmer_is_hh_head',
+                                    'format' => 'boolean',
+                                ],
+                                [
+                                    'attribute' => 'email',
+                                ],
+                                [
+                                    'attribute' => 'phone',
+                                ],
+                                [
+                                    'attribute' => 'odk_code',
+                                ],
+                                [
+                                    'attribute' => 'farmer_age',
+                                ],
+                                [
+                                    'attribute' => 'farmer_age_range',
+                                ],
+                                [
+                                    'attribute' => 'farmer_relationship_to_hhh',
+                                ],
+                                [
+                                    'attribute' => 'farmer_relationship_to_hhh_other',
+                                ],
+                            ],
+                        ]) ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<div class="accordion accordion-outline" id="accordion3">
+    <div class="card">
+        <div class="card-header" id="headingThree">
+            <div class="card-title collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false"
+                 aria-controls="collapseThree">
+                Field Agent
+            </div>
+        </div>
+        <div id="collapseThree" class="card-body-wrapper collapse" aria-labelledby="headingThree"
+             data-parent="#accordion3" style="">
+            <div class="card-body">
+                <br/>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <?= DetailView::widget([
+                            'model' => $model,
+                            'options' => ['class' => 'table detail-view table-striped'],
+                            'attributes' => [
+                                [
+                                    'attribute' => 'field_agent_name',
+                                    'value' => function (Farm $model) {
+                                        return $model->getRelationAttributeValue('fieldAgent', 'name');
+                                    }
+                                ],
+                            ],
+                        ]) ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<div class="accordion accordion-outline" id="accordion4">
+    <div class="card">
+        <div class="card-header" id="headingFour">
+            <div class="card-title collapsed" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false"
+                 aria-controls="collapseFour">
+                Household Details
+            </div>
+        </div>
+        <div id="collapseFour" class="card-body-wrapper collapse" aria-labelledby="headingFour"
+             data-parent="#accordion4" style="">
+            <div class="card-body">
+                <br/>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <?= DetailView::widget([
+                            'model' => $model,
+                            'options' => ['class' => 'table detail-view table-striped'],
+                            'attributes' => [
+                                [
+                                    'attribute' => 'hhh_age',
+                                ],
+                                [
+                                    'attribute' => 'hhh_age_range',
+                                ],
+                                [
+                                    'attribute' => 'hhh_gender',
+                                ],
+                                [
+                                    'attribute' => 'hhh_mobile',
+                                ],
+                                [
+                                    'attribute' => 'hhh_name',
+                                ],
+
+                                [
+                                    'attribute' => 'hhproblems_other',
+                                ],
+                            ],
+                        ]) ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<div class="accordion accordion-outline" id="accordion5">
+    <div class="card">
+        <div class="card-header" id="headingFive">
+            <div class="card-title collapsed" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false"
+                 aria-controls="collapseFive">
+                Cattle
+            </div>
+        </div>
+        <div id="collapseFive" class="card-body-wrapper collapse" aria-labelledby="headingFive"
+             data-parent="#accordion5" style="">
+            <div class="card-body">
+                <br/>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <?= DetailView::widget([
+                            'model' => $model,
+                            'options' => ['class' => 'table detail-view table-striped'],
+                            'attributes' => [
+                                [
+                                    'attribute' => 'total_cattle_owned',
+                                ],
+                                [
+                                    'attribute' => 'total_cattle_owned_by_female',
+                                ],
+                                [
+                                    'attribute' => 'total_cattle_owned_by_male',
+                                ],
+                                [
+                                    'attribute' => 'total_cattle_owned_joint',
+                                ],
+                            ],
+                        ]) ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<div class="accordion accordion-outline" id="accordion6">
+    <div class="card">
+        <div class="card-header" id="headingSix">
+            <div class="card-title collapsed" data-toggle="collapse" data-target="#collapseSix" aria-expanded="false"
+                 aria-controls="collapseSix">
+                Statistics
+            </div>
+        </div>
+        <div id="collapseSix" class="card-body-wrapper collapse" aria-labelledby="headingSix"
+             data-parent="#accordion6" style="">
+            <div class="card-body">
+                <br/>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <?= DetailView::widget([
+                            'model' => $model,
+                            'options' => ['class' => 'table detail-view table-striped'],
+                            'attributes' => [
+                                [
+                                    'attribute' => 'nfemale15to64',
+                                ],
+                                [
+                                    'attribute' => 'nfemale6to14',
+                                ],
+                                [
+                                    'attribute' => 'nfemaleo64',
+                                ],
+                                [
+                                    'attribute' => 'nmale0to5',
+                                ],
+                                [
+                                    'attribute' => 'nmale15to64',
+                                ],
+
+                                [
+                                    'attribute' => 'nmale6to14',
+                                ],
+                                [
+                                    'attribute' => 'nmaleo64',
+                                ],
+                            ],
+                        ]) ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+
+<div class="accordion accordion-outline" id="accordion7">
+    <div class="card">
+        <div class="card-header" id="headingSeven">
+            <div class="card-title collapsed" data-toggle="collapse" data-target="#collapseSeven" aria-expanded="false"
+                 aria-controls="collapseSeven">
+                Location
+            </div>
+        </div>
+        <div id="collapseSeven" class="card-body-wrapper collapse" aria-labelledby="headingSeven"
+             data-parent="#accordion7" style="">
+            <div class="card-body">
+                <br/>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <?= SingleViewWidget::widget([
                             'latitude' => $model->latitude,
                             'longitude' => $model->longitude,
                             'showDefaultMap' => false,
@@ -212,3 +344,4 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 </div>
+<br>

@@ -18,7 +18,7 @@ trait AnimalEventTrait
 {
     use SessionTrait;
 
-    protected function renderIndexAction($event_type, $animal_id = null, $org_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $from = null, $to = null)
+    protected function renderIndexAction($event_type = null, $animal_id = null, $org_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $from = null, $to = null)
     {
         $dateFilter = DateUtils::getDateFilterParams($from, $to, 'event_date', false, false);
         $condition = $dateFilter['condition'];

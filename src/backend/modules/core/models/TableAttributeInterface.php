@@ -9,8 +9,6 @@
 namespace backend\modules\core\models;
 
 
-use common\models\ActiveRecord;
-
 interface TableAttributeInterface
 {
     /**
@@ -30,24 +28,14 @@ interface TableAttributeInterface
 
     /**
      * @param string $attribute
-     * @param string $attributeValueModelClass
-     * @param string $foreignKeyAttribute
-     * @return bool
-     */
-    public function saveAdditionalAttributeValue(string $attribute, string $attributeValueModelClass, string $foreignKeyAttribute);
-
-
-    /**
-     * @param string $attribute
      * @return bool
      */
     public function isAdditionalAttribute(string $attribute): bool;
 
     /**
-     * @param ActiveRecord[] $valueModels
      * @return mixed
      */
-    public function loadAdditionalAttributeValues($valueModels);
+    public function loadAdditionalAttributeValues();
 
 
 }

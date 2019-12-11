@@ -6,6 +6,7 @@ use backend\modules\reports\Constants;
 use common\helpers\DbUtils;
 use common\helpers\FileManager;
 use common\helpers\Lang;
+use common\helpers\Utils;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
@@ -13,6 +14,7 @@ use common\models\CustomValidationsTrait;
 use common\widgets\highchart\HighChart;
 use common\widgets\highchart\HighChartInterface;
 use Yii;
+use yii\base\InvalidArgumentException;
 use yii\db\Expression;
 use yii\helpers\Inflector;
 
@@ -58,12 +60,12 @@ use yii\helpers\Inflector;
  * @property int $created_by
  * @property string $updated_at
  * @property int $updated_by
+ * @property string|array $additional_attributes
  *
  * @property Farm $farm
  * @property Animal $sire
  * @property Animal $dam
  * @property AnimalHerd $herd
- * @property AnimalAttributeValue[] $attributeValues
  * @property AnimalEvent [] $events
  *
  */
@@ -111,7 +113,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             [['sire_tag_id', 'dam_tag_id'], 'validateSireOrDam'],
             ['sire_tag_id', 'validateSireBisexual'],
             ['dam_tag_id', 'validateDamBisexual'],
-            ['tmp_animal_photo', 'safe'],
+            [['tmp_animal_photo', 'additional_attributes'], 'safe'],
             [$this->getAdditionalAttributes(), 'safe'],
             [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
@@ -205,14 +207,6 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getAttributeValues()
-    {
-        return $this->hasMany(AnimalAttributeValue::class, ['animal_id' => 'id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
     public function getEvents()
     {
         return $this->hasMany(AnimalEvent::class, ['animal_id' => 'id']);
@@ -247,6 +241,35 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
         ];
     }
 
+    public function fields()
+    {
+        $fields = $this->apiResourceFields();
+        $fields['animal_type'] = function () {
+            return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, $this->animal_type);
+        };
+        /**
+         * @return string
+         */
+        $fields['sire_type'] = function () {
+            return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_SIRE_TYPE, $this->sire_type);
+
+        };
+        /**
+         * @return array
+         */
+        $fields['deformities'] = function () {
+            $decoded = [];
+            foreach ($this->deformities as $key => $value) {
+                $decoded[] = Choices::getLabel(ChoiceTypes::CHOICE_TYPE_CALVE_DEFORMITY, $value);
+            };
+            return $decoded;
+        };
+        $fields['is_derived_birthdate'] = function () {
+            return Utils::decodeBoolean($this->is_derived_birthdate);
+        };
+        return $fields;
+    }
+
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
@@ -272,21 +295,21 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
                 $this->is_derived_birthdate = 1;
             }
 
+            $this->setAdditionalAttributesValues();
+
             return true;
         }
         return false;
     }
-
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
-        $this->saveAdditionalAttributes(AnimalAttributeValue::class, 'animal_id', $insert);
     }
 
     public function afterFind()
     {
         parent::afterFind();
-        $this->loadAdditionalAttributeValues($this->attributeValues);
+        $this->loadAdditionalAttributeValues();
     }
 
     /**

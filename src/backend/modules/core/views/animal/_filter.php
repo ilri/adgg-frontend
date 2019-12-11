@@ -2,6 +2,7 @@
 
 use backend\modules\core\models\ChoiceTypes;
 use backend\modules\core\models\Choices;
+use backend\modules\core\models\Farm;
 use backend\modules\core\models\Organization;
 use backend\modules\core\models\OrganizationUnits;
 use common\helpers\Lang;
@@ -24,6 +25,21 @@ use yii\bootstrap4\Html;
             <div class="card-body">
                 <?= Html::beginForm(['index'], 'get', ['class' => '', 'id' => 'grid-filter-form', 'data-grid' => $model->getPjaxWidgetId()]) ?>
                 <div class="form-row align-items-center">
+                    <div class="col-lg-2">
+                        <?= Html::label($model->getAttributeLabel('farm_id')) ?>
+                        <?= Select2::widget([
+                            'name' => 'farm_id',
+                            'value' => $model->farm_id,
+                            'data' => Farm::getListData(),
+                            'options' => [
+                                'placeholder' => "--All Farms--",
+                                'class' => 'form-control select2',
+                            ],
+                            'pluginOptions' => [
+                                'allowClear' => true
+                            ],
+                        ]); ?>
+                    </div>
                     <?php if ($model->showCountryField()): ?>
                         <div class="col-lg-2">
                             <?= Html::label($model->getAttributeLabel('org_id')) ?>

@@ -22,6 +22,15 @@ return [
         'class' => \yii\rest\UrlRule::class,
         'pluralize' => false,
         'controller' => [
+            'animals' => 'v1/animals',
+            'events' => 'v1/animal-event',
+        ],
+        'except' => ['delete', 'update', 'create'],
+    ],
+    [
+        'class' => \yii\rest\UrlRule::class,
+        'pluralize' => false,
+        'controller' => [
             'auth' => 'v1/auth',
         ],
         'extraPatterns' => [

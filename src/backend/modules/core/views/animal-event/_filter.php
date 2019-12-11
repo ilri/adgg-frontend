@@ -1,5 +1,8 @@
 <?php
 
+use backend\modules\core\models\AnimalEvent;
+use backend\modules\core\models\Choices;
+use backend\modules\core\models\ChoiceTypes;
 use backend\modules\core\models\Organization;
 use backend\modules\core\models\OrganizationUnits;
 use common\helpers\Lang;
@@ -22,6 +25,36 @@ use yii\bootstrap4\Html;
             <div class="card-body">
                 <?= Html::beginForm(['index'], 'get', ['class' => '', 'id' => 'grid-filter-form', 'data-grid' => $model->getPjaxWidgetId()]) ?>
                 <div class="form-row align-items-center">
+                    <div class="col-lg-2">
+                        <?= Html::label($model->getAttributeLabel('animal_id')) ?>
+                        <?= Select2::widget([
+                            'name' => 'farm_id',
+                            'value' => $model->animal_id,
+                            'data' => Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, false),
+                            'options' => [
+                                'placeholder' => "--All Animals--",
+                                'class' => 'form-control select2',
+                            ],
+                            'pluginOptions' => [
+                                'allowClear' => true
+                            ],
+                        ]); ?>
+                    </div>
+                    <div class="col-lg-2">
+                        <?= Html::label($model->getAttributeLabel('event_type')) ?>
+                        <?= Select2::widget([
+                            'name' => 'event_type',
+                            'value' => $model->event_type,
+                            'data' => AnimalEvent::eventTypeOptions(),
+                            'options' => [
+                                'placeholder' => "--All Events--",
+                                'class' => 'form-control select2',
+                            ],
+                            'pluginOptions' => [
+                                'allowClear' => true
+                            ],
+                        ]); ?>
+                    </div>
                     <?php if ($model->showCountryField()): ?>
                         <div class="col-lg-2">
                             <?= Html::label($model->getAttributeLabel('org_id')) ?>
