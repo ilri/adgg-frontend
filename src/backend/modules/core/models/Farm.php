@@ -7,7 +7,6 @@ use common\helpers\Utils;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
-use phpDocumentor\Reflection\Types\Boolean;
 use yii\db\Expression;
 use yii\helpers\Html;
 

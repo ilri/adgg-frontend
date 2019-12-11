@@ -179,6 +179,7 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
             ['attribute_key', 'attribute_key'],
             ['attribute_label', 'attribute_label'],
             'table_id',
+            'list_type_id',
             'group_id',
             'type',
             'event_type',
@@ -314,12 +315,13 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
     /**
      * @param int $tableId
      * @param int $type
+     * @param int $listTypeId
      * @return mixed
      * @throws \Exception
      */
     public static function getDefinedAttributes($tableId, $type)
     {
-        return static::getData(['id', 'attribute_key', 'input_type'], ['table_id' => $tableId, 'type' => $type, 'is_active' => 1]);
+        return static::getData(['id', 'attribute_key', 'input_type', 'list_type_id'], ['table_id' => $tableId, 'type' => $type, 'is_active' => 1]);
     }
 
     /**
