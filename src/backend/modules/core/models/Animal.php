@@ -254,6 +254,18 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_SIRE_TYPE, $this->sire_type);
 
         };
+        $fields['breed_composition'] = function () {
+            return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_BREED_COMPOSITION, $this->breed_composition);
+        };
+        $fields['main_breed'] = function () {
+            return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, $this->main_breed);
+        };
+        $fields['secondary_breed'] = function () {
+            return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, $this->secondary_breed);
+        };
+        $fields['entry_type'] = function () {
+            return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_ENTRY_TYPE, $this->entry_type);
+        };
         /**
          * @return array
          */
