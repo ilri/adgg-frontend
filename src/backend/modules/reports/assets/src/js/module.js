@@ -47,7 +47,12 @@ MyApp.modules.reports = {};
             if(selectedParentModel !== parentModel){
                 selectedFields.length = 0;
             }
-            selectedFields.push(name);
+            // check for duplicates
+            var index = selectedFields.indexOf(name);
+            if (index <= -1) {
+                selectedFields.push(name);
+            }
+            //selectedFields.push(name);
             selectedParentModel = parentModel;
             console.log(selectedParentModel);
             console.log(name);
