@@ -57,8 +57,11 @@ class ReportBuilder extends Model
         return Utils::appendDropDownListPrompt($values, $prompt);
     }
 
+    /**
+     * @return array
+     */
     public static function buildAttributeList(){
-
+        return [];
     }
 
     /**
@@ -92,6 +95,39 @@ class ReportBuilder extends Model
         /* @var $relationModelClass ActiveRecord */
         $relationModelClass = new $relation->modelClass();
         return $relationModelClass;
+    }
+
+    /**
+     * @param string $modelName
+     * @return \yii\db\ActiveRecord
+     */
+    public static function getModelClass($modelName){
+        $className = static::reportableModels()[$modelName]['class'];
+        return new $className();
+    }
+
+    /**
+     * @param string $field
+     * @param \yii\db\ActiveRecord $class
+     * @return string
+     */
+    public static function getFullColumnName($field, $class){
+        // check if field is a joined relation
+        if(strpos($field, '.')){
+            $relationName = (explode('.', $field)[0]);
+            $fieldName = (explode('.', $field)[1]);
+            $relationModelClass = static::getRelationClass($class, $relationName);
+
+            $tableName = $relationModelClass::tableName();
+            // append table name || relationName to field to remove ambiguity.
+            $aliasedField = $relationName.'.'.$fieldName;
+        }
+        else {
+            // append table name to field to remove ambiguity.
+            $aliasedField = $class::tableName().'.'.$field;
+        }
+
+        return $aliasedField;
     }
 
     /**
@@ -161,7 +197,7 @@ class ReportBuilder extends Model
         }
         if ($this->orderBy){
             // should be a fully qualified column name
-            $query->orderBy($this->orderBy);
+            $query->orderBy(static::getFullColumnName($this->orderBy, $class));
         }
         return $query;
 
