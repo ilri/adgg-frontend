@@ -73,13 +73,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     </div>
                 </div>
                 <div class="panel panel-default bs-item z-depth-2 col-md-5">
-                    <div class="panel-body">
+                    <div class="panel-body pt-3">
                         <h3 id="selectedModel"></h3>
                         <ul id="selectedFields" class="list-group"></ul>
                     </div>
                 </div>
                 <div class="panel panel-default bs-item z-depth-2 col-md-3">
-                    <div class="panel-body">
+                    <div class="panel-body pt-3">
                         <div id="queryOptions" class="hidden">
                             <h3>Query Options</h3>
                             <div class="row row-no-gutters mb-2">
@@ -93,6 +93,8 @@ $this->params['breadcrumbs'][] = $this->title;
                             <div class="mt-5">
                                 <button id="generateQuery" role="button" class="btn btn-primary col-md-8 offset-3">Generate Query</button>
                             </div>
+                            <div class="row card card-body mt-4" id="queryHolder"></div>
+
                         </div>
                     </div>
                 </div>

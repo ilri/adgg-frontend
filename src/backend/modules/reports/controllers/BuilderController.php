@@ -29,8 +29,24 @@ class BuilderController extends Controller
 
     public function  actionGenerateQuery()
     {
-        $post = \Yii::$app->request->post();
-        print_r($post);
+        $req =   \Yii::$app->request;
+        //$post = \Yii::$app->request->post();
+        $modelName = $req->post('model');
+        $filterConditions = $req->post('filterCondition', []); // array
+        $filterValues = $req->post('filterValue', []); // array
+        $limit = $req->post('limit', 100);
+        $orderBy = $req->post('orderby', '');
+
+        $builder = new ReportBuilder();
+        $builder->model = $modelName;
+        $builder->filterConditions = $filterConditions;
+        $builder->filterValues = $filterValues;
+        $builder->orderBy = $orderBy;
+        $builder->limit = $limit;
+        //echo $builder->generateQuery();
+        echo $builder->rawQuery();
+        //print_r($builder->generateQuery());
+
         exit;
     }
 }

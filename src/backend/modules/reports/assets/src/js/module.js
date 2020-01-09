@@ -9,6 +9,7 @@ MyApp.modules.reports = {};
             builderFormSelector: '#report-builder-form',
             generateQueryBtnSelector: '#generateQuery',
             queryOptionsContainer: '#queryOptions',
+            queryHolderContainer: '#queryHolder',
             inputSelectOptions: {},
             generateQueryURL: '',
         };
@@ -39,7 +40,7 @@ MyApp.modules.reports = {};
                 dataType: 'html',
                 data: form.serialize(),
                 success: function (data) {
-                    //$($this.options.reportContainerSelector).html(data);
+                    $($this.options.queryHolderContainer).html(data);
                     console.log(data);
                 },
                 beforeSend: function (xhr) {
