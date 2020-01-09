@@ -2,6 +2,7 @@
 
 /* @var $this yii\web\View */
 
+use backend\modules\reports\models\ReportBuilder;
 use backend\modules\reports\models\Reports;
 use common\helpers\Lang;
 use common\helpers\Url;
@@ -18,6 +19,8 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="well">
             <h3 class="text-muted"><?= Lang::t('REPORT BUILDER') ?></h3>
             <hr>
+            <form method="POST" id="report-builder-form" >
+                <input type="hidden" name="model" id="model" />
             <div class="row">
                 <div class="panel panel-default bs-item z-depth-2 col-md-4">
                     <div class="panel-body">
@@ -69,23 +72,40 @@ $this->params['breadcrumbs'][] = $this->title;
                         ?>
                     </div>
                 </div>
-                <div class="panel panel-default bs-item z-depth-2 col-md-4">
+                <div class="panel panel-default bs-item z-depth-2 col-md-5">
                     <div class="panel-body">
-                        <ul id="selectedFields">
-
-                        </ul>
+                        <h3 id="selectedModel"></h3>
+                        <ul id="selectedFields" class="list-group"></ul>
                     </div>
                 </div>
-                <div class="panel panel-default bs-item z-depth-2 col-md-4">
+                <div class="panel panel-default bs-item z-depth-2 col-md-3">
                     <div class="panel-body">
-
+                        <div id="queryOptions" class="hidden">
+                            <h3>Query Options</h3>
+                            <div class="row row-no-gutters mb-2">
+                                <div class="col-md-3"><label>Limit: </label></div>
+                                <div class="col-md-8"><input name="limit" type="text" value="100" class="form-control" /></div>
+                            </div>
+                            <div class="row row-no-gutters mt-2">
+                                <div class="col-md-3"><label>Order By: </label></div>
+                                <div class="col-md-8"><input name="orderby" type="text" value="" class="form-control" /></div>
+                            </div>
+                            <div class="mt-5">
+                                <button id="generateQuery" role="button" class="btn btn-primary col-md-8 offset-3">Generate Query</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
             </div>
+            </form>
         </div>
     </div>
 </div>
 <?php
-$options = [];
+$options = [
+    'inputSelectOptions' => ReportBuilder::fieldConditionOptions(),
+    'generateQueryURL' => Url::to(['/reports/builder/generate-query']),
+];
 $this->registerJs("MyApp.modules.reports.reportbuilder(" . Json::encode($options) . ");");
 ?>

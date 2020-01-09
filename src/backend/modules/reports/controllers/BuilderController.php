@@ -26,4 +26,11 @@ class BuilderController extends Controller
             'models' => $models,
         ]);
     }
+
+    public function  actionGenerateQuery()
+    {
+        $post = \Yii::$app->request->post();
+        print_r($post);
+        exit;
+    }
 }
