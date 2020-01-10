@@ -69,6 +69,11 @@ class ReportBuilder extends Model
     {
         $null = new Expression('NULL');
         switch ($operator){
+            //case '>':
+            //case '<':
+            //case '<=':
+            //case '>=':
+            //    return [$operator, $column, intval($value)];
             case 'IS NULL':
                 return ['IS', $column, $null];
             case 'NOT NULL':
@@ -111,15 +116,31 @@ class ReportBuilder extends Model
         if(strpos($field, '.')){
             $relationName = (explode('.', $field)[0]);
             $fieldName = (explode('.', $field)[1]);
-            $relationModelClass = static::getRelationClass($class, $relationName);
+            $modelClass = static::getRelationClass($class, $relationName);
 
-            $tableName = $relationModelClass::tableName();
             // append table name || relationName to field to remove ambiguity.
-            $aliasedField = $relationName.'.'.$fieldName;
+            $fieldAlias = $relationName;
         }
         else {
+            $modelClass = $class;
             // append table name to field to remove ambiguity.
-            $aliasedField = $class::tableName().'.'.$field;
+            $fieldName = $field;
+            $fieldAlias = $modelClass::tableName();
+        }
+
+        if (!$modelClass->isAdditionalAttribute($fieldName)){
+            $main_attributes[] = $fieldName;
+            # append alias to field to remove ambiguity
+            $aliasedField = $fieldAlias.'.'.$fieldName;
+        }
+        else {
+            # for additional attributes, find a way to get their values
+            $attributeModel = TableAttribute::find()->andWhere(['attribute_key' => $fieldName, 'table_id' => $modelClass::getDefinedTableId()])->one();
+            $id = $attributeModel->id;
+            $attributesColumn = $fieldAlias.'.[[additional_attributes]]';
+            # get the value of this field from the json payload
+            # e.g JSON_EXTRACT(`core_farm`.`additional_attributes`, '$."34"')
+            $aliasedField = new Expression('JSON_UNQUOTE(JSON_EXTRACT('.$attributesColumn.', '."'".'$."'.$id.'"'."'".'))');
         }
 
         return $aliasedField;
@@ -151,14 +172,12 @@ class ReportBuilder extends Model
                 $joins[] = $relationName;
                 # table name || relationName alias.
                 $fieldAlias = $relationName;
-                //$aliasedField = $relationName.'.'.$fieldName;
             }
             else {
                 $modelClass = $class;
                 # table name || relationName alias.
                 $fieldAlias = $class::tableName();
                 $fieldName = $field;
-                //$aliasedField = $class::tableName().'.'.$field;
             }
 
             # filter out additional attributes
@@ -173,14 +192,14 @@ class ReportBuilder extends Model
             else {
                 # for additional attributes, find a way to get their values
                 $additional_attributes[] = $fieldName;
-                $attributeModel = TableAttribute::find()->andWhere(['attribute_key' => $fieldName, 'table_id' => $class::getDefinedTableId()])->one();
+                $attributeModel = TableAttribute::find()->andWhere(['attribute_key' => $fieldName, 'table_id' => $modelClass::getDefinedTableId()])->one();
                 $id = $attributeModel->id;
                 $attributesColumn = $fieldAlias.'.[[additional_attributes]]';
                 # get the value of this field from the json payload
                 # e.g JSON_EXTRACT(`core_farm`.`additional_attributes`, '$."34"') as `hh_name`
-                $expression = new Expression('JSON_EXTRACT('.$attributesColumn.', '."'".'$."'.$id.'"'."'".') as ' . $fieldName);
+                $expression = new Expression('JSON_UNQUOTE(JSON_EXTRACT('.$attributesColumn.', '."'".'$."'.$id.'"'."'".')) as [[' . $fieldName .']]');
                 // TODO: define a better way to search the json object
-                $aliasedField = new Expression('JSON_EXTRACT('.$attributesColumn.', '."'".'$."'.$id.'"'."'".')');
+                $aliasedField = new Expression('JSON_UNQUOTE(JSON_EXTRACT('.$attributesColumn.', '."'".'$."'.$id.'"'."'".'))');
                 $query->addSelect($expression);
             }
 
