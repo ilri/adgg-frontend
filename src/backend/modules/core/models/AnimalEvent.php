@@ -44,6 +44,10 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     const EVENT_TYPE_SYNCHRONIZATION = 5;
     const EVENT_TYPE_WEIGHTS = 6;
     const EVENT_TYPE_HEALTH = 7;
+    const EVENT_TYPE_FEEDING = 8;
+    const EVENT_TYPE_EXITS = 9;
+    const EVENT_TYPE_SAMPLING = 10;//no data available yet
+    const EVENT_TYPE_CERTIFICATION=11;//no data available yet
 
     public $animalTagId;
 
