@@ -44,7 +44,7 @@ class FarmController extends Controller
             'defaultOrder' => ['id' => SORT_DESC],
             'condition' => $condition,
             'params' => $params,
-            'with' => ['org', 'region', 'district', 'ward', 'village', 'attributeValues', 'fieldAgent'],
+            'with' => ['org', 'region', 'district', 'ward', 'village', 'fieldAgent'],
         ]);
         $searchModel->org_id = $org_id;
         $searchModel->region_id = $region_id;
@@ -92,7 +92,7 @@ class FarmController extends Controller
         $model = $this->loadModel($id);
         if ($this->handlePostedData($model)) {
             Yii::$app->session->setFlash('success', Lang::t('SUCCESS_MESSAGE'));
-            return $this->redirect(Url::getReturnUrl(['index', 'id' => $model->id]));
+            return $this->redirect(Url::getReturnUrl(['view', 'id' => $model->id]));
         }
 
         return $this->render('update', [

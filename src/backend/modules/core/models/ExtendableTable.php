@@ -15,7 +15,6 @@ use yii\base\InvalidArgumentException;
 class ExtendableTable
 {
     //tables
-    const TABLE_CLIENT = 1;
     const TABLE_FARM = 2;
     const TABLE_ANIMAL_ATTRIBUTES = 3;
     const TABLE_ANIMAL_EVENTS = 4;
@@ -31,8 +30,6 @@ class ExtendableTable
     public static function decodeTableId($intVal)
     {
         switch ($intVal) {
-            case self::TABLE_CLIENT:
-                return 'Client/People Attributes';
             case self::TABLE_FARM:
                 return 'Farm Attributes';
             case self::TABLE_ANIMAL_ATTRIBUTES:

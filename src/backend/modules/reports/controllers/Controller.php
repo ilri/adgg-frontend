@@ -38,6 +38,7 @@ class Controller extends BackendController
                             'create',
                             'update',
                             'delete',
+                            'generate-query',
                         ],
                         'allow' => true,
                         'roles' => ['@'],

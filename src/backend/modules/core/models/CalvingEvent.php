@@ -33,6 +33,7 @@ class CalvingEvent extends AnimalEvent implements ImportActiveRecordInterface
     public function rules()
     {
         return ArrayHelper::merge(parent::rules(), [
+            [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
             ['event_date', 'validateCalvingDate'],
         ]);
     }

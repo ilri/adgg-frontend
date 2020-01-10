@@ -9,7 +9,7 @@ return [
         'class' => \yii\rest\UrlRule::class,
         'pluralize' => false,
         'controller' => [
-            'farmers' => 'v1/farmers',
+            'farms' => 'v1/farmers',
         ],
         'tokens' => [
             '{id}' => '<id:\\w+>',
@@ -17,6 +17,17 @@ return [
         ],
         'extraPatterns' => [
         ]
+    ],
+    [
+        'class' => \yii\rest\UrlRule::class,
+        'pluralize' => false,
+        'controller' => [
+            'animals' => 'v1/animals',
+            'events' => 'v1/animal-event',
+            'list-types' => 'v1/list-types',
+            'event-types' => 'v1/event-types'
+        ],
+        'except' => ['delete', 'update', 'create'],
     ],
     [
         'class' => \yii\rest\UrlRule::class,

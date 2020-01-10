@@ -9,11 +9,16 @@
 namespace backend\modules\core\models;
 
 
-use common\helpers\Str;
 use common\models\ActiveRecord;
 use common\widgets\select2\Select2;
 use yii\bootstrap4\ActiveForm;
 
+/**
+ * Trait TableAttributeTrait
+ * @package backend\modules\core\models
+ *
+ * @property string|array $additional_attributes
+ */
 trait TableAttributeTrait
 {
     /**
@@ -30,6 +35,11 @@ trait TableAttributeTrait
      * @var array
      */
     private $_additionalAttributesInputTypes;
+
+    /**
+     * @var array
+     */
+    private $_additionalAttributesListTypeIds;
 
     /**
      * @var array
@@ -79,6 +89,15 @@ trait TableAttributeTrait
         return $this->_additionalAttributesInputTypes;
     }
 
+    public function getAdditionalAttributesListTypeIds(): array
+    {
+        if (empty($this->_additionalAttributesListTypeIds)) {
+            $this->setAdditionalAttributes();
+        }
+
+        return $this->_additionalAttributesListTypeIds;
+    }
+
     protected function setAdditionalAttributes()
     {
         $tableId = static::getDefinedTableId();
@@ -88,18 +107,24 @@ trait TableAttributeTrait
             $attributeKeys = [];
             $attributeIds = [];
             $attributesInputTypes = [];
+            $attributeListTypeIds = [];
             foreach ($attributes as $v) {
                 $attributeKeys[] = $v['attribute_key'];
                 $attributeIds[$v['attribute_key']] = $v['id'];
                 $attributesInputTypes[$v['attribute_key']] = $v['input_type'];
+                if (!empty($v['list_type_id'])) {
+                    $attributeListTypeIds[$v['attribute_key']] = $v['list_type_id'];
+                }
             }
             $this->_additionalAttributes = $attributeKeys;
             $this->_additionalAttributeIds = $attributeIds;
             $this->_additionalAttributesInputTypes = $attributesInputTypes;
+            $this->_additionalAttributesListTypeIds = $attributeListTypeIds;
         } else {
             $this->_additionalAttributes = [];
             $this->_additionalAttributeIds = [];
             $this->_additionalAttributesInputTypes = [];
+            $this->_additionalAttributesListTypeIds = [];
         }
     }
 
@@ -123,17 +148,136 @@ trait TableAttributeTrait
     }
 
     /**
-     * @param ActiveRecord[] $valueModels
+     * @param string $attribute
+     * @return bool
+     */
+    public function isSingleSelectAttribute(string $attribute): bool
+    {
+        $inputTypes = $this->getAdditionalAttributesInputTypes();
+        return $inputTypes[$attribute] == TableAttribute::INPUT_TYPE_SELECT;
+    }
+
+    /**
+     * @return array|false
+     */
+    public function apiResourceFields()
+    {
+        $fields = parent::fields();
+        //all additional fields here
+        foreach ($this->getAdditionalAttributes() as $attribute) {
+            if (!isset($fields[$attribute])) {
+                $fields[$attribute] = function () use ($attribute) {
+                    return $this->{$attribute};
+                };
+            }
+            if ($this->isSingleSelectAttribute($attribute) || $this->isMultiSelectAttribute($attribute)) {
+                $fields['decoded_' . $attribute] = function () use ($attribute) {
+                    $listTypeIds = $this->getAdditionalAttributesListTypeIds();
+                    $listTypeId = $listTypeIds[$attribute] ?? null;
+                    if (null === $listTypeId) {
+                        return $this->{$attribute};
+                    }
+                    if ($this->isMultiSelectAttribute($attribute)) {
+                        return Choices::getMultiSelectLabel($this->{$attribute}, $listTypeId);
+                    } else {
+                        return Choices::getLabel($listTypeId, $this->{$attribute});
+                    }
+                };
+            }
+        }
+        //all the relations here
+        //animal
+        if (isset($this->animal)) {
+            $fields['animal'] = function () {
+                $attributes = $this->animal->attributes;
+                unset($attributes['latlng'], $attributes['additional_attributes']);
+                return $attributes;
+            };
+        }
+        //farm attributes without the relations
+        if (isset($this->farm)) {
+            $fields['farm'] = function () {
+                $attributes = $this->farm->attributes;
+                unset($attributes['additional_attributes']);
+                return $attributes;
+            };
+        }
+        //country
+        if (isset($this->org)) {
+            $fields['org'] = function () {
+                return $this->org;
+            };
+        }
+        //region
+        if (isset($this->region)) {
+            $fields['region'] = function () {
+                return $this->region;
+            };
+        }
+        //district
+        if (isset($this->district)) {
+            $fields['district'] = function () {
+                return $this->district;
+            };
+        }
+        //ward
+        if (isset($this->ward)) {
+            $fields['ward'] = function () {
+                return $this->ward;
+            };
+        }
+        //village
+        if (isset($this->village)) {
+            $fields['village'] = function () {
+                return $this->village;
+            };
+        }
+        //fieldAgent
+        if (isset($this->fieldAgent)) {
+            $fields['fieldAgent'] = function () {
+                $attributes = $this->fieldAgent->attributes;
+                unset($attributes['additional_attributes']);
+                return $attributes;
+            };
+        }
+        //excluded fields
+        if ($this->hasAttribute('latlng')) {
+            $excludedFields = ['latlng'];
+            foreach ($excludedFields as $f) {
+                if (isset($fields[$f])) {
+                    unset($fields[$f]);
+                }
+            }
+        }
+        if ($this->hasAttribute('additional_attributes')) {
+            $excludedFields = ['additional_attributes'];
+            foreach ($excludedFields as $f) {
+                if (isset($fields[$f])) {
+                    unset($fields[$f]);
+                }
+            }
+        }
+
+        return $fields;
+    }
+
+    /**
      * @return mixed
      */
-    public function loadAdditionalAttributeValues($valueModels)
+    public function loadAdditionalAttributeValues()
     {
+        if (empty($this->additional_attributes)) {
+            return false;
+        }
+        if (!is_array($this->additional_attributes)) {
+            $this->additional_attributes = json_decode($this->additional_attributes, true);
+        }
         $additionalAttributes = array_flip($this->getAdditionalAttributeIds());
-        foreach ($valueModels as $model) {
-            $attribute = $additionalAttributes[$model->attribute_id] ?? null;
-            $isMultiSelectField = $this->isMultiSelectAttribute($attribute);
-            $valueAttribute = $isMultiSelectField ? 'attribute_value_json' : 'attribute_value';
-            $this->{$attribute} = $model->{$valueAttribute};
+        foreach ($this->additional_attributes as $attributeId => $val) {
+            $attribute = $additionalAttributes[$attributeId] ?? null;
+            if (!empty($attribute)) {
+                $this->{$attribute} = $val;
+            }
         }
     }
 
@@ -158,78 +302,30 @@ trait TableAttributeTrait
         $this->{$attribute} = $value;
     }
 
-    /**
-     * @param string $attributeValueModelClass
-     * @param string $foreignKeyAttribute
-     * @param bool $insert
-     * @throws \Exception
-     */
-    protected function saveAdditionalAttributes(string $attributeValueModelClass, string $foreignKeyAttribute, $insert = true)
+    protected function setAdditionalAttributesValues()
     {
         $this->ignoreAdditionalAttributes = false;
 
         $attributes = [];
-        foreach ($this->getAttributes() as $attribute => $val) {
-            if ($this->isAdditionalAttribute($attribute)) {
-                $columns = $this->saveAdditionalAttributeValue($attribute, $attributeValueModelClass, $foreignKeyAttribute, $insert);
-                if (is_array($columns)) {
-                    $attributes[] = $columns;
-                }
-            }
-        }
-        if (!empty($attributes)) {
-            $attributeValueModelClass::insertMultiple($attributes);
-        }
-
-    }
-
-    /**
-     * @param string $attribute
-     * @param string $attributeValueModelClass
-     * @param string $foreignKeyAttribute
-     * @param bool $insert
-     * @return bool|array
-     * @throws \Exception
-     */
-    public function saveAdditionalAttributeValue(string $attribute, string $attributeValueModelClass, string $foreignKeyAttribute, $insert = true)
-    {
-        if (null === $this->{$attribute}) {
-            return false;
-        }
         /* @var $attributeValueModelClass ActiveRecord */
         $additionalAttributeIds = $this->getAdditionalAttributeIds();
-        $attributeId = $additionalAttributeIds[$attribute];
-        $model = new $attributeValueModelClass([$foreignKeyAttribute => $this->id, 'attribute_id' => $attributeId]);
-        $isMultiSelectField = $this->isMultiSelectAttribute($attribute);
-        $valueAttribute = 'attribute_value';
-        if ($isMultiSelectField) {
-            $valueAttribute = 'attribute_value_json';
-        }
-        $attributeValue = $this->{$attribute};
-        if ($isMultiSelectField) {
-            if (!is_array($attributeValue)) {
-                $attributeValue = array_map('trim', explode(' ', $attributeValue));
+        foreach ($this->getAttributes() as $attribute => $val) {
+            if ($this->isAdditionalAttribute($attribute)) {
+                $attributeId = $additionalAttributeIds[$attribute];
+                $attributeValue = $this->{$attribute};
+                $isMultiSelectField = $this->isMultiSelectAttribute($attribute);
+                if ($isMultiSelectField) {
+                    if (!is_array($attributeValue)) {
+                        $attributeValue = array_map('trim', explode(' ', $attributeValue));
+                    }
+                    $attributeValue = array_unique($attributeValue);
+                }
+                $attributes[$attributeId] = $attributeValue;
             }
-            $attributeValue = array_unique($attributeValue);
         }
-        if ($insert) {
-            if (Str::isEmpty($attributeValue)) {
-                return false;
-            }
-            return [
-                $foreignKeyAttribute => $this->id,
-                'attribute_value' => !$isMultiSelectField ? $attributeValue : null,
-                'attribute_value_json' => $isMultiSelectField ? json_encode($attributeValue) : null,
-                'attribute_id' => $attributeId,
-            ];
-        }
+        $this->additional_attributes = $attributes;
 
-        $newModel = $attributeValueModelClass::find()->andWhere([$foreignKeyAttribute => $this->id, 'attribute_id' => $attributeId])->one();
-        if (null === $newModel) {
-            $newModel = clone $model;
-        }
-        $newModel->{$valueAttribute} = $attributeValue;
-        return $newModel->save(false);
+        $this->ignoreAdditionalAttributes = true;
     }
 
     /**

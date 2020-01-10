@@ -3,6 +3,7 @@
 namespace backend\modules\core\models;
 
 use backend\modules\auth\models\Users;
+use common\helpers\Utils;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
@@ -44,11 +45,10 @@ use yii\helpers\Html;
  * @property string $deleted_at
  * @property int $deleted_by
  * @property string $odk_code
+ * @property string|array $additional_attributes
  *
- * @property Organization $org
- * @property FarmAttributeValue[] $attributeValues
  * @property Users $fieldAgent
- * @property Animal [] $animals
+ * @property Animal $animals
  * @property AnimalHerd [] $herds
  */
 class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInterface, TableAttributeInterface
@@ -77,7 +77,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             [['farmer_name', 'org_id'], 'required'],
             [['name'], 'required', 'except' => [self::SCENARIO_UPLOAD]],
             [['org_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'field_agent_id', 'is_active', 'farmer_is_hh_head'], 'safe'],
-            [['latitude', 'latitude', 'phone'], 'number'],
+            [['latitude', 'longitude', 'phone'], 'number'],
             [['code', 'name', 'project', 'field_agent_name', 'farmer_name'], 'string', 'max' => 128],
             [['phone'], 'string', 'min' => 9, 'max' => 12, 'message' => '{attribute} should contain between 9 and 12 digits', 'except' => self::SCENARIO_UPLOAD],
             [['email', 'map_address'], 'string', 'max' => 255],
@@ -86,6 +86,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             [['reg_date'], 'date', 'format' => 'Y-m-d'],
             [['code'], 'unique', 'targetAttribute' => ['org_id', 'code'], 'message' => '{attribute} already exists', 'except' => self::SCENARIO_UPLOAD],
             [$this->getAdditionalAttributes(), 'safe'],
+            [['additional_attributes'], 'safe'],
             ['odk_code', 'unique', 'targetAttribute' => ['org_id', 'odk_code'], 'message' => '{attribute} already exists.', 'on' => self::SCENARIO_UPLOAD],
             [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
@@ -100,7 +101,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     {
         $labels = [
             'id' => 'ID',
-            'code' => 'Farmer Phone No.',
+            'code' => 'Code.',
             'name' => 'Farm Name',
             'org_id' => 'Country',
             'region_id' => $this->org !== null ? Html::encode($this->org->unit1_name) : 'Region',
@@ -160,6 +161,21 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
         ];
     }
 
+    public function fields()
+    {
+        $fields = $this->apiResourceFields();
+        $fields['gender_code'] = function () {
+            return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_GENDER, $this->gender_code);
+        };
+        $fields['farmer_is_hh_head'] = function () {
+            return Utils::decodeBoolean($this->farmer_is_hh_head);
+        };
+        $fields['is_active'] = function () {
+            return Utils::decodeBoolean($this->is_active);
+        };
+        return $fields;
+    }
+
     public function beforeValidate()
     {
         if (parent::beforeValidate()) {
@@ -167,7 +183,6 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
         }
         return false;
     }
-
 
     public function beforeSave($insert)
     {
@@ -182,6 +197,8 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             if (empty($this->name)) {
                 $this->name = $this->farmer_name;
             }
+            $this->setAdditionalAttributesValues();
+
             return true;
         }
         return false;
@@ -190,13 +207,12 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
-        $this->saveAdditionalAttributes(FarmAttributeValue::class, 'farm_id', $insert);
     }
 
     public function afterFind()
     {
         parent::afterFind();
-        $this->loadAdditionalAttributeValues($this->attributeValues);
+        $this->loadAdditionalAttributeValues();
     }
 
     /**
@@ -248,14 +264,6 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             'hhproblems',
             'hhproblems_other',
         ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getAttributeValues()
-    {
-        return $this->hasMany(FarmAttributeValue::class, ['farm_id' => 'id']);
     }
 
     /**

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * @author: Fred <mconyango@gmail.com>
- * Date: 2019-10-23
- * Time: 3:21 AM
- */
 
 namespace api\modules\v1\controllers;
 
@@ -12,13 +6,13 @@ namespace api\modules\v1\controllers;
 use api\controllers\ActiveController;
 use api\controllers\JwtAuthTrait;
 use backend\modules\conf\settings\SystemSettings;
-use backend\modules\core\models\Farm;
+use backend\modules\core\models\ChoiceTypes;
 
-class FarmersController extends ActiveController
+class ListTypesController extends ActiveController
 {
     use JwtAuthTrait;
 
-    public $modelClass = Farm::class;
+    public $modelClass = ChoiceTypes::class;
 
     public function init()
     {
@@ -28,11 +22,8 @@ class FarmersController extends ActiveController
 
     public function actionIndex()
     {
-        list($condition, $params) = Farm::appendOrgSessionIdCondition('', [], false);
-        $searchModel = Farm::searchModel([
+        $searchModel = ChoiceTypes::searchModel([
             'defaultOrder' => ['id' => SORT_ASC],
-            'condition' => $condition,
-            'params' => $params,
             'pageSize' => SystemSettings::getPaginationSize(),
             'enablePagination' => true,
         ]);

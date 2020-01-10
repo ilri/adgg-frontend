@@ -26,6 +26,9 @@ use yii\helpers\Url;
     'showExportButton' => false,
     'columns' => [
         [
+            'attribute' => 'id',
+        ],
+        [
             'attribute' => 'attribute_key',
         ],
         [
