@@ -108,7 +108,7 @@ use yii\helpers\Url;
                 </a>
             </li>
             <li class="kt-menu__item kt-menu__item--submenu">
-                <a href="#" class="kt-menu__link">
+                <a href="<?= Url::to(['/reports/builder/index']) ?>" class="kt-menu__link">
                     <i class="kt-menu__link-icon far fa-chart-pie"></i>
                     <span class="kt-menu__link-text">REPORTS</span>
                 </a>
