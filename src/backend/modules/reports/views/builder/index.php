@@ -29,7 +29,23 @@ $this->params['breadcrumbs'][] = $this->title;
                             /* @var $class ActiveRecord */
                             $class = new $modelData['class']();
                             //$name = $class::shortClassName();
-                            $attributes = $class->attributes();
+                            $all_attributes = $class->attributes();
+                            $main_attributes = [];
+                            $additional_attributes = [];
+                            // check if attribute is main or additional
+                            ## not necessary anymore, logic pushed to ReportBuilder
+                            foreach ($all_attributes as $attr){
+                                if (!$class->isAdditionalAttribute($attr)){
+                                    $main_attributes[] = $attr;
+                                }
+                                else {
+                                    $additional_attributes[] = $attr;
+                                }
+                            }
+                            # filter out additional_attributes field
+                            $attributes = array_filter($all_attributes, function($attr){
+                                return $attr != 'additional_attributes';
+                            });
                         ?>
                             <p>
                                 <button class="btn btn-outline-secondary" type="button" data-toggle="collapse" data-target="#collapse<?= $name ?>" aria-expanded="false" aria-controls="collapse<?= $name ?>">
@@ -51,6 +67,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                             $relationModelClass = new $relation->modelClass();
                                             $relationAttributes = $relationModelClass->attributes();
                                             $className = $relationModelClass::shortClassName();
+
                                             ?>
                                             <li data-toggle="collapse" data-target="#collapse<?= $relationName ?>" aria-expanded="false" aria-controls="collapse<?= $relationName ?>"> > <?= $relationName ?></li>
                                             <div class="collapse" id="collapse<?= $relationName ?>" style="">

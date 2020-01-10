@@ -116,7 +116,7 @@ MyApp.modules.reports = {};
 
         let _buildDropdownSelect = function(fieldName){
             var input = '<div class="col-md-3 mr-2"><select name="filterCondition['+fieldName+']" class="form-control-inline">';
-            input += '<option value=""> - Select - </option>';
+            input += '<option value=""> - Select an Operator- </option>';
             var options = $this.options.inputSelectOptions;
             for (var prop in options) {
                 if (Object.prototype.hasOwnProperty.call(options, prop)) {

@@ -1,15 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * @author: Fred <mconyango@gmail.com>
- * Date: 2019-06-20
- * Time: 9:40 AM
- */
 
 namespace backend\modules\reports\models;
 
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\Farm;
+use backend\modules\core\models\TableAttribute;
 use common\helpers\DbUtils;
 use common\helpers\Str;
 use common\helpers\Utils;
@@ -101,7 +96,7 @@ class ReportBuilder extends Model
      * @param string $modelName
      * @return \yii\db\ActiveRecord
      */
-    public static function getModelClass($modelName){
+    public static function getReportModelClass($modelName){
         $className = static::reportableModels()[$modelName]['class'];
         return new $className();
     }
@@ -134,9 +129,12 @@ class ReportBuilder extends Model
      * @return \yii\db\ActiveQuery
      */
     public function generateQuery(){
-        $className = static::reportableModels()[$this->model]['class'];
+        //$className = static::reportableModels()[$this->model]['class'];
         /* @var $class ActiveRecord */
-        $class = new $className();
+        //$class = new $className();
+        $class = static::getReportModelClass($this->model);
+        $main_attributes = [];
+        $additional_attributes = [];
         $attributes = [];
         $joins = [];
 
@@ -144,35 +142,59 @@ class ReportBuilder extends Model
         $query = $class::find();
         // get the attributes for select
         foreach ($this->filterConditions as $field => $conditionOperator){
-            // check if field is a joined relation
+            # check if field is a joined relation
             if(strpos($field, '.')){
                 $relationName = (explode('.', $field)[0]);
                 $fieldName = (explode('.', $field)[1]);
-                $relation = $class->getRelation($relationName);
-                /* @var $relationModelClass ActiveRecord */
-                $relationModelClass = new $relation->modelClass();
-
-                $tableName = $relationModelClass::tableName();
+                $modelClass = static::getRelationClass($class, $relationName);
+                //$tableName = $modelClass::tableName();
                 $joins[] = $relationName;
-                // append table name || relationName to field to remove ambiguity.
-                $aliasedField = $relationName.'.'.$fieldName;
+                # table name || relationName alias.
+                $fieldAlias = $relationName;
+                //$aliasedField = $relationName.'.'.$fieldName;
             }
             else {
-                // append table name to field to remove ambiguity.
-                $aliasedField = $class::tableName().'.'.$field;
+                $modelClass = $class;
+                # table name || relationName alias.
+                $fieldAlias = $class::tableName();
+                $fieldName = $field;
+                //$aliasedField = $class::tableName().'.'.$field;
             }
-            $attributes[] = $aliasedField;
+
+            # filter out additional attributes
+            # if it's additional field we will handle it in special way
+
+            if (!$modelClass->isAdditionalAttribute($fieldName)){
+                $main_attributes[] = $fieldName;
+                # append alias to field to remove ambiguity
+                $aliasedField = $fieldAlias.'.'.$fieldName;
+                $attributes[] = $aliasedField;
+            }
+            else {
+                # for additional attributes, find a way to get their values
+                $additional_attributes[] = $fieldName;
+                $attributeModel = TableAttribute::find()->andWhere(['attribute_key' => $fieldName, 'table_id' => $class::getDefinedTableId()])->one();
+                $id = $attributeModel->id;
+                $attributesColumn = $fieldAlias.'.[[additional_attributes]]';
+                # get the value of this field from the json payload
+                # e.g JSON_EXTRACT(`core_farm`.`additional_attributes`, '$."34"') as `hh_name`
+                $expression = new Expression('JSON_EXTRACT('.$attributesColumn.', '."'".'$."'.$id.'"'."'".') as ' . $fieldName);
+                // TODO: define a better way to search the json object
+                $aliasedField = new Expression('JSON_EXTRACT('.$attributesColumn.', '."'".'$."'.$id.'"'."'".')');
+                $query->addSelect($expression);
+            }
 
             // build the condition
             if (!empty($conditionOperator)){
                 // get the condition value for this field
                 $filter = $this->filterValues[$field];
+                // TODO: define a better way to search the json object in additional_attributes
                 $sqlCondition = static::buildCondition($conditionOperator, $aliasedField, $filter);
                 $query->andFilterWhere($sqlCondition);
             }
         }
         // do the select
-        $query->select($attributes);
+        $query->addSelect($attributes);
         // do the joins
         if (count($joins)){
             foreach (array_unique($joins) as $join){
