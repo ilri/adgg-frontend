@@ -44,6 +44,10 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     const EVENT_TYPE_SYNCHRONIZATION = 5;
     const EVENT_TYPE_WEIGHTS = 6;
     const EVENT_TYPE_HEALTH = 7;
+    const EVENT_TYPE_FEEDING = 8;
+    const EVENT_TYPE_EXITS = 9;
+    const EVENT_TYPE_SAMPLING = 10;//no data available yet
+    const EVENT_TYPE_CERTIFICATION = 11;//no data available yet
 
     public $animalTagId;
 
@@ -196,9 +200,17 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             case self::EVENT_TYPE_SYNCHRONIZATION:
                 return 'Synchronization';
             case self::EVENT_TYPE_WEIGHTS:
-                return 'Weights';
+                return 'Weights/Growth';
             case self::EVENT_TYPE_HEALTH:
                 return 'Health';
+            case self::EVENT_TYPE_FEEDING:
+                return 'Feeding';
+            case self::EVENT_TYPE_EXITS:
+                return 'Exits';
+            case self::EVENT_TYPE_SAMPLING:
+                return 'Sampling';
+            case self::EVENT_TYPE_CERTIFICATION:
+                return 'Certification';
             default:
                 return '';
         }
@@ -218,6 +230,10 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             self::EVENT_TYPE_SYNCHRONIZATION => static::decodeEventType(self::EVENT_TYPE_SYNCHRONIZATION),
             self::EVENT_TYPE_WEIGHTS => static::decodeEventType(self::EVENT_TYPE_WEIGHTS),
             self::EVENT_TYPE_HEALTH => static::decodeEventType(self::EVENT_TYPE_HEALTH),
+            self::EVENT_TYPE_FEEDING => static::decodeEventType(self::EVENT_TYPE_FEEDING),
+            self::EVENT_TYPE_EXITS => static::decodeEventType(self::EVENT_TYPE_EXITS),
+            //self::EVENT_TYPE_SAMPLING => static::decodeEventType(self::EVENT_TYPE_SAMPLING),
+            //self::EVENT_TYPE_CERTIFICATION => static::decodeEventType(self::EVENT_TYPE_CERTIFICATION),
         ], $prompt);
     }
 
