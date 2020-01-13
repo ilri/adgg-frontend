@@ -92,8 +92,8 @@ MyApp.modules.reports = {};
             $($this.options.selectedFieldsHolder).html('');
             arr.forEach(function (fieldName, index){
                 var dropdown = _buildDropdownSelect(fieldName);
-                var filterInput = '<div class="col-md-5 mr-2"><input name="filterValue['+fieldName+']" type="text" /></div>';
-                var removeBtn = '<div><span class="flaticon2-delete removeField" data-name="'+fieldName+'"></span></div>';
+                var filterInput = '<div class="col-md-4 mr-0 pr-0"><input name="filterValue['+fieldName+']" class="form-control form-control-sm" type="text" /></div>';
+                var removeBtn = '<div class="col-md-1 pt-2"><span class="flaticon2-delete removeField" data-name="'+fieldName+'"></span></div>';
                 var nameElem = '<div class="col-md-3"><span class="text-wrap word-wrap">'+ fieldName +'</span></div>';
                 var item = '<li class="list-group-item d-flex pr-0 pl-0" data-index="'+index+'" data-name="'+fieldName+'">'+ nameElem + dropdown + filterInput + removeBtn +'</li>';
                 $($this.options.selectedFieldsHolder).append(item);
@@ -115,8 +115,8 @@ MyApp.modules.reports = {};
         }
 
         let _buildDropdownSelect = function(fieldName){
-            var input = '<div class="col-md-3 mr-2"><select name="filterCondition['+fieldName+']" class="form-control-inline">';
-            input += '<option value=""> - Select - </option>';
+            var input = '<div class="col-md-4 mr-0 pr-0"><select name="filterCondition['+fieldName+']" class="form-control form-control-sm p-0">';
+            input += '<option value=""> - Select Operator- </option>';
             var options = $this.options.inputSelectOptions;
             for (var prop in options) {
                 if (Object.prototype.hasOwnProperty.call(options, prop)) {
