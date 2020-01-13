@@ -10,6 +10,7 @@ MyApp.modules.reports = {};
             generateQueryBtnSelector: '#generateQuery',
             queryOptionsContainer: '#queryOptions',
             queryHolderContainer: '#queryHolder',
+            orderBySelector: '#orderby',
             inputSelectOptions: {},
             generateQueryURL: '',
         };
@@ -25,6 +26,7 @@ MyApp.modules.reports = {};
         let $this = this;
         let selectedFields = [];
         let selectedParentModel = null;
+        let selectedParentModelTitle = null;
 
         //console.log($this.options.inputSelectOptions);
 
@@ -58,6 +60,7 @@ MyApp.modules.reports = {};
         let _populateSelected = function(e){
             var name = $(e).data('name');
             var parentModel = $(e).data('parent-model');
+            var parentModelTitle = $(e).data('parent-model-title');
             // if parentModel changes, prompt to clear selectedFields
             if(selectedParentModel !== parentModel){
                 selectedFields.length = 0;
@@ -69,6 +72,7 @@ MyApp.modules.reports = {};
             }
             //selectedFields.push(name);
             selectedParentModel = parentModel;
+            selectedParentModelTitle = parentModelTitle;
             console.log(selectedParentModel);
             console.log(name);
             console.log(selectedFields);
@@ -86,20 +90,22 @@ MyApp.modules.reports = {};
         }
 
         let _showSelected = function(){
-            $('#selectedModel').html(selectedParentModel);
+            $('#selectedModel').html(selectedParentModelTitle);
             $('input#model').val(selectedParentModel);
             let arr = selectedFields;
             $($this.options.selectedFieldsHolder).html('');
             arr.forEach(function (fieldName, index){
                 var dropdown = _buildDropdownSelect(fieldName);
-                var filterInput = '<div class="col-md-5 mr-2"><input name="filterValue['+fieldName+']" type="text" /></div>';
-                var removeBtn = '<div><span class="flaticon2-delete removeField" data-name="'+fieldName+'"></span></div>';
+                var filterInput = '<div class="col-md-4 mr-0 pr-0"><input name="filterValue['+fieldName+']" class="form-control form-control-sm" type="text" /></div>';
+                var removeBtn = '<div class="col-md-1 pt-2"><span class="flaticon2-delete removeField" data-name="'+fieldName+'"></span></div>';
                 var nameElem = '<div class="col-md-3"><span class="text-wrap word-wrap">'+ fieldName +'</span></div>';
                 var item = '<li class="list-group-item d-flex pr-0 pl-0" data-index="'+index+'" data-name="'+fieldName+'">'+ nameElem + dropdown + filterInput + removeBtn +'</li>';
                 $($this.options.selectedFieldsHolder).append(item);
             });
             // display the query options
             _toggleQueryOptions();
+            // rebuild orderby dropdown
+            _buildOrderByDropdown();
         }
 
         let _toggleQueryOptions = function(){
@@ -115,8 +121,8 @@ MyApp.modules.reports = {};
         }
 
         let _buildDropdownSelect = function(fieldName){
-            var input = '<div class="col-md-3 mr-2"><select name="filterCondition['+fieldName+']" class="form-control-inline">';
-            input += '<option value=""> - Select - </option>';
+            var input = '<div class="col-md-4 mr-0 pr-0"><select name="filterCondition['+fieldName+']" class="form-control form-control-sm p-0">';
+            input += '<option value=""> - Select Operator- </option>';
             var options = $this.options.inputSelectOptions;
             for (var prop in options) {
                 if (Object.prototype.hasOwnProperty.call(options, prop)) {
@@ -126,6 +132,15 @@ MyApp.modules.reports = {};
             }
             input += '</select></div>';
             return input;
+        }
+
+        let _buildOrderByDropdown = function(){
+            let options = '<option value=""> - Select Field- </option>';
+            selectedFields.forEach(function (item, index) {
+                var option = '<option value="'+item+'">'+item+'</option>';
+                options += option;
+            });
+            $($this.options.orderBySelector).html(options);
         }
 
         //on click
