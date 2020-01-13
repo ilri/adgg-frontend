@@ -103,6 +103,9 @@ class ChoiceTypes extends ActiveRecord implements ActiveSearchInterface
     const CHOICE_TYPE_SYNCHRONIZATION_TYPE = 75;
     const CHOICE_TYPE_BREEDING_HORMONES = 76;
     const CHOICE_TYPE_BREEDING_WHO_SYNC = 77;
+    const CHOICE_TYPE_PD_RESULT = 78;
+    const CHOICE_TYPE_PD_STAGE = 79;
+    const CHOICE_TYPE_PD_METHOD = 80;
 
     /**
      * {@inheritdoc}
