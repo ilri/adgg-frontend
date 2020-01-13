@@ -1,6 +1,8 @@
 <?php
 
 use backend\modules\core\models\AnimalEvent;
+use backend\modules\core\models\Choices;
+use backend\modules\core\models\ChoiceTypes;
 use common\helpers\Lang;
 use common\widgets\grid\GridView;
 use yii\helpers\Url;
@@ -16,6 +18,11 @@ use yii\helpers\Url;
     ],
     'columns' => [
         [
+            'attribute' => 'event_date',
+            'label' => 'Sync Date',
+            'format' => ['date', 'php:d-M-Y'],
+        ],
+        [
             'attribute' => 'animal_id',
             'value' => function (AnimalEvent $model) {
                 return $model->animal->tag_id;
@@ -29,9 +36,52 @@ use yii\helpers\Url;
             },
         ],
         [
-            'attribute' => 'event_date',
-            'label' => 'Milk Date',
-            'format' => ['date', 'php:d-M-Y'],
+            'attribute' => 'animalbreeding_syncnumber',
+            'value' => function (AnimalEvent $model) {
+                return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_SYNCHRONIZATION_TYPE, $model->animalbreeding_syncnumber);
+            },
+        ],
+        [
+            'attribute' => 'breeding_syncparity',
+        ],
+        [
+            'attribute' => 'breeding_synctime',
+        ],
+        [
+            'attribute' => 'animalbreeding_synchormonetype',
+            'value' => function (AnimalEvent $model) {
+                return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_BREEDING_HORMONES, $model->animalbreeding_synchormonetype);
+            },
+        ],
+        [
+            'attribute' => 'animalbreeding_syncsemensource',
+            'value' => function (AnimalEvent $model) {
+                return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_SEMEN_SOURCE, $model->animalbreeding_syncsemensource);
+            },
+        ],
+        [
+            'attribute' => 'breeding_syncsemensourceoth',
+        ],
+        [
+            'attribute' => 'breeding_synccost',
+        ],
+        [
+            'attribute' => 'animalbreeding_syncwhodid',
+            'value' => function (AnimalEvent $model) {
+                return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_BREEDING_WHO_SYNC, $model->animalbreeding_syncwhodid);
+            },
+        ],
+        [
+            'attribute' => 'breeding_syncwhodidoth',
+        ],
+        [
+            'attribute' => 'breeding_syncwhodidothphone',
+        ],
+        [
+            'attribute' => 'field_agent_id',
+            'value' => function (AnimalEvent $model) {
+                return $model->getRelationAttributeValue('fieldAgent', 'name');
+            },
         ],
     ],
 ]);
