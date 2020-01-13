@@ -73,4 +73,22 @@ $controller = Yii::$app->controller;
             </span>
         </a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link"
+           href="<?= Url::to(['#']) ?>">
+            <?= Lang::t('Feeding') ?>
+            <span class="badge badge-important badge-pill">
+                (<?= number_format(AnimalEvent::getCount(['event_type' => AnimalEvent::EVENT_TYPE_FEEDING])) ?>)
+            </span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link"
+           href="<?= Url::to(['#']) ?>">
+            <?= Lang::t('Exits') ?>
+            <span class="badge badge-important badge-pill">
+                (<?= number_format(AnimalEvent::getCount(['event_type' => AnimalEvent::EVENT_TYPE_EXITS])) ?>)
+            </span>
+        </a>
+    </li>
 </ul>
