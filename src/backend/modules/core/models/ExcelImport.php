@@ -41,7 +41,8 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
     const TYPE_ANIMAL_EVENT_AI = 32;
     const TYPE_ANIMAL_EVENT_SYNC = 33;
     const TYPE_ANIMAL_EVENT_PD = 34;
-    const TYPE_ORGANIZATION_UNITS = 40;
+    const TYPE_ANIMAL_EVENT_WEIGHT = 35;
+    const TYPE_ORGANIZATION_UNITS = 50;
 
     /**
      * {@inheritdoc}
@@ -167,6 +168,8 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
                 return 'Synchronization';
             case self::TYPE_ANIMAL_EVENT_PD:
                 return 'Pregnancy Diagnosis';
+            case self::TYPE_ANIMAL_EVENT_WEIGHT:
+                return 'Weight';
             case self::TYPE_ORGANIZATION_UNITS:
                 return 'Country Administrative Units';
             default:
@@ -190,6 +193,7 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
             self::TYPE_ANIMAL_EVENT_AI => static::decodeType(self::TYPE_ANIMAL_EVENT_AI),
             self::TYPE_ANIMAL_EVENT_SYNC => static::decodeType(self::TYPE_ANIMAL_EVENT_SYNC),
             self::TYPE_ANIMAL_EVENT_PD => static::decodeType(self::TYPE_ANIMAL_EVENT_PD),
+            self::TYPE_ANIMAL_EVENT_WEIGHT => static::decodeType(self::TYPE_ANIMAL_EVENT_WEIGHT),
             self::TYPE_ORGANIZATION_UNITS => static::decodeType(self::TYPE_ORGANIZATION_UNITS),
         ], $prompt);
     }

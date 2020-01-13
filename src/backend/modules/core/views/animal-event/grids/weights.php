@@ -1,6 +1,8 @@
 <?php
 
 use backend\modules\core\models\AnimalEvent;
+use backend\modules\core\models\Choices;
+use backend\modules\core\models\ChoiceTypes;
 use common\helpers\Lang;
 use common\widgets\grid\GridView;
 use yii\helpers\Url;
@@ -16,6 +18,11 @@ use yii\helpers\Url;
     ],
     'columns' => [
         [
+            'attribute' => 'event_date',
+            'label' => 'Weight Date',
+            'format' => ['date', 'php:d-M-Y'],
+        ],
+        [
             'attribute' => 'animal_id',
             'value' => function (AnimalEvent $model) {
                 return $model->animal->tag_id;
@@ -29,9 +36,23 @@ use yii\helpers\Url;
             },
         ],
         [
-            'attribute' => 'event_date',
-            'label' => 'Milk Date',
-            'format' => ['date', 'php:d-M-Y'],
+            'attribute' => 'weight_kg',
+            'enableSorting' => false,
+        ],
+        [
+            'attribute' => 'heartgirth',
+            'enableSorting' => false,
+        ],
+        [
+            'attribute' => 'body_length',
+            'enableSorting' => false,
+        ],
+        [
+            'attribute' => 'body_score',
+            'value' => function (AnimalEvent $model) {
+                return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_BODY_CONDITION, $model->body_score);
+            },
+            'enableSorting' => false,
         ],
     ],
 ]);
