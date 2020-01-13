@@ -20,7 +20,7 @@ class AnimalsController extends ActiveController
     }
 
 
-    public function actionIndex($farm_id = null, $farm_name = null, $tag_id = null, $animal_type = null, $breed = null)
+    public function actionIndex($farm_id = null, $tag_id = null, $animal_type = null, $breed = null)
     {
         $searchModel = Animal::searchModel([
             'defaultOrder' => ['id' => SORT_ASC],
