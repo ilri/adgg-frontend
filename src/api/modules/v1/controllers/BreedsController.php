@@ -21,6 +21,15 @@ class BreedsController extends ActiveController
 
     public function actionIndex()
     {
-        return Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS);
+        $data = [];
+        $breeds = Choices::getData('value, label', ['list_type_id' => ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS]);
+
+        foreach ($breeds as $breed) {
+            $data[] = [
+                'id' => $breed['value'],
+                'label' => $breed['label'],
+            ];
+        }
+        return $data;
     }
 }
