@@ -28,8 +28,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         foreach ($models as $name => $modelData){
                             /* @var $class ActiveRecord */
                             $class = new $modelData['class']();
+                            $title = $modelData['title'] ?? $name;
                             //$name = $class::shortClassName();
-                            $all_attributes = $class->attributes();
+                            $all_attributes = $class->reportBuilderFields();
                             $main_attributes = [];
                             $additional_attributes = [];
                             // check if attribute is main or additional
@@ -49,14 +50,14 @@ $this->params['breadcrumbs'][] = $this->title;
                         ?>
                             <p>
                                 <button class="btn btn-outline-secondary" type="button" data-toggle="collapse" data-target="#collapse<?= $name ?>" aria-expanded="false" aria-controls="collapse<?= $name ?>">
-                                        <?= $name ?>
+                                        <?= $title ?>
                                 </button>
                             </p>
                             <div class="collapse" id="collapse<?= $name ?>" style="">
                                 <div class="card card-body">
                                     <ul>
                                     <?php foreach ($attributes as $attr): ?>
-                                        <li class="attribute" data-model="<?= $name ?>" data-parent-model="<?= $name ?>" data-name="<?= $attr ?>"><?= $attr ?></li>
+                                        <li class="attribute" data-model="<?= $name ?>" data-parent-model="<?= $name ?>" data-parent-model-title="<?= $title ?>" data-name="<?= $attr ?>"><?= $attr ?></li>
                                     <?php endforeach; ?>
                                     <?php
                                     if(count($modelData['relations'])){
@@ -65,7 +66,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                             $relation = $class->getRelation($relationName);
                                             /* @var $relationModelClass ActiveRecord */
                                             $relationModelClass = new $relation->modelClass();
-                                            $relationAttributes = $relationModelClass->attributes();
+                                            $relationAttributes = $relationModelClass->reportBuilderFields();
                                             $className = $relationModelClass::shortClassName();
 
                                             # filter out additional_attributes field
@@ -78,7 +79,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                             <div class="collapse" id="collapse<?= $relationName ?>" style="">
                                                 <ul>
                                                     <?php foreach ($relationAttributes as $attr): ?>
-                                                        <li class="attribute" data-model="<?= $className ?>" data-parent-model="<?= $name ?>" data-name="<?= $relationName.'.'.$attr ?>"><?= $attr ?></li>
+                                                        <li class="attribute" data-model="<?= $className ?>" data-parent-model="<?= $name ?>" data-parent-model-title="<?= $title ?>" data-name="<?= $relationName.'.'.$attr ?>"><?= $attr ?></li>
                                                     <?php endforeach; ?>
                                                 </ul>
                                             </div>

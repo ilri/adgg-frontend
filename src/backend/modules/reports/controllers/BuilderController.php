@@ -43,7 +43,6 @@ class BuilderController extends Controller
         $builder->filterValues = $filterValues;
         $builder->orderBy = $orderBy;
         $builder->limit = $limit;
-        //echo $builder->generateQuery();
         echo $builder->rawQuery();
         //print_r($builder->generateQuery());
 

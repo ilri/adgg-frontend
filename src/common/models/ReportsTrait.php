@@ -36,4 +36,14 @@ trait ReportsTrait
         }
         return static::getStats($durationType, $condition, $params, $sum, $dateField, $from, $to);
     }
+
+    public function reportBuilderFields(){
+        $unwanted = [
+            'id', 'test', 'additional_attributes', 'created_at', 'created_by', 'updated_at', 'updated_by', 'is_deleted', 'deleted_at', 'deleted_by',
+        ];
+        $attributes = $this->attributes();
+        $attrs = array_diff($attributes, $unwanted);
+        sort($attrs);
+        return $attrs;
+    }
 }

@@ -25,6 +25,7 @@ MyApp.modules.reports = {};
         let $this = this;
         let selectedFields = [];
         let selectedParentModel = null;
+        let selectedParentModelTitle = null;
 
         //console.log($this.options.inputSelectOptions);
 
@@ -58,6 +59,7 @@ MyApp.modules.reports = {};
         let _populateSelected = function(e){
             var name = $(e).data('name');
             var parentModel = $(e).data('parent-model');
+            var parentModelTitle = $(e).data('parent-model-title');
             // if parentModel changes, prompt to clear selectedFields
             if(selectedParentModel !== parentModel){
                 selectedFields.length = 0;
@@ -69,6 +71,7 @@ MyApp.modules.reports = {};
             }
             //selectedFields.push(name);
             selectedParentModel = parentModel;
+            selectedParentModelTitle = parentModelTitle;
             console.log(selectedParentModel);
             console.log(name);
             console.log(selectedFields);
@@ -86,7 +89,7 @@ MyApp.modules.reports = {};
         }
 
         let _showSelected = function(){
-            $('#selectedModel').html(selectedParentModel);
+            $('#selectedModel').html(selectedParentModelTitle);
             $('input#model').val(selectedParentModel);
             let arr = selectedFields;
             $($this.options.selectedFieldsHolder).html('');
