@@ -22,10 +22,25 @@ return [
         'class' => \yii\rest\UrlRule::class,
         'pluralize' => false,
         'controller' => [
+            'stats' => 'v1/animal-stats',
+        ],
+        'tokens' => [
+            '{id}' => '<id:\\w+>',
+        ],
+        'extraPatterns' => [
+        ]
+    ],
+    [
+        'class' => \yii\rest\UrlRule::class,
+        'pluralize' => false,
+        'controller' => [
             'animals' => 'v1/animals',
             'events' => 'v1/animal-event',
             'list-types' => 'v1/list-types',
-            'event-types' => 'v1/event-types'
+            'event-types' => 'v1/event-types',
+            'animal-types' => 'v1/animal-types',
+            'breeds' => 'v1/breeds',
+            'users' => 'v1/user'
         ],
         'except' => ['delete', 'update', 'create'],
     ],
