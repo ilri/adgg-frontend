@@ -3,6 +3,7 @@
 namespace backend\modules\reports\models;
 
 use backend\modules\core\models\Animal;
+use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\TableAttribute;
 use common\helpers\DbUtils;
@@ -28,13 +29,70 @@ class ReportBuilder extends Model
         return [
             'Farm' => [
                 'class' => Farm::class,
+                'title' => 'Farm',
                 'relations' => ['fieldAgent'],
             ],
             'Animal' => [
                 'class' => Animal::class,
+                'title' => 'Animal',
                 'relations' => ['farm', 'herd', 'sire', 'dam'],
             ],
+            'Calving_Event' => [
+                'class' => AnimalEvent::class,
+                'title' => 'Calving Events',
+                'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_CALVING],
+                'relations' => ['animal', 'org', 'region', 'district', 'ward', 'village'],
+            ],
+            'Milking_Event' => [
+                'class' => AnimalEvent::class,
+                'title' => 'Milking Events',
+                'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_MILKING],
+                'relations' => ['animal', 'org', 'region', 'district', 'ward', 'village'],
+            ],
+            'Insemination_Event' => [
+                'class' => AnimalEvent::class,
+                'title' => 'Insemination Events',
+                'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_AI],
+                'relations' => ['animal', 'org', 'region', 'district', 'ward', 'village'],
+            ],
+            'Pregnancy_Diagnosis_Event' => [
+                'class' => AnimalEvent::class,
+                'title' => 'Pregnancy Diagnosis Events',
+                'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_PREGNANCY_DIAGNOSIS],
+                'relations' => ['animal', 'org', 'region', 'district', 'ward', 'village'],
+            ],
+            'Synchronization_Event' => [
+                'class' => AnimalEvent::class,
+                'title' => 'Synchronization Events',
+                'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_SYNCHRONIZATION],
+                'relations' => ['animal', 'org', 'region', 'district', 'ward', 'village'],
+            ],
+            'Weights_Event' => [
+                'class' => AnimalEvent::class,
+                'title' => 'Weights Events',
+                'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_WEIGHTS],
+                'relations' => ['animal', 'org', 'region', 'district', 'ward', 'village'],
+            ],
+            'Health_Event' => [
+                'class' => AnimalEvent::class,
+                'title' => 'Health Events',
+                'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_HEALTH],
+                'relations' => ['animal', 'org', 'region', 'district', 'ward', 'village'],
+            ],
+            'Feeding_Event' => [
+                'class' => AnimalEvent::class,
+                'title' => 'Feeding Events',
+                'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_FEEDING],
+                'relations' => ['animal', 'org', 'region', 'district', 'ward', 'village'],
+            ],
+            'Exits_Event' => [
+                'class' => AnimalEvent::class,
+                'title' => 'Exits Events',
+                'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_EXITS],
+                'relations' => ['animal', 'org', 'region', 'district', 'ward', 'village'],
+            ],
         ];
+
     }
 
     public static function fieldConditionOptions($prompt = false)
@@ -128,19 +186,20 @@ class ReportBuilder extends Model
             $fieldAlias = $modelClass::tableName();
         }
 
-        if (!$modelClass->isAdditionalAttribute($fieldName)){
-            $main_attributes[] = $fieldName;
-            # append alias to field to remove ambiguity
-            $aliasedField = $fieldAlias.'.'.$fieldName;
-        }
-        else {
-            # for additional attributes, find a way to get their values
-            $attributeModel = TableAttribute::find()->andWhere(['attribute_key' => $fieldName, 'table_id' => $modelClass::getDefinedTableId()])->one();
-            $id = $attributeModel->id;
-            $attributesColumn = $fieldAlias.'.[[additional_attributes]]';
-            # get the value of this field from the json payload
-            # e.g JSON_EXTRACT(`core_farm`.`additional_attributes`, '$."34"')
-            $aliasedField = new Expression('JSON_UNQUOTE(JSON_EXTRACT('.$attributesColumn.', '."'".'$."'.$id.'"'."'".'))');
+        # append alias to field to remove ambiguity
+        $aliasedField = $fieldAlias.'.'.$fieldName;
+
+        if($modelClass->hasMethod('isAdditionalAttribute')){
+            if ($modelClass->isAdditionalAttribute($fieldName)){
+                # for additional attributes, find a way to get their values
+                $attributeModel = TableAttribute::find()->andWhere(['attribute_key' => $fieldName, 'table_id' => $modelClass::getDefinedTableId()])->one();
+                $id = $attributeModel->id;
+                $attributesColumn = $fieldAlias.'.[[additional_attributes]]';
+                # get the value of this field from the json payload
+                # e.g JSON_EXTRACT(`core_farm`.`additional_attributes`, '$."34"')
+                $aliasedField = new Expression('JSON_UNQUOTE(JSON_EXTRACT('.$attributesColumn.', '."'".'$."'.$id.'"'."'".'))');
+
+            }
         }
 
         return $aliasedField;
@@ -154,6 +213,7 @@ class ReportBuilder extends Model
         /* @var $class ActiveRecord */
         //$class = new $className();
         $class = static::getReportModelClass($this->model);
+        $reportableModelOptions = static::reportableModels()[$this->model];
         $main_attributes = [];
         $additional_attributes = [];
         $attributes = [];
@@ -183,31 +243,38 @@ class ReportBuilder extends Model
             # filter out additional attributes
             # if it's additional field we will handle it in special way
 
-            if (!$modelClass->isAdditionalAttribute($fieldName)){
+            if($modelClass->hasMethod('isAdditionalAttribute')){
+                if (!$modelClass->isAdditionalAttribute($fieldName)){
+                    $main_attributes[] = $fieldName;
+                    # append alias to field to remove ambiguity
+                    $aliasedField = $fieldAlias.'.'.$fieldName;
+                    $attributes[] = $aliasedField;
+                }
+                else {
+                    # for additional attributes, find a way to get their values
+                    $additional_attributes[] = $fieldName;
+                    $attributeModel = TableAttribute::find()->andWhere(['attribute_key' => $fieldName, 'table_id' => $modelClass::getDefinedTableId()])->one();
+                    $id = $attributeModel->id;
+                    $attributesColumn = $fieldAlias.'.[[additional_attributes]]';
+                    # get the value of this field from the json payload
+                    # e.g JSON_EXTRACT(`core_farm`.`additional_attributes`, '$."34"') as `hh_name`
+                    $expression = new Expression('JSON_UNQUOTE(JSON_EXTRACT('.$attributesColumn.', '."'".'$."'.$id.'"'."'".')) as [[' . $fieldName .']]');
+                    $aliasedField = new Expression('JSON_UNQUOTE(JSON_EXTRACT('.$attributesColumn.', '."'".'$."'.$id.'"'."'".'))');
+                    $query->addSelect($expression);
+                }
+            }
+            else{
+                // TODO: refactor repetition
                 $main_attributes[] = $fieldName;
                 # append alias to field to remove ambiguity
                 $aliasedField = $fieldAlias.'.'.$fieldName;
                 $attributes[] = $aliasedField;
-            }
-            else {
-                # for additional attributes, find a way to get their values
-                $additional_attributes[] = $fieldName;
-                $attributeModel = TableAttribute::find()->andWhere(['attribute_key' => $fieldName, 'table_id' => $modelClass::getDefinedTableId()])->one();
-                $id = $attributeModel->id;
-                $attributesColumn = $fieldAlias.'.[[additional_attributes]]';
-                # get the value of this field from the json payload
-                # e.g JSON_EXTRACT(`core_farm`.`additional_attributes`, '$."34"') as `hh_name`
-                $expression = new Expression('JSON_UNQUOTE(JSON_EXTRACT('.$attributesColumn.', '."'".'$."'.$id.'"'."'".')) as [[' . $fieldName .']]');
-                // TODO: define a better way to search the json object
-                $aliasedField = new Expression('JSON_UNQUOTE(JSON_EXTRACT('.$attributesColumn.', '."'".'$."'.$id.'"'."'".'))');
-                $query->addSelect($expression);
             }
 
             // build the condition
             if (!empty($conditionOperator)){
                 // get the condition value for this field
                 $filter = $this->filterValues[$field];
-                // TODO: define a better way to search the json object in additional_attributes
                 $sqlCondition = static::buildCondition($conditionOperator, $aliasedField, $filter);
                 $query->andFilterWhere($sqlCondition);
             }
@@ -239,6 +306,18 @@ class ReportBuilder extends Model
         if ($this->orderBy){
             // should be a fully qualified column name
             $query->orderBy(static::getFullColumnName($this->orderBy, $class));
+        }
+        // if reportable model has extraCondition to be enforced, add it here
+        if(array_key_exists('extraCondition', $reportableModelOptions)){
+            $condition = $reportableModelOptions['extraCondition'];
+            if (count($condition)){
+                foreach ($condition as $f => $value){
+                    $aliasedField = static::getFullColumnName($f,$class);
+                    $sqlCondition = static::buildCondition('=', $aliasedField, $value);
+                    $query->andWhere($sqlCondition);
+                }
+
+            }
         }
         return $query;
 

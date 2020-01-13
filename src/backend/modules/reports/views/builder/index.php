@@ -28,8 +28,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         foreach ($models as $name => $modelData){
                             /* @var $class ActiveRecord */
                             $class = new $modelData['class']();
+                            $title = $modelData['title'] ?? $name;
                             //$name = $class::shortClassName();
-                            $all_attributes = $class->attributes();
+                            $all_attributes = $class->reportBuilderFields();
                             $main_attributes = [];
                             $additional_attributes = [];
                             // check if attribute is main or additional
@@ -49,14 +50,14 @@ $this->params['breadcrumbs'][] = $this->title;
                         ?>
                             <p>
                                 <button class="btn btn-outline-secondary" type="button" data-toggle="collapse" data-target="#collapse<?= $name ?>" aria-expanded="false" aria-controls="collapse<?= $name ?>">
-                                        <?= $name ?>
+                                        <?= $title ?>
                                 </button>
                             </p>
                             <div class="collapse" id="collapse<?= $name ?>" style="">
                                 <div class="card card-body">
                                     <ul>
                                     <?php foreach ($attributes as $attr): ?>
-                                        <li class="attribute" data-model="<?= $name ?>" data-parent-model="<?= $name ?>" data-name="<?= $attr ?>"><?= $attr ?></li>
+                                        <li class="attribute" data-model="<?= $name ?>" data-parent-model="<?= $name ?>" data-parent-model-title="<?= $title ?>" data-name="<?= $attr ?>"><?= $attr ?></li>
                                     <?php endforeach; ?>
                                     <?php
                                     if(count($modelData['relations'])){
@@ -65,7 +66,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                             $relation = $class->getRelation($relationName);
                                             /* @var $relationModelClass ActiveRecord */
                                             $relationModelClass = new $relation->modelClass();
-                                            $relationAttributes = $relationModelClass->attributes();
+                                            $relationAttributes = $relationModelClass->reportBuilderFields();
                                             $className = $relationModelClass::shortClassName();
 
                                             # filter out additional_attributes field
@@ -78,7 +79,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                             <div class="collapse" id="collapse<?= $relationName ?>" style="">
                                                 <ul>
                                                     <?php foreach ($relationAttributes as $attr): ?>
-                                                        <li class="attribute" data-model="<?= $className ?>" data-parent-model="<?= $name ?>" data-name="<?= $relationName.'.'.$attr ?>"><?= $attr ?></li>
+                                                        <li class="attribute" data-model="<?= $className ?>" data-parent-model="<?= $name ?>" data-parent-model-title="<?= $title ?>" data-name="<?= $relationName.'.'.$attr ?>"><?= $attr ?></li>
                                                     <?php endforeach; ?>
                                                 </ul>
                                             </div>
@@ -105,12 +106,14 @@ $this->params['breadcrumbs'][] = $this->title;
                         <div id="queryOptions" class="hidden">
                             <h3>Query Options</h3>
                             <div class="row row-no-gutters mb-2">
-                                <div class="col-md-3"><label>Limit: </label></div>
-                                <div class="col-md-8"><input name="limit" type="text" value="100" class="form-control form-control-sm" /></div>
+                                <div class="col-md-3"><label for="limit">Limit: </label></div>
+                                <div class="col-md-8"><input name="limit" id="limit" type="text" value="100" class="form-control form-control-sm" /></div>
                             </div>
                             <div class="row row-no-gutters mt-2">
-                                <div class="col-md-3"><label>Order By: </label></div>
-                                <div class="col-md-8"><input name="orderby" type="text" value="" class="form-control form-control-sm" /></div>
+                                <div class="col-md-3"><label for="orderby">Order By: </label></div>
+                                <div class="col-md-8">
+                                    <select name="orderby" id="orderby" type="text" class="form-control form-control-sm"></select>
+                                </div>
                             </div>
                             <div class="mt-5">
                                 <button id="generateQuery" role="button" class="btn btn-primary col-md-8 offset-3">Generate Query</button>
