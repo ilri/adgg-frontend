@@ -27,7 +27,7 @@ trait AnimalEventTrait
             'defaultOrder' => ['id' => SORT_DESC],
             'condition' => $condition,
             'params' => $params,
-            'with' => ['animal'],
+            'with' => ['animal','fieldAgent'],
         ]);
         $animalTagId = Yii::$app->request->get('animal_tag_id', null);
         if (!empty($animalTagId)) {

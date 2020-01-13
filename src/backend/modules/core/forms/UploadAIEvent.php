@@ -9,6 +9,8 @@
 namespace backend\modules\core\forms;
 
 
+use backend\modules\auth\models\Users;
+use backend\modules\core\models\AIEvent;
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\ExcelImport;
 use common\excel\ImportInterface;
@@ -39,12 +41,21 @@ class UploadAIEvent extends UploadAnimalEvent implements ImportInterface
                 continue;
             }
             $row = $this->setDefaultAttributes($row);
-            $row['milk_qty_is_tested'] = static::encodeBoolean($row['milk_qty_is_tested'], $row['milk_qty_is_tested']);
+            $row['field_agent_id'] = $this->getFieldAgentId($row['field_agent_id']);
             $insert_data[$k] = $row;
         }
 
-        $model = new MilkingEvent(['org_id' => $this->org_id, 'event_type' => $this->event_type]);
+        $model = new AIEvent(['org_id' => $this->org_id, 'event_type' => $this->event_type]);
         $this->save($insert_data, $model, false);
+    }
+
+    protected function getFieldAgentId($code)
+    {
+        $userId = Users::getScalar('id', ['username' => $code]);
+        if (empty($userId)) {
+            return null;
+        }
+        return $userId;
     }
 
     /**
