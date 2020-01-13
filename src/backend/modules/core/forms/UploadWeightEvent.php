@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * @author: Fred <mconyango@gmail.com>
  * Date: 2020-01-14
- * Time: 12:56 AM
+ * Time: 1:56 AM
  */
 
 namespace backend\modules\core\forms;
@@ -14,13 +14,13 @@ use backend\modules\core\models\ExcelImport;
 use backend\modules\core\models\PDEvent;
 use common\excel\ImportInterface;
 
-class UploadPDEvent extends UploadAnimalEvent implements ImportInterface
+class UploadWeightEvent extends UploadAnimalEvent implements ImportInterface
 {
     public function init()
     {
         parent::init();
-        $this->event_type = AnimalEvent::EVENT_TYPE_PREGNANCY_DIAGNOSIS;
-        $this->sampleExcelFileName = 'pd-event.xlsx';
+        $this->event_type = AnimalEvent::EVENT_TYPE_WEIGHTS;
+        $this->sampleExcelFileName = 'weight-event.xlsx';
     }
 
 
@@ -40,8 +40,6 @@ class UploadPDEvent extends UploadAnimalEvent implements ImportInterface
                 continue;
             }
             $row = $this->setDefaultAttributes($row);
-            $row['field_agent_id'] = $this->getFieldAgentId($row['field_agent_id']);
-            $row['breeding_pdservicedate'] = static::getDateColumnData($row['breeding_pdservicedate']);
             $insert_data[$k] = $row;
         }
 
@@ -54,6 +52,6 @@ class UploadPDEvent extends UploadAnimalEvent implements ImportInterface
      */
     public function setUploadType()
     {
-        $this->_uploadType = ExcelImport::TYPE_ANIMAL_EVENT_PD;
+        $this->_uploadType = ExcelImport::TYPE_ANIMAL_EVENT_WEIGHT;
     }
 }
