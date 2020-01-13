@@ -10,6 +10,7 @@ MyApp.modules.reports = {};
             generateQueryBtnSelector: '#generateQuery',
             queryOptionsContainer: '#queryOptions',
             queryHolderContainer: '#queryHolder',
+            orderBySelector: '#orderby',
             inputSelectOptions: {},
             generateQueryURL: '',
         };
@@ -103,6 +104,8 @@ MyApp.modules.reports = {};
             });
             // display the query options
             _toggleQueryOptions();
+            // rebuild orderby dropdown
+            _buildOrderByDropdown();
         }
 
         let _toggleQueryOptions = function(){
@@ -129,6 +132,15 @@ MyApp.modules.reports = {};
             }
             input += '</select></div>';
             return input;
+        }
+
+        let _buildOrderByDropdown = function(){
+            let options = '<option value=""> - Select Field- </option>';
+            selectedFields.forEach(function (item, index) {
+                var option = '<option value="'+item+'">'+item+'</option>';
+                options += option;
+            });
+            $($this.options.orderBySelector).html(options);
         }
 
         //on click
