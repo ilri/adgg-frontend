@@ -2,6 +2,7 @@
 
 namespace backend\modules\core\models;
 
+use backend\modules\auth\models\Users;
 use common\helpers\Utils;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
@@ -29,9 +30,11 @@ use common\models\CustomValidationsTrait;
  * @property int $created_by
  * @property string $updated_at
  * @property int $updated_by
+ * @property int $field_agent_id
  * @property string|array $additional_attributes
  *
  * @property Animal $animal
+ * @property Users $fieldAgent
  */
 class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAttributeInterface
 {
@@ -66,7 +69,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     {
         return [
             [['animal_id', 'event_type', 'event_date'], 'required'],
-            [['animal_id', 'event_type', 'org_id', 'region_id', 'district_id', 'ward_id', 'village_id'], 'integer'],
+            [['animal_id', 'event_type', 'org_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'field_agent_id'], 'integer'],
             [['event_date'], 'date', 'format' => 'php:Y-m-d'],
             [['latitude', 'longitude'], 'number'],
             [['map_address', 'uuid'], 'string', 'max' => 255],
@@ -101,6 +104,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             'updated_at' => 'Updated At',
             'updated_by' => 'Updated By',
             'animalTagId' => 'Animal Tag Id',
+            'field_agent_id' => 'Field Agent'
         ];
 
         return array_merge($labels, $this->getOtherAttributeLabels());
@@ -112,6 +116,14 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     public function getAnimal()
     {
         return $this->hasOne(Animal::class, ['id' => 'animal_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFieldAgent()
+    {
+        return $this->hasOne(Users::class, ['id' => 'field_agent_id']);
     }
 
     /**
@@ -127,6 +139,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             'district_id',
             'ward_id',
             'village_id',
+            'field_agent_id',
         ];
     }
 

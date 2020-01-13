@@ -26,17 +26,17 @@ class FarmersController extends ActiveController
     }
 
 
-    public function actionIndex()
+    public function actionIndex($farm_name = null, $farmer_phone = null, $farm_type = null, $project = null)
     {
-        list($condition, $params) = Farm::appendOrgSessionIdCondition('', [], false);
         $searchModel = Farm::searchModel([
             'defaultOrder' => ['id' => SORT_ASC],
-            'condition' => $condition,
-            'params' => $params,
             'pageSize' => SystemSettings::getPaginationSize(),
             'enablePagination' => true,
         ]);
-
+        $searchModel->name = $farm_name;
+        $searchModel->phone = $farmer_phone;
+        $searchModel->farm_type = $farm_type;
+        $searchModel->project = $project;
         return $searchModel->search();
     }
 }

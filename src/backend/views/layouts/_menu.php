@@ -55,7 +55,7 @@ use yii\helpers\Url;
                             <a href="<?= Url::to(['/core/insemination-event/index']) ?>"
                                class="kt-menu__link ">
                                 <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                <span class="kt-menu__link-text">Insemination</span>
+                                <span class="kt-menu__link-text">Artificial Insemination</span>
                             </a>
                         </li>
                         <li class="kt-menu__item">
@@ -84,6 +84,20 @@ use yii\helpers\Url;
                                class="kt-menu__link ">
                                 <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
                                 <span class="kt-menu__link-text">Health</span>
+                            </a>
+                        </li>
+                        <li class="kt-menu__item">
+                            <a href="#"
+                               class="kt-menu__link ">
+                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                <span class="kt-menu__link-text">Feeding</span>
+                            </a>
+                        </li>
+                        <li class="kt-menu__item">
+                            <a href="#"
+                               class="kt-menu__link ">
+                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                <span class="kt-menu__link-text">Exits</span>
                             </a>
                         </li>
                     </ul>
