@@ -9,6 +9,7 @@
 namespace backend\modules\core\forms;
 
 
+use backend\modules\auth\models\Users;
 use backend\modules\core\models\Animal;
 use common\excel\ExcelUploadForm;
 use common\helpers\Lang;
@@ -81,5 +82,14 @@ abstract class UploadAnimalEvent extends ExcelUploadForm
         $row['event_date'] = static::getDateColumnData($row['event_date']);
         $row['animal_id'] = $this->getAnimalId($row['animalTagId']);
         return $row;
+    }
+
+    protected function getFieldAgentId($code)
+    {
+        $userId = Users::getScalar('id', ['username' => $code]);
+        if (empty($userId)) {
+            return null;
+        }
+        return $userId;
     }
 }
