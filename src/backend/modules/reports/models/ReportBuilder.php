@@ -21,6 +21,7 @@ class ReportBuilder extends Model
     public $fields;
     public $limit;
     public $orderBy;
+    public $org_id;
 
     /**
      * @return array
@@ -30,12 +31,12 @@ class ReportBuilder extends Model
             'Farm' => [
                 'class' => Farm::class,
                 'title' => 'Farm',
-                'relations' => ['fieldAgent'],
+                'relations' => ['fieldAgent', 'org', 'region', 'district', 'ward', 'village'],
             ],
             'Animal' => [
                 'class' => Animal::class,
                 'title' => 'Animal',
-                'relations' => ['farm', 'herd', 'sire', 'dam'],
+                'relations' => ['farm', 'herd', 'sire', 'dam', 'org', 'region', 'district', 'ward', 'village'],
             ],
             'Calving_Event' => [
                 'class' => AnimalEvent::class,
@@ -318,6 +319,13 @@ class ReportBuilder extends Model
                 }
 
             }
+        }
+        // if user selected a country, append the org_id
+        // TODO: find a better way of doing all conditions in one place
+        if($this->org_id){
+            $aliasedField = static::getFullColumnName('org_id', $class);
+            $sqlCondition = static::buildCondition('=', $aliasedField, $this->org_id);
+            $query->andWhere($sqlCondition);
         }
         return $query;
 

@@ -25,6 +25,8 @@ MyApp.modules.reports = {};
     REPORTBUILDER.prototype.init = function () {
         let $this = this;
         let selectedFields = [];
+        let selectedFilterOperators = {};
+        let selectedFilterValues = {};
         let selectedParentModel = null;
         let selectedParentModelTitle = null;
 
@@ -34,7 +36,7 @@ MyApp.modules.reports = {};
             let form = $($this.options.builderFormSelector),
                 url = $this.options.generateQueryURL;
             let data =  JSON.stringify( form.serializeArray() );
-            console.log(data);
+            //console.log(data);
 
             $.ajax({
                 url: url,
@@ -43,7 +45,7 @@ MyApp.modules.reports = {};
                 data: form.serialize(),
                 success: function (data) {
                     $($this.options.queryHolderContainer).html(data);
-                    console.log(data);
+                    //console.log(data);
                 },
                 beforeSend: function (xhr) {
                     //$($this.options.reportContainerSelector).html('<h1 class="text-center text-warning" style="margin-top:50px;"><i class="fa fa-spinner fa-spin fa-2x"></i> Loading...</h1>');
@@ -73,17 +75,17 @@ MyApp.modules.reports = {};
             //selectedFields.push(name);
             selectedParentModel = parentModel;
             selectedParentModelTitle = parentModelTitle;
-            console.log(selectedParentModel);
-            console.log(name);
-            console.log(selectedFields);
+            //console.log(selectedParentModel);
+            //console.log(name);
+            //console.log(selectedFields);
             // write to html
             _showSelected();
         }
         let _removeSelected = function(e){
             var name = $(e).data('name');
             selectedFields = selectedFields.filter(function(e) { return e !== name; });
-            console.log(name);
-            console.log(selectedFields);
+            //console.log(name);
+            //console.log(selectedFields);
             // write to html
             _showSelected();
             //_toggleQueryOptions();
@@ -122,7 +124,7 @@ MyApp.modules.reports = {};
 
         let _buildDropdownSelect = function(fieldName){
             var input = '<div class="col-md-4 mr-0 pr-0"><select name="filterCondition['+fieldName+']" class="form-control form-control-sm p-0">';
-            input += '<option value=""> - Select Operator- </option>';
+            input += '<option value=""> - Select Operator - </option>';
             var options = $this.options.inputSelectOptions;
             for (var prop in options) {
                 if (Object.prototype.hasOwnProperty.call(options, prop)) {
@@ -135,7 +137,7 @@ MyApp.modules.reports = {};
         }
 
         let _buildOrderByDropdown = function(){
-            let options = '<option value=""> - Select Field- </option>';
+            let options = '<option value=""> - Select Field - </option>';
             selectedFields.forEach(function (item, index) {
                 var option = '<option value="'+item+'">'+item+'</option>';
                 options += option;
@@ -156,10 +158,24 @@ MyApp.modules.reports = {};
             event.preventDefault();
             _generateQuery(this);
         });
+        $('#select_org_id').on('change', function (event) {
+            event.preventDefault();
+            var elem = $('#report-builder-container');
+            if($(elem).hasClass('hidden')){
+                $(elem).removeClass('hidden');
+            }
+        });
         // enable sorting of the selected items
         $($this.options.selectedFieldsHolder).sortable({
             stop: function( event, ui ) {
-                //TODO: update the indexes in selectedFields array
+                var item = ui.item;
+                var newIndex = item.index();
+                var formerIndex = item.data('index');
+                //console.log(item);
+                //console.log(newIndex);
+                selectedFields.move(formerIndex, newIndex);
+                //console.log(selectedFields);
+                _showSelected();
             }
         });
 
