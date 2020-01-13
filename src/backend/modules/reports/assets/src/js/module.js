@@ -158,6 +158,13 @@ MyApp.modules.reports = {};
             event.preventDefault();
             _generateQuery(this);
         });
+        $('#select_org_id').on('change', function (event) {
+            event.preventDefault();
+            var elem = $('#report-builder-container');
+            if($(elem).hasClass('hidden')){
+                $(elem).removeClass('hidden');
+            }
+        });
         // enable sorting of the selected items
         $($this.options.selectedFieldsHolder).sortable({
             stop: function( event, ui ) {

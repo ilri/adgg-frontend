@@ -2,11 +2,13 @@
 
 /* @var $this yii\web\View */
 
+use backend\modules\core\models\Organization;
 use backend\modules\reports\models\ReportBuilder;
 use backend\modules\reports\models\Reports;
 use common\helpers\Lang;
 use common\helpers\Url;
 use common\models\ActiveRecord;
+use common\widgets\select2\Select2;
 use yii\bootstrap\Html;
 use yii\helpers\Json;
 
@@ -21,7 +23,28 @@ $this->params['breadcrumbs'][] = $this->title;
             <hr>
             <form method="POST" id="report-builder-form" >
                 <input type="hidden" name="model" id="model" />
-            <div class="row">
+            <div class="row row-no-gutters mt-2 mb-3">
+                <div class="col-md-3 row">
+                    <div class="col-md-4"><label for="org_id">Country: </label></div>
+                    <div class="col-md-8">
+                        <?= Select2::widget([
+                            'name' => 'org_id',
+                            'value' => '',
+                            'data' => Organization::getListData(),
+                            'options' => [
+                                'placeholder' => "",
+                                'class' => 'form-control select2',
+                                'id' => 'select_org_id',
+                            ],
+                            'pluginOptions' => [
+                                'allowClear' => true
+                            ],
+                        ]); ?>
+                    </div>
+                </div>
+            </div>
+                <hr>
+            <div class="row hidden" id="report-builder-container">
                 <div class="panel panel-default bs-item z-depth-2 col-md-3">
                     <div class="panel-body">
                         <?php
@@ -54,7 +77,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 </button>
                             </p>
                             <div class="collapse" id="collapse<?= $name ?>" style="">
-                                <div class="card card-body">
+                                <div class="card card-body kt-scroll ps ps--active-y" style="height: 550px; overflow: hidden;" data-scroll="true">
                                     <ul>
                                     <?php foreach ($attributes as $attr): ?>
                                         <li class="attribute" data-model="<?= $name ?>" data-parent-model="<?= $name ?>" data-parent-model-title="<?= $title ?>" data-name="<?= $attr ?>"><?= $attr ?></li>
