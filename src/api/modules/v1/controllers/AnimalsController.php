@@ -20,16 +20,18 @@ class AnimalsController extends ActiveController
     }
 
 
-    public function actionIndex()
+    public function actionIndex($farm_id = null, $farm_name = null, $tag_id = null, $animal_type = null, $breed = null)
     {
-        list($condition, $params) = Animal::appendOrgSessionIdCondition('', [], false);
         $searchModel = Animal::searchModel([
             'defaultOrder' => ['id' => SORT_ASC],
-            'condition' => $condition,
-            'params' => $params,
             'enablePagination' => true,
             'pageSize' => SystemSettings::getPaginationSize(),
+            'with' => ['farm']
         ]);
+        $searchModel->farm_id = $farm_id;
+        $searchModel->tag_id = $tag_id;
+        $searchModel->animal_type = $animal_type;
+        $searchModel->main_breed = $breed;
         return $searchModel->search();
     }
 }
