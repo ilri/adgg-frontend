@@ -124,7 +124,7 @@ MyApp.modules.reports = {};
 
         let _buildDropdownSelect = function(fieldName){
             var input = '<div class="col-md-4 mr-0 pr-0"><select name="filterCondition['+fieldName+']" class="form-control form-control-sm p-0">';
-            input += '<option value=""> - Select Operator- </option>';
+            input += '<option value=""> - Select Operator - </option>';
             var options = $this.options.inputSelectOptions;
             for (var prop in options) {
                 if (Object.prototype.hasOwnProperty.call(options, prop)) {
@@ -137,7 +137,7 @@ MyApp.modules.reports = {};
         }
 
         let _buildOrderByDropdown = function(){
-            let options = '<option value=""> - Select Field- </option>';
+            let options = '<option value=""> - Select Field - </option>';
             selectedFields.forEach(function (item, index) {
                 var option = '<option value="'+item+'">'+item+'</option>';
                 options += option;
