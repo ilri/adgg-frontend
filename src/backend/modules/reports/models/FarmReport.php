@@ -8,9 +8,10 @@
 
 namespace backend\modules\reports\models;
 
-
 use backend\modules\core\models\Farm;
+use backend\modules\core\models\OrganizationUnits;
 use common\helpers\DbUtils;
+use common\helpers\Lang;
 use common\helpers\Str;
 use common\widgets\highchart\HighChart;
 use common\widgets\highchart\HighChartInterface;
@@ -25,14 +26,18 @@ class FarmReport extends Farm implements HighChartInterface
         $condition = '';
         $params = [];
         list($condition, $params) = static::appendOrgSessionIdCondition($condition, $params);
-        $series = [
-            [
-                'name' =>'Total Farms',
-                'condition' => $condition,
-                'params' => $params,
+        $series = [];
+        // get districts
+        $districts = OrganizationUnits::getListData('id', 'name', '', ['org_id' => 10, 'level' => OrganizationUnits::LEVEL_DISTRICT]);
+        foreach ($districts as $id => $label){
+            list($newCondition, $newParams) = DbUtils::appendCondition('district_id', $id, $condition, $params);
+            $series[] = [
+                'name' => Lang::t('{district}', ['district' => $label]),
+                'condition' => $newCondition,
+                'params' => $newParams,
                 'sum' => false,
-            ],
-        ];
+            ];
+        };
         if ($graphType !== HighChart::GRAPH_PIE) {
             return $series;
         } else {
@@ -54,7 +59,7 @@ class FarmReport extends Farm implements HighChartInterface
      * @return int
      * @throws \Exception
      */
-    public static function getDashboardStats($durationType, $sum = false, $filters = [], $dateField = 'reg_date', $from = null, $to = null)
+    public static function _getDashboardStats($durationType, $sum = false, $filters = [], $dateField = 'reg_date', $from = null, $to = null)
     {
         $condition = '';
         $params = [];

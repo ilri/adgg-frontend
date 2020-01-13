@@ -44,6 +44,7 @@ class Controller extends BackendController
                             'index',
                             'map',
                             'graph',
+                            'summary',
                         ],
                         'allow' => true,
                         'roles' => ['@'],

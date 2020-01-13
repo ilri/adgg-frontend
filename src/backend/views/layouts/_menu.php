@@ -9,10 +9,35 @@ use yii\helpers\Url;
          data-ktmenu-dropdown-timeout="500">
         <ul class="kt-menu__nav ">
             <li class="kt-menu__item  kt-menu__item--submenu">
-                <a href="<?= Yii::$app->homeUrl ?>" class="kt-menu__link kt-menu__toggle">
+                <!--<a href="<?= Yii::$app->homeUrl ?>" class="kt-menu__link kt-menu__toggle">
                     <i class="kt-menu__link-icon fas fa-home"></i>
                     <span class="kt-menu__link-text">DASHBOARD</span>
+                </a>-->
+                <a href="#" class="kt-menu__link kt-menu__toggle">
+                    <i class="kt-menu__link-icon far fa-calendar"></i>
+                    <span class="kt-menu__link-text">DASHBOARD</span>
+                    <i class="kt-menu__ver-arrow la la-angle-right"></i>
                 </a>
+                <div class="kt-menu__submenu">
+                    <span class="kt-menu__arrow"></span>
+                    <ul class="kt-menu__subnav">
+                        <li class="kt-menu__item">
+                            <a href="<?= Yii::$app->homeUrl ?>"
+                               class="kt-menu__link ">
+                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                <span class="kt-menu__link-text">QUICK SUMMARY</span>
+                            </a>
+                        </li>
+                        <li class="kt-menu__item">
+                            <a href="<?= Url::to(['/dashboard/stats/index']) ?>"
+                               class="kt-menu__link ">
+                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                <span class="kt-menu__link-text">DETAILED SUMMARY</span>
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
             </li>
 
             <li class="kt-menu__section ">
