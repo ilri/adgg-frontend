@@ -36,6 +36,7 @@ class BuilderController extends Controller
         $filterValues = $req->post('filterValue', []); // array
         $limit = $req->post('limit', 100);
         $orderBy = $req->post('orderby', '');
+        $org_id = $req->post('org_id', '');
 
         $builder = new ReportBuilder();
         $builder->model = $modelName;
@@ -43,6 +44,7 @@ class BuilderController extends Controller
         $builder->filterValues = $filterValues;
         $builder->orderBy = $orderBy;
         $builder->limit = $limit;
+        $builder->org_id = $org_id;
         echo $builder->rawQuery();
         //print_r($builder->generateQuery());
 
