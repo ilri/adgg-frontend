@@ -17,7 +17,7 @@ $groupBy = $groupBy ?? array_key_first(Constants::animalGraphGroupByOptions(fals
     'modelClass' => \backend\modules\reports\models\FarmReport::class,
     'graphType' => $graphType,
     'chartIndex' => 1,
-    'graphTitle' => 'Farmers per District',
+    'graphTitle' => 'Farmers Per Region',
     //'yAxisLabel' => 'Total animals',
     'chartTemplate' => $this->render('_template', ['filterOptions' => $graphFilterOptions, 'graphType' => $graphType]),
     'filterFormAction' => ['graph'],

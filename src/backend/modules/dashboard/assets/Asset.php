@@ -23,6 +23,7 @@ class Asset extends AssetBundle
     }
 
     public $js = [
+        'js/module.js'
 
     ];
     public $css = [
