@@ -46,39 +46,48 @@ class AnimalStatsController extends ActiveController
 
 
         $data = [];
+        $p_data = [];
         if ($groupBy == Constants::ANIMAL_GRAPH_GROUP_BY_ANIMAL_TYPES) {
             $animalTypes = Choices::getData('value, label', ['list_type_id' => ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES]);
 
             foreach ($animalTypes as $type) {
-                $data['Animal Stats'][$type['label']] = [
+                $p_data[$type['value']] = [
                     'id' => $type['value'],
+                    'label' => $type['label'],
                 ];
             }
-            foreach ($data['Animal Stats'] as $typeLabel => $animalStats) {
+            //print_r($data);
+
+            foreach ($p_data as $typeId => $animalStats) {
                 // get count of each animal type
-                $typeId = $animalStats['id'];
+                //$typeId = $animalStats['id'];
                 $searchModel->animal_type = $typeId;
                 $count = $searchModel->search()->getTotalCount();
                 $animalStats['count'] = $count;
+                //$animalStats['label']=$typeLabel;
                 //$animalStats['query'] = $searchModel->search()->query->createCommand()->rawSql;
-                $data['Animal Stats'][$typeLabel] = $animalStats;
+                $data[] = $animalStats;
             }
         } else {
             $breeds = Choices::getData('value, label', ['list_type_id' => ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS]);
 
-            foreach ($breeds as $breed) {
-                $data['Animal Stats'][$breed['label']] = [
-                    'id' => $breed['value'],
+            foreach ($breeds as $type) {
+                $p_data[$type['value']] = [
+                    'id' => $type['value'],
+                    'label' => $type['label'],
                 ];
             }
-            foreach ($data['Animal Stats'] as $typeLabel => $animalStats) {
+            //print_r($data);
+
+            foreach ($p_data as $typeId => $animalStats) {
                 // get count of each animal type
-                $breedId = $animalStats['id'];
-                $searchModel->main_breed = $breedId;
+                //$typeId = $animalStats['id'];
+                $searchModel->main_breed = $typeId;
                 $count = $searchModel->search()->getTotalCount();
                 $animalStats['count'] = $count;
+                //$animalStats['label']=$typeLabel;
                 //$animalStats['query'] = $searchModel->search()->query->createCommand()->rawSql;
-                $data['Animal Stats'][$typeLabel] = $animalStats;
+                $data[] = $animalStats;
             }
         }
 
