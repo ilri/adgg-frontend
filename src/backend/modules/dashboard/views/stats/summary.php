@@ -4,9 +4,13 @@ use backend\modules\core\models\Animal;
 use backend\modules\core\models\CalvingEvent;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\MilkingEvent;
+use backend\modules\core\models\OrganizationUnits;
+use common\helpers\DbUtils;
 use common\helpers\Lang;
 use common\helpers\Url;
+use common\models\ActiveRecord;
 use common\widgets\highchart\HighChart;
+use yii\helpers\Json;
 
 /* @var $this yii\web\View */
 /* @var $controller \backend\controllers\BackendController */
@@ -27,7 +31,35 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
         <!--begin::Portlet-->
         <div class="kt-portlet">
             <div class="col-md-12 kt-iconbox kt-iconbox--active">
-                <?= $this->render('graph/_widget', ['graphType' => HighChart::GRAPH_PIE, 'graphFilterOptions' => $graphFilterOptions]) ?>
+                <div id="chartContainer"></div>
+                <!--                $this->render('graph/_widget', ['graphType' => HighChart::GRAPH_PIE, 'graphFilterOptions' => $graphFilterOptions])
+                --> <?php
+                $condition = '';
+                $params = [];
+                list($condition, $params) = Farm::appendOrgSessionIdCondition($condition, $params);
+                $data = [];
+                // get districts
+                $districts = OrganizationUnits::getListData('id', 'name', '', ['org_id' => 10, 'level' => OrganizationUnits::LEVEL_REGION]);
+                foreach ($districts as $id => $label) {
+                    list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
+
+                    // fetch count for each district
+                    //print_r(Farm::find()->andWhere($newcondition, $newparams)->createCommand()->rawSql);
+                    $count = Farm::find()->andWhere($newcondition, $newparams)->count();
+                    $data[] = [
+                        'name' => $label,
+                        'y' => floatval(number_format($count, 2, '.', '')),
+                    ];
+                };
+                $series = [[
+                    'colorByPoint' => true,
+                    'data' => $data,
+                ]];
+                $graphOptions = [];
+                $containerId = 'chartContainer';
+                $this->registerJs("MyApp.modules.dashboard.piechart('" . $containerId . "', " . Json::encode($series) . "," . Json::encode($graphOptions) . ");");
+
+                ?>
             </div>
         </div>
         <!--end::Portlet-->

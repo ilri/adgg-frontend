@@ -27,12 +27,12 @@ class FarmReport extends Farm implements HighChartInterface
         $params = [];
         list($condition, $params) = static::appendOrgSessionIdCondition($condition, $params);
         $series = [];
-        // get districts
-        $districts = OrganizationUnits::getListData('id', 'name', '', ['org_id' => 10, 'level' => OrganizationUnits::LEVEL_REGION]);
-        foreach ($districts as $id => $label){
+        // get regions
+        $regions = OrganizationUnits::getListData('id', 'name', '', ['org_id' => 10, 'level' => OrganizationUnits::LEVEL_REGION]);
+        foreach ($regions as $id => $label) {
             list($newCondition, $newParams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
             $series[] = [
-                'name' => Lang::t('{district}', ['district' => $label]),
+                'name' => Lang::t('{region}', ['region' => $label]),
                 'condition' => $newCondition,
                 'params' => $newParams,
                 'sum' => false,

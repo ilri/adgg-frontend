@@ -21,6 +21,15 @@ class AnimalTypesController extends ActiveController
 
     public function actionIndex()
     {
-        return Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES);
+        $data = [];
+        $types = Choices::getData('value, label', ['list_type_id' => ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES]);
+
+        foreach ($types as $type) {
+            $data[] = [
+                'id' => $type['value'],
+                'label' => $type['label'],
+            ];
+        }
+        return $data;
     }
 }
