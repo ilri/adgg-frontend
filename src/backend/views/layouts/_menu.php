@@ -105,20 +105,20 @@ use yii\helpers\Url;
                             </a>
                         </li>
                         <li class="kt-menu__item">
-                            <a href="#"
+                            <a href="<?= Url::to(['/core/health-event/index']) ?>"
                                class="kt-menu__link ">
                                 <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
                                 <span class="kt-menu__link-text">Health</span>
                             </a>
                         </li>
-                        <li class="kt-menu__item">
+                        <li class="kt-menu__item hidden">
                             <a href="#"
                                class="kt-menu__link ">
                                 <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
                                 <span class="kt-menu__link-text">Feeding</span>
                             </a>
                         </li>
-                        <li class="kt-menu__item">
+                        <li class="kt-menu__item hidden">
                             <a href="#"
                                class="kt-menu__link ">
                                 <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
