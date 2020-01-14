@@ -43,54 +43,63 @@ class ReportBuilder extends Model
                 'title' => 'Calving Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_CALVING],
                 'relations' => ['animal', 'org', 'region', 'district', 'ward', 'village'],
+                'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
             ],
             'Milking_Event' => [
                 'class' => AnimalEvent::class,
                 'title' => 'Milking Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_MILKING],
                 'relations' => ['animal', 'org', 'region', 'district', 'ward', 'village'],
+                'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
             ],
             'Insemination_Event' => [
                 'class' => AnimalEvent::class,
                 'title' => 'Insemination Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_AI],
                 'relations' => ['animal', 'org', 'region', 'district', 'ward', 'village'],
+                'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
             ],
             'Pregnancy_Diagnosis_Event' => [
                 'class' => AnimalEvent::class,
                 'title' => 'Pregnancy Diagnosis Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_PREGNANCY_DIAGNOSIS],
                 'relations' => ['animal', 'org', 'region', 'district', 'ward', 'village'],
+                'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
             ],
             'Synchronization_Event' => [
                 'class' => AnimalEvent::class,
                 'title' => 'Synchronization Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_SYNCHRONIZATION],
                 'relations' => ['animal', 'org', 'region', 'district', 'ward', 'village'],
+                'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
             ],
             'Weights_Event' => [
                 'class' => AnimalEvent::class,
                 'title' => 'Weights Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_WEIGHTS],
                 'relations' => ['animal', 'org', 'region', 'district', 'ward', 'village'],
+                'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
             ],
             'Health_Event' => [
                 'class' => AnimalEvent::class,
                 'title' => 'Health Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_HEALTH],
                 'relations' => ['animal', 'org', 'region', 'district', 'ward', 'village'],
+                'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
             ],
             'Feeding_Event' => [
                 'class' => AnimalEvent::class,
                 'title' => 'Feeding Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_FEEDING],
                 'relations' => ['animal', 'org', 'region', 'district', 'ward', 'village'],
+                'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
             ],
             'Exits_Event' => [
                 'class' => AnimalEvent::class,
                 'title' => 'Exits Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_EXITS],
                 'relations' => ['animal', 'org', 'region', 'district', 'ward', 'village'],
+                'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
             ],
         ];
 
@@ -173,12 +182,25 @@ class ReportBuilder extends Model
     public static function getFullColumnName($field, $class){
         // check if field is a joined relation
         if(strpos($field, '.')){
-            $relationName = (explode('.', $field)[0]);
-            $fieldName = (explode('.', $field)[1]);
-            $modelClass = static::getRelationClass($class, $relationName);
+            if(substr_count($field, '.') > 1){
+                // animal.farm.farmer_name
+                $relationName = (explode('.', $field)[0]); // animal
+                $subRelationName = (explode('.', $field)[1]); // farm
+                $fieldName = (explode('.', $field)[2]); // farmer_name
 
-            // append table name || relationName to field to remove ambiguity.
-            $fieldAlias = $relationName;
+                $relationClass = static::getRelationClass($class, $relationName); // Animal::class
+                $subRelationClass = static::getRelationClass($relationClass, $subRelationName); // Farm::class
+                $modelClass = $subRelationClass;
+                $fieldAlias = $subRelationName;
+            }
+            else{
+                $relationName = (explode('.', $field)[0]);
+                $fieldName = (explode('.', $field)[1]);
+                $modelClass = static::getRelationClass($class, $relationName);
+
+                // append table name || relationName to field to remove ambiguity.
+                $fieldAlias = $relationName;
+            }
         }
         else {
             $modelClass = $class;
@@ -219,20 +241,53 @@ class ReportBuilder extends Model
         $additional_attributes = [];
         $attributes = [];
         $joins = [];
+        $other_joins = [];
 
         // start the query
         $query = $class::find();
         // get the attributes for select
         foreach ($this->filterConditions as $field => $conditionOperator){
             # check if field is a joined relation
+            // TODO:: refactor all this and use getFullColumnName()
             if(strpos($field, '.')){
-                $relationName = (explode('.', $field)[0]);
-                $fieldName = (explode('.', $field)[1]);
-                $modelClass = static::getRelationClass($class, $relationName);
-                //$tableName = $modelClass::tableName();
-                $joins[] = $relationName;
-                # table name || relationName alias.
-                $fieldAlias = $relationName;
+                if(substr_count($field, '.') > 1){
+                    // animal.farm.farmer_name
+                    $relationName = (explode('.', $field)[0]); // animal
+                    $subRelationName = (explode('.', $field)[1]); // farm
+                    $fieldName = (explode('.', $field)[2]); // farmer_name
+                    $relationClass = static::getRelationClass($class, $relationName); // Animal::class
+                    $subRelationClass = static::getRelationClass($relationClass, $subRelationName); // Farm::class
+                    $modelClass = $subRelationClass;
+                    $fieldAlias = $subRelationName;
+                    $other_joins[$relationName] = $subRelationName;
+                    // build the inner join manually
+
+                    //  INNER JOIN `core_farm` `farm` ON `animal`.`farm_id` = `farm`.`id`
+                    // get the subrelation join condition
+                    // [animal.farm => ['animal.farm_id' => 'animal.id']]
+                    //
+                    /*
+                    $link = $reportableModelOptions['sub_relations'][$relationName. '.' . $subRelationName];
+                    $on = '';
+                    foreach ($link as $k => $f){
+                        // animal.farm_id
+                        $on .= static::getFullColumnName($k, $class);
+                        $on .= ' = ';
+                        // farm.id
+                        $on .= static::getFullColumnName($f, $modelClass);
+                    }
+                    $query->leftJoin($subRelationClass::tableName() . ' as ' . $subRelationName, $on);
+                    */
+                }
+                else {
+                    $relationName = (explode('.', $field)[0]);
+                    $fieldName = (explode('.', $field)[1]);
+                    $modelClass = static::getRelationClass($class, $relationName);
+                    //$tableName = $modelClass::tableName();
+                    $joins[] = $relationName;
+                    # table name || relationName alias.
+                    $fieldAlias = $relationName;
+                }
             }
             else {
                 $modelClass = $class;
@@ -297,6 +352,22 @@ class ReportBuilder extends Model
                         }
                     }
                 ]);
+            }
+        }
+        if (count($other_joins)){
+            foreach (array_unique($other_joins) as $relationName => $subRelationName){
+                $link = $reportableModelOptions['sub_relations'][$relationName. '.' . $subRelationName];
+                $modelClass = static::getRelationClass($class, $relationName); // Animal::class
+                $subRelationClass = static::getRelationClass($modelClass, $subRelationName); // Farm::class
+                $on = '';
+                foreach ($link as $k => $f){
+                    // animal.farm_id
+                    $on .= static::getFullColumnName($k, $class);
+                    $on .= ' = ';
+                    // farm.id
+                    $on .= static::getFullColumnName($f, $modelClass);
+                }
+                $query->leftJoin($subRelationClass::tableName() . ' as ' . $subRelationName, $on);
             }
         }
 
