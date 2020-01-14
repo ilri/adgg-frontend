@@ -9,6 +9,9 @@ namespace console\controllers;
 
 
 use backend\modules\core\models\AnimalEvent;
+use backend\modules\core\models\OdkJsonQueue;
+use backend\modules\core\models\Organization;
+use common\helpers\FileManager;
 use Yii;
 use yii\console\Controller;
 
@@ -94,11 +97,36 @@ class FakerController extends Controller
         Yii::$app->db->createCommand($sql, [])->execute();
     }
 
+
     protected function canExecuteFaker()
     {
         if (YII_ENV === 'prod') {
             $this->stdout("FAKER CANNOT BE EXECUTED\n");
             Yii::$app->end();
+        }
+    }
+
+    public function actionUploadJson()
+    {
+        $it = new \RecursiveDirectoryIterator(FileManager::getUploadsDir() . DIRECTORY_SEPARATOR . 'json');
+
+        // Loop through files
+        $n = 1;
+        $org_id = Organization::getScalar('id', ['code' => 3]);
+        $model = new OdkJsonQueue(['org_id' => $org_id]);
+        foreach (new \RecursiveIteratorIterator($it) as $file) {
+            if ($file->getExtension() == 'json') {
+                $newModel = clone $model;
+                $newModel->setJsonAttributes($file);
+                $file_name = $newModel->uuid . '.json';
+                $new_path = $newModel->getDir() . DIRECTORY_SEPARATOR . $file_name;
+                if (copy($file, $new_path)) {
+                    $newModel->file = $file_name;
+                    $newModel->save(false);
+                }
+                $this->stdout("Parsed $n JSON Files: $file\n");
+                $n++;
+            }
         }
     }
 }

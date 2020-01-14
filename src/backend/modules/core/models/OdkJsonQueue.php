@@ -6,7 +6,6 @@ use common\helpers\FileManager;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
-use console\jobs\ProcessODKJson;
 use Yii;
 use yii\web\UploadedFile;
 
@@ -116,7 +115,7 @@ class OdkJsonQueue extends ActiveRecord implements ActiveSearchInterface
         parent::afterSave($insert, $changedAttributes);
 
         if ($insert) {
-            ProcessODKJson::push(['queueId' => $this->id]);
+            //ProcessODKJson::push(['queueId' => $this->id]);
         }
     }
 
@@ -137,12 +136,12 @@ class OdkJsonQueue extends ActiveRecord implements ActiveSearchInterface
      * @param string $file
      * @return void
      */
-    protected function setJsonAttributes($file)
+    public function setJsonAttributes($file)
     {
         $jsonStr = file_get_contents($file);
         $json = json_decode($jsonStr, true);
         $this->uuid = $json['_uuid'];
-        $this->file_contents = json_encode($json);
+        $this->file_contents = $json;
     }
 
 
