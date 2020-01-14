@@ -20,7 +20,7 @@ use yii\helpers\Url;
     'createButton' => [
         'visible' => Yii::$app->user->canCreate(),
         'modal' => true,
-        'url' => Url::to(['table-attribute/create', 'table_id' => $model->table_id]),
+        'url' => Url::to(['table-attribute/create', 'table_id' => $model->table_id,'event_type'=>$model->event_type]),
         'label' => '<i class="fa fa-plus-circle"></i> ' . Lang::t('Add Attribute'),
     ],
     'showExportButton' => false,

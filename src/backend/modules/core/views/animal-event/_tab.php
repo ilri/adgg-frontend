@@ -66,14 +66,14 @@ $controller = Yii::$app->controller;
     </li>
     <li class="nav-item">
         <a class="nav-link"
-           href="<?= Url::to(['#']) ?>">
+           href="<?= Url::to(['/core/health-event/index']) ?>">
             <?= Lang::t('Health') ?>
             <span class="badge badge-important badge-pill">
                 (<?= number_format(AnimalEvent::getCount(['event_type' => AnimalEvent::EVENT_TYPE_HEALTH])) ?>)
             </span>
         </a>
     </li>
-    <li class="nav-item">
+    <li class="nav-item hidden">
         <a class="nav-link"
            href="<?= Url::to(['#']) ?>">
             <?= Lang::t('Feeding') ?>
@@ -82,7 +82,7 @@ $controller = Yii::$app->controller;
             </span>
         </a>
     </li>
-    <li class="nav-item">
+    <li class="nav-item hidden">
         <a class="nav-link"
            href="<?= Url::to(['#']) ?>">
             <?= Lang::t('Exits') ?>
