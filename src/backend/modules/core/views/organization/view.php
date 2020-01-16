@@ -66,13 +66,16 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     [
                         'attribute' => 'contact_person',
+                        'visible' => false,
                     ],
                     [
                         'attribute' => 'contact_phone',
+                        'visible' => false,
                     ],
                     [
                         'attribute' => 'contact_email',
                         'format' => 'email',
+                        'visible' => false,
                     ],
                     [
                         'attribute' => 'is_active',
