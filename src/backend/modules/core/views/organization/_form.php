@@ -51,6 +51,7 @@ use yii\bootstrap4\ActiveForm;
                             ],
                         ]) ?>
                         <?= $form->field($model, 'dialing_code') ?>
+                        <?= $form->field($model, 'code') ?>
                         <?= $form->field($model, 'contact_person') ?>
                         <?= $form->field($model, 'contact_phone') ?>
                         <?= $form->field($model, 'contact_email') ?>
