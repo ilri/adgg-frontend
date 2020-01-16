@@ -88,7 +88,7 @@ class Organization extends ActiveRecord implements ActiveSearchInterface
     {
         return [
             'id' => 'ID',
-            'code' => 'Code',
+            'code' => 'ODK Code',
             'name' => 'Country Name',
             'country' => 'Country',
             'contact_person' => 'Contact Person',
