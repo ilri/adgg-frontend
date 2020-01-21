@@ -1,16 +1,22 @@
 <?php
-
+/**
+ * Created by PhpStorm.
+ * @author: Fred <mconyango@gmail.com>
+ * Date: 2020-01-13
+ * Time: 11:45 PM
+ */
 
 namespace backend\modules\core\controllers;
 
+
 use backend\modules\auth\Acl;
 use backend\modules\core\Constants;
-use backend\modules\core\forms\UploadAIEvent;
-use backend\modules\core\models\AIEvent;
+use backend\modules\core\forms\UploadSyncEvent;
 use backend\modules\core\models\AnimalEvent;
+use backend\modules\core\models\SyncEvent;
 use common\controllers\UploadExcelTrait;
 
-class InseminationEventController extends Controller
+class SynchronizationEventController extends Controller
 {
     use AnimalEventTrait, UploadExcelTrait;
 
@@ -19,20 +25,20 @@ class InseminationEventController extends Controller
         parent::init();
 
         $this->resource = Constants::RES_ANIMAL_EVENTS;
-        $this->resourceLabel = 'Insemination';
+        $this->resourceLabel = 'Synchronization';
     }
 
     public function actionIndex($animal_id = null, $org_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $from = null, $to = null)
     {
-        return $this->renderIndexAction(AnimalEvent::EVENT_TYPE_AI, $animal_id, $org_id, $region_id, $district_id, $ward_id, $village_id, $from, $to);
+        return $this->renderIndexAction(AnimalEvent::EVENT_TYPE_SYNCHRONIZATION, $animal_id, $org_id, $region_id, $district_id, $ward_id, $village_id, $from, $to);
     }
 
     public function actionUpload()
     {
         $this->hasPrivilege(Acl::ACTION_CREATE);
 
-        $form = new UploadAIEvent( AIEvent::class);
-        $resp = $this->uploadExcelConsole($form, 'insemination-event/index', []);
+        $form = new UploadSyncEvent( SyncEvent::class);
+        $resp = $this->uploadExcelConsole($form, 'synchronization-event/index', []);
         if ($resp !== false) {
             return $resp;
         }
@@ -44,7 +50,7 @@ class InseminationEventController extends Controller
 
     public function actionUploadPreview()
     {
-        $form = new UploadAIEvent(AIEvent::class);
+        $form = new UploadSyncEvent(SyncEvent::class);
         return $form->previewAction();
     }
 }

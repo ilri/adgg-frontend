@@ -1,16 +1,22 @@
 <?php
-
+/**
+ * Created by PhpStorm.
+ * @author: Fred <mconyango@gmail.com>
+ * Date: 2020-01-14
+ * Time: 10:44 AM
+ */
 
 namespace backend\modules\core\controllers;
 
+
 use backend\modules\auth\Acl;
 use backend\modules\core\Constants;
-use backend\modules\core\forms\UploadAIEvent;
-use backend\modules\core\models\AIEvent;
+use backend\modules\core\forms\UploadHealthEvent;
 use backend\modules\core\models\AnimalEvent;
+use backend\modules\core\models\HealthEvent;
 use common\controllers\UploadExcelTrait;
 
-class InseminationEventController extends Controller
+class HealthEventController extends Controller
 {
     use AnimalEventTrait, UploadExcelTrait;
 
@@ -19,20 +25,20 @@ class InseminationEventController extends Controller
         parent::init();
 
         $this->resource = Constants::RES_ANIMAL_EVENTS;
-        $this->resourceLabel = 'Insemination';
+        $this->resourceLabel = 'Health';
     }
 
     public function actionIndex($animal_id = null, $org_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $from = null, $to = null)
     {
-        return $this->renderIndexAction(AnimalEvent::EVENT_TYPE_AI, $animal_id, $org_id, $region_id, $district_id, $ward_id, $village_id, $from, $to);
+        return $this->renderIndexAction(AnimalEvent::EVENT_TYPE_HEALTH, $animal_id, $org_id, $region_id, $district_id, $ward_id, $village_id, $from, $to);
     }
 
     public function actionUpload()
     {
         $this->hasPrivilege(Acl::ACTION_CREATE);
 
-        $form = new UploadAIEvent( AIEvent::class);
-        $resp = $this->uploadExcelConsole($form, 'insemination-event/index', []);
+        $form = new UploadHealthEvent(HealthEvent::class);
+        $resp = $this->uploadExcelConsole($form, 'health-event/index', []);
         if ($resp !== false) {
             return $resp;
         }
@@ -44,7 +50,7 @@ class InseminationEventController extends Controller
 
     public function actionUploadPreview()
     {
-        $form = new UploadAIEvent(AIEvent::class);
+        $form = new UploadHealthEvent(HealthEvent::class);
         return $form->previewAction();
     }
 }

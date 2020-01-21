@@ -30,6 +30,9 @@ use yii\helpers\Html;
             'attribute' => 'dialing_code',
         ],
         [
+            'attribute' => 'code',
+        ],
+        [
             'attribute' => 'is_active',
             'value' => function (Organization $model) {
                 return Html::tag('span', Utils::decodeBoolean($model->is_active), ['class' => $model->is_active ? 'kt-badge  kt-badge--success kt-badge--inline kt-badge--pill' : 'kt-badge  kt-badge--metal kt-badge--inline kt-badge--pill']);

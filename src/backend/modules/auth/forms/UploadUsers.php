@@ -10,14 +10,15 @@ namespace backend\modules\auth\forms;
 
 
 use backend\modules\auth\models\Users;
+use backend\modules\core\models\ExcelImport;
 use backend\modules\core\models\OrganizationUnits;
 use common\excel\ExcelReaderTrait;
+use common\excel\ExcelUploadForm;
 use common\excel\ImportInterface;
 use common\helpers\Msisdn;
-use common\models\Model;
 use Yii;
 
-class UploadUsers extends Model implements ImportInterface
+class UploadUsers extends ExcelUploadForm implements ImportInterface
 {
     use ExcelReaderTrait;
 
@@ -36,22 +37,10 @@ class UploadUsers extends Model implements ImportInterface
     public $role_id;
 
     /**
-     * @var Users
-     */
-    public $_model;
-
-    /**
      * @inheritdoc
      */
     public function init()
     {
-        $this->end_column = 'AD';
-
-        $this->required_columns = [];
-        $this->_model = new Users(['org_id' => $this->org_id, 'level_id' => $this->level_id, 'role_id' => $this->role_id]);
-        foreach ($this->_model->getExcelColumns() as $column) {
-            $this->file_columns['[' . $column . ']'] = $this->_model->getAttributeLabel($column);
-        }
         parent::init();
     }
 
@@ -71,9 +60,9 @@ class UploadUsers extends Model implements ImportInterface
     public function attributeLabels()
     {
         return array_merge($this->excelAttributeLabels(), [
-            'org_id' => $this->_model->getAttributeLabel('org_id'),
-            'level_id' => $this->_model->getAttributeLabel('level_id'),
-            'role_id' => $this->_model->getAttributeLabel('role_id'),
+            'org_id' => 'Country',
+            'level_id' => 'Level',
+            'role_id' => 'Role',
         ]);
     }
 
@@ -113,10 +102,46 @@ class UploadUsers extends Model implements ImportInterface
     }
 
     /**
+     * @param $batch
+     * @return mixed
+     * @throws \Exception
+     */
+    public function processExcelBatchDataX($batch)
+    {
+        $columns = [];
+        $insert_data = [];
+
+        foreach ($batch as $k => $excel_row) {
+            $row = $this->getExcelRowColumns($excel_row, $columns);
+            if (empty($row))
+                continue;
+
+            $row['org_id'] = $this->org_id;
+            $row['level_id'] = $this->level_id;
+            $row['role_id'] = $this->role_id;
+
+            if (!empty($row['phone'])) {
+                $row['phone'] = $this->cleanPhoneNumber($row['phone']);
+            }
+            if (!empty($row['region_code'])) {
+                $row['region_id'] = $this->getRegionId($row['region_code']);
+            }
+            if (!empty($row['district_code'])) {
+                $row['district_id'] = $this->getDistrictId($row['district_code']);
+            }
+
+            $insert_data[$k] = $row;
+        }
+
+        $model =new Users(['org_id' => $this->org_id, 'level_id' => $this->level_id, 'role_id' => $this->role_id]);
+        $this->save($insert_data, $model, true, ['code' => '{username}', 'org_id' => $this->org_id, 'level' => $this->level]);
+    }
+
+    /**
      * @param array $data
      * @return bool
      */
-    public function save($data)
+    public function saveT($data)
     {
         if (empty($data))
             return false;
@@ -145,7 +170,7 @@ class UploadUsers extends Model implements ImportInterface
 
     protected function cleanPhoneNumber($number)
     {
-        return Msisdn::format($number, '255');
+        return Msisdn::format($number, '254');
     }
 
     /**
@@ -166,5 +191,13 @@ class UploadUsers extends Model implements ImportInterface
     protected function getDistrictId($districtCode)
     {
         return OrganizationUnits::getScalar('id', ['org_id' => $this->org_id, 'level' => OrganizationUnits::LEVEL_DISTRICT, 'code' => $districtCode]);
+    }
+
+    /**
+     * @return string|int
+     */
+    public function setUploadType()
+    {
+        $this->_uploadType = ExcelImport::TYPE_USERS;
     }
 }

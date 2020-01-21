@@ -43,7 +43,7 @@
     "markrogoyski/math-php": "0.*",
     "nesbot/carbon": "^2.16",
     "php-amqplib/php-amqplib": "*",
-    "phpoffice/phpspreadsheet": "^1.2",
+    "phpoffice/phpspreadsheet": "~1.9.0",
     "picqer/php-barcode-generator": "^0.2.1",
     "ramsey/uuid": "^3.1",
     "sizeg/yii2-jwt": "^2.0",
