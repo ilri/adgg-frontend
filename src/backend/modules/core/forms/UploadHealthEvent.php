@@ -2,25 +2,25 @@
 /**
  * Created by PhpStorm.
  * @author: Fred <mconyango@gmail.com>
- * Date: 2020-01-13
- * Time: 11:44 AM
+ * Date: 2020-01-14
+ * Time: 10:36 AM
  */
 
 namespace backend\modules\core\forms;
 
 
-use backend\modules\core\models\AIEvent;
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\ExcelImport;
+use backend\modules\core\models\HealthEvent;
 use common\excel\ImportInterface;
 
-class UploadAIEvent extends UploadAnimalEvent implements ImportInterface
+class UploadHealthEvent extends UploadAnimalEvent implements ImportInterface
 {
     public function init()
     {
         parent::init();
-        $this->event_type = AnimalEvent::EVENT_TYPE_AI;
-        $this->sampleExcelFileName = 'AI-event.xlsx';
+        $this->event_type = AnimalEvent::EVENT_TYPE_HEALTH;
+        $this->sampleExcelFileName = 'health-event.xlsx';
     }
 
 
@@ -40,11 +40,10 @@ class UploadAIEvent extends UploadAnimalEvent implements ImportInterface
                 continue;
             }
             $row = $this->setDefaultAttributes($row);
-            $row['field_agent_id'] = $this->getFieldAgentId($row['field_agent_id']);
             $insert_data[$k] = $row;
         }
 
-        $model = new AIEvent(['org_id' => $this->org_id, 'event_type' => $this->event_type]);
+        $model = new HealthEvent(['org_id' => $this->org_id, 'event_type' => $this->event_type]);
         $this->save($insert_data, $model, false);
     }
 
@@ -53,6 +52,6 @@ class UploadAIEvent extends UploadAnimalEvent implements ImportInterface
      */
     public function setUploadType()
     {
-        $this->_uploadType = ExcelImport::TYPE_ANIMAL_EVENT_AI;
+        $this->_uploadType = ExcelImport::TYPE_ANIMAL_EVENT_HEALTH;
     }
 }

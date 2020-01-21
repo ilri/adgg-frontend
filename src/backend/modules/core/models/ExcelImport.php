@@ -39,7 +39,14 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
     const TYPE_ANIMAL_EVENT_CALVING = 30;
     const TYPE_ANIMAL_EVENT_MILK = 31;
     const TYPE_ANIMAL_EVENT_AI = 32;
+    const TYPE_ANIMAL_EVENT_SYNC = 33;
+    const TYPE_ANIMAL_EVENT_PD = 34;
+    const TYPE_ANIMAL_EVENT_WEIGHT = 35;
+    const TYPE_ANIMAL_EVENT_HEALTH = 36;
+    const TYPE_ANIMAL_EVENT_FEEDING = 37;
+    const TYPE_ANIMAL_EVENT_EXITS = 38;
     const TYPE_ORGANIZATION_UNITS = 40;
+    const TYPE_USERS = 60;
 
     /**
      * {@inheritdoc}
@@ -161,6 +168,18 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
                 return 'Milking Data';
             case self::TYPE_ANIMAL_EVENT_AI:
                 return 'Artificial Insemination';
+            case self::TYPE_ANIMAL_EVENT_SYNC:
+                return 'Synchronization';
+            case self::TYPE_ANIMAL_EVENT_PD:
+                return 'Pregnancy Diagnosis';
+            case self::TYPE_ANIMAL_EVENT_WEIGHT:
+                return 'Weight';
+            case self::TYPE_ANIMAL_EVENT_HEALTH:
+                return 'Health';
+            case self::TYPE_ANIMAL_EVENT_FEEDING:
+                return 'Feeding';
+            case self::TYPE_ANIMAL_EVENT_EXITS:
+                return 'Exits';
             case self::TYPE_ORGANIZATION_UNITS:
                 return 'Country Administrative Units';
             default:
@@ -182,6 +201,12 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
             self::TYPE_ANIMAL_EVENT_CALVING => static::decodeType(self::TYPE_ANIMAL_EVENT_CALVING),
             self::TYPE_ANIMAL_EVENT_MILK => static::decodeType(self::TYPE_ANIMAL_EVENT_MILK),
             self::TYPE_ANIMAL_EVENT_AI => static::decodeType(self::TYPE_ANIMAL_EVENT_AI),
+            self::TYPE_ANIMAL_EVENT_SYNC => static::decodeType(self::TYPE_ANIMAL_EVENT_SYNC),
+            self::TYPE_ANIMAL_EVENT_PD => static::decodeType(self::TYPE_ANIMAL_EVENT_PD),
+            self::TYPE_ANIMAL_EVENT_WEIGHT => static::decodeType(self::TYPE_ANIMAL_EVENT_WEIGHT),
+            self::TYPE_ANIMAL_EVENT_HEALTH => static::decodeType(self::TYPE_ANIMAL_EVENT_HEALTH),
+            self::TYPE_ANIMAL_EVENT_FEEDING => static::decodeType(self::TYPE_ANIMAL_EVENT_FEEDING),
+            self::TYPE_ANIMAL_EVENT_EXITS => static::decodeType(self::TYPE_ANIMAL_EVENT_EXITS),
             self::TYPE_ORGANIZATION_UNITS => static::decodeType(self::TYPE_ORGANIZATION_UNITS),
         ], $prompt);
     }

@@ -85,6 +85,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <?php
                                     if(count($modelData['relations'])){
                                         $relations = $modelData['relations'];
+                                        $sub_relations = $modelData['sub_relations'] ?? [];
                                         foreach ($relations as $relationName){
                                             $relation = $class->getRelation($relationName);
                                             /* @var $relationModelClass ActiveRecord */
@@ -104,9 +105,35 @@ $this->params['breadcrumbs'][] = $this->title;
                                                     <?php foreach ($relationAttributes as $attr): ?>
                                                         <li class="attribute" data-model="<?= $className ?>" data-parent-model="<?= $name ?>" data-parent-model-title="<?= $title ?>" data-name="<?= $relationName.'.'.$attr ?>"><?= $attr ?></li>
                                                     <?php endforeach; ?>
+                                                    <?php
+                                                    if(count($sub_relations)){
+                                                        foreach ($sub_relations as $sub_relation => $on_options){
+                                                        $main = explode('.', $sub_relation)[0];
+                                                        $sub = explode('.', $sub_relation)[1];
+                                                        $sub_id = $main .'_'. $sub;
+                                                        if($main == $relationName){
+                                                            $relation = $relationModelClass->getRelation($sub);
+                                                            $relationClass = new $relation->modelClass();
+                                                            $className = $relationModelClass::shortClassName();
+                                                            $relationAttributes  = $relationClass->reportBuilderFields();
+                                                    ?>
+                                                            <li data-toggle="collapse" data-target="#collapse<?= $sub_id ?>" aria-expanded="false" aria-controls="collapse<?= $sub_id ?>"> > <?= $sub ?></li>
+                                                            <div class="collapse" id="collapse<?= $sub_id ?>" style="">
+                                                                <ul>
+                                                                    <?php foreach ($relationAttributes as $attr): ?>
+                                                                        <li class="attribute" data-model="<?= $className ?>" data-parent-model="<?= $name ?>" data-parent-model-title="<?= $title ?>" data-name="<?= $main.'.'.$sub.'.'.$attr ?>"><?= $attr ?></li>
+                                                                    <?php endforeach; ?>
+                                                                </ul>
+                                                            </div>
+                                                    <?php
+
+                                                            }
+                                                        }
+                                                    }
+                                                    ?>
                                                 </ul>
                                             </div>
-                                            <?php
+                                    <?php
                                         }
                                     }
                                     ?>

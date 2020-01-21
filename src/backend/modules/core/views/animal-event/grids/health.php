@@ -1,6 +1,8 @@
 <?php
 
 use backend\modules\core\models\AnimalEvent;
+use backend\modules\core\models\Choices;
+use backend\modules\core\models\ChoiceTypes;
 use common\helpers\Lang;
 use common\widgets\grid\GridView;
 use yii\helpers\Url;
@@ -16,6 +18,11 @@ use yii\helpers\Url;
     ],
     'columns' => [
         [
+            'attribute' => 'event_date',
+            'label' => 'Health Date',
+            'format' => ['date', 'php:d-M-Y'],
+        ],
+        [
             'attribute' => 'animal_id',
             'value' => function (AnimalEvent $model) {
                 return $model->animal->tag_id;
@@ -29,9 +36,19 @@ use yii\helpers\Url;
             },
         ],
         [
-            'attribute' => 'event_date',
-            'label' => 'Milk Date',
-            'format' => ['date', 'php:d-M-Y'],
+            'attribute' => 'health_category',
+            'enableSorting' => false,
+        ],
+        [
+            'attribute' => 'health_provider',
+            'value' => function (AnimalEvent $model) {
+                return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_HEALTH_PROVIDER, $model->health_provider);
+            },
+            'enableSorting' => false,
+        ],
+        [
+            'attribute' => 'health_drug_cost',
+            'enableSorting' => false,
         ],
     ],
 ]);
