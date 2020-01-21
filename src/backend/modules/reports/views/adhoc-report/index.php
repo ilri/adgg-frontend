@@ -9,9 +9,9 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="row">
     <div class="col-lg-12">
-        <?= $this->render('@reportsModule/views/layouts/_tab', ['orgModel' => $orgModel]) ?>
+        <?= $this->render('_tab') ?>
         <div class="tab-content">
-            <?= $this->render('_filter', ['model' => $searchModel,  ]) ?>
+            <?= $this->render('_filter', ['model' => $searchModel]) ?>
             <?= $this->render('_grid', ['model' => $searchModel]) ?>
         </div>
     </div>

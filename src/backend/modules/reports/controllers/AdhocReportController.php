@@ -27,16 +27,8 @@ class AdhocReportController extends Controller
         $this->activeMenu = Constants::MENU_REPORTS;
     }
 
-    public function actionIndex($org_id = null, $name = null, $created_by = null, $status = null, $from = null, $to = null)
+    public function actionIndex($name = null, $created_by = null, $status = null, $from = null, $to = null)
     {
-        $orgModel = null;
-        if (Session::isOrganization()) {
-            $org_id = Session::getOrgId();
-            $level_id = UserLevels::LEVEL_COUNTRY;
-        }
-        if (!empty($org_id)) {
-            $orgModel = Organization::loadModel($org_id);
-        }
         $date_filter = DateUtils::getDateFilterParams($from, $to, 'created_at', false, false);
         $condition = $date_filter['condition'];
         $params = [];
@@ -47,8 +39,6 @@ class AdhocReportController extends Controller
             'params' => $params,
             'with' => ['level', 'role', 'org'],
         ]);
-        //$searchModel->org_id = $org_id;
-        //$searchModel->status = AdhocReport::STATUS_QUEUED;
         $searchModel->name = $name;
         $searchModel->created_by = $created_by;
         $searchModel->status = $status ?? AdhocReport::STATUS_QUEUED;
@@ -57,7 +47,6 @@ class AdhocReportController extends Controller
 
         return $this->render('index', [
             'searchModel' => $searchModel,
-            'orgModel' => $orgModel,
         ]);
     }
 
