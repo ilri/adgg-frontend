@@ -8,11 +8,13 @@ MyApp.modules.reports = {};
             selectedFieldsHolder: '#selectedFields',
             builderFormSelector: '#report-builder-form',
             generateQueryBtnSelector: '#generateQuery',
+            saveReportBtnSelector: '#saveReport',
             queryOptionsContainer: '#queryOptions',
             queryHolderContainer: '#queryHolder',
             orderBySelector: '#orderby',
             inputSelectOptions: {},
             generateQueryURL: '',
+            saveReportURL: '',
         };
         this.options = $.extend({}, defaultOptions, options || {});
     }
@@ -57,6 +59,31 @@ MyApp.modules.reports = {};
                 }
             })
 
+        }
+
+        let _saveReport = function(e){
+            let form = $($this.options.builderFormSelector),
+                url = $this.options.saveReportURL;
+            let data =  JSON.stringify( form.serializeArray() );
+
+            $.ajax({
+                url: url,
+                type: 'post',
+                dataType: 'html',
+                data: form.serialize(),
+                success: function (data) {
+                    //$($this.options.queryHolderContainer).html(data);
+                    console.log(data);
+                },
+                beforeSend: function (xhr) {
+                    //$($this.options.reportContainerSelector).html('<h1 class="text-center text-warning" style="margin-top:50px;"><i class="fa fa-spinner fa-spin fa-2x"></i> Loading...</h1>');
+                },
+                error: function (xhr) {
+                    if (MyApp.DEBUG_MODE) {
+                        console.log(xhr);
+                    }
+                }
+            })
         }
 
         let _populateSelected = function(e){
@@ -158,6 +185,11 @@ MyApp.modules.reports = {};
             event.preventDefault();
             _generateQuery(this);
         });
+        $($this.options.saveReportBtnSelector).on('click', function (event) {
+            event.preventDefault();
+            _saveReport(this);
+        });
+
         $('#select_org_id').on('change', function (event) {
             event.preventDefault();
             var elem = $('#report-builder-container');

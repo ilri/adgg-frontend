@@ -39,6 +39,7 @@ class Controller extends BackendController
                             'update',
                             'delete',
                             'generate-query',
+                            'save-report',
                         ],
                         'allow' => true,
                         'roles' => ['@'],

@@ -45,9 +45,7 @@ use yii\helpers\Url;
             'class' => common\widgets\grid\ActionColumn::class,
             'template' => '{view}{update}',
             'visibleButtons' => [
-                'update' => function (AdhocReport $model) {
-                    return Yii::$app->user->canUpdate() && $model->checkPermission(false, true, false, true);
-                }
+                'update' => false,
             ],
             'updateOptions' => ['data-pjax' => 0, 'title' => 'Update', 'modal' => false],
         ],

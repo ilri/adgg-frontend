@@ -37,7 +37,6 @@ class AdhocReportController extends Controller
             'defaultOrder' => ['name' => SORT_ASC],
             'condition' => $condition,
             'params' => $params,
-            'with' => ['level', 'role', 'org'],
         ]);
         $searchModel->name = $name;
         $searchModel->created_by = $created_by;
