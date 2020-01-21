@@ -56,16 +56,11 @@ class AnimalStatsController extends ActiveController
                     'label' => $type['label'],
                 ];
             }
-            //print_r($data);
 
             foreach ($p_data as $typeId => $animalStats) {
-                // get count of each animal type
-                //$typeId = $animalStats['id'];
                 $searchModel->animal_type = $typeId;
                 $count = $searchModel->search()->getTotalCount();
                 $animalStats['count'] = $count;
-                //$animalStats['label']=$typeLabel;
-                //$animalStats['query'] = $searchModel->search()->query->createCommand()->rawSql;
                 $data[] = $animalStats;
             }
         } else {
@@ -77,16 +72,10 @@ class AnimalStatsController extends ActiveController
                     'label' => $type['label'],
                 ];
             }
-            //print_r($data);
-
             foreach ($p_data as $typeId => $animalStats) {
-                // get count of each animal type
-                //$typeId = $animalStats['id'];
                 $searchModel->main_breed = $typeId;
                 $count = $searchModel->search()->getTotalCount();
                 $animalStats['count'] = $count;
-                //$animalStats['label']=$typeLabel;
-                //$animalStats['query'] = $searchModel->search()->query->createCommand()->rawSql;
                 $data[] = $animalStats;
             }
         }
