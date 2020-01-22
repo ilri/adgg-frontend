@@ -22,6 +22,7 @@ class ReportBuilder extends Model
     public $limit;
     public $orderBy;
     public $org_id;
+    public $name;
 
     /**
      * @return array
@@ -410,6 +411,16 @@ class ReportBuilder extends Model
     }
 
     public function saveReport(){
-
+        // save name, raw_query
+        $report = new AdhocReport();
+        $report->name = $this->name;
+        $report->raw_sql = $this->rawQuery();
+        $report->status = AdhocReport::STATUS_QUEUED;
+        if($report->save()){
+            return true;
+        }
+        else{
+            return $report->getErrors();
+        }
     }
 }
