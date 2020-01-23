@@ -143,11 +143,13 @@ class ReportGenerator extends BaseObject implements JobInterface
                 $this->populateCSV($columns, $rows);
             }
             else {
+                $this->_model->status = AdhocReport::STATUS_COMPLETED;
                 $this->_model->status_remarks = Lang::t('No data returned from query');
                 $this->_model->save(false);
             }
 
         }catch (\Exception $e) {
+            $this->_model->status = AdhocReport::STATUS_ERROR;
             $this->_model->status_remarks = $e->getMessage();
             $this->_model->save(false);
             Yii::$app->controller->stdout("{$e->getMessage()} \n");
