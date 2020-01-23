@@ -53,7 +53,7 @@ use yii\helpers\Url;
                 <h4 class="kt-menu__section-text">ANIMALS, FARMS AND CLIENTS</h4>
                 <i class="kt-menu__section-icon flaticon-more-v2"></i>
             </li>
-            <li class="kt-menu__item  kt-menu__item--submenu">
+            <li class="kt-menu__item  kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'core/animal' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
                 <a href="#" class="kt-menu__link kt-menu__toggle">
                     <i class="kt-menu__link-icon far fa-cow"></i>
                     <span class="kt-menu__link-text">ANIMALS</span>
@@ -94,7 +94,13 @@ use yii\helpers\Url;
                     </ul>
                 </div>
             </li>
-            <li class="kt-menu__item kt-menu__item--submenu" data-ktmenu-submenu-toggle="hover">
+            <?php
+                $eventControllers = ['core/animal-event','core/calving-event', 'core/milking-event', 'core/insemination-event', 'core/pd-event',
+                    'core/synchronization-event', 'core/weight-event', 'core/health-event', 'core/feeding-event', 'core/exits-event',
+                ];
+                $animalEventsActive = in_array(Yii::$app->controller->uniqueId, $eventControllers);
+            ?>
+            <li class="kt-menu__item kt-menu__item--submenu <?= $animalEventsActive ? 'kt-menu__item--open kt-menu__item--here' : '' ?>" data-ktmenu-submenu-toggle="hover">
                 <a href="#" class="kt-menu__link kt-menu__toggle">
                     <i class="kt-menu__link-icon far fa-calendar"></i>
                     <span class="kt-menu__link-text">ANIMALS EVENTS</span>
@@ -172,13 +178,13 @@ use yii\helpers\Url;
                     </ul>
                 </div>
             </li>
-            <li class="kt-menu__item kt-menu__item--submenu">
+            <li class="kt-menu__item kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'core/herd' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
                 <a href="<?= Url::to(['/core/herd/index']) ?>" class="kt-menu__link">
                     <i class="kt-menu__link-icon far fa-cow"></i>
                     <span class="kt-menu__link-text">HERDS</span>
                 </a>
             </li>
-            <li class="kt-menu__item  kt-menu__item--submenu">
+            <li class="kt-menu__item  kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'core/farm' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
                 <a href="#" class="kt-menu__link kt-menu__toggle">
                     <i class="kt-menu__link-icon far fa-tractor"></i>
                     <span class="kt-menu__link-text">FARMS</span>
@@ -225,7 +231,7 @@ use yii\helpers\Url;
                     <span class="kt-menu__link-text">CLIENTS/FARMERS</span>
                 </a>
             </li>
-            <li class="kt-menu__item kt-menu__item--submenu">
+            <li class="kt-menu__item kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'reports/builder' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
                 <a href="#" class="kt-menu__link kt-menu__toggle">
                     <i class="kt-menu__link-icon far fa-chart-pie"></i>
                     <span class="kt-menu__link-text">REPORT BUILDER</span>
@@ -255,11 +261,10 @@ use yii\helpers\Url;
                                 <span class="kt-menu__link-text">ETHIOPIA</span>
                             </a>
                         </li>
-
                     </ul>
                 </div>
             </li>
-            <li class="kt-menu__item kt-menu__item--submenu">
+            <li class="kt-menu__item kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'reports/adhoc-report' ? 'kt-menu__item--here' : '' ?>">
                 <a href="<?= Url::to(['/reports/adhoc-report/index']) ?>" class="kt-menu__link">
                     <i class="kt-menu__link-icon flaticon2-browser-2"></i>
                     <span class="kt-menu__link-text">AD-HOC REPORTS</span>
@@ -270,31 +275,31 @@ use yii\helpers\Url;
                 <h4 class="kt-menu__section-text">ADMINISTRATION</h4>
                 <i class="kt-menu__section-icon flaticon-more-v2"></i>
             </li>
-            <li class="kt-menu__item kt-menu__item--submenu">
+            <li class="kt-menu__item kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'core/organization' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
                 <a href="<?= Url::to(['/core/organization/index']) ?>" class="kt-menu__link">
                     <i class="kt-menu__link-icon far fa-globe-africa"></i>
                     <span class="kt-menu__link-text">COUNTRIES</span>
                 </a>
             </li>
-            <li class="kt-menu__item kt-menu__item--submenu">
+            <li class="kt-menu__item kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'auth/user' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
                 <a href="<?= Url::to(['/auth/user/index']) ?>" class="kt-menu__link">
                     <i class="kt-menu__link-icon far fa-users"></i>
                     <span class="kt-menu__link-text">USERS</span>
                 </a>
             </li>
-            <li class="kt-menu__item kt-menu__item--submenu">
+            <li class="kt-menu__item kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'conf/settings' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
                 <a href="<?= Url::to(['/conf/settings/index']) ?>" class="kt-menu__link">
                     <i class="kt-menu__link-icon far fa-cog"></i>
                     <span class="kt-menu__link-text">SETTINGS</span>
                 </a>
             </li>
-            <li class="kt-menu__item kt-menu__item--submenu">
+            <li class="kt-menu__item kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'core/odk-json' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
                 <a href="<?= Url::to(['/core/odk-json/index']) ?>" class="kt-menu__link">
                     <i class="kt-menu__link-icon far fa-file-alt"></i>
                     <span class="kt-menu__link-text">ODK JSON FILES</span>
                 </a>
             </li>
-            <li class="kt-menu__item kt-menu__item--submenu">
+            <li class="kt-menu__item kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'core/excel-upload-status' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
                 <a href="<?= Url::to(['/core/excel-upload-status/index']) ?>" class="kt-menu__link">
                     <i class="kt-menu__link-icon far fa-file-alt"></i>
                     <span class="kt-menu__link-text">EXCEL/CSV FILES</span>
