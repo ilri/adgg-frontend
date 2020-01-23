@@ -2,6 +2,7 @@
 
 namespace backend\modules\reports\controllers;
 
+use backend\modules\auth\Acl;
 use backend\modules\reports\models\AdhocReport;
 use backend\modules\reports\models\ReportBuilder;
 use common\helpers\Lang;
@@ -22,6 +23,7 @@ class BuilderController extends Controller
     public function init()
     {
         parent::init();
+        $this->hasPrivilege(Acl::ACTION_CREATE);
     }
 
     public function actionIndex()
@@ -77,6 +79,7 @@ class BuilderController extends Controller
             $report->raw_sql = $builder->rawQuery();
             $report->status = AdhocReport::STATUS_QUEUED;
             if($report->save()){
+                $transaction->commit();
                 ReportGenerator::push(['queueId' => $report->id]);
                 return Json::encode(['success' => true, 'message' => $success_msg, 'redirectUrl' => '', 'forceRedirect' => false]);
             }
@@ -84,6 +87,7 @@ class BuilderController extends Controller
                 Yii::debug($report->getErrors());
                 return Json::encode(['success' => false, 'message' => $report->getErrors()]);
             }
+
         }
         catch (\Exception $e) {
             $transaction->rollBack();
