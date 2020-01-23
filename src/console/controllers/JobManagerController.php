@@ -22,7 +22,6 @@ class JobManagerController extends BaseController
 
     protected function generalCron()
     {
-        \backend\modules\saving\models\WithdrawNotice::checkDueDate();
     }
 
     public function actionNotification()
