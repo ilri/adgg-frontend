@@ -73,25 +73,20 @@ MyApp.modules.reports = {};
                 dataType: 'json',
                 data: form.serialize(),
                 success: function (response) {
-                    console.log(response);
                     if(response.success){
                         let message = '<div class="alert alert-outline-success">' + response.message + '</div>';
                         swal("SUCCESS!", message, "success");
                     }
                     else {
-                        console.log(response.message);
                         if (typeof response.message === 'string' || response.message instanceof String) {
-                            console.log('message is a string')
                             let message = '<div class="alert alert-outline-danger">' + response.message + '</div>';
                             swal("ERROR!", message, "error");
                         } else {
-
                             let summary = '<ul>';
                             if (typeof response.message === 'object') {
-                                console.log('message is an object')
-                                $.each(response, function (i) {
-                                    if ($.isArray(response[i])) {
-                                        $.each(response[i], function (j, msg) {
+                                $.each(response.message, function (i) {
+                                    if ($.isArray(response.message[i])) {
+                                        $.each(response.message[i], function (j, msg) {
                                             let $input = $('#' + i);
                                             $input.addClass('is-invalid');
                                             $input.next('.invalid-feedback').html(msg);
@@ -106,11 +101,9 @@ MyApp.modules.reports = {};
                     }
                 },
                 beforeSend: function () {
-                    //$(e).attr('disabled', 'disabled').html('Please wait....');
                     MyApp.utils.startBlockUI();
                 },
                 complete: function () {
-                    //$(e).html(originalButtonHtml).removeAttr('disabled');
                     MyApp.utils.stopBlockUI();
                 },
                 error: function (xhr) {
