@@ -35,7 +35,8 @@ use common\models\CustomValidationsTrait;
  * @property int $lactation_id
  * @property string $lactation_number
  * @property string|array $additional_attributes
- *
+ * @property int lactation_id
+ * @property int lactation_number
  * @property Animal $animal
  * @property Users $fieldAgent
  * @property AnimalEvent $lactation

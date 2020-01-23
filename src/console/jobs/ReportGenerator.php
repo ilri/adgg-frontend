@@ -163,26 +163,24 @@ class ReportGenerator extends BaseObject implements JobInterface
     protected function populateCSV($columns, $rows){
         $filepath = $this->filepath;
         try {
-            if (count($rows) > 0) {
-                $data = [];
-                $header = $columns;
-                $data[] = $header;
-                foreach ($rows as $n => $row) {
-                    $data[] = $row;
-                }
-
-                $fp = fopen($filepath, 'wb');
-
-                foreach ($data as $fields) {
-                    fputcsv($fp, $fields);
-                }
-
-                fclose($fp);
-
-                $this->_model->report_file = $filepath;
-                $this->_model->status = AdhocReport::STATUS_COMPLETED;
-                $this->_model->save(false);
+            $data = [];
+            $header = $columns;
+            $data[] = $header;
+            foreach ($rows as $n => $row) {
+                $data[] = $row;
             }
+
+            $fp = fopen($filepath, 'wb');
+
+            foreach ($data as $fields) {
+                fputcsv($fp, $fields);
+            }
+
+            fclose($fp);
+
+            $this->_model->report_file = $filepath;
+            $this->_model->status = AdhocReport::STATUS_COMPLETED;
+            $this->_model->save(false);
         } catch (\Exception $e) {
             Yii::$app->controller->stdout("{$e->getMessage()} \n");
         }

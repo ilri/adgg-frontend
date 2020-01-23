@@ -63,20 +63,48 @@ MyApp.modules.reports = {};
 
         let _saveReport = function(e){
             let form = $($this.options.builderFormSelector),
+                originalButtonHtml = $(e).html(),
                 url = $this.options.saveReportURL;
             let data =  JSON.stringify( form.serializeArray() );
 
             $.ajax({
                 url: url,
                 type: 'post',
-                dataType: 'html',
+                dataType: 'json',
                 data: form.serialize(),
-                success: function (data) {
-                    //$($this.options.queryHolderContainer).html(data);
-                    console.log(data);
+                success: function (response) {
+                    if(response.success){
+                        let message = '<div class="alert alert-outline-success">' + response.message + '</div>';
+                        swal("SUCCESS!", message, "success");
+                    }
+                    else {
+                        if (typeof response.message === 'string' || response.message instanceof String) {
+                            let message = '<div class="alert alert-outline-danger">' + response.message + '</div>';
+                            swal("ERROR!", message, "error");
+                        } else {
+                            let summary = '<ul>';
+                            if (typeof response.message === 'object') {
+                                $.each(response.message, function (i) {
+                                    if ($.isArray(response.message[i])) {
+                                        $.each(response.message[i], function (j, msg) {
+                                            let $input = $('#' + i);
+                                            $input.addClass('is-invalid');
+                                            $input.next('.invalid-feedback').html(msg);
+                                            summary += '<li>' + msg + '</li>';
+                                        });
+                                    }
+                                });
+                            }
+                            summary += '</ul>';
+                            swal("ERROR!", summary, "error");
+                        }
+                    }
                 },
-                beforeSend: function (xhr) {
-                    //$($this.options.reportContainerSelector).html('<h1 class="text-center text-warning" style="margin-top:50px;"><i class="fa fa-spinner fa-spin fa-2x"></i> Loading...</h1>');
+                beforeSend: function () {
+                    MyApp.utils.startBlockUI();
+                },
+                complete: function () {
+                    MyApp.utils.stopBlockUI();
                 },
                 error: function (xhr) {
                     if (MyApp.DEBUG_MODE) {
