@@ -229,7 +229,7 @@ class UserController extends Controller
         }
         $this->hasPrivilege(Acl::ACTION_CREATE);
 
-        $form = new UploadUsers(['org_id' => $org_id, 'level_id' => $level_id]);
+        $form = new UploadUsers(Users::class, ['org_id' => $org_id, 'level_id' => $level_id]);
         if ($form->load(Yii::$app->request->post())) {
             if ($form->validate() && $form->addToExcelQueue()) {
                 //process the file

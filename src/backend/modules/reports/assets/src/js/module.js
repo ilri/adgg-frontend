@@ -8,11 +8,13 @@ MyApp.modules.reports = {};
             selectedFieldsHolder: '#selectedFields',
             builderFormSelector: '#report-builder-form',
             generateQueryBtnSelector: '#generateQuery',
+            saveReportBtnSelector: '#saveReport',
             queryOptionsContainer: '#queryOptions',
             queryHolderContainer: '#queryHolder',
             orderBySelector: '#orderby',
             inputSelectOptions: {},
             generateQueryURL: '',
+            saveReportURL: '',
         };
         this.options = $.extend({}, defaultOptions, options || {});
     }
@@ -57,6 +59,59 @@ MyApp.modules.reports = {};
                 }
             })
 
+        }
+
+        let _saveReport = function(e){
+            let form = $($this.options.builderFormSelector),
+                originalButtonHtml = $(e).html(),
+                url = $this.options.saveReportURL;
+            let data =  JSON.stringify( form.serializeArray() );
+
+            $.ajax({
+                url: url,
+                type: 'post',
+                dataType: 'json',
+                data: form.serialize(),
+                success: function (response) {
+                    if(response.success){
+                        let message = '<div class="alert alert-outline-success">' + response.message + '</div>';
+                        swal("SUCCESS!", message, "success");
+                    }
+                    else {
+                        if (typeof response.message === 'string' || response.message instanceof String) {
+                            let message = '<div class="alert alert-outline-danger">' + response.message + '</div>';
+                            swal("ERROR!", message, "error");
+                        } else {
+                            let summary = '<ul>';
+                            if (typeof response.message === 'object') {
+                                $.each(response.message, function (i) {
+                                    if ($.isArray(response.message[i])) {
+                                        $.each(response.message[i], function (j, msg) {
+                                            let $input = $('#' + i);
+                                            $input.addClass('is-invalid');
+                                            $input.next('.invalid-feedback').html(msg);
+                                            summary += '<li>' + msg + '</li>';
+                                        });
+                                    }
+                                });
+                            }
+                            summary += '</ul>';
+                            swal("ERROR!", summary, "error");
+                        }
+                    }
+                },
+                beforeSend: function () {
+                    MyApp.utils.startBlockUI();
+                },
+                complete: function () {
+                    MyApp.utils.stopBlockUI();
+                },
+                error: function (xhr) {
+                    if (MyApp.DEBUG_MODE) {
+                        console.log(xhr);
+                    }
+                }
+            })
         }
 
         let _populateSelected = function(e){
@@ -158,6 +213,11 @@ MyApp.modules.reports = {};
             event.preventDefault();
             _generateQuery(this);
         });
+        $($this.options.saveReportBtnSelector).on('click', function (event) {
+            event.preventDefault();
+            _saveReport(this);
+        });
+
         $('#select_org_id').on('change', function (event) {
             event.preventDefault();
             var elem = $('#report-builder-container');
