@@ -43,9 +43,9 @@ $this->params['breadcrumbs'] = [
             <div class="card-body">
                 <div class="row">
                     <div class="col-12 col-md-6">
-                        <p class="text-center"></p>
+                        <p class="text-center">0</p>
                         <h6 class="text-center font-weight-bold">Number Of Farms</h6>
-                        <p class="text-center"></p>
+                        <p class="text-center">0</p>
                         <h6 class="text-center font-weight-bold">Number Of Animals</h6>
                     </div>
                     <div class="col-12 col-md-6">
@@ -67,9 +67,9 @@ $this->params['breadcrumbs'] = [
             <div class="card-body">
                 <div class="row">
                     <div class="col-12 col-md-6">
-                        <p class="text-center"></p>
+                        <p class="text-center">0</p>
                         <h6 class="text-center font-weight-bold">Number Of Farms</h6>
-                        <p class="text-center"></p>
+                        <p class="text-center">0</p>
                         <h6 class="text-center font-weight-bold">Number Of Animals</h6>
                     </div>
                     <div class="col-12 col-md-6">
