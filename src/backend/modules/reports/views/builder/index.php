@@ -149,7 +149,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 </div>
                             </div>
                             <div class="mt-5">
-                                <button id="generateQuery" role="button" class="btn btn-primary col-md-8 offset-3">Generate Query</button>
+                                <button id="generateQuery" role="button" class="btn btn-primary col-md-8 offset-3">Preview Query</button>
                             </div>
                             <div class="row card card-body mt-4 mb-4">
                                 <div class="bd-clipboard hidden">

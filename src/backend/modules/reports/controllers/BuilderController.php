@@ -70,7 +70,7 @@ class BuilderController extends Controller
     }
 
     public function actionSaveReport(){
-        $success_msg = Lang::t('SUCCESS_MESSAGE');
+        $success_msg = Lang::t('Report Queued Successfully. You will be notified once your report is ready for download');
         $transaction = Yii::$app->db->beginTransaction();
         try {
             $builder = $this->build();
