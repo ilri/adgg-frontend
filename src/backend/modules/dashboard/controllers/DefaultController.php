@@ -9,6 +9,8 @@
 namespace backend\modules\dashboard\controllers;
 
 
+use backend\modules\core\models\Organization;
+
 class DefaultController extends Controller
 {
     /**
@@ -21,7 +23,9 @@ class DefaultController extends Controller
 
     public function actionIndex()
     {
+        $countries = Organization::find()->orderBy(['code' => SORT_ASC])->all();
         return $this->render('index2', [
+            'countries' => $countries,
             'graphFilterOptions' => [
             ],
         ]);
