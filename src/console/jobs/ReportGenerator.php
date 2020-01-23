@@ -178,7 +178,7 @@ class ReportGenerator extends BaseObject implements JobInterface
 
             fclose($fp);
 
-            $this->_model->report_file = $filepath;
+            $this->_model->report_file = $this->filename. '.csv';
             $this->_model->status = AdhocReport::STATUS_COMPLETED;
             $this->_model->save(false);
         } catch (\Exception $e) {

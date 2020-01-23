@@ -2,6 +2,7 @@
 
 namespace backend\modules\reports\models;
 
+use common\helpers\FileManager;
 use common\helpers\Lang;
 use common\helpers\Utils;
 use common\models\ActiveRecord;
@@ -117,6 +118,31 @@ class AdhocReport extends ActiveRecord implements ActiveSearchInterface
             self::STATUS_COMPLETED => static::decodeStatus(self::STATUS_COMPLETED),
             self::STATUS_ERROR => static::decodeStatus(self::STATUS_ERROR),
         ], $tip);
+    }
+
+    /**
+     * @return string
+     */
+    public function getBaseDir()
+    {
+        return FileManager::createDir(FileManager::getUploadsDir() . DIRECTORY_SEPARATOR . 'adhoc-reports');
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getFilePath()
+    {
+        $path = null;
+        if (empty($this->report_file))
+            return null;
+
+        $file = $this->getBaseDir() . DIRECTORY_SEPARATOR . $this->report_file;
+        if (file_exists($file)) {
+            $path = $file;
+        }
+
+        return $path;
     }
 
 }

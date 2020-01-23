@@ -2,6 +2,7 @@
 
 use common\widgets\grid\GridView;
 use backend\modules\reports\models\AdhocReport;
+use yii\helpers\Html;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
@@ -29,6 +30,10 @@ use yii\helpers\Url;
         [
             'attribute' => 'report_file',
             'filter' => false,
+            'value' => function (AdhocReport $model) {
+                return Html::a($model->report_file, ['download-file', 'id' => $model->id], ['data-pjax' => 0]);
+            },
+            'format' => 'raw',
         ],
         [
             'attribute' => 'status',

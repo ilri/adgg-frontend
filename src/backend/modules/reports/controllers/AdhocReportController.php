@@ -8,6 +8,8 @@ use backend\modules\core\models\Organization;
 use backend\modules\reports\Constants;
 use backend\modules\reports\models\AdhocReport;
 use common\helpers\DateUtils;
+use common\helpers\FileManager;
+use common\helpers\Str;
 use common\models\ActiveRecord;
 
 /**
@@ -34,7 +36,7 @@ class AdhocReportController extends Controller
         $params = [];
 
         $searchModel = AdhocReport::searchModel([
-            'defaultOrder' => ['name' => SORT_ASC],
+            'defaultOrder' => ['id' => SORT_DESC],
             'condition' => $condition,
             'params' => $params,
         ]);
@@ -47,6 +49,11 @@ class AdhocReportController extends Controller
         return $this->render('index', [
             'searchModel' => $searchModel,
         ]);
+    }
+    public function actionDownloadFile($id)
+    {
+        $model = AdhocReport::loadModel($id);
+        FileManager::downloadFile($model->getFilePath(), Str::removeWhitespace($model->report_file));
     }
 
 }
