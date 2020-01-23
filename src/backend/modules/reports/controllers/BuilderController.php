@@ -26,12 +26,13 @@ class BuilderController extends Controller
         $this->hasPrivilege(Acl::ACTION_CREATE);
     }
 
-    public function actionIndex()
+    public function actionIndex($org_id)
     {
         $models = ReportBuilder::reportableModels();
 
         return $this->render('index',[
             'models' => $models,
+            'org_id' => $org_id,
         ]);
     }
 

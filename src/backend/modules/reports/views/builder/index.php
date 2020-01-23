@@ -19,34 +19,14 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="row">
     <div class="col-md-12">
         <div class="well">
-            <h3 class="text-muted"><?= Lang::t('REPORT BUILDER') ?></h3>
+            <h3 class="text-muted"><?= Lang::t('REPORT BUILDER') ?> [<?= strtoupper(Organization::getScalar('name', ['id' => $org_id])) ?>]</h3>
             <hr>
             <form method="POST" id="report-builder-form" >
 
                 <input type="hidden" name="<?= Yii::$app->request->csrfParam ?>" value="<?= Yii::$app->request->csrfToken ?>" />
                 <input type="hidden" name="model" id="model" />
-            <div class="row row-no-gutters mt-2 mb-3">
-                <div class="col-md-3 row">
-                    <div class="col-md-4"><label for="org_id">Country: </label></div>
-                    <div class="col-md-8">
-                        <?= Select2::widget([
-                            'name' => 'org_id',
-                            'value' => '',
-                            'data' => Organization::getListData(),
-                            'options' => [
-                                'placeholder' => "",
-                                'class' => 'form-control select2',
-                                'id' => 'select_org_id',
-                            ],
-                            'pluginOptions' => [
-                                'allowClear' => true
-                            ],
-                        ]); ?>
-                    </div>
-                </div>
-            </div>
-                <hr>
-            <div class="row hidden" id="report-builder-container">
+                <input type="hidden" name="org_id" id="org_id" value="<?= $org_id ?>"/>
+            <div class="row" id="report-builder-container">
                 <div class="panel panel-default bs-item z-depth-2 col-md-3">
                     <div class="panel-body">
                         <?php

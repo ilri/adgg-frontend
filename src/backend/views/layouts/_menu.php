@@ -226,9 +226,43 @@ use yii\helpers\Url;
                 </a>
             </li>
             <li class="kt-menu__item kt-menu__item--submenu">
-                <a href="<?= Url::to(['/reports/builder/index']) ?>" class="kt-menu__link">
+                <a href="#" class="kt-menu__link kt-menu__toggle">
                     <i class="kt-menu__link-icon far fa-chart-pie"></i>
                     <span class="kt-menu__link-text">REPORT BUILDER</span>
+                    <i class="kt-menu__ver-arrow la la-angle-right"></i>
+                </a>
+                <div class="kt-menu__submenu">
+                    <span class="kt-menu__arrow"></span>
+                    <ul class="kt-menu__subnav">
+                        <li class="kt-menu__item">
+                            <a href="<?= Url::to(['/reports/builder/index', 'org_id' => 10]) ?>"
+                               class="kt-menu__link ">
+                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                <span class="kt-menu__link-text">TANZANIA</span>
+                            </a>
+                        </li>
+                        <li class="kt-menu__item">
+                            <a href="<?= Url::to(['/reports/builder/index', 'org_id' => 11]) ?>"
+                               class="kt-menu__link ">
+                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                <span class="kt-menu__link-text">KENYA</span>
+                            </a>
+                        </li>
+                        <li class="kt-menu__item">
+                            <a href="#"
+                               class="kt-menu__link ">
+                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                <span class="kt-menu__link-text">ETHIOPIA</span>
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+            </li>
+            <li class="kt-menu__item kt-menu__item--submenu">
+                <a href="<?= Url::to(['/reports/adhoc-report/index']) ?>" class="kt-menu__link">
+                    <i class="kt-menu__link-icon flaticon2-browser-2"></i>
+                    <span class="kt-menu__link-text">AD-HOC REPORTS</span>
                 </a>
             </li>
 

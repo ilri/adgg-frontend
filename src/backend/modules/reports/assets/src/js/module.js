@@ -47,10 +47,12 @@ MyApp.modules.reports = {};
                 data: form.serialize(),
                 success: function (data) {
                     $($this.options.queryHolderContainer).html(data);
-                    //console.log(data);
                 },
                 beforeSend: function (xhr) {
-                    //$($this.options.reportContainerSelector).html('<h1 class="text-center text-warning" style="margin-top:50px;"><i class="fa fa-spinner fa-spin fa-2x"></i> Loading...</h1>');
+                    MyApp.utils.startBlockUI();
+                },
+                complete: function () {
+                    MyApp.utils.stopBlockUI();
                 },
                 error: function (xhr) {
                     if (MyApp.DEBUG_MODE) {
