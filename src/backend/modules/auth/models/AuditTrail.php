@@ -5,6 +5,7 @@ namespace backend\modules\auth\models;
 use backend\modules\auth\Session;
 use backend\modules\core\models\Organization;
 use backend\modules\core\models\OrganizationDataTrait;
+use backend\modules\core\models\TableAttributeInterface;
 use common\helpers\Lang;
 use common\helpers\Utils;
 use common\models\ActiveRecord;
@@ -154,8 +155,13 @@ class AuditTrail extends ActiveRecord implements ActiveSearchInterface
 
         if ($action === self::ACTION_CREATE || $action === self::ACTION_DELETE) {
             foreach ($model->safeAttributes() as $k) {
+                if ($model instanceof TableAttributeInterface) {
+                    if ($model->isAdditionalAttribute($k)) {
+                        continue;
+                    }
+                }
                 if ($model->hasAttribute($k)) {
-                    $changedAttributes[$k] = ['old' => null, 'new' => $model->changedAttributes[$k]];
+                    $changedAttributes[$k] = ['old' => null, 'new' => $model->attributes[$k]];
                 }
             }
         }
