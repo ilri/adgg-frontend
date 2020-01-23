@@ -9,6 +9,8 @@
 namespace backend\modules\dashboard\controllers;
 
 
+use backend\modules\core\models\Animal;
+
 class StatsController extends Controller
 {
     /**
@@ -27,9 +29,67 @@ class StatsController extends Controller
         ]);
     }
 
-    public function actionSummary()
+    public function actionDash($org_id = null)
     {
-        return $this->render('summary', [
+        $searchModel = Animal::searchModel([
+            'defaultOrder' => ['id' => SORT_ASC],
+        ]);
+        return $this->render('dashboards', [
+            'graphFilterOptions' => [
+                'org_id' => $org_id,
+            ],
+            'searchModel' => $searchModel,
+        ]);
+    }
+
+    public function actionDash1($org_id = null)
+    {
+        return $this->render('lsf', [
+            'graphFilterOptions' => [
+                'org_id' => $org_id,
+            ],
+        ]);
+    }
+
+    public function actionDash2($org_id = null)
+    {
+        return $this->render('test-day', [
+            'graphFilterOptions' => [
+                'org_id' => $org_id,
+            ],
+        ]);
+    }
+
+    public function actionDash3($org_id = null)
+    {
+        return $this->render('genotyped-animals', [
+            'graphFilterOptions' => [
+                'org_id' => $org_id,
+            ],
+        ]);
+    }
+
+    public function actionDash4($org_id = null)
+    {
+        return $this->render('pd-ai-cal', [
+            'graphFilterOptions' => [
+                'org_id' => $org_id,
+            ],
+        ]);
+    }
+
+    public function actionFarmSummary()
+    {
+        return $this->render('farm-summary', [
+            'graphFilterOptions' => [
+                'org_id' => 10,
+            ],
+        ]);
+    }
+
+    public function actionAnimalSummary()
+    {
+        return $this->render('animal-summary', [
             'graphFilterOptions' => [
                 'org_id' => 10,
             ],

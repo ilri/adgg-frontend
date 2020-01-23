@@ -29,8 +29,10 @@ MyApp.modules.dashboard = {};
                         enabled: true,
                         color: '#000000',
                         connectorColor: '#000000',
-                        format: '<b>{point.name}</b>: {point.y}: {point.percentage:.0f} %',
-                    }
+                        format: '<b>{point.name}</b>: {point.y}({point.percentage:.0f}%)',
+                    },
+                    innerSize: '30%',
+                    size: 300,
                 }
             },
         };
