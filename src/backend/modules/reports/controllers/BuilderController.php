@@ -4,8 +4,12 @@ namespace backend\modules\reports\controllers;
 
 use backend\modules\reports\models\AdhocReport;
 use backend\modules\reports\models\ReportBuilder;
+use common\helpers\Lang;
+use common\helpers\Url;
 use common\models\ActiveRecord;
 use console\jobs\ReportGenerator;
+use Yii;
+use yii\helpers\Json;
 
 /**
  * Default controller for the `reports` module
@@ -63,18 +67,29 @@ class BuilderController extends Controller
     }
 
     public function actionSaveReport(){
-        $builder = $this->build();
-        // save name, raw_query
-        $report = new AdhocReport();
-        $report->name = $builder->name;
-        $report->raw_sql = $builder->rawQuery();
-        $report->status = AdhocReport::STATUS_QUEUED;
-        if($report->save()){
-            ReportGenerator::push(['queueId' => $report->id]);
-            return true;
+        $success_msg = Lang::t('SUCCESS_MESSAGE');
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            $builder = $this->build();
+            // save name, raw_query
+            $report = new AdhocReport();
+            $report->name = $builder->name;
+            $report->raw_sql = $builder->rawQuery();
+            $report->status = AdhocReport::STATUS_QUEUED;
+            if($report->save()){
+                ReportGenerator::push(['queueId' => $report->id]);
+                return Json::encode(['success' => true, 'message' => $success_msg, 'redirectUrl' => '', 'forceRedirect' => false]);
+            }
+            else{
+                Yii::debug($report->getErrors());
+                return Json::encode(['success' => false, 'message' => $report->getErrors()]);
+            }
         }
-        else{
-            return json_encode($report->getErrors());
+        catch (\Exception $e) {
+            $transaction->rollBack();
+            Yii::debug($e->getTrace());
+            return Json::encode(['success' => false, 'message' => $e->getMessage()]);
         }
+
     }
 }

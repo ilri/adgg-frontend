@@ -32,7 +32,8 @@ use common\models\CustomValidationsTrait;
  * @property int $updated_by
  * @property int $field_agent_id
  * @property string|array $additional_attributes
- *
+ * @property int lactation_id
+ * @property int lactation_number
  * @property Animal $animal
  * @property Users $fieldAgent
  */

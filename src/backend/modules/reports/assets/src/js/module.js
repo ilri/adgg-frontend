@@ -63,20 +63,55 @@ MyApp.modules.reports = {};
 
         let _saveReport = function(e){
             let form = $($this.options.builderFormSelector),
+                originalButtonHtml = $(e).html(),
                 url = $this.options.saveReportURL;
             let data =  JSON.stringify( form.serializeArray() );
 
             $.ajax({
                 url: url,
                 type: 'post',
-                dataType: 'html',
+                dataType: 'json',
                 data: form.serialize(),
-                success: function (data) {
-                    //$($this.options.queryHolderContainer).html(data);
-                    console.log(data);
+                success: function (response) {
+                    console.log(response);
+                    if(response.success){
+                        let message = '<div class="alert alert-outline-success">' + response.message + '</div>';
+                        swal("SUCCESS!", message, "success");
+                    }
+                    else {
+                        console.log(response.message);
+                        if (typeof response.message === 'string' || response.message instanceof String) {
+                            console.log('message is a string')
+                            let message = '<div class="alert alert-outline-danger">' + response.message + '</div>';
+                            swal("ERROR!", message, "error");
+                        } else {
+
+                            let summary = '<ul>';
+                            if (typeof response.message === 'object') {
+                                console.log('message is an object')
+                                $.each(response, function (i) {
+                                    if ($.isArray(response[i])) {
+                                        $.each(response[i], function (j, msg) {
+                                            let $input = $('#' + i);
+                                            $input.addClass('is-invalid');
+                                            $input.next('.invalid-feedback').html(msg);
+                                            summary += '<li>' + msg + '</li>';
+                                        });
+                                    }
+                                });
+                            }
+                            summary += '</ul>';
+                            swal("ERROR!", summary, "error");
+                        }
+                    }
                 },
-                beforeSend: function (xhr) {
-                    //$($this.options.reportContainerSelector).html('<h1 class="text-center text-warning" style="margin-top:50px;"><i class="fa fa-spinner fa-spin fa-2x"></i> Loading...</h1>');
+                beforeSend: function () {
+                    //$(e).attr('disabled', 'disabled').html('Please wait....');
+                    MyApp.utils.startBlockUI();
+                },
+                complete: function () {
+                    //$(e).html(originalButtonHtml).removeAttr('disabled');
+                    MyApp.utils.stopBlockUI();
                 },
                 error: function (xhr) {
                     if (MyApp.DEBUG_MODE) {
