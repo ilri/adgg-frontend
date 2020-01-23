@@ -8,28 +8,37 @@ use yii\helpers\Url;
     <div id="kt_aside_menu" class="kt-aside-menu " data-ktmenu-vertical="1" data-ktmenu-scroll="1"
          data-ktmenu-dropdown-timeout="500">
         <ul class="kt-menu__nav ">
-            <li class="kt-menu__item  kt-menu__item--submenu">
-                <!--<a href="<?= Yii::$app->homeUrl ?>" class="kt-menu__link kt-menu__toggle">
+            <li class="kt-menu__item kt-menu__item--submenu">
+                <a href="<?= Yii::$app->homeUrl ?>" class="kt-menu__link">
                     <i class="kt-menu__link-icon fas fa-home"></i>
                     <span class="kt-menu__link-text">DASHBOARD</span>
-                </a>-->
+                </a>
+            </li>
+            <!--<li class="kt-menu__item  kt-menu__item--submenu">
                 <a href="#" class="kt-menu__link kt-menu__toggle">
                     <i class="kt-menu__link-icon far fa-calendar"></i>
-                    <span class="kt-menu__link-text">DASHBOARD</span>
+                    <span class="kt-menu__link-text">DASHBOARDS</span>
                     <i class="kt-menu__ver-arrow la la-angle-right"></i>
                 </a>
                 <div class="kt-menu__submenu">
                     <span class="kt-menu__arrow"></span>
                     <ul class="kt-menu__subnav">
                         <li class="kt-menu__item">
-                            <a href="<?= Yii::$app->homeUrl ?>"
+                            <a href="<? /*= Url::to(['/dashboard/stats/dash','org_id'=>10]) */ ?>"
+                               class="kt-menu__link ">
+                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                <span class="kt-menu__link-text">TANZANIA</span>
+                            </a>
+                        </li>
+                        <li class="kt-menu__item">
+                            <a href="<? /*= Yii::$app->homeUrl */ ?>"
                                class="kt-menu__link ">
                                 <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
                                 <span class="kt-menu__link-text">QUICK SUMMARY</span>
                             </a>
                         </li>
                         <li class="kt-menu__item">
-                            <a href="<?= Url::to(['/dashboard/stats/index']) ?>"
+                            <a href="<? /*= Url::to(['/dashboard/stats/index']) */ ?>"
                                class="kt-menu__link ">
                                 <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
                                 <span class="kt-menu__link-text">DETAILED SUMMARY</span>
@@ -38,17 +47,52 @@ use yii\helpers\Url;
 
                     </ul>
                 </div>
-            </li>
+            </li>-->
 
             <li class="kt-menu__section ">
                 <h4 class="kt-menu__section-text">ANIMALS, FARMS AND CLIENTS</h4>
                 <i class="kt-menu__section-icon flaticon-more-v2"></i>
             </li>
-            <li class="kt-menu__item kt-menu__item--submenu">
-                <a href="<?= Url::to(['/core/animal/index']) ?>" class="kt-menu__link">
+            <li class="kt-menu__item  kt-menu__item--submenu">
+                <a href="#" class="kt-menu__link kt-menu__toggle">
                     <i class="kt-menu__link-icon far fa-cow"></i>
                     <span class="kt-menu__link-text">ANIMALS</span>
+                    <i class="kt-menu__ver-arrow la la-angle-right"></i>
                 </a>
+                <div class="kt-menu__submenu">
+                    <span class="kt-menu__arrow"></span>
+                    <ul class="kt-menu__subnav">
+                        <li class="kt-menu__item">
+                            <a href="<?= Url::to(['/core/animal/index']) ?>"
+                               class="kt-menu__link ">
+                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                <span class="kt-menu__link-text">ALL ANIMALS</span>
+                            </a>
+                        </li>
+                        <li class="kt-menu__item">
+                            <a href="<?= Url::to(['/core/animal/index', 'org_id' => 10]) ?>"
+                               class="kt-menu__link ">
+                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                <span class="kt-menu__link-text">TANZANIA</span>
+                            </a>
+                        </li>
+                        <li class="kt-menu__item">
+                            <a href="<?= Url::to(['/core/animal/index', 'org_id' => 11]) ?>"
+                               class="kt-menu__link ">
+                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                <span class="kt-menu__link-text">KENYA</span>
+                            </a>
+                        </li>
+                        <li class="kt-menu__item">
+                            <a href="#"
+                               class="kt-menu__link ">
+                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                <span class="kt-menu__link-text">ETHIOPIA</span>
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
             </li>
             <li class="kt-menu__item kt-menu__item--submenu" data-ktmenu-submenu-toggle="hover">
                 <a href="#" class="kt-menu__link kt-menu__toggle">
@@ -134,11 +178,46 @@ use yii\helpers\Url;
                     <span class="kt-menu__link-text">HERDS</span>
                 </a>
             </li>
-            <li class="kt-menu__item kt-menu__item--submenu">
-                <a href="<?= Url::to(['/core/farm/index']) ?>" class="kt-menu__link">
+            <li class="kt-menu__item  kt-menu__item--submenu">
+                <a href="#" class="kt-menu__link kt-menu__toggle">
                     <i class="kt-menu__link-icon far fa-tractor"></i>
                     <span class="kt-menu__link-text">FARMS</span>
+                    <i class="kt-menu__ver-arrow la la-angle-right"></i>
                 </a>
+                <div class="kt-menu__submenu">
+                    <span class="kt-menu__arrow"></span>
+                    <ul class="kt-menu__subnav">
+                        <li class="kt-menu__item">
+                            <a href="<?= Url::to(['/core/farm/index']) ?>"
+                               class="kt-menu__link ">
+                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                <span class="kt-menu__link-text">ALL FARMS</span>
+                            </a>
+                        </li>
+                        <li class="kt-menu__item">
+                            <a href="<?= Url::to(['/core/farm/index', 'org_id' => 10]) ?>"
+                               class="kt-menu__link ">
+                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                <span class="kt-menu__link-text">TANZANIA</span>
+                            </a>
+                        </li>
+                        <li class="kt-menu__item">
+                            <a href="<?= Url::to(['/core/farm/index', 'org_id' => 11]) ?>"
+                               class="kt-menu__link ">
+                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                <span class="kt-menu__link-text">KENYA</span>
+                            </a>
+                        </li>
+                        <li class="kt-menu__item">
+                            <a href="#"
+                               class="kt-menu__link ">
+                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                <span class="kt-menu__link-text">ETHIOPIA</span>
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
             </li>
             <li class="kt-menu__item kt-menu__item--submenu hidden">
                 <a href="<?= Url::to(['/core/client/index']) ?>" class="kt-menu__link">
@@ -149,7 +228,7 @@ use yii\helpers\Url;
             <li class="kt-menu__item kt-menu__item--submenu">
                 <a href="<?= Url::to(['/reports/builder/index']) ?>" class="kt-menu__link">
                     <i class="kt-menu__link-icon far fa-chart-pie"></i>
-                    <span class="kt-menu__link-text">REPORTS</span>
+                    <span class="kt-menu__link-text">REPORT BUILDER</span>
                 </a>
             </li>
 
