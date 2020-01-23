@@ -1,42 +1,35 @@
 <?php
 
-use backend\modules\core\models\Animal;
-use backend\modules\core\models\AnimalEvent;
+use backend\modules\core\models\LSFMilkingReport;
 use common\widgets\grid\GridView;
 
 /* @var $this yii\web\View */
-/* @var $model AnimalEvent */
+/* @var $dataProvider LSFMilkingReport */
 ?>
 
 <?= GridView::widget([
-    'searchModel' => $model,
-    'filterModel' => $model,
+    'dataProvider' => $dataProvider,
     'title' => 'Test Day Milk',
     'createButton' => ['visible' => false],
     'columns' => [
         [
-            'attribute' => 'farm_id',
-            'label' => 'Farm',
-            'value' => function (Animal $model) {
-                return $model->getRelationAttributeValue('farm', 'name');
-            }
+            'attribute' => 'farmer_name',
+            'label' => 'Farmer Name',
         ],
         [
             'label' => 'No.Of Animals',
-            'attribute' => 'id',
+            'attribute' => 'animalCount',
         ],
         [
             'label' => 'No of Milk Records',
-            'attribute' => 'id',
+            'attribute' => 'milkRecordsCount',
         ],
         [
             'label' => 'Average Milk Yield',
-            'attribute' => 'id',
+            'attribute' => 'average',
+            'format' => ['decimal', 2]
         ],
     ],
 ]);
-//$n=new GridView;
-//$n->title;
-
 
 ?>
