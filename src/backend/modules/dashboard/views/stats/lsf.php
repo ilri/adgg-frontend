@@ -41,8 +41,6 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                         foreach ($regions as $id => $label) {
                             list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
 
-                            // fetch count for each district
-                            //print_r(Farm::find()->andWhere($newcondition, $newparams)->createCommand()->rawSql);
                             $count = Farm::find()->where($newcondition, $newparams)
                                 ->andWhere(['farm_type' => 'LSF'])
                                 ->count();
@@ -70,7 +68,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
             <div class="col-md-6">
                 <div class="kt-portlet">
                     <div class="col-md-12 kt-iconbox kt-iconbox--active">
-                        <div class="kt-iconbox__title">Large Scale Farms Grouped By Breeds</div>
+                        <div class="kt-iconbox__title">Number of Animals Registered By Breeds</div>
                         <div id="chartContainer2" title=""></div>
                         <!--                $this->render('graph/_widget', ['graphType' => HighChart::GRAPH_PIE, 'graphFilterOptions' => $graphFilterOptions])
                         --> <?php
@@ -117,7 +115,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                                 'categories' => [],
                                 'title' => [
                                     'margin' => 40,
-                                    'text' => 'Number Of Farms'
+                                    'text' => 'Number Of Animals'
                                 ],
                             ],
                             'plotOptions' => [
@@ -134,5 +132,8 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                 </div>
             </div>
         </div>
+    </div>
+    <div class="col-md-12">
+        <?= $this->render('_grid', ['dataProvider' => $dataProvider]) ?>
     </div>
 </div>
