@@ -2,10 +2,19 @@
 
 namespace backend\modules\reports\models;
 
+use backend\modules\core\models\AIEvent;
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\AnimalEvent;
+use backend\modules\core\models\CalvingEvent;
+use backend\modules\core\models\ExitsEvent;
 use backend\modules\core\models\Farm;
+use backend\modules\core\models\FeedingEvent;
+use backend\modules\core\models\HealthEvent;
+use backend\modules\core\models\MilkingEvent;
+use backend\modules\core\models\PDEvent;
+use backend\modules\core\models\SyncEvent;
 use backend\modules\core\models\TableAttribute;
+use backend\modules\core\models\WeightEvent;
 use common\helpers\DbUtils;
 use common\helpers\Str;
 use common\helpers\Utils;
@@ -22,6 +31,7 @@ class ReportBuilder extends Model
     public $limit;
     public $orderBy;
     public $org_id;
+    public $name;
 
     /**
      * @return array
@@ -39,63 +49,63 @@ class ReportBuilder extends Model
                 'relations' => ['farm', 'herd', 'sire', 'dam', 'org', 'region', 'district', 'ward', 'village'],
             ],
             'Calving_Event' => [
-                'class' => AnimalEvent::class,
+                'class' => CalvingEvent::class,
                 'title' => 'Calving Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_CALVING],
                 'relations' => ['animal', 'org', 'region', 'district', 'ward', 'village'],
                 'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
             ],
             'Milking_Event' => [
-                'class' => AnimalEvent::class,
+                'class' => MilkingEvent::class,
                 'title' => 'Milking Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_MILKING],
-                'relations' => ['animal', 'org', 'region', 'district', 'ward', 'village'],
+                'relations' => ['lactation','animal', 'org', 'region', 'district', 'ward', 'village'],
                 'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
             ],
             'Insemination_Event' => [
-                'class' => AnimalEvent::class,
+                'class' => AIEvent::class,
                 'title' => 'Insemination Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_AI],
                 'relations' => ['animal', 'org', 'region', 'district', 'ward', 'village'],
                 'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
             ],
             'Pregnancy_Diagnosis_Event' => [
-                'class' => AnimalEvent::class,
+                'class' => PDEvent::class,
                 'title' => 'Pregnancy Diagnosis Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_PREGNANCY_DIAGNOSIS],
                 'relations' => ['animal', 'org', 'region', 'district', 'ward', 'village'],
                 'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
             ],
             'Synchronization_Event' => [
-                'class' => AnimalEvent::class,
+                'class' => SyncEvent::class,
                 'title' => 'Synchronization Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_SYNCHRONIZATION],
                 'relations' => ['animal', 'org', 'region', 'district', 'ward', 'village'],
                 'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
             ],
             'Weights_Event' => [
-                'class' => AnimalEvent::class,
+                'class' => WeightEvent::class,
                 'title' => 'Weights Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_WEIGHTS],
                 'relations' => ['animal', 'org', 'region', 'district', 'ward', 'village'],
                 'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
             ],
             'Health_Event' => [
-                'class' => AnimalEvent::class,
+                'class' => HealthEvent::class,
                 'title' => 'Health Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_HEALTH],
                 'relations' => ['animal', 'org', 'region', 'district', 'ward', 'village'],
                 'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
             ],
             'Feeding_Event' => [
-                'class' => AnimalEvent::class,
+                'class' => FeedingEvent::class,
                 'title' => 'Feeding Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_FEEDING],
                 'relations' => ['animal', 'org', 'region', 'district', 'ward', 'village'],
                 'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
             ],
             'Exits_Event' => [
-                'class' => AnimalEvent::class,
+                'class' => ExitsEvent::class,
                 'title' => 'Exits Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_EXITS],
                 'relations' => ['animal', 'org', 'region', 'district', 'ward', 'village'],
@@ -410,6 +420,16 @@ class ReportBuilder extends Model
     }
 
     public function saveReport(){
-
+        // save name, raw_query
+        $report = new AdhocReport();
+        $report->name = $this->name;
+        $report->raw_sql = $this->rawQuery();
+        $report->status = AdhocReport::STATUS_QUEUED;
+        if($report->save()){
+            return true;
+        }
+        else{
+            return $report->getErrors();
+        }
     }
 }

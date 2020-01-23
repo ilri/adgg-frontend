@@ -39,6 +39,22 @@ class HealthEvent extends AnimalEvent implements ImportActiveRecordInterface
         ]);
     }
 
+    public function reportBuilderFields(){
+        $this->ignoreAdditionalAttributes = true;
+        $attributes = $this->attributes();
+        $attrs = [];
+        $fields = TableAttribute::getData(['attribute_key'], ['table_id' => self::getDefinedTableId(), 'event_type' => self::EVENT_TYPE_HEALTH]);
+
+        foreach ($fields as $k => $field){
+            $attrs[] = $field['attribute_key'];
+        }
+        $attrs = array_merge($attributes, $attrs);
+        $unwanted = array_merge($this->reportBuilderUnwantedFields(), ['lactation_id', 'lactation_number']);
+        $attrs = array_diff($attrs, $unwanted);
+        sort($attrs);
+        return $attrs;
+    }
+
 
     /**
      * @return array

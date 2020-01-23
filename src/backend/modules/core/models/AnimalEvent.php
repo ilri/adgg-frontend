@@ -3,6 +3,7 @@
 namespace backend\modules\core\models;
 
 use backend\modules\auth\models\Users;
+use common\helpers\DbUtils;
 use common\helpers\Utils;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
@@ -31,10 +32,13 @@ use common\models\CustomValidationsTrait;
  * @property string $updated_at
  * @property int $updated_by
  * @property int $field_agent_id
+ * @property int $lactation_id
+ * @property string $lactation_number
  * @property string|array $additional_attributes
- *
  * @property Animal $animal
  * @property Users $fieldAgent
+ * @property AnimalEvent $lactation
+ * @property
  */
 class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAttributeInterface
 {
@@ -127,6 +131,15 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     }
 
     /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getLactation()
+    {
+        return $this->hasOne(AnimalEvent::class, ['id' => 'lactation_id']);
+    }
+
+
+    /**
      * {@inheritDoc}
      */
     public function searchParams()
@@ -163,14 +176,66 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             $this->ward_id = $this->animal->ward_id;
             $this->village_id = $this->animal->village_id;
             $this->setAdditionalAttributesValues();
+            $this->setLactationId();
             return true;
         }
         return false;
     }
 
+    /**
+     * @param string $animalId
+     * @param string $milkDate
+     * @return mixed|null
+     * @throws \Exception
+     */
+    public static function fetchLactationId($animalId, $milkDate)
+    {
+        $condition = '[[event_date]]<=:event_date';//calving date must be less than or equal to milking date
+        $params = [':event_date' => $milkDate];
+        list($condition, $params) = DbUtils::appendCondition('event_type', self::EVENT_TYPE_CALVING, $condition, $params);
+        list($condition, $params) = DbUtils::appendCondition('animal_id', $animalId, $condition, $params);
+        $data = static::getData(['id'], $condition, $params, ['orderBy' => ['event_date' => SORT_DESC], 'limit' => 1]);
+        if (empty($data)) {
+            return null;
+        }
+        return $data[0]['id'] ?? null;
+    }
+
+    protected function setLactationId()
+    {
+        //only done for milking event
+        if ($this->event_type != self::EVENT_TYPE_MILKING) {
+            return;
+        }
+        $this->lactation_id = static::fetchLactationId($this->animal_id, $this->event_date);
+    }
+
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
+        $this->setLactationNumber();
+        if ($this->event_type == self::EVENT_TYPE_CALVING) {
+            //update milk records
+            $data = static::getData(['id', 'event_date'], ['event_type' => self::EVENT_TYPE_MILKING, 'animal_id' => $this->animal_id]);
+            foreach ($data as $row) {
+                $lactation_id = static::fetchLactationId($this->animal_id, $row['event_date']);
+                static::updateAll(['lactation_id' => $lactation_id], ['id' => $row['id']]);
+            }
+        }
+    }
+
+    protected function setLactationNumber()
+    {
+        //only done for calving/lactation event
+        if ($this->event_type != self::EVENT_TYPE_CALVING) {
+            return;
+        }
+        $data = static::getData('id', ['event_type' => self::EVENT_TYPE_CALVING, 'animal_id' => $this->animal_id], [], ['orderBy' => ['event_date' => SORT_ASC]]);
+        $n = 1;
+        foreach ($data as $row) {
+            static::updateAll(['lactation_number' => $n], ['id' => $row['id']]);
+            $n++;
+        }
     }
 
     public function afterFind()

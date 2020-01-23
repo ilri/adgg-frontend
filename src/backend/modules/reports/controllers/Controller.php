@@ -17,12 +17,13 @@ class Controller extends BackendController
 {
     public function init()
     {
+        parent::init();
         if (empty($this->activeMenu))
             $this->activeMenu = Constants::MENU_REPORTS;
         if (empty($this->resource))
             $this->resource = Constants::RES_REPORTS;
 
-        parent::init();
+        $this->enableDefaultAcl = true;
     }
 
     public function behaviors()
@@ -39,6 +40,7 @@ class Controller extends BackendController
                             'update',
                             'delete',
                             'generate-query',
+                            'save-report',
                         ],
                         'allow' => true,
                         'roles' => ['@'],

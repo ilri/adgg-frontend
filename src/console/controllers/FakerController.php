@@ -97,7 +97,6 @@ class FakerController extends Controller
         Yii::$app->db->createCommand($sql, [])->execute();
     }
 
-
     protected function canExecuteFaker()
     {
         if (YII_ENV === 'prod') {
@@ -125,6 +124,20 @@ class FakerController extends Controller
                     $newModel->save(false);
                 }
                 $this->stdout("Parsed $n JSON Files: $file\n");
+                $n++;
+            }
+        }
+    }
+
+    public function actionResetModels()
+    {
+        $query = AnimalEvent::find()->andWhere(['event_type' => AnimalEvent::EVENT_TYPE_MILKING]);
+        $n = 1;
+        /* @var $models AnimalEvent[] */
+        foreach ($query->batch() as $i => $models) {
+            foreach ($models as $model) {
+                $model->save(false);
+                $this->stdout("Processed {$n} Milking records\n");
                 $n++;
             }
         }

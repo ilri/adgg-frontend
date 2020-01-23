@@ -22,6 +22,8 @@ $this->params['breadcrumbs'][] = $this->title;
             <h3 class="text-muted"><?= Lang::t('REPORT BUILDER') ?></h3>
             <hr>
             <form method="POST" id="report-builder-form" >
+
+                <input type="hidden" name="<?= Yii::$app->request->csrfParam ?>" value="<?= Yii::$app->request->csrfToken ?>" />
                 <input type="hidden" name="model" id="model" />
             <div class="row row-no-gutters mt-2 mb-3">
                 <div class="col-md-3 row">
@@ -80,7 +82,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <div class="card card-body kt-scroll ps ps--active-y" style="height: 550px; overflow: hidden;" data-scroll="true">
                                     <ul>
                                     <?php foreach ($attributes as $attr): ?>
-                                        <li class="attribute" data-model="<?= $name ?>" data-parent-model="<?= $name ?>" data-parent-model-title="<?= $title ?>" data-name="<?= $attr ?>"><?= $attr ?></li>
+                                        <li class="attribute" data-toggle="kt-tooltip" data-skin="dark" data-original-title="<?= $class->getAttributeLabel($attr) ?>" data-model="<?= $name ?>" data-parent-model="<?= $name ?>" data-parent-model-title="<?= $title ?>" data-name="<?= $attr ?>"><?= $class->getAttributeLabel($attr) ?></li>
                                     <?php endforeach; ?>
                                     <?php
                                     if(count($modelData['relations'])){
@@ -90,6 +92,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                             $relation = $class->getRelation($relationName);
                                             /* @var $relationModelClass ActiveRecord */
                                             $relationModelClass = new $relation->modelClass();
+                                            //$class = $relationModelClass;
                                             $relationAttributes = $relationModelClass->reportBuilderFields();
                                             $className = $relationModelClass::shortClassName();
 
@@ -103,7 +106,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                             <div class="collapse" id="collapse<?= $relationName ?>" style="">
                                                 <ul>
                                                     <?php foreach ($relationAttributes as $attr): ?>
-                                                        <li class="attribute" data-model="<?= $className ?>" data-parent-model="<?= $name ?>" data-parent-model-title="<?= $title ?>" data-name="<?= $relationName.'.'.$attr ?>"><?= $attr ?></li>
+                                                        <li class="attribute" data-model="<?= $className ?>" data-parent-model="<?= $name ?>" data-parent-model-title="<?= $title ?>" data-name="<?= $relationName.'.'.$attr ?>"><?= $relationModelClass->getAttributeLabel($attr) ?></li>
                                                     <?php endforeach; ?>
                                                     <?php
                                                     if(count($sub_relations)){
@@ -121,7 +124,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                                             <div class="collapse" id="collapse<?= $sub_id ?>" style="">
                                                                 <ul>
                                                                     <?php foreach ($relationAttributes as $attr): ?>
-                                                                        <li class="attribute" data-model="<?= $className ?>" data-parent-model="<?= $name ?>" data-parent-model-title="<?= $title ?>" data-name="<?= $main.'.'.$sub.'.'.$attr ?>"><?= $attr ?></li>
+                                                                        <li class="attribute" data-model="<?= $className ?>" data-parent-model="<?= $name ?>" data-parent-model-title="<?= $title ?>" data-name="<?= $main.'.'.$sub.'.'.$attr ?>"><?= $relationClass->getAttributeLabel($attr) ?></li>
                                                                     <?php endforeach; ?>
                                                                 </ul>
                                                             </div>
@@ -168,7 +171,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             <div class="mt-5">
                                 <button id="generateQuery" role="button" class="btn btn-primary col-md-8 offset-3">Generate Query</button>
                             </div>
-                            <div class="row card card-body mt-4">
+                            <div class="row card card-body mt-4 mb-4">
                                 <div class="bd-clipboard hidden">
                                     <button type="button" class="btn-clipboard" title="" data-original-title="Copy to clipboard">Copy</button>
                                 </div>
@@ -177,6 +180,13 @@ $this->params['breadcrumbs'][] = $this->title;
                                         <code id="queryHolder" class="language-sql text-wrap word-wrap" data-lang="sql"></code>
                                     </pre>
                                 </figure>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-3"><label for="name">Report Name: </label></div>
+                                <div class="col-md-8"><input name="name" id="name" type="text" value="" class="form-control form-control-sm" /></div>
+                            </div>
+                            <div class="mt-2">
+                                <button id="saveReport" role="button" class="btn btn-success col-md-8 offset-3">Generate & Save Report</button>
                             </div>
 
                         </div>
@@ -192,6 +202,7 @@ $this->params['breadcrumbs'][] = $this->title;
 $options = [
     'inputSelectOptions' => ReportBuilder::fieldConditionOptions(),
     'generateQueryURL' => Url::to(['/reports/builder/generate-query']),
+    'saveReportURL' =>  Url::to(['/reports/builder/save-report']),
 ];
 $this->registerJs("MyApp.modules.reports.reportbuilder(" . Json::encode($options) . ");");
 ?>

@@ -26,13 +26,16 @@ use yii\helpers\Url;
         ],
         [
             'attribute' => 'contact_name',
+            'visible' => false,
         ],
         [
             'attribute' => 'contact_phone',
+            'visible' => false,
         ],
         [
             'attribute' => 'contact_email',
             'format' => 'email',
+            'visible' => false,
         ],
         [
             'attribute' => 'parent_id',

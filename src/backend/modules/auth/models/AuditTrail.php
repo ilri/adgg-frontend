@@ -155,7 +155,7 @@ class AuditTrail extends ActiveRecord implements ActiveSearchInterface
         if ($action === self::ACTION_CREATE || $action === self::ACTION_DELETE) {
             foreach ($model->safeAttributes() as $k) {
                 if ($model->hasAttribute($k)) {
-                    $changedAttributes[$k] = ['old' => null, 'new' => $model->attributes[$k]];
+                    $changedAttributes[$k] = ['old' => null, 'new' => $model->changedAttributes[$k]];
                 }
             }
         }
