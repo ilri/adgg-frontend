@@ -82,7 +82,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <div class="card card-body kt-scroll ps ps--active-y" style="height: 550px; overflow: hidden;" data-scroll="true">
                                     <ul>
                                     <?php foreach ($attributes as $attr): ?>
-                                        <li class="attribute" data-model="<?= $name ?>" data-parent-model="<?= $name ?>" data-parent-model-title="<?= $title ?>" data-name="<?= $attr ?>"><?= $attr ?></li>
+                                        <li class="attribute" data-toggle="kt-tooltip" data-skin="dark" data-original-title="<?= $class->getAttributeLabel($attr) ?>" data-model="<?= $name ?>" data-parent-model="<?= $name ?>" data-parent-model-title="<?= $title ?>" data-name="<?= $attr ?>"><?= $class->getAttributeLabel($attr) ?></li>
                                     <?php endforeach; ?>
                                     <?php
                                     if(count($modelData['relations'])){
@@ -92,6 +92,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                             $relation = $class->getRelation($relationName);
                                             /* @var $relationModelClass ActiveRecord */
                                             $relationModelClass = new $relation->modelClass();
+                                            //$class = $relationModelClass;
                                             $relationAttributes = $relationModelClass->reportBuilderFields();
                                             $className = $relationModelClass::shortClassName();
 
@@ -105,7 +106,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                             <div class="collapse" id="collapse<?= $relationName ?>" style="">
                                                 <ul>
                                                     <?php foreach ($relationAttributes as $attr): ?>
-                                                        <li class="attribute" data-model="<?= $className ?>" data-parent-model="<?= $name ?>" data-parent-model-title="<?= $title ?>" data-name="<?= $relationName.'.'.$attr ?>"><?= $attr ?></li>
+                                                        <li class="attribute" data-model="<?= $className ?>" data-parent-model="<?= $name ?>" data-parent-model-title="<?= $title ?>" data-name="<?= $relationName.'.'.$attr ?>"><?= $relationModelClass->getAttributeLabel($attr) ?></li>
                                                     <?php endforeach; ?>
                                                     <?php
                                                     if(count($sub_relations)){
@@ -123,7 +124,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                                             <div class="collapse" id="collapse<?= $sub_id ?>" style="">
                                                                 <ul>
                                                                     <?php foreach ($relationAttributes as $attr): ?>
-                                                                        <li class="attribute" data-model="<?= $className ?>" data-parent-model="<?= $name ?>" data-parent-model-title="<?= $title ?>" data-name="<?= $main.'.'.$sub.'.'.$attr ?>"><?= $attr ?></li>
+                                                                        <li class="attribute" data-model="<?= $className ?>" data-parent-model="<?= $name ?>" data-parent-model-title="<?= $title ?>" data-name="<?= $main.'.'.$sub.'.'.$attr ?>"><?= $relationClass->getAttributeLabel($attr) ?></li>
                                                                     <?php endforeach; ?>
                                                                 </ul>
                                                             </div>
