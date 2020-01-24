@@ -10,12 +10,10 @@ namespace console\jobs;
 
 
 use backend\modules\reports\models\AdhocReport;
-use common\helpers\DateUtils;
 use common\helpers\FileManager;
 use common\helpers\Lang;
 use Yii;
 use yii\base\BaseObject;
-use yii\db\Query;
 use yii\queue\Queue;
 
 class ReportGenerator extends BaseObject implements JobInterface
