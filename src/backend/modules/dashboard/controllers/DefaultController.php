@@ -26,8 +26,6 @@ class DefaultController extends Controller
         $countries = Organization::find()->orderBy(['code' => SORT_ASC])->all();
         return $this->render('index2', [
             'countries' => $countries,
-            'graphFilterOptions' => [
-            ],
         ]);
     }
 

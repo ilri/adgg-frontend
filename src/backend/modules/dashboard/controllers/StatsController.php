@@ -9,8 +9,8 @@
 namespace backend\modules\dashboard\controllers;
 
 
-use backend\modules\core\models\Animal;
-use backend\modules\core\models\LSFMilkingReport;
+use backend\modules\core\models\MilkingReport;
+use backend\modules\core\models\Organization;
 
 class StatsController extends Controller
 {
@@ -32,67 +32,66 @@ class StatsController extends Controller
 
     public function actionDash($org_id = null)
     {
-        $searchModel = Animal::searchModel([
-            'defaultOrder' => ['id' => SORT_ASC],
-        ]);
+        $country = Organization::findOne(['id' => $org_id]);
         return $this->render('dashboards', [
-            'graphFilterOptions' => [
-                'org_id' => $org_id,
-            ],
-            'searchModel' => $searchModel,
+            'org_id' => $org_id,
+            'country' => $country,
         ]);
     }
 
-    public function actionDash1()
+    public function actionFarmSummary($org_id = null)
     {
-        $dataProvider = LSFMilkingReport::getLargeScaleFarmMilkDetails();
+        $country = Organization::findOne(['id' => $org_id]);
+        return $this->render('farm-summary', [
+            'org_id' => $org_id,
+            'country' => $country,
+        ]);
+    }
+
+    public function actionAnimalSummary($org_id = null)
+    {
+        $country = Organization::findOne(['id' => $org_id]);
+        return $this->render('animal-summary', [
+            'org_id' => $org_id,
+            'country' => $country
+        ]);
+    }
+
+    public function actionDash1($org_id = null)
+    {
+        $country = Organization::findOne(['id' => $org_id]);
+        $dataProvider = MilkingReport::getLargeScaleFarmMilkDetails($org_id);
         return $this->render('lsf', [
             'dataProvider' => $dataProvider,
+            'org_id' => $org_id,
+            'country' => $country,
         ]);
     }
 
     public function actionDash2($org_id = null)
     {
+        $country = Organization::findOne(['id' => $org_id]);
         return $this->render('test-day', [
-            'graphFilterOptions' => [
-                'org_id' => $org_id,
-            ],
+            'org_id' => $org_id,
+            'country' => $country,
         ]);
     }
 
     public function actionDash3($org_id = null)
     {
+        $country = Organization::findOne(['id' => $org_id]);
         return $this->render('genotyped-animals', [
-            'graphFilterOptions' => [
-                'org_id' => $org_id,
-            ],
+            'org_id' => $org_id,
+            'country' => $country,
         ]);
     }
 
     public function actionDash4($org_id = null)
     {
+        $country = Organization::findOne(['id' => $org_id]);
         return $this->render('pd-ai-cal', [
-            'graphFilterOptions' => [
-                'org_id' => $org_id,
-            ],
-        ]);
-    }
-
-    public function actionFarmSummary()
-    {
-        return $this->render('farm-summary', [
-            'graphFilterOptions' => [
-                'org_id' => 10,
-            ],
-        ]);
-    }
-
-    public function actionAnimalSummary()
-    {
-        return $this->render('animal-summary', [
-            'graphFilterOptions' => [
-                'org_id' => 10,
-            ],
+            'org_id' => $org_id,
+            'country' => $country,
         ]);
     }
 

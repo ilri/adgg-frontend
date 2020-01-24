@@ -3,6 +3,7 @@
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\Choices;
 use backend\modules\core\models\Farm;
+use backend\modules\core\models\Organization;
 use backend\modules\core\models\OrganizationUnits;
 use common\helpers\DbUtils;
 use common\helpers\Lang;
@@ -12,6 +13,7 @@ use yii\helpers\Json;
 /* @var $this yii\web\View */
 /* @var $controller \backend\controllers\BackendController */
 /* @var $graphFilterOptions array */
+/* @var $country Organization */
 $controller = Yii::$app->controller;
 $this->title = Lang::t('Dashboard');
 $this->params['breadcrumbs'] = [
@@ -21,28 +23,29 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
 ?>
 <div class="row">
     <div class="col-md-12">
-        <h3><?= Lang::t('Large Scale Farm Stats') ?></h3>
+        <h3><?= Lang::t('Large Scale Farm Stats in {country}', ['country' => $country->name]) ?></h3>
         <hr>
         <div class="row">
             <div class="col-md-6">
                 <div class="kt-portlet">
                     <div class="col-md-12 kt-iconbox kt-iconbox--active">
-                        <div class="kt-iconbox__title">Large Scale Farms Grouped By Region</div>
+                        <div class="kt-iconbox__title">
+                            <?= Lang::t('Large Scale Farms Grouped By Region in {country}', ['country' => $country->name]) ?>
+                        </div>
                         <div id="chartContainer" title=""></div>
-                        <!--                $this->render('graph/_widget', ['graphType' => HighChart::GRAPH_PIE, 'graphFilterOptions' => $graphFilterOptions])
-                        --> <?php
+                        <?php
                         $condition = '';
                         $params = [];
                         list($condition, $params) = Farm::appendOrgSessionIdCondition($condition, $params);
                         $data = [];
                         // get regions
-                        $regions = OrganizationUnits::getListData('id', 'name', '', ['org_id' => 10, 'level' => OrganizationUnits::LEVEL_REGION]);
+                        $regions = OrganizationUnits::getListData('id', 'name', '', ['level' => OrganizationUnits::LEVEL_REGION]);
                         //print_r($regions);
                         foreach ($regions as $id => $label) {
                             list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
 
                             $count = Farm::find()->where($newcondition, $newparams)
-                                ->andWhere(['farm_type' => 'LSF'])
+                                ->andWhere(['farm_type' => 'LSF', 'org_id' => $country->id])
                                 ->count();
                             if ($count > 0) {
                                 $data[] = [
@@ -68,10 +71,11 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
             <div class="col-md-6">
                 <div class="kt-portlet">
                     <div class="col-md-12 kt-iconbox kt-iconbox--active">
-                        <div class="kt-iconbox__title">Number of Animals Registered By Breeds</div>
+                        <div class="kt-iconbox__title">
+                            <?= Lang::t('Number of Animals Registered By Breeds in {country}', ['country' => $country->name]) ?>
+                        </div>
                         <div id="chartContainer2" title=""></div>
-                        <!--                $this->render('graph/_widget', ['graphType' => HighChart::GRAPH_PIE, 'graphFilterOptions' => $graphFilterOptions])
-                        --> <?php
+                        <?php
                         $condition = '';
                         $params = [];
                         list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
@@ -84,6 +88,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                             $count = Animal::find()->joinWith('farm')
                                 ->andWhere($newCondition, $newParams)
                                 ->andWhere([Farm::tableName() . '.farm_type' => 'LSF'])
+                                ->andWhere([Farm::tableName() . '.org_id' => $country->id])
                                 ->count();
                             if ($count > 0) {
                                 $labels[] = trim($label);
@@ -91,11 +96,10 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                             }
 
                         };
-                        //print_r($data);
                         $series = [[
                             'colorByPoint' => true,
                             'data' => $data,
-                            'name' => 'Breed Details'
+                            'showInLegend' => false,
                         ]];
                         $graphOptions = [
                             'chart' => [
@@ -107,7 +111,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                             'xAxis' => [
                                 'categories' => $labels,
                                 'title' => [
-                                    'margin' => 40,
+                                    'margin' => 30,
                                     'text' => 'Breed Type'
                                 ],
                             ],
@@ -118,11 +122,6 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                                     'text' => 'Number Of Animals'
                                 ],
                             ],
-                            'plotOptions' => [
-                                'series' => [
-                                    //'pointPadding'=>10
-                                ]
-                            ]
                         ];
                         $containerId = 'chartContainer2';
                         $this->registerJs("MyApp.modules.dashboard.piechart('" . $containerId . "', " . Json::encode($series) . "," . Json::encode($graphOptions) . ");");
