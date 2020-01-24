@@ -9,8 +9,7 @@
 namespace backend\modules\dashboard\controllers;
 
 
-use backend\modules\core\models\Animal;
-use backend\modules\core\models\LSFMilkingReport;
+use backend\modules\core\models\MilkingReport;
 use backend\modules\core\models\Organization;
 
 class StatsController extends Controller
@@ -61,7 +60,7 @@ class StatsController extends Controller
     public function actionDash1($org_id = null)
     {
         $country = Organization::findOne(['id' => $org_id]);
-        $dataProvider = LSFMilkingReport::getLargeScaleFarmMilkDetails($org_id);
+        $dataProvider = MilkingReport::getLargeScaleFarmMilkDetails($org_id);
         return $this->render('lsf', [
             'dataProvider' => $dataProvider,
             'org_id' => $org_id,
