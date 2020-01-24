@@ -12,7 +12,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="row">
     <div class="col-md-12">
         <div class="well">
-            <h3><?= Lang::t('The List Of  Events In {country}', ['country' => $country->name]) ?></h3>
+            <h3><?= Lang::t('List Animal Of  Events In {country}', ['country' => $country->name]) ?></h3>
             <hr>
             <div class="row">
                 <?php foreach ($events as $key => $name): ?>
