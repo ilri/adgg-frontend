@@ -57,72 +57,15 @@ $countries = Organization::find()->orderBy(['code' => SORT_ASC])->all();
                 <div class="kt-menu__submenu">
                     <span class="kt-menu__arrow"></span>
                     <ul class="kt-menu__subnav">
-                        <li class="kt-menu__item  kt-menu__item--parent">
-                            <span class="kt-menu__link"><span class="kt-menu__link-text">EVENTS</span></span>
-                        </li>
-                        <li class="kt-menu__item">
-                            <a href="<?= Url::to(['/core/calving-event/index']) ?>"
-                               class="kt-menu__link ">
-                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                <span class="kt-menu__link-text">Calving</span>
-                            </a>
-                        </li>
-                        <li class="kt-menu__item">
-                            <a href="<?= Url::to(['/core/milking-event/index']) ?>"
-                               class="kt-menu__link ">
-                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                <span class="kt-menu__link-text">Milking</span>
-                            </a>
-                        </li>
-                        <li class="kt-menu__item">
-                            <a href="<?= Url::to(['/core/insemination-event/index']) ?>"
-                               class="kt-menu__link ">
-                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                <span class="kt-menu__link-text">Artificial Insemination</span>
-                            </a>
-                        </li>
-                        <li class="kt-menu__item">
-                            <a href="<?= Url::to(['/core/pd-event/index']) ?>"
-                               class="kt-menu__link ">
-                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                <span class="kt-menu__link-text">Pregnancy Diagnosis</span>
-                            </a>
-                        </li>
-                        <li class="kt-menu__item">
-                            <a href="<?= Url::to(['/core/synchronization-event/index']) ?>"
-                               class="kt-menu__link ">
-                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                <span class="kt-menu__link-text">Synchronization</span>
-                            </a>
-                        </li>
-                        <li class="kt-menu__item">
-                            <a href="<?= Url::to(['/core/weight-event/index']) ?>"
-                               class="kt-menu__link ">
-                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                <span class="kt-menu__link-text">Weights</span>
-                            </a>
-                        </li>
-                        <li class="kt-menu__item">
-                            <a href="<?= Url::to(['/core/health-event/index']) ?>"
-                               class="kt-menu__link ">
-                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                <span class="kt-menu__link-text">Health</span>
-                            </a>
-                        </li>
-                        <li class="kt-menu__item hidden">
-                            <a href="#"
-                               class="kt-menu__link ">
-                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                <span class="kt-menu__link-text">Feeding</span>
-                            </a>
-                        </li>
-                        <li class="kt-menu__item hidden">
-                            <a href="#"
-                               class="kt-menu__link ">
-                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                <span class="kt-menu__link-text">Exits</span>
-                            </a>
-                        </li>
+                        <?php foreach ($countries as $country): ?>
+                            <li class="kt-menu__item">
+                                <a href="<?= Url::to(['/core/event-list/index', 'org_id' => $country->id]) ?>"
+                                   class="kt-menu__link ">
+                                    <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                    <span class="kt-menu__link-text"><?= Lang::t('{country}', ['country' => $country->name]) ?></span>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
                     </ul>
                 </div>
             </li>
