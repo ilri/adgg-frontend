@@ -41,6 +41,8 @@ class Controller extends BackendController
                             'delete',
                             'generate-query',
                             'save-report',
+                            'download-file',
+                            'requeue',
                         ],
                         'allow' => true,
                         'roles' => ['@'],

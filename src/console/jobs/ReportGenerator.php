@@ -9,15 +9,11 @@
 namespace console\jobs;
 
 
-use backend\modules\core\models\Farm;
-use backend\modules\core\models\OdkJsonQueue;
 use backend\modules\reports\models\AdhocReport;
-use common\helpers\DateUtils;
 use common\helpers\FileManager;
 use common\helpers\Lang;
 use Yii;
 use yii\base\BaseObject;
-use yii\db\Query;
 use yii\queue\Queue;
 
 class ReportGenerator extends BaseObject implements JobInterface
@@ -82,11 +78,7 @@ class ReportGenerator extends BaseObject implements JobInterface
             $this->filename = $this->_model->name . '_' . time();
             $this->fetchData();
 
-            //$this->_model->is_processed = 1;
-            //$this->_model->processed_at = DateUtils::mysqlTimestamp();
-            //$this->_model->save(false);
-
-            //ODKJsonNotification::createManualNotifications(ODKJsonNotification::NOTIF_ODK_JSON, $this->_model->id);
+            ReportNotification::createManualNotifications(ReportNotification::NOTIF_REPORT_COMPLETION, $this->_model->id);
         } catch (\Exception $e) {
             Yii::error($e->getMessage());
         }
@@ -143,11 +135,13 @@ class ReportGenerator extends BaseObject implements JobInterface
                 $this->populateCSV($columns, $rows);
             }
             else {
+                $this->_model->status = AdhocReport::STATUS_COMPLETED;
                 $this->_model->status_remarks = Lang::t('No data returned from query');
                 $this->_model->save(false);
             }
 
         }catch (\Exception $e) {
+            $this->_model->status = AdhocReport::STATUS_ERROR;
             $this->_model->status_remarks = $e->getMessage();
             $this->_model->save(false);
             Yii::$app->controller->stdout("{$e->getMessage()} \n");
@@ -178,7 +172,7 @@ class ReportGenerator extends BaseObject implements JobInterface
 
             fclose($fp);
 
-            $this->_model->report_file = $filepath;
+            $this->_model->report_file = $this->filename. '.csv';
             $this->_model->status = AdhocReport::STATUS_COMPLETED;
             $this->_model->save(false);
         } catch (\Exception $e) {

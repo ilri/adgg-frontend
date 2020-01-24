@@ -26,12 +26,13 @@ class BuilderController extends Controller
         $this->hasPrivilege(Acl::ACTION_CREATE);
     }
 
-    public function actionIndex()
+    public function actionIndex($org_id)
     {
         $models = ReportBuilder::reportableModels();
 
         return $this->render('index',[
             'models' => $models,
+            'org_id' => $org_id,
         ]);
     }
 
@@ -69,7 +70,7 @@ class BuilderController extends Controller
     }
 
     public function actionSaveReport(){
-        $success_msg = Lang::t('SUCCESS_MESSAGE');
+        $success_msg = Lang::t('Report Queued Successfully. You will be notified once your report is ready for download');
         $transaction = Yii::$app->db->beginTransaction();
         try {
             $builder = $this->build();

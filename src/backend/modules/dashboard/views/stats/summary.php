@@ -22,15 +22,14 @@ $this->params['breadcrumbs'] = [
 ];
 $graphType = $graphType ?? HighChart::GRAPH_PIE;
 ?>
-
+<h3><?= Lang::t('Animals Registered ') ?></h3>
+<hr>
 <div class="row">
-    <div class="col-md-12">
-        <?= $this->render('graph/_graphFilters', ['filterOptions' => $graphFilterOptions, 'graphType' => $graphType]) ?>
-    </div>
     <div class="col-md-6">
         <!--begin::Portlet-->
         <div class="kt-portlet">
             <div class="col-md-12 kt-iconbox kt-iconbox--active">
+                <div class="kt-iconbox__title">Registered Farms Grouped by Regions</div>
                 <div id="chartContainer"></div>
                 <!--                $this->render('graph/_widget', ['graphType' => HighChart::GRAPH_PIE, 'graphFilterOptions' => $graphFilterOptions])
                 --> <?php
@@ -62,22 +61,52 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                 ?>
             </div>
         </div>
+        <div class="kt-portlet">
+            <div class="col-md-12 kt-iconbox kt-iconbox--active">
+                <div class="kt-iconbox__title">Registered Animals Grouped by Regions</div>
+                <div id="chartContainer2"></div>
+                <!--                $this->render('graph/_widget', ['graphType' => HighChart::GRAPH_PIE, 'graphFilterOptions' => $graphFilterOptions])
+                --> <?php
+                $condition = '';
+                $params = [];
+                list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
+                $data = [];
+                // get regions
+                $regions = OrganizationUnits::getListData('id', 'name', '', ['org_id' => 10, 'level' => OrganizationUnits::LEVEL_REGION]);
+                foreach ($regions as $id => $label) {
+                    list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
+
+                    // fetch count for each district
+                    //print_r(Farm::find()->andWhere($newcondition, $newparams)->createCommand()->rawSql);
+                    $count = Animal::find()->andWhere($newcondition, $newparams)->count();
+                    $data[] = [
+                        'name' => $label,
+                        'y' => floatval(number_format($count, 2, '.', '')),
+                    ];
+                };
+                $series = [[
+                    'colorByPoint' => true,
+                    'data' => $data,
+                ]];
+                $graphOptions = [];
+                $containerId = 'chartContainer2';
+                $this->registerJs("MyApp.modules.dashboard.piechart('" . $containerId . "', " . Json::encode($series) . "," . Json::encode($graphOptions) . ");");
+
+                ?>
+            </div>
+        </div>
         <!--end::Portlet-->
     </div>
     <div class="col-md-6">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="kt-portlet">
-                    <div class="kt-iconbox kt-iconbox--active">
-                        <div class="kt-iconbox__icon mb-0">
+        <div class="kt-portlet">
+            <div class="kt-iconbox kt-iconbox--active">
+                <div class="kt-iconbox__icon mb-0">
                             <div class="kt-iconbox__icon-bg"></div>
                             <span><?= number_format(Farm::getCount(['org_id' => $graphFilterOptions['org_id']])) ?></span>
                         </div>
                         <div class="kt-iconbox__title">ADGG Number of Farmers</div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-6">
                 <div class="kt-portlet">
                     <div class="kt-iconbox kt-iconbox--active">
                         <div class="kt-iconbox__icon mb-0">
@@ -87,8 +116,6 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                         <div class="kt-iconbox__title">ADGG Number of Animals</div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-6">
                 <div class="kt-portlet">
                     <div class="kt-iconbox kt-iconbox--active">
                         <div class="kt-iconbox__icon mb-0">
@@ -98,32 +125,23 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                         <div class="kt-iconbox__title">ADGG Male Household headed Farmers</div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-6">
-                <div class="kt-portlet">
-                    <div class="kt-iconbox kt-iconbox--active">
-                        <div class="kt-iconbox__icon mb-0">
-                            <div class="kt-iconbox__icon-bg"></div>
-                            <span><?= number_format(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => 2])->count()) ?></span>
-                        </div>
-                        <div class="kt-iconbox__title">ADGG Female Household headed Farmers</div>
-                    </div>
+        <div class="kt-portlet">
+            <div class="kt-iconbox kt-iconbox--active">
+                <div class="kt-iconbox__icon mb-0">
+                    <div class="kt-iconbox__icon-bg"></div>
+                    <span><?= number_format(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => 2])->count()) ?></span>
                 </div>
+                <div class="kt-iconbox__title">ADGG Female Household headed Farmers</div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="kt-portlet">
-                    <div class="kt-iconbox kt-iconbox--active">
-                        <div class="kt-iconbox__icon mb-0">
-                            <div class="kt-iconbox__icon-bg"></div>
-                            <span><?= number_format(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => [1,2]])->count()) ?></span>
-                        </div>
-                        <div class="kt-iconbox__title">Households headed by both male and female members</div>
-                    </div>
+        <div class="kt-portlet">
+            <div class="kt-iconbox kt-iconbox--active">
+                <div class="kt-iconbox__icon mb-0">
+                    <div class="kt-iconbox__icon-bg"></div>
+                    <span><?= number_format(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => [1, 2]])->count()) ?></span>
                 </div>
+                <div class="kt-iconbox__title">Households headed by both male and female members</div>
             </div>
         </div>
     </div>
 </div>
-<br/>

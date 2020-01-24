@@ -8,7 +8,13 @@ use backend\modules\core\models\Organization;
 use backend\modules\reports\Constants;
 use backend\modules\reports\models\AdhocReport;
 use common\helpers\DateUtils;
+use common\helpers\FileManager;
+use common\helpers\Lang;
+use common\helpers\Str;
 use common\models\ActiveRecord;
+use console\jobs\ReportGenerator;
+use Yii;
+use yii\helpers\Json;
 
 /**
  * Default controller for the `reports` module
@@ -34,7 +40,7 @@ class AdhocReportController extends Controller
         $params = [];
 
         $searchModel = AdhocReport::searchModel([
-            'defaultOrder' => ['name' => SORT_ASC],
+            'defaultOrder' => ['id' => SORT_DESC],
             'condition' => $condition,
             'params' => $params,
         ]);
@@ -47,6 +53,40 @@ class AdhocReportController extends Controller
         return $this->render('index', [
             'searchModel' => $searchModel,
         ]);
+    }
+    public function actionDownloadFile($id)
+    {
+        $model = AdhocReport::loadModel($id);
+        FileManager::downloadFile($model->getFilePath(), Str::removeWhitespace($model->report_file));
+    }
+
+    public function actionRequeue($id){
+        $model = AdhocReport::loadModel($id);
+        $report = clone $model;
+        $report->isNewRecord = true;
+        $report->id = null;
+        $report->report_file = null;
+        $report->created_by = Yii::$app->user->id;
+        $report->status = AdhocReport::STATUS_QUEUED;
+        $success_msg = Lang::t('Report Queued Successfully. You will be notified once your report is ready for download');
+
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            if($report->save()){
+                $transaction->commit();
+                ReportGenerator::push(['queueId' => $report->id]);
+                return Json::encode(['success' => true, 'message' => $success_msg, 'redirectUrl' => 'index', 'forceRedirect' => false]);
+            }
+            else{
+                Yii::debug($report->getErrors());
+                return Json::encode(['success' => false, 'message' => $report->getErrors()]);
+            }
+        }
+        catch (\Exception $e) {
+            $transaction->rollBack();
+            Yii::debug($e->getTrace());
+            return Json::encode(['success' => false, 'message' => $e->getMessage()]);
+        }
     }
 
 }
