@@ -24,13 +24,37 @@ use yii\db\Expression;
 
 class ReportBuilder extends Model
 {
+    /**
+     * @var string
+     */
     public $model;
+    /**
+     * @var array
+     */
     public $filterConditions;
+    /**
+     * @var array
+     */
     public $filterValues;
+    /**
+     * @var array
+     */
     public $fields;
+    /**
+     * @var int
+     */
     public $limit;
+    /**
+     * @var string
+     */
     public $orderBy;
+    /**
+     * @var int
+     */
     public $org_id;
+    /**
+     * @var string
+     */
     public $name;
 
     /**

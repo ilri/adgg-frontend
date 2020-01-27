@@ -79,6 +79,17 @@ class BuilderController extends Controller
             $report->name = $builder->name;
             $report->raw_sql = $builder->rawQuery();
             $report->status = AdhocReport::STATUS_QUEUED;
+            // serialize query object and save to options
+            $query = $builder->generateQuery();
+            $report->options = json_encode([
+                'query' => serialize($query),
+                'filterConditions' => $builder->filterConditions,
+                'filterValues' => $builder->filterValues,
+                'limit' => $builder->limit,
+                'orderby' => $builder->orderBy,
+                'org_id' => $builder->org_id,
+                'reportModel' => $builder->model,
+            ]);
             if($report->save()){
                 $transaction->commit();
                 ReportGenerator::push(['queueId' => $report->id]);
