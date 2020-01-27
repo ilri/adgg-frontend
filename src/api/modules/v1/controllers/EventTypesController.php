@@ -20,6 +20,14 @@ class EventTypesController extends ActiveController
 
     public function actionIndex()
     {
-        return AnimalEvent::eventTypeOptions();
+        $data = [];
+        $types = AnimalEvent::eventTypeOptions();
+        foreach ($types as $key => $value) {
+            $data[] = [
+                'id' => $key,
+                'label' => $value,
+            ];
+        }
+        return $data;
     }
 }
