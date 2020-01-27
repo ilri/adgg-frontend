@@ -26,6 +26,7 @@ use yii\helpers\Url;
             'attribute' => 'raw_sql',
             'filter' => false,
             'enableSorting' => false,
+            'visible' => false,
         ],
         [
             'attribute' => 'report_file',
