@@ -20,19 +20,19 @@ $this->params['breadcrumbs'] = [
     <?php foreach ($countries as $country): ?>
         <div class="col-md-6">
             <div class='card my-2'>
-                <h4 class="card-header bg-white border-0"><?= Html::encode($country->name) ?></h4>
+                <h3 class="card-header bg-white border-0"><?= Html::encode($country->name) ?></h3>
                 <hr>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-12 col-md-6">
+                            <h5 class="text-center font-weight-normal"><?= Lang::t('Number Of Farms') ?></h5>
                             <h1 class="text-center kt-font-info">
                                 <?= Yii::$app->formatter->asDecimal(Farm::getCount(['org_id' => $country->id])) ?>
                             </h1>
-                            <h6 class="text-center font-weight-normal"><?= Lang::t('Number Of Farms') ?></h6>
+                            <h6 class="text-center font-weight-normal"><?= Lang::t('Number Of Animals') ?></h6>
                             <h1 class="text-center kt-font-info">
                                 <?= Yii::$app->formatter->asDecimal(Animal::getCount(['org_id' => $country->id])) ?>
                             </h1>
-                            <h6 class="text-center font-weight-normal"><?= Lang::t('Number Of Animals') ?></h6>
                         </div>
                         <div class="col-12 col-md-6">
                             <div class="card-footer bg-white d-flex justify-content-center justify-content-md-end border-0">

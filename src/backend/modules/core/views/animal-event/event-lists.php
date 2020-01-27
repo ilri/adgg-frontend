@@ -10,9 +10,9 @@ $this->title = 'Events';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-12" title="Click to view details">
         <div class="well">
-            <h3><?= Lang::t('List Animal Of  Events In {country}', ['country' => $country->name]) ?></h3>
+            <h3><?= Lang::t('List Of Animal  Events In {country}', ['country' => $country->name]) ?></h3>
             <hr>
             <div class="row">
                 <?php foreach ($events as $key => $name): ?>
