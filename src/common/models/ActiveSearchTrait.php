@@ -51,12 +51,14 @@ trait ActiveSearchTrait
     public function search()
     {
         /* @var $this ActiveRecord|ActiveSearchInterface */
+        /* @var $query ActiveQuery */
         $defaultOrder = ArrayHelper::getValue($this->_searchOptions, 'defaultOrder', []);
         $condition = ArrayHelper::getValue($this->_searchOptions, 'condition', '');
         $params = ArrayHelper::getValue($this->_searchOptions, 'params', []);
         $pageSize = ArrayHelper::getValue($this->_searchOptions, 'pageSize', SystemSettings::getPaginationSize());
         $enablePagination = ArrayHelper::getValue($this->_searchOptions, 'enablePagination', true);
         $with = ArrayHelper::getValue($this->_searchOptions, 'with');
+        $joinWith = ArrayHelper::getValue($this->_searchOptions, 'joinWith');
         $asArray = ArrayHelper::getValue($this->_searchOptions, 'asArray');
         $query = $this->find();
         if ($asArray === true) {
@@ -64,6 +66,9 @@ trait ActiveSearchTrait
         }
         if ($with !== null) {
             $query->with($with);
+        }
+        if ($joinWith !== null) {
+            $query->joinWith($joinWith);
         }
         /** @var $query ActiveQuery */
         $query->andWhere($condition);

@@ -198,7 +198,7 @@ trait TableAttributeTrait
         if (isset($this->farm)) {
             $fields['farm'] = function () {
                 $attributes = $this->farm->attributes;
-                unset($attributes['additional_attributes']);
+                unset($attributes['additional_attributes'], $attributes['latlng']);
                 return $attributes;
             };
         }
