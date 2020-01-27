@@ -24,13 +24,37 @@ use yii\db\Expression;
 
 class ReportBuilder extends Model
 {
+    /**
+     * @var string
+     */
     public $model;
+    /**
+     * @var array
+     */
     public $filterConditions;
+    /**
+     * @var array
+     */
     public $filterValues;
+    /**
+     * @var array
+     */
     public $fields;
+    /**
+     * @var int
+     */
     public $limit;
+    /**
+     * @var string
+     */
     public $orderBy;
+    /**
+     * @var int
+     */
     public $org_id;
+    /**
+     * @var string
+     */
     public $name;
 
     /**
@@ -187,9 +211,11 @@ class ReportBuilder extends Model
     /**
      * @param string $field
      * @param \yii\db\ActiveRecord $class
+     * @param string|null $field_alias
+     * @param bool append_field_alias
      * @return string
      */
-    public static function getFullColumnName($field, $class){
+    public static function getFullColumnName($field, $class, $field_alias = null, $append_field_alias = false){
         // check if field is a joined relation
         if(strpos($field, '.')){
             if(substr_count($field, '.') > 1){
@@ -201,7 +227,7 @@ class ReportBuilder extends Model
                 $relationClass = static::getRelationClass($class, $relationName); // Animal::class
                 $subRelationClass = static::getRelationClass($relationClass, $subRelationName); // Farm::class
                 $modelClass = $subRelationClass;
-                $fieldAlias = $subRelationName;
+                $tableAlias = $subRelationName;
             }
             else{
                 $relationName = (explode('.', $field)[0]);
@@ -209,25 +235,26 @@ class ReportBuilder extends Model
                 $modelClass = static::getRelationClass($class, $relationName);
 
                 // append table name || relationName to field to remove ambiguity.
-                $fieldAlias = $relationName;
+                $tableAlias = $relationName;
             }
         }
         else {
             $modelClass = $class;
             // append table name to field to remove ambiguity.
             $fieldName = $field;
-            $fieldAlias = $modelClass::tableName();
+            $tableAlias = $modelClass::tableName();
         }
 
         # append alias to field to remove ambiguity
-        $aliasedField = $fieldAlias.'.'.$fieldName;
+        $aliasedField = $tableAlias.'.'.$fieldName;
 
+        # additional columns
         if($modelClass->hasMethod('isAdditionalAttribute')){
             if ($modelClass->isAdditionalAttribute($fieldName)){
                 # for additional attributes, find a way to get their values
                 $attributeModel = TableAttribute::find()->andWhere(['attribute_key' => $fieldName, 'table_id' => $modelClass::getDefinedTableId()])->one();
                 $id = $attributeModel->id;
-                $attributesColumn = $fieldAlias.'.[[additional_attributes]]';
+                $attributesColumn = $tableAlias.'.[[additional_attributes]]';
                 # get the value of this field from the json payload
                 # e.g JSON_EXTRACT(`core_farm`.`additional_attributes`, '$."34"')
                 $aliasedField = new Expression('JSON_UNQUOTE(JSON_EXTRACT('.$attributesColumn.', '."'".'$."'.$id.'"'."'".'))');
@@ -257,85 +284,26 @@ class ReportBuilder extends Model
         $query = $class::find();
         // get the attributes for select
         foreach ($this->filterConditions as $field => $conditionOperator){
-            # check if field is a joined relation
-            // TODO:: refactor all this and use getFullColumnName()
+            $fieldAlias = str_replace('.','_', $field);
+
             if(strpos($field, '.')){
                 if(substr_count($field, '.') > 1){
                     // animal.farm.farmer_name
                     $relationName = (explode('.', $field)[0]); // animal
                     $subRelationName = (explode('.', $field)[1]); // farm
-                    $fieldName = (explode('.', $field)[2]); // farmer_name
-                    $relationClass = static::getRelationClass($class, $relationName); // Animal::class
-                    $subRelationClass = static::getRelationClass($relationClass, $subRelationName); // Farm::class
-                    $modelClass = $subRelationClass;
-                    $fieldAlias = $subRelationName;
+                    // add subrelation to other joins
                     $other_joins[$relationName] = $subRelationName;
-                    // build the inner join manually
-
-                    //  INNER JOIN `core_farm` `farm` ON `animal`.`farm_id` = `farm`.`id`
-                    // get the subrelation join condition
-                    // [animal.farm => ['animal.farm_id' => 'animal.id']]
-                    //
-                    /*
-                    $link = $reportableModelOptions['sub_relations'][$relationName. '.' . $subRelationName];
-                    $on = '';
-                    foreach ($link as $k => $f){
-                        // animal.farm_id
-                        $on .= static::getFullColumnName($k, $class);
-                        $on .= ' = ';
-                        // farm.id
-                        $on .= static::getFullColumnName($f, $modelClass);
-                    }
-                    $query->leftJoin($subRelationClass::tableName() . ' as ' . $subRelationName, $on);
-                    */
                 }
                 else {
                     $relationName = (explode('.', $field)[0]);
-                    $fieldName = (explode('.', $field)[1]);
-                    $modelClass = static::getRelationClass($class, $relationName);
-                    //$tableName = $modelClass::tableName();
                     $joins[] = $relationName;
-                    # table name || relationName alias.
-                    $fieldAlias = $relationName;
                 }
-            }
-            else {
-                $modelClass = $class;
-                # table name || relationName alias.
-                $fieldAlias = $class::tableName();
-                $fieldName = $field;
             }
 
-            # filter out additional attributes
-            # if it's additional field we will handle it in special way
+            $aliasedField = static::getFullColumnName($field, $class);
 
-            if($modelClass->hasMethod('isAdditionalAttribute')){
-                if (!$modelClass->isAdditionalAttribute($fieldName)){
-                    $main_attributes[] = $fieldName;
-                    # append alias to field to remove ambiguity
-                    $aliasedField = $fieldAlias.'.'.$fieldName;
-                    $attributes[] = $aliasedField;
-                }
-                else {
-                    # for additional attributes, find a way to get their values
-                    $additional_attributes[] = $fieldName;
-                    $attributeModel = TableAttribute::find()->andWhere(['attribute_key' => $fieldName, 'table_id' => $modelClass::getDefinedTableId()])->one();
-                    $id = $attributeModel->id;
-                    $attributesColumn = $fieldAlias.'.[[additional_attributes]]';
-                    # get the value of this field from the json payload
-                    # e.g JSON_EXTRACT(`core_farm`.`additional_attributes`, '$."34"') as `hh_name`
-                    $expression = new Expression('JSON_UNQUOTE(JSON_EXTRACT('.$attributesColumn.', '."'".'$."'.$id.'"'."'".')) as [[' . $fieldName .']]');
-                    $aliasedField = new Expression('JSON_UNQUOTE(JSON_EXTRACT('.$attributesColumn.', '."'".'$."'.$id.'"'."'".'))');
-                    $query->addSelect($expression);
-                }
-            }
-            else{
-                // TODO: refactor repetition
-                $main_attributes[] = $fieldName;
-                # append alias to field to remove ambiguity
-                $aliasedField = $fieldAlias.'.'.$fieldName;
-                $attributes[] = $aliasedField;
-            }
+            // add field to select
+            $query->addSelect(new Expression( $aliasedField . ' AS "' . $field . '"'));
 
             // build the condition
             if (!empty($conditionOperator)){
@@ -346,7 +314,7 @@ class ReportBuilder extends Model
             }
         }
         // do the select
-        $query->addSelect($attributes);
+        //$query->addSelect($attributes);
         // do the joins
         if (count($joins)){
             foreach (array_unique($joins) as $join){

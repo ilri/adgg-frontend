@@ -18,6 +18,21 @@ use yii\widgets\ActiveForm;
 
 trait ControllerActionTrait
 {
+
+    /**
+     * @param string $view
+     * @param string $redirect_route
+     * @param array $redirect_params
+     * @param null $success_msg
+     * @param bool $forceRedirect
+     * @return bool|string
+     * @throws \yii\base\ExitException
+     */
+    public function simpleAjaxSaveRenderAjax($view = '_form', $redirect_route = 'index', $redirect_params = [], $success_msg = null, $forceRedirect = false)
+    {
+        return $this->simpleAjaxSave($view, $redirect_route, $redirect_params, $success_msg, $forceRedirect, true);
+    }
+
     /**
      * Performs simple ajax save
      * @param string $view

@@ -41,4 +41,15 @@ $activeStatus = Yii::$app->request->get('status', AdhocReport::STATUS_QUEUED);
             </a>
         </li>
     <?php endif; ?>
+    <?php if (Yii::$app->user->canView(Constants::RES_REPORTS)): ?>
+        <li class="nav-item">
+            <a class="nav-link <?= ($activeStatus == AdhocReport::STATUS_ERROR) ? 'active' : '' ?>"
+               href="<?= Url::to(['adhoc-report/index', 'status' => AdhocReport::STATUS_ERROR]) ?>">
+                <?= Lang::t('Completed with Errors') ?>
+                <span class="badge badge-secondary badge-pill">
+                    <?= number_format(AdhocReport::getCount(['status' => AdhocReport::STATUS_ERROR])) ?>
+                </span>
+            </a>
+        </li>
+    <?php endif; ?>
 </ul>

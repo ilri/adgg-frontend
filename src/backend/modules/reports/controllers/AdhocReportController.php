@@ -2,6 +2,7 @@
 
 namespace backend\modules\reports\controllers;
 
+use backend\modules\auth\Acl;
 use backend\modules\auth\models\UserLevels;
 use backend\modules\auth\Session;
 use backend\modules\core\models\Organization;
@@ -35,6 +36,8 @@ class AdhocReportController extends Controller
 
     public function actionIndex($name = null, $created_by = null, $status = null, $from = null, $to = null)
     {
+        $this->hasPrivilege(Acl::ACTION_VIEW);
+
         $date_filter = DateUtils::getDateFilterParams($from, $to, 'created_at', false, false);
         $condition = $date_filter['condition'];
         $params = [];
@@ -54,13 +57,28 @@ class AdhocReportController extends Controller
             'searchModel' => $searchModel,
         ]);
     }
+
+    public function actionView($id)
+    {
+        $this->hasPrivilege(Acl::ACTION_VIEW);
+        $model = AdhocReport::loadModel($id);
+
+        return $this->render('view', [
+            'model' => $model,
+        ]);
+    }
+
     public function actionDownloadFile($id)
     {
+        $this->hasPrivilege(Acl::ACTION_VIEW);
+
         $model = AdhocReport::loadModel($id);
         FileManager::downloadFile($model->getFilePath(), Str::removeWhitespace($model->report_file));
     }
 
     public function actionRequeue($id){
+        $this->hasPrivilege(Acl::ACTION_CREATE);
+
         $model = AdhocReport::loadModel($id);
         $report = clone $model;
         $report->isNewRecord = true;
