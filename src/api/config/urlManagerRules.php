@@ -40,7 +40,8 @@ return [
             'event-types' => 'v1/event-types',
             'animal-types' => 'v1/animal-types',
             'breeds' => 'v1/breeds',
-            'users' => 'v1/user'
+            'users' => 'v1/user',
+            'androidVersion' => 'v1/android-app-version'
         ],
         'except' => ['delete', 'update', 'create'],
     ],

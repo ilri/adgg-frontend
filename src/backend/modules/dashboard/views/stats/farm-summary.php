@@ -82,9 +82,6 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                 //print_r($farmTypes);
                 foreach ($farmTypes as $type => $label) {
                     list($newcondition, $newparams) = DbUtils::appendCondition('farm_type', $type, $condition, $params);
-
-                    // fetch count for each district
-                    //print_r(Farm::find()->andWhere($newcondition, $newparams)->createCommand()->rawSql);
                     $count = Farm::find()->andWhere($newcondition, $newparams)
                         ->andWhere(['org_id' => $country->id])
                         ->count();
