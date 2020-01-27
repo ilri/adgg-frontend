@@ -92,7 +92,7 @@ class AndroidApps extends ActiveRecord implements ActiveSearchInterface
         //using fine-uploader
         $ext = FileManager::getFileExtension($this->temp_apk_file);
         $env = YII_ENV === 'dev' ? 'uat-' : '';
-        $file_name = 'leadsman-' . $env . $this->version_name . '.' . $ext;
+        $file_name = 'adgg-' . $env . $this->version_name . '.' . $ext;
         $temp_dir = dirname($this->temp_apk_file);
         $new_path = static::getDir() . DIRECTORY_SEPARATOR . $file_name;
         if (copy($this->temp_apk_file, $new_path)) {
