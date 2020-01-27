@@ -140,7 +140,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             <h3>Query Options</h3>
                             <div class="row row-no-gutters mb-2">
                                 <div class="col-md-3"><label for="limit">Limit: </label></div>
-                                <div class="col-md-8"><input name="limit" id="limit" type="text" value="100" class="form-control form-control-sm" /></div>
+                                <div class="col-md-8"><input name="limit" id="limit" type="number" value="" class="form-control form-control-sm" /></div>
                             </div>
                             <div class="row row-no-gutters mt-2">
                                 <div class="col-md-3"><label for="orderby">Order By: </label></div>

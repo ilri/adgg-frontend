@@ -82,6 +82,11 @@ $controller = Yii::$app->controller;
                         <span class="kt-nav__link-text"><?= Lang::t('Manage System Manual') ?></span>
                     </a>
                 </li>
+                 <li class="kt-nav__item">
+                    <a href="<?= Url::to(['/conf/android-app/index']) ?>" class="kt-nav__link">
+                        <span class="kt-nav__link-text"><?= Lang::t('Manage Apps') ?></span>
+                    </a>
+                </li>
             <?php endif; ?>
         </ul>
     </div>
