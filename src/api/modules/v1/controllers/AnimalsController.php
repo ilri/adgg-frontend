@@ -29,7 +29,7 @@ class AnimalsController extends ActiveController
             'pageSize' => SystemSettings::getPaginationSize(),
             'joinWith' => [
                 'farm' => function (\yii\db\ActiveQuery $query) use ($farm_name) {
-                    $query->andFilterWhere([Farm::tableName() . '.name' => $farm_name]);
+                    $query->andFilterWhere(['LIKE', Farm::tableName() . '.name', $farm_name]);
                 },
             ]
         ]);
