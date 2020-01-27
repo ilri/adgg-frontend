@@ -102,7 +102,7 @@ class AndroidApps extends ActiveRecord implements ActiveSearchInterface
             $this->save(false);
 
             if (!empty($temp_dir))
-                FileManager::deleteDir($temp_dir);
+                FileManager::deleteDirOrFile($temp_dir);
         }
     }
 

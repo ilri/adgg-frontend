@@ -37,26 +37,44 @@ class AndroidAppController extends Controller
         ]);
     }
 
-
+    /**
+     * @return bool|string
+     * @throws \yii\base\ExitException
+     */
     public function actionCreate()
     {
         $model = new AndroidApps(['is_active' => 1]);
         return $model->simpleAjaxSaveRenderAjax();
     }
 
-
+    /**
+     * @param $id
+     * @return bool|string
+     * @throws \yii\base\ExitException
+     * @throws \yii\web\NotFoundHttpException
+     */
     public function actionUpdate($id)
     {
         $model = AndroidApps::loadModel($id);
         return $model->simpleAjaxSaveRenderAjax();
     }
 
-
+    /**
+     * @param $id
+     * @return bool
+     * @throws \Throwable
+     */
     public function actionDelete($id)
     {
         return AndroidApps::softDelete($id);
     }
 
+    /**
+     * @param $id
+     * @throws ForbiddenHttpException
+     * @throws \yii\web\BadRequestHttpException
+     * @throws \yii\web\NotFoundHttpException
+     */
     public function actionDownload($id)
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
