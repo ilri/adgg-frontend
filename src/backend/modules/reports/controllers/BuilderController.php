@@ -82,7 +82,7 @@ class BuilderController extends Controller
             // serialize query object and save to options
             $query = $builder->generateQuery();
             $report->options = json_encode([
-                'query' => serialize($query),
+                //'query' => serialize($query), // fails with exception: Serialization of Closure not allowed
                 'filterConditions' => $builder->filterConditions,
                 'filterValues' => $builder->filterValues,
                 'limit' => $builder->limit,
