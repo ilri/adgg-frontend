@@ -303,7 +303,7 @@ class ReportBuilder extends Model
             $aliasedField = static::getFullColumnName($field, $class);
 
             // add field to select
-            $query->addSelect(new Expression($aliasedField .  ' AS "' . $field . '"'));
+            $query->addSelect(new Expression( $aliasedField . ' AS "' . $field . '"'));
 
             // build the condition
             if (!empty($conditionOperator)){
