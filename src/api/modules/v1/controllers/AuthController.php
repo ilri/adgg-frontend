@@ -24,9 +24,14 @@ class AuthController extends Controller
 
     public function getUnAuthenticatedActions()
     {
-        return ['login', 'beginResetPassword', 'finishResetPassword'];
+        return ['login', 'begin-reset-password', 'complete-reset-password'];
     }
 
+    /**
+     * @return LoginForm|array
+     * @throws ForbiddenHttpException
+     * @throws \yii\base\InvalidConfigException
+     */
     public function actionLogin()
     {
         $model = new LoginForm();
@@ -46,6 +51,62 @@ class AuthController extends Controller
         return [
             'token' => $user->getToken(),
         ];
+    }
+
+    /**
+     * @return ProvideEmail|\yii\web\Response
+     * @throws NotFoundHttpException
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function actionBeginResetPassword()
+    {
+        $model = new ProvideEmail();
+        if ($model->load(Yii::$app->request->getBodyParams(), '') && $model->validate()) {
+            // find user by email
+            if ($user = User::findByEmail($model->email)) {
+                $user->generatePasswordResetToken();
+                $user->save(false);
+
+                return $this->asJson([
+                    'message' => 'Reset link sent successfully to ' . $model->email,
+                    'reset_token' => $user->password_reset_token,
+                ]);
+            }
+            throw new NotFoundHttpException('User with email ' . $model->email . ' not found.');
+        }
+        return $model;
+    }
+
+    /**
+     * @return ResetPassword|array
+     * @throws NotFoundHttpException
+     * @throws \yii\base\Exception
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function actionCompleteResetPassword()
+    {
+        $form = new ResetPassword();
+        $token = Yii::$app->request->get('token');
+        $form->load(Yii::$app->request->getBodyParams(), '');
+
+        if ($form->validate()) {
+
+            $user = User::findByPasswordResetToken($token);
+            if ($user !== null) {
+                $status = User::isPasswordResetTokenValid($token);
+                if ($status) {
+                    $user->setPasswordHash($form->password);
+                    $user->password_reset_token = null;
+                    $user->save(false);
+
+                    return ['message' => 'password reset successful.'];
+                } else {
+                    throw new NotFoundHttpException('The token has expired.');
+                }
+            }
+            throw new NotFoundHttpException('The token was not found.');
+        }
+        return $form;
     }
 
     public function actionChangePassword()
@@ -68,49 +129,5 @@ class AuthController extends Controller
             }
         }
         return $model;
-    }
-
-    public function actionBeginResetPassword()
-    {
-        $model = new ProvideEmail();
-        if ($model->load(Yii::$app->request->getBodyParams(), '') && $model->validate()) {
-            // find user by email
-            if ($user = User::findByEmail($model->email)) {
-                $user->password_reset_token = $user->generatePasswordResetToken();
-                $user->save(false);
-
-                return $this->asJson([
-                    'message' => 'Reset link sent successfully to ' . $model->email,
-                ]);
-            }
-            throw new NotFoundHttpException('User with email ' . $model->email . ' not found.');
-        }
-        return $model;
-    }
-
-    public function actionCompleteResetPassword()
-    {
-        $form = new ResetPassword();
-        $token = Yii::$app->request->get('token');
-        $form->load(Yii::$app->request->getBodyParams(), '');
-
-        if ($form->validate()) {
-
-            $user = User::findByPasswordResetToken($token);
-            if ($user !== null) {
-                $status = User::isPasswordResetTokenValid($token);
-                if ($status) {
-                    $user->setPasswordHash($form->password);
-                    $user->password_reset_token = null;
-                    $user->save(false);
-
-                    return ['message' => 'password reset.'];
-                } else {
-                    throw new NotFoundHttpException('The token has expired.');
-                }
-            }
-            throw new NotFoundHttpException('The token was not found.');
-        }
-        return $form;
     }
 }
