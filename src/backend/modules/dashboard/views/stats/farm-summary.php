@@ -113,17 +113,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                     <span><?= number_format(Farm::getCount(['org_id' => $country->id])) ?></span>
                 </div>
                 <div class="kt-iconbox__title">
-                    <?= Lang::t('ADGG Number Of Farms in {country}', ['country' => $country->name]); ?>                </div>
-            </div>
-        </div>
-        <div class="kt-portlet">
-            <div class="kt-iconbox kt-iconbox--active">
-                <div class="kt-iconbox__icon mb-0">
-                    <div class="kt-iconbox__icon-bg"></div>
-                    <span><?= number_format(Animal::getCount(['org_id' => $country->id])) ?></span>
-                </div>
-                <div class="kt-iconbox__title">
-                    <?= Lang::t('ADGG Number Of Animals in {country}', ['country' => $country->name]); ?>                </div>
+                    <?= Lang::t('Number Of Farms in {country}', ['country' => $country->name]); ?>                </div>
             </div>
         </div>
         <div class="kt-portlet">
@@ -133,7 +123,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                     <span><?= number_format(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => 1])->andWhere(['org_id' => $country->id])->count()) ?></span>
                 </div>
                 <div class="kt-iconbox__title">
-                    <?= Lang::t('ADGG Male Household headed Farmers in {country}', ['country' => $country->name]); ?>
+                    <?= Lang::t('Male Household headed Farmers in {country}', ['country' => $country->name]); ?>
                 </div>
             </div>
         </div>
@@ -143,7 +133,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                     <div class="kt-iconbox__icon-bg"></div>
                     <span><?= number_format(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => 2])->andWhere(['org_id' => $country->id])->count()) ?></span>
                 </div>
-                <div class="kt-iconbox__title"><?= Lang::t('ADGG Female Household headed Farmers in {country}', ['country' => $country->name]); ?></div>
+                <div class="kt-iconbox__title"><?= Lang::t('Female Household headed Farmers in {country}', ['country' => $country->name]); ?></div>
             </div>
         </div>
         <div class="kt-portlet">
