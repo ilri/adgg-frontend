@@ -1,7 +1,6 @@
 <?php
 
 use backend\controllers\BackendController;
-use backend\modules\core\models\Animal;
 use backend\modules\core\models\Choices;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\Organization;
