@@ -246,7 +246,7 @@ class ReportBuilder extends Model
         }
 
         # append alias to field to remove ambiguity
-        $aliasedField = $tableAlias.'.'.$fieldName;
+        $aliasedField = $tableAlias.'. [['.$fieldName.']]';
 
         # additional columns
         if($modelClass->hasMethod('isAdditionalAttribute')){
@@ -261,8 +261,20 @@ class ReportBuilder extends Model
 
             }
         }
+        $className = $modelClass::shortClassName();
+        $fieldAlias = $className . '.' .$modelClass->getAttributeLabel($fieldName);
 
-        return $aliasedField;
+        if($append_field_alias){
+            if($field_alias === null){
+                return $aliasedField . ' AS "' . $fieldAlias .'"';
+            }
+            else {
+                return $aliasedField . ' AS "' . $field_alias .'"';
+            }
+        }
+        else{
+            return $aliasedField;
+        }
     }
 
     /**
@@ -299,11 +311,14 @@ class ReportBuilder extends Model
                     $joins[] = $relationName;
                 }
             }
-
+            # field with table alias
             $aliasedField = static::getFullColumnName($field, $class);
+            # field with table and column alias
+            $selectField = static::getFullColumnName($field, $class, null, true);
 
             // add field to select
-            $query->addSelect(new Expression( $aliasedField . ' AS "' . $field . '"'));
+            //$query->addSelect(new Expression( $aliasedField . ' AS "' . $field . '"'));
+            $query->addSelect(new Expression($selectField));
 
             // build the condition
             if (!empty($conditionOperator)){
