@@ -14,6 +14,7 @@ use api\modules\v1\forms\LoginForm;
 use api\modules\v1\forms\ProvideEmail;
 use api\modules\v1\forms\ResetPassword;
 use api\modules\v1\models\User;
+use backend\modules\auth\forms\PasswordResetRequestForm;
 use Yii;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
@@ -54,27 +55,23 @@ class AuthController extends Controller
     }
 
     /**
-     * @return ProvideEmail|\yii\web\Response
+     * @return array
      * @throws NotFoundHttpException
      * @throws \yii\base\InvalidConfigException
      */
     public function actionBeginResetPassword()
     {
-        $model = new ProvideEmail();
-        if ($model->load(Yii::$app->request->getBodyParams(), '') && $model->validate()) {
-            // find user by email
-            if ($user = User::findByEmail($model->email)) {
-                $user->generatePasswordResetToken();
-                $user->save(false);
-
-                return $this->asJson([
-                    'message' => 'Reset link sent successfully to ' . $model->email,
-                    'reset_token' => $user->password_reset_token,
-                ]);
+        $model = new PasswordResetRequestForm();
+        $model->attributes = Yii::$app->getRequest()->getBodyParams();
+        if ($model->validate()) {
+            if ($model->sendEmail()) {
+                $msg = 'Check your email for further instructions on how to reset your password.<br/>NOTE: If you do not get an email please check your spams folder and mark it as not spam';
+                return ['success' => true, 'message' => $msg];
+            } else {
             }
-            throw new NotFoundHttpException('User with email ' . $model->email . ' not found.');
         }
-        return $model;
+
+        return ['success' => false, 'error' => $model->getErrors(), 'message' => 'Sorry, we are unable to reset password for email provided.'];
     }
 
     /**
