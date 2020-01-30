@@ -47,6 +47,7 @@ MyApp.modules.reports = {};
                 data: form.serialize(),
                 success: function (data) {
                     $($this.options.queryHolderContainer).html(data);
+                    $($this.options.queryHolderContainer).parent().attr('contenteditable','true');
                 },
                 beforeSend: function (xhr) {
                     MyApp.utils.startBlockUI();
