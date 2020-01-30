@@ -41,7 +41,8 @@ return [
             'animal-types' => 'v1/animal-types',
             'breeds' => 'v1/breeds',
             'users' => 'v1/user',
-            'androidVersion' => 'v1/android-app-version'
+            'androidVersion' => 'v1/android-app-version',
+            'countries' => 'v1/countries',
         ],
         'except' => ['delete', 'update', 'create'],
     ],
@@ -57,6 +58,19 @@ return [
             'POST reset-password/begin' => 'begin-reset-password',
             'POST reset-password/finish' => 'complete-reset-password',
             'POST reset-password/finish/{token}' => 'complete-reset-password',
+            'OPTIONS <action>' => 'options',
+        ],
+    ],
+    [
+        'class' => \yii\rest\UrlRule::class,
+        'pluralize' => false,
+        'controller' => [
+            'dashboard' => 'v1/countries-stats',
+        ],
+        'extraPatterns' => [
+            'GET landing' => 'landing',
+            'GET countries/list' => 'countries-list',
+            'GET large-scale-farms/grouped/regions' => 'farm-stats-grouped-by-regions',
             'OPTIONS <action>' => 'options',
         ],
     ],
