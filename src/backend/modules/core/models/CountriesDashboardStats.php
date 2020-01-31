@@ -86,8 +86,10 @@ class CountriesDashboardStats extends Model
         $insBox5 = Animal::getCount(['org_id' => $org_id, 'animal_type' => Animal::ANIMAL_TYPE_FEMALE_CALF]);
 
         $testCalve = [];
-        $testCalve[] = [
+        $testCalve[0] = [
             'Male Calves Count' => $insBox4,
+        ];
+        $testCalve[1] = [
             'Female Calves Count' => $insBox5,
         ];
 
