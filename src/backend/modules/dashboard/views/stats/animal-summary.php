@@ -138,7 +138,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
             <div class="kt-iconbox kt-iconbox--active">
                 <div class="kt-iconbox__icon mb-0">
                     <div class="kt-iconbox__icon-bg"></div>
-                    <span><?= number_format(Animal::getCount(['org_id' => $country->id, 'animal_type' => [Animal::ANIMAL_TYPE_MALE_CALF]])) ?></span>
+                    <span><?= number_format(Animal::getCount(['org_id' => $country->id, 'animal_type' => Animal::ANIMAL_TYPE_MALE_CALF])) ?></span>
                 </div>
                 <div class="kt-iconbox__title"><?= Lang::t('ADGG Number of Male Calves in {country}', ['country' => $country->name]); ?>
                 </div>
@@ -148,7 +148,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
             <div class="kt-iconbox kt-iconbox--active">
                 <div class="kt-iconbox__icon mb-0">
                     <div class="kt-iconbox__icon-bg"></div>
-                    <span><?= number_format(Animal::getCount(['org_id' => $country->id, 'animal_type' => [Animal::ANIMAL_TYPE_FEMALE_CALF]])) ?></span>
+                    <span><?= number_format(Animal::getCount(['org_id' => $country->id, 'animal_type' => Animal::ANIMAL_TYPE_FEMALE_CALF])) ?></span>
                 </div>
                 <div class="kt-iconbox__title"><?= Lang::t('ADGG Number of Female Calves in {country}', ['country' => $country->name]); ?>
                 </div>
