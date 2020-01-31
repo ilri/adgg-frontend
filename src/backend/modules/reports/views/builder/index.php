@@ -152,14 +152,15 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <button id="generateQuery" role="button" class="btn btn-primary col-md-8 offset-3">Preview Query</button>
                             </div>
                             <div class="row card card-body mt-4 mb-4">
-                                <div class="bd-clipboard hidden">
-                                    <button type="button" class="btn-clipboard" title="" data-original-title="Copy to clipboard">Copy</button>
+                                <div class="bd-clipboard">
+                                    <button type="button" data-clipboard-target="#queryHolder" class="btn-clipboard">Copy</button>
                                 </div>
-                                <figure class="highlight">
+                                <figure class="highlight hidden">
                                     <pre class="pre-scrollable">
-                                        <code id="queryHolder" class="language-sql text-wrap word-wrap" data-lang="sql"></code>
+                                        <code id="" class="language-sql text-wrap word-wrap" data-lang="sql"></code>
                                     </pre>
                                 </figure>
+                                <textarea id="queryHolder" class="language-sql text-wrap word-wrap" ></textarea>
                             </div>
                             <div class="row mt-2">
                                 <div class="col-md-3"><label for="name">Report Name: </label></div>

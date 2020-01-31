@@ -249,6 +249,8 @@ class ReportBuilder extends Model
             $tableAlias = $modelClass::tableName();
             $fieldLabelAlias = $modelClass::shortClassName();
         }
+        # quote the table alias
+        $tableAlias = \Yii::$app->db->quoteTableName($tableAlias);
 
         # append alias to field to remove ambiguity
         $aliasedField = $tableAlias.'. [['.$fieldName.']]';
