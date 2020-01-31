@@ -49,9 +49,9 @@ class CountriesDashboardStats extends Model
         //boxes
         //1.Farm boxes
         $farmBox1 = Farm::getCount(['org_id' => $org_id]);
-        $farmBox1 = Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => 1])->andWhere(['org_id' => $org_id])->count();
-        $farmBox2 = Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => 2])->andWhere(['org_id' => $org_id])->count();
-        $farmBox3 = Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => [1, 2]])->andWhere(['org_id' => $org_id])->count();
+        $farmBox2 = Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => 1])->andWhere(['org_id' => $org_id])->count();
+        $farmBox3 = Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => 2])->andWhere(['org_id' => $org_id])->count();
+        $farmBox4 = Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => [1, 2]])->andWhere(['org_id' => $org_id])->count();
 
         //2.Animal boxes
         $animalTypesData = [];
@@ -104,9 +104,10 @@ class CountriesDashboardStats extends Model
             ];
             $data[1] = [
                 'Boxes' => [
-                    $farmBox1,
-                    $farmBox2,
-                    $farmBox3
+                    'No of farms' => $farmBox1,
+                    'Male House Hold Head' => $farmBox2,
+                    'Female House Hold Head' => $farmBox3,
+                    'House Holds Headed By both male and female' => $farmBox4
                 ]
             ];
         } elseif ($report_name == static::ANIMALS_REGISTERED_REPORT) {
