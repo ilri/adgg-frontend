@@ -70,7 +70,7 @@ return [
         'extraPatterns' => [
             'GET landing' => 'landing',
             'GET countries/list' => 'countries-list',
-            'GET large-scale-farms/grouped/regions' => 'farm-stats-grouped-by-regions',
+            'GET country-report' => 'country-report',
             'OPTIONS <action>' => 'options',
         ],
     ],
