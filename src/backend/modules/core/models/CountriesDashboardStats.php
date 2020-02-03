@@ -312,7 +312,6 @@ class CountriesDashboardStats extends Model
         $params = [];
         list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
         $data = [];
-        $labels = [];
         // get breeds
         $breeds = Choices::getList(\backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS);
         foreach ($breeds as $id => $label) {
@@ -323,8 +322,9 @@ class CountriesDashboardStats extends Model
                 ->andWhere([Farm::tableName() . '.org_id' => $country->id])
                 ->count();
             if ($count > 0) {
-                $labels[] = trim($label);
-                $data[] = floatval($count);
+                $data[] = [
+                    'Breed' => $label,
+                    'Number' => floatval($count)];
             }
 
         };
