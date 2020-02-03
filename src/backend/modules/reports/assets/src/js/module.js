@@ -81,6 +81,9 @@ MyApp.modules.reports = {};
                     if(response.success){
                         let message = '<div class="alert alert-outline-success">' + response.message + '</div>';
                         swal("SUCCESS!", message, "success");
+                        if(response.redirectUrl !== ''){
+                            MyApp.utils.reload(response.redirectUrl, 2000);
+                        }
                     }
                     else {
                         if (typeof response.message === 'string' || response.message instanceof String) {
