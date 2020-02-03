@@ -99,8 +99,8 @@ class CountriesDashboardStats extends Model
 
         $testCalve = [];
         $testCalve[] = [
-            'Male Calves Count' => [$insBox4],
-            'Female Calves Count' => [$insBox5],
+            'Male Calves Count' => $insBox4,
+            'Female Calves Count' => $insBox5,
         ];
 
         if ($report_id == static::FARMS_REGISTERED_REPORT) {
