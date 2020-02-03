@@ -16,10 +16,15 @@ class Asset extends AssetBundle
     public $sourcePath = '@reportsModule/assets/src';
 
     public $js = [
+        'https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.51.0/codemirror.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.51.0/mode/sql/sql.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.51.0/addon/hint/sql-hint.min.js',
         'js/module.js',
     ];
 
     public $css = [
+        'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.51.0/codemirror.min.css',
     ];
 
     public $depends = [

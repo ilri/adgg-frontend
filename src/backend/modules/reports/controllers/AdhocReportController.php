@@ -49,7 +49,7 @@ class AdhocReportController extends Controller
         ]);
         $searchModel->name = $name;
         $searchModel->created_by = $created_by;
-        $searchModel->status = $status ?? AdhocReport::STATUS_QUEUED;
+        $searchModel->status = $status ?? AdhocReport::STATUS_COMPLETED;
         $searchModel->_dateFilterFrom = $date_filter['from'];
         $searchModel->_dateFilterTo = $date_filter['to'];
 
