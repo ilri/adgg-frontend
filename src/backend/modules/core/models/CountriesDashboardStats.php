@@ -104,74 +104,73 @@ class CountriesDashboardStats extends Model
         ];
 
         if ($report_id == static::FARMS_REGISTERED_REPORT) {
-            $data[0] = [
-                'Farms Grouped By Regions' => [
-                    $farmsGroupedByRegions,
+            $data[] = [
+                'Charts' => [
+                    'Farms Grouped By Regions' => [
+                        $farmsGroupedByRegions,
+                    ],
+                    'Farms Grouped By Farm Types' => [
+                        $farmsGroupedByFarmType,
+                    ]
                 ],
-                'Farms Grouped By Farm Types' => [
-                    $farmsGroupedByFarmType,
-                ]
-            ];
-            $data[1] = [
                 'Boxes' => [
-                    $farmBoxes,
+                    'List Of Farm Boxes' => $farmBoxes,
                 ]
             ];
         } elseif ($report_id == static::ANIMALS_REGISTERED_REPORT) {
-            $data[0] = [
-                'Animals Grouped By Regions' => [
-                    $animalsGroupedByRegions,
+            $data[] = [
+                'Charts' => [
+                    'Animals Grouped By Regions' => [
+                        $animalsGroupedByRegions,
+                    ],
+                    'Animals Grouped By Breeds' => [
+                        $animalsGroupedByBreeds,
+                    ]
                 ],
-                'Animals Grouped By Breeds' => [
-                    $animalsGroupedByBreeds,
-                ]
-            ];
-            $data[1] = [
-                'Boxes Counts' => [
-                    $animalTypesData,
+                'Boxes' => [
+                    'List Of Animal Boxes' => $animalTypesData,
                 ]
             ];
         } elseif ($report_id == static::LSF_FARM_STATS_REPORT) {
-            $data[0] = [
-                'Large Scale Farms Grouped By Regions' => [
-                    $LSFGroupedByRegions,
+            $data[] = [
+                'Charts' => [
+                    'Large Scale Farms Grouped By Regions' => [
+                        $LSFGroupedByRegions,
+                    ],
+                    'LSF Animals By Breeds' => [
+                        $LSFAnimalsGroupedByBreeds,
+                    ]
                 ],
-                'LSF Animals By Breeds' => [
-                    $LSFAnimalsGroupedByBreeds,
-                ]
-            ];
-            $data[1] = [
                 'Boxes' => [
+                    // 'List Of LSF Boxes' => $animalTypesData,
                 ]
             ];
         } elseif ($report_id == static::TEST_DAY_REPORT) {
-            $data[0] = [
-                'Test Day Grouped By regions' => [
-                    $testDayMilkGroupedByRegions,
+            $data[] = [
+                'Charts' => [
+                    'Test Day Grouped By regions' => [
+                        $testDayMilkGroupedByRegions,
+                    ],
                 ],
-            ];
-            $data[1] = [
                 'Boxes' => [
-                    $testDayBoxes,
+                    'List Of Test Day Boxes' => $testDayBoxes
                 ]
             ];
         } elseif ($report_id == static::GENOTYPE_ANIMALS_REPORT) {
-            $data[0] = [
-            ];
-            $data[1] = [
+            $data[] = [
             ];
         } elseif ($report_id == static::INSEMINATION_PD_CALVING_REPORT) {
-            $data[0] = [
-                'Male Calves Grouped By Regions' => [
-                    $maleCalvesByRegions,
+            $data[] = [
+                'Charts' => [
+                    'Male Calves Grouped By Regions' => [
+                        $maleCalvesByRegions,
+                    ],
+                    'Female Calves Grouped By Regions' => [
+                        $femaleCalvesByRegions,
+                    ]
                 ],
-                'Female Calves Grouped By Regions' => [
-                    $femaleCalvesByRegions,
-                ]
-            ];
-            $data[1] = [
                 'Boxes' => [
-                    array_merge($eventTypesData, $testCalve),
+                    'List Of Insemination, PD And Calving Boxes' => array_merge($eventTypesData, $testCalve),
                 ]
             ];
 
