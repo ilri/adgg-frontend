@@ -392,9 +392,9 @@ class CountriesDashboardStats extends Model
         $params = [];
         list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
         $data = [];
-        // get districts
-        $districts = OrganizationUnits::getListData('id', 'name', '', ['level' => OrganizationUnits::LEVEL_REGION]);
-        foreach ($districts as $id => $label) {
+        // get regions
+        $regions = OrganizationUnits::getListData('id', 'name', '', ['level' => OrganizationUnits::LEVEL_REGION]);
+        foreach ($regions as $id => $label) {
             list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
 
             $count = Animal::find()->where($newcondition, $newparams)
