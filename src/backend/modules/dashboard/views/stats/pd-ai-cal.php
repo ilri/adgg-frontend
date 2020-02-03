@@ -38,9 +38,9 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                         $params = [];
                         list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
                         $data = [];
-                        // get districts
-                        $districts = OrganizationUnits::getListData('id', 'name', '', ['level' => OrganizationUnits::LEVEL_REGION]);
-                        foreach ($districts as $id => $label) {
+                        // get regions
+                        $regions = OrganizationUnits::getListData('id', 'name', '', ['level' => OrganizationUnits::LEVEL_REGION]);
+                        foreach ($regions as $id => $label) {
                             list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
 
                             $count = Animal::find()->where($newcondition, $newparams)
@@ -72,11 +72,15 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                         </div>
                         <div id="chartContainer2" title=""></div>
                         <?php
+                        $condition = '';
+                        $params = [];
+                        list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
                         $data = [];
-                        // get districts
-                        $districts = OrganizationUnits::getListData('id', 'name', '', ['level' => OrganizationUnits::LEVEL_REGION]);
-                        foreach ($districts as $id => $label) {
-                            list($newCondition, $newParams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
+                        // get regions
+                        $regions = OrganizationUnits::getListData('id', 'name', '', ['level' => OrganizationUnits::LEVEL_REGION]);
+                        foreach ($regions as $id => $label) {
+                            list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
+
                             $count = Animal::find()->where($newcondition, $newparams)
                                 ->andWhere(['animal_type' => Animal::ANIMAL_TYPE_FEMALE_CALF])
                                 ->andWhere(['org_id' => $country->id])

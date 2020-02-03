@@ -46,7 +46,9 @@ MyApp.modules.reports = {};
                 dataType: 'html',
                 data: form.serialize(),
                 success: function (data) {
-                    $($this.options.queryHolderContainer).html(data);
+                    //$($this.options.queryHolderContainer).text(data);
+                    //$($this.options.queryHolderContainer).parent().attr('contenteditable','true');
+                    window.editor.setValue(data);
                 },
                 beforeSend: function (xhr) {
                     MyApp.utils.startBlockUI();
@@ -246,6 +248,35 @@ MyApp.modules.reports = {};
     MyApp.modules.reports.reportbuilder = function (options) {
         let obj = new REPORTBUILDER(options);
         obj.init();
+        window.editor = CodeMirror.fromTextArea(document.getElementById('queryHolder'), {
+            value: '',
+            mode: 'text/x-mysql',
+            indentWithTabs: true,
+            smartIndent: true,
+            lineNumbers: false,
+            lineWrapping: true,
+            matchBrackets : true,
+            autofocus: true,
+            extraKeys: {"Ctrl-Space": "autocomplete"},
+            foldGutter: true,
+        });
+        const copy = new ClipboardJS('.btn-clipboard', {
+            text: function (trigger) {
+                return window.editor.getValue();
+            }
+        });
+
+        copy.on('success',function(e){
+            e.clearSelection();
+            $(e.trigger).text("Copied!");
+            setTimeout(function () {
+                $(e.trigger).text("Copy");
+            }, 2500);
+        });
+        copy.on('error',function(e){
+            console.error('Action:',e.action);
+            console.error('Trigger:',e.trigger);
+        });
     }
 
 }(jQuery));
