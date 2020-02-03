@@ -141,9 +141,6 @@ class CountriesDashboardStats extends Model
                         $LSFAnimalsGroupedByBreeds,
                     ]
                 ],
-                'Boxes' => [
-                    // 'List Of LSF Boxes' => $animalTypesData,
-                ]
             ];
         } elseif ($report_id == static::TEST_DAY_REPORT) {
             $data[] = [
