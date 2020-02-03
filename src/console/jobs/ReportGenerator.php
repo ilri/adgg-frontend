@@ -75,7 +75,8 @@ class ReportGenerator extends BaseObject implements JobInterface
             $json = json_decode($this->_model->options, true);
             $this->_jsonArr = $json;
             $this->_sql = $this->_model->raw_sql;
-            $this->filename = $this->_model->name . '_' . time();
+            $date_created = \common\helpers\DateUtils::formatToLocalDate($this->_model->created_at);
+            $this->filename = $this->_model->name . '_' . $date_created . '_' . time();
             $this->fetchData();
 
             ReportNotification::createManualNotifications(ReportNotification::NOTIF_REPORT_COMPLETION, $this->_model->id);

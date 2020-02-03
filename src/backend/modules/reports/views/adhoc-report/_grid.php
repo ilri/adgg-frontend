@@ -1,5 +1,6 @@
 <?php
 
+use common\helpers\Lang;
 use common\widgets\grid\GridView;
 use backend\modules\reports\models\AdhocReport;
 use yii\helpers\Html;
@@ -46,6 +47,22 @@ use yii\helpers\Url;
         [
             'attribute' => 'status_remarks',
             'filter' => false,
+        ],
+        [
+            'label' => 'Date',
+            'filter' => false,
+            'format' => 'html',
+            'value' => function (AdhocReport $model) {
+                return \common\helpers\DateUtils::formatToLocalDate($model->created_at);
+            },
+        ],
+        [
+            'label' => 'Download',
+            'filter' => false,
+            'format' => 'html',
+            'value' => function (AdhocReport $model) {
+                return Html::a(Lang::t('Download Report') . ' <i class="fas fa-download"></i>', ['download-file', 'id' => $model->id], ['data-pjax' => 0]);
+            },
         ],
         [
             'class' => common\widgets\grid\ActionColumn::class,
