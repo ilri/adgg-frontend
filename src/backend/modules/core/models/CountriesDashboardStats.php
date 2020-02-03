@@ -52,7 +52,13 @@ class CountriesDashboardStats extends Model
         $farmBox2 = Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => 1])->andWhere(['org_id' => $org_id])->count();
         $farmBox3 = Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => 2])->andWhere(['org_id' => $org_id])->count();
         $farmBox4 = Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => [1, 2]])->andWhere(['org_id' => $org_id])->count();
-
+        $farmBoxes = [];
+        $farmBoxes[] = [
+            'No of farms' => [$farmBox1],
+            'Male House Hold Head' => [$farmBox2],
+            'Female House Hold Head' => [$farmBox3],
+            'House Holds Headed By both male and female' => [$farmBox4]
+        ];
         //2.Animal boxes
         $animalTypesData = [];
         $animalTypes = Choices::getList(\backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES);
@@ -70,6 +76,12 @@ class CountriesDashboardStats extends Model
         $testDayBox1 = MilkingReport::getFarmersWithAnimalsWithMilkingRecord($org_id);
         $testDayBox2 = MilkingReport::getAnimalsWithMilkingRecord($org_id);
 
+        $testDayBoxes = [];
+        $testDayBoxes[] = [
+            'Farmers With Animals With Test Day' => [$testDayBox1],
+            'Animals With Test Day' => [$testDayBox2],
+        ];
+
         //4.Insemination,PD and Calving boxes
         $eventTypesData = [];
         $eventTypes = AnimalEvent::eventTypeOptions();
@@ -86,11 +98,9 @@ class CountriesDashboardStats extends Model
         $insBox5 = Animal::getCount(['org_id' => $org_id, 'animal_type' => Animal::ANIMAL_TYPE_FEMALE_CALF]);
 
         $testCalve = [];
-        $testCalve[0] = [
-            'Male Calves Count' => $insBox4,
-        ];
-        $testCalve[1] = [
-            'Female Calves Count' => $insBox5,
+        $testCalve[] = [
+            'Male Calves Count' => [$insBox4],
+            'Female Calves Count' => [$insBox5],
         ];
 
         if ($report_id == static::FARMS_REGISTERED_REPORT) {
@@ -104,10 +114,7 @@ class CountriesDashboardStats extends Model
             ];
             $data[1] = [
                 'Boxes' => [
-                    'No of farms' => $farmBox1,
-                    'Male House Hold Head' => $farmBox2,
-                    'Female House Hold Head' => $farmBox3,
-                    'House Holds Headed By both male and female' => $farmBox4
+                    $farmBoxes,
                 ]
             ];
         } elseif ($report_id == static::ANIMALS_REGISTERED_REPORT) {
@@ -145,8 +152,7 @@ class CountriesDashboardStats extends Model
             ];
             $data[1] = [
                 'Boxes' => [
-                    $testDayBox1,
-                    $testDayBox2
+                    $testDayBoxes,
                 ]
             ];
         } elseif ($report_id == static::GENOTYPE_ANIMALS_REPORT) {
