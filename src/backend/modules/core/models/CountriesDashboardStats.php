@@ -32,14 +32,14 @@ class CountriesDashboardStats extends Model
         }
     }
 
-    public static function getCountryReports($report_name = null, $org_id = null)
+    public static function getCountryReports($report_id = null, $org_id = null)
     {
         $data = [];
         //charts
-        $regionsFarm = self::getFarmsGroupedByRegions($org_id);
-        $farmsFarmType = self::getFarmsGroupedByFarmType($org_id);
-        $regionsAnimal = self::getAnimalsGroupedByRegions($org_id);
-        $breedsAnimal = self::getAnimalsGroupedByBreeds($org_id);
+        $farmsGroupedByRegions = self::getFarmsGroupedByRegions($org_id);
+        $farmsGroupedByFarmType = self::getFarmsGroupedByFarmType($org_id);
+        $animalsGroupedByRegions = self::getAnimalsGroupedByRegions($org_id);
+        $animalsGroupedByBreeds = self::getAnimalsGroupedByBreeds($org_id);
         $LSFGroupedByRegions = self::getLSFGroupedByRegions($org_id);
         $LSFAnimalsGroupedByBreeds = self::getLSFAnimalsGroupedByBreeds($org_id);
         $testDayMilkGroupedByRegions = self::getTestDayMilkGroupedByRegions($org_id);
@@ -93,13 +93,13 @@ class CountriesDashboardStats extends Model
             'Female Calves Count' => $insBox5,
         ];
 
-        if ($report_name == static::FARMS_REGISTERED_REPORT) {
+        if ($report_id == static::FARMS_REGISTERED_REPORT) {
             $data[0] = [
                 'Farms Grouped By Regions' => [
-                    $regionsFarm,
+                    $farmsGroupedByRegions,
                 ],
                 'Farms Grouped By Farm Types' => [
-                    $farmsFarmType,
+                    $farmsGroupedByFarmType,
                 ]
             ];
             $data[1] = [
@@ -110,13 +110,13 @@ class CountriesDashboardStats extends Model
                     'House Holds Headed By both male and female' => $farmBox4
                 ]
             ];
-        } elseif ($report_name == static::ANIMALS_REGISTERED_REPORT) {
+        } elseif ($report_id == static::ANIMALS_REGISTERED_REPORT) {
             $data[0] = [
                 'Animals Grouped By Regions' => [
-                    $regionsAnimal,
+                    $animalsGroupedByRegions,
                 ],
                 'Animals Grouped By Breeds' => [
-                    $breedsAnimal,
+                    $animalsGroupedByBreeds,
                 ]
             ];
             $data[1] = [
@@ -124,7 +124,7 @@ class CountriesDashboardStats extends Model
                     $animalTypesData,
                 ]
             ];
-        } elseif ($report_name == static::LSF_FARM_STATS_REPORT) {
+        } elseif ($report_id == static::LSF_FARM_STATS_REPORT) {
             $data[0] = [
                 'Large Scale Farms Grouped By Regions' => [
                     $LSFGroupedByRegions,
@@ -137,7 +137,7 @@ class CountriesDashboardStats extends Model
                 'Boxes' => [
                 ]
             ];
-        } elseif ($report_name == static::TEST_DAY_REPORT) {
+        } elseif ($report_id == static::TEST_DAY_REPORT) {
             $data[0] = [
                 'Test Day Grouped By regions' => [
                     $testDayMilkGroupedByRegions,
@@ -149,12 +149,12 @@ class CountriesDashboardStats extends Model
                     $testDayBox2
                 ]
             ];
-        } elseif ($report_name == static::GENOTYPE_ANIMALS_REPORT) {
+        } elseif ($report_id == static::GENOTYPE_ANIMALS_REPORT) {
             $data[0] = [
             ];
             $data[1] = [
             ];
-        } elseif ($report_name == static::INSEMINATION_PD_CALVING_REPORT) {
+        } elseif ($report_id == static::INSEMINATION_PD_CALVING_REPORT) {
             $data[0] = [
                 'Male Calves Grouped By Regions' => [
                     $maleCalvesByRegions,

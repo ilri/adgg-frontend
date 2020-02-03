@@ -61,6 +61,7 @@ class CountriesStatsController extends ActiveController
      */
     public function actionCountryReport($report_id = null, $org_id = null)
     {
-        return CountriesDashboardStats::getCountryReports($report_id, $org_id);
+        $country = Organization::findOne(['id' => $org_id]);
+        return CountriesDashboardStats::getCountryReports($report_id, $country->id);
     }
 }
