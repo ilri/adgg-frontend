@@ -1,5 +1,6 @@
 <?php
 
+use common\helpers\Lang;
 use common\widgets\grid\GridView;
 use backend\modules\reports\models\AdhocReport;
 use yii\helpers\Html;
@@ -48,6 +49,22 @@ use yii\helpers\Url;
             'filter' => false,
         ],
         [
+            'label' => 'Date',
+            'filter' => false,
+            'format' => 'html',
+            'value' => function (AdhocReport $model) {
+                return \common\helpers\DateUtils::formatToLocalDate($model->created_at);
+            },
+        ],
+        [
+            'label' => 'Download',
+            'filter' => false,
+            'format' => 'html',
+            'value' => function (AdhocReport $model) {
+                return Html::a(Lang::t('Download Report') . ' <i class="fas fa-download"></i>', ['download-file', 'id' => $model->id], ['data-pjax' => 0]);
+            },
+        ],
+        [
             'class' => common\widgets\grid\ActionColumn::class,
             'template' => '{view}{update}{reload}',
             'visibleButtons' => [
@@ -59,7 +76,7 @@ use yii\helpers\Url;
             'buttons'=>[
                 'reload' => function ($url, AdhocReport $model) {
                     $url = Url::to(['requeue', 'id' => $model->id]);
-                    return Html::a('<i class="fas fa-redo"></i>', $url, ['title' => 'Re-add back to Queue', 'data-pjax' => 0, 'class' => 'grid-update', 'data-grid' => $model->getPjaxWidgetId(), 'data-href' => $url]);
+                    return Html::a('<i class="fas fa-redo"></i>', '#', ['title' => 'Re-add back to Queue', 'data-pjax' => 0, 'data-toggle' => 'modal', 'class' => '_grid-update', 'data-grid' => $model->getPjaxWidgetId(), 'data-href' => $url]);
                 }
             ],
             'updateOptions' => ['data-pjax' => 0, 'title' => 'Update', 'modal' => false],

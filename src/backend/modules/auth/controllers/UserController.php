@@ -44,7 +44,7 @@ class UserController extends Controller
         if (!empty($org_id)) {
             $orgModel = Organization::loadModel($org_id);
         }
-        $date_filter = DateUtils::getDateFilterParams($from, $to, 'last_login', false, false);
+        $date_filter = DateUtils::getDateFilterParams($from, $to, 'last_login', false, true);
         $condition = $date_filter['condition'];
         $params = [];
 
@@ -260,7 +260,7 @@ class UserController extends Controller
 
     public function actionUploadPreview($level_id, $org_id = null)
     {
-        $form = new UploadUsers(['level_id' => $level_id, 'org_id' => $org_id]);
+        $form = new UploadUsers(Users::class, ['level_id' => $level_id, 'org_id' => $org_id]);
         return $form->previewAction();
     }
 }
