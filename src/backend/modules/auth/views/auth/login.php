@@ -9,7 +9,7 @@ use yii\helpers\Url;
 /* @var $this yii\web\View */
 /* @var $model \backend\modules\auth\forms\LoginForm */
 ?>
-<div class="kt-login-v2__container" style="padding: 1.2rem;">
+<div class="kt-login-v2__container" style="padding: 1.2rem; background-color:#f2f3f8">
     <div class="kt-login-v2__title">
         <h3 style="color: #004730;font-size: 24px;font-weight: 600;">Login to your account</h3>
     </div>
