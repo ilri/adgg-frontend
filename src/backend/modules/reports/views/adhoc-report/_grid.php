@@ -76,7 +76,7 @@ use yii\helpers\Url;
             'buttons'=>[
                 'reload' => function ($url, AdhocReport $model) {
                     $url = Url::to(['requeue', 'id' => $model->id]);
-                    return Html::a('<i class="fas fa-redo"></i>', $url, ['title' => 'Re-add back to Queue', 'data-pjax' => 0, 'class' => 'grid-update', 'data-grid' => $model->getPjaxWidgetId(), 'data-href' => $url]);
+                    return Html::a('<i class="fas fa-redo"></i>', '#', ['title' => 'Re-add back to Queue', 'data-pjax' => 0, 'data-toggle' => 'modal', 'class' => '_grid-update', 'data-grid' => $model->getPjaxWidgetId(), 'data-href' => $url]);
                 }
             ],
             'updateOptions' => ['data-pjax' => 0, 'title' => 'Update', 'modal' => false],

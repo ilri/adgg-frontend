@@ -44,7 +44,7 @@ class UserController extends Controller
         if (!empty($org_id)) {
             $orgModel = Organization::loadModel($org_id);
         }
-        $date_filter = DateUtils::getDateFilterParams($from, $to, 'last_login', false, false);
+        $date_filter = DateUtils::getDateFilterParams($from, $to, 'last_login', false, true);
         $condition = $date_filter['condition'];
         $params = [];
 
