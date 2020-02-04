@@ -34,7 +34,6 @@ class CountriesDashboardStats extends Model
 
     public static function getCountryReports($report_id = null, $org_id = null)
     {
-        $data = [];
         //charts
         $farmsGroupedByRegions = self::getFarmsGroupedByRegions($org_id);
         $farmsGroupedByFarmType = self::getFarmsGroupedByFarmType($org_id);
@@ -52,13 +51,7 @@ class CountriesDashboardStats extends Model
         $farmBox2 = Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => 1])->andWhere(['org_id' => $org_id])->count();
         $farmBox3 = Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => 2])->andWhere(['org_id' => $org_id])->count();
         $farmBox4 = Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => [1, 2]])->andWhere(['org_id' => $org_id])->count();
-        $farmBoxes = [];
-        $farmBoxes[] = [
-            'No of farms' => [$farmBox1],
-            'Male House Hold Head' => [$farmBox2],
-            'Female House Hold Head' => [$farmBox3],
-            'House Holds Headed By both male and female' => [$farmBox4]
-        ];
+
         //2.Animal boxes
         $animalTypesData = [];
         $animalTypes = Choices::getList(\backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES);
@@ -78,8 +71,8 @@ class CountriesDashboardStats extends Model
 
         $testDayBoxes = [];
         $testDayBoxes[] = [
-            'Farmers With Animals With Test Day' => [$testDayBox1],
-            'Animals With Test Day' => [$testDayBox2],
+            ['Farmers With Animals With Test Day' => $testDayBox1],
+            ['Animals With Test Day' => $testDayBox2],
         ];
 
         //4.Insemination,PD and Calving boxes
@@ -103,74 +96,56 @@ class CountriesDashboardStats extends Model
             'Female Calves Count' => $insBox5,
         ];
 
+        $data = [];
         if ($report_id == static::FARMS_REGISTERED_REPORT) {
             $data[] = [
                 'Charts' => [
-                    'Farms Grouped By Regions' => [
-                        $farmsGroupedByRegions,
-                    ],
-                    'Farms Grouped By Farm Types' => [
-                        $farmsGroupedByFarmType,
-                    ]
+                    'Farms Grouped By Regions' => $farmsGroupedByRegions,
+                    'Farms Grouped By Farm Types' => $farmsGroupedByFarmType,
                 ],
                 'Boxes' => [
-                    'List Of Farm Boxes' => $farmBoxes,
-                ]
+                    ['No of farms' => $farmBox1],
+                    ['Male House Hold Head' => $farmBox2],
+                    ['Female House Hold Head' => $farmBox3],
+                    ['House Holds Headed By both male and female' => $farmBox4]
+                ],
             ];
         } elseif ($report_id == static::ANIMALS_REGISTERED_REPORT) {
             $data[] = [
                 'Charts' => [
-                    'Animals Grouped By Regions' => [
-                        $animalsGroupedByRegions,
-                    ],
-                    'Animals Grouped By Breeds' => [
-                        $animalsGroupedByBreeds,
-                    ]
+                    'Animals Grouped By Regions' => $animalsGroupedByRegions,
+                    'Animals Grouped By Breeds' => $animalsGroupedByBreeds,
                 ],
-                'Boxes' => [
-                    'List Of Animal Boxes' => $animalTypesData,
-                ]
+                'Boxes' =>
+                    $animalTypesData,
             ];
         } elseif ($report_id == static::LSF_FARM_STATS_REPORT) {
             $data[] = [
                 'Charts' => [
-                    'Large Scale Farms Grouped By Regions' => [
-                        $LSFGroupedByRegions,
-                    ],
-                    'LSF Animals By Breeds' => [
-                        $LSFAnimalsGroupedByBreeds,
-                    ]
+                    'Large Scale Farms Grouped By Regions' => $LSFGroupedByRegions,
+                    'LSF Animals By Breeds' => $LSFAnimalsGroupedByBreeds,
                 ],
             ];
         } elseif ($report_id == static::TEST_DAY_REPORT) {
             $data[] = [
                 'Charts' => [
-                    'Test Day Grouped By regions' => [
-                        $testDayMilkGroupedByRegions,
-                    ],
+                    'Test Day Grouped By regions' => $testDayMilkGroupedByRegions,
                 ],
                 'Boxes' => [
-                    'List Of Test Day Boxes' => $testDayBoxes
+                    ['Farmers With Animals With Test Day' => $testDayBox1],
+                    ['Animals With Test Day' => $testDayBox2],
                 ]
-            ];
-        } elseif ($report_id == static::GENOTYPE_ANIMALS_REPORT) {
-            $data[] = [
             ];
         } elseif ($report_id == static::INSEMINATION_PD_CALVING_REPORT) {
             $data[] = [
                 'Charts' => [
-                    'Male Calves Grouped By Regions' => [
-                        $maleCalvesByRegions,
-                    ],
-                    'Female Calves Grouped By Regions' => [
-                        $femaleCalvesByRegions,
-                    ]
+                    'Male Calves Grouped By Regions' => $maleCalvesByRegions,
+                    'Female Calves Grouped By Regions' => $femaleCalvesByRegions,
                 ],
-                'Boxes' => [
-                    'List Of Insemination, PD And Calving Boxes' => array_merge($eventTypesData, $testCalve),
-                ]
+                'Boxes' => array_merge($eventTypesData, $testCalve)
             ];
-
+        } elseif ($report_id == static::GENOTYPE_ANIMALS_REPORT) {
+            $data[] = [];
         }
         return $data;
     }
