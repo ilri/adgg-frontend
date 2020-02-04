@@ -97,8 +97,9 @@ class UploadUsers extends ExcelUploadForm implements ImportInterface
 
             $insert_data[$k] = $row;
         }
+        $model =new Users(['org_id' => $this->org_id, 'level_id' => $this->level_id, 'role_id' => $this->role_id]);
 
-        $this->save($insert_data);
+        $this->save($insert_data, $model);
     }
 
     /**

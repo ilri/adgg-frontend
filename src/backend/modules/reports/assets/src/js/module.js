@@ -29,6 +29,7 @@ MyApp.modules.reports = {};
         let selectedFields = [];
         let selectedFilterOperators = {};
         let selectedFilterValues = {};
+        let selectedFieldLabels = {};
         let selectedParentModel = null;
         let selectedParentModelTitle = null;
 
@@ -80,6 +81,9 @@ MyApp.modules.reports = {};
                     if(response.success){
                         let message = '<div class="alert alert-outline-success">' + response.message + '</div>';
                         swal("SUCCESS!", message, "success");
+                        if(response.redirectUrl !== ''){
+                            MyApp.utils.reload(response.redirectUrl, 2000);
+                        }
                     }
                     else {
                         if (typeof response.message === 'string' || response.message instanceof String) {
@@ -120,16 +124,22 @@ MyApp.modules.reports = {};
 
         let _populateSelected = function(e){
             var name = $(e).data('name');
+            var label = $(e).data('original-title');
             var parentModel = $(e).data('parent-model');
             var parentModelTitle = $(e).data('parent-model-title');
+
             // if parentModel changes, prompt to clear selectedFields
             if(selectedParentModel !== parentModel){
                 selectedFields.length = 0;
+                selectedFieldLabels = {};
             }
             // check for duplicates
             var index = selectedFields.indexOf(name);
             if (index <= -1) {
                 selectedFields.push(name);
+            }
+            if (selectedFieldLabels[name] === undefined){
+                selectedFieldLabels[name] = label;
             }
             //selectedFields.push(name);
             selectedParentModel = parentModel;
@@ -137,14 +147,17 @@ MyApp.modules.reports = {};
             //console.log(selectedParentModel);
             //console.log(name);
             //console.log(selectedFields);
+            //console.log(selectedFieldLabels);
             // write to html
             _showSelected();
         }
         let _removeSelected = function(e){
             var name = $(e).data('name');
             selectedFields = selectedFields.filter(function(e) { return e !== name; });
+            delete selectedFieldLabels[name];
             //console.log(name);
             //console.log(selectedFields);
+            //console.log(selectedFieldLabels);
             // write to html
             _showSelected();
             //_toggleQueryOptions();
@@ -159,7 +172,7 @@ MyApp.modules.reports = {};
                 var dropdown = _buildDropdownSelect(fieldName);
                 var filterInput = '<div class="col-md-4 mr-0 pr-0"><input name="filterValue['+fieldName+']" class="form-control form-control-sm" type="text" /></div>';
                 var removeBtn = '<div class="col-md-1 pt-2"><span class="flaticon2-delete removeField" data-name="'+fieldName+'"></span></div>';
-                var nameElem = '<div class="col-md-3"><span class="text-wrap word-wrap">'+ fieldName +'</span></div>';
+                var nameElem = '<div class="col-md-3"><span class="text-wrap word-wrap">'+ selectedFieldLabels[fieldName] +'</span></div>';
                 var item = '<li class="list-group-item d-flex pr-0 pl-0" data-index="'+index+'" data-name="'+fieldName+'">'+ nameElem + dropdown + filterInput + removeBtn +'</li>';
                 $($this.options.selectedFieldsHolder).append(item);
             });
@@ -198,7 +211,7 @@ MyApp.modules.reports = {};
         let _buildOrderByDropdown = function(){
             let options = '<option value=""> - Select Field - </option>';
             selectedFields.forEach(function (item, index) {
-                var option = '<option value="'+item+'">'+item+'</option>';
+                var option = '<option value="'+item+'">'+selectedFieldLabels[item]+'</option>';
                 options += option;
             });
             $($this.options.orderBySelector).html(options);
@@ -259,6 +272,7 @@ MyApp.modules.reports = {};
             autofocus: true,
             extraKeys: {"Ctrl-Space": "autocomplete"},
             foldGutter: true,
+            readOnly: true,
         });
         const copy = new ClipboardJS('.btn-clipboard', {
             text: function (trigger) {
