@@ -41,11 +41,11 @@ $controller = Yii::$app->controller;
                  id="kt_aside">
 
                 <!-- begin::Aside Brand -->
-                <div class="kt-aside__brand kt-grid__item " id="kt_aside_brand">
+                <div class="kt-aside__brand kt-grid__item " id="kt_aside_brand" style="background-color: #f2f3f8;">
                     <div class="kt-aside__brand-logo">
                         <a href="<?= Yii::$app->homeUrl ?>">
                             <img alt="Logo"
-                                 src="<?= Yii::$app->view->theme->baseUrl ?>/assets/img/<?= SystemSettings::getDefaultTheme() === SystemSettings::THEME_DEFAULT ? 'logo.jpg' : 'logo.jpg' ?>"/>
+                                 src="<?= Yii::$app->view->theme->baseUrl ?>/assets/img/login/<?= SystemSettings::getDefaultTheme() === SystemSettings::THEME_DEFAULT ? 'adggLogo1.png' : 'adggLogo1.png' ?>" style="max-height: 100px; max-width: 150px;"/>
                         </a>
                     </div>
                     <div class="kt-aside__brand-tools">
