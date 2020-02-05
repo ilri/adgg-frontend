@@ -3,6 +3,7 @@
 use backend\controllers\BackendController;
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\Choices;
+use backend\modules\core\models\CountriesDashboardStats;
 use backend\modules\core\models\Organization;
 use backend\modules\core\models\OrganizationUnits;
 use common\helpers\DbUtils;
@@ -33,23 +34,18 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                 </div>
                 <div id="chartContainer"></div>
                 <?php
-                $condition = '';
-                $params = [];
-                list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
                 $data = [];
-                // get regions
-                $regions = OrganizationUnits::getListData('id', 'name', '', ['level' => OrganizationUnits::LEVEL_REGION]);
-                foreach ($regions as $id => $label) {
-                    list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
 
-                    $count = Animal::find()->andWhere($newcondition, $newparams)->andWhere(['org_id' => $country->id])->count();
-                    if ($count > 0) {
+                $chart_data = CountriesDashboardStats::getAnimalsGroupedByRegions($country->id);
+
+                if (count($chart_data) > 0) {
+                    foreach ($chart_data as $cdata){
                         $data[] = [
-                            'name' => $label,
-                            'y' => floatval(number_format($count, 2, '.', '')),
+                            'name' => $cdata['label'],
+                            'y' => floatval(number_format($cdata['value'], 2, '.', '')),
                         ];
                     }
-                };
+                }
                 $series = [[
                     'colorByPoint' => true,
                     'data' => $data,
@@ -67,27 +63,19 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                     <?= Lang::t('Registered Animals Grouped by Breeds in {country}', ['country' => $country->name]); ?>
                 </div>
                 <div id="chartContainer2"></div>
-                <!--                $this->render('graph/_widget', ['graphType' => HighChart::GRAPH_PIE, 'graphFilterOptions' => $graphFilterOptions])
-                --> <?php
-                $condition = '';
-                $params = [];
-                list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
+                <?php
                 $data = [];
-                // get breeds
-                $breeds = Choices::getList(\backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS);
-                foreach ($breeds as $id => $label) {
-                    list($newcondition, $newparams) = DbUtils::appendCondition('main_breed', $id, $condition, $params);
 
-                    $count = Animal::find()->andWhere($newcondition, $newparams)
-                        ->andWhere(['org_id' => $country->id])
-                        ->count();
-                    if ($count > 0) {
+                $chart_data = CountriesDashboardStats::getAnimalsGroupedByBreeds($country->id);
+
+                if (count($chart_data) > 0) {
+                    foreach ($chart_data as $cdata){
                         $data[] = [
-                            'name' => $label,
-                            'y' => floatval(number_format($count, 2, '.', '')),
+                            'name' => $cdata['label'],
+                            'y' => floatval(number_format($cdata['value'], 2, '.', '')),
                         ];
                     }
-                };
+                }
                 $series = [[
                     'colorByPoint' => true,
                     'data' => $data,

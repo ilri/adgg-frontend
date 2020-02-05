@@ -7,6 +7,7 @@ namespace backend\modules\core\models;
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\Farm;
 use common\helpers\DbUtils;
+use common\helpers\Lang;
 use yii\base\Model;
 
 class CountriesDashboardStats extends Model
@@ -32,8 +33,9 @@ class CountriesDashboardStats extends Model
         }
     }
 
-    public static function getCountryReports($report_id = null, $org_id = null)
+    public static function getCountryReports($report_id, $org_id = null)
     {
+        $country = Organization::getScalar('name', ['id' => $org_id]);
         //charts
         $farmsGroupedByRegions = self::getFarmsGroupedByRegions($org_id);
         $farmsGroupedByFarmType = self::getFarmsGroupedByFarmType($org_id);
@@ -41,6 +43,9 @@ class CountriesDashboardStats extends Model
         $animalsGroupedByBreeds = self::getAnimalsGroupedByBreeds($org_id);
         $LSFGroupedByRegions = self::getLSFGroupedByRegions($org_id);
         $LSFAnimalsGroupedByBreeds = self::getLSFAnimalsGroupedByBreeds($org_id);
+        $LSFMilkRecordsProvider = MilkingReport::getLargeScaleFarmMilkDetails($org_id);
+        $LSFMilkRecordsProvider->setPagination(false);
+        $LSFMilkRecords = $LSFMilkRecordsProvider->getModels();
         $testDayMilkGroupedByRegions = self::getTestDayMilkGroupedByRegions($org_id);
         $maleCalvesByRegions = self::getMaleCalvesByRegions($org_id);
         $femaleCalvesByRegions = self::getFemaleCalvesByRegions($org_id);
@@ -59,21 +64,21 @@ class CountriesDashboardStats extends Model
             $count = Animal::getCount(['org_id' => $org_id, 'animal_type' => $animalType]);
             if ($count > 0) {
                 $animalTypesData[] = [
-                    'Animal Type' => $label,
-                    'Number' => floatval(number_format($count, 2, '.', '')),
+                    'label' => $label,
+                    'value' => floatval(number_format($count, 2, '.', '')),
                 ];
             }
         };
+        $animalBox1 = Animal::getCount(['org_id' => $org_id, 'animal_type' => Animal::ANIMAL_TYPE_COW]);
+        $animalBox2 = Animal::getCount(['org_id' => $org_id, 'animal_type' => Animal::ANIMAL_TYPE_HEIFER]);
+        $animalBox3 = Animal::getCount(['org_id' => $org_id, 'animal_type' => Animal::ANIMAL_TYPE_BULL]);
+        $animalBox4 = Animal::getCount(['org_id' => $org_id, 'animal_type' => Animal::ANIMAL_TYPE_MALE_CALF]);
+        $animalBox5 = Animal::getCount(['org_id' => $org_id, 'animal_type' => Animal::ANIMAL_TYPE_FEMALE_CALF]);
 
         //3.Test Day boxes
         $testDayBox1 = MilkingReport::getFarmersWithAnimalsWithMilkingRecord($org_id);
         $testDayBox2 = MilkingReport::getAnimalsWithMilkingRecord($org_id);
 
-        $testDayBoxes = [];
-        $testDayBoxes[] = [
-            ['Farmers With Animals With Test Day' => $testDayBox1],
-            ['Animals With Test Day' => $testDayBox2],
-        ];
 
         //4.Insemination,PD and Calving boxes
         $eventTypesData = [];
@@ -82,67 +87,128 @@ class CountriesDashboardStats extends Model
             $count = AnimalEvent::getCount(['org_id' => $org_id, 'event_type' => $type]);
             if ($type == AnimalEvent::EVENT_TYPE_AI || $type == AnimalEvent::EVENT_TYPE_CALVING || $type == AnimalEvent::EVENT_TYPE_PREGNANCY_DIAGNOSIS) {
                 $eventTypesData[] = [
-                    'Event Type' => $label,
-                    'Number' => floatval(number_format($count, 2, '.', '')),
+                    'label' => $label,
+                    'value' => floatval(number_format($count, 2, '.', '')),
                 ];
             }
         };
+
+        $insBox1 = AnimalEvent::getCount(['org_id' => $org_id, 'event_type' => AnimalEvent::EVENT_TYPE_CALVING]);
+        $insBox2 = AnimalEvent::getCount(['org_id' => $org_id, 'event_type' => AnimalEvent::EVENT_TYPE_AI]);
+        $insBox3 = AnimalEvent::getCount(['org_id' => $org_id, 'event_type' => AnimalEvent::EVENT_TYPE_PREGNANCY_DIAGNOSIS]);
         $insBox4 = Animal::getCount(['org_id' => $org_id, 'animal_type' => Animal::ANIMAL_TYPE_MALE_CALF]);
         $insBox5 = Animal::getCount(['org_id' => $org_id, 'animal_type' => Animal::ANIMAL_TYPE_FEMALE_CALF]);
-
-        $testCalve = [];
-        $testCalve[] = [
-            'Male Calves Count' => $insBox4,
-            'Female Calves Count' => $insBox5,
-        ];
 
         $data = [];
         if ($report_id == static::FARMS_REGISTERED_REPORT) {
             $data[] = [
                 'Charts' => [
+                    /* [
+                         'title' =>  Lang::t('Farms Grouped By Regions in {country}', ['country' => $country]),
+                         'data' => $farmsGroupedByRegions,
+                     ],
+                     [
+                         'title' =>  Lang::t( 'Farms Grouped By Farm Types in {country}', ['country' => $country]),
+                         'data' => $farmsGroupedByFarmType,
+                     ],*/
                     'Farms Grouped By Regions' => $farmsGroupedByRegions,
-                    'Farms Grouped By Farm Types' => $farmsGroupedByFarmType,
+                    'Farms Grouped By Farm Types' => $farmsGroupedByFarmType
                 ],
                 'Boxes' => [
-                    ['No of farms' => $farmBox1],
-                    ['Male House Hold Head' => $farmBox2],
-                    ['Female House Hold Head' => $farmBox3],
-                    ['House Holds Headed By both male and female' => $farmBox4]
+                    /* ['label' => 'No of farms', 'value' => $farmBox1],
+                     ['label' => 'Male House Hold Head' , 'value' => $farmBox2],
+                     ['label' => 'Female House Hold Head', 'value' =>  $farmBox3],
+                     ['label' => 'House Holds Headed By both male and female' , 'value' => $farmBox4],*/
+                    'No of farms' => $farmBox1,
+                    'Male House Hold Head' => $farmBox2,
+                    'Female House Hold Head' => $farmBox3,
+                    'House Holds Headed By both male and female' => $farmBox4,
                 ],
             ];
         } elseif ($report_id == static::ANIMALS_REGISTERED_REPORT) {
             $data[] = [
                 'Charts' => [
+                    /*[
+                        'title' =>  Lang::t('Animals Grouped By Regions in {country}', ['country' => $country]),
+                        'data' => $animalsGroupedByRegions,
+                    ],
+                    [
+                        'title' =>  Lang::t( 'Animals Grouped By Breeds in {country}', ['country' => $country]),
+                        'data' => $animalsGroupedByBreeds,
+                    ],*/
                     'Animals Grouped By Regions' => $animalsGroupedByRegions,
                     'Animals Grouped By Breeds' => $animalsGroupedByBreeds,
                 ],
-                'Boxes' =>
-                    $animalTypesData,
+                'Boxes' => [
+                    'Cows' => $animalBox1,
+                    'Heifers' => $animalBox2,
+                    'Bulls' => $animalBox3,
+                    'MaleCalves' => $animalBox4,
+                    'FemaleCalves' => $animalBox5,
+                ],
             ];
         } elseif ($report_id == static::LSF_FARM_STATS_REPORT) {
             $data[] = [
                 'Charts' => [
+                    /*[
+                        'title' =>  Lang::t('Large Scale Farms Grouped By Regions in {country}', ['country' => $country]),
+                        'data' => $LSFGroupedByRegions,
+                    ],
+                    [
+                        'title' =>  Lang::t( 'LSF Animals By Breeds in {country}', ['country' => $country]),
+                        'data' => $LSFAnimalsGroupedByBreeds,
+                    ],*/
                     'Large Scale Farms Grouped By Regions' => $LSFGroupedByRegions,
                     'LSF Animals By Breeds' => $LSFAnimalsGroupedByBreeds,
                 ],
+                'Table' => [
+                    'title' =>  Lang::t('Test Day Milk in {country}', ['country' => $country]),
+                    'data' => $LSFMilkRecords,
+                ]
             ];
         } elseif ($report_id == static::TEST_DAY_REPORT) {
             $data[] = [
                 'Charts' => [
+                    /* [
+                         'title' =>  Lang::t('Test Day Grouped By regions in {country}', ['country' => $country]),
+                         'data' => $testDayMilkGroupedByRegions,
+                     ],*/
                     'Test Day Grouped By regions' => $testDayMilkGroupedByRegions,
                 ],
                 'Boxes' => [
-                    ['Farmers With Animals With Test Day' => $testDayBox1],
-                    ['Animals With Test Day' => $testDayBox2],
+                    /* [
+                         'label' => 'Farmers With Animals With Test Day',
+                         'value' => $testDayBox1
+                     ],
+                     [
+                         'label' => 'Animals With Test Day',
+                         'value' => $testDayBox2
+                     ],*/
+                    'Farmers With Animals With Test Day' => $testDayBox1,
+                    'Animals With Test Day' => $testDayBox2,
                 ]
             ];
         } elseif ($report_id == static::INSEMINATION_PD_CALVING_REPORT) {
             $data[] = [
                 'Charts' => [
+                    /* [
+                         'title' =>  Lang::t('Male Calves Grouped By Regions in {country}', ['country' => $country]),
+                         'data' => $maleCalvesByRegions,
+                     ],
+                     [
+                         'title' =>  Lang::t( 'Female Calves Grouped By Regions in {country}', ['country' => $country]),
+                         'data' => $femaleCalvesByRegions,
+                     ],*/
                     'Male Calves Grouped By Regions' => $maleCalvesByRegions,
                     'Female Calves Grouped By Regions' => $femaleCalvesByRegions,
                 ],
-                'Boxes' => array_merge($eventTypesData, $testCalve)
+                'Boxes' => [
+                    'Calving' => $insBox1,
+                    'Insemination' => $insBox2,
+                    'PD' => $insBox3,
+                    'Male Calves' => $insBox4,
+                    'Female Calves' => $insBox5,
+                ]
             ];
         } elseif ($report_id == static::GENOTYPE_ANIMALS_REPORT) {
             $data[] = [];
@@ -152,7 +218,7 @@ class CountriesDashboardStats extends Model
 
     public static function getFarmsGroupedByRegions($org_id = null)
     {
-        $country = Organization::findOne(['id' => $org_id]);
+        
         $condition = '';
         $params = [];
         list($condition, $params) = Farm::appendOrgSessionIdCondition($condition, $params);
@@ -163,12 +229,12 @@ class CountriesDashboardStats extends Model
             list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
 
             $count = Farm::find()->andWhere($newcondition, $newparams)
-                ->andWhere(['org_id' => $country->id])
+                ->andFilterWhere(['org_id' => $org_id])
                 ->count();
             if ($count > 0) {
                 $data[] = [
-                    'Region Name' => $label,
-                    'No Of Farms' => floatval(number_format($count, 2, '.', '')),
+                    'label' => $label,
+                    'value' => floatval(number_format($count, 2, '.', '')),
                 ];
             }
         };
@@ -177,7 +243,7 @@ class CountriesDashboardStats extends Model
 
     public static function getFarmsGroupedByFarmType($org_id = null)
     {
-        $country = Organization::findOne(['id' => $org_id]);
+        
 
         $condition = '';
         $params = [];
@@ -189,12 +255,12 @@ class CountriesDashboardStats extends Model
         foreach ($farmTypes as $type => $label) {
             list($newcondition, $newparams) = DbUtils::appendCondition('farm_type', $type, $condition, $params);
             $count = Farm::find()->andWhere($newcondition, $newparams)
-                ->andWhere(['org_id' => $country->id])
+                ->andFilterWhere(['org_id' => $org_id])
                 ->count();
             if ($count > 0) {
                 $data[] = [
-                    'Farm Type' => $label,
-                    'Number' => floatval(number_format($count, 2, '.', '')),
+                    'label' => $label,
+                    'value' => floatval(number_format($count, 2, '.', '')),
                 ];
             }
         };
@@ -203,7 +269,7 @@ class CountriesDashboardStats extends Model
 
     public static function getAnimalsGroupedByRegions($org_id = null)
     {
-        $country = Organization::findOne(['id' => $org_id]);
+        
         $condition = '';
         $params = [];
         list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
@@ -214,12 +280,12 @@ class CountriesDashboardStats extends Model
             list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
 
             $count = Animal::find()->andWhere($newcondition, $newparams)
-                ->andWhere(['org_id' => $country->id])
+                ->andFilterWhere(['org_id' => $org_id])
                 ->count();
             if ($count > 0) {
                 $data[] = [
-                    'Region Name' => $label,
-                    'No Of Animals' => floatval(number_format($count, 2, '.', '')),
+                    'label' => $label,
+                    'value' => floatval(number_format($count, 2, '.', '')),
                 ];
             }
         };
@@ -228,7 +294,7 @@ class CountriesDashboardStats extends Model
 
     public static function getAnimalsGroupedByBreeds($org_id = null)
     {
-        $country = Organization::findOne(['id' => $org_id]);
+        
 
         $condition = '';
         $params = [];
@@ -240,12 +306,12 @@ class CountriesDashboardStats extends Model
             list($newcondition, $newparams) = DbUtils::appendCondition('main_breed', $id, $condition, $params);
 
             $count = Animal::find()->andWhere($newcondition, $newparams)
-                ->andWhere(['org_id' => $country->id])
+                ->andFilterWhere(['org_id' => $org_id])
                 ->count();
             if ($count > 0) {
                 $data[] = [
-                    'Breed Name' => $label,
-                    'Number' => floatval(number_format($count, 2, '.', '')),
+                    'label' => $label,
+                    'value' => floatval(number_format($count, 2, '.', '')),
                 ];
             }
         };
@@ -254,7 +320,7 @@ class CountriesDashboardStats extends Model
 
     public static function getLSFGroupedByRegions($org_id = null)
     {
-        $country = Organization::findOne(['id' => $org_id]);
+        
         $condition = '';
         $params = [];
         list($condition, $params) = Farm::appendOrgSessionIdCondition($condition, $params);
@@ -266,12 +332,12 @@ class CountriesDashboardStats extends Model
             list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
 
             $count = Farm::find()->where($newcondition, $newparams)
-                ->andWhere(['farm_type' => 'LSF', 'org_id' => $country->id])
+                ->andFilterWhere(['farm_type' => 'LSF', 'org_id' => $org_id])
                 ->count();
             if ($count > 0) {
                 $data[] = [
-                    'Region Name' => $label,
-                    'Number' => floatval(number_format($count, 2, '.', '')),
+                    'label' => $label,
+                    'value' => floatval(number_format($count, 2, '.', '')),
                 ];
             }
 
@@ -282,7 +348,7 @@ class CountriesDashboardStats extends Model
 
     public static function getLSFAnimalsGroupedByBreeds($org_id = null)
     {
-        $country = Organization::findOne(['id' => $org_id]);
+        
         $condition = '';
         $params = [];
         list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
@@ -294,12 +360,13 @@ class CountriesDashboardStats extends Model
             $count = Animal::find()->joinWith('farm')
                 ->andWhere($newCondition, $newParams)
                 ->andWhere([Farm::tableName() . '.farm_type' => 'LSF'])
-                ->andWhere([Farm::tableName() . '.org_id' => $country->id])
+                ->andFilterWhere([Farm::tableName() . '.org_id' => $org_id])
                 ->count();
             if ($count > 0) {
                 $data[] = [
-                    'Breed' => $label,
-                    'Number' => floatval($count)];
+                    'label' => $label,
+                    'value' => floatval($count)
+                ];
             }
 
         };
@@ -308,7 +375,7 @@ class CountriesDashboardStats extends Model
 
     public static function getTestDayMilkGroupedByRegions($org_id = null)
     {
-        $country = Organization::findOne(['id' => $org_id]);
+        
         $condition = '';
         $params = [];
         list($condition, $params) = AnimalEvent::appendOrgSessionIdCondition($condition, $params);
@@ -319,12 +386,12 @@ class CountriesDashboardStats extends Model
             list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
 
             $count = AnimalEvent::find()->where($newcondition, $newparams)
-                ->andWhere(['event_type' => AnimalEvent::EVENT_TYPE_MILKING, 'org_id' => $country->id])
+                ->andFilterWhere(['event_type' => AnimalEvent::EVENT_TYPE_MILKING, 'org_id' => $org_id])
                 ->count();
             if ($count > 0) {
                 $data[] = [
-                    'Region Name' => $label,
-                    'Number' => floatval(number_format($count, 2, '.', '')),
+                    'label' => $label,
+                    'value' => floatval(number_format($count, 2, '.', '')),
                 ];
             }
 
@@ -335,7 +402,7 @@ class CountriesDashboardStats extends Model
 
     public static function getMaleCalvesByRegions($org_id = null)
     {
-        $country = Organization::findOne(['id' => $org_id]);
+        
         $condition = '';
         $params = [];
         list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
@@ -347,12 +414,12 @@ class CountriesDashboardStats extends Model
 
             $count = Animal::find()->where($newcondition, $newparams)
                 ->andWhere(['animal_type' => Animal::ANIMAL_TYPE_MALE_CALF])
-                ->andWhere(['org_id' => $country->id])
+                ->andFilterWhere(['org_id' => $org_id])
                 ->count();
             if ($count > 0) {
                 $data[] = [
-                    'Region Name' => $label,
-                    'Number' => floatval(number_format($count, 2, '.', '')),
+                    'label' => $label,
+                    'value' => floatval(number_format($count, 2, '.', '')),
                 ];
             }
         };
@@ -361,7 +428,7 @@ class CountriesDashboardStats extends Model
 
     public static function getFemaleCalvesByRegions($org_id = null)
     {
-        $country = Organization::findOne(['id' => $org_id]);
+        
         $condition = '';
         $params = [];
         list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
@@ -373,12 +440,12 @@ class CountriesDashboardStats extends Model
 
             $count = Animal::find()->where($newcondition, $newparams)
                 ->andWhere(['animal_type' => Animal::ANIMAL_TYPE_FEMALE_CALF])
-                ->andWhere(['org_id' => $country->id])
+                ->andFilterWhere(['org_id' => $org_id])
                 ->count();
             if ($count > 0) {
                 $data[] = [
-                    'Region Name' => $label,
-                    'Value' => floatval(number_format($count, 2, '.', '')),
+                    'label' => $label,
+                    'value' => floatval(number_format($count, 2, '.', '')),
                 ];
             }
         };
