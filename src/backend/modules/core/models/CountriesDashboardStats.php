@@ -69,6 +69,11 @@ class CountriesDashboardStats extends Model
                 ];
             }
         };
+        $animalBox1 = Animal::getCount(['org_id' => $org_id, 'animal_type' => Animal::ANIMAL_TYPE_COW]);
+        $animalBox2 = Animal::getCount(['org_id' => $org_id, 'animal_type' => Animal::ANIMAL_TYPE_HEIFER]);
+        $animalBox3 = Animal::getCount(['org_id' => $org_id, 'animal_type' => Animal::ANIMAL_TYPE_BULL]);
+        $animalBox4 = Animal::getCount(['org_id' => $org_id, 'animal_type' => Animal::ANIMAL_TYPE_MALE_CALF]);
+        $animalBox5 = Animal::getCount(['org_id' => $org_id, 'animal_type' => Animal::ANIMAL_TYPE_FEMALE_CALF]);
 
         //3.Test Day boxes
         $testDayBox1 = MilkingReport::getFarmersWithAnimalsWithMilkingRecord($org_id);
@@ -87,60 +92,74 @@ class CountriesDashboardStats extends Model
                 ];
             }
         };
+
+        $insBox1 = AnimalEvent::getCount(['org_id' => $org_id, 'event_type' => AnimalEvent::EVENT_TYPE_CALVING]);
+        $insBox2 = AnimalEvent::getCount(['org_id' => $org_id, 'event_type' => AnimalEvent::EVENT_TYPE_AI]);
+        $insBox3 = AnimalEvent::getCount(['org_id' => $org_id, 'event_type' => AnimalEvent::EVENT_TYPE_PREGNANCY_DIAGNOSIS]);
         $insBox4 = Animal::getCount(['org_id' => $org_id, 'animal_type' => Animal::ANIMAL_TYPE_MALE_CALF]);
         $insBox5 = Animal::getCount(['org_id' => $org_id, 'animal_type' => Animal::ANIMAL_TYPE_FEMALE_CALF]);
-
-        $testCalve = [
-            ['label' => 'Male Calves Count', 'value' => $insBox4],
-            ['label' => 'Female Calves Count', 'value' => $insBox5],
-        ];
 
         $data = [];
         if ($report_id == static::FARMS_REGISTERED_REPORT) {
             $data[] = [
                 'Charts' => [
-                    [
-                        'title' =>  Lang::t('Farms Grouped By Regions in {country}', ['country' => $country]),
-                        'data' => $farmsGroupedByRegions,
-                    ],
-                    [
-                        'title' =>  Lang::t( 'Farms Grouped By Farm Types in {country}', ['country' => $country]),
-                        'data' => $farmsGroupedByFarmType,
-                    ],
+                    /* [
+                         'title' =>  Lang::t('Farms Grouped By Regions in {country}', ['country' => $country]),
+                         'data' => $farmsGroupedByRegions,
+                     ],
+                     [
+                         'title' =>  Lang::t( 'Farms Grouped By Farm Types in {country}', ['country' => $country]),
+                         'data' => $farmsGroupedByFarmType,
+                     ],*/
+                    'Farms Grouped By Regions' => $farmsGroupedByRegions,
+                    'Farms Grouped By Farm Types' => $farmsGroupedByFarmType
                 ],
                 'Boxes' => [
-                    ['label' => 'No of farms', 'value' => $farmBox1],
-                    ['label' => 'Male House Hold Head' , 'value' => $farmBox2],
-                    ['label' => 'Female House Hold Head', 'value' =>  $farmBox3],
-                    ['label' => 'House Holds Headed By both male and female' , 'value' => $farmBox4]
+                    /* ['label' => 'No of farms', 'value' => $farmBox1],
+                     ['label' => 'Male House Hold Head' , 'value' => $farmBox2],
+                     ['label' => 'Female House Hold Head', 'value' =>  $farmBox3],
+                     ['label' => 'House Holds Headed By both male and female' , 'value' => $farmBox4],*/
+                    'No of farms' => $farmBox1,
+                    'Male House Hold Head' => $farmBox2,
+                    'Female House Hold Head' => $farmBox3,
+                    'House Holds Headed By both male and female' => $farmBox4,
                 ],
             ];
         } elseif ($report_id == static::ANIMALS_REGISTERED_REPORT) {
             $data[] = [
                 'Charts' => [
-                    [
+                    /*[
                         'title' =>  Lang::t('Animals Grouped By Regions in {country}', ['country' => $country]),
                         'data' => $animalsGroupedByRegions,
                     ],
                     [
                         'title' =>  Lang::t( 'Animals Grouped By Breeds in {country}', ['country' => $country]),
                         'data' => $animalsGroupedByBreeds,
-                    ],
+                    ],*/
+                    'Animals Grouped By Regions' => $animalsGroupedByRegions,
+                    'Animals Grouped By Breeds' => $animalsGroupedByBreeds,
                 ],
-                'Boxes' =>
-                    $animalTypesData,
+                'Boxes' => [
+                    'Cows' => $animalBox1,
+                    'Heifers' => $animalBox2,
+                    'Bulls' => $animalBox3,
+                    'MaleCalves' => $animalBox4,
+                    'FemaleCalves' => $animalBox5,
+                ],
             ];
         } elseif ($report_id == static::LSF_FARM_STATS_REPORT) {
             $data[] = [
                 'Charts' => [
-                    [
+                    /*[
                         'title' =>  Lang::t('Large Scale Farms Grouped By Regions in {country}', ['country' => $country]),
                         'data' => $LSFGroupedByRegions,
                     ],
                     [
                         'title' =>  Lang::t( 'LSF Animals By Breeds in {country}', ['country' => $country]),
                         'data' => $LSFAnimalsGroupedByBreeds,
-                    ],
+                    ],*/
+                    'Large Scale Farms Grouped By Regions' => $LSFGroupedByRegions,
+                    'LSF Animals By Breeds' => $LSFAnimalsGroupedByBreeds,
                 ],
                 'Table' => [
                     'title' =>  Lang::t('Test Day Milk in {country}', ['country' => $country]),
@@ -150,35 +169,46 @@ class CountriesDashboardStats extends Model
         } elseif ($report_id == static::TEST_DAY_REPORT) {
             $data[] = [
                 'Charts' => [
-                    [
-                        'title' =>  Lang::t('Test Day Grouped By regions in {country}', ['country' => $country]),
-                        'data' => $testDayMilkGroupedByRegions,
-                    ],
+                    /* [
+                         'title' =>  Lang::t('Test Day Grouped By regions in {country}', ['country' => $country]),
+                         'data' => $testDayMilkGroupedByRegions,
+                     ],*/
+                    'Test Day Grouped By regions' => $testDayMilkGroupedByRegions,
                 ],
                 'Boxes' => [
-                    [
-                        'label' => 'Farmers With Animals With Test Day',
-                        'value' => $testDayBox1
-                    ],
-                    [
-                        'label' => 'Animals With Test Day',
-                        'value' => $testDayBox2
-                    ],
+                    /* [
+                         'label' => 'Farmers With Animals With Test Day',
+                         'value' => $testDayBox1
+                     ],
+                     [
+                         'label' => 'Animals With Test Day',
+                         'value' => $testDayBox2
+                     ],*/
+                    'Farmers With Animals With Test Day' => $testDayBox1,
+                    'Animals With Test Day' => $testDayBox2,
                 ]
             ];
         } elseif ($report_id == static::INSEMINATION_PD_CALVING_REPORT) {
             $data[] = [
                 'Charts' => [
-                    [
-                        'title' =>  Lang::t('Male Calves Grouped By Regions in {country}', ['country' => $country]),
-                        'data' => $maleCalvesByRegions,
-                    ],
-                    [
-                        'title' =>  Lang::t( 'Female Calves Grouped By Regions in {country}', ['country' => $country]),
-                        'data' => $femaleCalvesByRegions,
-                    ],
+                    /* [
+                         'title' =>  Lang::t('Male Calves Grouped By Regions in {country}', ['country' => $country]),
+                         'data' => $maleCalvesByRegions,
+                     ],
+                     [
+                         'title' =>  Lang::t( 'Female Calves Grouped By Regions in {country}', ['country' => $country]),
+                         'data' => $femaleCalvesByRegions,
+                     ],*/
+                    'Male Calves Grouped By Regions' => $maleCalvesByRegions,
+                    'Female Calves Grouped By Regions' => $femaleCalvesByRegions,
                 ],
-                'Boxes' => array_merge($eventTypesData, $testCalve)
+                'Boxes' => [
+                    'Calving' => $insBox1,
+                    'Insemination' => $insBox2,
+                    'PD' => $insBox3,
+                    'Male Calves' => $insBox4,
+                    'Female Calves' => $insBox5,
+                ]
             ];
         } elseif ($report_id == static::GENOTYPE_ANIMALS_REPORT) {
             $data[] = [];
