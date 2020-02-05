@@ -33,6 +33,7 @@ class AnimalController extends Controller
 
     public function actionIndex($org_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $animal_type = null, $farm_id = null, $main_breed = null, $name = null, $tag_id = null, $sire_tag_id = null, $dam_tag_id = null)
     {
+        $this->hasPrivilege(Acl::ACTION_VIEW);
         $org_id = Session::getOrgId($org_id);
         $region_id = Session::getRegionId($region_id);
         $district_id = Session::getDistrictId($district_id);
@@ -67,6 +68,7 @@ class AnimalController extends Controller
 
     public function actionView($id)
     {
+        $this->hasPrivilege(Acl::ACTION_VIEW);
         $model = Animal::loadModel($id);
 
         return $this->render('view', [
@@ -76,6 +78,7 @@ class AnimalController extends Controller
 
     public function actionCreate($farm_id = null, $animal_type = null)
     {
+        $this->hasPrivilege(Acl::ACTION_CREATE);
         $model = new Animal(['farm_id' => $farm_id, 'animal_type' => $animal_type]);
         if ($this->handlePostedData($model)) {
             Yii::$app->session->setFlash('success', Lang::t('SUCCESS_MESSAGE'));
@@ -89,6 +92,7 @@ class AnimalController extends Controller
 
     public function actionUpdate($id)
     {
+        $this->hasPrivilege(Acl::ACTION_UPDATE);
         $model = Animal::loadModel($id);
         if ($this->handlePostedData($model)) {
             Yii::$app->session->setFlash('success', Lang::t('SUCCESS_MESSAGE'));
