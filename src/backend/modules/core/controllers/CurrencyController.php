@@ -17,6 +17,7 @@ class CurrencyController extends MasterDataController
     {
         parent::init();
         $this->resourceLabel = 'Currency';
+        $this->enableDefaultAcl = true;
     }
 
     public function actionIndex()

@@ -123,19 +123,11 @@ class SendEmail extends BaseObject implements JobInterface
             'port' => EmailSettings::getPort(),
             'encryption' => EmailSettings::getSecurity(),
         ];
-        Yii::info($transport);
         /* @var $mailer Mailer */
         $mailer = Yii::createObject([
             'class' => Mailer::class,
             'useFileTransport' => false,
-            'transport' => [
-                'class' => 'Swift_SmtpTransport',
-                'host' => 'smtp.sendgrid.net',
-                'username' => 'apikey',
-                'password' => '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',
-                'port' => 465,
-                'encryption' => 'ssl',
-            ],
+            'transport' => $transport,
         ]);
 
         //send email
@@ -161,7 +153,7 @@ class SendEmail extends BaseObject implements JobInterface
                 ->setHtmlBody($this->message)
                 ->send($mailer);
         } catch (Exception $e) {
-            Yii::error($e->getMessage());
+            Yii::error('SEND EMAIL EXCEPTION: '.$e->getMessage());
         }
 
         $outboxModel = !empty($this->id) ? EmailOutbox::loadModel($this->id) : new EmailOutbox();

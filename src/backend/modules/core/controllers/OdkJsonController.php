@@ -9,6 +9,7 @@
 namespace backend\modules\core\controllers;
 
 
+use backend\modules\auth\Acl;
 use backend\modules\core\Constants;
 use backend\modules\core\models\OdkJsonQueue;
 use common\helpers\Lang;
@@ -30,6 +31,7 @@ class OdkJsonController extends Controller
 
     public function actionIndex($tab = 1)
     {
+        $this->hasPrivilege(Acl::ACTION_VIEW);
         $searchModel = OdkJsonQueue::searchModel([
             'defaultOrder' => ['id' => SORT_DESC],
         ]);
@@ -56,12 +58,14 @@ class OdkJsonController extends Controller
 
     public function actionView($id)
     {
+        $this->hasPrivilege(Acl::ACTION_VIEW);
         $model = $this->loadModel($id);
         return $this->render('view', ['model' => $model]);
     }
 
     public function actionCreate()
     {
+        $this->hasPrivilege(Acl::ACTION_CREATE);
         $model = new OdkJsonQueue([]);
         $model->setScenario(OdkJsonQueue::SCENARIO_UPLOAD);
 
@@ -87,6 +91,7 @@ class OdkJsonController extends Controller
 
     public function actionDelete($id)
     {
+        $this->hasPrivilege(Acl::ACTION_DELETE);
         $model = $this->loadModel($id);
         return OdkJsonQueue::softDelete($model->id);
     }

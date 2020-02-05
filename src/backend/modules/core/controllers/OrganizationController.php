@@ -9,6 +9,7 @@
 namespace backend\modules\core\controllers;
 
 
+use backend\modules\auth\Acl;
 use backend\modules\core\Constants;
 use backend\modules\core\models\Organization;
 use common\helpers\Lang;
@@ -29,6 +30,7 @@ class OrganizationController extends Controller
 
     public function actionIndex()
     {
+        $this->hasPrivilege(Acl::ACTION_VIEW);
         $searchModel = Organization::searchModel([
             'defaultOrder' => ['name' => SORT_ASC],
         ]);
@@ -41,12 +43,14 @@ class OrganizationController extends Controller
 
     public function actionView($id)
     {
+        $this->hasPrivilege(Acl::ACTION_VIEW);
         $model = $this->loadModel($id);
         return $this->render('view', ['model' => $model]);
     }
 
     public function actionCreate()
     {
+        $this->hasPrivilege(Acl::ACTION_CREATE);
         $model = new Organization([]);
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
@@ -71,6 +75,7 @@ class OrganizationController extends Controller
 
     public function actionUpdate($id)
     {
+        $this->hasPrivilege(Acl::ACTION_UPDATE);
         $model = $this->loadModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {

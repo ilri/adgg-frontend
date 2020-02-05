@@ -30,6 +30,7 @@ class WeightEventController extends Controller
 
     public function actionIndex($animal_id = null, $org_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $from = null, $to = null)
     {
+        $this->hasPrivilege(Acl::ACTION_VIEW);
         return $this->renderIndexAction(AnimalEvent::EVENT_TYPE_WEIGHTS, $animal_id, $org_id, $region_id, $district_id, $ward_id, $village_id, $from, $to);
     }
 
