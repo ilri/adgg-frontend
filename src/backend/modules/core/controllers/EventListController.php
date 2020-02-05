@@ -9,6 +9,11 @@ use backend\modules\core\models\Organization;
 
 class EventListController extends Controller
 {
+    public function init()
+    {
+        $this->enableDefaultAcl = true;
+    }
+
     public function actionIndex($org_id = null)
     {
         $events = AnimalEvent::eventTypeOptions();
