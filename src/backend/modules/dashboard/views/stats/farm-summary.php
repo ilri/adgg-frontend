@@ -2,6 +2,7 @@
 
 use backend\controllers\BackendController;
 use backend\modules\core\models\Choices;
+use backend\modules\core\models\CountriesDashboardStats;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\Organization;
 use backend\modules\core\models\OrganizationUnits;
@@ -32,27 +33,19 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                     <?= Lang::t(' Registered Farms Grouped by Regions in {country}', ['country' => $country->name]); ?>
                 </div>
                 <div id="chartContainer"></div>
-                <!--                $this->render('graph/_widget', ['graphType' => HighChart::GRAPH_PIE, 'graphFilterOptions' => $graphFilterOptions])
-                --> <?php
-                $condition = '';
-                $params = [];
-                list($condition, $params) = Farm::appendOrgSessionIdCondition($condition, $params);
+                <?php
                 $data = [];
-                // get regions
-                $regions = OrganizationUnits::getListData('id', 'name', '', ['level' => OrganizationUnits::LEVEL_REGION]);
-                foreach ($regions as $id => $label) {
-                    list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
 
-                    $count = Farm::find()->andWhere($newcondition, $newparams)
-                        ->andWhere(['org_id' => $country->id])
-                        ->count();
-                    if ($count > 0) {
+                $chart_data = CountriesDashboardStats::getFarmsGroupedByRegions($country->id);
+
+                if (count($chart_data) > 0) {
+                    foreach ($chart_data as $cdata){
                         $data[] = [
-                            'name' => $label,
-                            'y' => floatval(number_format($count, 2, '.', '')),
+                            'name' => $cdata['label'],
+                            'y' => floatval(number_format($cdata['value'], 2, '.', '')),
                         ];
                     }
-                };
+                }
                 $series = [[
                     'colorByPoint' => true,
                     'data' => $data,
@@ -70,27 +63,19 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                     <?= Lang::t(' Registered Farms Grouped by Farm Type in {country}', ['country' => $country->name]); ?>
                 </div>
                 <div id="chartContainer2"></div>
-                <!--                $this->render('graph/_widget', ['graphType' => HighChart::GRAPH_PIE, 'graphFilterOptions' => $graphFilterOptions])
-                --> <?php
-                $condition = '';
-                $params = [];
-                list($condition, $params) = Farm::appendOrgSessionIdCondition($condition, $params);
+                <?php
                 $data = [];
-                // get farm types
-                $farmTypes = Choices::getList(\backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_FARM_TYPE);
-                //print_r($farmTypes);
-                foreach ($farmTypes as $type => $label) {
-                    list($newcondition, $newparams) = DbUtils::appendCondition('farm_type', $type, $condition, $params);
-                    $count = Farm::find()->andWhere($newcondition, $newparams)
-                        ->andWhere(['org_id' => $country->id])
-                        ->count();
-                    if ($count > 0) {
+
+                $chart_data = CountriesDashboardStats::getFarmsGroupedByFarmType($country->id);
+
+                if (count($chart_data) > 0) {
+                    foreach ($chart_data as $cdata){
                         $data[] = [
-                            'name' => $label,
-                            'y' => floatval(number_format($count, 2, '.', '')),
+                            'name' => $cdata['label'],
+                            'y' => floatval(number_format($cdata['value'], 2, '.', '')),
                         ];
                     }
-                };
+                }
                 $series = [[
                     'colorByPoint' => true,
                     'data' => $data,

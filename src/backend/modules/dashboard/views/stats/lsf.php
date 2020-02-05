@@ -2,6 +2,7 @@
 
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\Choices;
+use backend\modules\core\models\CountriesDashboardStats;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\Organization;
 use backend\modules\core\models\OrganizationUnits;
@@ -34,27 +35,18 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                         </div>
                         <div id="chartContainer" title=""></div>
                         <?php
-                        $condition = '';
-                        $params = [];
-                        list($condition, $params) = Farm::appendOrgSessionIdCondition($condition, $params);
                         $data = [];
-                        // get regions
-                        $regions = OrganizationUnits::getListData('id', 'name', '', ['level' => OrganizationUnits::LEVEL_REGION]);
-                        //print_r($regions);
-                        foreach ($regions as $id => $label) {
-                            list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
 
-                            $count = Farm::find()->where($newcondition, $newparams)
-                                ->andWhere(['farm_type' => 'LSF', 'org_id' => $country->id])
-                                ->count();
-                            if ($count > 0) {
+                        $chart_data = CountriesDashboardStats::getLSFGroupedByRegions($country->id);
+
+                        if (count($chart_data) > 0) {
+                            foreach ($chart_data as $cdata){
                                 $data[] = [
-                                    'name' => $label,
-                                    'y' => floatval(number_format($count, 2, '.', '')),
+                                    'name' => $cdata['label'],
+                                    'y' => floatval(number_format($cdata['value'], 2, '.', '')),
                                 ];
                             }
-
-                        };
+                        }
                         $series = [[
                             'colorByPoint' => true,
                             'data' => $data,
