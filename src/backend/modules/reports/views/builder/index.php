@@ -62,7 +62,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <div class="card card-body kt-scroll ps ps--active-y" style="height: 550px; overflow: hidden;" data-scroll="true">
                                     <ul>
                                     <?php foreach ($attributes as $attr): ?>
-                                        <li class="attribute" data-toggle="kt-tooltip" data-skin="dark" data-original-title="<?= $class->getAttributeLabel($attr) ?>" data-model="<?= $name ?>" data-parent-model="<?= $name ?>" data-parent-model-title="<?= $title ?>" data-name="<?= $attr ?>"><?= $class->getAttributeLabel($attr) ?></li>
+                                        <li class="attribute" data-original-title="<?= $class->getAttributeLabel($attr) ?>" data-model="<?= $name ?>" data-parent-model="<?= $name ?>" data-parent-model-title="<?= $title ?>" data-name="<?= $attr ?>"><?= $class->getAttributeLabel($attr) ?></li>
                                     <?php endforeach; ?>
                                     <?php
                                     if(count($modelData['relations'])){
@@ -86,7 +86,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                             <div class="collapse" id="collapse<?= $relationName ?>" style="">
                                                 <ul>
                                                     <?php foreach ($relationAttributes as $attr): ?>
-                                                        <li class="attribute" data-model="<?= $className ?>" data-parent-model="<?= $name ?>" data-parent-model-title="<?= $title ?>" data-name="<?= $relationName.'.'.$attr ?>"><?= $relationModelClass->getAttributeLabel($attr) ?></li>
+                                                        <li class="attribute" data-original-title="<?= $relationName. '.'.$relationModelClass->getAttributeLabel($attr) ?>" data-model="<?= $className ?>" data-parent-model="<?= $name ?>" data-parent-model-title="<?= $title ?>" data-name="<?= $relationName.'.'.$attr ?>"><?= $relationModelClass->getAttributeLabel($attr) ?></li>
                                                     <?php endforeach; ?>
                                                     <?php
                                                     if(count($sub_relations)){
@@ -104,7 +104,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                                             <div class="collapse" id="collapse<?= $sub_id ?>" style="">
                                                                 <ul>
                                                                     <?php foreach ($relationAttributes as $attr): ?>
-                                                                        <li class="attribute" data-model="<?= $className ?>" data-parent-model="<?= $name ?>" data-parent-model-title="<?= $title ?>" data-name="<?= $main.'.'.$sub.'.'.$attr ?>"><?= $relationClass->getAttributeLabel($attr) ?></li>
+                                                                        <li class="attribute" data-original-title="<?= $main. '.'. $sub. '.' .$relationClass->getAttributeLabel($attr) ?>" data-model="<?= $className ?>" data-parent-model="<?= $name ?>" data-parent-model-title="<?= $title ?>" data-name="<?= $main.'.'.$sub.'.'.$attr ?>"><?= $relationClass->getAttributeLabel($attr) ?></li>
                                                                     <?php endforeach; ?>
                                                                 </ul>
                                                             </div>
@@ -152,14 +152,15 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <button id="generateQuery" role="button" class="btn btn-primary col-md-8 offset-3">Preview Query</button>
                             </div>
                             <div class="row card card-body mt-4 mb-4">
-                                <div class="bd-clipboard hidden">
-                                    <button type="button" class="btn-clipboard" title="" data-original-title="Copy to clipboard">Copy</button>
+                                <div class="bd-clipboard">
+                                    <button type="button" data-clipboard-target="#queryHolder" class="btn-clipboard">Copy</button>
                                 </div>
-                                <figure class="highlight">
+                                <figure class="highlight hidden">
                                     <pre class="pre-scrollable">
-                                        <code id="queryHolder" class="language-sql text-wrap word-wrap" data-lang="sql"></code>
+                                        <code id="" class="language-sql text-wrap word-wrap" data-lang="sql"></code>
                                     </pre>
                                 </figure>
+                                <textarea id="queryHolder" class="language-sql text-wrap word-wrap" ></textarea>
                             </div>
                             <div class="row mt-2">
                                 <div class="col-md-3"><label for="name">Report Name: </label></div>

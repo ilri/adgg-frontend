@@ -38,7 +38,7 @@ class AdhocReportController extends Controller
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
 
-        $date_filter = DateUtils::getDateFilterParams($from, $to, 'created_at', false, false);
+        $date_filter = DateUtils::getDateFilterParams($from, $to, 'created_at', false, true);
         $condition = $date_filter['condition'];
         $params = [];
 
@@ -49,7 +49,7 @@ class AdhocReportController extends Controller
         ]);
         $searchModel->name = $name;
         $searchModel->created_by = $created_by;
-        $searchModel->status = $status ?? AdhocReport::STATUS_QUEUED;
+        $searchModel->status = $status ?? AdhocReport::STATUS_COMPLETED;
         $searchModel->_dateFilterFrom = $date_filter['from'];
         $searchModel->_dateFilterTo = $date_filter['to'];
 
@@ -88,23 +88,27 @@ class AdhocReportController extends Controller
         $report->status = AdhocReport::STATUS_QUEUED;
         $success_msg = Lang::t('Report Queued Successfully. You will be notified once your report is ready for download');
 
-        $transaction = Yii::$app->db->beginTransaction();
-        try {
-            if($report->save()){
-                $transaction->commit();
-                ReportGenerator::push(['queueId' => $report->id]);
-                return Json::encode(['success' => true, 'message' => $success_msg, 'redirectUrl' => 'index', 'forceRedirect' => false]);
+        if(Yii::$app->request->isPost && $report->load(Yii::$app->request->post()) && $report->validate() ){
+            $transaction = Yii::$app->db->beginTransaction();
+            try {
+                if($report->save()){
+                    $transaction->commit();
+                    ReportGenerator::push(['queueId' => $report->id]);
+                    return Json::encode(['success' => true, 'message' => $success_msg, 'redirectUrl' => 'index', 'forceRedirect' => false]);
+                }
+                else{
+                    Yii::debug($report->getErrors());
+                    return Json::encode(['success' => false, 'message' => $report->getErrors()]);
+                }
             }
-            else{
-                Yii::debug($report->getErrors());
-                return Json::encode(['success' => false, 'message' => $report->getErrors()]);
+            catch (\Exception $e) {
+                $transaction->rollBack();
+                Yii::debug($e->getTrace());
+                return Json::encode(['success' => false, 'message' => $e->getMessage()]);
             }
         }
-        catch (\Exception $e) {
-            $transaction->rollBack();
-            Yii::debug($e->getTrace());
-            return Json::encode(['success' => false, 'message' => $e->getMessage()]);
-        }
+
+        return $report->simpleAjaxSave('_requeue', 'index', [], $success_msg, false, 'id');
     }
 
 }

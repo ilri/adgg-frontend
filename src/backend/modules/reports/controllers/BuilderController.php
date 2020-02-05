@@ -93,7 +93,8 @@ class BuilderController extends Controller
             if($report->save()){
                 $transaction->commit();
                 ReportGenerator::push(['queueId' => $report->id]);
-                return Json::encode(['success' => true, 'message' => $success_msg, 'redirectUrl' => '', 'forceRedirect' => false]);
+                $redirect = Url::to(['/reports/adhoc-report/index']);
+                return Json::encode(['success' => true, 'message' => $success_msg, 'redirectUrl' => $redirect, 'forceRedirect' => false]);
             }
             else{
                 Yii::debug($report->getErrors());

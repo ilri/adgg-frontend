@@ -39,6 +39,14 @@ $url = ['index'];
                         <?= Html::label($model->getAttributeLabel('name')) ?>
                         <?= Html::textInput('name', $model->name, ['class' => 'form-control']) ?>
                     </div>
+                    <div class="col-lg-2">
+                        <?= Html::label('From') ?>
+                        <?= Html::textInput('from', $model->_dateFilterFrom, ['class' => 'form-control show-datepicker', 'placeholder' => 'From']) ?>
+                    </div>
+                    <div class="col-lg-2">
+                        <?= Html::label('To') ?>
+                        <?= Html::textInput('to', $model->_dateFilterTo, ['class' => 'form-control show-datepicker', 'placeholder' => 'To']) ?>
+                    </div>
 
                     <div class="col-lg-2">
                         <br>

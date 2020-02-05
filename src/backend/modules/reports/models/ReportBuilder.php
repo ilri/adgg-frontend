@@ -21,6 +21,7 @@ use common\helpers\Utils;
 use common\models\ActiveRecord;
 use yii\base\Model;
 use yii\db\Expression;
+use yii\helpers\Inflector;
 
 class ReportBuilder extends Model
 {
@@ -228,14 +229,17 @@ class ReportBuilder extends Model
                 $subRelationClass = static::getRelationClass($relationClass, $subRelationName); // Farm::class
                 $modelClass = $subRelationClass;
                 $tableAlias = $subRelationName;
+                $fieldLabelAlias = ucfirst($subRelationName);
             }
             else{
-                $relationName = (explode('.', $field)[0]);
-                $fieldName = (explode('.', $field)[1]);
+                // farm.farmer_name
+                $relationName = (explode('.', $field)[0]); // farm
+                $fieldName = (explode('.', $field)[1]); // farmer_name
                 $modelClass = static::getRelationClass($class, $relationName);
 
                 // append table name || relationName to field to remove ambiguity.
                 $tableAlias = $relationName;
+                $fieldLabelAlias = ucfirst($relationName);
             }
         }
         else {
@@ -243,10 +247,13 @@ class ReportBuilder extends Model
             // append table name to field to remove ambiguity.
             $fieldName = $field;
             $tableAlias = $modelClass::tableName();
+            $fieldLabelAlias = $modelClass::shortClassName();
         }
+        # quote the table alias
+        $tableAlias = \Yii::$app->db->quoteTableName($tableAlias);
 
         # append alias to field to remove ambiguity
-        $aliasedField = $tableAlias.'.'.$fieldName;
+        $aliasedField = $tableAlias.'. [['.$fieldName.']]';
 
         # additional columns
         if($modelClass->hasMethod('isAdditionalAttribute')){
@@ -254,15 +261,37 @@ class ReportBuilder extends Model
                 # for additional attributes, find a way to get their values
                 $attributeModel = TableAttribute::find()->andWhere(['attribute_key' => $fieldName, 'table_id' => $modelClass::getDefinedTableId()])->one();
                 $id = $attributeModel->id;
-                $attributesColumn = $tableAlias.'.[[additional_attributes]]';
+                $attributesColumn = "{$tableAlias}.[[additional_attributes]]";
                 # get the value of this field from the json payload
                 # e.g JSON_EXTRACT(`core_farm`.`additional_attributes`, '$."34"')
                 $aliasedField = new Expression('JSON_UNQUOTE(JSON_EXTRACT('.$attributesColumn.', '."'".'$."'.$id.'"'."'".'))');
 
             }
         }
+        //$className = $modelClass::shortClassName();
+        $attrLabel = $modelClass->getAttributeLabel($fieldName);
+        # remove special characters from $attrLabel except underscore
+        $attrLabel = preg_replace('/[^a-zA-Z0-9_]/', '', $attrLabel);
 
-        return $aliasedField;
+        # convert label to camelCase if there are spaces in the word
+        $attrLabel = Inflector::camelize($attrLabel);
+        if(strpos($modelClass->getAttributeLabel($fieldName), ' ' )){
+            $attrLabel = Inflector::variablize($attrLabel);
+        }
+
+        $fieldAlias = $fieldLabelAlias . '_' .$attrLabel;
+
+        if($append_field_alias){
+            if($field_alias === null){
+                return $aliasedField . ' AS [[' . $fieldAlias .']]';
+            }
+            else {
+                return $aliasedField . ' AS [[' . $field_alias .']]';
+            }
+        }
+        else{
+            return $aliasedField;
+        }
     }
 
     /**
@@ -299,11 +328,14 @@ class ReportBuilder extends Model
                     $joins[] = $relationName;
                 }
             }
-
+            # field with table alias
             $aliasedField = static::getFullColumnName($field, $class);
+            # field with table and column alias
+            $selectField = static::getFullColumnName($field, $class, null, true);
 
             // add field to select
-            $query->addSelect(new Expression( $aliasedField . ' AS "' . $field . '"'));
+            //$query->addSelect(new Expression( $aliasedField . ' AS "' . $field . '"'));
+            $query->addSelect(new Expression($selectField));
 
             // build the condition
             if (!empty($conditionOperator)){
