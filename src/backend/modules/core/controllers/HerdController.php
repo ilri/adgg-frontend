@@ -29,6 +29,7 @@ class HerdController extends Controller
 
     public function actionIndex($farm_id = null, $org_id = null, $herd_id = null, $name = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null)
     {
+        $this->hasPrivilege(Acl::ACTION_VIEW);
         $condition = '';
         $params = [];
         $searchModel = AnimalHerd::searchModel([

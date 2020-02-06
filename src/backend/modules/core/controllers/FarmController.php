@@ -33,6 +33,7 @@ class FarmController extends Controller
 
     public function actionIndex($org_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $name = null, $code = null, $phone = null, $project = null, $farm_type = null, $gender_code = null, $is_active = null, $odk_code = null)
     {
+        $this->hasPrivilege(Acl::ACTION_VIEW);
         $org_id = Session::getOrgId($org_id);
         $region_id = Session::getRegionId($region_id);
         $district_id = Session::getDistrictId($district_id);
@@ -67,6 +68,7 @@ class FarmController extends Controller
 
     public function actionCreate($org_id = null)
     {
+        $this->hasPrivilege(Acl::ACTION_CREATE);
         $model = new Farm(['org_id' => $org_id, 'is_active' => 1]);
         if ($this->handlePostedData($model)) {
             Yii::$app->session->setFlash('success', Lang::t('SUCCESS_MESSAGE'));
@@ -80,6 +82,7 @@ class FarmController extends Controller
 
     public function actionView($id)
     {
+        $this->hasPrivilege(Acl::ACTION_VIEW);
         $model = Farm::loadModel($id);
 
         return $this->render('view', [
@@ -89,6 +92,7 @@ class FarmController extends Controller
 
     public function actionUpdate($id)
     {
+        $this->hasPrivilege(Acl::ACTION_UPDATE);
         $model = $this->loadModel($id);
         if ($this->handlePostedData($model)) {
             Yii::$app->session->setFlash('success', Lang::t('SUCCESS_MESSAGE'));

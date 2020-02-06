@@ -16,7 +16,7 @@ use yii\helpers\Json;
 /* @var $graphFilterOptions array */
 /* @var $country Organization */
 $controller = Yii::$app->controller;
-$this->title = Lang::t('Dashboard');
+$this->title = Lang::t('Large Scale Farm Report');
 $this->params['breadcrumbs'] = [
     $this->title,
 ];
@@ -24,7 +24,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
 ?>
 <div class="row">
     <div class="col-md-12">
-        <h3><?= Lang::t('Large Scale Farm Stats in {country}', ['country' => $country->name]) ?></h3>
+        <h3><?= Lang::t('Large Scale Farm Report in {country}', ['country' => $country->name]) ?></h3>
         <hr>
         <div class="row">
             <div class="col-md-6">

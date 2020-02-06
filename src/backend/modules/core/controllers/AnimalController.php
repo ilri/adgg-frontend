@@ -143,6 +143,7 @@ class AnimalController extends Controller
 
     public function actionDelete($id)
     {
+        $this->hasPrivilege(Acl::ACTION_DELETE);
         return Animal::softDelete($id);
     }
 }
