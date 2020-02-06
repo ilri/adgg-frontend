@@ -83,7 +83,7 @@ $countries = Organization::find()->orderBy(['code' => SORT_ASC])->all();
                 <li class="kt-menu__item  kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'core/herd' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
                     <a href="#" class="kt-menu__link kt-menu__toggle">
                         <i class="kt-menu__link-icon far fa-cow"></i>
-                        <span class="kt-menu__link-text">Herds</span>
+                        <span class="kt-menu__link-text">HERDS</span>
                         <i class="kt-menu__ver-arrow la la-angle-right"></i>
                     </a>
                     <div class="kt-menu__submenu">
