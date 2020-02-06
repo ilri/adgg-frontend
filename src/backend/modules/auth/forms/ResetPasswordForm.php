@@ -23,6 +23,11 @@ class ResetPasswordForm extends Model
     public $confirm;
 
     /**
+     * @var bool
+     */
+    public $is_api = false;
+
+    /**
      * @var string
      */
     public $username;
@@ -39,6 +44,7 @@ class ResetPasswordForm extends Model
      * @param array $config Name-value pairs that will be used to initialize the object properties.
      *
      * @throws \yii\base\InvalidParamException  If token is empty or not valid.
+     * @throws \yii\web\NotFoundHttpException
      */
     public function __construct($token, $config = [])
     {
@@ -46,7 +52,10 @@ class ResetPasswordForm extends Model
             throw new InvalidArgumentException('Password reset token cannot be blank.');
         }
 
-        $this->_user = Users::findByPasswordResetToken($token);
+        if (isset($config['is_api'])) {
+            $this->is_api = $config['is_api'];
+        }
+        $this->_user = Users::findByPasswordResetToken($token, $this->is_api);
 
         if (!$this->_user) {
             throw new InvalidArgumentException('Wrong password reset token.');
@@ -95,7 +104,7 @@ class ResetPasswordForm extends Model
     {
         $user = $this->_user;
         $user->setPasswordHash($this->password);
-        $user->removePasswordResetToken();
+        $user->removePasswordResetToken($this->is_api);
 
         return $user->save();
     }

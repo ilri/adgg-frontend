@@ -9,6 +9,7 @@ use common\helpers\Utils;
 use common\models\ActiveRecord;
 use kartik\password\StrengthValidator;
 use Yii;
+use yii\base\InvalidArgumentException;
 use yii\base\NotSupportedException;
 use yii\web\IdentityInterface;
 use yii2tech\authlog\AuthLogIdentityBehavior;
@@ -235,18 +236,33 @@ abstract class UserIdentity extends ActiveRecord implements IdentityInterface
      * Finds user by password reset token.
      *
      * @param string $token Password reset token.
+     * @param bool $is_api
      * @return $this
+     * @throws \yii\web\NotFoundHttpException
      */
-    public static function findByPasswordResetToken($token)
+    public static function findByPasswordResetToken($token,  $is_api = false)
     {
-        if (!static::isPasswordResetTokenValid($token)) {
-            return null;
-        }
+        if (!$is_api) {
+            if (!static::isPasswordResetTokenValid($token)) {
+                return null;
+            }
 
-        return static::findOne([
-            'password_reset_token' => $token,
-            'status' => self::STATUS_ACTIVE,
-        ]);
+            return static::findOne([
+                'password_reset_token' => $token,
+                'status' => self::STATUS_ACTIVE,
+            ]);
+        } else {
+            $user_id = PasswordResetCodes::isValid($token);
+            if (!$user_id) {
+                return null;
+            }
+            $user = static::loadModel(['id' => $user_id, 'status' => self::STATUS_ACTIVE], false);
+            if (null === $user) {
+                return null;
+            }
+
+            return $user;
+        }
     }
 
     /**
@@ -362,10 +378,15 @@ abstract class UserIdentity extends ActiveRecord implements IdentityInterface
 
     /**
      * Removes password reset token.
+     * @param bool $is_api
      */
-    public function removePasswordResetToken()
+    public function removePasswordResetToken($is_api = false)
     {
-        $this->password_reset_token = null;
+        if (!$is_api) {
+            $this->password_reset_token = null;
+        } else {
+            PasswordResetCodes::updateAll(['is_active' => 0], ['user_id' => $this->id]);
+        }
     }
 
     /**
