@@ -16,7 +16,7 @@ use yii\helpers\Json;
 /* @var $graphFilterOptions array */
 /* @var $country Organization */
 $controller = Yii::$app->controller;
-$this->title = Lang::t('Dashboard');
+$this->title = Lang::t('Insemination,PD And Calving Report');
 $this->params['breadcrumbs'] = [
     $this->title,
 ];
