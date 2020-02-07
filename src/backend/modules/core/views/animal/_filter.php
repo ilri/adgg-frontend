@@ -26,11 +26,11 @@ use yii\bootstrap4\Html;
                 <?= Html::beginForm(['index'], 'get', ['class' => '', 'id' => 'grid-filter-form', 'data-grid' => $model->getPjaxWidgetId()]) ?>
                 <div class="form-row align-items-center">
                     <div class="col-lg-2">
-                        <?= Html::label($model->getAttributeLabel('farm_id')) ?>
+                        <?= Html::label($model->getAttributeLabel('farm_type')) ?>
                         <?= Select2::widget([
-                            'name' => 'farm_id',
+                            'name' => 'farm_type',
                             'value' => $model->farm_id,
-                            'data' => Farm::getListData(),
+                            'data' => Choices::getList(ChoiceTypes::CHOICE_TYPE_FARM_TYPE, false),
                             'options' => [
                                 'placeholder' => "--All Farms--",
                                 'class' => 'form-control select2',

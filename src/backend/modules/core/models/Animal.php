@@ -217,27 +217,28 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
      */
     public function searchParams()
     {
+        $alias = static::tableName();
         return [
-            ['tag_id', 'tag_id'],
-            ['name', 'name'],
-            ['color', 'color'],
-            ['sire_name', 'sire_name'],
-            ['bull_straw_id', 'bull_straw_id'],
-            ['sire_tag_id', 'sire_tag_id'],
-            ['dam_tag_id', 'dam_tag_id'],
-            ['dam_name', 'dam_name'],
-            'farm_id',
-            'org_id',
-            'region_id',
-            'district_id',
-            'ward_id',
-            'village_id',
-            'animal_type',
-            'dam_id',
-            'sire_id',
-            'herd_id',
-            'entry_type',
-            'main_breed',
+            [$alias.'.tag_id', 'tag_id'],
+            [$alias.'.name', 'name'],
+            [$alias.'.color', 'color'],
+            [$alias.'.sire_name', 'sire_name'],
+            [$alias.'.bull_straw_id', 'bull_straw_id'],
+            [$alias.'.sire_tag_id', 'sire_tag_id'],
+            [$alias.'.dam_tag_id', 'dam_tag_id'],
+            [$alias.'.dam_name', 'dam_name'],
+            [$alias.'.farm_id', 'farm_id', '', '='],
+            [$alias.'.org_id', 'org_id', '', '='],
+            [$alias.'.region_id', 'region_id', '', '='],
+            [$alias.'.district_id', 'district_id', '', '='],
+            [$alias.'.ward_id', 'ward_id', '', '='],
+            [$alias.'.village_id', 'village_id', '', '='],
+            [$alias.'.animal_type', 'animal_type', '', '='],
+            [$alias.'.dam_id', 'dam_id', '', '='],
+            [$alias.'.sire_id', 'sire_id', '', '='],
+            [$alias.'.herd_id', 'herd_id', '', '='],
+            [$alias.'.entry_type', 'entry_type', '', '='],
+            [$alias.'.main_breed', 'main_breed', '', '='],
         ];
     }
 
