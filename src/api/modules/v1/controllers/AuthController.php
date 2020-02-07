@@ -29,7 +29,7 @@ class AuthController extends Controller
 
     public function getUnAuthenticatedActions()
     {
-        return ['login', 'begin-reset-password', 'complete-reset-password'];
+        return ['login', 'activation-code', 'new-password'];
     }
 
     /**
