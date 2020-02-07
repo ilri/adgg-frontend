@@ -92,7 +92,7 @@ $countries = Organization::find()->orderBy(['code' => SORT_ASC])->all();
                             <?php foreach ($countries as $country): ?>
                                 <?php if (Session::getOrgId() == $country->id || Session::isPrivilegedAdmin()): ?>
                                     <li class="kt-menu__item">
-                                        <a href="<?= Url::to(['/core/farm/index', 'org_id' => $country->id]) ?>"
+                                        <a href="<?= Url::to(['/core/herd/index', 'org_id' => $country->id]) ?>"
                                            class="kt-menu__link ">
                                             <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
                                             <span class="kt-menu__link-text"><?= Lang::t('{country}', ['country' => $country->name]) ?></span>
