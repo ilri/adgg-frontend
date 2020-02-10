@@ -163,7 +163,7 @@ class AuthController extends Controller
             $msg = 'New password saved successfully';
             return ['success' => true, 'message' => $msg];
         }
-
+        Yii::$app->response->statusCode = 400;
         return ['success' => false, 'error' => $model->getErrors()];
     }
 }
