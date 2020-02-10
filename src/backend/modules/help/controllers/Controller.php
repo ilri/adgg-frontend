@@ -29,6 +29,7 @@ class Controller extends BackendController
             $this->helpModuleName = Constants::HELP_MODULE_NAME;
         }
         $this->enableHelpLink = false;
+        $this->enableDefaultAcl = true;
     }
 
     public function behaviors()
@@ -48,7 +49,8 @@ class Controller extends BackendController
                             'create',
                             'update',
                             'delete',
-                            'upload-image'
+                            'upload-image',
+                            'read',
                         ],
                         'allow' => true,
                         'roles' => ['@'],
