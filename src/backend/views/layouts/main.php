@@ -45,7 +45,8 @@ $controller = Yii::$app->controller;
                     <div class="kt-aside__brand-logo">
                         <a href="<?= Yii::$app->homeUrl ?>">
                             <img alt="Logo"
-                                 src="<?= Yii::$app->view->theme->baseUrl ?>/assets/img/login/<?= SystemSettings::getDefaultTheme() === SystemSettings::THEME_DEFAULT ? 'adggLogo1.png' : 'adggLogo1.png' ?>" style="max-height: 100px; max-width: 150px;"/>
+                                 src="<?= Yii::$app->view->theme->baseUrl ?>/assets/img/login/<?= SystemSettings::getDefaultTheme() === SystemSettings::THEME_DEFAULT ? 'adggLogo1.png' : 'adggLogo1.png' ?>"
+                                 style="max-height: 100px; max-width: 150px;"/>
                         </a>
                     </div>
                     <div class="kt-aside__brand-tools">
@@ -115,34 +116,47 @@ $controller = Yii::$app->controller;
                 Quick Actions
             </h3>
             <a href="#" class="kt-offcanvas-panel__close" id="kt_offcanvas_toolbar_quick_actions_close"><i
-                        class="flaticon2-delete"></i></a>
+                    class="flaticon2-delete"></i></a>
         </div>
         <div class="kt-offcanvas-panel__body">
             <div class="kt-grid-nav-v2">
-                <a href="<?= Url::to(['/core/animal/index']) ?>" class="kt-grid-nav-v2__item">
-                    <div class="kt-grid-nav-v2__item-icon"><i class="far fa-cow"></i></div>
-                    <div class="kt-grid-nav-v2__item-title">Animals</div>
-                </a>
-                <a href="<?= Url::to(['/core/farm/index']) ?>" class="kt-grid-nav-v2__item">
-                    <div class="kt-grid-nav-v2__item-icon"><i class="far fa-tractor"></i></div>
-                    <div class="kt-grid-nav-v2__item-title">Farms</div>
-                </a>
-                <a href="#" class="kt-grid-nav-v2__item">
-                    <div class="kt-grid-nav-v2__item-icon"><i class="far fa-users"></i></div>
-                    <div class="kt-grid-nav-v2__item-title">Clients/People</div>
-                </a>
-                <a href="#" class="kt-grid-nav-v2__item">
-                    <div class="kt-grid-nav-v2__item-icon"><i class="far fa-calendar-day"></i></div>
-                    <div class="kt-grid-nav-v2__item-title">Animal Events</div>
-                </a>
-                <a href="<?= Url::to(['/auth/user/index']) ?>" class="kt-grid-nav-v2__item">
-                    <div class="kt-grid-nav-v2__item-icon"><i class="far fa-users"></i></div>
-                    <div class="kt-grid-nav-v2__item-title">Users</div>
-                </a>
-                <a href="<?= Url::to(['/conf/settings/index']) ?>" class="kt-grid-nav-v2__item">
-                    <div class="kt-grid-nav-v2__item-icon"><i class="far fa-cog"></i></div>
-                    <div class="kt-grid-nav-v2__item-title">Settings</div>
-                </a>
+                <?php if (Yii::$app->user->canView(\backend\modules\core\Constants::RES_ANIMAL)): ?>
+                    <a href="<?= Url::to(['/core/animal/index']) ?>" class="kt-grid-nav-v2__item">
+                        <div class="kt-grid-nav-v2__item-icon"><i class="far fa-cow"></i></div>
+                        <div class="kt-grid-nav-v2__item-title">Animals</div>
+                    </a>
+                <?php endif; ?>
+                <?php if (Yii::$app->user->canView(\backend\modules\core\Constants::RES_FARM)): ?>
+                    <a href="<?= Url::to(['/core/farm/index']) ?>" class="kt-grid-nav-v2__item">
+                        <div class="kt-grid-nav-v2__item-icon"><i class="far fa-tractor"></i></div>
+                        <div class="kt-grid-nav-v2__item-title">Farms</div>
+                    </a>
+                <?php endif; ?>
+                <?php if (Yii::$app->user->canView(\backend\modules\core\Constants::RES_CLIENT)): ?>
+                    <a href="#" class="kt-grid-nav-v2__item">
+                        <div class="kt-grid-nav-v2__item-icon"><i class="far fa-users"></i></div>
+                        <div class="kt-grid-nav-v2__item-title">Clients/People</div>
+                    </a>
+                <?php endif; ?>
+                <?php if (Yii::$app->user->canView(\backend\modules\core\Constants::RES_ANIMAL_EVENTS)): ?>
+
+                    <a href="#" class="kt-grid-nav-v2__item">
+                        <div class="kt-grid-nav-v2__item-icon"><i class="far fa-calendar-day"></i></div>
+                        <div class="kt-grid-nav-v2__item-title">Animal Events</div>
+                    </a>
+                <?php endif; ?>
+                <?php if (Yii::$app->user->canView(\backend\modules\auth\Constants::RES_USER)): ?>
+                    <a href="<?= Url::to(['/auth/user/index']) ?>" class="kt-grid-nav-v2__item">
+                        <div class="kt-grid-nav-v2__item-icon"><i class="far fa-users"></i></div>
+                        <div class="kt-grid-nav-v2__item-title">Users</div>
+                    </a>
+                <?php endif; ?>
+                <?php if (Yii::$app->user->canView(\backend\modules\conf\Constants::RES_SETTINGS)): ?>
+                    <a href="<?= Url::to(['/conf/settings/index']) ?>" class="kt-grid-nav-v2__item">
+                        <div class="kt-grid-nav-v2__item-icon"><i class="far fa-cog"></i></div>
+                        <div class="kt-grid-nav-v2__item-title">Settings</div>
+                    </a>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -187,6 +201,12 @@ $controller = Yii::$app->controller;
                 }
             }
         };
+
+
+
+
+
+
     </script>
     <?php $this->endBody() ?>
     <!-- begin: Modal -->
