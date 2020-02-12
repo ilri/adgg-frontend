@@ -13,4 +13,7 @@ class Constants
 {
     //constants
     const MENU_DASHBOARD = 1;
+
+    //resources
+    const RES_COUNTRY = 'DASHBOARD';
 }

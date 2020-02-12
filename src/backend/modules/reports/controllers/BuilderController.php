@@ -3,6 +3,7 @@
 namespace backend\modules\reports\controllers;
 
 use backend\modules\auth\Acl;
+use backend\modules\reports\Constants;
 use backend\modules\reports\models\AdhocReport;
 use backend\modules\reports\models\ReportBuilder;
 use common\helpers\Lang;
@@ -23,6 +24,7 @@ class BuilderController extends Controller
     public function init()
     {
         parent::init();
+        $this->resource = \backend\modules\core\Constants::RES_REPORT_BUILDER;
         $this->hasPrivilege(Acl::ACTION_CREATE);
     }
 
