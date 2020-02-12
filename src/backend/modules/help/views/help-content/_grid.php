@@ -2,6 +2,7 @@
 
 use backend\modules\help\models\HelpContent;
 use backend\modules\help\models\HelpModules;
+use common\helpers\Lang;
 use common\widgets\grid\GridView;
 use common\helpers\Url;
 
@@ -11,7 +12,10 @@ use common\helpers\Url;
     'filterModel' => $model,
     'createButton' => ['visible' => Yii::$app->user->canCreate(), 'modal' => false],
     'refreshUrl' => array_merge(['index'], Yii::$app->controller->actionParams),
-    'toolbarButtons' => [],
+    'toolbarButtons' => [
+        Yii::$app->user->canView() ? '<a target="_blank" class="btn btn-brand btn-bold btn-upper btn-font-sm btn-space" href="' . Url::to(['read']) . '" data-pjax="0"><i class="far fa-browser"></i> ' . Lang::t('Read on Web') . '</a> ' : '',
+        Yii::$app->user->canView() ? '<a target="_blank" class="btn btn-brand btn-bold btn-upper btn-font-sm btn-space" href="' . Url::to(['read', 'format' => 'pdf']) . '" data-pjax="0"><i class="far fa-file-pdf"></i> ' . Lang::t('Read as PDF') . '</a> ' : '',
+    ],
     'showExportButton' => false,
     'rowOptions' => function (HelpContent $model) {
         return ["class" => "linkable", "data-href" => Url::to(['update', "id" => $model->id])];

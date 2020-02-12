@@ -20,6 +20,13 @@ $user = Yii::$app->user->identity;
 
     <!-- begin:: Header Topbar -->
     <div class="kt-header__topbar">
+        <div class="kt-header__topbar-item">
+            <a class="pt-3" href="<?= Url::to(['/help/help-content/index']) ?>">
+            <div class="kt-header__topbar-wrapper">
+                <span class="kt-header__topbar-icon"><i class="flaticon2-information"></i></span>
+            </div>
+            </a>
+        </div>
         <!--begin: Notifications -->
         <?= $this->render('@confModule/views/notif/notif2') ?>
         <!--end: Notifications -->
