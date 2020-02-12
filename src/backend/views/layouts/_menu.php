@@ -2,6 +2,7 @@
 
 use backend\modules\auth\Session;
 use backend\modules\core\Constants;
+use backend\modules\help\Constants as HelpConstants;
 use backend\modules\core\models\Organization;
 use common\helpers\Lang;
 use yii\helpers\Url;
@@ -213,6 +214,18 @@ $countries = Organization::find()->orderBy(['code' => SORT_ASC])->all();
                     <a href="<?= Url::to(['/core/excel-upload-status/index']) ?>" class="kt-menu__link">
                         <i class="kt-menu__link-icon far fa-file-alt"></i>
                         <span class="kt-menu__link-text">EXCEL/CSV FILES</span>
+                    </a>
+                </li>
+            <?php endif; ?>
+            <li class="kt-menu__section ">
+                <h4 class="kt-menu__section-text">HELP</h4>
+                <i class="kt-menu__section-icon flaticon-more-v2"></i>
+            </li>
+            <?php if (Yii::$app->user->canView(HelpConstants::RES_HELP)): ?>
+                <li class="kt-menu__item kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'help/help-content' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
+                    <a href="<?= Url::to(['/help/help-content/index']) ?>" class="kt-menu__link">
+                        <i class="kt-menu__link-icon far fa-info-circle"></i>
+                        <span class="kt-menu__link-text">HELP CONTENT</span>
                     </a>
                 </li>
             <?php endif; ?>
