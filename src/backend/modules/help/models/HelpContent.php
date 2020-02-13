@@ -2,6 +2,7 @@
 
 namespace backend\modules\help\models;
 
+use backend\modules\auth\models\UserLevels;
 use backend\modules\auth\Session;
 use backend\modules\conf\settings\SystemSettings;
 use backend\modules\help\Help;
@@ -17,6 +18,7 @@ use kartik\mpdf\Pdf;
  *
  * @property integer $id
  * @property integer $module_id
+ * @property integer $user_level_id
  * @property string $name
  * @property string $slug
  * @property string $content
@@ -30,6 +32,7 @@ use kartik\mpdf\Pdf;
  * @property integer $is_active
  *
  * @property HelpModules $module
+ * @property UserLevels $userLevel
  */
 class HelpContent extends ActiveRecord implements ActiveSearchInterface
 {
@@ -52,7 +55,7 @@ class HelpContent extends ActiveRecord implements ActiveSearchInterface
     {
         return [
             [['module_id', 'name', 'content'], 'required'],
-            [['module_id', 'is_active',], 'integer'],
+            [['module_id', 'user_level_id', 'is_active',], 'integer'],
             [['content'], 'string'],
             [['name'], 'string', 'max' => 255],
             [['slug'], 'string', 'max' => 128],
@@ -69,6 +72,7 @@ class HelpContent extends ActiveRecord implements ActiveSearchInterface
         return [
             'id' => 'ID',
             'module_id' => 'Module',
+            'user_level_id' => 'User Level',
             'name' => 'Help Topic',
             'slug' => 'Slug',
             'content' => 'Content',
@@ -89,7 +93,8 @@ class HelpContent extends ActiveRecord implements ActiveSearchInterface
         return [
             'id',
             'name',
-            'module_id'
+            'module_id',
+            'user_level_id',
         ];
     }
 
@@ -99,6 +104,14 @@ class HelpContent extends ActiveRecord implements ActiveSearchInterface
     public function getModule()
     {
         return $this->hasOne(HelpModules::class, ['id' => 'module_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUserLevel()
+    {
+        return $this->hasOne(UserLevels::class, ['id' => 'user_level_id']);
     }
 
     /**
@@ -134,6 +147,18 @@ class HelpContent extends ActiveRecord implements ActiveSearchInterface
         $this->slug = str_slug($this->name);
         // these dummy tags will allow us to find partial search results
         $this->tags = self::getPermissions($this->permissions);
+        if (empty($this->user_level_id)) {
+            $this->user_level_id = UserLevels::getScalar('id', ['id' => $this->user_level_id]);
+        } else {
+            $this->user_level_id = UserLevels::getScalar('id', ['id' => $this->user_level_id]);
+        }
+        /* if (!empty($this->user_level_id)) {
+             if (is_string($this->user_level_id)) {
+                 $this->user_level_id = array_map('trim', explode(' ', $this->user_level_id));
+             }
+         } else {
+             $this->user_level_id = [];
+         }*/
         // just fill all permissions by default
         $this->permissions = json_encode(array_keys(Help::$permissions));
         return parent::beforeSave($insert);
@@ -145,6 +170,7 @@ class HelpContent extends ActiveRecord implements ActiveSearchInterface
     public function afterFind()
     {
         $this->permissions = json_decode($this->permissions);
+        $this->user_level_id = UserLevels::getScalar('id', ['id' => $this->user_level_id]);
         parent::afterFind();
     }
 

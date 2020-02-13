@@ -133,5 +133,14 @@ class UserLevels extends ActiveRecord implements ActiveSearchInterface
         return $this->hasOne(static::class, ['id' => 'parent_id']);
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public static function getListData($valueColumn = 'id', $textColumn = 'name', $prompt = false, $condition = '', $params = [], $options = [])
+    {
+        $options['orderBy'] = ['id' => SORT_ASC];
+        return parent::getListData($valueColumn, $textColumn, $prompt, $condition, $params, $options);
+    }
+
 
 }

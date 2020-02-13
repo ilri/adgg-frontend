@@ -6,7 +6,8 @@ use yii\helpers\Url;
 <div class="kt-header__topbar-item dropdown">
     <div class="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="30px, 0px"
          aria-expanded="true">
-									<span class="kt-header__topbar-icon" id="button-show-notifications"
+									<span class="kt-header__topbar-icon" title="Notifications"
+                                          id="button-show-notifications"
                                           data-mark-as-seen-url="<?= Url::to(['/conf/notif/mark-as-seen']) ?>"
                                           data-check-notif-url="<?= Url::to(['/conf/notif/fetch']) ?>">
 										<i class="flaticon2-bell-alarm-symbol"></i>
