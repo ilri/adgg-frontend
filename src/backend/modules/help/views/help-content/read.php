@@ -29,17 +29,17 @@ $format = Yii::$app->request->get('format', null);
             //$model->content = preg_replace('/<img /', '<img width="1024" ', $model->content);
     ?>
     <?php if($format === null): ?>
-        <div class="card">
+        <div class="card mb-2">
             <div class="card-header">
                 <div class="card-title" data-toggle="collapse" data-target="#collapse<?= $i ?>" aria-expanded="true"
                      aria-controls="collapseOne">
                     <i class="fas fa-chevron-down"></i> <?= $i .' - '. $model->name ?>:
                 </div>
             </div>
-        </div>
-        <div id="collapse<?= $i ?>" class="collapse" data-parent="#accordion">
-            <div class="card-body">
-                <div class="help-content-body mt-3 mb-3"><?= HtmlPurifier::process($model->content) ?></div>
+            <div id="collapse<?= $i ?>" class="collapse" data-parent="#accordion">
+                <div class="card-body">
+                    <div class="help-content-body mt-3 mb-3"><?= HtmlPurifier::process($model->content) ?></div>
+                </div>
             </div>
         </div>
 
