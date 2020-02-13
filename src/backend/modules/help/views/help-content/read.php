@@ -3,8 +3,6 @@
 use backend\modules\auth\Session;
 use backend\modules\help\assets\PDFAsset;
 use backend\modules\help\models\HelpContent;
-use common\helpers\Url;
-use yii\helpers\Html;
 use yii\helpers\HtmlPurifier;
 
 /* @var $this yii\web\View */
@@ -19,11 +17,11 @@ PDFAsset::register($this);
 $format = Yii::$app->request->get('format', null);
 ?>
 <div class="help-content-view">
-    <?php if($format === null): ?>
+    <?php if ($format === null): ?>
         <?= $this->render('_filter', ['filterOptions' => $filterOptions,]) ?>
     <?php endif; ?>
     <div class="accordion mb-5" id="accordion">
-    <?php
+        <?php
         $i = 0;
         foreach ($models as $model):
             /* @var $model HelpContent */
