@@ -3,7 +3,6 @@
 namespace backend\modules\help\controllers;
 
 use backend\modules\auth\Acl;
-use backend\modules\auth\models\UserLevels;
 use backend\modules\help\Constants;
 use backend\modules\help\models\HelpContent;
 use Yii;
@@ -80,6 +79,13 @@ class HelpContentController extends Controller
         ]);
     }
 
+    /**
+     * @return mixed
+     * @throws NotFoundHttpException
+     * @throws \yii\db\Exception
+     * @throws \yii\web\BadRequestHttpException
+     * @throws \yii\web\ForbiddenHttpException
+     */
     public function actionCreate()
     {
         $this->hasPrivilege(Acl::ACTION_CREATE);
@@ -88,6 +94,14 @@ class HelpContentController extends Controller
         return $model->simpleSave('create', 'index');
     }
 
+    /**
+     * @param $id
+     * @return bool|string
+     * @throws NotFoundHttpException
+     * @throws \yii\base\ExitException
+     * @throws \yii\web\BadRequestHttpException
+     * @throws \yii\web\ForbiddenHttpException
+     */
     public function actionUpdate($id)
     {
         $this->hasPrivilege(Acl::ACTION_UPDATE);
@@ -96,6 +110,13 @@ class HelpContentController extends Controller
         return $model->simpleSave('update', 'index');
     }
 
+    /**
+     * @param $id
+     * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws \yii\web\BadRequestHttpException
+     * @throws \yii\web\ForbiddenHttpException
+     */
     public function actionDelete($id)
     {
         $this->hasPrivilege(Acl::ACTION_DELETE);

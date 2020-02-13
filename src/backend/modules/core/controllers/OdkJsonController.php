@@ -29,7 +29,7 @@ class OdkJsonController extends Controller
     }
 
 
-    public function actionIndex($tab = 1)
+    public function actionIndex($tab = 1, $org_id = null)
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
         $searchModel = OdkJsonQueue::searchModel([
@@ -50,6 +50,7 @@ class OdkJsonController extends Controller
             default:
                 $searchModel->is_processed = 0;
         }
+        $searchModel->org_id = $org_id;
 
         return $this->render('index', [
             'searchModel' => $searchModel,

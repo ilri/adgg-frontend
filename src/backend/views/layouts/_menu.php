@@ -186,11 +186,29 @@ $countries = Organization::find()->orderBy(['code' => SORT_ASC])->all();
                 </li>
             <?php endif; ?>
             <?php if (Yii::$app->user->canView(Constants::RES_USERS)): ?>
-                <li class="kt-menu__item kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'auth/user' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
-                    <a href="<?= Url::to(['/auth/user/index']) ?>" class="kt-menu__link">
+                <li class="kt-menu__item  kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'auth/user' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
+                    <a href="#" class="kt-menu__link kt-menu__toggle">
                         <i class="kt-menu__link-icon far fa-users"></i>
                         <span class="kt-menu__link-text">USERS</span>
+                        <i class="kt-menu__ver-arrow la la-angle-right"></i>
                     </a>
+                    <div class="kt-menu__submenu">
+                        <span class="kt-menu__arrow"></span>
+                        <ul class="kt-menu__subnav">
+                            <?php foreach ($countries as $country): ?>
+                                <?php if (Session::getOrgId() == $country->id || Session::isPrivilegedAdmin()): ?>
+                                    <li class="kt-menu__item">
+                                        <a href="<?= Url::to(['/auth/user/index', 'org_id' => $country->id]) ?>"
+                                           class="kt-menu__link ">
+                                            <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                            <span class="kt-menu__link-text"><?= Lang::t('{country}', ['country' => $country->name]) ?></span>
+                                        </a>
+                                    </li>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+
+                        </ul>
+                    </div>
                 </li>
             <?php endif; ?>
             <?php if (Yii::$app->user->canView(Constants::RES_SYSTEM_SETTINGS)): ?>
@@ -202,19 +220,55 @@ $countries = Organization::find()->orderBy(['code' => SORT_ASC])->all();
                 </li>
             <?php endif; ?>
             <?php if (Yii::$app->user->canView(Constants::RES_ODK_JSON)): ?>
-                <li class="kt-menu__item kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'core/odk-json' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
-                    <a href="<?= Url::to(['/core/odk-json/index']) ?>" class="kt-menu__link">
+                <li class="kt-menu__item  kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'core/odk-json' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
+                    <a href="#" class="kt-menu__link kt-menu__toggle">
                         <i class="kt-menu__link-icon far fa-file-alt"></i>
                         <span class="kt-menu__link-text">ODK JSON FILES</span>
+                        <i class="kt-menu__ver-arrow la la-angle-right"></i>
                     </a>
+                    <div class="kt-menu__submenu">
+                        <span class="kt-menu__arrow"></span>
+                        <ul class="kt-menu__subnav">
+                            <?php foreach ($countries as $country): ?>
+                                <?php if (Session::getOrgId() == $country->id || Session::isPrivilegedAdmin()): ?>
+                                    <li class="kt-menu__item">
+                                        <a href="<?= Url::to(['/core/odk-json/index', 'org_id' => $country->id]) ?>"
+                                           class="kt-menu__link ">
+                                            <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                            <span class="kt-menu__link-text"><?= Lang::t('{country}', ['country' => $country->name]) ?></span>
+                                        </a>
+                                    </li>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+
+                        </ul>
+                    </div>
                 </li>
             <?php endif; ?>
             <?php if (Yii::$app->user->canView(Constants::RES_EXCEL_UPLOAD_STATUS)): ?>
-                <li class="kt-menu__item kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'core/excel-upload-status' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
-                    <a href="<?= Url::to(['/core/excel-upload-status/index']) ?>" class="kt-menu__link">
+                <li class="kt-menu__item  kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'core/excel-upload-status' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
+                    <a href="#" class="kt-menu__link kt-menu__toggle">
                         <i class="kt-menu__link-icon far fa-file-alt"></i>
                         <span class="kt-menu__link-text">EXCEL/CSV FILES</span>
+                        <i class="kt-menu__ver-arrow la la-angle-right"></i>
                     </a>
+                    <div class="kt-menu__submenu">
+                        <span class="kt-menu__arrow"></span>
+                        <ul class="kt-menu__subnav">
+                            <?php foreach ($countries as $country): ?>
+                                <?php if (Session::getOrgId() == $country->id || Session::isPrivilegedAdmin()): ?>
+                                    <li class="kt-menu__item">
+                                        <a href="<?= Url::to(['/core/excel-upload-status/index', 'org_id' => $country->id]) ?>"
+                                           class="kt-menu__link ">
+                                            <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                            <span class="kt-menu__link-text"><?= Lang::t('{country}', ['country' => $country->name]) ?></span>
+                                        </a>
+                                    </li>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+
+                        </ul>
+                    </div>
                 </li>
             <?php endif; ?>
             <li class="kt-menu__section ">
@@ -223,10 +277,17 @@ $countries = Organization::find()->orderBy(['code' => SORT_ASC])->all();
             </li>
             <?php if (Yii::$app->user->canView(HelpConstants::RES_HELP)): ?>
                 <li class="kt-menu__item kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'help/help-content' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
-                    <a href="<?= Url::to(['/help/help-content/index']) ?>" class="kt-menu__link">
-                        <i class="kt-menu__link-icon far fa-info-circle"></i>
-                        <span class="kt-menu__link-text">HELP CONTENT</span>
-                    </a>
+                    <?php if (Session::isPrivilegedAdmin()): ?>
+                        <a href="<?= Url::to(['/help/help-content/index']) ?>" class="kt-menu__link">
+                            <i class="kt-menu__link-icon far fa-info-circle"></i>
+                            <span class="kt-menu__link-text">HELP CONTENT</span>
+                        </a>
+                    <?php else: ?>
+                        <a href="<?= Url::to(['/help/help-content/read']) ?>" class="kt-menu__link">
+                            <i class="kt-menu__link-icon far fa-info-circle"></i>
+                            <span class="kt-menu__link-text">HELP CONTENT</span>
+                        </a>
+                    <?php endif; ?>
                 </li>
             <?php endif; ?>
         </ul>
