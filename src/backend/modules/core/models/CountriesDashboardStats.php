@@ -318,7 +318,7 @@ class CountriesDashboardStats extends Model
     {
         $condition = '';
         $params = [];
-        list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
+      //  list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
         $data = [];
         // get breeds
         $breeds = Choices::getList(\backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS);
