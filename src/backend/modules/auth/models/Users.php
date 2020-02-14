@@ -129,9 +129,9 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
                 'on' => self::SCENARIO_SEARCH
             ],
             static::passwordValidator(),
-            $this->passwordHistoryValidator(),
+            ['password', 'passwordHistoryValidator', 'on' => [self::SCENARIO_CHANGE_PASSWORD, self::SCENARIO_RESET_PASSWORD]],
             [['region_id', 'district_id', 'ward_id', 'village_id', 'additional_attributes'], 'safe'],
-            [$this->getAdditionalAttributes(), 'safe'],
+            [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
             ['odk_code', 'unique', 'targetAttribute' => ['org_id', 'odk_code'], 'message' => '{attribute} already exists.'],
         ];
     }

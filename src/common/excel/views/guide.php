@@ -1,5 +1,6 @@
 <?php
 /* @var $sampleUrl string */
+/* @var $model common\excel\ExcelUploadForm */
 ?>
 
 <div class="card">
@@ -31,9 +32,15 @@
                 </li>
             </ul>
             </p>
+            <p>
+                4. Upload Excel/CSV with these columns:
+                <strong>
+                    <?= implode(', ', $model->targetModel->getExcelColumns()) ?>
+                </strong>
+            </p>
 
             <p>
-                4. Click here to <a href="<?= $sampleUrl ?>" target="_top">download a sample excel.</a>
+                5. Click here to <a href="<?= $sampleUrl ?>" target="_top">download a sample excel.</a>
             </p>
         </div>
     </div>
