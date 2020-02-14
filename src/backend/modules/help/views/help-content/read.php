@@ -39,13 +39,12 @@ $format = Yii::$app->request->get('format', null);
                             <i class="fas fa-chevron-down"></i> <?= $i . ' - ' . $model->name ?>:
                         </div>
                     </div>
-                </div>
-                <div id="collapse<?= $i ?>" class="collapse" data-parent="#accordion">
-                    <div class="card-body">
-                        <div class="help-content-body mt-3 mb-3"><?= HtmlPurifier::process($model->content) ?></div>
+                    <div id="collapse<?= $i ?>" class="collapse" data-parent="#accordion">
+                        <div class="card-body">
+                            <div class="help-content-body mt-3 mb-3"><?= HtmlPurifier::process($model->content) ?></div>
+                        </div>
                     </div>
                 </div>
-
             <?php else: ?>
                 <div class="help-content-container card card-body mb-5">
                     <div class="help-content-container card card-body mb-5">

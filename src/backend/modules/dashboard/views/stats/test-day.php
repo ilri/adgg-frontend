@@ -1,19 +1,18 @@
 <?php
 
-use backend\modules\core\models\AnimalEvent;
+use backend\controllers\BackendController;
 use backend\modules\core\models\CountriesDashboardStats;
 use backend\modules\core\models\MilkingReport;
 use backend\modules\core\models\Organization;
-use backend\modules\core\models\OrganizationUnits;
-use common\helpers\DbUtils;
 use common\helpers\Lang;
 use common\widgets\highchart\HighChart;
 use yii\helpers\Json;
 
 /* @var $this yii\web\View */
-/* @var $controller \backend\controllers\BackendController */
+/* @var $controller BackendController */
 /* @var $graphFilterOptions array */
 /* @var $country Organization */
+/* @var $dataProvider */
 $controller = Yii::$app->controller;
 $this->title = Lang::t('Test Day Milk Report');
 $this->params['breadcrumbs'] = [
@@ -35,7 +34,6 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                         <div id="chartContainer" title=""></div>
                         <?php
                         $data = [];
-
                         $chart_data = CountriesDashboardStats::getTestDayMilkGroupedByRegions($country->id);
 
                         if (count($chart_data) > 0) {
@@ -82,5 +80,8 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                 </div>
             </div>
         </div>
+    </div>
+    <div class="col-md-12">
+        <?= $this->render('_animalGrid', ['dataProvider' => $dataProvider]) ?>
     </div>
 </div>

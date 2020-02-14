@@ -55,9 +55,10 @@ class CountriesStatsController extends ActiveController
     }
 
     /**
-     * @param integer $report_id
-     * @param integer $org_id
+     * @param $report_id
+     * @param $org_id
      * @return array
+     * @throws \Exception
      */
     public function actionCountryReport($report_id, $org_id)
     {

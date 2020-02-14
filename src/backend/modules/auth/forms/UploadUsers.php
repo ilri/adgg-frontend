@@ -12,16 +12,12 @@ namespace backend\modules\auth\forms;
 use backend\modules\auth\models\Users;
 use backend\modules\core\models\ExcelImport;
 use backend\modules\core\models\OrganizationUnits;
-use common\excel\ExcelReaderTrait;
 use common\excel\ExcelUploadForm;
 use common\excel\ImportInterface;
 use common\helpers\Msisdn;
-use Yii;
 
 class UploadUsers extends ExcelUploadForm implements ImportInterface
 {
-    use ExcelReaderTrait;
-
     /**
      * @var int
      */
@@ -97,76 +93,9 @@ class UploadUsers extends ExcelUploadForm implements ImportInterface
 
             $insert_data[$k] = $row;
         }
-        $model =new Users(['org_id' => $this->org_id, 'level_id' => $this->level_id, 'role_id' => $this->role_id]);
+        $model = new Users(['org_id' => $this->org_id, 'level_id' => $this->level_id, 'role_id' => $this->role_id]);
 
-        $this->save($insert_data, $model);
-    }
-
-    /**
-     * @param $batch
-     * @return mixed
-     * @throws \Exception
-     */
-    public function processExcelBatchDataX($batch)
-    {
-        $columns = [];
-        $insert_data = [];
-
-        foreach ($batch as $k => $excel_row) {
-            $row = $this->getExcelRowColumns($excel_row, $columns);
-            if (empty($row))
-                continue;
-
-            $row['org_id'] = $this->org_id;
-            $row['level_id'] = $this->level_id;
-            $row['role_id'] = $this->role_id;
-
-            if (!empty($row['phone'])) {
-                $row['phone'] = $this->cleanPhoneNumber($row['phone']);
-            }
-            if (!empty($row['region_code'])) {
-                $row['region_id'] = $this->getRegionId($row['region_code']);
-            }
-            if (!empty($row['district_code'])) {
-                $row['district_id'] = $this->getDistrictId($row['district_code']);
-            }
-
-            $insert_data[$k] = $row;
-        }
-
-        $model =new Users(['org_id' => $this->org_id, 'level_id' => $this->level_id, 'role_id' => $this->role_id]);
-        $this->save($insert_data, $model, true, ['code' => '{username}', 'org_id' => $this->org_id, 'level' => $this->level]);
-    }
-
-    /**
-     * @param array $data
-     * @return bool
-     */
-    public function saveT($data)
-    {
-        if (empty($data))
-            return false;
-
-        $model = clone $this->_model;
-        $model->auto_generate_password = 1;
-        foreach ($data as $n => $row) {
-            $newModel = Users::find()->andWhere([
-                'username' => $row['username'],
-                'org_id' => $row['org_id'],
-            ])->one();
-
-            if (null === $newModel) {
-                $newModel = clone $model;
-            }
-            $newModel->setScenario(Users::SCENARIO_UPLOAD);
-            $this->saveExcelRow($newModel, $row, $n);
-        }
-
-        if (!empty($this->_failedRows)) {
-            foreach ($this->_failedRows as $log) {
-                Yii::warning($log);
-            }
-        }
+        $this->save($insert_data, $model, false, ['username' => '{username}', 'org_id' => $this->org_id]);
     }
 
     protected function cleanPhoneNumber($number)

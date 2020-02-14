@@ -9,7 +9,6 @@ use common\helpers\Utils;
 use common\models\ActiveRecord;
 use kartik\password\StrengthValidator;
 use Yii;
-use yii\base\InvalidArgumentException;
 use yii\base\NotSupportedException;
 use yii\web\IdentityInterface;
 use yii2tech\authlog\AuthLogIdentityBehavior;
@@ -189,18 +188,23 @@ abstract class UserIdentity extends ActiveRecord implements IdentityInterface
 
     public function behaviors()
     {
+        if (!Utils::isWebApp()) {
+            return [];
+        }
+        $ip = Yii::$app->request->getUserIP();
+        $host = @gethostbyaddr(Yii::$app->request->getUserIP());
+        $url = Yii::$app->request->getAbsoluteUrl();
+        $userAgent = Yii::$app->request->getUserAgent();
         return [
             'authLog' => [
                 'class' => AuthLogIdentityBehavior::class,
                 'authLogRelation' => 'authLogs',
-                'defaultAuthLogData' => function ($model) {
-                    return [
-                        'ip' => Yii::$app->request->getUserIP(),
-                        'host' => @gethostbyaddr(Yii::$app->request->getUserIP()),
-                        'url' => Yii::$app->request->getAbsoluteUrl(),
-                        'userAgent' => Yii::$app->request->getUserAgent(),
-                    ];
-                },
+                'defaultAuthLogData' => [
+                    'ip' => $ip,
+                    'host' => $host,
+                    'url' => $url,
+                    'userAgent' => $userAgent,
+                ],
             ],
         ];
     }
@@ -240,7 +244,7 @@ abstract class UserIdentity extends ActiveRecord implements IdentityInterface
      * @return $this
      * @throws \yii\web\NotFoundHttpException
      */
-    public static function findByPasswordResetToken($token,  $is_api = false)
+    public static function findByPasswordResetToken($token, $is_api = false)
     {
         if (!$is_api) {
             if (!static::isPasswordResetTokenValid($token)) {
@@ -469,26 +473,20 @@ abstract class UserIdentity extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * @return array
+     * @throws \Exception
      */
     public function passwordHistoryValidator()
     {
-        return [
-            'password',
-            function () {
-                $limit = 5;
-                //@todo define in settings
-                $passwordHistory = PasswordResetHistory::getColumnData('old_password_hash', ['user_id' => $this->id], [], ['orderBy' => ['id' => SORT_DESC], 'limit' => $limit]);
-                foreach ($passwordHistory as $p) {
-                    if (Yii::$app->security->validatePassword($this->password, $p)) {
-                        $this->addError('password', Lang::t('You cannot use a recent password.'));
-                        return false;
-                    }
+        if (!$this->hasErrors() && ($this->scenario === self::SCENARIO_CHANGE_PASSWORD || $this->scenario === self::SCENARIO_RESET_PASSWORD)) {
+            $limit = 5;
+            $passwordHistory = PasswordResetHistory::getColumnData('old_password_hash', ['user_id' => $this->id], [], ['orderBy' => ['id' => SORT_DESC], 'limit' => $limit]);
+            foreach ($passwordHistory as $p) {
+                if (Yii::$app->security->validatePassword($this->password, $p)) {
+                    $this->addError('password', Lang::t('You cannot use a recent password.'));
+                    return;
                 }
-                return true;
-            },
-            'on' => [self::SCENARIO_CHANGE_PASSWORD, self::SCENARIO_RESET_PASSWORD]
-        ];
+            }
+        }
     }
 
     public function validateCurrentPassword()

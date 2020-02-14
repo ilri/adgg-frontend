@@ -1,10 +1,10 @@
 <?php
 
-use backend\modules\core\models\LSFMilkingReport;
+use backend\modules\core\models\MilkingReport;
 use common\widgets\grid\GridView;
 
 /* @var $this yii\web\View */
-/* @var $dataProvider LSFMilkingReport */
+/* @var $dataProvider MilkingReport */
 ?>
 
 <?= GridView::widget([

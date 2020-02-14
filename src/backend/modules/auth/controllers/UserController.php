@@ -7,6 +7,7 @@ use backend\modules\auth\forms\UploadUsers;
 use backend\modules\auth\models\UserLevels;
 use backend\modules\auth\Session;
 use backend\modules\core\models\Organization;
+use common\controllers\UploadExcelTrait;
 use common\helpers\DateUtils;
 use Yii;
 use backend\modules\auth\Acl;
@@ -21,6 +22,7 @@ use app\modules\auth\models\PasswordResetHistory;
  */
 class UserController extends Controller
 {
+    use UploadExcelTrait;
     /**
      * @inheritdoc
      */
@@ -222,6 +224,15 @@ class UserController extends Controller
         return json_encode($data);
     }
 
+    /**
+     * @param $level_id
+     * @param null $org_id
+     * @return bool|false|string
+     * @throws BadRequestHttpException
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\web\ForbiddenHttpException
+     * @throws \yii\web\NotFoundHttpException
+     */
     public function actionUpload($level_id, $org_id = null)
     {
         if (Session::isOrganization()) {
@@ -230,27 +241,9 @@ class UserController extends Controller
         $this->hasPrivilege(Acl::ACTION_CREATE);
 
         $form = new UploadUsers(Users::class, ['org_id' => $org_id, 'level_id' => $level_id]);
-        if ($form->load(Yii::$app->request->post())) {
-            if ($form->validate() && $form->addToExcelQueue()) {
-                //process the file
-                $form->saveExcelData();
-                if (count($form->getSavedRows()) > 0) {
-                    $successMsg = Lang::t('{n} rows successfully uploaded.', ['n' => count($form->getSavedRows())]);
-                    Yii::$app->session->setFlash('success', $successMsg);
-                }
-                if (count($form->getFailedRows()) > 0) {
-                    $warningMsg = '<p>' . Lang::t('{n} rows could could not be saved.', ['n' => count($form->getFailedRows())]) . '</p>';
-                    $warningMsg .= '<ul style="max-height: 200px;overflow: auto">';
-                    foreach ($form->getFailedRows() as $n => $message) {
-                        $warningMsg .= '<li>' . $message . '</li>';
-                    }
-                    $warningMsg .= '</ul>';
-                    Yii::$app->session->setFlash('warning', $warningMsg);
-                }
-                return json_encode(['success' => true, 'savedRows' => $form->getSavedRows(), 'failedRows' => $form->getFailedRows(), 'redirectUrl' => Url::to(['index', 'org_id' => $org_id, 'level_id' => $level_id])]);
-            } else {
-                return json_encode(['success' => false, 'message' => $form->getErrors()]);
-            }
+        $resp = $this->uploadExcelConsole($form, 'index', ['org_id' => $org_id, 'level_id' => $level_id]);
+        if ($resp !== false) {
+            return $resp;
         }
 
         return $this->render('upload', [
@@ -258,6 +251,14 @@ class UserController extends Controller
         ]);
     }
 
+    /**
+     * @param $level_id
+     * @param null $org_id
+     * @return bool|string
+     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * @throws \PhpOffice\PhpSpreadsheet\Reader\Exception
+     * @throws \yii\base\InvalidConfigException
+     */
     public function actionUploadPreview($level_id, $org_id = null)
     {
         $form = new UploadUsers(Users::class, ['level_id' => $level_id, 'org_id' => $org_id]);

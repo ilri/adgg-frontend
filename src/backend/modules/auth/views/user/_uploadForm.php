@@ -44,7 +44,7 @@ use yii\bootstrap4\ActiveForm;
         <div class="kt-section kt-section--first">
             <div class="kt-section__body">
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-8">
                         <?php if (!Session::isOrganization()): ?>
                             <?= $form->field($model, 'org_id')->widget(Select2::class, [
                                 'data' => Organization::getListData(),
@@ -63,7 +63,7 @@ use yii\bootstrap4\ActiveForm;
                         ]) ?>
                         <?= $this->render('@common/excel/views/uploadExcel', ['model' => $model, 'form_id' => $formId, 'previewUrl' => Url::to(['upload-preview', 'org_id' => $model->org_id, 'level_id' => $model->level_id])]); ?>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <?= $this->render('@common/excel/views/guide', ['model' => $model, 'sampleUrl' => Url::to(['/helper/download-excel-sample', 'route' => 'users.xlsx']),]); ?>
                     </div>
                 </div>
