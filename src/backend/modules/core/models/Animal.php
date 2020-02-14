@@ -555,4 +555,10 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             ];
         }
     }
+
+    public static function getListData($valueColumn = 'id', $textColumn = 'name', $prompt = false, $condition = '', $params = [], $options = [])
+    {
+        $options['orderBy'] = ['id' => SORT_ASC];
+        return parent::getListData($valueColumn, $textColumn, $prompt, $condition, $params, $options);
+    }
 }

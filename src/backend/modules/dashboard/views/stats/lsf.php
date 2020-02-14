@@ -15,6 +15,8 @@ use yii\helpers\Json;
 /* @var $controller \backend\controllers\BackendController */
 /* @var $graphFilterOptions array */
 /* @var $country Organization */
+/* @var $dataProvider */
+
 $controller = Yii::$app->controller;
 $this->title = Lang::t('Large Scale Farm Report');
 $this->params['breadcrumbs'] = [
