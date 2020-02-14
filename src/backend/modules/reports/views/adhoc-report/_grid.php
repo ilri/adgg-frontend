@@ -59,7 +59,7 @@ use yii\helpers\Url;
         [
             'label' => 'Download',
             'filter' => false,
-            'format' => 'html',
+            'format' => 'raw',
             'value' => function (AdhocReport $model) {
                 return Html::a(Lang::t('Download Report') . ' <i class="fas fa-download"></i>', ['download-file', 'id' => $model->id], ['data-pjax' => 0]);
             },
