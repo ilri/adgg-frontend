@@ -35,7 +35,8 @@ use common\helpers\Url;
             'buttons' => [],
             'updateOptions' => [
                 'data-pjax' => 0,
-                'class'=>'',
+                'class' => '',
+                'modal' => false,
             ],
         ],
     ]

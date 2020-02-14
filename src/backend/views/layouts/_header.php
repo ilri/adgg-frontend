@@ -22,9 +22,9 @@ $user = Yii::$app->user->identity;
     <div class="kt-header__topbar">
         <div class="kt-header__topbar-item">
             <a class="pt-3" href="<?= Url::to(['/help/help-content/index']) ?>">
-            <div class="kt-header__topbar-wrapper">
-                <span class="kt-header__topbar-icon"><i class="flaticon2-information"></i></span>
-            </div>
+                <div class="kt-header__topbar-wrapper">
+                    <span class="kt-header__topbar-icon" title="Help"><i class="flaticon2-information"></i></span>
+                </div>
             </a>
         </div>
         <!--begin: Notifications -->
@@ -34,7 +34,7 @@ $user = Yii::$app->user->identity;
         <!--begin: Quick Actions -->
         <div class="kt-header__topbar-item">
             <div class="kt-header__topbar-wrapper" id="kt_offcanvas_toolbar_quick_actions_toggler_btn">
-                <span class="kt-header__topbar-icon"><i class="flaticon2-gear"></i></span>
+                <span class="kt-header__topbar-icon" title="Settings"><i class="flaticon2-gear"></i></span>
             </div>
         </div>
 
