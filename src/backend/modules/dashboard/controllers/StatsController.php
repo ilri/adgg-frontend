@@ -9,6 +9,7 @@
 namespace backend\modules\dashboard\controllers;
 
 
+use backend\modules\core\models\CountriesDashboardStats;
 use backend\modules\core\models\MilkingReport;
 use backend\modules\core\models\Organization;
 
@@ -70,9 +71,11 @@ class StatsController extends Controller
 
     public function actionDash2($org_id = null)
     {
+        $dataProvider = CountriesDashboardStats::getGetAnimalsMilkingRecords($org_id);
         $country = Organization::findOne(['id' => $org_id]);
         return $this->render('test-day', [
             'org_id' => $org_id,
+            'dataProvider' => $dataProvider,
             'country' => $country,
         ]);
     }

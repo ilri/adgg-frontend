@@ -15,7 +15,7 @@ class HelpModulesController extends Controller
 
     public function init()
     {
-        $this->resourceLabel = 'Help Modules';
+        $this->resourceLabel = 'Help Module';
         $this->resource = Constants::RES_HELP;
         //$this->skipPermissionCheckOnAction = true;
         parent::init();
