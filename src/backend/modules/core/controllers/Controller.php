@@ -58,6 +58,7 @@ class Controller extends BackendController
                             'process',
                             'download-file',
                             'download-error',
+                            'event-list',
                         ],
                         'allow' => true,
                         'roles' => ['@'],

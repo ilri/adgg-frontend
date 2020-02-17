@@ -1,14 +1,11 @@
 <?php
 
 use backend\modules\core\models\AnimalEvent;
-use backend\modules\core\models\Choices;
-use backend\modules\core\models\ChoiceTypes;
 use common\helpers\Lang;
 use common\widgets\grid\GridView;
 use yii\helpers\Url;
-use yii\web\View;
 
-/* @var $this View */
+/* @var $this \yii\web\View */
 /* @var $model AnimalEvent */
 ?>
 <?= GridView::widget([
@@ -20,7 +17,7 @@ use yii\web\View;
     'columns' => [
         [
             'attribute' => 'event_date',
-            'label' => 'Health Date',
+            'label' => 'Exit Date',
             'format' => ['date', 'php:d-M-Y'],
         ],
         [
@@ -35,21 +32,6 @@ use yii\web\View;
             'value' => function (AnimalEvent $model) {
                 return $model->animal->name;
             },
-        ],
-        [
-            'attribute' => 'health_category',
-            'enableSorting' => false,
-        ],
-        [
-            'attribute' => 'health_provider',
-            'value' => function (AnimalEvent $model) {
-                return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_HEALTH_PROVIDER, $model->health_provider);
-            },
-            'enableSorting' => false,
-        ],
-        [
-            'attribute' => 'health_drug_cost',
-            'enableSorting' => false,
         ],
     ],
 ]);

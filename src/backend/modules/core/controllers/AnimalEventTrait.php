@@ -40,42 +40,39 @@ trait AnimalEventTrait
         $searchModel = $this->setSessionData($searchModel, $org_id, $region_id, $district_id, $ward_id, $village_id);
 
         $grid = null;
-        $upload_url = null;
         switch ($event_type) {
             case AnimalEvent::EVENT_TYPE_CALVING:
-                $upload_url = 'calving-event/upload';
                 $grid = 'calving';
                 break;
             case AnimalEvent::EVENT_TYPE_MILKING:
-                $upload_url = 'milking-event/upload';
                 $grid = 'milking';
                 break;
             case AnimalEvent::EVENT_TYPE_AI:
-                $upload_url = 'insemination-event/upload';
                 $grid = 'ai';
                 break;
             case AnimalEvent::EVENT_TYPE_PREGNANCY_DIAGNOSIS:
-                $upload_url = 'pd-event/upload';
                 $grid = 'pregnancy_diagnosis';
                 break;
             case AnimalEvent::EVENT_TYPE_SYNCHRONIZATION:
-                $upload_url = 'synchronization-event/upload';
                 $grid = 'synchronization';
                 break;
             case AnimalEvent::EVENT_TYPE_WEIGHTS:
-                $upload_url = 'weight-event/upload';
                 $grid = 'weights';
                 break;
             case AnimalEvent::EVENT_TYPE_HEALTH:
-                $upload_url = 'health-event/upload';
                 $grid = 'health';
+                break;
+            case AnimalEvent::EVENT_TYPE_FEEDING:
+                $grid = 'feeding';
+                break;
+            case AnimalEvent::EVENT_TYPE_EXITS:
+                $grid = 'exits';
                 break;
         }
 
         return $this->render('@coreModule/views/animal-event/index', [
             'searchModel' => $searchModel,
             'grid' => $grid,
-            'upload_url' => $upload_url,
         ]);
     }
 }
