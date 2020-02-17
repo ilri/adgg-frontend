@@ -3,6 +3,7 @@
 use backend\modules\auth\Session;
 use backend\modules\help\assets\PDFAsset;
 use backend\modules\help\models\HelpContent;
+use yii\helpers\Html;
 use yii\helpers\HtmlPurifier;
 
 /* @var $this yii\web\View */
@@ -36,7 +37,7 @@ $format = Yii::$app->request->get('format', null);
                         <div class="card-title" data-toggle="collapse" data-target="#collapse<?= $i ?>"
                              aria-expanded="true"
                              aria-controls="collapseOne">
-                            <i class="fas fa-chevron-down"></i> <?= $i . ' - ' . $model->name ?>:
+                            <i class="fas fa-chevron-down"></i> <?= Html::encode($i . ' - ' . $model->name)  ?>:
                         </div>
                     </div>
                     <div id="collapse<?= $i ?>" class="collapse" data-parent="#accordion">
@@ -48,7 +49,7 @@ $format = Yii::$app->request->get('format', null);
             <?php else: ?>
                 <div class="help-content-container card card-body mb-5">
                     <div class="help-content-container card card-body mb-5">
-                        <div class="help-content-title"><h3><?= $i . ' - ' . $model->name ?></h3></div>
+                        <div class="help-content-title"><h3><?= Html::encode($i . ' - ' . $model->name) ?></h3></div>
                         <div class="help-content-body mt-3 mb-3"><?= HtmlPurifier::process($model->content) ?></div>
                     </div>
                 </div>
