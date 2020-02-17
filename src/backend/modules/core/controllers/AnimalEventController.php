@@ -11,7 +11,9 @@ namespace backend\modules\core\controllers;
 
 use backend\modules\auth\Acl;
 use backend\modules\core\Constants;
+use backend\modules\core\forms\UploadFarms;
 use backend\modules\core\models\AnimalEvent;
+use backend\modules\core\models\Farm;
 use common\controllers\UploadExcelTrait;
 
 class AnimalEventController extends Controller
