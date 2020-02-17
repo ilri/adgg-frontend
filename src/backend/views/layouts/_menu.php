@@ -68,7 +68,7 @@ $countries = Organization::find()->orderBy(['code' => SORT_ASC])->all();
                             <?php foreach ($countries as $country): ?>
                                 <?php if (Session::getOrgId() == $country->id || Session::isPrivilegedAdmin()): ?>
                                     <li class="kt-menu__item">
-                                        <a href="<?= Url::to(['/core/event-list/index', 'org_id' => $country->id]) ?>"
+                                        <a href="<?= Url::to(['/core/animal-event/event-list', 'org_id' => $country->id]) ?>"
                                            class="kt-menu__link ">
                                             <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
                                             <span class="kt-menu__link-text"><?= Lang::t('{country}', ['country' => $country->name]) ?></span>
@@ -194,6 +194,17 @@ $countries = Organization::find()->orderBy(['code' => SORT_ASC])->all();
                     </a>
                     <div class="kt-menu__submenu">
                         <span class="kt-menu__arrow"></span>
+                        <ul class="kt-menu__subnav">
+                            <?php if (Session::isPrivilegedAdmin()): ?>
+                                <li class="kt-menu__item">
+                                    <a href="<?= Url::to(['/auth/user/index']) ?>"
+                                       class="kt-menu__link ">
+                                        <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                        <span class="kt-menu__link-text"><?= Lang::t('All Users') ?></span>
+                                    </a>
+                                </li>
+                            <?php endif; ?>
+                        </ul>
                         <ul class="kt-menu__subnav">
                             <?php foreach ($countries as $country): ?>
                                 <?php if (Session::getOrgId() == $country->id || Session::isPrivilegedAdmin()): ?>

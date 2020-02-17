@@ -1,10 +1,13 @@
 <?php
 
+use backend\controllers\BackendController;
+use backend\modules\core\models\AnimalEvent;
 use common\helpers\Lang;
+use yii\web\View;
 
-/* @var $this \yii\web\View */
-/* @var $searchModel \backend\modules\core\models\AnimalEvent */
-/* @var $controller \backend\controllers\BackendController */
+/* @var $this View */
+/* @var $searchModel AnimalEvent */
+/* @var $controller BackendController */
 /* @var $grid string */
 /* @var $upload_url string */
 
@@ -21,7 +24,7 @@ $this->params['breadcrumbs'] = [
         <?= $this->render('@coreModule/views/animal-event/_tab', ['model' => $searchModel]) ?>
         <div class="tab-content">
             <?= $this->render('_filter', ['model' => $searchModel,]) ?>
-            <?= $this->render('grids/' . $grid, ['model' => $searchModel, 'upload_url' => $upload_url]) ?>
+            <?= $this->render('grids/' . $grid, ['model' => $searchModel]) ?>
         </div>
     </div>
 </div>

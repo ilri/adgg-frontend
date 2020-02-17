@@ -10,7 +10,7 @@ use yii\helpers\Html;
 /* @var $model \backend\modules\reports\models\AdhocReport */
 /* @var $controller \backend\controllers\BackendController */
 $controller = Yii::$app->controller;
-$this->title = Lang::t('Re-add Report back to Queue');
+$this->title = Lang::t('Re-generate Report');
 
 $form = ActiveForm::begin([
     'id' => 'my-modal-form',
@@ -40,7 +40,7 @@ $form = ActiveForm::begin([
 
     <div class="modal-body">
         <div class="hidden" id="my-modal-notif"></div>
-        <?= $form->field($model, 'name'); ?>
+        <?= $form->field($model, 'name')->label('New Report name'); ?>
     </div>
     <div class="modal-footer">
         <button type="submit" class="btn btn-primary">
