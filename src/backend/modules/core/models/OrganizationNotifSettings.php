@@ -64,8 +64,8 @@ class OrganizationNotifSettings extends ActiveRecord implements LineItemModelInt
     {
         return [
             'id' => Lang::t('ID'),
-            'org_id' => Lang::t('Organization'),
-            'notification_id' => Lang::t('Notification'),
+            'org_id' => Lang::t('Country ID'),
+            'notification_id' => Lang::t('Notification ID'),
             'enable_internal_notification' => Lang::t('Enable Internal Notification'),
             'enable_email_notification' => Lang::t('Enable Email Notification'),
             'enable_sms_notification' => Lang::t('Enable Sms Notification'),

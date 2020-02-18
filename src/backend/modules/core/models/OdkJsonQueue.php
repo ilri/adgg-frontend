@@ -79,7 +79,7 @@ class OdkJsonQueue extends ActiveRecord implements ActiveSearchInterface
             'tmp_file' => 'JSON File',
             'is_processed' => 'Is Processed',
             'processed_at' => 'Processed At',
-            'org_id' => 'Country',
+            'org_id' => 'Country ID',
             'has_errors' => 'Has Errors',
             'error_message' => 'Error Message',
             'file_contents' => 'Json',
