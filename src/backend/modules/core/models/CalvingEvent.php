@@ -38,6 +38,13 @@ class CalvingEvent extends AnimalEvent implements ImportActiveRecordInterface
         ]);
     }
 
+    public function attributeLabels()
+    {
+        return ArrayHelper::merge(parent::attributeLabels(), [
+            'event_date' => 'Calving Date',
+        ]);
+    }
+
     public function reportBuilderFields(){
         $this->ignoreAdditionalAttributes = true;
         $attributes = $this->attributes();
