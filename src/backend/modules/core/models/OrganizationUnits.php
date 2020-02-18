@@ -88,7 +88,7 @@ class OrganizationUnits extends ActiveRecord implements ActiveSearchInterface, U
             'code' => 'Code',
             'name' => 'Name',
             'level' => 'Level',
-            'org_id' => 'Country',
+            'org_id' => 'Country ID',
             'contact_name' => 'Contact Name',
             'contact_phone' => 'Contact Phone',
             'contact_email' => 'Contact Email',

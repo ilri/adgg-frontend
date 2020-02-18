@@ -77,7 +77,7 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
         return [
             'id' => 'ID',
             'uuid' => 'Uuid',
-            'org_id' => 'Org ID',
+            'org_id' => 'Country ID',
             'type' => 'Type',
             'is_processed' => 'Is Processed',
             'processed_at' => 'Processed At',
