@@ -2,6 +2,7 @@
 
 return [
     'db' => require(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'db.php'),
+    'mistroKeDb' => require(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'mistro_ke_db.php'),
     'assetManager' => [
         'linkAssets' => true,
         'forceCopy' => YII_DEBUG ? true : false,
