@@ -96,22 +96,10 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
             ]));
             return false;
         }
-        $parentModel = null;
-        switch ($this->table_id) {
-            case ExtendableTable::TABLE_FARM:
-                $parentModel = new Farm();
-                break;
-            case ExtendableTable::TABLE_ANIMAL_ATTRIBUTES:
-                $parentModel = new Animal();
-                break;
-            case ExtendableTable::TABLE_ANIMAL_EVENTS:
-                $parentModel = new AnimalEvent();
-                break;
-            case ExtendableTable::TABLE_USERS:
-                $parentModel = new Users();
-                break;
+        $parentModel = $this->getTableIdModel($this->table_id);
+        if (null === $parentModel) {
+            return false;
         }
-
         $parentModel->ignoreAdditionalAttributes = true;
         if ($parentModel !== null && $parentModel->hasAttribute($this->attribute_key)) {
             $this->addError('attribute_key', Lang::t('{attribute_key_label} already defined in the primary table.', [
@@ -306,7 +294,6 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
     /**
      * @param int $tableId
      * @param int $type
-     * @param int $listTypeId
      * @return mixed
      * @throws \Exception
      */
@@ -320,8 +307,21 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
      */
     public function getAliasToList()
     {
+        $model = $this->getTableIdModel($this->table_id);
+        if (null === $model) {
+            return [];
+        }
+        return $model->getOriginalAttributesListData();
+    }
+
+    /**
+     * @param int $tableId
+     * @return ActiveRecord|TableAttributeInterface|null
+     */
+    protected function getTableIdModel($tableId)
+    {
         $model = null;
-        switch ($this->table_id) {
+        switch ($tableId) {
             case ExtendableTable::TABLE_FARM:
                 $model = new Farm();
                 break;
@@ -334,12 +334,11 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
             case ExtendableTable::TABLE_USERS:
                 $model = new Users();
                 break;
+            case ExtendableTable::TABLE_CLIENTS:
+                $model = new Client();
+                break;
         }
-
-        if (null === $model) {
-            return [];
-        }
-        return $model->getOriginalAttributesListData();
+        return $model;
     }
 
 
