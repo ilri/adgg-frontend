@@ -182,7 +182,7 @@ class HelpContent extends ActiveRecord implements ActiveSearchInterface
         $title = 'ADGG Help Content';
         $pdfHeader = [
             'L' => [
-                //'content' => $model->country->name,
+                //'content' => $model->org->name,
                 'content' => SystemSettings::getAppName(),
                 'font-size' => 8,
                 'color' => '#333333',
