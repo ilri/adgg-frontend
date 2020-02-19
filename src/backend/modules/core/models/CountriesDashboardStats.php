@@ -4,7 +4,6 @@
 namespace backend\modules\core\models;
 
 
-use backend\modules\conf\Settings;
 use backend\modules\conf\settings\SystemSettings;
 use common\helpers\DbUtils;
 use common\helpers\Lang;
@@ -43,7 +42,7 @@ class CountriesDashboardStats extends Model
      */
     public static function getCountryReports($report_id, $country_id = null)
     {
-        $country = OrganizationRef::getScalar('name', ['id' => $country_id]);
+        $country = Country::getScalar('name', ['id' => $country_id]);
         $data = [];
         if ($report_id == static::FARMS_REGISTERED_REPORT) {
             //1. charts
@@ -178,7 +177,7 @@ class CountriesDashboardStats extends Model
         list($condition, $params) = Farm::appendOrgSessionIdCondition($condition, $params);
         $data = [];
         // get regions
-        $regions = OrganizationRefUnits::getListData('id', 'name', '', ['level' => OrganizationRefUnits::LEVEL_REGION]);
+        $regions = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_REGION]);
         foreach ($regions as $id => $label) {
             list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
 
@@ -236,7 +235,7 @@ class CountriesDashboardStats extends Model
         list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
         $data = [];
         // get regions
-        $regions = OrganizationRefUnits::getListData('id', 'name', '', ['level' => OrganizationRefUnits::LEVEL_REGION]);
+        $regions = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_REGION]);
         foreach ($regions as $id => $label) {
             list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
 
@@ -294,7 +293,7 @@ class CountriesDashboardStats extends Model
         list($condition, $params) = Farm::appendOrgSessionIdCondition($condition, $params);
         $data = [];
         // get regions
-        $regions = OrganizationRefUnits::getListData('id', 'name', '', ['level' => OrganizationRefUnits::LEVEL_REGION]);
+        $regions = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_REGION]);
         //print_r($regions);
         foreach ($regions as $id => $label) {
             list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
@@ -357,7 +356,7 @@ class CountriesDashboardStats extends Model
         //list($condition, $params) = AnimalEvent::appendOrgSessionIdCondition($condition, $params);
         $data = [];
         // get regions
-        $regions = OrganizationRefUnits::getListData('id', 'name', '', ['level' => OrganizationRefUnits::LEVEL_REGION]);
+        $regions = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_REGION]);
         foreach ($regions as $id => $label) {
             list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
 
@@ -388,7 +387,7 @@ class CountriesDashboardStats extends Model
         list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
         $data = [];
         // get regions
-        $regions = OrganizationRefUnits::getListData('id', 'name', '', ['level' => OrganizationRefUnits::LEVEL_REGION]);
+        $regions = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_REGION]);
         foreach ($regions as $id => $label) {
             list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
 
@@ -419,7 +418,7 @@ class CountriesDashboardStats extends Model
         list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
         $data = [];
         // get regions
-        $regions = OrganizationRefUnits::getListData('id', 'name', '', ['level' => OrganizationRefUnits::LEVEL_REGION]);
+        $regions = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_REGION]);
         foreach ($regions as $id => $label) {
             list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
 

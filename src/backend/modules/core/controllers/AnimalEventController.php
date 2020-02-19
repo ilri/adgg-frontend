@@ -14,7 +14,7 @@ use backend\modules\core\Constants;
 use backend\modules\core\forms\UploadFarms;
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\Farm;
-use backend\modules\core\models\OrganizationRef;
+use backend\modules\core\models\Country;
 use common\controllers\UploadExcelTrait;
 
 class AnimalEventController extends Controller
@@ -40,7 +40,7 @@ class AnimalEventController extends Controller
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
         $events = AnimalEvent::eventTypeOptions();
-        $country = OrganizationRef::findOne(['id' => $country_id]);
+        $country = Country::findOne(['id' => $country_id]);
         return $this->render('/animal-event/event-lists', [
             'country' => $country,
             'events' => $events,

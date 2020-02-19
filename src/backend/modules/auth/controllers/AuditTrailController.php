@@ -11,7 +11,7 @@ namespace backend\modules\auth\controllers;
 use backend\modules\auth\Constants;
 use backend\modules\auth\models\AuditTrail;
 use backend\modules\auth\Session;
-use backend\modules\core\models\OrganizationRef;
+use backend\modules\core\models\Country;
 use common\helpers\DateUtils;
 
 class AuditTrailController extends Controller
@@ -30,11 +30,11 @@ class AuditTrailController extends Controller
     public function actionIndex($user_id = null, $country_id = null, $action = null, $from = null, $to = null)
     {
         $countryModel = null;
-        if (Session::isOrganizationRef()) {
+        if (Session::isCountry()) {
             $country_id = Session::getCountryId();
         }
         if (!empty($country_id)) {
-            $countryModel = OrganizationRef::loadModel($country_id);
+            $countryModel = Country::loadModel($country_id);
         }
         $date_filter = DateUtils::getDateFilterParams($from, $to, 'created_at', true, true);
         $condition = $date_filter['condition'];

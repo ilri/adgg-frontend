@@ -3,11 +3,11 @@
 use backend\modules\auth\Session;
 use backend\modules\core\Constants;
 use backend\modules\help\Constants as HelpConstants;
-use backend\modules\core\models\OrganizationRef;
+use backend\modules\core\models\Country;
 use common\helpers\Lang;
 use yii\helpers\Url;
 
-$countries = OrganizationRef::find()->orderBy(['code' => SORT_ASC])->all();
+$countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
 ?>
 <div class="kt-aside-menu-wrapper kt-grid__item kt-grid__item--fluid" id="kt_aside_menu_wrapper">
     <div id="kt_aside_menu" class="kt-aside-menu " data-ktmenu-vertical="1" data-ktmenu-scroll="1"

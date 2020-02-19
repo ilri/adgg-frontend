@@ -42,14 +42,14 @@ use yii\helpers\Url;
             'value' => function (Users $model) {
                 return $model->getRelationAttributeValue('level', 'name');
             },
-            'visible' => !Session::isOrganizationRef(),
+            'visible' => !Session::isCountry(),
         ],
         [
             'attribute' => 'country_id',
             'value' => function (Users $model) {
                 return $model->getRelationAttributeValue('country', 'name');
             },
-            'visible' => !Session::isOrganizationRef(),
+            'visible' => !Session::isCountry(),
         ],
         [
             'attribute' => 'role_id',

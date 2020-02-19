@@ -2,7 +2,7 @@
 
 /* @var $this yii\web\View */
 /* @var $searchModel \backend\modules\auth\models\Roles */
-/* @var $countryModel \backend\modules\core\models\OrganizationRef */
+/* @var $countryModel \backend\modules\core\models\Country */
 
 $this->title = \common\helpers\Lang::t('Roles & Privileges');
 $this->params['breadcrumbs'][] = $this->title;

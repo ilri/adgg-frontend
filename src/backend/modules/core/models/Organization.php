@@ -2,7 +2,9 @@
 
 namespace backend\modules\core\models;
 
-use Yii;
+use common\models\ActiveRecord;
+use common\models\ActiveSearchInterface;
+use common\models\ActiveSearchTrait;
 
 /**
  * This is the model class for table "organization".
@@ -14,10 +16,12 @@ use Yii;
  * @property string $created_at Date the record was created
  * @property int|null $created_by Id of the user who created the record
  *
- * @property OrganizationRef $country
+ * @property Country $country
  */
-class Organization extends \yii\db\ActiveRecord
+class Organization extends ActiveRecord implements ActiveSearchInterface
 {
+    use ActiveSearchTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -33,10 +37,11 @@ class Organization extends \yii\db\ActiveRecord
     {
         return [
             [['name', 'country_id'], 'required'],
-            [['country_id', 'is_active', 'created_by'], 'integer'],
+            [['country_id', 'is_active'], 'integer'],
             [['created_at'], 'safe'],
             [['name'], 'string', 'max' => 255],
-            [['country_id'], 'exist', 'skipOnError' => true, 'targetClass' => OrganizationRef::className(), 'targetAttribute' => ['country_id' => 'id']],
+            [['country_id'], 'exist', 'skipOnError' => true, 'targetClass' => Country::class, 'targetAttribute' => ['country_id' => 'id']],
+            [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
     }
 
@@ -62,6 +67,18 @@ class Organization extends \yii\db\ActiveRecord
      */
     public function getCountry()
     {
-        return $this->hasOne(OrganizationRef::className(), ['id' => 'country_id']);
+        return $this->hasOne(Country::class, ['id' => 'country_id']);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function searchParams()
+    {
+        return [
+            ['name', 'name'],
+            'country_id',
+            'is_active',
+        ];
     }
 }

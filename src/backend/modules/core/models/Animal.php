@@ -14,7 +14,6 @@ use common\models\CustomValidationsTrait;
 use common\widgets\highchart\HighChart;
 use common\widgets\highchart\HighChartInterface;
 use Yii;
-use yii\base\InvalidArgumentException;
 use yii\db\Expression;
 use yii\helpers\Inflector;
 
@@ -71,7 +70,7 @@ use yii\helpers\Inflector;
  */
 class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttributeInterface, UploadExcelInterface, HighChartInterface
 {
-    use ActiveSearchTrait, OrganizationRefUnitDataTrait, TableAttributeTrait, CustomValidationsTrait, AnimalValidators;
+    use ActiveSearchTrait, CountryUnitDataTrait, TableAttributeTrait, CustomValidationsTrait, AnimalValidators;
 
     const ANIMAL_TYPE_HEIFER = 1;
     const ANIMAL_TYPE_COW = 2;
@@ -129,13 +128,13 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'id' => 'ID',
             'name' => 'Animal Name',
             'tag_id' => 'Animal Tag ID',
-            'farm_id' => 'Farm',
-            'herd_id' => 'Herd',
-            'country_id' => 'Country',
-            'region_id' => 'Region',
-            'district_id' => 'District',
-            'ward_id' => 'Ward',
-            'village_id' => 'Village',
+            'farm_id' => 'Farm ID',
+            'herd_id' => 'Herd ID',
+            'country_id' => 'Country ID',
+            'region_id' => 'Region ID',
+            'district_id' => 'District ID',
+            'ward_id' => 'Ward ID',
+            'village_id' => 'Village ID',
             'animal_type' => 'Animal Type',
             'color' => 'Animal Color',
             'birthdate' => 'Date of Birth',

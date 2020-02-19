@@ -16,7 +16,7 @@ use common\models\ActiveSearchTrait;
  * @property string $call_code
  * @property string $currency
  */
-class Country extends ActiveRecord implements ActiveSearchInterface
+class CountryRef extends ActiveRecord implements ActiveSearchInterface
 {
     use ActiveSearchTrait;
 

@@ -2,7 +2,7 @@
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\modules\reports\models\AdhocReport */
-/* @var $countryModel \backend\modules\core\models\OrganizationRef */
+/* @var $countryModel \backend\modules\core\models\Country */
 
 $this->title = \common\helpers\Lang::t('Ad-hoc Reports');
 $this->params['breadcrumbs'][] = $this->title;

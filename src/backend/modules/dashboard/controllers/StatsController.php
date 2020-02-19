@@ -11,7 +11,7 @@ namespace backend\modules\dashboard\controllers;
 
 use backend\modules\core\models\CountriesDashboardStats;
 use backend\modules\core\models\MilkingReport;
-use backend\modules\core\models\OrganizationRef;
+use backend\modules\core\models\Country;
 
 class StatsController extends Controller
 {
@@ -33,7 +33,7 @@ class StatsController extends Controller
 
     public function actionDash($country_id = null)
     {
-        $country = OrganizationRef::findOne(['id' => $country_id]);
+        $country = Country::findOne(['id' => $country_id]);
         return $this->render('dashboards', [
             'country_id' => $country_id,
             'country' => $country,
@@ -42,7 +42,7 @@ class StatsController extends Controller
 
     public function actionFarmSummary($country_id = null)
     {
-        $country = OrganizationRef::findOne(['id' => $country_id]);
+        $country = Country::findOne(['id' => $country_id]);
         return $this->render('farm-summary', [
             'country_id' => $country_id,
             'country' => $country,
@@ -51,7 +51,7 @@ class StatsController extends Controller
 
     public function actionAnimalSummary($country_id = null)
     {
-        $country = OrganizationRef::findOne(['id' => $country_id]);
+        $country = Country::findOne(['id' => $country_id]);
         return $this->render('animal-summary', [
             'country_id' => $country_id,
             'country' => $country
@@ -60,7 +60,7 @@ class StatsController extends Controller
 
     public function actionDash1($country_id = null)
     {
-        $country = OrganizationRef::findOne(['id' => $country_id]);
+        $country = Country::findOne(['id' => $country_id]);
         $dataProvider = MilkingReport::getLargeScaleFarmMilkDetails($country_id);
         return $this->render('lsf', [
             'dataProvider' => $dataProvider,
@@ -72,7 +72,7 @@ class StatsController extends Controller
     public function actionDash2($country_id = null)
     {
         $dataProvider = CountriesDashboardStats::getGetAnimalsMilkingRecords($country_id);
-        $country = OrganizationRef::findOne(['id' => $country_id]);
+        $country = Country::findOne(['id' => $country_id]);
         return $this->render('test-day', [
             'country_id' => $country_id,
             'dataProvider' => $dataProvider,
@@ -82,7 +82,7 @@ class StatsController extends Controller
 
     public function actionDash3($country_id = null)
     {
-        $country = OrganizationRef::findOne(['id' => $country_id]);
+        $country = Country::findOne(['id' => $country_id]);
         return $this->render('genotyped-animals', [
             'country_id' => $country_id,
             'country' => $country,
@@ -91,7 +91,7 @@ class StatsController extends Controller
 
     public function actionDash4($country_id = null)
     {
-        $country = OrganizationRef::findOne(['id' => $country_id]);
+        $country = Country::findOne(['id' => $country_id]);
         return $this->render('pd-ai-cal', [
             'country_id' => $country_id,
             'country' => $country,

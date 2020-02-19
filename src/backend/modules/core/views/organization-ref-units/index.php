@@ -4,9 +4,9 @@ use common\helpers\Lang;
 use yii\bootstrap\Html;
 
 /* @var $this \yii\web\View */
-/* @var $searchModel \backend\modules\core\models\OrganizationRefUnits */
+/* @var $searchModel \backend\modules\core\models\CountryUnits */
 /* @var $controller \backend\controllers\BackendController */
-/* @var $countryModel \backend\modules\core\models\OrganizationRef */
+/* @var $countryModel \backend\modules\core\models\Country */
 $controller = Yii::$app->controller;
 $this->title = $controller->getPageTitle();
 $this->params['breadcrumbs'][] = ['label' => Lang::t('Countries'), 'url' => ['organization-ref/index']];

@@ -13,8 +13,8 @@ use backend\modules\auth\Acl;
 use backend\modules\auth\Session;
 use backend\modules\core\Constants;
 use backend\modules\core\forms\UploadOrganizationRefUnits;
-use backend\modules\core\models\OrganizationRef;
-use backend\modules\core\models\OrganizationRefUnits;
+use backend\modules\core\models\Country;
+use backend\modules\core\models\CountryUnits;
 use common\controllers\UploadExcelTrait;
 use yii\base\InvalidArgumentException;
 use yii\helpers\Html;
@@ -30,19 +30,19 @@ class OrganizationRefUnitsController extends Controller
         $this->resourceLabel = 'Country';
     }
 
-    public function setResourceLabel(OrganizationRef $country, $level)
+    public function setResourceLabel(Country $country, $level)
     {
         switch ($level) {
-            case OrganizationRefUnits::LEVEL_REGION:
+            case CountryUnits::LEVEL_REGION:
                 $this->resourceLabel = Html::encode($country->unit1_name);
                 break;
-            case OrganizationRefUnits::LEVEL_DISTRICT:
+            case CountryUnits::LEVEL_DISTRICT:
                 $this->resourceLabel = Html::encode($country->unit2_name);
                 break;
-            case OrganizationRefUnits::LEVEL_WARD:
+            case CountryUnits::LEVEL_WARD:
                 $this->resourceLabel = Html::encode($country->unit3_name);
                 break;
-            case OrganizationRefUnits::LEVEL_VILLAGE:
+            case CountryUnits::LEVEL_VILLAGE:
                 $this->resourceLabel = Html::encode($country->unit4_name);
                 break;
             default:
@@ -54,9 +54,9 @@ class OrganizationRefUnitsController extends Controller
 
     public function actionIndex($country_id, $level)
     {
-        $countryModel = OrganizationRef::loadModel(['uuid' => $country_id]);
+        $countryModel = Country::loadModel(['uuid' => $country_id]);
         $this->setResourceLabel($countryModel, $level);
-        $searchModel = OrganizationRefUnits::searchModel([
+        $searchModel = CountryUnits::searchModel([
             'defaultOrder' => ['id' => SORT_ASC],
         ]);
         $searchModel->is_active = 1;
@@ -71,9 +71,9 @@ class OrganizationRefUnitsController extends Controller
 
     public function actionCreate($country_id, $level)
     {
-        $countryModel = OrganizationRef::loadModel(['uuid' => $country_id]);
+        $countryModel = Country::loadModel(['uuid' => $country_id]);
         $this->setResourceLabel($countryModel, $level);
-        $model = new OrganizationRefUnits(['country_id' => $countryModel->id, 'level' => $level]);
+        $model = new CountryUnits(['country_id' => $countryModel->id, 'level' => $level]);
         return $model->simpleAjaxSave('_form', 'organization-ref/view', ['id' => $countryModel->uuid]);
     }
 
@@ -86,15 +86,15 @@ class OrganizationRefUnitsController extends Controller
 
     /**
      * @param $id
-     * @return OrganizationRefUnits
+     * @return CountryUnits
      * @throws \yii\web\NotFoundHttpException
      */
     protected function loadModel($id)
     {
         if (is_string($id) && !is_numeric($id)) {
-            $model = OrganizationRefUnits::loadModel(['uuid' => $id]);
+            $model = CountryUnits::loadModel(['uuid' => $id]);
         } else {
-            $model = OrganizationRefUnits::loadModel($id);
+            $model = CountryUnits::loadModel($id);
         }
 
         return $model;
@@ -102,10 +102,10 @@ class OrganizationRefUnitsController extends Controller
 
     public function actionGetList($level, $country_id = null, $parent_id = null, $placeholder = false)
     {
-        if ($level == OrganizationRefUnits::LEVEL_REGION) {
-            $data = OrganizationRefUnits::getListData('id', 'name', $placeholder, ['country_id' => $country_id, 'level' => $level]);
+        if ($level == CountryUnits::LEVEL_REGION) {
+            $data = CountryUnits::getListData('id', 'name', $placeholder, ['country_id' => $country_id, 'level' => $level]);
         } else {
-            $data = OrganizationRefUnits::getListData('id', 'name', $placeholder, ['parent_id' => $parent_id, 'level' => $level]);
+            $data = CountryUnits::getListData('id', 'name', $placeholder, ['parent_id' => $parent_id, 'level' => $level]);
         }
         return json_encode($data);
     }
@@ -122,14 +122,14 @@ class OrganizationRefUnitsController extends Controller
 
     public function actionUpload($level, $country_id = null)
     {
-        if (Session::isOrganizationRef()) {
+        if (Session::isCountry()) {
             $country_id = Session::getCountryId();
         }
-        $countryModel = OrganizationRef::loadModel($country_id);
+        $countryModel = Country::loadModel($country_id);
         $this->setResourceLabel($countryModel, $level);
         $this->hasPrivilege(Acl::ACTION_CREATE);
 
-        $form = new UploadOrganizationRefUnits(OrganizationRefUnits::class, ['country_id' => $countryModel->id, 'level' => $level]);
+        $form = new UploadOrganizationRefUnits(CountryUnits::class, ['country_id' => $countryModel->id, 'level' => $level]);
         $resp = $this->uploadExcelConsole($form, 'index', ['country_id' => $countryModel->uuid, 'level' => $level]);
         if ($resp !== false) {
             return $resp;
@@ -151,7 +151,7 @@ class OrganizationRefUnitsController extends Controller
      */
     public function actionUploadPreview($level, $country_id)
     {
-        $form = new UploadOrganizationRefUnits(OrganizationRefUnits::class, ['level' => $level, 'country_id' => $country_id]);
+        $form = new UploadOrganizationRefUnits(CountryUnits::class, ['level' => $level, 'country_id' => $country_id]);
         return $form->previewAction();
     }
 }

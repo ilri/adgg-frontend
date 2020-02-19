@@ -10,7 +10,7 @@ namespace console\controllers;
 
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\OdkJsonQueue;
-use backend\modules\core\models\OrganizationRef;
+use backend\modules\core\models\Country;
 use common\helpers\FileManager;
 use Yii;
 use yii\console\Controller;
@@ -111,7 +111,7 @@ class FakerController extends Controller
 
         // Loop through files
         $n = 1;
-        $country_id = OrganizationRef::getScalar('id', ['code' => 3]);
+        $country_id = Country::getScalar('id', ['code' => 3]);
         $model = new OdkJsonQueue(['country_id' => $country_id]);
         foreach (new \RecursiveIteratorIterator($it) as $file) {
             if ($file->getExtension() == 'json') {

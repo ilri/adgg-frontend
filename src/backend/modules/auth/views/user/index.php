@@ -2,7 +2,7 @@
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\modules\auth\models\Users */
-/* @var $countryModel \backend\modules\core\models\OrganizationRef */
+/* @var $countryModel \backend\modules\core\models\Country */
 
 $this->title = \common\helpers\Lang::t('Users');
 $this->params['breadcrumbs'][] = $this->title;

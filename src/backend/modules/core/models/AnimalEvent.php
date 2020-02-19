@@ -38,11 +38,10 @@ use common\models\CustomValidationsTrait;
  * @property Animal $animal
  * @property Users $fieldAgent
  * @property AnimalEvent $lactation
- * @property
  */
 class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAttributeInterface
 {
-    use ActiveSearchTrait, OrganizationRefUnitDataTrait, TableAttributeTrait, CustomValidationsTrait, AnimalEventValidators;
+    use ActiveSearchTrait, CountryUnitDataTrait, TableAttributeTrait, CustomValidationsTrait, AnimalEventValidators;
 
     const EVENT_TYPE_CALVING = 1;
     const EVENT_TYPE_MILKING = 2;
@@ -90,13 +89,13 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     {
         $labels = [
             'id' => 'ID',
-            'animal_id' => 'Animal',
+            'animal_id' => 'Animal ID',
             'event_type' => 'Event Type',
-            'country_id' => 'Country',
-            'region_id' => 'Region',
-            'district_id' => 'District',
-            'ward_id' => 'Ward',
-            'village_id' => 'Village',
+            'country_id' => 'Country ID',
+            'region_id' => 'Region ID',
+            'district_id' => 'District ID',
+            'ward_id' => 'Ward ID',
+            'village_id' => 'Village ID',
             'event_date' => 'Event Date',
             'latitude' => 'Latitude',
             'longitude' => 'Longitude',
@@ -108,7 +107,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             'updated_at' => 'Updated At',
             'updated_by' => 'Updated By',
             'animalTagId' => 'Animal Tag Id',
-            'field_agent_id' => 'Field Agent'
+            'field_agent_id' => 'Field Agent ID'
         ];
 
         return array_merge($labels, $this->getOtherAttributeLabels());

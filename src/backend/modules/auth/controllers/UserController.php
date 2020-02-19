@@ -6,7 +6,7 @@ use backend\modules\auth\Constants;
 use backend\modules\auth\forms\UploadUsers;
 use backend\modules\auth\models\UserLevels;
 use backend\modules\auth\Session;
-use backend\modules\core\models\OrganizationRef;
+use backend\modules\core\models\Country;
 use common\controllers\UploadExcelTrait;
 use common\helpers\DateUtils;
 use Yii;
@@ -23,6 +23,7 @@ use app\modules\auth\models\PasswordResetHistory;
 class UserController extends Controller
 {
     use UploadExcelTrait;
+
     /**
      * @inheritdoc
      */
@@ -39,12 +40,12 @@ class UserController extends Controller
     public function actionIndex($level_id = null, $country_id = null, $name = null, $username = null, $email = null, $phone = null, $role_id = null, $status = Users::STATUS_ACTIVE, $from = null, $to = null)
     {
         $countryModel = null;
-        if (Session::isOrganizationRef()) {
+        if (Session::isCountry()) {
             $country_id = Session::getCountryId();
             $level_id = UserLevels::LEVEL_COUNTRY;
         }
         if (!empty($country_id)) {
-            $countryModel = OrganizationRef::loadModel($country_id);
+            $countryModel = Country::loadModel($country_id);
         }
         $date_filter = DateUtils::getDateFilterParams($from, $to, 'last_login', false, true);
         $condition = $date_filter['condition'];
@@ -87,7 +88,7 @@ class UserController extends Controller
 
     public function actionCreate($level_id = null, $country_id = null)
     {
-        if (Session::isOrganizationRef()) {
+        if (Session::isCountry()) {
             $country_id = Session::getCountryId();
             $level_id = UserLevels::LEVEL_COUNTRY;
         }
@@ -235,37 +236,13 @@ class UserController extends Controller
      */
     public function actionUpload($level_id, $country_id = null)
     {
-        if (Session::isOrganizationRef()) {
+        if (Session::isCountry()) {
             $country_id = Session::getCountryId();
         }
         $this->hasPrivilege(Acl::ACTION_CREATE);
 
         $form = new UploadUsers(Users::class, ['country_id' => $country_id, 'level_id' => $level_id]);
-        /*
-        if ($form->load(Yii::$app->request->post())) {
-            if ($form->validate() && $form->addToExcelQueue()) {
-                //process the file
-                $form->saveExcelData();
-                if (count($form->getSavedRows()) > 0) {
-                    $successMsg = Lang::t('{n} rows successfully uploaded.', ['n' => count($form->getSavedRows())]);
-                    Yii::$app->session->setFlash('success', $successMsg);
-                }
-                if (count($form->getFailedRows()) > 0) {
-                    $warningMsg = '<p>' . Lang::t('{n} rows could could not be saved.', ['n' => count($form->getFailedRows())]) . '</p>';
-                    $warningMsg .= '<ul style="max-height: 200px;overflow: auto">';
-                    foreach ($form->getFailedRows() as $n => $message) {
-                        $warningMsg .= '<li>' . $message . '</li>';
-                    }
-                    $warningMsg .= '</ul>';
-                    Yii::$app->session->setFlash('warning', $warningMsg);
-                }
-                return json_encode(['success' => true, 'savedRows' => $form->getSavedRows(), 'failedRows' => $form->getFailedRows(), 'redirectUrl' => Url::to(['index', 'country_id' => $country_id, 'level_id' => $level_id])]);
-            } else {
-                return json_encode(['success' => false, 'message' => $form->getErrors()]);
-            }
-        }
-        */
-        $resp = $this->uploadExcelConsole($form, 'index', []);
+        $resp = $this->uploadExcelConsole($form, 'index', ['country_id' => $country_id, 'level_id' => $level_id]);
         if ($resp !== false) {
             return $resp;
         }

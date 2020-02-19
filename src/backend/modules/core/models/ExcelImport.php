@@ -77,7 +77,7 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
         return [
             'id' => 'ID',
             'uuid' => 'Uuid',
-            'country_id' => 'Org ID',
+            'country_id' => 'Country ID',
             'type' => 'Type',
             'is_processed' => 'Is Processed',
             'processed_at' => 'Processed At',
@@ -182,6 +182,8 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
                 return 'Exits';
             case self::TYPE_ORGANIZATION_REF_UNITS:
                 return 'Country Administrative Units';
+            case self::TYPE_USERS:
+                return 'Users';
             default:
                 throw new InvalidArgumentException();
 
@@ -208,6 +210,7 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
             self::TYPE_ANIMAL_EVENT_FEEDING => static::decodeType(self::TYPE_ANIMAL_EVENT_FEEDING),
             self::TYPE_ANIMAL_EVENT_EXITS => static::decodeType(self::TYPE_ANIMAL_EVENT_EXITS),
             self::TYPE_ORGANIZATION_REF_UNITS => static::decodeType(self::TYPE_ORGANIZATION_REF_UNITS),
+            self::TYPE_USERS => static::decodeType(self::TYPE_USERS),
         ], $prompt);
     }
 

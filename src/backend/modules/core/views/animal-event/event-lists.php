@@ -1,11 +1,11 @@
 <?php
 
 use backend\modules\core\models\AnimalEvent;
-use backend\modules\core\models\OrganizationRef;
+use backend\modules\core\models\Country;
 use common\helpers\Lang;
 use common\helpers\Url;
 
-/* @var $country OrganizationRef */
+/* @var $country Country */
 /* @var $events */
 $this->title = 'Events';
 $this->params['breadcrumbs'][] = $this->title;

@@ -27,10 +27,10 @@ use yii\helpers\Html;
  * @property string $updated_at
  * @property int $updated_by
  *
- * @property OrganizationRef $country
- * @property OrganizationRefUnits $parent
+ * @property Country $country
+ * @property CountryUnits $parent
  */
-class OrganizationRefUnits extends ActiveRecord implements ActiveSearchInterface, UploadExcelInterface
+class CountryUnits extends ActiveRecord implements ActiveSearchInterface, UploadExcelInterface
 {
     use ActiveSearchTrait;
 
@@ -61,7 +61,7 @@ class OrganizationRefUnits extends ActiveRecord implements ActiveSearchInterface
             [['name', 'contact_email'], 'string', 'max' => 255],
             [['contact_phone'], 'string', 'min' => 8, 'max' => 20],
             ['code', 'unique', 'targetAttribute' => ['country_id', 'level', 'code'], 'message' => Lang::t('{attribute} already exists.')],
-            [['country_id'], 'exist', 'skipOnError' => true, 'targetClass' => OrganizationRef::class, 'targetAttribute' => ['country_id' => 'id']],
+            [['country_id'], 'exist', 'skipOnError' => true, 'targetClass' => Country::class, 'targetAttribute' => ['country_id' => 'id']],
             ['contact_email', 'email'],
             ['parent_id', 'required', 'when' => function (self $model) {
                 return $model->level != self::LEVEL_REGION;
@@ -88,7 +88,7 @@ class OrganizationRefUnits extends ActiveRecord implements ActiveSearchInterface
             'code' => 'Code',
             'name' => 'Name',
             'level' => 'Level',
-            'country_id' => 'Country',
+            'country_id' => 'Country ID',
             'contact_name' => 'Contact Name',
             'contact_phone' => 'Contact Phone',
             'contact_email' => 'Contact Email',
@@ -125,7 +125,7 @@ class OrganizationRefUnits extends ActiveRecord implements ActiveSearchInterface
      */
     public function getCountry()
     {
-        return $this->hasOne(OrganizationRef::class, ['id' => 'country_id']);
+        return $this->hasOne(Country::class, ['id' => 'country_id']);
     }
 
     /**
@@ -133,7 +133,7 @@ class OrganizationRefUnits extends ActiveRecord implements ActiveSearchInterface
      */
     public function getParent()
     {
-        return $this->hasOne(OrganizationRefUnits::class, ['id' => 'parent_id']);
+        return $this->hasOne(CountryUnits::class, ['id' => 'parent_id']);
     }
 
     /**

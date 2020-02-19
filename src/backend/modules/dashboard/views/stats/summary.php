@@ -4,7 +4,7 @@ use backend\modules\core\models\Animal;
 use backend\modules\core\models\CalvingEvent;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\MilkingEvent;
-use backend\modules\core\models\OrganizationRefUnits;
+use backend\modules\core\models\CountryUnits;
 use common\helpers\DbUtils;
 use common\helpers\Lang;
 use common\helpers\Url;
@@ -38,7 +38,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                 list($condition, $params) = Farm::appendOrgSessionIdCondition($condition, $params);
                 $data = [];
                 // get districts
-                $districts = OrganizationRefUnits::getListData('id', 'name', '', ['country_id' => 10, 'level' => OrganizationRefUnits::LEVEL_REGION]);
+                $districts = CountryUnits::getListData('id', 'name', '', ['country_id' => 10, 'level' => CountryUnits::LEVEL_REGION]);
                 foreach ($districts as $id => $label) {
                     list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
 
@@ -72,7 +72,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                 list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
                 $data = [];
                 // get regions
-                $regions = OrganizationRefUnits::getListData('id', 'name', '', ['country_id' => 10, 'level' => OrganizationRefUnits::LEVEL_REGION]);
+                $regions = CountryUnits::getListData('id', 'name', '', ['country_id' => 10, 'level' => CountryUnits::LEVEL_REGION]);
                 foreach ($regions as $id => $label) {
                     list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
 

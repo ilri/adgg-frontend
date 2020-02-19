@@ -5,7 +5,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 /* @var $searchModel \backend\modules\auth\models\AuditTrail */
 /* @var $this yii\web\View */
-/* @var $countryModel \backend\modules\core\models\OrganizationRef */
+/* @var $countryModel \backend\modules\core\models\Country */
 ?>
 <div class="row">
     <div class="col-md-12">

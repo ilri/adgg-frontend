@@ -10,7 +10,7 @@ namespace backend\modules\core\forms;
 
 
 use backend\modules\core\models\ExcelImport;
-use backend\modules\core\models\OrganizationRefUnits;
+use backend\modules\core\models\CountryUnits;
 use common\excel\ExcelUploadForm;
 use common\excel\ImportInterface;
 use yii\base\InvalidArgumentException;
@@ -83,7 +83,7 @@ class UploadOrganizationRefUnits extends ExcelUploadForm implements ImportInterf
             $insert_data[$k] = $row;
         }
 
-        $model = new OrganizationRefUnits(['country_id' => $this->country_id, 'level' => $this->level]);
+        $model = new CountryUnits(['country_id' => $this->country_id, 'level' => $this->level]);
         $this->save($insert_data, $model, true, ['code' => '{code}', 'country_id' => $this->country_id, 'level' => $this->level]);
     }
 
@@ -94,25 +94,25 @@ class UploadOrganizationRefUnits extends ExcelUploadForm implements ImportInterf
      */
     protected function getParentId($code)
     {
-        if ($this->level == OrganizationRefUnits::LEVEL_REGION) {
+        if ($this->level == CountryUnits::LEVEL_REGION) {
             return null;
         }
         $parentLevel = null;
         switch ($this->level) {
-            case OrganizationRefUnits::LEVEL_DISTRICT:
-                $parentLevel = OrganizationRefUnits::LEVEL_REGION;
+            case CountryUnits::LEVEL_DISTRICT:
+                $parentLevel = CountryUnits::LEVEL_REGION;
                 break;
-            case OrganizationRefUnits::LEVEL_WARD:
-                $parentLevel = OrganizationRefUnits::LEVEL_DISTRICT;
+            case CountryUnits::LEVEL_WARD:
+                $parentLevel = CountryUnits::LEVEL_DISTRICT;
                 break;
-            case OrganizationRefUnits::LEVEL_VILLAGE:
-                $parentLevel = OrganizationRefUnits::LEVEL_WARD;
+            case CountryUnits::LEVEL_VILLAGE:
+                $parentLevel = CountryUnits::LEVEL_WARD;
                 break;
             default:
                 throw new InvalidArgumentException();
         }
 
-        $parentId = OrganizationRefUnits::getScalar('id', ['country_id' => $this->country_id, 'level' => $parentLevel, 'code' => $code]);
+        $parentId = CountryUnits::getScalar('id', ['country_id' => $this->country_id, 'level' => $parentLevel, 'code' => $code]);
         if (empty($parentId)) {
             return null;
         }

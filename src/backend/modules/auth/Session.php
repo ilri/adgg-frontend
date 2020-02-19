@@ -53,7 +53,7 @@ class Session
     /**
      * @return bool
      */
-    public static function isOrganizationRef()
+    public static function isCountry()
     {
         if (Yii::$app->user->isGuest) {
             return false;
@@ -122,7 +122,7 @@ class Session
      */
     public static function getCountryId($default = null)
     {
-        if (static::isOrganizationRef()) {
+        if (static::isCountry()) {
             return Yii::$app->user->identity->country_id ?? null;
         }
         return $default;

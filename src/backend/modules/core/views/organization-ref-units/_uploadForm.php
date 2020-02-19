@@ -1,7 +1,7 @@
 <?php
 
 use backend\modules\auth\Session;
-use backend\modules\core\models\OrganizationRef;
+use backend\modules\core\models\Country;
 use common\forms\ActiveField;
 use common\widgets\select2\Select2;
 use yii\bootstrap\Html;
@@ -11,7 +11,7 @@ use yii\bootstrap4\ActiveForm;
 
 /* @var $this \yii\web\View */
 /* @var $model \backend\modules\core\forms\UploadOrganizationRefUnits */
-/* @var $countryModel OrganizationRef */
+/* @var $countryModel Country */
 /* @var $form ActiveForm */
 ?>
 <div class="kt-portlet">
@@ -45,9 +45,9 @@ use yii\bootstrap4\ActiveForm;
             <div class="kt-section__body">
                 <div class="row">
                     <div class="col-md-6">
-                        <?php if (!Session::isOrganizationRef()): ?>
+                        <?php if (!Session::isCountry()): ?>
                             <?= $form->field($model, 'country_id')->widget(Select2::class, [
-                                'data' => OrganizationRef::getListData(),
+                                'data' => Country::getListData(),
                                 'options' => ['placeholder' => '[select one]'],
                                 'pluginOptions' => [
                                     'allowClear' => false

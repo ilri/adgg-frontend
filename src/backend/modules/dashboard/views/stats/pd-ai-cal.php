@@ -4,8 +4,8 @@ use backend\controllers\BackendController;
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\CountriesDashboardStats;
-use backend\modules\core\models\OrganizationRef;
-use backend\modules\core\models\OrganizationRefUnits;
+use backend\modules\core\models\Country;
+use backend\modules\core\models\CountryUnits;
 use common\helpers\DbUtils;
 use common\helpers\Lang;
 use common\widgets\highchart\HighChart;
@@ -14,7 +14,7 @@ use yii\helpers\Json;
 /* @var $this yii\web\View */
 /* @var $controller BackendController */
 /* @var $graphFilterOptions array */
-/* @var $country OrganizationRef */
+/* @var $country Country */
 $controller = Yii::$app->controller;
 $this->title = Lang::t('Insemination,PD And Calving Report');
 $this->params['breadcrumbs'] = [

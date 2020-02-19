@@ -12,6 +12,7 @@ namespace backend\modules\core\models;
 use backend\modules\auth\Session;
 use common\helpers\DbUtils;
 use common\helpers\Utils;
+use common\models\ActiveRecord;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 
@@ -19,9 +20,9 @@ use yii\web\NotFoundHttpException;
  * Trait OrganizationRefDataTrait
  * @package backend\modules\core\models
  *
- * @property OrganizationRef $country
+ * @property Country $country
  */
-trait OrganizationRefDataTrait
+trait CountryDataTrait
 {
     /**
      * @param string $condition
@@ -33,13 +34,13 @@ trait OrganizationRefDataTrait
      */
     public static function appendOrgSessionIdCondition($condition = '', $params = [], $strict = false, $countryIdAttribute = 'country_id')
     {
-        if (Utils::isWebApp() && Session::isOrganizationRef()) {
+        if (Utils::isWebApp() && Session::isCountry()) {
             if (is_array($condition)) {
                 $condition[$countryIdAttribute] = Session::getCountryId();
             } else {
                 list($condition, $params) = DbUtils::appendCondition($countryIdAttribute, Session::getCountryId(), $condition, $params);
             }
-        } elseif ($strict && Utils::isWebApp() && !Session::isOrganizationRef()) {
+        } elseif ($strict && Utils::isWebApp() && !Session::isCountry()) {
             if (is_array($condition)) {
                 if (!isset($condition[$countryIdAttribute])) {
                     $condition[$countryIdAttribute] = null;
@@ -58,7 +59,7 @@ trait OrganizationRefDataTrait
      * @param $condition
      * @param bool $throwException
      * @param string $countryIdAttribute
-     * @return $this
+     * @return $this|ActiveRecord
      * @throws ForbiddenHttpException
      * @throws NotFoundHttpException
      */
@@ -73,7 +74,7 @@ trait OrganizationRefDataTrait
             if ($throwException) {
                 throw new NotFoundHttpException('The requested resource was not found.');
             }
-        } elseif (Utils::isWebApp() && Session::isOrganizationRef() && $model->{$countryIdAttribute} != Session::getCountryId()) {
+        } elseif (Utils::isWebApp() && Session::isCountry() && $model->{$countryIdAttribute} != Session::getCountryId()) {
             throw new ForbiddenHttpException();
         }
         return $model;
@@ -94,6 +95,6 @@ trait OrganizationRefDataTrait
      */
     public function getCountry()
     {
-        return $this->hasOne(OrganizationRef::class, ['id' => 'country_id']);
+        return $this->hasOne(Country::class, ['id' => 'country_id']);
     }
 }

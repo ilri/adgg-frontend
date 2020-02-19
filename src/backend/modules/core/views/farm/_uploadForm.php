@@ -3,7 +3,7 @@
 use backend\modules\auth\Session;
 use backend\modules\core\models\ChoiceTypes;
 use backend\modules\core\models\Choices;
-use backend\modules\core\models\OrganizationRef;
+use backend\modules\core\models\Country;
 use common\forms\ActiveField;
 use common\widgets\select2\Select2;
 use yii\bootstrap\Html;
@@ -46,9 +46,9 @@ use yii\bootstrap4\ActiveForm;
             <div class="kt-section__body">
                 <div class="row">
                     <div class="col-md-8">
-                        <?php if (!Session::isOrganizationRef()): ?>
+                        <?php if (!Session::isCountry()): ?>
                             <?= $form->field($model, 'country_id')->widget(Select2::class, [
-                                'data' => OrganizationRef::getListData(),
+                                'data' => Country::getListData(),
                                 'options' => ['placeholder' => '[select one]'],
                                 'pluginOptions' => [
                                     'allowClear' => false

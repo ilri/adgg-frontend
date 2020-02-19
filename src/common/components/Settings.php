@@ -52,7 +52,7 @@ class Settings extends \yii2mod\settings\components\Settings
      */
     public static function getQualifiedSection($section, $country_id = null)
     {
-        if (Utils::isWebApp() && !Yii::$app->user->getIsGuest() && Session::isOrganizationRef()) {
+        if (Utils::isWebApp() && !Yii::$app->user->getIsGuest() && Session::isCountry()) {
             $country_id = Session::getCountryId();
         }
         if (!empty($country_id)) {

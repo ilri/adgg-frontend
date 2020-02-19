@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\helpers\Inflector;
 
 /* @var $this \yii\web\View */
-/* @var $model \backend\modules\core\models\OrganizationRef */
+/* @var $model \backend\modules\core\models\Country */
 /* @var $controller \backend\controllers\BackendController */
 $controller = Yii::$app->controller;
 

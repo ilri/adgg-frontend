@@ -23,7 +23,7 @@ class NumberFormatController extends DevController
 
     public function actionIndex($country_id = null)
     {
-        if (Session::isOrganizationRef()) {
+        if (Session::isCountry()) {
             $country_id = Session::getCountryId();
         }
         $condition = ['country_id' => $country_id];

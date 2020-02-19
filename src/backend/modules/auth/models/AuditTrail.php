@@ -3,8 +3,8 @@
 namespace backend\modules\auth\models;
 
 use backend\modules\auth\Session;
-use backend\modules\core\models\OrganizationRef;
-use backend\modules\core\models\OrganizationRefDataTrait;
+use backend\modules\core\models\Country;
+use backend\modules\core\models\CountryDataTrait;
 use backend\modules\core\models\TableAttributeInterface;
 use common\helpers\Lang;
 use common\helpers\Utils;
@@ -28,11 +28,11 @@ use Yii;
  * @property string $created_at
  *
  * @property Users $user
- * @property OrganizationRef $country
+ * @property Country $country
  */
 class AuditTrail extends ActiveRecord implements ActiveSearchInterface
 {
-    use ActiveSearchTrait, OrganizationRefDataTrait;
+    use ActiveSearchTrait, CountryDataTrait;
 
     //actions
     const ACTION_VIEW = 1;
@@ -221,7 +221,7 @@ class AuditTrail extends ActiveRecord implements ActiveSearchInterface
      */
     public function getOrg()
     {
-        return $this->hasOne(OrganizationRef::class, ['id' => 'country_id']);
+        return $this->hasOne(Country::class, ['id' => 'country_id']);
     }
 
 }

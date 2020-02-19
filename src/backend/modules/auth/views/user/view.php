@@ -67,7 +67,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'attribute' => 'country_id',
                     'value' => Html::a($model->getRelationAttributeValue('country', 'name') . ' <i class="fas fa-external-link"></i>', ['/core/organization-ref/view', 'id' => $model->country_id], ['target' => '_blank']),
                     'format' => 'raw',
-                    'visible' => $model->country !== null && !\backend\modules\auth\Session::isOrganizationRef(),
+                    'visible' => $model->country !== null && !\backend\modules\auth\Session::isCountry(),
                 ],
                 [
                     'attribute' => 'require_password_change',

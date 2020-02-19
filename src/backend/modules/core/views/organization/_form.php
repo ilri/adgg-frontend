@@ -42,7 +42,7 @@ $form = ActiveForm::begin([
     <div class="hidden" id="my-modal-notif"></div>
     <?= $form->field($model, 'name', []) ?>
     <?= $form->field($model, 'country_id')->widget(Select2::class, [
-        'data' => \backend\modules\core\models\OrganizationRef::getListData(),
+        'data' => \backend\modules\core\models\Country::getListData(),
         'modal' => true,
         'theme' => Select2::THEME_BOOTSTRAP,
         'pluginOptions' => [

@@ -1,6 +1,6 @@
 <?php
 
-use backend\modules\core\models\OrganizationRefUnits;
+use backend\modules\core\models\CountryUnits;
 use common\helpers\Lang;
 use common\helpers\Utils;
 use common\widgets\grid\GridView;
@@ -8,7 +8,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 
 /* @var $this \yii\web\View */
-/* @var $model OrganizationRefUnits */
+/* @var $model CountryUnits */
 ?>
 <?= GridView::widget([
     'searchModel' => $model,
@@ -40,15 +40,15 @@ use yii\helpers\Url;
         [
             'attribute' => 'parent_id',
             'label' => $model->getAttributeLabel('parent_id'),
-            'value' => function (OrganizationRefUnits $model) {
+            'value' => function (CountryUnits $model) {
                 return $model->getRelationAttributeValue('parent', 'name');
             },
-            'visible' => $model->level > OrganizationRefUnits::LEVEL_REGION,
-            'filter' => OrganizationRefUnits::getListData('id', 'name', false, ['level' => $model->level - 1, 'country_id' => $model->country_id])
+            'visible' => $model->level > CountryUnits::LEVEL_REGION,
+            'filter' => CountryUnits::getListData('id', 'name', false, ['level' => $model->level - 1, 'country_id' => $model->country_id])
         ],
         [
             'attribute' => 'is_active',
-            'value' => function (OrganizationRefUnits $model) {
+            'value' => function (CountryUnits $model) {
                 return Html::tag('span', Utils::decodeBoolean($model->is_active), ['class' => $model->is_active ? 'kt-badge  kt-badge--success kt-badge--inline kt-badge--pill' : 'kt-badge  kt-badge--metal kt-badge--inline kt-badge--pill']);
             },
             'format' => 'raw',
@@ -58,7 +58,7 @@ use yii\helpers\Url;
             'class' => common\widgets\grid\ActionColumn::class,
             'template' => '{update}',
             'visibleButtons' => [
-                'update' => function (OrganizationRefUnits $model) {
+                'update' => function (CountryUnits $model) {
                     return Yii::$app->user->canUpdate();
                 }
             ],

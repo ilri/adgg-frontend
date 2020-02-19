@@ -1,12 +1,12 @@
 <?php
 
-use backend\modules\core\models\OrganizationRef;
+use backend\modules\core\models\Country;
 use common\helpers\Utils;
 use common\widgets\grid\GridView;
 use yii\helpers\Html;
 
 /* @var $this \yii\web\View */
-/* @var $model OrganizationRef */
+/* @var $model Country */
 ?>
 <?= GridView::widget([
     'searchModel' => $model,
@@ -34,7 +34,7 @@ use yii\helpers\Html;
         ],
         [
             'attribute' => 'is_active',
-            'value' => function (OrganizationRef $model) {
+            'value' => function (Country $model) {
                 return Html::tag('span', Utils::decodeBoolean($model->is_active), ['class' => $model->is_active ? 'kt-badge  kt-badge--success kt-badge--inline kt-badge--pill' : 'kt-badge  kt-badge--metal kt-badge--inline kt-badge--pill']);
             },
             'format' => 'raw',
@@ -44,7 +44,7 @@ use yii\helpers\Html;
             'class' => common\widgets\grid\ActionColumn::class,
             'template' => '{view}{update}',
             'visibleButtons' => [
-                'update' => function (OrganizationRef $model) {
+                'update' => function (Country $model) {
                     return Yii::$app->user->canUpdate();
                 }
             ],

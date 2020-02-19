@@ -11,8 +11,8 @@ namespace backend\modules\core\forms;
 use backend\modules\auth\models\Users;
 use backend\modules\core\models\ExcelImport;
 use backend\modules\core\models\Farm;
-use backend\modules\core\models\OrganizationRef;
-use backend\modules\core\models\OrganizationRefUnits;
+use backend\modules\core\models\Country;
+use backend\modules\core\models\CountryUnits;
 use common\excel\ExcelUploadForm;
 use common\excel\ImportInterface;
 use common\helpers\Lang;
@@ -26,7 +26,7 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface
     public $country_id;
 
     /**
-     * @var OrganizationRef
+     * @var Country
      */
     public $countryModel;
 
@@ -89,28 +89,28 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface
     protected function setRegions()
     {
         if (null === $this->_regions) {
-            $this->_regions = OrganizationRefUnits::getData(['id', 'code'], ['country_id' => $this->country_id, 'level' => OrganizationRefUnits::LEVEL_REGION]);
+            $this->_regions = CountryUnits::getData(['id', 'code'], ['country_id' => $this->country_id, 'level' => CountryUnits::LEVEL_REGION]);
         }
     }
 
     protected function setDistricts()
     {
         if (null === $this->_districts) {
-            $this->_districts = OrganizationRefUnits::getData(['id', 'code'], ['country_id' => $this->country_id, 'level' => OrganizationRefUnits::LEVEL_DISTRICT]);
+            $this->_districts = CountryUnits::getData(['id', 'code'], ['country_id' => $this->country_id, 'level' => CountryUnits::LEVEL_DISTRICT]);
         }
     }
 
     protected function setWards()
     {
         if (null === $this->_wards) {
-            $this->_wards = OrganizationRefUnits::getData(['id', 'code'], ['country_id' => $this->country_id, 'level' => OrganizationRefUnits::LEVEL_WARD]);
+            $this->_wards = CountryUnits::getData(['id', 'code'], ['country_id' => $this->country_id, 'level' => CountryUnits::LEVEL_WARD]);
         }
     }
 
     protected function setVillages()
     {
         if (null === $this->_villages) {
-            $this->_villages = OrganizationRefUnits::getData(['id', 'code'], ['country_id' => $this->country_id, 'level' => OrganizationRefUnits::LEVEL_VILLAGE]);
+            $this->_villages = CountryUnits::getData(['id', 'code'], ['country_id' => $this->country_id, 'level' => CountryUnits::LEVEL_VILLAGE]);
         }
     }
 
@@ -123,7 +123,7 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface
     {
         $columns = [];
         $insert_data = [];
-        $this->countryModel = OrganizationRef::loadModel($this->country_id);
+        $this->countryModel = Country::loadModel($this->country_id);
         $this->setRegions();
         $this->setDistricts();
         $this->setWards();
@@ -155,7 +155,7 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface
      */
     protected function getRegionId($name)
     {
-        return $this->getAdminUnitId($name, OrganizationRefUnits::LEVEL_REGION);
+        return $this->getAdminUnitId($name, CountryUnits::LEVEL_REGION);
     }
 
     /**
@@ -165,7 +165,7 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface
      */
     protected function getDistrictId($name)
     {
-        return $this->getAdminUnitId($name, OrganizationRefUnits::LEVEL_DISTRICT);
+        return $this->getAdminUnitId($name, CountryUnits::LEVEL_DISTRICT);
     }
 
     /**
@@ -175,7 +175,7 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface
      */
     protected function getWardId($name)
     {
-        return $this->getAdminUnitId($name, OrganizationRefUnits::LEVEL_WARD);
+        return $this->getAdminUnitId($name, CountryUnits::LEVEL_WARD);
     }
 
     /**
@@ -185,7 +185,7 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface
      */
     protected function getVillageId($name)
     {
-        return $this->getAdminUnitId($name, OrganizationRefUnits::LEVEL_VILLAGE);
+        return $this->getAdminUnitId($name, CountryUnits::LEVEL_VILLAGE);
     }
 
     /**
@@ -198,16 +198,16 @@ class UploadFarms extends ExcelUploadForm implements ImportInterface
     {
         $data = [];
         switch ($level) {
-            case OrganizationRefUnits::LEVEL_REGION:
+            case CountryUnits::LEVEL_REGION:
                 $data = $this->_regions;
                 break;
-            case OrganizationRefUnits::LEVEL_DISTRICT:
+            case CountryUnits::LEVEL_DISTRICT:
                 $data = $this->_districts;
                 break;
-            case OrganizationRefUnits::LEVEL_WARD:
+            case CountryUnits::LEVEL_WARD:
                 $data = $this->_wards;
                 break;
-            case OrganizationRefUnits::LEVEL_VILLAGE:
+            case CountryUnits::LEVEL_VILLAGE:
                 $data = $this->_villages;
                 break;
         }

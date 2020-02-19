@@ -10,7 +10,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $controller \backend\controllers\BackendController */
 /* @var $graphFilterOptions array */
-/* @var $countries \backend\modules\core\models\OrganizationRef[] */
+/* @var $countries \backend\modules\core\models\Country[] */
 $controller = Yii::$app->controller;
 $this->title = Lang::t('Dashboard');
 $this->params['breadcrumbs'] = [

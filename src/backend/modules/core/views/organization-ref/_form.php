@@ -1,7 +1,7 @@
 <?php
 
+use backend\modules\core\models\CountryRef;
 use backend\modules\core\models\Country;
-use backend\modules\core\models\OrganizationRef;
 use common\forms\ActiveField;
 use common\widgets\select2\Select2;
 use yii\bootstrap\Html;
@@ -10,7 +10,7 @@ use common\helpers\Lang;
 use yii\bootstrap4\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model OrganizationRef */
+/* @var $model Country */
 /* @var $form ActiveForm */
 ?>
 <div class="kt-portlet">
@@ -44,7 +44,7 @@ use yii\bootstrap4\ActiveForm;
                 <div class="row">
                     <div class="col-md-6">
                         <?= $form->field($model, 'country')->widget(Select2::class, [
-                            'data' => Country::getListData('iso2', 'name', false),
+                            'data' => CountryRef::getListData('iso2', 'name', false),
                             'options' => ['placeholder' => '[select one]'],
                             'pluginOptions' => [
                                 'allowClear' => false

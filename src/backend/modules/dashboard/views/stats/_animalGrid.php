@@ -3,11 +3,11 @@
 use backend\modules\core\models\Choices;
 use backend\modules\core\models\ChoiceTypes;
 use backend\modules\core\models\CountriesDashboardStats;
-use backend\modules\core\models\OrganizationRef;
+use backend\modules\core\models\Country;
 use common\widgets\grid\GridView;
 
 /* @var $this yii\web\View */
-/* @var $country OrganizationRef */
+/* @var $country Country */
 /* @var $dataProvider CountriesDashboardStats */
 ?>
 <?php

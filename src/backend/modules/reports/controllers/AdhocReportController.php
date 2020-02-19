@@ -5,7 +5,7 @@ namespace backend\modules\reports\controllers;
 use backend\modules\auth\Acl;
 use backend\modules\auth\models\UserLevels;
 use backend\modules\auth\Session;
-use backend\modules\core\models\OrganizationRef;
+use backend\modules\core\models\Country;
 use backend\modules\reports\Constants;
 use backend\modules\reports\models\AdhocReport;
 use common\helpers\DateUtils;

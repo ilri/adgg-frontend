@@ -2,7 +2,7 @@
 
 use backend\modules\auth\Session;
 use backend\modules\conf\settings\SystemSettings;
-use backend\modules\core\models\OrganizationRef;
+use backend\modules\core\models\Country;
 use common\helpers\Lang;
 use common\helpers\Url;
 use common\widgets\select2\Select2;
@@ -25,13 +25,13 @@ use yii\bootstrap4\Html;
             <div class="card-body">
                 <?= Html::beginForm(['index'], 'get', ['class' => '', 'id' => 'grid-filter-form', 'data-grid' => $model->getPjaxWidgetId()]) ?>
                 <div class="form-row align-items-center">
-                    <?php if (!Session::isOrganizationRef()): ?>
+                    <?php if (!Session::isCountry()): ?>
                         <div class="col-lg-2">
                             <?= Html::label($model->getAttributeLabel('country_id')) ?>
                             <?= Select2::widget([
                                 'name' => 'country_id',
                                 'value' => $model->country_id,
-                                'data' => OrganizationRef::getListData('id', 'name', SystemSettings::getCompanyName()),
+                                'data' => Country::getListData('id', 'name', SystemSettings::getCompanyName()),
                                 'options' => [
                                     'class' => 'form-control select2 parent-depdropdown',
                                     'data-child-selectors' => [

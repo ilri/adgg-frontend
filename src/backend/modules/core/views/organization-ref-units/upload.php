@@ -5,7 +5,7 @@ use common\helpers\Utils;
 use yii\helpers\Inflector;
 
 /* @var $this \yii\web\View */
-/* @var $countryModel \backend\modules\core\models\OrganizationRef */
+/* @var $countryModel \backend\modules\core\models\Country */
 /* @var $model \backend\modules\core\forms\UploadOrganizationRefUnits */
 /* @var $controller \backend\controllers\BackendController */
 

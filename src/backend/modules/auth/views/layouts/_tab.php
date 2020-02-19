@@ -5,7 +5,7 @@ use backend\modules\auth\models\Users;
 use common\helpers\Lang;
 use yii\helpers\Url;
 
-/* @var $countryModel \backend\modules\core\models\OrganizationRef */
+/* @var $countryModel \backend\modules\core\models\Country */
 ?>
 <ul class="nav nav-tabs my-nav" role="tablist">
     <?php if (Yii::$app->user->canView(Constants::RES_USER)): ?>

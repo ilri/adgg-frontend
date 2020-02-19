@@ -25,7 +25,7 @@ trait SessionTrait
      */
     public function setSessionData($searchModel, $country_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null)
     {
-        if (Session::isOrganizationRef()) {
+        if (Session::isCountry()) {
             $country_id = Session::getCountryId();
         }
         if (Session::isRegionUser()) {

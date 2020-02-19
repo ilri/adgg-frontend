@@ -18,7 +18,7 @@ use common\widgets\grid\GridView;
         ],
         [
             'attribute' => 'country_id',
-            'filter' => \backend\modules\core\models\OrganizationRef::getListData()
+            'filter' => \backend\modules\core\models\Country::getListData()
         ],
         [
             'attribute' => 'is_active',

@@ -33,11 +33,11 @@ use common\models\ActiveSearchTrait;
  * @property string $project
  *
  * @property Farm $farm
- * @property OrganizationRef $country
+ * @property Country $country
  */
 class AnimalHerd extends ActiveRecord implements ActiveSearchInterface, ImportActiveRecordInterface
 {
-    use ActiveSearchTrait, OrganizationRefUnitDataTrait;
+    use ActiveSearchTrait, CountryUnitDataTrait;
 
     public $farmerName;
     public $farmerPhone;
@@ -85,11 +85,11 @@ class AnimalHerd extends ActiveRecord implements ActiveSearchInterface, ImportAc
             'herd_code' => 'Herd Code',
             'farm_id' => 'Farm ID',
             'uuid' => 'Uuid',
-            'country_id' => 'Country',
-            'region_id' => 'Region',
-            'district_id' => 'District',
-            'ward_id' => 'Ward',
-            'village_id' => 'Village',
+            'country_id' => 'Country ID',
+            'region_id' => 'Region ID',
+            'district_id' => 'District ID',
+            'ward_id' => 'Ward ID',
+            'village_id' => 'Village ID',
             'latitude' => 'Latitude',
             'longitude' => 'Longitude',
             'map_address' => 'Map Address',

@@ -50,7 +50,7 @@ use yii\helpers\Url;
             'width' => '200px',
             'visibleButtons' => [
                 'update' => function (Roles $model) {
-                    return Yii::$app->user->canUpdate() && !Session::isOrganizationRef();
+                    return Yii::$app->user->canUpdate() && !Session::isCountry();
                 }
             ],
         ],

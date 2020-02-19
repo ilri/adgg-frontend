@@ -6,9 +6,9 @@ namespace backend\modules\auth\models;
 use backend\modules\auth\Session;
 use backend\modules\conf\settings\SystemSettings;
 use backend\modules\core\models\ExtendableTable;
-use backend\modules\core\models\OrganizationRef;
-use backend\modules\core\models\OrganizationRefUnitDataTrait;
-use backend\modules\core\models\OrganizationRefUnits;
+use backend\modules\core\models\Country;
+use backend\modules\core\models\CountryUnitDataTrait;
+use backend\modules\core\models\CountryUnits;
 use backend\modules\core\models\TableAttribute;
 use backend\modules\core\models\TableAttributeInterface;
 use backend\modules\core\models\TableAttributeTrait;
@@ -37,16 +37,16 @@ use yii\web\NotFoundHttpException;
  * @property string $odk_code
  * @property string|array $additional_attributes
  *
- * @property OrganizationRef $country
- * @property OrganizationRefUnits $region
- * @property OrganizationRefUnits $district
- * @property OrganizationRefUnits $ward
- * @property OrganizationRefUnits $village
+ * @property Country $country
+ * @property CountryUnits $region
+ * @property CountryUnits $district
+ * @property CountryUnits $ward
+ * @property CountryUnits $village
  *
  */
 class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelInterface, TableAttributeInterface
 {
-    use ActiveSearchTrait, OrganizationRefUnitDataTrait, UserNotificationTrait, TableAttributeTrait;
+    use ActiveSearchTrait, CountryUnitDataTrait, UserNotificationTrait, TableAttributeTrait;
 
     /**
      *
@@ -129,10 +129,11 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
                 'on' => self::SCENARIO_SEARCH
             ],
             static::passwordValidator(),
-            $this->passwordHistoryValidator(),
+            ['password', 'passwordHistoryValidator', 'on' => [self::SCENARIO_CHANGE_PASSWORD, self::SCENARIO_RESET_PASSWORD]],
             [['region_id', 'district_id', 'ward_id', 'village_id', 'additional_attributes'], 'safe'],
-            [$this->getAdditionalAttributes(), 'safe'],
+            [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
             ['odk_code', 'unique', 'targetAttribute' => ['country_id', 'odk_code'], 'message' => '{attribute} already exists.'],
+            [$this->getAdditionalAttributes(), 'safe'],
         ];
     }
 
@@ -161,15 +162,15 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
             'updated_at' => Lang::t('Updated At'),
             'last_login' => Lang::t('Last Login'),
             'send_email' => Lang::t('Email the login details to the user.'),
-            'country_id' => Lang::t('Country'),
+            'country_id' => Lang::t('Country ID'),
             'auto_generate_password' => Lang::t('Auto Generate Password'),
             'branch_id' => Lang::t('Branch'),
             'require_password_change' => Lang::t('Force password change on login'),
             'odk_code' => 'ODK Code',
-            'region_id' => $this->country !== null ? Html::encode($this->country->unit1_name) : 'Region',
-            'district_id' => $this->country !== null ? Html::encode($this->country->unit2_name) : 'District',
-            'ward_id' => $this->country !== null ? Html::encode($this->country->unit3_name) : 'Ward',
-            'village_id' => $this->country !== null ? Html::encode($this->country->unit4_name) : 'Village',
+            'region_id' => $this->country !== null ? Html::encode($this->country->unit1_name) : 'Region ID',
+            'district_id' => $this->country !== null ? Html::encode($this->country->unit2_name) : 'District ID',
+            'ward_id' => $this->country !== null ? Html::encode($this->country->unit3_name) : 'Ward ID',
+            'village_id' => $this->country !== null ? Html::encode($this->country->unit4_name) : 'Village ID',
         ];
     }
 
@@ -439,7 +440,7 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
             if ($throwException) {
                 throw new NotFoundHttpException('The requested resource was not found.');
             }
-        } elseif (Utils::isWebApp() && Session::isOrganizationRef() && $model->country_id != Session::getCountryId()) {
+        } elseif (Utils::isWebApp() && Session::isCountry() && $model->country_id != Session::getCountryId()) {
             throw new ForbiddenHttpException();
         }
         return $model;

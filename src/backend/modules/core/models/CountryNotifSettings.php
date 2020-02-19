@@ -28,12 +28,12 @@ use yii\helpers\Html;
  * @property string $created_at
  * @property int $created_by
  *
- * @property OrganizationRef $country
+ * @property Country $country
  * @property NotifTypes $notification
  */
-class OrganizationRefNotifSettings extends ActiveRecord implements LineItemModelInterface
+class CountryNotifSettings extends ActiveRecord implements LineItemModelInterface
 {
-    use LineItemTrait, OrganizationRefDataTrait;
+    use LineItemTrait, CountryDataTrait;
 
     /**
      * {@inheritdoc}
@@ -64,8 +64,8 @@ class OrganizationRefNotifSettings extends ActiveRecord implements LineItemModel
     {
         return [
             'id' => Lang::t('ID'),
-            'country_id' => Lang::t('OrganizationRef'),
-            'notification_id' => Lang::t('Notification'),
+            'country_id' => Lang::t('Country ID'),
+            'notification_id' => Lang::t('Notification ID'),
             'enable_internal_notification' => Lang::t('Enable Internal Notification'),
             'enable_email_notification' => Lang::t('Enable Email Notification'),
             'enable_sms_notification' => Lang::t('Enable Sms Notification'),
@@ -93,7 +93,7 @@ class OrganizationRefNotifSettings extends ActiveRecord implements LineItemModel
             [
                 'attribute' => 'notification_id',
                 'type' => LineItem::LINE_ITEM_FIELD_TYPE_STATIC,
-                'value' => function (OrganizationRefNotifSettings $model) {
+                'value' => function (CountryNotifSettings $model) {
                     return '<span>' . Html::encode($model->notification->name) . '<br/><small class="text-muted">' . Html::encode($model->notification->description) . '</small>' . '</span>';
                 },
                 'tdOptions' => ['style' => 'max-width:400px;'],
@@ -132,8 +132,8 @@ class OrganizationRefNotifSettings extends ActiveRecord implements LineItemModel
             [
                 'attribute' => 'users',
                 'type' => LineItem::LINE_ITEM_FIELD_TYPE_DROP_DOWN_LIST,
-                'listItems' => function (OrganizationRefNotifSettings $model) {
-                    return Users::getListData('id', 'name', false, ['level_id' => UserLevels::LEVEL_OrganizationRef, 'country_id' => $model->country_id]);
+                'listItems' => function (CountryNotifSettings $model) {
+                    return Users::getListData('id', 'name', false, ['level_id' => UserLevels::LEVEL_COUNTRY, 'country_id' => $model->country_id]);
                 },
                 'tdOptions' => ['style' => 'min-width:300px;'],
                 'options' => ['class' => 'form-control select2', 'multiple' => true],
@@ -176,7 +176,7 @@ class OrganizationRefNotifSettings extends ActiveRecord implements LineItemModel
     /**
      * @param int $country_id
      * @param string $notification_id
-     * @return OrganizationRefNotifSettings|null
+     * @return CountryNotifSettings|null
      */
     public static function getModel($country_id, $notification_id)
     {

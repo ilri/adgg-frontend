@@ -2,7 +2,7 @@
 
 /* @var $this yii\web\View */
 
-use backend\modules\core\models\OrganizationRef;
+use backend\modules\core\models\Country;
 use backend\modules\reports\models\ReportBuilder;
 use backend\modules\reports\models\Reports;
 use common\helpers\Lang;
@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-md-12">
             <div class="well">
                 <h3 class="text-muted"><?= Lang::t('REPORT BUILDER') ?>
-                    [<?= strtoupper(OrganizationRef::getScalar('name', ['id' => $country_id])) ?>]</h3>
+                    [<?= strtoupper(Country::getScalar('name', ['id' => $country_id])) ?>]</h3>
                 <hr>
                 <form method="POST" id="report-builder-form">
 

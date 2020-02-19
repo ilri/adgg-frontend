@@ -1,8 +1,8 @@
 <?php
 
 use backend\modules\auth\models\Users;
-use backend\modules\core\models\OrganizationRef;
-use backend\modules\core\models\OrganizationRefUnits;
+use backend\modules\core\models\Country;
+use backend\modules\core\models\CountryUnits;
 use common\forms\ActiveField;
 use common\helpers\DateUtils;
 use common\widgets\select2\Select2;
@@ -48,7 +48,7 @@ use yii\bootstrap4\ActiveForm;
                     <?php if ($model->showCountryField()): ?>
                         <div class="col-md-4">
                             <?= $form->field($model, 'country_id')->widget(Select2::class, [
-                                'data' => OrganizationRef::getListData(),
+                                'data' => Country::getListData(),
                                 'options' => [
                                     'class' => 'form-control parent-depdropdown',
                                     'placeholder' => '[select one]',
@@ -65,14 +65,14 @@ use yii\bootstrap4\ActiveForm;
                     <?php if ($model->showRegionField()): ?>
                         <div class="col-md-4">
                             <?= $form->field($model, 'region_id')->widget(Select2::class, [
-                                'data' => OrganizationRefUnits::getListData('id', 'name', false, ['country_id' => $model->country_id, 'level' => OrganizationRefUnits::LEVEL_REGION]),
+                                'data' => CountryUnits::getListData('id', 'name', false, ['country_id' => $model->country_id, 'level' => CountryUnits::LEVEL_REGION]),
                                 'options' => [
                                     'class' => 'form-control parent-depdropdown',
                                     'placeholder' => '[select one]',
                                     'data-child-selectors' => [
                                         '#' . Html::getInputId($model, 'district_id'),
                                     ],
-                                    'data-url' => Url::to(['OrganizationRef-units/get-list', 'country_id' => 'idV', 'level' => OrganizationRefUnits::LEVEL_REGION]),
+                                    'data-url' => Url::to(['OrganizationRef-units/get-list', 'country_id' => 'idV', 'level' => CountryUnits::LEVEL_REGION]),
                                     'data-selected' => $model->region_id,
                                 ],
                                 'pluginOptions' => [
@@ -84,14 +84,14 @@ use yii\bootstrap4\ActiveForm;
                     <?php if ($model->showDistrictField()): ?>
                         <div class="col-md-4">
                             <?= $form->field($model, 'district_id')->widget(Select2::class, [
-                                'data' => OrganizationRefUnits::getListData('id', 'name', false, ['country_id' => $model->country_id, 'level' => OrganizationRefUnits::LEVEL_DISTRICT]),
+                                'data' => CountryUnits::getListData('id', 'name', false, ['country_id' => $model->country_id, 'level' => CountryUnits::LEVEL_DISTRICT]),
                                 'options' => [
                                     'class' => 'form-control parent-depdropdown',
                                     'placeholder' => '[select one]',
                                     'data-child-selectors' => [
                                         '#' . Html::getInputId($model, 'ward_id'),
                                     ],
-                                    'data-url' => Url::to(['OrganizationRef-units/get-list', 'parent_id' => 'idV', 'level' => OrganizationRefUnits::LEVEL_DISTRICT]),
+                                    'data-url' => Url::to(['OrganizationRef-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_DISTRICT]),
                                     'data-selected' => $model->district_id,
                                 ],
                                 'pluginOptions' => [
@@ -103,14 +103,14 @@ use yii\bootstrap4\ActiveForm;
                     <?php if ($model->showWardField()): ?>
                         <div class="col-md-4">
                             <?= $form->field($model, 'ward_id')->widget(Select2::class, [
-                                'data' => OrganizationRefUnits::getListData('id', 'name', false, ['country_id' => $model->country_id, 'level' => OrganizationRefUnits::LEVEL_WARD]),
+                                'data' => CountryUnits::getListData('id', 'name', false, ['country_id' => $model->country_id, 'level' => CountryUnits::LEVEL_WARD]),
                                 'options' => [
                                     'class' => 'form-control parent-depdropdown',
                                     'placeholder' => '[select one]',
                                     'data-child-selectors' => [
                                         '#' . Html::getInputId($model, 'village_id'),
                                     ],
-                                    'data-url' => Url::to(['OrganizationRef-units/get-list', 'parent_id' => 'idV', 'level' => OrganizationRefUnits::LEVEL_WARD]),
+                                    'data-url' => Url::to(['OrganizationRef-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_WARD]),
                                     'data-selected' => $model->ward_id,
                                 ],
                                 'pluginOptions' => [
@@ -122,11 +122,11 @@ use yii\bootstrap4\ActiveForm;
                     <?php if ($model->showVillageField()): ?>
                         <div class="col-md-4">
                             <?= $form->field($model, 'village_id')->widget(Select2::class, [
-                                'data' => OrganizationRefUnits::getListData('id', 'name', false, ['country_id' => $model->country_id, 'level' => OrganizationRefUnits::LEVEL_VILLAGE]),
+                                'data' => CountryUnits::getListData('id', 'name', false, ['country_id' => $model->country_id, 'level' => CountryUnits::LEVEL_VILLAGE]),
                                 'options' => [
                                     'class' => 'form-control parent-depdropdown',
                                     'placeholder' => '[select one]',
-                                    'data-url' => Url::to(['OrganizationRef-units/get-list', 'parent_id' => 'idV', 'level' => OrganizationRefUnits::LEVEL_VILLAGE]),
+                                    'data-url' => Url::to(['OrganizationRef-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_VILLAGE]),
                                     'data-selected' => $model->village_id,
                                 ],
                                 'pluginOptions' => [

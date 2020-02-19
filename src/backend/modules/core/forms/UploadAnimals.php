@@ -12,7 +12,7 @@ namespace backend\modules\core\forms;
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\ExcelImport;
 use backend\modules\core\models\Farm;
-use backend\modules\core\models\OrganizationRef;
+use backend\modules\core\models\Country;
 use common\excel\ExcelUploadForm;
 use common\excel\ImportInterface;
 use common\helpers\Lang;
@@ -25,7 +25,7 @@ class UploadAnimals extends ExcelUploadForm implements ImportInterface
     public $country_id;
 
     /**
-     * @var OrganizationRef
+     * @var Country
      */
     public $countryModel;
 
@@ -58,7 +58,7 @@ class UploadAnimals extends ExcelUploadForm implements ImportInterface
     {
         $columns = [];
         $insert_data = [];
-        $this->countryModel = OrganizationRef::loadModel($this->country_id);
+        $this->countryModel = Country::loadModel($this->country_id);
 
         foreach ($batch as $k => $excel_row) {
             $row = $this->getExcelRowColumns($excel_row, $columns);

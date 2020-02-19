@@ -27,7 +27,7 @@ use yii\web\UploadedFile;
  */
 class OdkJsonQueue extends ActiveRecord implements ActiveSearchInterface
 {
-    use ActiveSearchTrait, OrganizationRefDataTrait;
+    use ActiveSearchTrait, CountryDataTrait;
 
     const SCENARIO_UPLOAD = 'upload';
     const SCENARIO_API_PUSH = 'api_push';
@@ -79,7 +79,7 @@ class OdkJsonQueue extends ActiveRecord implements ActiveSearchInterface
             'tmp_file' => 'JSON File',
             'is_processed' => 'Is Processed',
             'processed_at' => 'Processed At',
-            'country_id' => 'Country',
+            'country_id' => 'Country ID',
             'has_errors' => 'Has Errors',
             'error_message' => 'Error Message',
             'file_contents' => 'Json',

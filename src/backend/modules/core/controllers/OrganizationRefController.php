@@ -11,7 +11,7 @@ namespace backend\modules\core\controllers;
 
 use backend\modules\auth\Acl;
 use backend\modules\core\Constants;
-use backend\modules\core\models\OrganizationRef;
+use backend\modules\core\models\Country;
 use common\helpers\Lang;
 use Yii;
 use yii\db\Exception;
@@ -31,7 +31,7 @@ class OrganizationRefController extends Controller
     public function actionIndex()
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
-        $searchModel = OrganizationRef::searchModel([
+        $searchModel = Country::searchModel([
             'defaultOrder' => ['name' => SORT_ASC],
         ]);
         $searchModel->is_active = 1;
@@ -51,7 +51,7 @@ class OrganizationRefController extends Controller
     public function actionCreate()
     {
         $this->hasPrivilege(Acl::ACTION_CREATE);
-        $model = new OrganizationRef([]);
+        $model = new Country([]);
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $transaction = Yii::$app->db->beginTransaction();
@@ -100,15 +100,15 @@ class OrganizationRefController extends Controller
 
     /**
      * @param $id
-     * @return OrganizationRef
+     * @return Country
      * @throws \yii\web\NotFoundHttpException
      */
     protected function loadModel($id)
     {
         if (is_string($id) && !is_numeric($id)) {
-            $model = OrganizationRef::loadModel(['uuid' => $id]);
+            $model = Country::loadModel(['uuid' => $id]);
         } else {
-            $model = OrganizationRef::loadModel($id);
+            $model = Country::loadModel($id);
         }
 
         return $model;

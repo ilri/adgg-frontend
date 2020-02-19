@@ -2,7 +2,7 @@
 
 namespace backend\modules\conf\models;
 
-use backend\modules\core\models\OrganizationRef;
+use backend\modules\core\models\Country;
 use common\helpers\DbUtils;
 use common\helpers\Lang;
 use common\models\ActiveRecord;
@@ -162,7 +162,7 @@ class NumberingFormat extends ActiveRecord implements ActiveSearchInterface
             'preview' => $this->preview,
             'created_by' => $this->created_by,
         ]);
-        foreach (OrganizationRef::getColumnData('id') as $country_id) {
+        foreach (Country::getColumnData('id') as $country_id) {
             $newModel = clone $model;
             $newModel->country_id = $country_id;
             $newModel->save();

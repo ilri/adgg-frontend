@@ -3,7 +3,7 @@
 use common\helpers\Lang;
 use common\helpers\Url;
 
-/* @var $country \backend\modules\core\models\OrganizationRef */
+/* @var $country \backend\modules\core\models\Country */
 $this->title = 'Reports Dashboard';
 $this->params['breadcrumbs'][] = $this->title;
 ?>

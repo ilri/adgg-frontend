@@ -1,7 +1,7 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $searchModel backend\modules\core\models\Country */
+/* @var $searchModel backend\modules\core\models\CountryRef */
 $this->title = 'Countries list';
 $this->params['breadcrumbs'][] = $this->title;
 ?>

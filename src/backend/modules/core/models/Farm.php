@@ -53,7 +53,7 @@ use yii\helpers\Html;
  */
 class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInterface, TableAttributeInterface
 {
-    use ActiveSearchTrait, OrganizationRefUnitDataTrait, TableAttributeTrait;
+    use ActiveSearchTrait, CountryUnitDataTrait, TableAttributeTrait;
 
     /**
      * @var
@@ -101,13 +101,13 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     {
         $labels = [
             'id' => 'ID',
-            'code' => 'Code.',
+            'code' => 'Code',
             'name' => 'Farm Name',
             'country_id' => 'Country',
-            'region_id' => $this->country !== null ? Html::encode($this->country->unit1_name) : 'Region',
-            'district_id' => $this->country !== null ? Html::encode($this->country->unit2_name) : 'District',
-            'ward_id' => $this->country !== null ? Html::encode($this->country->unit3_name) : 'Ward',
-            'village_id' => $this->country !== null ? Html::encode($this->country->unit4_name) : 'Village',
+            'region_id' => $this->country !== null ? Html::encode($this->country->unit1_name) . ' ID' : 'Region ID',
+            'district_id' => $this->country !== null ? Html::encode($this->country->unit2_name) . ' ID' : 'District ID',
+            'ward_id' => $this->country !== null ? Html::encode($this->country->unit3_name) . ' ID' : 'Ward ID',
+            'village_id' => $this->country !== null ? Html::encode($this->country->unit4_name) . ' ID' : 'Village ID',
             'farmer_name' => 'Farmer Name',
             'reg_date' => 'Reg Date',
             'phone' => 'Farmer Phone No.',
@@ -326,6 +326,6 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
 
     public function getCountry()
     {
-        return $this->hasOne(OrganizationRef::class, ['id' => 'country_id']);
+        return $this->hasOne(Country::class, ['id' => 'country_id']);
     }
 }
