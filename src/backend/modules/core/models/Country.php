@@ -130,6 +130,7 @@ class Country extends ActiveRecord implements ActiveSearchInterface
     public function searchParams()
     {
         return [
+            'id',
             ['code', 'code'],
             ['name', 'name'],
             ['country', 'country'],
