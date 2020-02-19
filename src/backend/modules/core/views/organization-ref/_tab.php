@@ -39,4 +39,16 @@ $tab = Yii::$app->request->get('level', 0);
             <?= Html::encode($model->unit4_name) ?>
         </a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link "
+           href="<?= Url::to(['/core/organization/index', 'country_id' => $model->id]) ?>">
+            <?= Lang::t('Organization') ?>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link "
+           href="<?= Url::to(['/core/client/index', 'country_id' => $model->id]) ?>">
+            <?= Lang::t('Clients') ?>
+        </a>
+    </li>
 </ul>

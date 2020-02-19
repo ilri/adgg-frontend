@@ -20,6 +20,7 @@ use common\models\ActiveSearchTrait;
  * @property int|null $created_by Id of the user who created the records
  *
  * @property Country $country
+ * @property Organization $organization
  *
  */
 class Client extends ActiveRecord implements ActiveSearchInterface, TableAttributeInterface
@@ -86,6 +87,17 @@ class Client extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     public static function getDefinedTableId(): int
     {
         return ExtendableTable::TABLE_CLIENTS;
+    }
+
+    public function getCountry()
+    {
+        return $this->hasOne(Country::class, ['id' => 'country_id']);
+    }
+
+    public function getOrganization()
+    {
+        return $this->hasOne(Organization::class, ['id' => 'org_id']);
+
     }
 
     /**
