@@ -38,7 +38,7 @@ class ExtendableTableController extends MasterDataController
         $this->hasPrivilege(Acl::ACTION_VIEW);
         $this->setResourceLabel($table_id);
         $searchModel = TableAttribute::searchModel([
-            'defaultOrder' => ['group_id' => SORT_ASC, 'attribute_key' => SORT_ASC],
+            'defaultOrder' => ['group_id' => SORT_ASC, 'id' => SORT_ASC],
             'with' => ['group', 'listType'],
         ]);
         $searchModel->is_active = 1;
