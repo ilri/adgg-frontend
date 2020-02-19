@@ -21,6 +21,8 @@ use yii\helpers\Html;
  * @property int $district_id
  * @property int $ward_id
  * @property int $village_id
+ * @property int $org_id
+ * @property int $client_id
  * @property string $reg_date
  * @property string $farmer_name
  * @property string $phone
@@ -86,7 +88,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             [['reg_date'], 'date', 'format' => 'Y-m-d'],
             [['code'], 'unique', 'targetAttribute' => ['country_id', 'code'], 'message' => '{attribute} already exists', 'except' => self::SCENARIO_UPLOAD],
             [$this->getAdditionalAttributes(), 'safe'],
-            [['additional_attributes'], 'safe'],
+            [['additional_attributes', 'org_id', 'client_id'], 'safe'],
             ['odk_code', 'unique', 'targetAttribute' => ['country_id', 'odk_code'], 'message' => '{attribute} already exists.', 'on' => self::SCENARIO_UPLOAD],
             [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
@@ -108,6 +110,8 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             'district_id' => $this->country !== null ? Html::encode($this->country->unit2_name) . ' ID' : 'District ID',
             'ward_id' => $this->country !== null ? Html::encode($this->country->unit3_name) . ' ID' : 'Ward ID',
             'village_id' => $this->country !== null ? Html::encode($this->country->unit4_name) . ' ID' : 'Village ID',
+            'org_id' => 'External Organization ID',
+            'client_id' => 'Client ID',
             'farmer_name' => 'Farmer Name',
             'reg_date' => 'Reg Date',
             'phone' => 'Farmer Phone No.',
@@ -153,6 +157,8 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             'district_id',
             'ward_id',
             'village_id',
+            'org_id',
+            'client_id',
             'field_agent_id',
             'farm_type',
             'gender_code',

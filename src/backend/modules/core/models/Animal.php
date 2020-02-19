@@ -30,6 +30,8 @@ use yii\helpers\Inflector;
  * @property int $district_id
  * @property int $ward_id
  * @property int $village_id
+ * @property int $org_id
+ * @property int $client_id
  * @property int $animal_type
  * @property string $color
  * @property string $birthdate
@@ -112,7 +114,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             [['sire_tag_id', 'dam_tag_id'], 'validateSireOrDam'],
             ['sire_tag_id', 'validateSireBisexual'],
             ['dam_tag_id', 'validateDamBisexual'],
-            [['tmp_animal_photo', 'additional_attributes'], 'safe'],
+            [['tmp_animal_photo', 'additional_attributes', 'org_id', 'client_id'], 'safe'],
             [$this->getAdditionalAttributes(), 'safe'],
             [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
@@ -135,6 +137,8 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'district_id' => 'District ID',
             'ward_id' => 'Ward ID',
             'village_id' => 'Village ID',
+            'org_id' => 'External Organization ID',
+            'client_id' => 'Client ID',
             'animal_type' => 'Animal Type',
             'color' => 'Animal Color',
             'birthdate' => 'Date of Birth',
@@ -232,6 +236,8 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             [$alias . '.district_id', 'district_id', '', '='],
             [$alias . '.ward_id', 'ward_id', '', '='],
             [$alias . '.village_id', 'village_id', '', '='],
+            [$alias . '.org_id', 'org_id', '', '='],
+            [$alias . '.client_id', 'client_id', '', '='],
             [$alias . '.animal_type', 'animal_type', '', '='],
             [$alias . '.dam_id', 'dam_id', '', '='],
             [$alias . '.sire_id', 'sire_id', '', '='],
@@ -295,6 +301,8 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             $this->district_id = $this->farm->district_id;
             $this->ward_id = $this->farm->ward_id;
             $this->village_id = $this->farm->village_id;
+            $this->org_id = $this->farm->org_id;
+            $this->client_id = $this->farm->client_id;
             if (!empty($this->deformities)) {
                 if (is_string($this->deformities)) {
                     $this->deformities = array_map('trim', explode(' ', $this->deformities));
@@ -313,6 +321,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
         }
         return false;
     }
+
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);

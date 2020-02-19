@@ -55,7 +55,7 @@ class Client extends ActiveRecord implements ActiveSearchInterface, TableAttribu
      */
     public function attributeLabels()
     {
-        return [
+        $labels = [
             'id' => 'ID',
             'name' => 'Name',
             'description' => 'Description',
@@ -65,6 +65,7 @@ class Client extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'created_at' => 'Created At',
             'created_by' => 'Created By',
         ];
+        return array_merge($labels, $this->getOtherAttributeLabels());
     }
 
     /**

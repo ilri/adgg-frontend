@@ -23,6 +23,7 @@ class ExtendableTable
     const TABLE_CLIENT_REPEATS = 7;
     const TABLE_USERS = 8;
     const TABLE_CLIENTS = 9;
+    const TABLE_HERDS = 10;
 
     /**
      * @param int $intVal

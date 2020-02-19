@@ -21,6 +21,8 @@ use common\models\ActiveSearchTrait;
  * @property int $district_id
  * @property int $ward_id
  * @property int $village_id
+ * @property int $org_id
+ * @property int $client_id
  * @property float $latitude
  * @property float $longitude
  * @property string $map_address
@@ -31,19 +33,18 @@ use common\models\ActiveSearchTrait;
  * @property int $updated_by
  * @property string $reg_date
  * @property string $project
+ * @property string $additional_attributes
  *
  * @property Farm $farm
  * @property Country $country
  */
-class AnimalHerd extends ActiveRecord implements ActiveSearchInterface, ImportActiveRecordInterface
+class AnimalHerd extends ActiveRecord implements ActiveSearchInterface, ImportActiveRecordInterface, TableAttributeInterface
 {
-    use ActiveSearchTrait, CountryUnitDataTrait;
+    use ActiveSearchTrait, CountryUnitDataTrait, TableAttributeTrait;
 
     public $farmerName;
     public $farmerPhone;
     public $farmerEmail;
-
-    const SCENARIO_UPLOAD = 'upload';
 
 
     /**
@@ -69,6 +70,8 @@ class AnimalHerd extends ActiveRecord implements ActiveSearchInterface, ImportAc
             [['reg_date'], 'date', 'format' => 'php:Y-m-d'],
             [['herd_id'], 'unique', 'targetAttribute' => ['country_id', 'herd_id'], 'message' => '{attribute} already exists.'],
             [['herd_code'], 'unique', 'targetAttribute' => ['country_id', 'herd_code'], 'message' => '{attribute} already exists.'],
+            [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
+            [$this->getAdditionalAttributes(), 'safe'],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
     }
@@ -78,7 +81,7 @@ class AnimalHerd extends ActiveRecord implements ActiveSearchInterface, ImportAc
      */
     public function attributeLabels()
     {
-        return [
+        $labels = [
             'id' => 'ID',
             'name' => 'Herd Name',
             'herd_id' => 'Herd ID',
@@ -90,6 +93,8 @@ class AnimalHerd extends ActiveRecord implements ActiveSearchInterface, ImportAc
             'district_id' => 'District ID',
             'ward_id' => 'Ward ID',
             'village_id' => 'Village ID',
+            'org_id' => 'External Organization ID',
+            'client_id' => 'Client ID',
             'latitude' => 'Latitude',
             'longitude' => 'Longitude',
             'map_address' => 'Map Address',
@@ -104,6 +109,7 @@ class AnimalHerd extends ActiveRecord implements ActiveSearchInterface, ImportAc
             'farmerPhone' => 'Farmer Phone',
             'farmerEmail' => 'Farmer Email',
         ];
+        return array_merge($labels, $this->getOtherAttributeLabels());
     }
 
     /**
@@ -129,6 +135,8 @@ class AnimalHerd extends ActiveRecord implements ActiveSearchInterface, ImportAc
             'district_id',
             'ward_id',
             'village_id',
+            'org_id',
+            'client_id',
             'farm_id',
         ];
     }
@@ -136,16 +144,27 @@ class AnimalHerd extends ActiveRecord implements ActiveSearchInterface, ImportAc
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
+            $this->ignoreAdditionalAttributes = true;
             $this->setLocationData();
             $this->country_id = $this->farm->country_id;
             $this->region_id = $this->farm->region_id;
             $this->district_id = $this->farm->district_id;
             $this->ward_id = $this->farm->ward_id;
             $this->village_id = $this->farm->village_id;
+            $this->org_id = $this->farm->org_id;
+            $this->client_id = $this->farm->client_id;
+
+            $this->setAdditionalAttributesValues();
 
             return true;
         }
         return false;
+    }
+
+    public function afterFind()
+    {
+        parent::afterFind();
+        $this->loadAdditionalAttributeValues();
     }
 
 
@@ -166,5 +185,21 @@ class AnimalHerd extends ActiveRecord implements ActiveSearchInterface, ImportAc
             'latitude',
             'longitude',
         ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function getDefinedTableId(): int
+    {
+        return ExtendableTable::TABLE_HERDS;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function getDefinedType(): int
+    {
+        return TableAttribute::TYPE_ATTRIBUTE;
     }
 }
