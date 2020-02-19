@@ -12,7 +12,7 @@ namespace backend\modules\core\forms;
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\ExcelImport;
 use backend\modules\core\models\Farm;
-use backend\modules\core\models\Organization;
+use backend\modules\core\models\OrganizationRef;
 use common\excel\ExcelUploadForm;
 use common\excel\ImportInterface;
 use common\helpers\Lang;
@@ -22,12 +22,12 @@ class UploadAnimals extends ExcelUploadForm implements ImportInterface
     /**
      * @var int
      */
-    public $org_id;
+    public $country_id;
 
     /**
-     * @var Organization
+     * @var OrganizationRef
      */
-    public $orgModel;
+    public $countryModel;
 
     /**
      * @inheritdoc
@@ -35,7 +35,7 @@ class UploadAnimals extends ExcelUploadForm implements ImportInterface
     public function rules()
     {
         return array_merge($this->excelValidationRules(), [
-            [['org_id'], 'required'],
+            [['country_id'], 'required'],
         ]);
     }
 
@@ -45,7 +45,7 @@ class UploadAnimals extends ExcelUploadForm implements ImportInterface
     public function attributeLabels()
     {
         return array_merge($this->excelAttributeLabels(), [
-            'org_id' => Lang::t('Country'),
+            'country_id' => Lang::t('Country'),
         ]);
     }
 
@@ -58,14 +58,14 @@ class UploadAnimals extends ExcelUploadForm implements ImportInterface
     {
         $columns = [];
         $insert_data = [];
-        $this->orgModel = Organization::loadModel($this->org_id);
+        $this->countryModel = OrganizationRef::loadModel($this->country_id);
 
         foreach ($batch as $k => $excel_row) {
             $row = $this->getExcelRowColumns($excel_row, $columns);
             if (empty($row)) {
                 continue;
             }
-            $row['org_id'] = $this->org_id;
+            $row['country_id'] = $this->country_id;
             $row['farm_id'] = $this->getFarmId($row['odkFarmCode']);
             $row['derivedBirthdate'] = static::getDateColumnData($row['derivedBirthdate'] ?? null);
             $row['birthdate'] = static::getDateColumnData($row['birthdate'] ?? null);
@@ -74,7 +74,7 @@ class UploadAnimals extends ExcelUploadForm implements ImportInterface
             $row['animal_damknown'] = static::encodeBoolean($row['animal_damknown']);
             $insert_data[$k] = $row;
         }
-        $targetModel = new Animal(['org_id' => $this->org_id]);
+        $targetModel = new Animal(['country_id' => $this->country_id]);
         $this->save($insert_data, $targetModel, false);
     }
 

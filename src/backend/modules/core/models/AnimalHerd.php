@@ -16,7 +16,7 @@ use common\models\ActiveSearchTrait;
  * @property string $herd_code
  * @property int $farm_id
  * @property string $uuid
- * @property int $org_id
+ * @property int $country_id
  * @property int $region_id
  * @property int $district_id
  * @property int $ward_id
@@ -33,10 +33,11 @@ use common\models\ActiveSearchTrait;
  * @property string $project
  *
  * @property Farm $farm
+ * @property OrganizationRef $country
  */
 class AnimalHerd extends ActiveRecord implements ActiveSearchInterface, ImportActiveRecordInterface
 {
-    use ActiveSearchTrait, OrganizationUnitDataTrait;
+    use ActiveSearchTrait, OrganizationRefUnitDataTrait;
 
     public $farmerName;
     public $farmerPhone;
@@ -60,14 +61,14 @@ class AnimalHerd extends ActiveRecord implements ActiveSearchInterface, ImportAc
     {
         return [
             [['herd_id', 'farm_id', 'name'], 'required'],
-            [['farm_id', 'org_id', 'region_id', 'district_id', 'ward_id', 'village_id'], 'integer'],
+            [['farm_id', 'country_id', 'region_id', 'district_id', 'ward_id', 'village_id'], 'integer'],
             [['name', 'map_address'], 'string', 'max' => 255],
             [['herd_id', 'project'], 'string', 'max' => 128],
             [['latitude', 'longitude'], 'number'],
             [['farm_id'], 'exist', 'skipOnError' => true, 'targetClass' => Farm::class, 'targetAttribute' => ['farm_id' => 'id']],
             [['reg_date'], 'date', 'format' => 'php:Y-m-d'],
-            [['herd_id'], 'unique', 'targetAttribute' => ['org_id', 'herd_id'], 'message' => '{attribute} already exists.'],
-            [['herd_code'], 'unique', 'targetAttribute' => ['org_id', 'herd_code'], 'message' => '{attribute} already exists.'],
+            [['herd_id'], 'unique', 'targetAttribute' => ['country_id', 'herd_id'], 'message' => '{attribute} already exists.'],
+            [['herd_code'], 'unique', 'targetAttribute' => ['country_id', 'herd_code'], 'message' => '{attribute} already exists.'],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
     }
@@ -84,7 +85,7 @@ class AnimalHerd extends ActiveRecord implements ActiveSearchInterface, ImportAc
             'herd_code' => 'Herd Code',
             'farm_id' => 'Farm ID',
             'uuid' => 'Uuid',
-            'org_id' => 'Country',
+            'country_id' => 'Country',
             'region_id' => 'Region',
             'district_id' => 'District',
             'ward_id' => 'Ward',
@@ -123,7 +124,7 @@ class AnimalHerd extends ActiveRecord implements ActiveSearchInterface, ImportAc
             ['herd_id', 'herd_id'],
             ['herd_code', 'herd_code'],
             ['project', 'project'],
-            'org_id',
+            'country_id',
             'region_id',
             'district_id',
             'ward_id',
@@ -136,7 +137,7 @@ class AnimalHerd extends ActiveRecord implements ActiveSearchInterface, ImportAc
     {
         if (parent::beforeSave($insert)) {
             $this->setLocationData();
-            $this->org_id = $this->farm->org_id;
+            $this->country_id = $this->farm->country_id;
             $this->region_id = $this->farm->region_id;
             $this->district_id = $this->farm->district_id;
             $this->ward_id = $this->farm->ward_id;

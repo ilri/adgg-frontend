@@ -29,8 +29,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             ],
             [
-                'attribute' => 'org_id',
-                'value' => $model->org->name,
+                'attribute' => 'country_id',
+                'value' => $model->country->name,
             ],
             [
                 'attribute' => 'region_id',

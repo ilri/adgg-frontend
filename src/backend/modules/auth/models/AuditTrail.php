@@ -3,8 +3,8 @@
 namespace backend\modules\auth\models;
 
 use backend\modules\auth\Session;
-use backend\modules\core\models\Organization;
-use backend\modules\core\models\OrganizationDataTrait;
+use backend\modules\core\models\OrganizationRef;
+use backend\modules\core\models\OrganizationRefDataTrait;
 use backend\modules\core\models\TableAttributeInterface;
 use common\helpers\Lang;
 use common\helpers\Utils;
@@ -23,16 +23,16 @@ use Yii;
  * @property string $user_agent
  * @property string $ip_address
  * @property integer $user_id
- * @property  integer org_id
+ * @property  integer country_id
  * @property string $details
  * @property string $created_at
  *
  * @property Users $user
- * @property Organization $org
+ * @property OrganizationRef $country
  */
 class AuditTrail extends ActiveRecord implements ActiveSearchInterface
 {
-    use ActiveSearchTrait, OrganizationDataTrait;
+    use ActiveSearchTrait, OrganizationRefDataTrait;
 
     //actions
     const ACTION_VIEW = 1;
@@ -58,7 +58,7 @@ class AuditTrail extends ActiveRecord implements ActiveSearchInterface
     {
         return [
             [['action', 'action_description', 'url', 'user_id', 'user_agent'], 'required'],
-            [['action', 'user_id', 'org_id'], 'integer'],
+            [['action', 'user_id', 'country_id'], 'integer'],
             [['details'], 'string'],
             [['action_description', 'url', 'user_agent'], 'string', 'max' => 1000],
             [['ip_address'], 'string', 'max' => 30],
@@ -79,7 +79,7 @@ class AuditTrail extends ActiveRecord implements ActiveSearchInterface
             'ip_address' => Lang::t('Ip Address'),
             'user_agent' => Lang::t('Browser'),
             'user_id' => Lang::t('User'),
-            'org_id' => Lang::t('Organization'),
+            'country_id' => Lang::t('Country'),
             'details' => Lang::t('Details'),
             'created_at' => Lang::t('Time'),
         ];
@@ -94,7 +94,7 @@ class AuditTrail extends ActiveRecord implements ActiveSearchInterface
             ['ip_address', 'ip_address'],
             'action',
             'user_id',
-            'org_id',
+            'country_id',
         ];
     }
 
@@ -174,8 +174,8 @@ class AuditTrail extends ActiveRecord implements ActiveSearchInterface
         $audit->action_description = static::getActionDescription($model, $action);
 
         if (Utils::isWebApp()) {
-            if (!empty(Session::getOrgId())) {
-                $audit->org_id = Session::getOrgId();
+            if (!empty(Session::getCountryId())) {
+                $audit->country_id = Session::getCountryId();
             }
         }
 
@@ -221,7 +221,7 @@ class AuditTrail extends ActiveRecord implements ActiveSearchInterface
      */
     public function getOrg()
     {
-        return $this->hasOne(Organization::class, ['id' => 'org_id']);
+        return $this->hasOne(OrganizationRef::class, ['id' => 'country_id']);
     }
 
 }

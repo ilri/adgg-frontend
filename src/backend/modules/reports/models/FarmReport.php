@@ -9,7 +9,7 @@
 namespace backend\modules\reports\models;
 
 use backend\modules\core\models\Farm;
-use backend\modules\core\models\OrganizationUnits;
+use backend\modules\core\models\OrganizationRefUnits;
 use common\helpers\DbUtils;
 use common\helpers\Lang;
 use common\helpers\Str;
@@ -28,7 +28,7 @@ class FarmReport extends Farm implements HighChartInterface
         list($condition, $params) = static::appendOrgSessionIdCondition($condition, $params);
         $series = [];
         // get regions
-        $regions = OrganizationUnits::getListData('id', 'name', '', ['org_id' => 10, 'level' => OrganizationUnits::LEVEL_REGION]);
+        $regions = OrganizationRefUnits::getListData('id', 'name', '', ['country_id' => 10, 'level' => OrganizationRefUnits::LEVEL_REGION]);
         foreach ($regions as $id => $label) {
             list($newCondition, $newParams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
             $series[] = [

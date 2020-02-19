@@ -4,8 +4,8 @@ use backend\modules\core\models\Animal;
 use backend\modules\core\models\Choices;
 use backend\modules\core\models\CountriesDashboardStats;
 use backend\modules\core\models\Farm;
-use backend\modules\core\models\Organization;
-use backend\modules\core\models\OrganizationUnits;
+use backend\modules\core\models\OrganizationRef;
+use backend\modules\core\models\OrganizationRefUnits;
 use common\helpers\DbUtils;
 use common\helpers\Lang;
 use common\widgets\highchart\HighChart;
@@ -14,7 +14,7 @@ use yii\helpers\Json;
 /* @var $this yii\web\View */
 /* @var $controller \backend\controllers\BackendController */
 /* @var $graphFilterOptions array */
-/* @var $country Organization */
+/* @var $country OrganizationRef */
 /* @var $dataProvider */
 
 $controller = Yii::$app->controller;
@@ -82,7 +82,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                             $count = Animal::find()->joinWith('farm')
                                 ->andWhere($newCondition, $newParams)
                                 ->andWhere([Farm::tableName() . '.farm_type' => 'LSF'])
-                                ->andWhere([Farm::tableName() . '.org_id' => $country->id])
+                                ->andWhere([Farm::tableName() . '.country_id' => $country->id])
                                 ->count();
                             if ($count > 0) {
                                 $labels[] = trim($label);

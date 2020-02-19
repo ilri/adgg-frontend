@@ -11,7 +11,7 @@ namespace backend\modules\auth\forms;
 
 use backend\modules\auth\models\Users;
 use backend\modules\core\models\ExcelImport;
-use backend\modules\core\models\OrganizationUnits;
+use backend\modules\core\models\OrganizationRefUnits;
 use common\excel\ExcelReaderTrait;
 use common\excel\ExcelUploadForm;
 use common\excel\ImportInterface;
@@ -25,7 +25,7 @@ class UploadUsers extends ExcelUploadForm implements ImportInterface
     /**
      * @var int
      */
-    public $org_id;
+    public $country_id;
 
     /**
      * @var int
@@ -50,7 +50,7 @@ class UploadUsers extends ExcelUploadForm implements ImportInterface
     public function rules()
     {
         return array_merge($this->excelValidationRules(), [
-            [['org_id', 'level_id', 'role_id'], 'required'],
+            [['country_id', 'level_id', 'role_id'], 'required'],
         ]);
     }
 
@@ -60,7 +60,7 @@ class UploadUsers extends ExcelUploadForm implements ImportInterface
     public function attributeLabels()
     {
         return array_merge($this->excelAttributeLabels(), [
-            'org_id' => 'Country',
+            'country_id' => 'Country',
             'level_id' => 'Level',
             'role_id' => 'Role',
         ]);
@@ -81,7 +81,7 @@ class UploadUsers extends ExcelUploadForm implements ImportInterface
             if (empty($row))
                 continue;
 
-            $row['org_id'] = $this->org_id;
+            $row['country_id'] = $this->country_id;
             $row['level_id'] = $this->level_id;
             $row['role_id'] = $this->role_id;
             if (!empty($row['phone'])) {
@@ -97,7 +97,7 @@ class UploadUsers extends ExcelUploadForm implements ImportInterface
 
             $insert_data[$k] = $row;
         }
-        $model =new Users(['org_id' => $this->org_id, 'level_id' => $this->level_id, 'role_id' => $this->role_id]);
+        $model = new Users(['country_id' => $this->country_id, 'level_id' => $this->level_id, 'role_id' => $this->role_id]);
 
         $this->save($insert_data, $model);
     }
@@ -117,7 +117,7 @@ class UploadUsers extends ExcelUploadForm implements ImportInterface
             if (empty($row))
                 continue;
 
-            $row['org_id'] = $this->org_id;
+            $row['country_id'] = $this->country_id;
             $row['level_id'] = $this->level_id;
             $row['role_id'] = $this->role_id;
 
@@ -134,8 +134,8 @@ class UploadUsers extends ExcelUploadForm implements ImportInterface
             $insert_data[$k] = $row;
         }
 
-        $model =new Users(['org_id' => $this->org_id, 'level_id' => $this->level_id, 'role_id' => $this->role_id]);
-        $this->save($insert_data, $model, true, ['code' => '{username}', 'org_id' => $this->org_id, 'level' => $this->level]);
+        $model = new Users(['country_id' => $this->country_id, 'level_id' => $this->level_id, 'role_id' => $this->role_id]);
+        $this->save($insert_data, $model, true, ['code' => '{username}', 'country_id' => $this->country_id, 'level' => $this->level]);
     }
 
     /**
@@ -152,7 +152,7 @@ class UploadUsers extends ExcelUploadForm implements ImportInterface
         foreach ($data as $n => $row) {
             $newModel = Users::find()->andWhere([
                 'username' => $row['username'],
-                'org_id' => $row['org_id'],
+                'country_id' => $row['country_id'],
             ])->one();
 
             if (null === $newModel) {
@@ -181,7 +181,7 @@ class UploadUsers extends ExcelUploadForm implements ImportInterface
      */
     protected function getRegionId($regionCode)
     {
-        return OrganizationUnits::getScalar('id', ['org_id' => $this->org_id, 'level' => OrganizationUnits::LEVEL_REGION, 'code' => $regionCode]);
+        return OrganizationRefUnits::getScalar('id', ['country_id' => $this->country_id, 'level' => OrganizationRefUnits::LEVEL_REGION, 'code' => $regionCode]);
     }
 
     /**
@@ -191,7 +191,7 @@ class UploadUsers extends ExcelUploadForm implements ImportInterface
      */
     protected function getDistrictId($districtCode)
     {
-        return OrganizationUnits::getScalar('id', ['org_id' => $this->org_id, 'level' => OrganizationUnits::LEVEL_DISTRICT, 'code' => $districtCode]);
+        return OrganizationRefUnits::getScalar('id', ['country_id' => $this->country_id, 'level' => OrganizationRefUnits::LEVEL_DISTRICT, 'code' => $districtCode]);
     }
 
     /**

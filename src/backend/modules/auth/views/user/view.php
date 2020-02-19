@@ -64,10 +64,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => $model->getRelationAttributeValue('role', 'name'),
                 ],
                 [
-                    'attribute' => 'org_id',
-                    'value' => Html::a($model->getRelationAttributeValue('org', 'name') . ' <i class="fas fa-external-link"></i>', ['/core/organization/view', 'id' => $model->org_id], ['target' => '_blank']),
+                    'attribute' => 'country_id',
+                    'value' => Html::a($model->getRelationAttributeValue('country', 'name') . ' <i class="fas fa-external-link"></i>', ['/core/organization-ref/view', 'id' => $model->country_id], ['target' => '_blank']),
                     'format' => 'raw',
-                    'visible' => $model->org !== null && !\backend\modules\auth\Session::isOrganization(),
+                    'visible' => $model->country !== null && !\backend\modules\auth\Session::isOrganizationRef(),
                 ],
                 [
                     'attribute' => 'require_password_change',

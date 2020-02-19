@@ -53,19 +53,19 @@ class Session
     /**
      * @return bool
      */
-    public static function isOrganization()
+    public static function isOrganizationRef()
     {
         if (Yii::$app->user->isGuest) {
             return false;
         }
-        $orgUserLevels = [
+        $countryUserLevels = [
             UserLevels::LEVEL_COUNTRY,
             UserLevels::LEVEL_REGION,
             UserLevels::LEVEL_DISTRICT,
             UserLevels::LEVEL_WARD,
             UserLevels::LEVEL_VILLAGE,
         ];
-        return in_array(Yii::$app->user->identity->level_id, $orgUserLevels);
+        return in_array(Yii::$app->user->identity->level_id, $countryUserLevels);
     }
 
     public static function isCountryUser()
@@ -120,10 +120,10 @@ class Session
      * @param null|string|int $default
      * @return mixed
      */
-    public static function getOrgId($default = null)
+    public static function getCountryId($default = null)
     {
-        if (static::isOrganization()) {
-            return Yii::$app->user->identity->org_id ?? null;
+        if (static::isOrganizationRef()) {
+            return Yii::$app->user->identity->country_id ?? null;
         }
         return $default;
     }

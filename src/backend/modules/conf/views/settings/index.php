@@ -51,7 +51,7 @@ $this->params['breadcrumbs'] = [
                 <div class="kt-section kt-section--first">
                     <div class="kt-section__body">
                         <?= Html::errorSummary($model, ['class' => 'alert alert-warning', 'header' => '']); ?>
-                        <?php if (!\backend\modules\auth\Session::isOrganization()): ?>
+                        <?php if (!\backend\modules\auth\Session::isOrganizationRef()): ?>
                             <?= $form->field($model, SystemSettings::KEY_COMPANY_NAME); ?>
                             <?= $form->field($model, SystemSettings::KEY_APP_NAME); ?>
                             <?= $form->field($model, SystemSettings::KEY_COMPANY_EMAIL); ?>

@@ -21,12 +21,12 @@ class NumberFormatController extends DevController
         $this->resourceLabel = 'Number Format';
     }
 
-    public function actionIndex($org_id = null)
+    public function actionIndex($country_id = null)
     {
-        if (Session::isOrganization()) {
-            $org_id = Session::getOrgId();
+        if (Session::isOrganizationRef()) {
+            $country_id = Session::getCountryId();
         }
-        $condition = ['org_id' => $org_id];
+        $condition = ['country_id' => $country_id];
         $searchModel = NumberingFormat::searchModel([
             'defaultOrder' => ['id' => SORT_ASC],
             'condition' => $condition,

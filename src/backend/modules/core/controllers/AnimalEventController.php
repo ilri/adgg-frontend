@@ -14,7 +14,7 @@ use backend\modules\core\Constants;
 use backend\modules\core\forms\UploadFarms;
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\Farm;
-use backend\modules\core\models\Organization;
+use backend\modules\core\models\OrganizationRef;
 use common\controllers\UploadExcelTrait;
 
 class AnimalEventController extends Controller
@@ -30,28 +30,28 @@ class AnimalEventController extends Controller
     }
 
     /**
-     * @param null $org_id
+     * @param null $country_id
      * @return string
      * @throws \yii\web\BadRequestHttpException
      * @throws \yii\web\ForbiddenHttpException
      * @throws \yii\web\NotFoundHttpException
      */
-    public function actionEventList($org_id = null)
+    public function actionEventList($country_id = null)
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
         $events = AnimalEvent::eventTypeOptions();
-        $country = Organization::findOne(['id' => $org_id]);
+        $country = OrganizationRef::findOne(['id' => $country_id]);
         return $this->render('/animal-event/event-lists', [
             'country' => $country,
             'events' => $events,
-            'org_id' => $org_id,
+            'country_id' => $country_id,
         ]);
     }
 
     /**
      * @param null $event_type
      * @param null $animal_id
-     * @param null $org_id
+     * @param null $country_id
      * @param null $region_id
      * @param null $district_id
      * @param null $ward_id
@@ -63,10 +63,10 @@ class AnimalEventController extends Controller
      * @throws \yii\web\ForbiddenHttpException
      * @throws \yii\web\NotFoundHttpException
      */
-    public function actionIndex($event_type = null, $animal_id = null, $org_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $from = null, $to = null)
+    public function actionIndex($event_type = null, $animal_id = null, $country_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $from = null, $to = null)
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
-        return $this->renderIndexAction($event_type, $animal_id, $org_id, $region_id, $district_id, $ward_id, $village_id, $from, $to);
+        return $this->renderIndexAction($event_type, $animal_id, $country_id, $region_id, $district_id, $ward_id, $village_id, $from, $to);
     }
 
     public function actionView($id)

@@ -17,10 +17,10 @@ use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 
 /**
- * Trait OrganizationUnitDataTrait
+ * Trait OrganizationRefUnitDataTrait
  * @package backend\modules\core\models
  *
- * @property int $org_id
+ * @property int $country_id
  * @property int $region_id
  * @property int $district_id
  * @property int $ward_id
@@ -28,13 +28,13 @@ use yii\web\NotFoundHttpException;
  * @property float $latitude
  * @property float $longitude
  * @property string $latlng
- * @property Organization $org
- * @property OrganizationUnits $region
- * @property OrganizationUnits $district
- * @property OrganizationUnits $ward
- * @property OrganizationUnits $village
+ * @property OrganizationRef $country
+ * @property OrganizationRefUnits $region
+ * @property OrganizationRefUnits $district
+ * @property OrganizationRefUnits $ward
+ * @property OrganizationRefUnits $village
  */
-trait OrganizationUnitDataTrait
+trait OrganizationRefUnitDataTrait
 {
     /**
      * @param string $condition
@@ -45,9 +45,9 @@ trait OrganizationUnitDataTrait
      */
     public static function appendOrgSessionIdCondition($condition = '', $params = [], $strict = false)
     {
-        if (Utils::isWebApp() && Session::isOrganization()) {
+        if (Utils::isWebApp() && Session::isOrganizationRef()) {
             if (is_array($condition)) {
-                $condition['org_id'] = Session::getOrgId();
+                $condition['country_id'] = Session::getCountryId();
                 if (Session::isRegionUser()) {
                     $condition['region_id'] = Session::getRegionId();
                 } elseif (Session::isDistrictUser()) {
@@ -58,7 +58,7 @@ trait OrganizationUnitDataTrait
                     $condition['village_id'] = Session::getVillageId();
                 }
             } else {
-                list($condition, $params) = DbUtils::appendCondition('org_id', Session::getOrgId(), $condition, $params);
+                list($condition, $params) = DbUtils::appendCondition('country_id', Session::getCountryId(), $condition, $params);
                 if (Session::isRegionUser()) {
                     list($condition, $params) = DbUtils::appendCondition('region_id', Session::getRegionId(), $condition, $params);
                 } elseif (Session::isDistrictUser()) {
@@ -69,16 +69,16 @@ trait OrganizationUnitDataTrait
                     list($condition, $params) = DbUtils::appendCondition('village_id', Session::getVillageId(), $condition, $params);
                 }
             }
-        } elseif ($strict && Utils::isWebApp() && !Session::isOrganization()) {
+        } elseif ($strict && Utils::isWebApp() && !Session::isOrganizationRef()) {
             if (is_array($condition)) {
-                if (!isset($condition['org_id'])) {
-                    $condition['org_id'] = null;
+                if (!isset($condition['country_id'])) {
+                    $condition['country_id'] = null;
                 }
             } else {
                 if (!empty($condition)) {
                     $condition .= ' AND ';
                 }
-                $condition .= '[[org_id]] IS NULL';
+                $condition .= '[[country_id]] IS NULL';
             }
         }
         return [$condition, $params];
@@ -102,8 +102,8 @@ trait OrganizationUnitDataTrait
             if ($throwException) {
                 throw new NotFoundHttpException('The requested resource was not found.');
             }
-        } elseif (Utils::isWebApp() && Session::isOrganization()) {
-            if ($model->org_id != Session::getOrgId()) {
+        } elseif (Utils::isWebApp() && Session::isOrganizationRef()) {
+            if ($model->country_id != Session::getCountryId()) {
                 throw new ForbiddenHttpException();
             }
             if (Session::isRegionUser() && $model->region_id != Session::getRegionId()) {
@@ -132,9 +132,9 @@ trait OrganizationUnitDataTrait
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getOrg()
+    public function getCountry()
     {
-        return $this->hasOne(Organization::class, ['id' => 'org_id']);
+        return $this->hasOne(OrganizationRef::class, ['id' => 'country_id']);
     }
 
     /**
@@ -142,7 +142,7 @@ trait OrganizationUnitDataTrait
      */
     public function getRegion()
     {
-        return $this->hasOne(OrganizationUnits::class, ['id' => 'region_id']);
+        return $this->hasOne(OrganizationRefUnits::class, ['id' => 'region_id']);
     }
 
     /**
@@ -150,7 +150,7 @@ trait OrganizationUnitDataTrait
      */
     public function getDistrict()
     {
-        return $this->hasOne(OrganizationUnits::class, ['id' => 'district_id']);
+        return $this->hasOne(OrganizationRefUnits::class, ['id' => 'district_id']);
     }
 
     /**
@@ -158,7 +158,7 @@ trait OrganizationUnitDataTrait
      */
     public function getWard()
     {
-        return $this->hasOne(OrganizationUnits::class, ['id' => 'ward_id']);
+        return $this->hasOne(OrganizationRefUnits::class, ['id' => 'ward_id']);
     }
 
     /**
@@ -166,7 +166,7 @@ trait OrganizationUnitDataTrait
      */
     public function getVillage()
     {
-        return $this->hasOne(OrganizationUnits::class, ['id' => 'village_id']);
+        return $this->hasOne(OrganizationRefUnits::class, ['id' => 'village_id']);
     }
 
     /**
@@ -174,7 +174,7 @@ trait OrganizationUnitDataTrait
      */
     public function showCountryField(): bool
     {
-        return !Session::isOrganization();
+        return !Session::isOrganizationRef();
     }
 
     /**
@@ -182,7 +182,7 @@ trait OrganizationUnitDataTrait
      */
     public function showRegionField(): bool
     {
-        return !Session::isOrganization() || Session::isCountryUser();
+        return !Session::isOrganizationRef() || Session::isCountryUser();
     }
 
     /**
@@ -190,7 +190,7 @@ trait OrganizationUnitDataTrait
      */
     public function showDistrictField(): bool
     {
-        return !Session::isOrganization() || Session::isCountryUser() || Session::isRegionUser();
+        return !Session::isOrganizationRef() || Session::isCountryUser() || Session::isRegionUser();
     }
 
     /**
@@ -198,7 +198,7 @@ trait OrganizationUnitDataTrait
      */
     public function showWardField(): bool
     {
-        return !Session::isOrganization() || Session::isCountryUser() || Session::isRegionUser() || Session::isDistrictUser();
+        return !Session::isOrganizationRef() || Session::isCountryUser() || Session::isRegionUser() || Session::isDistrictUser();
     }
 
     /**
@@ -206,7 +206,7 @@ trait OrganizationUnitDataTrait
      */
     public function showVillageField(): bool
     {
-        return !Session::isOrganization() || Session::isCountryUser() || Session::isRegionUser() || Session::isDistrictUser() || Session::isWardUser();
+        return !Session::isOrganizationRef() || Session::isCountryUser() || Session::isRegionUser() || Session::isDistrictUser() || Session::isWardUser();
     }
 
     protected function setLocationData()

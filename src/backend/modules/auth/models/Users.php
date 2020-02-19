@@ -6,9 +6,9 @@ namespace backend\modules\auth\models;
 use backend\modules\auth\Session;
 use backend\modules\conf\settings\SystemSettings;
 use backend\modules\core\models\ExtendableTable;
-use backend\modules\core\models\Organization;
-use backend\modules\core\models\OrganizationUnitDataTrait;
-use backend\modules\core\models\OrganizationUnits;
+use backend\modules\core\models\OrganizationRef;
+use backend\modules\core\models\OrganizationRefUnitDataTrait;
+use backend\modules\core\models\OrganizationRefUnits;
 use backend\modules\core\models\TableAttribute;
 use backend\modules\core\models\TableAttributeInterface;
 use backend\modules\core\models\TableAttributeTrait;
@@ -29,7 +29,7 @@ use yii\web\NotFoundHttpException;
  * This is the model class for table "auth_users".
  *
  * @property integer $branch_id
- * @property int $org_id
+ * @property int $country_id
  * @property int $region_id
  * @property int $district_id
  * @property int $ward_id
@@ -37,16 +37,16 @@ use yii\web\NotFoundHttpException;
  * @property string $odk_code
  * @property string|array $additional_attributes
  *
- * @property Organization $org
- * @property OrganizationUnits $region
- * @property OrganizationUnits $district
- * @property OrganizationUnits $ward
- * @property OrganizationUnits $village
+ * @property OrganizationRef $country
+ * @property OrganizationRefUnits $region
+ * @property OrganizationRefUnits $district
+ * @property OrganizationRefUnits $ward
+ * @property OrganizationRefUnits $village
  *
  */
 class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelInterface, TableAttributeInterface
 {
-    use ActiveSearchTrait, OrganizationUnitDataTrait, UserNotificationTrait, TableAttributeTrait;
+    use ActiveSearchTrait, OrganizationRefUnitDataTrait, UserNotificationTrait, TableAttributeTrait;
 
     /**
      *
@@ -85,7 +85,7 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
             [['name', 'username', 'level_id'], 'required', 'on' => [self::SCENARIO_CREATE, self::SCENARIO_UPDATE]],
             [['email'], 'required', 'except' => [self::SCENARIO_UPLOAD]],
             ['email', 'email'],
-            [['level_id', 'role_id', 'org_id', 'auto_generate_password', 'branch_id'], 'integer'],
+            [['level_id', 'role_id', 'country_id', 'auto_generate_password', 'branch_id'], 'integer'],
             [['name', 'profile_image'], 'string', 'max' => 128],
             ['username', 'string', 'min' => 4, 'max' => 30],
             // password field is required on 'create' scenario
@@ -132,7 +132,7 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
             $this->passwordHistoryValidator(),
             [['region_id', 'district_id', 'ward_id', 'village_id', 'additional_attributes'], 'safe'],
             [$this->getAdditionalAttributes(), 'safe'],
-            ['odk_code', 'unique', 'targetAttribute' => ['org_id', 'odk_code'], 'message' => '{attribute} already exists.'],
+            ['odk_code', 'unique', 'targetAttribute' => ['country_id', 'odk_code'], 'message' => '{attribute} already exists.'],
         ];
     }
 
@@ -161,15 +161,15 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
             'updated_at' => Lang::t('Updated At'),
             'last_login' => Lang::t('Last Login'),
             'send_email' => Lang::t('Email the login details to the user.'),
-            'org_id' => Lang::t('Country'),
+            'country_id' => Lang::t('Country'),
             'auto_generate_password' => Lang::t('Auto Generate Password'),
             'branch_id' => Lang::t('Branch'),
             'require_password_change' => Lang::t('Force password change on login'),
             'odk_code' => 'ODK Code',
-            'region_id' => $this->org !== null ? Html::encode($this->org->unit1_name) : 'Region',
-            'district_id' => $this->org !== null ? Html::encode($this->org->unit2_name) : 'District',
-            'ward_id' => $this->org !== null ? Html::encode($this->org->unit3_name) : 'Ward',
-            'village_id' => $this->org !== null ? Html::encode($this->org->unit4_name) : 'Village',
+            'region_id' => $this->country !== null ? Html::encode($this->country->unit1_name) : 'Region',
+            'district_id' => $this->country !== null ? Html::encode($this->country->unit2_name) : 'District',
+            'ward_id' => $this->country !== null ? Html::encode($this->country->unit3_name) : 'Ward',
+            'village_id' => $this->country !== null ? Html::encode($this->country->unit4_name) : 'Village',
         ];
     }
 
@@ -186,7 +186,7 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
             'status',
             'level_id',
             'role_id',
-            'org_id',
+            'country_id',
             'is_main_account',
             'branch_id',
         ];
@@ -200,7 +200,7 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
         if (parent::beforeSave($insert)) {
             $this->ignoreAdditionalAttributes = true;
             if ($this->level_id == UserLevels::LEVEL_DEV || $this->level_id == UserLevels::LEVEL_SUPER_ADMIN || $this->level_id == UserLevels::LEVEL_ADMIN) {
-                $this->org_id = null;
+                $this->country_id = null;
             }
             $this->setAdditionalAttributesValues();
             return true;
@@ -439,7 +439,7 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
             if ($throwException) {
                 throw new NotFoundHttpException('The requested resource was not found.');
             }
-        } elseif (Utils::isWebApp() && Session::isOrganization() && $model->org_id != Session::getOrgId()) {
+        } elseif (Utils::isWebApp() && Session::isOrganizationRef() && $model->country_id != Session::getCountryId()) {
             throw new ForbiddenHttpException();
         }
         return $model;

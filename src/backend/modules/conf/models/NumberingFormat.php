@@ -2,7 +2,7 @@
 
 namespace backend\modules\conf\models;
 
-use backend\modules\core\models\Organization;
+use backend\modules\core\models\OrganizationRef;
 use common\helpers\DbUtils;
 use common\helpers\Lang;
 use common\models\ActiveRecord;
@@ -22,7 +22,7 @@ use yii\helpers\ArrayHelper;
  * @property string $prefix
  * @property string $suffix
  * @property string $preview
- * @property int $org_id
+ * @property int $country_id
  * @property int $is_private
  * @property int $is_active
  * @property string $created_at
@@ -60,12 +60,12 @@ class NumberingFormat extends ActiveRecord implements ActiveSearchInterface
     {
         return [
             [['code', 'name'], 'required'],
-            [['next_number', 'min_digits', 'org_id', 'is_private', 'is_active'], 'integer'],
+            [['next_number', 'min_digits', 'country_id', 'is_private', 'is_active'], 'integer'],
             [['code'], 'string', 'max' => 60],
             [['name'], 'string', 'max' => 255],
             [['prefix', 'suffix'], 'string', 'max' => 5],
             [['preview'], 'string', 'max' => 128],
-            [['code'], 'unique', 'targetAttribute' => ['org_id', 'code'], 'message' => Lang::t('{attribute} {value} has been defined')],
+            [['code'], 'unique', 'targetAttribute' => ['country_id', 'code'], 'message' => Lang::t('{attribute} {value} has been defined')],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
     }
@@ -85,7 +85,7 @@ class NumberingFormat extends ActiveRecord implements ActiveSearchInterface
             'prefix' => Lang::t('Prefix'),
             'suffix' => Lang::t('Suffix'),
             'preview' => Lang::t('Preview'),
-            'org_id' => Lang::t('Organization'),
+            'country_id' => Lang::t('Country'),
             'is_private' => Lang::t('Private'),
             'is_active' => Lang::t('Active'),
         ];
@@ -95,15 +95,15 @@ class NumberingFormat extends ActiveRecord implements ActiveSearchInterface
      * Get next formatted number
      * @param string $code
      * @param boolean $increment_next_number
-     * @param null|int $org_id
+     * @param null|int $country_id
      * @return string $formatted_number
      * @throws \yii\db\Exception
      */
-    public static function getNextFormattedNumber($code, $increment_next_number = true, $org_id = null)
+    public static function getNextFormattedNumber($code, $increment_next_number = true, $country_id = null)
     {
         $condition = '[[code]]=:code';
         $params = [':code' => $code];
-        list($condition, $params) = DbUtils::appendCondition('org_id', $org_id, $condition, $params);
+        list($condition, $params) = DbUtils::appendCondition('country_id', $country_id, $condition, $params);
         $format = static::getOneRow('*', $condition, $params);
         $next_number = ArrayHelper::getValue($format, 'next_number', 1);
         $min_digits = ArrayHelper::getValue($format, 'min_digits', 3);
@@ -133,7 +133,7 @@ class NumberingFormat extends ActiveRecord implements ActiveSearchInterface
         return [
             ['code', 'code'],
             ['name', 'name'],
-            'org_id',
+            'country_id',
             'is_active',
         ];
     }
@@ -148,10 +148,10 @@ class NumberingFormat extends ActiveRecord implements ActiveSearchInterface
 
     protected function cascadeNumberingFormat()
     {
-        if ($this->is_private || !empty($this->org_id)) {
+        if ($this->is_private || !empty($this->country_id)) {
             return false;
         }
-        //get all organizations
+        //get all countries
         $model = new static([
             'code' => $this->code,
             'name' => $this->name,
@@ -162,9 +162,9 @@ class NumberingFormat extends ActiveRecord implements ActiveSearchInterface
             'preview' => $this->preview,
             'created_by' => $this->created_by,
         ]);
-        foreach (Organization::getColumnData('id') as $org_id) {
+        foreach (OrganizationRef::getColumnData('id') as $country_id) {
             $newModel = clone $model;
-            $newModel->org_id = $org_id;
+            $newModel->country_id = $country_id;
             $newModel->save();
         }
     }

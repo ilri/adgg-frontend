@@ -2,8 +2,8 @@
 
 use backend\modules\core\models\ChoiceTypes;
 use backend\modules\core\models\Choices;
-use backend\modules\core\models\Organization;
-use backend\modules\core\models\OrganizationUnits;
+use backend\modules\core\models\OrganizationRef;
+use backend\modules\core\models\OrganizationRefUnits;
 use backend\modules\reports\Constants;
 use common\widgets\highchart\HighChart;
 use common\widgets\select2\Select2;
@@ -16,12 +16,12 @@ $idPrefix = 'animal-g-filter-';
 <div class="row">
     <div class="col-md-2">
         <?= Select2::widget([
-            'name' => 'org_id',
-            'value' => $filterOptions['org_id'] ?? null,
-            'data' => Organization::getListData('id', 'name', '--All Countries--'),
+            'name' => 'country_id',
+            'value' => $filterOptions['country_id'] ?? null,
+            'data' => OrganizationRef::getListData('id', 'name', '--All Countries--'),
             'theme' => Select2::THEME_BOOTSTRAP,
             'options' => [
-                'id' => $idPrefix . 'org_id',
+                'id' => $idPrefix . 'country_id',
                 'class' => 'form-control parent-depdropdown',
                 'data-child-selectors' => [
                     '#' . $idPrefix . 'region_id',
@@ -41,7 +41,7 @@ $idPrefix = 'animal-g-filter-';
             'options' => [
                 'id' => $idPrefix . 'region_id',
                 'class' => 'form-control parent-depdropdown',
-                'data-url' => Url::to(['/core/organization-units/get-list', 'org_id' => 'idV', 'level' => OrganizationUnits::LEVEL_REGION, 'placeholder' => '--All Regions--']),
+                'data-url' => Url::to(['/core/OrganizationRef-units/get-list', 'country_id' => 'idV', 'level' => OrganizationRefUnits::LEVEL_REGION, 'placeholder' => '--All Regions--']),
                 'data-child-selectors' => [
                     '#' . $idPrefix . 'district_id',
                 ],
@@ -60,7 +60,7 @@ $idPrefix = 'animal-g-filter-';
             'options' => [
                 'id' => $idPrefix . 'district_id',
                 'class' => 'form-control parent-depdropdown',
-                'data-url' => Url::to(['/core/organization-units/get-list', 'parent_id' => 'idV', 'level' => OrganizationUnits::LEVEL_DISTRICT, 'placeholder' => '--All Districts--']),
+                'data-url' => Url::to(['/core/OrganizationRef-units/get-list', 'parent_id' => 'idV', 'level' => OrganizationRefUnits::LEVEL_DISTRICT, 'placeholder' => '--All Districts--']),
                 'data-child-selectors' => [
                     '#' . $idPrefix . 'ward_id',
                 ],
@@ -79,7 +79,7 @@ $idPrefix = 'animal-g-filter-';
             'options' => [
                 'id' => $idPrefix . 'ward_id',
                 'class' => 'form-control parent-depdropdown',
-                'data-url' => Url::to(['/core/organization-units/get-list', 'parent_id' => 'idV', 'level' => OrganizationUnits::LEVEL_WARD, 'placeholder' => '--All Wards--']),
+                'data-url' => Url::to(['/core/OrganizationRef-units/get-list', 'parent_id' => 'idV', 'level' => OrganizationRefUnits::LEVEL_WARD, 'placeholder' => '--All Wards--']),
                 'data-child-selectors' => [
                     '#' . $idPrefix . 'village_id',
                 ],
@@ -97,7 +97,7 @@ $idPrefix = 'animal-g-filter-';
             'theme' => Select2::THEME_BOOTSTRAP,
             'options' => [
                 'id' => $idPrefix . 'village_id',
-                'data-url' => Url::to(['/core/organization-units/get-list', 'parent_id' => 'idV', 'level' => OrganizationUnits::LEVEL_VILLAGE, 'placeholder' => '--All Villages--']),
+                'data-url' => Url::to(['/core/OrganizationRef-units/get-list', 'parent_id' => 'idV', 'level' => OrganizationRefUnits::LEVEL_VILLAGE, 'placeholder' => '--All Villages--']),
             ],
             'pluginOptions' => [
                 'allowClear' => false

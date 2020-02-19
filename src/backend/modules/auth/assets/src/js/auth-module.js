@@ -228,14 +228,14 @@ MyApp.modules.auth = {};
     }
 }(jQuery));
 
-//toggle organization
+//toggle OrganizationRef
 (function ($) {
     "use strict";
     let FORM = function (options) {
         let defaultOptions = {
-            organizationWrapperSelector: '#organization-id-wrapper',
+            OrganizationRefWrapperSelector: '#OrganizationRef-id-wrapper',
             levelIdFieldSelector: '#users-level_id',
-            orgIdFieldSelector: '#users-org_id',
+            orgIdFieldSelector: '#users-country_id',
             regionIdFieldSelector: '#users-region_id',
             districtIdFieldSelector: '#users-district_id',
             wardIdFieldSelector: '#users-ward_id',
@@ -250,7 +250,7 @@ MyApp.modules.auth = {};
                 selector = $this.options.levelIdFieldSelector;
             let _toggle = function (e) {
                 let val = $(e).val(),
-                    showOrganizationFlags = $(e).data('show-country'),
+                    showOrganizationRefFlags = $(e).data('show-country'),
                     orgSelect = $($this.options.orgIdFieldSelector),
                     orgSelectWrapper = $('#org-id-wrapper'),
                     showRegionFlags = $(e).data('show-region'),
@@ -265,7 +265,7 @@ MyApp.modules.auth = {};
                     showVillageFlags = $(e).data('show-village'),
                     villageSelect = $($this.options.villageIdFieldSelector),
                     villageSelectWrapper = $('#village-id-wrapper');
-                if (showOrganizationFlags.includes(parseInt(val))) {
+                if (showOrganizationRefFlags.includes(parseInt(val))) {
                     orgSelectWrapper.show();
                 } else {
                     orgSelectWrapper.hide();

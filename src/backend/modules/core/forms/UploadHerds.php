@@ -12,7 +12,7 @@ namespace backend\modules\core\forms;
 use backend\modules\core\models\AnimalHerd;
 use backend\modules\core\models\ExcelImport;
 use backend\modules\core\models\Farm;
-use backend\modules\core\models\Organization;
+use backend\modules\core\models\OrganizationRef;
 use common\excel\ExcelUploadForm;
 use common\excel\ImportInterface;
 use common\helpers\Lang;
@@ -23,12 +23,12 @@ class UploadHerds extends ExcelUploadForm implements ImportInterface
     /**
      * @var int
      */
-    public $org_id;
+    public $country_id;
 
     /**
-     * @var Organization
+     * @var OrganizationRef
      */
-    public $orgModel;
+    public $countryModel;
 
     /**
      * @inheritdoc
@@ -44,7 +44,7 @@ class UploadHerds extends ExcelUploadForm implements ImportInterface
     public function rules()
     {
         return array_merge($this->excelValidationRules(), [
-            [['org_id'], 'required'],
+            [['country_id'], 'required'],
         ]);
     }
 
@@ -54,7 +54,7 @@ class UploadHerds extends ExcelUploadForm implements ImportInterface
     public function attributeLabels()
     {
         return array_merge($this->excelAttributeLabels(), [
-            'org_id' => Lang::t('Country'),
+            'country_id' => Lang::t('Country'),
         ]);
     }
 
@@ -67,26 +67,26 @@ class UploadHerds extends ExcelUploadForm implements ImportInterface
     {
         $columns = [];
         $insert_data = [];
-        $this->orgModel = Organization::loadModel($this->org_id);
+        $this->countryModel = OrganizationRef::loadModel($this->country_id);
 
         foreach ($batch as $k => $excel_row) {
             $row = $this->getExcelRowColumns($excel_row, $columns);
             if (empty($row)) {
                 continue;
             }
-            $row['org_id'] = $this->org_id;
+            $row['country_id'] = $this->country_id;
             $row['reg_date'] = static::getDateColumnData($row['reg_date'], 'Y-m-d', 'UTC', 'd/m/Y');
             $insert_data[$k] = $row;
         }
 
-        $model = new AnimalHerd(['org_id' => $this->org_id]);
-        $this->save($insert_data, $model, true, ['herd_code' => '{herd_code}', 'org_id' => $this->org_id]);
+        $model = new AnimalHerd(['country_id' => $this->country_id]);
+        $this->save($insert_data, $model, true, ['herd_code' => '{herd_code}', 'country_id' => $this->country_id]);
     }
 
     protected function getFarmId($row)
     {
         $farmerPhone = trim($row['farmerPhone']);
-        $farm_id = Farm::getScalar('id', ['code' => $farmerPhone, 'org_id' => $this->org_id]);
+        $farm_id = Farm::getScalar('id', ['code' => $farmerPhone, 'country_id' => $this->country_id]);
 
         if (!empty($farm_id)) {
             return $farm_id;
@@ -110,7 +110,7 @@ class UploadHerds extends ExcelUploadForm implements ImportInterface
         $model->email = $row['farmerEmail'];
         $model->latitude = $row['latitude'];
         $model->longitude = $row['longitude'];
-        $model->org_id = $row['org_id'];
+        $model->country_id = $row['country_id'];
         $model->enableAuditTrail = false;
         $model->save(false);
         return $model->id;
@@ -126,6 +126,6 @@ class UploadHerds extends ExcelUploadForm implements ImportInterface
 
     protected function cleanPhoneNumber($number)
     {
-        return Msisdn::format($number, $this->orgModel->dialing_code);
+        return Msisdn::format($number, $this->countryModel->dialing_code);
     }
 }

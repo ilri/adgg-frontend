@@ -33,10 +33,10 @@ class AnimalController extends Controller
         $this->resourceLabel = 'Animal';
     }
 
-    public function actionIndex($org_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $animal_type = null, $farm_id = null, $farm_type = null, $main_breed = null, $name = null, $tag_id = null, $sire_tag_id = null, $dam_tag_id = null)
+    public function actionIndex($country_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $animal_type = null, $farm_id = null, $farm_type = null, $main_breed = null, $name = null, $tag_id = null, $sire_tag_id = null, $dam_tag_id = null)
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
-        $org_id = Session::getOrgId($org_id);
+        $country_id = Session::getCountryId($country_id);
         $region_id = Session::getRegionId($region_id);
         $district_id = Session::getDistrictId($district_id);
         $ward_id = Session::getWardId($ward_id);
@@ -47,12 +47,12 @@ class AnimalController extends Controller
             'defaultOrder' => ['id' => SORT_ASC],
             'condition' => $condition,
             'params' => $params,
-            'joinWith' => ['farm' => function(yii\db\ActiveQuery $query) use ($farm_type){
-                $query->andFilterWhere([Farm::tableName(). '.farm_type' => $farm_type]);
+            'joinWith' => ['farm' => function (yii\db\ActiveQuery $query) use ($farm_type) {
+                $query->andFilterWhere([Farm::tableName() . '.farm_type' => $farm_type]);
             }],
             'with' => ['farm', 'region', 'district', 'ward', 'village', 'sire', 'dam'],
         ]);
-        $searchModel->org_id = $org_id;
+        $searchModel->country_id = $country_id;
         $searchModel->region_id = $region_id;
         $searchModel->district_id = $district_id;
         $searchModel->ward_id = $ward_id;

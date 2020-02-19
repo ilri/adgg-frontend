@@ -8,7 +8,7 @@ use api\controllers\ActiveController;
 use api\controllers\JwtAuthTrait;
 use backend\modules\conf\settings\SystemSettings;
 use backend\modules\core\models\CountriesDashboardStats;
-use backend\modules\core\models\Organization;
+use backend\modules\core\models\OrganizationRef;
 
 class CountriesStatsController extends ActiveController
 {
@@ -26,7 +26,7 @@ class CountriesStatsController extends ActiveController
      */
     public function actionCountriesList()
     {
-        $searchModel = Organization::searchModel([
+        $searchModel = OrganizationRef::searchModel([
             'defaultOrder' => ['id' => SORT_ASC],
             'pageSize' => SystemSettings::getPaginationSize(),
             'enablePagination' => true,
@@ -40,7 +40,7 @@ class CountriesStatsController extends ActiveController
     public function actionLanding()
     {
         $data = [];
-        $countries = Organization::find()->orderBy(['id' => SORT_ASC])->all();
+        $countries = OrganizationRef::find()->orderBy(['id' => SORT_ASC])->all();
         foreach ($countries as $country) {
             $data[] = [
                 'Country Dashboard' => [
@@ -56,12 +56,12 @@ class CountriesStatsController extends ActiveController
 
     /**
      * @param $report_id
-     * @param $org_id
+     * @param $country_id
      * @return array
      * @throws \Exception
      */
-    public function actionCountryReport($report_id, $org_id)
+    public function actionCountryReport($report_id, $country_id)
     {
-        return CountriesDashboardStats::getCountryReports($report_id, $org_id);
+        return CountriesDashboardStats::getCountryReports($report_id, $country_id);
     }
 }

@@ -3,7 +3,7 @@
 
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\Farm;
-use backend\modules\core\models\OrganizationUnits;
+use backend\modules\core\models\OrganizationRefUnits;
 use common\helpers\DbUtils;
 use common\helpers\Lang;
 use common\helpers\Url;
@@ -37,7 +37,7 @@ $this->params['breadcrumbs'] = [
                         list($condition, $params) = Farm::appendOrgSessionIdCondition($condition, $params);
                         $data = [];
                         // get districts
-                        $districts = OrganizationUnits::getListData('id', 'name', '', ['org_id' => 10, 'level' => OrganizationUnits::LEVEL_REGION]);
+                        $districts = OrganizationRefUnits::getListData('id', 'name', '', ['country_id' => 10, 'level' => OrganizationRefUnits::LEVEL_REGION]);
                         foreach ($districts as $id => $label) {
                             list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
 

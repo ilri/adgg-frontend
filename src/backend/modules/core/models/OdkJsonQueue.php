@@ -17,7 +17,7 @@ use yii\web\UploadedFile;
  * @property string $file
  * @property int $is_processed
  * @property string $processed_at
- * @property int $org_id
+ * @property int $country_id
  * @property int $has_errors
  * @property string $error_message
  * @property string $file_contents
@@ -27,7 +27,7 @@ use yii\web\UploadedFile;
  */
 class OdkJsonQueue extends ActiveRecord implements ActiveSearchInterface
 {
-    use ActiveSearchTrait, OrganizationDataTrait;
+    use ActiveSearchTrait, OrganizationRefDataTrait;
 
     const SCENARIO_UPLOAD = 'upload';
     const SCENARIO_API_PUSH = 'api_push';
@@ -58,7 +58,7 @@ class OdkJsonQueue extends ActiveRecord implements ActiveSearchInterface
         return [
             [['uuid'], 'required'],
             ['tmp_file', 'required', 'on' => [self::SCENARIO_UPLOAD, self::SCENARIO_API_PUSH]],
-            [['is_processed', 'org_id', 'has_errors', 'is_locked'], 'integer'],
+            [['is_processed', 'country_id', 'has_errors', 'is_locked'], 'integer'],
             [['error_message', 'file_contents'], 'string'],
             [['uuid', 'file'], 'string', 'max' => 255],
             //[['uuid'], 'unique', 'message' => Lang::t('{attribute} already exists.')],
@@ -79,7 +79,7 @@ class OdkJsonQueue extends ActiveRecord implements ActiveSearchInterface
             'tmp_file' => 'JSON File',
             'is_processed' => 'Is Processed',
             'processed_at' => 'Processed At',
-            'org_id' => 'Country',
+            'country_id' => 'Country',
             'has_errors' => 'Has Errors',
             'error_message' => 'Error Message',
             'file_contents' => 'Json',
@@ -96,7 +96,7 @@ class OdkJsonQueue extends ActiveRecord implements ActiveSearchInterface
         return [
             ['uuid', 'uuid'],
             'is_processed',
-            'org_id',
+            'country_id',
             'has_errors',
         ];
     }

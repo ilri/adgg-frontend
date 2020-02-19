@@ -3,7 +3,7 @@
 use backend\modules\auth\models\UserLevels;
 use backend\modules\auth\models\Users;
 use backend\modules\auth\Session;
-use backend\modules\core\models\OrganizationUnits;
+use backend\modules\core\models\OrganizationRefUnits;
 use common\forms\ActiveField;
 use common\helpers\Lang;
 use common\helpers\Url;
@@ -70,10 +70,10 @@ use yii\helpers\Json;
                                     ],
                                 ]) ?>
                             </div>
-                            <?php if (!Session::isOrganization()): ?>
+                            <?php if (!Session::isOrganizationRef()): ?>
                                 <div class="col-md-4" id="org-id-wrapper">
-                                    <?= $form->field($model, 'org_id')->widget(Select2::class, [
-                                        'data' => \backend\modules\core\models\Organization::getListData(),
+                                    <?= $form->field($model, 'country_id')->widget(Select2::class, [
+                                        'data' => \backend\modules\core\models\OrganizationRef::getListData(),
                                         'theme' => Select2::THEME_BOOTSTRAP,
                                         'options' => [
                                             'class' => 'form-control parent-depdropdown',
@@ -88,11 +88,11 @@ use yii\helpers\Json;
                                 </div>
                                 <div class="col-md-4" id="region-id-wrapper">
                                     <?= $form->field($model, 'region_id')->widget(Select2::class, [
-                                        'data' => OrganizationUnits::getListData('id', 'name', true, ['org_id' => $model->org_id, 'level' => OrganizationUnits::LEVEL_REGION]),
+                                        'data' => OrganizationRefUnits::getListData('id', 'name', true, ['country_id' => $model->country_id, 'level' => OrganizationRefUnits::LEVEL_REGION]),
                                         'theme' => Select2::THEME_BOOTSTRAP,
                                         'options' => [
                                             'class' => 'form-control parent-depdropdown',
-                                            'data-url' => Url::to(['/core/organization-units/get-list', 'org_id' => 'idV', 'level' => OrganizationUnits::LEVEL_REGION]),
+                                            'data-url' => Url::to(['/core/organization-ref-units/get-list', 'country_id' => 'idV', 'level' => OrganizationRefUnits::LEVEL_REGION]),
                                             'data-selected' => $model->region_id,
                                             'data-child-selectors' => [
                                                 '#' . Html::getInputId($model, 'district_id'),
@@ -105,11 +105,11 @@ use yii\helpers\Json;
                                 </div>
                                 <div class="col-md-4" id="district-id-wrapper">
                                     <?= $form->field($model, 'district_id')->widget(Select2::class, [
-                                        'data' => OrganizationUnits::getListData('id', 'name', true, ['org_id' => $model->org_id, 'level' => OrganizationUnits::LEVEL_DISTRICT, 'parent_id' => $model->region_id]),
+                                        'data' => OrganizationRefUnits::getListData('id', 'name', true, ['country_id' => $model->country_id, 'level' => OrganizationRefUnits::LEVEL_DISTRICT, 'parent_id' => $model->region_id]),
                                         'theme' => Select2::THEME_BOOTSTRAP,
                                         'options' => [
                                             'class' => 'form-control parent-depdropdown',
-                                            'data-url' => Url::to(['/core/organization-units/get-list', 'org_id' => $model->org_id, 'parent_id' => 'idV', 'level' => OrganizationUnits::LEVEL_DISTRICT]),
+                                            'data-url' => Url::to(['/core/organization-ref-units/get-list', 'country_id' => $model->country_id, 'parent_id' => 'idV', 'level' => OrganizationRefUnits::LEVEL_DISTRICT]),
                                             'data-selected' => $model->district_id,
                                             'data-child-selectors' => [
                                                 '#' . Html::getInputId($model, 'ward_id'),
@@ -122,11 +122,11 @@ use yii\helpers\Json;
                                 </div>
                                 <div class="col-md-4" id="ward-id-wrapper">
                                     <?= $form->field($model, 'ward_id')->widget(Select2::class, [
-                                        'data' => OrganizationUnits::getListData('id', 'name', true, ['org_id' => $model->org_id, 'level' => OrganizationUnits::LEVEL_WARD, 'parent_id' => $model->district_id]),
+                                        'data' => OrganizationRefUnits::getListData('id', 'name', true, ['country_id' => $model->country_id, 'level' => OrganizationRefUnits::LEVEL_WARD, 'parent_id' => $model->district_id]),
                                         'theme' => Select2::THEME_BOOTSTRAP,
                                         'options' => [
                                             'class' => 'form-control parent-depdropdown',
-                                            'data-url' => Url::to(['/core/organization-units/get-list', 'org_id' => $model->org_id, 'parent_id' => 'idV', 'level' => OrganizationUnits::LEVEL_WARD]),
+                                            'data-url' => Url::to(['/core/organization-ref-units/get-list', 'country_id' => $model->country_id, 'parent_id' => 'idV', 'level' => OrganizationRefUnits::LEVEL_WARD]),
                                             'data-selected' => $model->ward_id,
                                             'data-child-selectors' => [
                                                 '#' . Html::getInputId($model, 'village_id'),
@@ -139,10 +139,10 @@ use yii\helpers\Json;
                                 </div>
                                 <div class="col-md-4" id="village-id-wrapper">
                                     <?= $form->field($model, 'village_id')->widget(Select2::class, [
-                                        'data' => OrganizationUnits::getListData('id', 'name', true, ['org_id' => $model->org_id, 'level' => OrganizationUnits::LEVEL_VILLAGE, 'parent_id' => $model->ward_id]),
+                                        'data' => OrganizationRefUnits::getListData('id', 'name', true, ['country_id' => $model->country_id, 'level' => OrganizationRefUnits::LEVEL_VILLAGE, 'parent_id' => $model->ward_id]),
                                         'theme' => Select2::THEME_BOOTSTRAP,
                                         'options' => [
-                                            'data-url' => Url::to(['/core/organization-units/get-list', 'org_id' => $model->org_id, 'parent_id' => 'idV', 'level' => OrganizationUnits::LEVEL_VILLAGE]),
+                                            'data-url' => Url::to(['/core/organization-ref-units/get-list', 'country_id' => $model->country_id, 'parent_id' => 'idV', 'level' => OrganizationRefUnits::LEVEL_VILLAGE]),
                                             'data-selected' => $model->village_id,
                                         ],
                                         'pluginOptions' => [
@@ -153,7 +153,7 @@ use yii\helpers\Json;
                             <?php endif; ?>
                             <div class="col-md-4">
                                 <?= $form->field($model, 'role_id')->widget(Select2::class, [
-                                    'data' => \backend\modules\auth\models\Roles::getListData('id', 'name', false, Session::isOrganization() ? ['level_id' => UserLevels::LEVEL_COUNTRY] : []),
+                                    'data' => \backend\modules\auth\models\Roles::getListData('id', 'name', false, Session::isOrganizationRef() ? ['level_id' => UserLevels::LEVEL_COUNTRY] : []),
                                     'theme' => Select2::THEME_BOOTSTRAP,
                                     'options' => [
                                         'data-url' => Url::to(['role/get-list', 'level_id' => 'idV']),
@@ -266,7 +266,7 @@ use yii\helpers\Json;
 <?php
 $options = [
     'levelIdFieldSelector' => '#' . Html::getInputId($model, 'level_id'),
-    'orgIdFieldSelector' => '#' . Html::getInputId($model, 'org_id'),
+    'orgIdFieldSelector' => '#' . Html::getInputId($model, 'country_id'),
 ];
 $this->registerJs("MyApp.modules.auth.initUserForm(" . Json::encode($options) . ");");
 ?>

@@ -132,7 +132,7 @@ class HighChart extends Widget
      */
     public $queryOptions = [
         'filters' => [], //Any $key=>$value table filters where $key is a column name and $value is the columns value. This will lead to a series of AND conditions
-        'condition' => '', //string MUST NOT BE ARRAY Any condition that must be passed to all query. This value is only necessary when passing other conditions which are not "AND". for conditions with "AND" use table_filters instead. e.g  "(`org_id`='3' OR `org_id`='6')",
+        'condition' => '', //string MUST NOT BE ARRAY Any condition that must be passed to all query. This value is only necessary when passing other conditions which are not "AND". for conditions with "AND" use table_filters instead. e.g  "(`country_id`='3' OR `country_id`='6')",
         'params' => [], //params for the condition
         'dateField' => 'created_at',
         'dateRange' => '',//date range of query eg '2015-01-01 - 2015-12-31'
