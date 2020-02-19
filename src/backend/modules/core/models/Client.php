@@ -2,7 +2,9 @@
 
 namespace backend\modules\core\models;
 
-use Yii;
+use common\models\ActiveRecord;
+use common\models\ActiveSearchInterface;
+use common\models\ActiveSearchTrait;
 
 /**
  * This is the model class for table "core_client".
@@ -13,11 +15,17 @@ use Yii;
  * @property int $country_id The country of the client
  * @property int|null $org_id The OrganizationRefRef of the client
  * @property int $is_active Whether the record is active
+ * @property string|null $additional_attributes
  * @property string $created_at The date the record was created
  * @property int|null $created_by Id of the user who created the records
+ *
+ * @property Country $country
+ *
  */
-class Client extends \yii\db\ActiveRecord
+class Client extends ActiveRecord implements ActiveSearchInterface, TableAttributeInterface
 {
+    use ActiveSearchTrait, CountryDataTrait, TableAttributeTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -33,9 +41,12 @@ class Client extends \yii\db\ActiveRecord
     {
         return [
             [['name', 'country_id'], 'required'],
-            [['country_id', 'org_id', 'is_active', 'created_by'], 'integer'],
-            [['created_at'], 'safe'],
+            [['country_id', 'org_id', 'is_active'], 'integer'],
             [['name', 'description'], 'string', 'max' => 255],
+            [['additional_attributes'], 'safe'],
+            [$this->getAdditionalAttributes(), 'safe'],
+            [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
+
         ];
     }
 
@@ -54,5 +65,51 @@ class Client extends \yii\db\ActiveRecord
             'created_at' => 'Created At',
             'created_by' => 'Created By',
         ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function searchParams()
+    {
+        return [
+            ['name', 'name'],
+            'country_id',
+            'org_id',
+            'is_active',
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function getDefinedTableId(): int
+    {
+        return ExtendableTable::TABLE_CLIENTS;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function getDefinedType(): int
+    {
+        return TableAttribute::TYPE_ATTRIBUTE;
+    }
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            $this->ignoreAdditionalAttributes = true;
+            $this->setAdditionalAttributesValues();
+
+            return true;
+        }
+        return false;
+    }
+
+    public function afterFind()
+    {
+        parent::afterFind();
+        $this->loadAdditionalAttributeValues();
     }
 }
