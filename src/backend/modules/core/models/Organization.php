@@ -27,7 +27,7 @@ class Organization extends ActiveRecord implements ActiveSearchInterface
      */
     public static function tableName()
     {
-        return '{{%organization}}';
+        return '{{%core_organization}}';
     }
 
     /**
@@ -53,7 +53,7 @@ class Organization extends ActiveRecord implements ActiveSearchInterface
         return [
             'id' => 'ID',
             'name' => 'Name',
-            'country_id' => 'Country ID',
+            'country_id' => 'Country',
             'is_active' => 'Is Active',
             'created_at' => 'Created At',
             'created_by' => 'Created By',

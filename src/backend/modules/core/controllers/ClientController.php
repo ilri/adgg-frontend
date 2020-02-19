@@ -10,10 +10,10 @@ namespace backend\modules\core\controllers;
 
 use backend\modules\auth\Acl;
 use backend\modules\core\Constants;
+use backend\modules\core\models\Client;
 use backend\modules\core\models\Country;
-use backend\modules\core\models\Organization;
 
-class OrganizationController extends Controller
+class ClientController extends Controller
 {
     /**
      * @inheritdoc
@@ -21,15 +21,15 @@ class OrganizationController extends Controller
     public function init()
     {
         parent::init();
-        $this->resourceLabel = 'Organization';
-        $this->resource = Constants::RES_ORGANIZATION;
+        $this->resourceLabel = 'Client';
+        $this->resource = Constants::RES_CLIENT;
     }
 
     public function actionIndex($country_id)
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
         $countryModel = Country::loadModel(['id' => $country_id]);
-        $searchModel = Organization::searchModel([
+        $searchModel = Client::searchModel([
             'defaultOrder' => ['id' => SORT_ASC],
         ]);
         $searchModel->is_active = 1;
@@ -44,16 +44,16 @@ class OrganizationController extends Controller
     public function actionCreate()
     {
         $this->hasPrivilege(Acl::ACTION_CREATE);
-        $model = new Organization(['is_active' => 1]);
+        $model = new Client(['is_active' => 1]);
         return $model->simpleAjaxSave();
     }
 
     public function actionView($id)
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
-        $model = Organization::loadModel($id);
+        $model = Client::loadModel($id);
 
-        return $this->render('view', [
+        return $this->renderAjax('view', [
             'model' => $model,
         ]);
     }
@@ -61,19 +61,13 @@ class OrganizationController extends Controller
     public function actionUpdate($id)
     {
         $this->hasPrivilege(Acl::ACTION_UPDATE);
-        $model = Organization::loadModel($id);
+        $model = Client::loadModel($id);
         return $model->simpleAjaxSave();
     }
 
     public function actionDelete($id)
     {
         $this->hasPrivilege(Acl::ACTION_DELETE);
-        return Organization::softDelete($id);
-    }
-
-    public function actionGetList($country_id = null, $placeholder = false)
-    {
-        $data = Organization::getListData('id', 'name', $placeholder, ['country_id' => $country_id]);
-        return json_encode($data);
+        return Client::softDelete($id);
     }
 }

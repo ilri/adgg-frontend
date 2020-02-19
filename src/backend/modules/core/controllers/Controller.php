@@ -51,7 +51,7 @@ class Controller extends BackendController
                             'upload',
                             'upload-preview',
                             'approve',
-                            'get-list',
+                            //'get-list',
                             'quick-create',
                             'typeahead-list',
                             'change-status',
