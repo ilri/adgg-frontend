@@ -22,6 +22,7 @@ class ExtendableTable
     const TABLE_FARM_REPEATS = 6;
     const TABLE_CLIENT_REPEATS = 7;
     const TABLE_USERS = 8;
+    const TABLE_CLIENTS = 9;
 
     /**
      * @param int $intVal
