@@ -23,6 +23,8 @@ class AnimalEventController extends ActiveController
 
     public function actionIndex($event_type = null, $from = null, $to = null)
     {
+        $user = \Yii::$app->user->identity;
+
         $dateFilter = DateUtils::getDateFilterParams($from, $to, 'event_date', false, false);
         $condition = $dateFilter['condition'];
         $params = [];
@@ -34,6 +36,7 @@ class AnimalEventController extends ActiveController
             'pageSize' => SystemSettings::getPaginationSize(),
         ]);
         $searchModel->event_type = $event_type;
+        $searchModel->country_id = $user->country_id;
         return $searchModel->search();
     }
 }

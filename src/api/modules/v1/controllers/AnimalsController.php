@@ -23,6 +23,8 @@ class AnimalsController extends ActiveController
 
     public function actionIndex($farm_id = null, $farm_name = null, $tag_id = null, $animal_type = null, $breed = null)
     {
+        $user = \Yii::$app->user->identity;
+
         $searchModel = Animal::searchModel([
             'defaultOrder' => ['id' => SORT_ASC],
             'enablePagination' => true,
@@ -37,6 +39,7 @@ class AnimalsController extends ActiveController
         $searchModel->tag_id = $tag_id;
         $searchModel->animal_type = $animal_type;
         $searchModel->main_breed = $breed;
+        $searchModel->country_id = $user->country_id;
         return $searchModel->search();
     }
 }
