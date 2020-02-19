@@ -6,7 +6,7 @@ use backend\modules\auth\Constants;
 use backend\modules\auth\forms\UploadUsers;
 use backend\modules\auth\models\UserLevels;
 use backend\modules\auth\Session;
-use backend\modules\core\models\Organization;
+use backend\modules\core\models\Country;
 use common\controllers\UploadExcelTrait;
 use common\helpers\DateUtils;
 use Yii;
@@ -23,6 +23,7 @@ use app\modules\auth\models\PasswordResetHistory;
 class UserController extends Controller
 {
     use UploadExcelTrait;
+
     /**
      * @inheritdoc
      */
@@ -36,15 +37,15 @@ class UserController extends Controller
     }
 
 
-    public function actionIndex($level_id = null, $org_id = null, $name = null, $username = null, $email = null, $phone = null, $role_id = null, $status = Users::STATUS_ACTIVE, $from = null, $to = null)
+    public function actionIndex($level_id = null, $country_id = null, $name = null, $username = null, $email = null, $phone = null, $role_id = null, $status = Users::STATUS_ACTIVE, $from = null, $to = null)
     {
-        $orgModel = null;
-        if (Session::isOrganization()) {
-            $org_id = Session::getOrgId();
+        $countryModel = null;
+        if (Session::isCountry()) {
+            $country_id = Session::getCountryId();
             $level_id = UserLevels::LEVEL_COUNTRY;
         }
-        if (!empty($org_id)) {
-            $orgModel = Organization::loadModel($org_id);
+        if (!empty($country_id)) {
+            $countryModel = Country::loadModel($country_id);
         }
         $date_filter = DateUtils::getDateFilterParams($from, $to, 'last_login', false, true);
         $condition = $date_filter['condition'];
@@ -55,9 +56,9 @@ class UserController extends Controller
             'defaultOrder' => ['username' => SORT_ASC],
             'condition' => $condition,
             'params' => $params,
-            'with' => ['level', 'role', 'org'],
+            'with' => ['level', 'role', 'country'],
         ]);
-        $searchModel->org_id = $org_id;
+        $searchModel->country_id = $country_id;
         $searchModel->level_id = $level_id;
         $searchModel->status = Users::STATUS_ACTIVE;
         $searchModel->name = $name;
@@ -71,7 +72,7 @@ class UserController extends Controller
 
         return $this->render('index', [
             'searchModel' => $searchModel,
-            'orgModel' => $orgModel,
+            'countryModel' => $countryModel,
         ]);
     }
 
@@ -85,16 +86,16 @@ class UserController extends Controller
         ]);
     }
 
-    public function actionCreate($level_id = null, $org_id = null)
+    public function actionCreate($level_id = null, $country_id = null)
     {
-        if (Session::isOrganization()) {
-            $org_id = Session::getOrgId();
+        if (Session::isCountry()) {
+            $country_id = Session::getCountryId();
             $level_id = UserLevels::LEVEL_COUNTRY;
         }
 
         $model = new Users([
             'level_id' => $level_id,
-            'org_id' => $org_id,
+            'country_id' => $country_id,
             'status' => Users::STATUS_ACTIVE,
             'scenario' => Users::SCENARIO_CREATE,
             'send_email' => true,
@@ -110,7 +111,7 @@ class UserController extends Controller
         $model->ajaxValidate($validateAttributes);
         if (Yii::$app->request->isPost && $model->validate($validateAttributes) && $model->save(false)) {
             Yii::$app->session->setFlash(self::FLASH_SUCCESS, Lang::t('SUCCESS_MESSAGE'));
-            return $this->redirect(['index', 'level_id' => $model->level_id, 'org_id' => $model->org_id]);
+            return $this->redirect(['index', 'level_id' => $model->level_id, 'country_id' => $model->country_id]);
         }
 
         return $this->render('create', [
@@ -216,32 +217,32 @@ class UserController extends Controller
         return json_encode($response);
     }
 
-    public function actionGetList($org_id = null)
+    public function actionGetList($country_id = null)
     {
-        if (empty($org_id))
-            $org_id = null;
-        $data = Users::getListData('id', 'name', false, ['org_id' => $org_id]);
+        if (empty($country_id))
+            $country_id = null;
+        $data = Users::getListData('id', 'name', false, ['country_id' => $country_id]);
         return json_encode($data);
     }
 
     /**
      * @param $level_id
-     * @param null $org_id
+     * @param null $country_id
      * @return bool|false|string
      * @throws BadRequestHttpException
      * @throws \yii\base\InvalidConfigException
      * @throws \yii\web\ForbiddenHttpException
      * @throws \yii\web\NotFoundHttpException
      */
-    public function actionUpload($level_id, $org_id = null)
+    public function actionUpload($level_id, $country_id = null)
     {
-        if (Session::isOrganization()) {
-            $org_id = Session::getOrgId();
+        if (Session::isCountry()) {
+            $country_id = Session::getCountryId();
         }
         $this->hasPrivilege(Acl::ACTION_CREATE);
 
-        $form = new UploadUsers(Users::class, ['org_id' => $org_id, 'level_id' => $level_id]);
-        $resp = $this->uploadExcelConsole($form, 'index', ['org_id' => $org_id, 'level_id' => $level_id]);
+        $form = new UploadUsers(Users::class, ['country_id' => $country_id, 'level_id' => $level_id]);
+        $resp = $this->uploadExcelConsole($form, 'index', ['country_id' => $country_id, 'level_id' => $level_id]);
         if ($resp !== false) {
             return $resp;
         }
@@ -253,15 +254,15 @@ class UserController extends Controller
 
     /**
      * @param $level_id
-     * @param null $org_id
+     * @param null $country_id
      * @return bool|string
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      * @throws \PhpOffice\PhpSpreadsheet\Reader\Exception
      * @throws \yii\base\InvalidConfigException
      */
-    public function actionUploadPreview($level_id, $org_id = null)
+    public function actionUploadPreview($level_id, $country_id = null)
     {
-        $form = new UploadUsers(Users::class, ['level_id' => $level_id, 'org_id' => $org_id]);
+        $form = new UploadUsers(Users::class, ['level_id' => $level_id, 'country_id' => $country_id]);
         return $form->previewAction();
     }
 }

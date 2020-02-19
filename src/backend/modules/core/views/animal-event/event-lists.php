@@ -1,11 +1,11 @@
 <?php
 
 use backend\modules\core\models\AnimalEvent;
-use backend\modules\core\models\Organization;
+use backend\modules\core\models\Country;
 use common\helpers\Lang;
 use common\helpers\Url;
 
-/* @var $country Organization */
+/* @var $country Country */
 /* @var $events */
 $this->title = 'Events';
 $this->params['breadcrumbs'][] = $this->title;
@@ -42,7 +42,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <div class="col-lg-4 col-xl-4 order-lg-2 order-xl-2">
                         <!--begin::Portlet-->
                         <div class="kt-portlet">
-                            <a href="<?= Url::to([$url, 'org_id' => $country->id, 'event_type' => $key]) ?>"
+                            <a href="<?= Url::to([$url, 'country_id' => $country->id, 'event_type' => $key]) ?>"
                                class="kt-iconbox kt-iconbox--active">
                                 <div class="kt-iconbox__title">
                                     <?= Lang::t('{name}', ['name' => $name]); ?>

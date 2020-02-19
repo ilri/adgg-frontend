@@ -1,6 +1,7 @@
 <?php
 
 use backend\modules\conf\settings\SystemSettings;
+use backend\modules\core\models\Country;
 use backend\widgets\Alert;
 use yii\bootstrap4\Breadcrumbs;
 use yii\helpers\Html;
@@ -135,14 +136,14 @@ $controller = Yii::$app->controller;
                 <?php if (Yii::$app->user->canView(\backend\modules\core\Constants::RES_CLIENT)): ?>
                     <a href="#" class="kt-grid-nav-v2__item">
                         <div class="kt-grid-nav-v2__item-icon"><i class="far fa-users"></i></div>
-                        <div class="kt-grid-nav-v2__item-title">Clients/People</div>
+                        <div class="kt-grid-nav-v2__item-title">Clients/Projects</div>
                     </a>
                 <?php endif; ?>
                 <?php if (Yii::$app->user->canView(\backend\modules\core\Constants::RES_ANIMAL_EVENTS)): ?>
 
-                    <a href="#" class="kt-grid-nav-v2__item">
+                    <a href="<?= Url::to(['/core/organization-ref/index']) ?>" class="kt-grid-nav-v2__item">
                         <div class="kt-grid-nav-v2__item-icon"><i class="far fa-calendar-day"></i></div>
-                        <div class="kt-grid-nav-v2__item-title">Animal Events</div>
+                        <div class="kt-grid-nav-v2__item-title">Countries</div>
                     </a>
                 <?php endif; ?>
                 <?php if (Yii::$app->user->canView(\backend\modules\auth\Constants::RES_USER)): ?>

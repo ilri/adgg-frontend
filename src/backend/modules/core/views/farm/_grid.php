@@ -40,9 +40,9 @@ use yii\helpers\Url;
             'hidden' => true,
         ],
         [
-            'attribute' => 'org_id',
+            'attribute' => 'country_id',
             'value' => function (Farm $model) {
-                return $model->getRelationAttributeValue('org', 'name');
+                return $model->getRelationAttributeValue('country', 'name');
             },
             'hidden' => false,
         ],

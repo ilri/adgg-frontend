@@ -11,7 +11,7 @@ namespace backend\modules\auth\forms;
 
 use backend\modules\auth\models\Users;
 use backend\modules\core\models\ExcelImport;
-use backend\modules\core\models\OrganizationUnits;
+use backend\modules\core\models\CountryUnits;
 use common\excel\ExcelUploadForm;
 use common\excel\ImportInterface;
 use common\helpers\Msisdn;
@@ -21,7 +21,7 @@ class UploadUsers extends ExcelUploadForm implements ImportInterface
     /**
      * @var int
      */
-    public $org_id;
+    public $country_id;
 
     /**
      * @var int
@@ -46,7 +46,7 @@ class UploadUsers extends ExcelUploadForm implements ImportInterface
     public function rules()
     {
         return array_merge($this->excelValidationRules(), [
-            [['org_id', 'level_id', 'role_id'], 'required'],
+            [['country_id', 'level_id', 'role_id'], 'required'],
         ]);
     }
 
@@ -56,7 +56,7 @@ class UploadUsers extends ExcelUploadForm implements ImportInterface
     public function attributeLabels()
     {
         return array_merge($this->excelAttributeLabels(), [
-            'org_id' => 'Country',
+            'country_id' => 'Country',
             'level_id' => 'Level',
             'role_id' => 'Role',
         ]);
@@ -77,7 +77,7 @@ class UploadUsers extends ExcelUploadForm implements ImportInterface
             if (empty($row))
                 continue;
 
-            $row['org_id'] = $this->org_id;
+            $row['country_id'] = $this->country_id;
             $row['level_id'] = $this->level_id;
             $row['role_id'] = $this->role_id;
             if (!empty($row['phone'])) {
@@ -93,9 +93,8 @@ class UploadUsers extends ExcelUploadForm implements ImportInterface
 
             $insert_data[$k] = $row;
         }
-        $model = new Users(['org_id' => $this->org_id, 'level_id' => $this->level_id, 'role_id' => $this->role_id]);
-
-        $this->save($insert_data, $model, false, ['username' => '{username}', 'org_id' => $this->org_id]);
+        $model = new Users(['country_id' => $this->country_id, 'level_id' => $this->level_id, 'role_id' => $this->role_id]);
+        $this->save($insert_data, $model, false, ['username' => '{username}', 'country_id' => $this->country_id]);
     }
 
     protected function cleanPhoneNumber($number)
@@ -110,7 +109,7 @@ class UploadUsers extends ExcelUploadForm implements ImportInterface
      */
     protected function getRegionId($regionCode)
     {
-        return OrganizationUnits::getScalar('id', ['org_id' => $this->org_id, 'level' => OrganizationUnits::LEVEL_REGION, 'code' => $regionCode]);
+        return CountryUnits::getScalar('id', ['country_id' => $this->country_id, 'level' => CountryUnits::LEVEL_REGION, 'code' => $regionCode]);
     }
 
     /**
@@ -120,7 +119,7 @@ class UploadUsers extends ExcelUploadForm implements ImportInterface
      */
     protected function getDistrictId($districtCode)
     {
-        return OrganizationUnits::getScalar('id', ['org_id' => $this->org_id, 'level' => OrganizationUnits::LEVEL_DISTRICT, 'code' => $districtCode]);
+        return CountryUnits::getScalar('id', ['country_id' => $this->country_id, 'level' => CountryUnits::LEVEL_DISTRICT, 'code' => $districtCode]);
     }
 
     /**

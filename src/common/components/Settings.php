@@ -47,16 +47,16 @@ class Settings extends \yii2mod\settings\components\Settings
 
     /**
      * @param string $section
-     * @param null|int $org_id
+     * @param null|int $country_id
      * @return string
      */
-    public static function getQualifiedSection($section, $org_id = null)
+    public static function getQualifiedSection($section, $country_id = null)
     {
-        if (Utils::isWebApp() && !Yii::$app->user->getIsGuest() && Session::isOrganization()) {
-            $org_id = Session::getOrgId();
+        if (Utils::isWebApp() && !Yii::$app->user->getIsGuest() && Session::isCountry()) {
+            $country_id = Session::getCountryId();
         }
-        if (!empty($org_id)) {
-            $section .= '_org_' . $org_id;
+        if (!empty($country_id)) {
+            $section .= '_org_' . $country_id;
         }
         return $section;
     }

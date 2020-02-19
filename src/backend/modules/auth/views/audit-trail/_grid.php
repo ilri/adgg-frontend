@@ -34,9 +34,9 @@ use common\helpers\DateUtils;
             'attribute' => 'ip_address',
         ],
         [
-            'attribute' => 'org_id',
+            'attribute' => 'country_id',
             'value' => function (AuditTrail $model) {
-                return $model->getRelationAttributeValue('org', 'name');
+                return $model->getRelationAttributeValue('country', 'name');
             }
         ],
         [

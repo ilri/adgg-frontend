@@ -1,6 +1,6 @@
 <?php
 
-use backend\modules\core\models\OrganizationUnits;
+use backend\modules\core\models\CountryUnits;
 use common\helpers\Lang;
 use common\widgets\select2\Select2;
 use yii\bootstrap4\ActiveForm;
@@ -9,7 +9,7 @@ use yii\helpers\Html;
 /* @var $this \yii\web\View */
 /* @var $form ActiveForm */
 /* @var $controller \backend\controllers\BackendController */
-/* @var $model OrganizationUnits */
+/* @var $model CountryUnits */
 $controller = Yii::$app->controller;
 $this->title = $controller->getPageTitle();
 
@@ -41,9 +41,9 @@ $form = ActiveForm::begin([
     <div class="hidden" id="my-modal-notif"></div>
     <?= $form->field($model, 'code', []) ?>
     <?= $form->field($model, 'name', []) ?>
-    <?php if ($model->level > OrganizationUnits::LEVEL_REGION): ?>
+    <?php if ($model->level > CountryUnits::LEVEL_REGION): ?>
         <?= $form->field($model, 'parent_id')->widget(Select2::class, [
-            'data' => OrganizationUnits::getListData('id', 'name', false, ['level' => $model->level - 1, 'org_id' => $model->org_id]),
+            'data' => CountryUnits::getListData('id', 'name', false, ['level' => $model->level - 1, 'country_id' => $model->country_id]),
             'modal' => true,
             'pluginOptions' => [
                 'allowClear' => false

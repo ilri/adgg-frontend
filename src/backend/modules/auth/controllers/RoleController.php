@@ -7,7 +7,7 @@ use backend\modules\auth\Constants;
 use backend\modules\auth\models\PermissionLineItems;
 use backend\modules\auth\models\Roles;
 use backend\modules\auth\Session;
-use backend\modules\core\models\Organization;
+use backend\modules\core\models\Country;
 use common\widgets\lineItem\LineItem;
 
 /**
@@ -31,9 +31,9 @@ class RoleController extends Controller
 
     public function actionIndex()
     {
-        $orgModel = null;
-        if (Session::isOrganization()) {
-            $orgModel = Organization::loadModel(Session::getOrgId());
+        $countryModel = null;
+        if (Session::isCountry()) {
+            $countryModel = Country::loadModel(Session::getCountryId());
         }
         $searchModel = Roles::searchModel([
             'defaultOrder' => ['name' => SORT_ASC]
@@ -41,7 +41,7 @@ class RoleController extends Controller
         $searchModel->is_active = 1;
         return $this->render('index', [
             'searchModel' => $searchModel,
-            'orgModel' => $orgModel,
+            'countryModel' => $countryModel,
         ]);
     }
 

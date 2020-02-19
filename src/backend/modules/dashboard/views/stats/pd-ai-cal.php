@@ -4,8 +4,8 @@ use backend\controllers\BackendController;
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\CountriesDashboardStats;
-use backend\modules\core\models\Organization;
-use backend\modules\core\models\OrganizationUnits;
+use backend\modules\core\models\Country;
+use backend\modules\core\models\CountryUnits;
 use common\helpers\DbUtils;
 use common\helpers\Lang;
 use common\widgets\highchart\HighChart;
@@ -14,7 +14,7 @@ use yii\helpers\Json;
 /* @var $this yii\web\View */
 /* @var $controller BackendController */
 /* @var $graphFilterOptions array */
-/* @var $country Organization */
+/* @var $country Country */
 $controller = Yii::$app->controller;
 $this->title = Lang::t('Insemination,PD And Calving Report');
 $this->params['breadcrumbs'] = [
@@ -94,7 +94,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                     <div class="kt-iconbox kt-iconbox--active">
                         <div class="kt-iconbox__icon mb-0">
                             <div class="kt-iconbox__icon-bg"></div>
-                            <span><?= number_format(AnimalEvent::getCount(['org_id' => $country->id, 'event_type' => AnimalEvent::EVENT_TYPE_CALVING])) ?></span>
+                            <span><?= number_format(AnimalEvent::getCount(['country_id' => $country->id, 'event_type' => AnimalEvent::EVENT_TYPE_CALVING])) ?></span>
                         </div>
                         <div class="kt-iconbox__title">
                             <?= Lang::t('Total Number Of Calving in {country}', ['country' => $country->name]) ?>
@@ -105,7 +105,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                     <div class="kt-iconbox kt-iconbox--active">
                         <div class="kt-iconbox__icon mb-0">
                             <div class="kt-iconbox__icon-bg"></div>
-                            <span><?= number_format(AnimalEvent::getCount(['org_id' => $country->id, 'event_type' => AnimalEvent::EVENT_TYPE_AI])) ?></span>
+                            <span><?= number_format(AnimalEvent::getCount(['country_id' => $country->id, 'event_type' => AnimalEvent::EVENT_TYPE_AI])) ?></span>
                         </div>
                         <div class="kt-iconbox__title">
                             <?= Lang::t(' Total Number Of Insemination in {country}', ['country' => $country->name]) ?>
@@ -116,7 +116,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                     <div class="kt-iconbox kt-iconbox--active">
                         <div class="kt-iconbox__icon mb-0">
                             <div class="kt-iconbox__icon-bg"></div>
-                            <span><?= number_format(AnimalEvent::getCount(['org_id' => $country->id, 'event_type' => AnimalEvent::EVENT_TYPE_PREGNANCY_DIAGNOSIS])) ?></span>
+                            <span><?= number_format(AnimalEvent::getCount(['country_id' => $country->id, 'event_type' => AnimalEvent::EVENT_TYPE_PREGNANCY_DIAGNOSIS])) ?></span>
                         </div>
                         <div class="kt-iconbox__title">
                             <?= Lang::t(' Total Number Of Pregnancy Diagnosis in {country}', ['country' => $country->name]) ?>
@@ -127,7 +127,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                     <div class="kt-iconbox kt-iconbox--active">
                         <div class="kt-iconbox__icon mb-0">
                             <div class="kt-iconbox__icon-bg"></div>
-                            <span><?= number_format(Animal::getCount(['org_id' => $country->id, 'animal_type' => Animal::ANIMAL_TYPE_MALE_CALF])) ?></span>
+                            <span><?= number_format(Animal::getCount(['country_id' => $country->id, 'animal_type' => Animal::ANIMAL_TYPE_MALE_CALF])) ?></span>
                         </div>
                         <div class="kt-iconbox__title">
                             <?= Lang::t(' Total Number of Male Calves in {country}', ['country' => $country->name]) ?>
@@ -138,7 +138,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                     <div class="kt-iconbox kt-iconbox--active">
                         <div class="kt-iconbox__icon mb-0">
                             <div class="kt-iconbox__icon-bg"></div>
-                            <span><?= number_format(Animal::getCount(['org_id' => $country->id, 'animal_type' => Animal::ANIMAL_TYPE_FEMALE_CALF])) ?></span>
+                            <span><?= number_format(Animal::getCount(['country_id' => $country->id, 'animal_type' => Animal::ANIMAL_TYPE_FEMALE_CALF])) ?></span>
                         </div>
                         <div class="kt-iconbox__title">
                             <?= Lang::t(' Total Number of Female Calves in {country}', ['country' => $country->name]) ?>

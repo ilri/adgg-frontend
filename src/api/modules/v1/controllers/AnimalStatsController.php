@@ -36,7 +36,7 @@ class AnimalStatsController extends ActiveController
             'enablePagination' => true,
             'pageSize' => SystemSettings::getPaginationSize(),
         ]);
-        $searchModel->org_id = $country_id;
+        $searchModel->country_id = $country_id;
         $searchModel->region_id = $region_id;
         $searchModel->district_id = $district_id;
         $searchModel->ward_id = $ward_id;

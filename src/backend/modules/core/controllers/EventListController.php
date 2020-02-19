@@ -7,7 +7,7 @@ namespace backend\modules\core\controllers;
 use backend\modules\auth\Acl;
 use backend\modules\core\Constants;
 use backend\modules\core\models\AnimalEvent;
-use backend\modules\core\models\Organization;
+use backend\modules\core\models\Country;
 
 class EventListController extends Controller
 {
@@ -17,15 +17,15 @@ class EventListController extends Controller
         $this->resource = Constants::RES_ANIMAL_EVENTS;
     }
 
-    public function actionIndex($org_id = null)
+    public function actionIndex($country_id = null)
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
         $events = AnimalEvent::eventTypeOptions();
-        $country = Organization::findOne(['id' => $org_id]);
+        $country = Country::findOne(['id' => $country_id]);
         return $this->render('/animal-event/event-lists', [
             'country' => $country,
             'events' => $events,
-            'org_id' => $org_id,
+            'country_id' => $country_id,
         ]);
     }
 }

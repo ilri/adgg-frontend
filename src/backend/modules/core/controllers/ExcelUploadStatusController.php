@@ -25,7 +25,7 @@ class ExcelUploadStatusController extends Controller
     }
 
 
-    public function actionIndex($id = null, $org_id = null)
+    public function actionIndex($id = null, $country_id = null)
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
         $condition = '';
@@ -36,7 +36,7 @@ class ExcelUploadStatusController extends Controller
             'params' => $params,
             'with' => [],
         ]);
-        $searchModel->org_id = $org_id;
+        $searchModel->country_id = $country_id;
 
         if (is_numeric($id)) {
             $searchModel->id = $id;

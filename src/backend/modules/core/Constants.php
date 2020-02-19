@@ -11,10 +11,11 @@ namespace backend\modules\core;
 class Constants
 {
     //menus
-    const MENU_ORGANIZATION = 'ORG';
+    const MENU_ORGANIZATION_REF = 'ORG_REF';
     const SUBMENU_REGISTRATION_DOCUMENTS = 'REG_DOCS';
     //resources
     const RES_COUNTRY = 'ORG_COUNTRY';
+    const RES_ORGANIZATION = 'ORG';
     const RES_REGION = 'ORG_REGION';
     const RES_DISTRICT = 'ORG_DISTRICT';
     const RES_WARD = 'WARD';

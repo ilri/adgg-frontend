@@ -1,12 +1,12 @@
 <?php
 
-use backend\modules\core\models\Country;
+use backend\modules\core\models\CountryRef;
 use common\helpers\Utils;
 use common\widgets\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $filterOptions array */
-/* @var $model Country */
+/* @var $model CountryRef */
 ?>
 <?= GridView::widget([
     'searchModel' => $model,
@@ -28,7 +28,7 @@ use common\widgets\grid\GridView;
         ],
         [
             'attribute' => 'is_active',
-            'value' => function (Country $model) {
+            'value' => function (CountryRef $model) {
                 return \yii\helpers\Html::tag('span', Utils::decodeBoolean($model->is_active), ['class' => $model->is_active ? 'kt-badge  kt-badge--success kt-badge--inline kt-badge--pill' : 'kt-badge  kt-badge--metal kt-badge--inline kt-badge--pill']);
             },
             'format' => 'raw',
@@ -37,7 +37,7 @@ use common\widgets\grid\GridView;
         ],
         [
             'attribute' => 'is_active',
-            'value' => function (Country $model) {
+            'value' => function (CountryRef $model) {
                 return Utils::decodeBoolean($model->is_active);
             },
             'hidden' => true,

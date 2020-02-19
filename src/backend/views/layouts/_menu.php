@@ -3,11 +3,11 @@
 use backend\modules\auth\Session;
 use backend\modules\core\Constants;
 use backend\modules\help\Constants as HelpConstants;
-use backend\modules\core\models\Organization;
+use backend\modules\core\models\Country;
 use common\helpers\Lang;
 use yii\helpers\Url;
 
-$countries = Organization::find()->orderBy(['code' => SORT_ASC])->all();
+$countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
 ?>
 <div class="kt-aside-menu-wrapper kt-grid__item kt-grid__item--fluid" id="kt_aside_menu_wrapper">
     <div id="kt_aside_menu" class="kt-aside-menu " data-ktmenu-vertical="1" data-ktmenu-scroll="1"
@@ -34,12 +34,13 @@ $countries = Organization::find()->orderBy(['code' => SORT_ASC])->all();
                     <span class="kt-menu__arrow"></span>
                     <ul class="kt-menu__subnav">
                         <?php foreach ($countries as $country): ?>
-                            <?php if (Session::getOrgId() == $country->id || Session::isPrivilegedAdmin()): ?>
+                            <?php if (Session::getCountryId() == $country->id || Session::isPrivilegedAdmin()): ?>
                                 <li class="kt-menu__item">
-                                    <a href="<?= Url::to(['/core/animal/index', 'org_id' => $country->id]) ?>"
+                                    <a href="<?= Url::to(['/core/animal/index', 'country_id' => $country->id]) ?>"
                                        class="kt-menu__link ">
                                         <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                        <span class="kt-menu__link-text"><?= Lang::t('{country}', ['country' => $country->name]) ?></span>
+                                        <span
+                                            class="kt-menu__link-text"><?= Lang::t('{country}', ['country' => $country->name]) ?></span>
                                     </a>
                                 </li>
                             <?php endif; ?>
@@ -66,12 +67,13 @@ $countries = Organization::find()->orderBy(['code' => SORT_ASC])->all();
                         <span class="kt-menu__arrow"></span>
                         <ul class="kt-menu__subnav">
                             <?php foreach ($countries as $country): ?>
-                                <?php if (Session::getOrgId() == $country->id || Session::isPrivilegedAdmin()): ?>
+                                <?php if (Session::getCountryId() == $country->id || Session::isPrivilegedAdmin()): ?>
                                     <li class="kt-menu__item">
-                                        <a href="<?= Url::to(['/core/animal-event/event-list', 'org_id' => $country->id]) ?>"
+                                        <a href="<?= Url::to(['/core/animal-event/event-list', 'country_id' => $country->id]) ?>"
                                            class="kt-menu__link ">
                                             <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                            <span class="kt-menu__link-text"><?= Lang::t('{country}', ['country' => $country->name]) ?></span>
+                                            <span
+                                                class="kt-menu__link-text"><?= Lang::t('{country}', ['country' => $country->name]) ?></span>
                                         </a>
                                     </li>
                                 <?php endif; ?>
@@ -91,12 +93,13 @@ $countries = Organization::find()->orderBy(['code' => SORT_ASC])->all();
                         <span class="kt-menu__arrow"></span>
                         <ul class="kt-menu__subnav">
                             <?php foreach ($countries as $country): ?>
-                                <?php if (Session::getOrgId() == $country->id || Session::isPrivilegedAdmin()): ?>
+                                <?php if (Session::getCountryId() == $country->id || Session::isPrivilegedAdmin()): ?>
                                     <li class="kt-menu__item">
-                                        <a href="<?= Url::to(['/core/herd/index', 'org_id' => $country->id]) ?>"
+                                        <a href="<?= Url::to(['/core/herd/index', 'country_id' => $country->id]) ?>"
                                            class="kt-menu__link ">
                                             <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                            <span class="kt-menu__link-text"><?= Lang::t('{country}', ['country' => $country->name]) ?></span>
+                                            <span
+                                                class="kt-menu__link-text"><?= Lang::t('{country}', ['country' => $country->name]) ?></span>
                                         </a>
                                     </li>
                                 <?php endif; ?>
@@ -117,12 +120,13 @@ $countries = Organization::find()->orderBy(['code' => SORT_ASC])->all();
                         <span class="kt-menu__arrow"></span>
                         <ul class="kt-menu__subnav">
                             <?php foreach ($countries as $country): ?>
-                                <?php if (Session::getOrgId() == $country->id || Session::isPrivilegedAdmin()): ?>
+                                <?php if (Session::getCountryId() == $country->id || Session::isPrivilegedAdmin()): ?>
                                     <li class="kt-menu__item">
-                                        <a href="<?= Url::to(['/core/farm/index', 'org_id' => $country->id]) ?>"
+                                        <a href="<?= Url::to(['/core/farm/index', 'country_id' => $country->id]) ?>"
                                            class="kt-menu__link ">
                                             <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                            <span class="kt-menu__link-text"><?= Lang::t('{country}', ['country' => $country->name]) ?></span>
+                                            <span
+                                                class="kt-menu__link-text"><?= Lang::t('{country}', ['country' => $country->name]) ?></span>
                                         </a>
                                     </li>
                                 <?php endif; ?>
@@ -151,12 +155,13 @@ $countries = Organization::find()->orderBy(['code' => SORT_ASC])->all();
                         <span class="kt-menu__arrow"></span>
                         <ul class="kt-menu__subnav">
                             <?php foreach ($countries as $country): ?>
-                                <?php if (Session::getOrgId() == $country->id || Session::isPrivilegedAdmin()): ?>
+                                <?php if (Session::getCountryId() == $country->id || Session::isPrivilegedAdmin()): ?>
                                     <li class="kt-menu__item">
-                                        <a href="<?= Url::to(['/reports/builder/index', 'org_id' => $country->id]) ?>"
+                                        <a href="<?= Url::to(['/reports/builder/index', 'country_id' => $country->id]) ?>"
                                            class="kt-menu__link ">
                                             <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                            <span class="kt-menu__link-text"><?= Lang::t('{country}', ['country' => $country->name]) ?></span>
+                                            <span
+                                                class="kt-menu__link-text"><?= Lang::t('{country}', ['country' => $country->name]) ?></span>
                                         </a>
                                     </li>
                                 <?php endif; ?>
@@ -178,8 +183,8 @@ $countries = Organization::find()->orderBy(['code' => SORT_ASC])->all();
                 <i class="kt-menu__section-icon flaticon-more-v2"></i>
             </li>
             <?php if (Yii::$app->user->canView(Constants::RES_COUNTRY)): ?>
-                <li class="kt-menu__item kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'core/organization' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
-                    <a href="<?= Url::to(['/core/organization/index']) ?>" class="kt-menu__link">
+                <li class="kt-menu__item kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'core/organization-ref' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
+                    <a href="<?= Url::to(['/core/organization-ref/index']) ?>" class="kt-menu__link">
                         <i class="kt-menu__link-icon far fa-globe-africa"></i>
                         <span class="kt-menu__link-text">COUNTRIES</span>
                     </a>
@@ -207,12 +212,13 @@ $countries = Organization::find()->orderBy(['code' => SORT_ASC])->all();
                         </ul>
                         <ul class="kt-menu__subnav">
                             <?php foreach ($countries as $country): ?>
-                                <?php if (Session::getOrgId() == $country->id || Session::isPrivilegedAdmin()): ?>
+                                <?php if (Session::getCountryId() == $country->id || Session::isPrivilegedAdmin()): ?>
                                     <li class="kt-menu__item">
-                                        <a href="<?= Url::to(['/auth/user/index', 'org_id' => $country->id]) ?>"
+                                        <a href="<?= Url::to(['/auth/user/index', 'country_id' => $country->id]) ?>"
                                            class="kt-menu__link ">
                                             <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                            <span class="kt-menu__link-text"><?= Lang::t('{country}', ['country' => $country->name]) ?></span>
+                                            <span
+                                                class="kt-menu__link-text"><?= Lang::t('{country}', ['country' => $country->name]) ?></span>
                                         </a>
                                     </li>
                                 <?php endif; ?>
@@ -241,12 +247,13 @@ $countries = Organization::find()->orderBy(['code' => SORT_ASC])->all();
                         <span class="kt-menu__arrow"></span>
                         <ul class="kt-menu__subnav">
                             <?php foreach ($countries as $country): ?>
-                                <?php if (Session::getOrgId() == $country->id || Session::isPrivilegedAdmin()): ?>
+                                <?php if (Session::getCountryId() == $country->id || Session::isPrivilegedAdmin()): ?>
                                     <li class="kt-menu__item">
-                                        <a href="<?= Url::to(['/core/odk-json/index', 'org_id' => $country->id]) ?>"
+                                        <a href="<?= Url::to(['/core/odk-json/index', 'country_id' => $country->id]) ?>"
                                            class="kt-menu__link ">
                                             <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                            <span class="kt-menu__link-text"><?= Lang::t('{country}', ['country' => $country->name]) ?></span>
+                                            <span
+                                                class="kt-menu__link-text"><?= Lang::t('{country}', ['country' => $country->name]) ?></span>
                                         </a>
                                     </li>
                                 <?php endif; ?>
@@ -267,12 +274,13 @@ $countries = Organization::find()->orderBy(['code' => SORT_ASC])->all();
                         <span class="kt-menu__arrow"></span>
                         <ul class="kt-menu__subnav">
                             <?php foreach ($countries as $country): ?>
-                                <?php if (Session::getOrgId() == $country->id || Session::isPrivilegedAdmin()): ?>
+                                <?php if (Session::getCountryId() == $country->id || Session::isPrivilegedAdmin()): ?>
                                     <li class="kt-menu__item">
-                                        <a href="<?= Url::to(['/core/excel-upload-status/index', 'org_id' => $country->id]) ?>"
+                                        <a href="<?= Url::to(['/core/excel-upload-status/index', 'country_id' => $country->id]) ?>"
                                            class="kt-menu__link ">
                                             <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                            <span class="kt-menu__link-text"><?= Lang::t('{country}', ['country' => $country->name]) ?></span>
+                                            <span
+                                                class="kt-menu__link-text"><?= Lang::t('{country}', ['country' => $country->name]) ?></span>
                                         </a>
                                     </li>
                                 <?php endif; ?>

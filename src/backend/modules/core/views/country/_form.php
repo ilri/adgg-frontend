@@ -8,7 +8,7 @@ use yii\helpers\Html;
 /* @var $this \yii\web\View */
 /* @var $form ActiveForm */
 /* @var $controller \backend\controllers\BackendController */
-/* @var $model \backend\modules\core\models\Country */
+/* @var $model \backend\modules\core\models\CountryRef */
 $controller = Yii::$app->controller;
 $this->title = $controller->getPageTitle();
 

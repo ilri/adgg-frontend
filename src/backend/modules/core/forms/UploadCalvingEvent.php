@@ -43,8 +43,8 @@ class UploadCalvingEvent extends UploadAnimalEvent implements ImportInterface
             $row['calvdatedead'] = static::getDateColumnData($row['calvdatedead']);
             $insert_data[$k] = $row;
         }
-        $model = new CalvingEvent(['org_id' => $this->org_id, 'event_type' => $this->event_type]);
-        $this->save($insert_data, $model,false);
+        $model = new CalvingEvent(['country_id' => $this->country_id, 'event_type' => $this->event_type]);
+        $this->save($insert_data, $model, false);
     }
 
     /**

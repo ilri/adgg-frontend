@@ -15,7 +15,7 @@ use yii\base\InvalidArgumentException;
  *
  * @property int $id
  * @property string $uuid
- * @property int $org_id
+ * @property int $country_id
  * @property int $type
  * @property int $is_processed
  * @property string $processed_at
@@ -45,7 +45,7 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
     const TYPE_ANIMAL_EVENT_HEALTH = 36;
     const TYPE_ANIMAL_EVENT_FEEDING = 37;
     const TYPE_ANIMAL_EVENT_EXITS = 38;
-    const TYPE_ORGANIZATION_UNITS = 40;
+    const TYPE_ORGANIZATION_REF_UNITS = 40;
     const TYPE_USERS = 60;
 
     /**
@@ -62,8 +62,8 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
     public function rules()
     {
         return [
-            [['org_id', 'type', 'file_name'], 'required'],
-            [['org_id', 'type', 'is_processed', 'has_errors', 'created_by'], 'integer'],
+            [['country_id', 'type', 'file_name'], 'required'],
+            [['country_id', 'type', 'is_processed', 'has_errors', 'created_by'], 'integer'],
             [['processed_at', 'error_message', 'success_message', 'created_at'], 'safe'],
             [['uuid', 'file_name'], 'string', 'max' => 255],
         ];
@@ -77,7 +77,7 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
         return [
             'id' => 'ID',
             'uuid' => 'Uuid',
-            'org_id' => 'Org ID',
+            'country_id' => 'Country ID',
             'type' => 'Type',
             'is_processed' => 'Is Processed',
             'processed_at' => 'Processed At',
@@ -110,13 +110,13 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
     /**
      * @param int $type
      * @param string $fileName
-     * @param int $orgId
+     * @param int $countryId
      * @return ExcelImport
      */
-    public static function addToQueue($type, $fileName, $orgId)
+    public static function addToQueue($type, $fileName, $countryId)
     {
         $model = new static([
-            'org_id' => $orgId,
+            'country_id' => $countryId,
             'type' => $type,
             'file_name' => $fileName,
         ]);
@@ -180,7 +180,7 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
                 return 'Feeding';
             case self::TYPE_ANIMAL_EVENT_EXITS:
                 return 'Exits';
-            case self::TYPE_ORGANIZATION_UNITS:
+            case self::TYPE_ORGANIZATION_REF_UNITS:
                 return 'Country Administrative Units';
             case self::TYPE_USERS:
                 return 'Users';
@@ -209,7 +209,7 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
             self::TYPE_ANIMAL_EVENT_HEALTH => static::decodeType(self::TYPE_ANIMAL_EVENT_HEALTH),
             self::TYPE_ANIMAL_EVENT_FEEDING => static::decodeType(self::TYPE_ANIMAL_EVENT_FEEDING),
             self::TYPE_ANIMAL_EVENT_EXITS => static::decodeType(self::TYPE_ANIMAL_EVENT_EXITS),
-            self::TYPE_ORGANIZATION_UNITS => static::decodeType(self::TYPE_ORGANIZATION_UNITS),
+            self::TYPE_ORGANIZATION_REF_UNITS => static::decodeType(self::TYPE_ORGANIZATION_REF_UNITS),
             self::TYPE_USERS => static::decodeType(self::TYPE_USERS),
         ], $prompt);
     }
