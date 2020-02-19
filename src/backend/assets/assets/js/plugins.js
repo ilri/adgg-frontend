@@ -360,11 +360,12 @@ MyApp.plugin = {};
     };
     var PLUGIN = function (options) {
         var obj = new NOTIF(options);
-        obj.show();
-        obj.get();
-        obj.markAsRead();
-        obj.markAllAsRead();
-        obj.refresh();
+        //TODO Check why this is making the browser freeze
+        //obj.show();
+        //obj.get();
+        //obj.markAsRead();
+        //obj.markAllAsRead();
+        //obj.refresh();
     };
     MyApp.plugin.notif = PLUGIN;
 }(jQuery));
