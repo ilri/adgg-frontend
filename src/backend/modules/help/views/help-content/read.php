@@ -37,7 +37,7 @@ $format = Yii::$app->request->get('format', null);
                         <div class="card-title" data-toggle="collapse" data-target="#collapse<?= $i ?>"
                              aria-expanded="true"
                              aria-controls="collapseOne">
-                            <i class="fas fa-chevron-down"></i> <?= Html::encode($i . ' - ' . $model->name) ?>:
+                            <i class="fas fa-chevron-down"></i> <?= Html::encode($i . ' - ' . $model->name)  ?>:
                         </div>
                     </div>
                     <div id="collapse<?= $i ?>" class="collapse" data-parent="#accordion">

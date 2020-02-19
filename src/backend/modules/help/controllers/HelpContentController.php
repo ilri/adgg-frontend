@@ -30,7 +30,6 @@ class HelpContentController extends Controller
         ];
     }
 
-
     public function actionIndex()
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
@@ -41,6 +40,37 @@ class HelpContentController extends Controller
         ]);
     }
 
+    public function actionManual()
+    {
+        $this->hasPrivilege(Acl::ACTION_VIEW);
+
+        $searchModel = HelpContent::searchModel(['defaultOrder' => ['id' => SORT_ASC]]);
+        return $this->render('grid', [
+            'searchModel' => $searchModel,
+        ]);
+    }
+
+    public function actionApiDoc()
+    {
+        $this->resource = Constants::RES_API_DOC;
+        $this->hasPrivilege(Acl::ACTION_VIEW);
+
+        $searchModel = HelpContent::searchModel(['defaultOrder' => ['id' => SORT_ASC]]);
+        return $this->render('grid', [
+            'searchModel' => $searchModel,
+        ]);
+    }
+
+    public function actionDbDoc()
+    {
+        $this->resource = Constants::RES_DB_DOC;
+        $this->hasPrivilege(Acl::ACTION_VIEW);
+
+        $searchModel = HelpContent::searchModel(['defaultOrder' => ['id' => SORT_ASC]]);
+        return $this->render('grid', [
+            'searchModel' => $searchModel,
+        ]);
+    }
 
     public function actionView($id)
     {
