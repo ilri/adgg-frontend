@@ -22,6 +22,7 @@ use yii\web\NotFoundHttpException;
  * @package backend\modules\core\models
  *
  * @property int $country_id
+ * @property int $org_id
  * @property int $region_id
  * @property int $district_id
  * @property int $ward_id
@@ -29,11 +30,13 @@ use yii\web\NotFoundHttpException;
  * @property float $latitude
  * @property float $longitude
  * @property string $latlng
- * @property Country $country
  * @property CountryUnits $region
  * @property CountryUnits $district
  * @property CountryUnits $ward
  * @property CountryUnits $village
+ *
+ * @property Country $country
+ * @property Organization $org
  */
 trait CountryUnitDataTrait
 {
@@ -49,7 +52,9 @@ trait CountryUnitDataTrait
         if (Utils::isWebApp() && Session::isCountry()) {
             if (is_array($condition)) {
                 $condition['country_id'] = Session::getCountryId();
-                if (Session::isRegionUser()) {
+                if (Session::isExternalOrgUser()) {
+                    $condition['org_id'] = Session::getOrgId();
+                } elseif (Session::isRegionUser()) {
                     $condition['region_id'] = Session::getRegionId();
                 } elseif (Session::isDistrictUser()) {
                     $condition['district_id'] = Session::getDistrictId();
@@ -60,7 +65,9 @@ trait CountryUnitDataTrait
                 }
             } else {
                 list($condition, $params) = DbUtils::appendCondition('country_id', Session::getCountryId(), $condition, $params);
-                if (Session::isRegionUser()) {
+                if (Session::isExternalOrgUser()) {
+                    list($condition, $params) = DbUtils::appendCondition('org_id', Session::getOrgId(), $condition, $params);
+                } elseif (Session::isRegionUser()) {
                     list($condition, $params) = DbUtils::appendCondition('region_id', Session::getRegionId(), $condition, $params);
                 } elseif (Session::isDistrictUser()) {
                     list($condition, $params) = DbUtils::appendCondition('district_id', Session::getDistrictId(), $condition, $params);
@@ -136,6 +143,14 @@ trait CountryUnitDataTrait
     public function getCountry()
     {
         return $this->hasOne(Country::class, ['id' => 'country_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getOrg()
+    {
+        return $this->hasOne(Organization::class, ['id' => 'org_id']);
     }
 
     /**

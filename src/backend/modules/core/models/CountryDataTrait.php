@@ -17,7 +17,7 @@ use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 
 /**
- * Trait OrganizationRefDataTrait
+ *
  * @package backend\modules\core\models
  *
  * @property Country $country
