@@ -81,7 +81,7 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
                 return $model->input_type == self::INPUT_TYPE_SELECT;
             }],
             ['attribute_key', 'validateAttributeKey'],
-            [[self::SEARCH_FIELD,'id'], 'safe', 'on' => self::SCENARIO_SEARCH],
+            [[self::SEARCH_FIELD, 'id'], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
     }
 
@@ -106,15 +106,6 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
                 break;
             case ExtendableTable::TABLE_ANIMAL_EVENTS:
                 $parentModel = new AnimalEvent();
-                break;
-            case ExtendableTable::TABLE_ANIMAL_REPEATS:
-                //@todo add table
-                break;
-            case ExtendableTable::TABLE_FARM_REPEATS:
-                //@todo add table
-                break;
-            case ExtendableTable::TABLE_CLIENT_REPEATS:
-                //@todo add table
                 break;
             case ExtendableTable::TABLE_USERS:
                 $parentModel = new Users();
@@ -339,15 +330,6 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
                 break;
             case ExtendableTable::TABLE_ANIMAL_EVENTS:
                 $model = new AnimalEvent();
-                break;
-            case ExtendableTable::TABLE_ANIMAL_REPEATS:
-                //@todo add table
-                break;
-            case ExtendableTable::TABLE_FARM_REPEATS:
-                //@todo add table
-                break;
-            case ExtendableTable::TABLE_CLIENT_REPEATS:
-                //@todo add table
                 break;
             case ExtendableTable::TABLE_USERS:
                 $model = new Users();

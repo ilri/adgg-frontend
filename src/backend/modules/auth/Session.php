@@ -64,6 +64,8 @@ class Session
             UserLevels::LEVEL_DISTRICT,
             UserLevels::LEVEL_WARD,
             UserLevels::LEVEL_VILLAGE,
+            UserLevels::LEVEL_FARMER,
+            UserLevels::LEVEL_EXTERNAL_ORGANIZATION,
         ];
         return in_array(Yii::$app->user->identity->level_id, $countryUserLevels);
     }
@@ -74,6 +76,14 @@ class Session
             return false;
         }
         return Yii::$app->user->identity->level_id == UserLevels::LEVEL_COUNTRY;
+    }
+
+    public static function isExternalOrgUser()
+    {
+        if (Yii::$app->user->isGuest) {
+            return false;
+        }
+        return Yii::$app->user->identity->level_id == UserLevels::LEVEL_EXTERNAL_ORGANIZATION;
     }
 
     public static function isRegionUser()
@@ -124,6 +134,18 @@ class Session
     {
         if (static::isCountry()) {
             return Yii::$app->user->identity->country_id ?? null;
+        }
+        return $default;
+    }
+
+    /**
+     * @param null|string|int $default
+     * @return mixed
+     */
+    public static function getOrgId($default = null)
+    {
+        if (static::isCountry()) {
+            return Yii::$app->user->identity->org_id ?? null;
         }
         return $default;
     }

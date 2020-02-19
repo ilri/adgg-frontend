@@ -34,6 +34,8 @@ use yii\web\NotFoundHttpException;
  * @property int $district_id
  * @property int $ward_id
  * @property int $village_id
+ * @property int $org_id
+ * @property int $client_id
  * @property string $odk_code
  * @property string|array $additional_attributes
  *
@@ -113,7 +115,7 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
             [['username'], 'unique', 'message' => 'This username has already been taken.'],
             ['email', 'unique', 'message' => 'This Email address has already been taken.'],
             [['timezone'], 'string', 'max' => 60],
-            [['send_email', 'tmp_profile_image'], 'safe'],
+            [['send_email', 'tmp_profile_image', 'org_id', 'client_id'], 'safe'],
             [['phone'], 'string', 'min' => 8, 'max' => 13],
             [['phone'], 'number'],
             [['currentPassword'], 'required', 'on' => self::SCENARIO_CHANGE_PASSWORD],
@@ -190,6 +192,11 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
             'country_id',
             'is_main_account',
             'branch_id',
+            'district_id',
+            'ward_id',
+            'village_id',
+            'org_id',
+            'client_id',
         ];
     }
 

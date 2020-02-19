@@ -23,9 +23,12 @@ class AnimalStatsController extends ActiveController
         parent::init();
     }
 
-
     public function actionIndex($groupBy = Constants::ANIMAL_GRAPH_GROUP_BY_ANIMAL_TYPES, $country_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $animal_type = null, $breed = null, $from = null, $to = null)
     {
+        $user = \Yii::$app->user->identity;
+        if ($user->country_id !== null){
+            $country_id = $user->country_id;
+        }
         $dateFilter = DateUtils::getDateFilterParams($from, $to, 'entry_date', false, false);
         $condition = $dateFilter['condition'];
         $params = [];
@@ -43,7 +46,6 @@ class AnimalStatsController extends ActiveController
         $searchModel->village_id = $village_id;
         $searchModel->animal_type = $animal_type;
         $searchModel->main_breed = $breed;
-
 
         $data = [];
         $p_data = [];
@@ -79,7 +81,6 @@ class AnimalStatsController extends ActiveController
                 $data[] = $animalStats;
             }
         }
-
 
         return $data;
     }

@@ -26,11 +26,13 @@ class CountriesStatsController extends ActiveController
      */
     public function actionCountriesList()
     {
+        $user = \Yii::$app->user->identity;
         $searchModel = Country::searchModel([
             'defaultOrder' => ['id' => SORT_ASC],
             'pageSize' => SystemSettings::getPaginationSize(),
             'enablePagination' => true,
         ]);
+        $searchModel->id = $user->country_id;
         return $searchModel->search();
     }
 
@@ -62,6 +64,10 @@ class CountriesStatsController extends ActiveController
      */
     public function actionCountryReport($report_id, $country_id)
     {
+        $user = \Yii::$app->user->identity;
+        if ($user->country_id !== null){
+            $country_id = $user->country_id;
+        }
         return CountriesDashboardStats::getCountryReports($report_id, $country_id);
     }
 }

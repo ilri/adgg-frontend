@@ -21,6 +21,8 @@ use common\models\CustomValidationsTrait;
  * @property int $district_id
  * @property int $ward_id
  * @property int $village_id
+ * @property int $org_id
+ * @property int $client_id
  * @property string $event_date
  * @property string $latitude
  * @property string $longitude
@@ -78,6 +80,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             [['map_address', 'uuid'], 'string', 'max' => 255],
             ['event_date', 'validateNoFutureDate'],
             ['event_date', 'unique', 'targetAttribute' => ['country_id', 'animal_id', 'event_type', 'event_date'], 'message' => '{attribute} should be unique per animal'],
+            [['org_id', 'client_id'], 'safe'],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
     }
@@ -96,6 +99,8 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             'district_id' => 'District ID',
             'ward_id' => 'Ward ID',
             'village_id' => 'Village ID',
+            'org_id' => 'External Organization ID',
+            'client_id' => 'Client ID',
             'event_date' => 'Event Date',
             'latitude' => 'Latitude',
             'longitude' => 'Longitude',
@@ -151,6 +156,8 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             'district_id',
             'ward_id',
             'village_id',
+            'org_id',
+            'client_id',
             'field_agent_id',
         ];
     }
@@ -174,6 +181,8 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             $this->district_id = $this->animal->district_id;
             $this->ward_id = $this->animal->ward_id;
             $this->village_id = $this->animal->village_id;
+            $this->org_id = $this->animal->org_id;
+            $this->client_id = $this->animal->client_id;
             $this->setAdditionalAttributesValues();
             $this->setLactationId();
             return true;
