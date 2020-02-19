@@ -7,9 +7,9 @@
  */
 return [
     'class' => \yii\db\Connection::class,
-    'dsn' => 'mysql:host=192.168.5.7;port=3306;dbname=kenyadb',
-    'username' => 'dmogaka',
-    'password' => 'PxHgP5uW9x',
+    'dsn' => 'mysql:host=localhost;port=3306;dbname=kenyadb',
+    'username' => 'root',
+    'password' => 'root',
     'charset' => 'utf8mb4',
     'on afterOpen' => function ($event) {
         $event->sender->createCommand("SET time_zone = '+00:00'")->execute();
