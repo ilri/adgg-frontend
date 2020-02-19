@@ -9,6 +9,12 @@
 namespace backend\modules\core\models;
 
 
+/**
+ * Interface TableAttributeInterface
+ * @package backend\modules\core\models
+ *
+ * @property bool $ignoreAdditionalAttributes
+ */
 interface TableAttributeInterface
 {
     /**
@@ -36,6 +42,11 @@ interface TableAttributeInterface
      * @return mixed
      */
     public function loadAdditionalAttributeValues();
+
+    /**
+     * @return array
+     */
+    public function getOriginalAttributesListData();
 
 
 }
