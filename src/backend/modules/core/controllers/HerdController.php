@@ -27,7 +27,7 @@ class HerdController extends Controller
         $this->resourceLabel = 'Herd';
     }
 
-    public function actionIndex($farm_id = null, $org_id = null, $herd_id = null, $name = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null)
+    public function actionIndex($farm_id = null, $country_id = null, $herd_id = null, $name = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null)
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
         $condition = '';
@@ -36,13 +36,13 @@ class HerdController extends Controller
             'defaultOrder' => ['id' => SORT_DESC],
             'condition' => $condition,
             'params' => $params,
-            'with' => ['org', 'region', 'district', 'ward', 'village'],
+            'with' => ['country', 'region', 'district', 'ward', 'village'],
         ]);
         $searchModel->farm_id = $farm_id;
         $searchModel->herd_id = $herd_id;
         $searchModel->name = $name;
 
-        $searchModel = $this->setSessionData($searchModel, $org_id, $region_id, $district_id, $ward_id, $village_id);
+        $searchModel = $this->setSessionData($searchModel, $country_id, $region_id, $district_id, $ward_id, $village_id);
 
         return $this->render('index', [
             'searchModel' => $searchModel,

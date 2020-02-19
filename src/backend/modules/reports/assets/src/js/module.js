@@ -235,7 +235,7 @@ MyApp.modules.reports = {};
             _saveReport(this);
         });
 
-        $('#select_org_id').on('change', function (event) {
+        $('#select_country_id').on('change', function (event) {
             event.preventDefault();
             var elem = $('#report-builder-container');
             if($(elem).hasClass('hidden')){

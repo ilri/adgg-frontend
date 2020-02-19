@@ -52,7 +52,7 @@ class ReportBuilder extends Model
     /**
      * @var int
      */
-    public $org_id;
+    public $country_id;
     /**
      * @var string
      */
@@ -392,20 +392,20 @@ class ReportBuilder extends Model
         // if reportable model has extraCondition to be enforced, add it here
         if(array_key_exists('extraCondition', $reportableModelOptions)){
             $condition = $reportableModelOptions['extraCondition'];
-            if (count($condition)){
-                foreach ($condition as $f => $value){
-                    $aliasedField = static::getFullColumnName($f,$class);
+            if (count($condition)) {
+                foreach ($condition as $f => $value) {
+                    $aliasedField = static::getFullColumnName($f, $class);
                     $sqlCondition = static::buildCondition('=', $aliasedField, $value);
                     $query->andWhere($sqlCondition);
                 }
 
             }
         }
-        // if user selected a country, append the org_id
+        // if user selected a country, append the country_id
         // TODO: find a better way of doing all conditions in one place
-        if($this->org_id){
-            $aliasedField = static::getFullColumnName('org_id', $class);
-            $sqlCondition = static::buildCondition('=', $aliasedField, $this->org_id);
+        if ($this->country_id) {
+            $aliasedField = static::getFullColumnName('country_id', $class);
+            $sqlCondition = static::buildCondition('=', $aliasedField, $this->country_id);
             $query->andWhere($sqlCondition);
         }
         return $query;

@@ -2,7 +2,7 @@
 
 /* @var $this yii\web\View */
 
-use backend\modules\core\models\Organization;
+use backend\modules\core\models\Country;
 use backend\modules\reports\models\ReportBuilder;
 use backend\modules\reports\models\Reports;
 use common\helpers\Lang;
@@ -16,36 +16,37 @@ $this->title = 'Report Builder';
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
-<div class="row">
-    <div class="col-md-12">
-        <div class="well">
-            <h3 class="text-muted"><?= Lang::t('REPORT BUILDER') ?> [<?= strtoupper(Organization::getScalar('name', ['id' => $org_id])) ?>]</h3>
-            <hr>
-            <form method="POST" id="report-builder-form" >
+    <div class="row">
+        <div class="col-md-12">
+            <div class="well">
+                <h3 class="text-muted"><?= Lang::t('REPORT BUILDER') ?>
+                    [<?= strtoupper(Country::getScalar('name', ['id' => $country_id])) ?>]</h3>
+                <hr>
+                <form method="POST" id="report-builder-form">
 
-                <input type="hidden" name="<?= Yii::$app->request->csrfParam ?>" value="<?= Yii::$app->request->csrfToken ?>" />
-                <input type="hidden" name="model" id="model" />
-                <input type="hidden" name="org_id" id="org_id" value="<?= $org_id ?>"/>
-            <div class="row" id="report-builder-container">
-                <div class="panel panel-default bs-item z-depth-2 col-md-3">
-                    <div class="panel-body">
-                        <?php
-                        foreach ($models as $name => $modelData){
-                            /* @var $class ActiveRecord */
-                            $class = new $modelData['class']();
-                            $title = $modelData['title'] ?? $name;
-                            //$name = $class::shortClassName();
-                            $all_attributes = $class->reportBuilderFields();
-                            $main_attributes = [];
-                            $additional_attributes = [];
-                            // check if attribute is main or additional
-                            ## not necessary anymore, logic pushed to ReportBuilder
-                            foreach ($all_attributes as $attr){
-                                if (!$class->isAdditionalAttribute($attr)){
-                                    $main_attributes[] = $attr;
-                                }
-                                else {
-                                    $additional_attributes[] = $attr;
+                    <input type="hidden" name="<?= Yii::$app->request->csrfParam ?>"
+                           value="<?= Yii::$app->request->csrfToken ?>"/>
+                    <input type="hidden" name="model" id="model"/>
+                    <input type="hidden" name="country_id" id="country_id" value="<?= $country_id ?>"/>
+                    <div class="row" id="report-builder-container">
+                        <div class="panel panel-default bs-item z-depth-2 col-md-3">
+                            <div class="panel-body">
+                                <?php
+                                foreach ($models as $name => $modelData) {
+                                    /* @var $class ActiveRecord */
+                                    $class = new $modelData['class']();
+                                    $title = $modelData['title'] ?? $name;
+                                    //$name = $class::shortClassName();
+                                    $all_attributes = $class->reportBuilderFields();
+                                    $main_attributes = [];
+                                    $additional_attributes = [];
+                                    // check if attribute is main or additional
+                                    ## not necessary anymore, logic pushed to ReportBuilder
+                                    foreach ($all_attributes as $attr) {
+                                        if (!$class->isAdditionalAttribute($attr)) {
+                                            $main_attributes[] = $attr;
+                                        } else {
+                                            $additional_attributes[] = $attr;
                                 }
                             }
                             # filter out additional_attributes field

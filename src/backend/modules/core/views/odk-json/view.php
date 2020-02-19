@@ -44,8 +44,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => DateUtils::formatToLocalDate($model->processed_at),
                 ],
                 [
-                    'attribute' => 'org_id',
-                    'value' => $model->getRelationAttributeValue('org', 'name'),
+                    'attribute' => 'country_id',
+                    'value' => $model->getRelationAttributeValue('country', 'name'),
                 ],
                 [
                     'attribute' => 'has_errors',

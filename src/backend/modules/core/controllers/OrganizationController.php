@@ -1,9 +1,8 @@
 <?php
 /**
  * Created by PhpStorm.
- * @author: Fred <mconyango@gmail.com>
- * Date: 2019-05-23
- * Time: 2:46 PM
+ * @author: Fred <fred@btimillman.com>
+ * Date & Time: 2017-09-27 3:03 PM
  */
 
 namespace backend\modules\core\controllers;
@@ -12,27 +11,24 @@ namespace backend\modules\core\controllers;
 use backend\modules\auth\Acl;
 use backend\modules\core\Constants;
 use backend\modules\core\models\Organization;
-use common\helpers\Lang;
-use Yii;
-use yii\db\Exception;
-use common\helpers\Url;
 
-class OrganizationController extends Controller
+class OrganizationController extends MasterDataController
 {
-
+    /**
+     * @inheritdoc
+     */
     public function init()
     {
         parent::init();
-        $this->resource = Constants::RES_COUNTRY;
         $this->resourceLabel = 'Country';
+        $this->resource = Constants::RES_ORGANIZATION;
     }
-
 
     public function actionIndex()
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
         $searchModel = Organization::searchModel([
-            'defaultOrder' => ['name' => SORT_ASC],
+            'defaultOrder' => ['id' => SORT_ASC],
         ]);
         $searchModel->is_active = 1;
 
@@ -41,76 +37,23 @@ class OrganizationController extends Controller
         ]);
     }
 
-    public function actionView($id)
-    {
-        $this->hasPrivilege(Acl::ACTION_VIEW);
-        $model = $this->loadModel($id);
-        return $this->render('view', ['model' => $model]);
-    }
-
     public function actionCreate()
     {
         $this->hasPrivilege(Acl::ACTION_CREATE);
-        $model = new Organization([]);
-
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $transaction = Yii::$app->db->beginTransaction();
-            try {
-                $model->save(false);
-                $transaction->commit();
-
-                Yii::$app->session->setFlash('success', Lang::t('SUCCESS_MESSAGE'));
-
-                return $this->redirect(Url::getReturnUrl(['view', 'id' => $model->id]));
-            } catch (\Exception $e) {
-                $transaction->rollBack();
-                throw new Exception($e->getMessage());
-            }
-        }
-
-        return $this->render('create', [
-            'model' => $model,
-        ]);
+        $model = new Organization(['is_active' => 1]);
+        return $model->simpleAjaxSave();
     }
 
     public function actionUpdate($id)
     {
         $this->hasPrivilege(Acl::ACTION_UPDATE);
-        $model = $this->loadModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $transaction = Yii::$app->db->beginTransaction();
-            try {
-                $model->save(false);
-                $transaction->commit();
-
-                Yii::$app->session->setFlash('success', Lang::t('SUCCESS_MESSAGE'));
-
-                return $this->redirect(Url::getReturnUrl(['view', 'id' => $model->id]));
-            } catch (\Exception $e) {
-                $transaction->rollBack();
-                throw new Exception($e->getMessage());
-            }
-        }
-
-        return $this->render('update', [
-            'model' => $model,
-        ]);
+        $model = Organization::loadModel($id);
+        return $model->simpleAjaxSave();
     }
 
-    /**
-     * @param $id
-     * @return Organization
-     * @throws \yii\web\NotFoundHttpException
-     */
-    protected function loadModel($id)
+    public function actionDelete($id)
     {
-        if (is_string($id) && !is_numeric($id)) {
-            $model = Organization::loadModel(['uuid' => $id]);
-        } else {
-            $model = Organization::loadModel($id);
-        }
-
-        return $model;
+        $this->hasPrivilege(Acl::ACTION_DELETE);
+        return Organization::softDelete($id);
     }
 }

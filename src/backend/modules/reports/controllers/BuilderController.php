@@ -28,13 +28,13 @@ class BuilderController extends Controller
         $this->hasPrivilege(Acl::ACTION_CREATE);
     }
 
-    public function actionIndex($org_id)
+    public function actionIndex($country_id)
     {
         $models = ReportBuilder::reportableModels();
 
-        return $this->render('index',[
+        return $this->render('index', [
             'models' => $models,
-            'org_id' => $org_id,
+            'country_id' => $country_id,
         ]);
     }
 
@@ -46,7 +46,7 @@ class BuilderController extends Controller
         $filterValues = $req->post('filterValue', []); // array
         $limit = $req->post('limit', 100);
         $orderBy = $req->post('orderby', '');
-        $org_id = $req->post('org_id', '');
+        $country_id = $req->post('country_id', '');
         $name = $req->post('name', time());
 
         $builder = new ReportBuilder();
@@ -55,7 +55,7 @@ class BuilderController extends Controller
         $builder->filterValues = $filterValues;
         $builder->orderBy = $orderBy;
         $builder->limit = $limit;
-        $builder->org_id = $org_id;
+        $builder->country_id = $country_id;
         $builder->name = $name;
 
         return $builder;
@@ -89,7 +89,7 @@ class BuilderController extends Controller
                 'filterValues' => $builder->filterValues,
                 'limit' => $builder->limit,
                 'orderby' => $builder->orderBy,
-                'org_id' => $builder->org_id,
+                'country_id' => $builder->country_id,
                 'reportModel' => $builder->model,
             ]);
             if($report->save()){

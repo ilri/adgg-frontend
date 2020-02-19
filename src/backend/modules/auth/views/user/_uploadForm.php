@@ -1,7 +1,7 @@
 <?php
 
 use backend\modules\auth\Session;
-use backend\modules\core\models\Organization;
+use backend\modules\core\models\Country;
 use common\forms\ActiveField;
 use common\widgets\select2\Select2;
 use yii\bootstrap\Html;
@@ -11,7 +11,7 @@ use yii\bootstrap4\ActiveForm;
 
 /* @var $this \yii\web\View */
 /* @var $model \backend\modules\auth\forms\UploadUsers */
-/* @var $orgModel Organization */
+/* @var $countryModel Country */
 /* @var $form ActiveForm */
 ?>
 <div class="kt-portlet">
@@ -44,10 +44,11 @@ use yii\bootstrap4\ActiveForm;
         <div class="kt-section kt-section--first">
             <div class="kt-section__body">
                 <div class="row">
-                    <div class="col-md-8">
-                        <?php if (!Session::isOrganization()): ?>
-                            <?= $form->field($model, 'org_id')->widget(Select2::class, [
-                                'data' => Organization::getListData(),
+
+                    <div class="col-md-6">
+                        <?php if (!Session::isCountry()): ?>
+                            <?= $form->field($model, 'country_id')->widget(Select2::class, [
+                                'data' => Country::getListData(),
                                 'options' => ['placeholder' => '[select one]'],
                                 'pluginOptions' => [
                                     'allowClear' => false
@@ -61,7 +62,7 @@ use yii\bootstrap4\ActiveForm;
                                 'allowClear' => false
                             ],
                         ]) ?>
-                        <?= $this->render('@common/excel/views/uploadExcel', ['model' => $model, 'form_id' => $formId, 'previewUrl' => Url::to(['upload-preview', 'org_id' => $model->org_id, 'level_id' => $model->level_id])]); ?>
+                        <?= $this->render('@common/excel/views/uploadExcel', ['model' => $model, 'form_id' => $formId, 'previewUrl' => Url::to(['upload-preview', 'country_id' => $model->country_id, 'level_id' => $model->level_id])]); ?>
                     </div>
                     <div class="col-md-4">
                         <?= $this->render('@common/excel/views/guide', ['model' => $model, 'sampleUrl' => Url::to(['/helper/download-excel-sample', 'route' => 'users.xlsx']),]); ?>
@@ -79,7 +80,7 @@ use yii\bootstrap4\ActiveForm;
                         <?= Lang::t('Upload') ?>
                     </button>
                     <a class="btn btn-secondary"
-                       href="<?= Url::getReturnUrl(Url::to(['index', 'org_id' => $model->org_id, 'level_id' => $model->level_id])) ?>">
+                       href="<?= Url::getReturnUrl(Url::to(['index', 'country_id' => $model->country_id, 'level_id' => $model->level_id])) ?>">
                         <?= Lang::t('Cancel') ?>
                     </a>
                 </div>

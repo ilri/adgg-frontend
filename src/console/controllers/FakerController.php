@@ -10,7 +10,7 @@ namespace console\controllers;
 
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\OdkJsonQueue;
-use backend\modules\core\models\Organization;
+use backend\modules\core\models\Country;
 use common\helpers\FileManager;
 use Yii;
 use yii\console\Controller;
@@ -81,7 +81,7 @@ class FakerController extends Controller
         //$sql .= "TRUNCATE  `sys_queue`;TRUNCATE  `sys_app_session`;TRUNCATE `auth_log`;";
         //$sql .= "TRUNCATE " . SmsOutbox::tableName() . ";";
         //$sql .= "TRUNCATE " . EmailOutbox::tableName() . ";";
-        //$sql .= "TRUNCATE " . OrganizationUnits::tableName() . ";";
+        //$sql .= "TRUNCATE " . OrganizationRefUnits::tableName() . ";";
         //$sql .= "TRUNCATE " . ExcelImport::tableName() . ";";
         //$sql .= "TRUNCATE " . OdkJsonQueue::tableName() . ";";
         //$sql .= "TRUNCATE " . Notif::tableName() . ";";
@@ -92,7 +92,7 @@ class FakerController extends Controller
         //$sql .= "TRUNCATE " . AnimalHerd::tableName() . ";";
         //$sql .= "TRUNCATE " . Farm::tableName() . ";";
 
-        //$sql .= "UPDATE " . NumberingFormat::tableName() . " SET [[next_number]]=1 WHERE [[id]]=:organization_account_no;";
+        //$sql .= "UPDATE " . NumberingFormat::tableName() . " SET [[next_number]]=1 WHERE [[id]]=:OrganizationRef_account_no;";
         $sql .= "SET FOREIGN_KEY_CHECKS=1;";
         Yii::$app->db->createCommand($sql, [])->execute();
     }
@@ -111,8 +111,8 @@ class FakerController extends Controller
 
         // Loop through files
         $n = 1;
-        $org_id = Organization::getScalar('id', ['code' => 3]);
-        $model = new OdkJsonQueue(['org_id' => $org_id]);
+        $country_id = Country::getScalar('id', ['code' => 3]);
+        $model = new OdkJsonQueue(['country_id' => $country_id]);
         foreach (new \RecursiveIteratorIterator($it) as $file) {
             if ($file->getExtension() == 'json') {
                 $newModel = clone $model;

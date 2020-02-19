@@ -55,7 +55,7 @@ trait AnimalValidators
         }
         if (!empty($this->{$attribute})) {
             //check if the same sire_tag_id exist as a dam_tag_id
-            if (static::exists(['dam_tag_id' => $this->{$attribute}, 'org_id' => $this->org_id])) {
+            if (static::exists(['dam_tag_id' => $this->{$attribute}, 'country_id' => $this->country_id])) {
                 $this->addError($attribute, Lang::t("{attribute} already exists in the database as a dam and cannot be added as a sire.", [
                     'attribute' => $this->getAttributeLabel($attribute),
                 ]));
@@ -70,7 +70,7 @@ trait AnimalValidators
         }
         if (!empty($this->{$attribute})) {
             //check if the same dam_tag_id exist as a sire_tag_id
-            if (static::exists(['sire_tag_id' => $this->{$attribute}, 'org_id' => $this->org_id])) {
+            if (static::exists(['sire_tag_id' => $this->{$attribute}, 'country_id' => $this->country_id])) {
                 $this->addError($attribute, Lang::t("{attribute} already exists in the database as a sire and cannot be added as a dam.", [
                     'attribute' => $this->getAttributeLabel($attribute),
                 ]));

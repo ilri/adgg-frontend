@@ -4,8 +4,8 @@ use backend\controllers\BackendController;
 use backend\modules\core\models\Choices;
 use backend\modules\core\models\CountriesDashboardStats;
 use backend\modules\core\models\Farm;
-use backend\modules\core\models\Organization;
-use backend\modules\core\models\OrganizationUnits;
+use backend\modules\core\models\Country;
+use backend\modules\core\models\CountryUnits;
 use common\helpers\DbUtils;
 use common\helpers\Lang;
 use common\widgets\highchart\HighChart;
@@ -14,7 +14,7 @@ use yii\helpers\Json;
 /* @var $this yii\web\View */
 /* @var $controller BackendController */
 /* @var $graphFilterOptions array */
-/* @var $country Organization */
+/* @var $country Country */
 $controller = Yii::$app->controller;
 $this->title = Lang::t('Farms Registered Report');
 $this->params['breadcrumbs'] = [
@@ -94,7 +94,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
             <div class="kt-iconbox kt-iconbox--active">
                 <div class="kt-iconbox__icon mb-0">
                     <div class="kt-iconbox__icon-bg"></div>
-                    <span><?= number_format(Farm::getCount(['org_id' => $country->id])) ?></span>
+                    <span><?= number_format(Farm::getCount(['country_id' => $country->id])) ?></span>
                 </div>
                 <div class="kt-iconbox__title">
                     <?= Lang::t('Number Of Farms in {country}', ['country' => $country->name]); ?>                </div>
@@ -104,7 +104,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
             <div class="kt-iconbox kt-iconbox--active">
                 <div class="kt-iconbox__icon mb-0">
                     <div class="kt-iconbox__icon-bg"></div>
-                    <span><?= number_format(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => 1])->andWhere(['org_id' => $country->id])->count()) ?></span>
+                    <span><?= number_format(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => 1])->andWhere(['country_id' => $country->id])->count()) ?></span>
                 </div>
                 <div class="kt-iconbox__title">
                     <?= Lang::t('Male Household headed Farmers in {country}', ['country' => $country->name]); ?>
@@ -115,16 +115,17 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
             <div class="kt-iconbox kt-iconbox--active">
                 <div class="kt-iconbox__icon mb-0">
                     <div class="kt-iconbox__icon-bg"></div>
-                    <span><?= number_format(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => 2])->andWhere(['org_id' => $country->id])->count()) ?></span>
+                    <span><?= number_format(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => 2])->andWhere(['country_id' => $country->id])->count()) ?></span>
                 </div>
-                <div class="kt-iconbox__title"><?= Lang::t('Female Household headed Farmers in {country}', ['country' => $country->name]); ?></div>
+                <div
+                    class="kt-iconbox__title"><?= Lang::t('Female Household headed Farmers in {country}', ['country' => $country->name]); ?></div>
             </div>
         </div>
         <div class="kt-portlet">
             <div class="kt-iconbox kt-iconbox--active">
                 <div class="kt-iconbox__icon mb-0">
                     <div class="kt-iconbox__icon-bg"></div>
-                    <span><?= number_format(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => [1, 2]])->andWhere(['org_id' => $country->id])->count()) ?></span>
+                    <span><?= number_format(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => [1, 2]])->andWhere(['country_id' => $country->id])->count()) ?></span>
                 </div>
                 <div class="kt-iconbox__title">
                     <?= Lang::t('Households headed by both male and female members in {country}', ['country' => $country->name]); ?>

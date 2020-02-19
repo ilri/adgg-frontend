@@ -3,7 +3,7 @@
 use backend\controllers\BackendController;
 use backend\modules\core\models\CountriesDashboardStats;
 use backend\modules\core\models\MilkingReport;
-use backend\modules\core\models\Organization;
+use backend\modules\core\models\Country;
 use common\helpers\Lang;
 use common\widgets\highchart\HighChart;
 use yii\helpers\Json;
@@ -11,7 +11,7 @@ use yii\helpers\Json;
 /* @var $this yii\web\View */
 /* @var $controller BackendController */
 /* @var $graphFilterOptions array */
-/* @var $country Organization */
+/* @var $country Country */
 /* @var $dataProvider */
 $controller = Yii::$app->controller;
 $this->title = Lang::t('Test Day Milk Report');

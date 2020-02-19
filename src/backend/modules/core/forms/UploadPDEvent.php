@@ -45,7 +45,7 @@ class UploadPDEvent extends UploadAnimalEvent implements ImportInterface
             $insert_data[$k] = $row;
         }
 
-        $model = new PDEvent(['org_id' => $this->org_id, 'event_type' => $this->event_type]);
+        $model = new PDEvent(['country_id' => $this->country_id, 'event_type' => $this->event_type]);
         $this->save($insert_data, $model, false);
     }
 

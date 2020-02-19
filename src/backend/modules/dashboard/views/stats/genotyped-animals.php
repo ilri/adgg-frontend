@@ -2,13 +2,13 @@
 /* @var $this yii\web\View */
 
 use backend\controllers\BackendController;
-use backend\modules\core\models\Organization;
+use backend\modules\core\models\Country;
 use common\helpers\Lang;
 use common\widgets\highchart\HighChart;
 
 /* @var $controller BackendController */
 /* @var $graphFilterOptions array */
-/* @var $country Organization */
+/* @var $country Country */
 $controller = Yii::$app->controller;
 $this->title = Lang::t('Genotype Report');
 $this->params['breadcrumbs'] = [

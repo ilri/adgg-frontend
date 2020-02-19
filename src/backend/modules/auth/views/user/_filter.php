@@ -20,13 +20,13 @@ $url = ['index'];
             <div class="card-body">
                 <?= Html::beginForm($url, 'get', ['class' => '', 'id' => 'grid-filter-form', 'data-grid' => $model->getPjaxWidgetId()]) ?>
                 <div class="form-row align-items-center">
-                    <?php if (!\backend\modules\auth\Session::isOrganization()): ?>
+                    <?php if (!\backend\modules\auth\Session::isCountry()): ?>
                         <div class="col-lg-2">
-                            <?= Html::label($model->getAttributeLabel('org_id')) ?>
+                            <?= Html::label($model->getAttributeLabel('country_id')) ?>
                             <?= Select2::widget([
-                                'name' => 'org_id',
-                                'value' => $model->org_id,
-                                'data' => \backend\modules\core\models\Organization::getListData('id', 'name', false),
+                                'name' => 'country_id',
+                                'value' => $model->country_id,
+                                'data' => \backend\modules\core\models\Country::getListData('id', 'name', false),
                                 'options' => [
                                     'placeholder' => '[all]',
                                     'class' => 'form-control mb-2 select2'
@@ -57,7 +57,7 @@ $url = ['index'];
                         <?= Select2::widget([
                             'name' => 'role_id',
                             'value' => $model->role_id,
-                            'data' => \backend\modules\auth\models\Roles::getListData('id', 'name', false, \backend\modules\auth\Session::isOrganization() ? ['level_id' => \backend\modules\auth\models\UserLevels::LEVEL_COUNTRY] : []),
+                            'data' => \backend\modules\auth\models\Roles::getListData('id', 'name', false, \backend\modules\auth\Session::isCountry() ? ['level_id' => \backend\modules\auth\models\UserLevels::LEVEL_COUNTRY] : []),
                             'options' => [
                                 'placeholder' => '[all]',
                                 'class' => 'form-control mb-2 select2'

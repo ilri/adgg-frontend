@@ -13,10 +13,10 @@ use common\widgets\lineItem\LineItemTrait;
 use yii\helpers\Html;
 
 /**
- * This is the model class for table "org_notif_settings".
+ * This is the model class for table "country_notif_settings".
  *
  * @property int $id
- * @property int $org_id
+ * @property int $country_id
  * @property string $notification_id
  * @property int $enable_internal_notification
  * @property int $enable_email_notification
@@ -28,19 +28,19 @@ use yii\helpers\Html;
  * @property string $created_at
  * @property int $created_by
  *
- * @property Organization $org
+ * @property Country $country
  * @property NotifTypes $notification
  */
-class OrganizationNotifSettings extends ActiveRecord implements LineItemModelInterface
+class CountryNotifSettings extends ActiveRecord implements LineItemModelInterface
 {
-    use LineItemTrait, OrganizationDataTrait;
+    use LineItemTrait, CountryDataTrait;
 
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return '{{%org_notif_settings}}';
+        return '{{%country_notif_settings}}';
     }
 
     /**
@@ -49,8 +49,8 @@ class OrganizationNotifSettings extends ActiveRecord implements LineItemModelInt
     public function rules()
     {
         return [
-            [['org_id', 'notification_id'], 'required'],
-            [['org_id', 'enable_internal_notification', 'enable_email_notification', 'enable_sms_notification'], 'integer'],
+            [['country_id', 'notification_id'], 'required'],
+            [['country_id', 'enable_internal_notification', 'enable_email_notification', 'enable_sms_notification'], 'integer'],
             [['users', 'roles'], 'safe'],
             [['notification_id'], 'string', 'max' => 60],
             [['email', 'phone'], 'string', 'max' => 1000],
@@ -64,7 +64,7 @@ class OrganizationNotifSettings extends ActiveRecord implements LineItemModelInt
     {
         return [
             'id' => Lang::t('ID'),
-            'org_id' => Lang::t('Country ID'),
+            'country_id' => Lang::t('Country ID'),
             'notification_id' => Lang::t('Notification ID'),
             'enable_internal_notification' => Lang::t('Enable Internal Notification'),
             'enable_email_notification' => Lang::t('Enable Email Notification'),
@@ -93,7 +93,7 @@ class OrganizationNotifSettings extends ActiveRecord implements LineItemModelInt
             [
                 'attribute' => 'notification_id',
                 'type' => LineItem::LINE_ITEM_FIELD_TYPE_STATIC,
-                'value' => function (OrganizationNotifSettings $model) {
+                'value' => function (CountryNotifSettings $model) {
                     return '<span>' . Html::encode($model->notification->name) . '<br/><small class="text-muted">' . Html::encode($model->notification->description) . '</small>' . '</span>';
                 },
                 'tdOptions' => ['style' => 'max-width:400px;'],
@@ -106,7 +106,7 @@ class OrganizationNotifSettings extends ActiveRecord implements LineItemModelInt
                 'options' => [],
             ],
             [
-                'attribute' => 'org_id',
+                'attribute' => 'country_id',
                 'type' => LineItem::LINE_ITEM_FIELD_TYPE_HIDDEN_INPUT,
                 'tdOptions' => [],
                 'options' => [],
@@ -132,8 +132,8 @@ class OrganizationNotifSettings extends ActiveRecord implements LineItemModelInt
             [
                 'attribute' => 'users',
                 'type' => LineItem::LINE_ITEM_FIELD_TYPE_DROP_DOWN_LIST,
-                'listItems' => function (OrganizationNotifSettings $model) {
-                    return Users::getListData('id', 'name', false, ['level_id' => UserLevels::LEVEL_ORGANIZATION, 'org_id' => $model->org_id]);
+                'listItems' => function (CountryNotifSettings $model) {
+                    return Users::getListData('id', 'name', false, ['level_id' => UserLevels::LEVEL_COUNTRY, 'country_id' => $model->country_id]);
                 },
                 'tdOptions' => ['style' => 'min-width:300px;'],
                 'options' => ['class' => 'form-control select2', 'multiple' => true],
@@ -174,23 +174,23 @@ class OrganizationNotifSettings extends ActiveRecord implements LineItemModelInt
 
 
     /**
-     * @param int $org_id
+     * @param int $country_id
      * @param string $notification_id
-     * @return OrganizationNotifSettings|null
+     * @return CountryNotifSettings|null
      */
-    public static function getModel($org_id, $notification_id)
+    public static function getModel($country_id, $notification_id)
     {
-        return static::findOne(['org_id' => $org_id, 'notification_id' => $notification_id]);
+        return static::findOne(['country_id' => $country_id, 'notification_id' => $notification_id]);
     }
 
     /**
-     * @param int $org_id
+     * @param int $country_id
      * @param string $notification_id
      * @return bool|int
      */
-    public static function isInternalNotifEnabled($org_id, $notification_id)
+    public static function isInternalNotifEnabled($country_id, $notification_id)
     {
-        $model = static::getModel($org_id, $notification_id);
+        $model = static::getModel($country_id, $notification_id);
         if (null === $model) {
             return true;
         }
@@ -198,13 +198,13 @@ class OrganizationNotifSettings extends ActiveRecord implements LineItemModelInt
     }
 
     /**
-     * @param int $org_id
+     * @param int $country_id
      * @param string $notification_id
      * @return bool|int
      */
-    public static function isEmailNotifEnabled($org_id, $notification_id)
+    public static function isEmailNotifEnabled($country_id, $notification_id)
     {
-        $model = static::getModel($org_id, $notification_id);
+        $model = static::getModel($country_id, $notification_id);
         if (null === $model) {
             return true;
         }
@@ -212,13 +212,13 @@ class OrganizationNotifSettings extends ActiveRecord implements LineItemModelInt
     }
 
     /**
-     * @param int $org_id
+     * @param int $country_id
      * @param string $notification_id
      * @return bool|int
      */
-    public static function isSmsNotifEnabled($org_id, $notification_id)
+    public static function isSmsNotifEnabled($country_id, $notification_id)
     {
-        $model = static::getModel($org_id, $notification_id);
+        $model = static::getModel($country_id, $notification_id);
         if (null === $model) {
             return true;
         }
@@ -226,18 +226,18 @@ class OrganizationNotifSettings extends ActiveRecord implements LineItemModelInt
     }
 
     /**
-     * @param int $org_id
+     * @param int $country_id
      * @param string $notification_id
      * @return $this
      * @throws \Exception
      */
-    public static function getSettings($org_id, $notification_id)
+    public static function getSettings($country_id, $notification_id)
     {
-        $model = static::getModel($org_id, $notification_id);
+        $model = static::getModel($country_id, $notification_id);
         $enableInternalNotif = null;
         $enableEmailNotif = null;
         $enableSmsNotif = null;
-        $userIds = Users::getColumnData('id', ['level_id' => UserLevels::LEVEL_COUNTRY, 'org_id' => $org_id, 'is_main_account' => 1]);
+        $userIds = Users::getColumnData('id', ['level_id' => UserLevels::LEVEL_COUNTRY, 'country_id' => $country_id, 'is_main_account' => 1]);
         if (null !== $model) {
             if (empty($model->users)) {
                 $model->users = $userIds;

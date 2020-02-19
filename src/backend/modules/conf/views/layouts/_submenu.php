@@ -18,7 +18,7 @@ $controller = Yii::$app->controller;
                     <span class="kt-nav__link-text"><?= Lang::t('General Settings') ?></span>
                 </a>
             </li>
-            <?php if (!Session::isOrganization()): ?>
+            <?php if (!Session::isCountry()): ?>
                 <li class="kt-nav__item<?= ($controller->activeSubMenu === Constants::SUBMENU_EMAIL) ? ' kt-nav__item--active' : '' ?>">
                     <a href="<?= Url::to(['/conf/email/index']) ?>" class="kt-nav__link">
                         <span class="kt-nav__link-text"><?= Lang::t('Email Settings') ?></span>

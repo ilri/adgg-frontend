@@ -1,7 +1,7 @@
 <?php
 
+use backend\modules\core\models\CountryRef;
 use backend\modules\core\models\Country;
-use backend\modules\core\models\Organization;
 use common\forms\ActiveField;
 use common\widgets\select2\Select2;
 use yii\bootstrap\Html;
@@ -10,7 +10,7 @@ use common\helpers\Lang;
 use yii\bootstrap4\ActiveForm;
 
 /* @var $this \yii\web\View */
-/* @var $model Organization */
+/* @var $model Country */
 /* @var $form ActiveForm */
 ?>
 <div class="kt-portlet">

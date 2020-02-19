@@ -4,7 +4,7 @@ use backend\modules\conf\settings\SystemSettings;
 use backend\modules\core\models\Currency;
 use common\helpers\Lang;
 use backend\modules\conf\models\Timezone;
-use backend\modules\core\models\Country;
+use backend\modules\core\models\CountryRef;
 use common\helpers\Utils;
 use common\widgets\select2\Select2;
 use yii\bootstrap4\ActiveForm;
@@ -51,7 +51,7 @@ $this->params['breadcrumbs'] = [
                 <div class="kt-section kt-section--first">
                     <div class="kt-section__body">
                         <?= Html::errorSummary($model, ['class' => 'alert alert-warning', 'header' => '']); ?>
-                        <?php if (!\backend\modules\auth\Session::isOrganization()): ?>
+                        <?php if (!\backend\modules\auth\Session::isCountry()): ?>
                             <?= $form->field($model, SystemSettings::KEY_COMPANY_NAME); ?>
                             <?= $form->field($model, SystemSettings::KEY_APP_NAME); ?>
                             <?= $form->field($model, SystemSettings::KEY_COMPANY_EMAIL); ?>
@@ -63,7 +63,7 @@ $this->params['breadcrumbs'] = [
                             ],
                         ]) ?>
                         <?= $form->field($model, SystemSettings::KEY_DEFAULT_COUNTRY)->widget(Select2::class, [
-                            'data' => Country::getListData('iso2', 'name'),
+                            'data' => CountryRef::getListData('iso2', 'name'),
                             'pluginOptions' => [
                                 'allowClear' => false
                             ],
