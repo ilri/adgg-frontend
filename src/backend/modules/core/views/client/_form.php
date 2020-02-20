@@ -66,7 +66,7 @@ $this->title = $controller->getPageTitle();
         'options' => [
             'class' => 'form-control parent-depdropdown',
             'placeholder' => '[select one]',
-            'data-url' => Url::to(['organization/get-list', 'country_id' => $model->country->id]),
+            'data-url' => Url::to(['organization/get-list', 'country_id' => 'idV']),
             'data-selected' => $model->org_id,
         ],
         'pluginOptions' => [
