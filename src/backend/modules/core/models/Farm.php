@@ -338,9 +338,4 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     {
         return $this->hasOne(Users::class, ['id' => 'field_agent_id']);
     }
-
-    public function getCountry()
-    {
-        return $this->hasOne(Country::class, ['id' => 'country_id']);
-    }
 }

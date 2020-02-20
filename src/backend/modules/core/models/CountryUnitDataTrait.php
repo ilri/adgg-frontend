@@ -37,6 +37,7 @@ use yii\web\NotFoundHttpException;
  *
  * @property Country $country
  * @property Organization $org
+ * @property Client $client
  */
 trait CountryUnitDataTrait
 {
@@ -151,6 +152,11 @@ trait CountryUnitDataTrait
     public function getOrg()
     {
         return $this->hasOne(Organization::class, ['id' => 'org_id']);
+    }
+
+    public function getClient()
+    {
+        return $this->hasOne(Client::class, ['id' => 'client_id']);
     }
 
     /**

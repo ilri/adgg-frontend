@@ -42,7 +42,7 @@ $idPrefix = 'animal-g-filter-';
             'options' => [
                 'id' => $idPrefix . 'region_id',
                 'class' => 'form-control parent-depdropdown',
-                'data-url' => Url::to(['/core/organization-ref-units/get-list', 'country_id' => 'idV', 'level' => CountryUnits::LEVEL_REGION, 'placeholder' => '--All Regions--']),
+                'data-url' => Url::to(['/core/country-units/get-list', 'country_id' => 'idV', 'level' => CountryUnits::LEVEL_REGION, 'placeholder' => '--All Regions--']),
                 'data-child-selectors' => [
                     '#' . $idPrefix . 'district_id',
                 ],
@@ -61,7 +61,7 @@ $idPrefix = 'animal-g-filter-';
             'options' => [
                 'id' => $idPrefix . 'district_id',
                 'class' => 'form-control parent-depdropdown',
-                'data-url' => Url::to(['/core/organization-ref-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_DISTRICT, 'placeholder' => '--All Districts--']),
+                'data-url' => Url::to(['/core/country-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_DISTRICT, 'placeholder' => '--All Districts--']),
                 'data-child-selectors' => [
                     '#' . $idPrefix . 'ward_id',
                 ],
@@ -80,7 +80,7 @@ $idPrefix = 'animal-g-filter-';
             'options' => [
                 'id' => $idPrefix . 'ward_id',
                 'class' => 'form-control parent-depdropdown',
-                'data-url' => Url::to(['/core/organization-ref-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_WARD, 'placeholder' => '--All Wards--']),
+                'data-url' => Url::to(['/core/country-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_WARD, 'placeholder' => '--All Wards--']),
                 'data-child-selectors' => [
                     '#' . $idPrefix . 'village_id',
                 ],
@@ -98,7 +98,7 @@ $idPrefix = 'animal-g-filter-';
             'theme' => Select2::THEME_BOOTSTRAP,
             'options' => [
                 'id' => $idPrefix . 'village_id',
-                'data-url' => Url::to(['/core/organization-ref-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_VILLAGE, 'placeholder' => '--All Villages--']),
+                'data-url' => Url::to(['/core/country-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_VILLAGE, 'placeholder' => '--All Villages--']),
             ],
             'pluginOptions' => [
                 'allowClear' => false

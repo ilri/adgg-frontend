@@ -19,7 +19,7 @@ use common\controllers\UploadExcelTrait;
 use yii\base\InvalidArgumentException;
 use yii\helpers\Html;
 
-class OrganizationRefUnitsController extends Controller
+class CountryUnitsController extends Controller
 {
     use UploadExcelTrait;
 
@@ -74,14 +74,14 @@ class OrganizationRefUnitsController extends Controller
         $countryModel = Country::loadModel(['uuid' => $country_id]);
         $this->setResourceLabel($countryModel, $level);
         $model = new CountryUnits(['country_id' => $countryModel->id, 'level' => $level]);
-        return $model->simpleAjaxSave('_form', 'organization-ref/view', ['id' => $countryModel->uuid]);
+        return $model->simpleAjaxSave('_form', 'country/view', ['id' => $countryModel->uuid]);
     }
 
     public function actionUpdate($id)
     {
         $model = $this->loadModel($id);
         $this->setResourceLabel($model->country, $model->level);
-        return $model->simpleAjaxSave('_form', 'organization-ref/view', ['id' => $model->country->uuid]);
+        return $model->simpleAjaxSave('_form', 'country/view', ['id' => $model->country->uuid]);
     }
 
     /**

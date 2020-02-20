@@ -53,7 +53,7 @@ class OrganizationController extends Controller
         $this->hasPrivilege(Acl::ACTION_VIEW);
         $model = Organization::loadModel($id);
 
-        return $this->render('view', [
+        return $this->renderAjax('view', [
             'model' => $model,
         ]);
     }
