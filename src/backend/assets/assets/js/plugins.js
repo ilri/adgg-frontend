@@ -68,6 +68,7 @@ MyApp.plugin = {};
                         }
                     }
                 });
+                MyApp.plugin.depDropDown({});
             },
             onLoaded: function (button, modal) {
                 $.fn.modal.Constructor.prototype.enforceFocus = function () {
@@ -666,6 +667,12 @@ MyApp.plugin = {};
         $elem.off('change.depdropdown').on('change.depdropdown', function (event) {
             _depDrop(this);
         });
+
+        $('#my-bs-modal').on('shown.bs.modal', function (e) {
+            $('#my-bs-modal').off('change.depdropdown').on('change.depdropdown', selector, function (event) {
+                _depDrop(this);
+            });
+        })
 
     }
 
