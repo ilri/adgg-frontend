@@ -41,10 +41,10 @@ class ClientController extends Controller
         ]);
     }
 
-    public function actionCreate()
+    public function actionCreate($country_id = null)
     {
         $this->hasPrivilege(Acl::ACTION_CREATE);
-        $model = new Client(['is_active' => 1]);
+        $model = new Client(['is_active' => 1, 'country_id' => $country_id]);
         return $model->simpleAjaxSave();
     }
 

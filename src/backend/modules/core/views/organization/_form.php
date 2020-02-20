@@ -1,6 +1,7 @@
 <?php
 
 use backend\controllers\BackendController;
+use backend\modules\core\models\Country;
 use backend\modules\core\models\Organization;
 use common\helpers\Lang;
 use common\widgets\select2\Select2;
@@ -42,8 +43,10 @@ $form = ActiveForm::begin([
     <div class="hidden" id="my-modal-notif"></div>
     <?= $form->field($model, 'name', []) ?>
     <?= $form->field($model, 'country_id')->widget(Select2::class, [
-        'data' => \backend\modules\core\models\Country::getListData(),
+        'data' => Country::getListData(),
         'modal' => true,
+        'value' => $model->country->id,
+        'disabled' => true,
         'theme' => Select2::THEME_BOOTSTRAP,
         'pluginOptions' => [
             'allowClear' => false

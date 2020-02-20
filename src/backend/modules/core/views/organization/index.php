@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="col-lg-12">
         <?= $this->render('@coreModule/views/country/_tab', ['model' => $countryModel]); ?>
         <div class="tab-content">
-            <?= $this->render('_grid', ['model' => $searchModel]) ?>
+            <?= $this->render('_grid', ['model' => $searchModel, 'countryModel' => $countryModel]) ?>
         </div>
     </div>
 </div>

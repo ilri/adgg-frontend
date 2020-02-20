@@ -28,7 +28,7 @@ use common\widgets\grid\GridView;
             'attribute' => 'org_id',
             'filter' => false,
             'value' => function (\backend\modules\core\models\Client $model) {
-                return $model->getRelationAttributeValue('organization', 'name');
+                return $model->getRelationAttributeValue('org', 'name');
             },
         ],
         [
