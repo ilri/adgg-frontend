@@ -12,8 +12,6 @@ use common\models\ActiveSearchTrait;
  *
  * @property int $id
  * @property string $name
- * @property string $herd_id
- * @property string $herd_code
  * @property int $farm_id
  * @property string $uuid
  * @property int $country_id
@@ -61,15 +59,13 @@ class AnimalHerd extends ActiveRecord implements ActiveSearchInterface, ImportAc
     public function rules()
     {
         return [
-            [['herd_id', 'farm_id', 'name'], 'required'],
+            [['farm_id', 'name'], 'required'],
             [['farm_id', 'country_id', 'region_id', 'district_id', 'ward_id', 'village_id'], 'integer'],
             [['name', 'map_address'], 'string', 'max' => 255],
-            [['herd_id', 'project'], 'string', 'max' => 128],
+            [['', 'project'], 'string', 'max' => 128],
             [['latitude', 'longitude'], 'number'],
             [['farm_id'], 'exist', 'skipOnError' => true, 'targetClass' => Farm::class, 'targetAttribute' => ['farm_id' => 'id']],
             [['reg_date'], 'date', 'format' => 'php:Y-m-d'],
-            [['herd_id'], 'unique', 'targetAttribute' => ['country_id', 'herd_id'], 'message' => '{attribute} already exists.'],
-            [['herd_code'], 'unique', 'targetAttribute' => ['country_id', 'herd_code'], 'message' => '{attribute} already exists.'],
             [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
             [$this->getAdditionalAttributes(), 'safe'],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
@@ -84,8 +80,6 @@ class AnimalHerd extends ActiveRecord implements ActiveSearchInterface, ImportAc
         $labels = [
             'id' => 'ID',
             'name' => 'Herd Name',
-            'herd_id' => 'Herd ID',
-            'herd_code' => 'Herd Code',
             'farm_id' => 'Farm ID',
             'uuid' => 'Uuid',
             'country_id' => 'Country ID',
@@ -127,8 +121,6 @@ class AnimalHerd extends ActiveRecord implements ActiveSearchInterface, ImportAc
     {
         return [
             ['name', 'name'],
-            ['herd_id', 'herd_id'],
-            ['herd_code', 'herd_code'],
             ['project', 'project'],
             'country_id',
             'region_id',
@@ -174,8 +166,6 @@ class AnimalHerd extends ActiveRecord implements ActiveSearchInterface, ImportAc
     public function getExcelColumns()
     {
         return [
-            'herd_id',
-            'herd_code',
             'name',
             'reg_date',
             'farmerName',

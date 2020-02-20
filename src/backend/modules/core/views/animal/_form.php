@@ -231,9 +231,6 @@ use yii\bootstrap4\ActiveForm;
                         <?= $form->field($model, 'sire_name') ?>
                     </div>
                     <div class="col-md-4">
-                        <?= $form->field($model, 'bull_straw_id') ?>
-                    </div>
-                    <div class="col-md-4">
                         <?= $form->field($model, 'dam_id')->widget(Select2::class, [
                             'data' => Animal::getListData('id', 'name', false, ['animal_type' => [Animal::ANIMAL_TYPE_COW, Animal::ANIMAL_TYPE_HEIFER]]),
                             'options' => [

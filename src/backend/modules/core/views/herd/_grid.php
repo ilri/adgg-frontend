@@ -19,10 +19,10 @@ use yii\helpers\Url;
     },
     'columns' => [
         [
-            'attribute' => 'herd_id',
+            'attribute' => '',
         ],
         [
-            'attribute' => 'herd_code',
+            'attribute' => '',
         ],
         [
             'attribute' => 'name',
