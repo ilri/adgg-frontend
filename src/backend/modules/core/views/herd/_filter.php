@@ -1,6 +1,5 @@
 <?php
 
-use backend\modules\core\models\Choices;
 use backend\modules\core\models\Country;
 use backend\modules\core\models\CountryUnits;
 use common\helpers\Lang;
@@ -135,25 +134,6 @@ use yii\bootstrap4\Html;
                     <div class="col-lg-2">
                         <?= Html::label($model->getAttributeLabel('name')) ?>
                         <?= Html::textInput('name', $model->name, ['class' => 'form-control']) ?>
-                    </div>
-                    <div class="col-lg-2">
-                        <?= Html::label($model->getAttributeLabel('herd_code')) ?>
-                        <?= Html::textInput('code', $model->herd_code, ['class' => 'form-control']) ?>
-                    </div>
-                    <div class="col-lg-2">
-                        <?= Html::label($model->getAttributeLabel('project')) ?>
-                        <?= Select2::widget([
-                            'name' => 'project',
-                            'value' => $model->project,
-                            'data' => Choices::getProjectListData(),
-                            'options' => [
-                                'placeholder' => "",
-                                'class' => 'form-control select2',
-                            ],
-                            'pluginOptions' => [
-                                'allowClear' => true
-                            ],
-                        ]); ?>
                     </div>
                     <div class="col-lg-2">
                         <br>
