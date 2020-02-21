@@ -32,6 +32,7 @@ class UserController extends Controller
         parent::init();
 
         $this->resourceLabel = 'User';
+        $this->enableDefaultAcl = false;
         $this->resource = Constants::RES_USER;
         $this->activeMenu = Constants::MENU_USER_MANAGEMENT;
     }
@@ -80,6 +81,9 @@ class UserController extends Controller
     {
         $model = Users::loadModel($id);
         $model->checkPermission(true, true, true, true);
+        if (!$model->isMyAccount()) {
+            $this->hasPrivilege(Acl::ACTION_VIEW);
+        }
 
         return $this->render('view', [
             'model' => $model,

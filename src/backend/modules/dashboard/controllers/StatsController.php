@@ -33,6 +33,10 @@ class StatsController extends Controller
 
     public function actionDash($country_id = null)
     {
+        $user = \Yii::$app->user->identity;
+        if ($user->country_id !== null) {
+            $country_id = $user->country_id;
+        }
         $country = Country::findOne(['id' => $country_id]);
         return $this->render('dashboards', [
             'country_id' => $country_id,
