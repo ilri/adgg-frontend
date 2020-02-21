@@ -67,7 +67,7 @@ $user = Yii::$app->user->identity;
                 </div>
                 <ul class="kt-nav kt-margin-b-10">
                     <li class="kt-nav__item">
-                        <a href="<?= Url::to(['/auth/user/update', 'id' => Yii::$app->user->id]) ?>"
+                        <a href="<?= Url::to(['/auth/user/view', 'id' => Yii::$app->user->id]) ?>"
                            class="kt-nav__link">
                             <span class="kt-nav__link-icon"><i class="flaticon2-calendar-3"></i></span>
                             <span class="kt-nav__link-text">My Account</span>
