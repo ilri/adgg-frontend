@@ -63,6 +63,15 @@ $can_update = Yii::$app->user->canUpdate(Constants::RES_USER) && $model->checkPe
                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
                    aria-expanded="false"><?= Lang::t('Actions') ?></a>
                 <div class="dropdown-menu" x-placement="bottom-start">
+                    <?php if ($model->isMyAccount()): ?>
+                        <a class="list-group-item"
+                           href="<?= Url::to(['/auth/user/update', 'id' => $model->id]) ?>">
+                            <i class="fa fa-pencil text-success"></i> <?= Lang::t('Update details') ?>
+                        </a>
+                        <a class="list-group-item" href="<?= Url::to(['/auth/user/change-password']) ?>">
+                            <i class="fa fa-lock text-success"></i> <?= Lang::t('Change your password') ?>
+                        </a>
+                    <?php endif; ?>
                     <?php if ($can_update): ?>
                         <a class="dropdown-item" href="<?= Url::to(['/auth/user/update', 'id' => $model->id]) ?>">
                             <?= Lang::t('Update details') ?>
@@ -85,11 +94,6 @@ $can_update = Yii::$app->user->canUpdate(Constants::RES_USER) && $model->checkPe
                                 <?= Lang::t('Activate Account') ?>
                             </a>
                         <?php endif; ?>
-                    <?php endif; ?>
-                    <?php if ($model->isMyAccount()): ?>
-                        <a class="dropdown-item" href="<?= Url::to(['/auth/user/change-password']) ?>">
-                            <?= Lang::t('Change your password') ?>
-                        </a>
                     <?php endif; ?>
                 </div>
             </li>

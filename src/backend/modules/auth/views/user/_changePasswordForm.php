@@ -2,6 +2,7 @@
 
 use common\forms\ActiveField;
 use common\helpers\Lang;
+use common\helpers\Url;
 use kartik\password\PasswordInput;
 use yii\bootstrap4\ActiveForm;
 use yii\bootstrap4\Html;
@@ -66,6 +67,10 @@ use yii\bootstrap4\Html;
                     <button type="submit" class="btn btn-success">
                         <?= Lang::t('Change Password') ?>
                     </button>
+                    <a class="btn btn-secondary"
+                       href="<?= Url::getReturnUrl(Url::to(['view', 'id' => $model->id])) ?>">
+                        <?= Lang::t('Cancel') ?>
+                    </a>
                 </div>
             </div>
         </div>
