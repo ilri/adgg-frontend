@@ -231,12 +231,37 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
                         </ul>
                     </div>
                 </li>
+                <li class="kt-menu__item kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'reports/default' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
+                    <a href="#" class="kt-menu__link kt-menu__toggle">
+                        <i class="kt-menu__link-icon far fa-chart-line"></i>
+                        <span class="kt-menu__link-text">STANDARD REPORTS</span>
+                        <i class="kt-menu__ver-arrow la la-angle-right"></i>
+                    </a>
+                    <div class="kt-menu__submenu">
+                        <span class="kt-menu__arrow"></span>
+                        <ul class="kt-menu__subnav">
+                            <?php foreach ($countries as $country): ?>
+                                <?php if (Session::getCountryId() == $country->id || Session::isPrivilegedAdmin()): ?>
+                                    <li class="kt-menu__item">
+                                        <a href="<?= Url::to(['/reports/default/index', 'country_id' => $country->id]) ?>"
+                                           class="kt-menu__link ">
+                                            <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                            <span
+                                                    class="kt-menu__link-text"><?= Lang::t('{country}', ['country' => $country->name]) ?></span>
+                                        </a>
+                                    </li>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                </li>
             <?php endif; ?>
+
             <?php if (Yii::$app->user->canView(Constants::RES_AD_HOC_REPORTS)): ?>
                 <li class="kt-menu__item kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'reports/adhoc-report' ? 'kt-menu__item--here' : '' ?>">
                     <a href="<?= Url::to(['/reports/adhoc-report/index']) ?>" class="kt-menu__link">
                         <i class="kt-menu__link-icon flaticon2-browser-2"></i>
-                        <span class="kt-menu__link-text">AD-HOC REPORTS</span>
+                        <span class="kt-menu__link-text">REPORTS</span>
                     </a>
                 </li>
             <?php endif; ?>
