@@ -4,7 +4,6 @@ namespace console\dataMigration\ke\models;
 
 use backend\modules\core\models\Client;
 use backend\modules\core\models\Farm;
-use common\models\ActiveRecord;
 use Yii;
 
 /**
@@ -32,7 +31,7 @@ use Yii;
  * @property int $Farms_HideFlag
  * @property int $Farms_Locked
  */
-class Farms extends ActiveRecord implements MigrationInterface
+class Farms extends MigrationBase implements MigrationInterface
 {
     /**
      * {@inheritdoc}
@@ -107,7 +106,6 @@ class Farms extends ActiveRecord implements MigrationInterface
         $query = static::find()->andWhere(['Farms_HideFlag' => 0]);
         /* @var $dataModels $this[] */
         $n = 1;
-        $className = static::class;
         $countryId = Helper::getCountryId(Constants::KENYA_COUNTRY_CODE);
         $orgId = Helper::getOrgId(Constants::KLBA_ORG_NAME);
         $model = new Farm(['country_id' => $countryId, 'org_id' => $orgId]);
@@ -131,16 +129,7 @@ class Farms extends ActiveRecord implements MigrationInterface
                 if (empty($newModel->name)) {
                     $newModel->name = $newModel->code;
                 }
-                $saved = $newModel->save();
-
-                if ($saved) {
-                    Yii::$app->controller->stdout($className . ": saved record {$n} successfully\n");
-                } else {
-                    $error = json_encode($newModel->getErrors());
-                    Yii::info($error);
-                    Yii::$app->controller->stdout($className . ": Failed to save record {$n}\n");
-                    Yii::$app->controller->stdout("ERROR: {$error} {$n}\n");
-                }
+                static::saveModel($newModel, $n);
                 $n++;
             }
         }

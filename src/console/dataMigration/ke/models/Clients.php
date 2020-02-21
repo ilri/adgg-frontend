@@ -3,7 +3,6 @@
 namespace console\dataMigration\ke\models;
 
 use backend\modules\core\models\Client;
-use common\models\ActiveRecord;
 use Yii;
 
 /**
@@ -40,7 +39,7 @@ use Yii;
  * @property int $Clients_HideFlag
  * @property int $Clients_Locked
  */
-class Clients extends ActiveRecord implements MigrationInterface
+class Clients extends MigrationBase implements MigrationInterface
 {
     /**
      * {@inheritdoc}
@@ -125,33 +124,26 @@ class Clients extends ActiveRecord implements MigrationInterface
     public static function migrateData()
     {
         $query = static::find()->andWhere(['Clients_HideFlag' => 0]);
-        /* @var $models $this[] */
+        /* @var $dataModels $this[] */
         $n = 1;
-        $className = static::class;
         $countryId = Helper::getCountryId(Constants::KENYA_COUNTRY_CODE);
         $orgId = Helper::getOrgId(Constants::KLBA_ORG_NAME);
-        $clientModel = new Client(['country_id' => $countryId, 'org_id' => $orgId]);
-        foreach ($query->batch() as $i => $models) {
-            foreach ($models as $model) {
-                $newClientModel = clone $clientModel;
-                $newClientModel->migration_id = Helper::getMigrationId($model->Clients_ID, Constants::KLBA_DATA_SOURCE_PREFIX);
-                $newClientModel->name = !empty(trim($model->Clients_BusName)) ? $model->Clients_BusName : $model->Clients_PersonName;
-                $newClientModel->contact_person = $model->Clients_PersonName;
-                $newClientModel->postal_address = $model->Clients_Address1;
-                $newClientModel->town = $model->Clients_Address2;
-                $newClientModel->client_country = $model->Clients_Address3;
-                $newClientModel->phone1 = $model->Clients_Mobile;
-                $newClientModel->phone2 = $model->Clients_Phone;
-                $newClientModel->email = $model->Clients_Email;
-                $newClientModel->county = $model->Clients_Branch;
-                $newClientModel->remarks = $model->Clients_Remark;
-                $saved = $newClientModel->save();
-
-                if ($saved) {
-                    Yii::$app->controller->stdout($className . ": saved record {$n} successfully\n");
-                } else {
-                    Yii::$app->controller->stdout($className . ": Failed to save record {$n}\n");
-                }
+        $model = new Client(['country_id' => $countryId, 'org_id' => $orgId]);
+        foreach ($query->batch() as $i => $dataModels) {
+            foreach ($dataModels as $dataModel) {
+                $newModel = clone $model;
+                $newModel->migration_id = Helper::getMigrationId($dataModel->Clients_ID, Constants::KLBA_DATA_SOURCE_PREFIX);
+                $newModel->name = !empty(trim($dataModel->Clients_BusName)) ? $dataModel->Clients_BusName : $dataModel->Clients_PersonName;
+                $newModel->contact_person = $dataModel->Clients_PersonName;
+                $newModel->postal_address = $dataModel->Clients_Address1;
+                $newModel->town = $dataModel->Clients_Address2;
+                $newModel->client_country = $dataModel->Clients_Address3;
+                $newModel->phone1 = $dataModel->Clients_Mobile;
+                $newModel->phone2 = $dataModel->Clients_Phone;
+                $newModel->email = $dataModel->Clients_Email;
+                $newModel->county = $dataModel->Clients_Branch;
+                $newModel->remarks = $dataModel->Clients_Remark;
+                static::saveModel($newModel, $n);
                 $n++;
             }
         }

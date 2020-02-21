@@ -14,4 +14,8 @@ class Constants
     const KLBA_DATA_SOURCE_PREFIX = 'KLBA_';
     const KENYA_COUNTRY_CODE = 3;
     const KLBA_ORG_NAME = 'KLBA';
+
+    //mistro lookup codes
+    const SEX_MALE = 'M';
+    const SEX_FEMALE = 'F';
 }
