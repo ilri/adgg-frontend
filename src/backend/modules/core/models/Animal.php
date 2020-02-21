@@ -62,6 +62,7 @@ use yii\helpers\Inflector;
  * @property string $updated_at
  * @property int $updated_by
  * @property string|array $additional_attributes
+ * @property string $animal_eartag_id
  *
  * @property Farm $farm
  * @property Animal $sire
