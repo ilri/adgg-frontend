@@ -3,6 +3,7 @@
 use backend\modules\conf\settings\SystemSettings;
 use backend\modules\core\models\Country;
 use backend\widgets\Alert;
+use common\helpers\Lang;
 use yii\bootstrap4\Breadcrumbs;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -124,38 +125,38 @@ $controller = Yii::$app->controller;
                 <?php if (Yii::$app->user->canView(\backend\modules\core\Constants::RES_ANIMAL)): ?>
                     <a href="<?= Url::to(['/core/animal/index']) ?>" class="kt-grid-nav-v2__item">
                         <div class="kt-grid-nav-v2__item-icon"><i class="far fa-cow"></i></div>
-                        <div class="kt-grid-nav-v2__item-title">Animals</div>
+                        <div class="kt-grid-nav-v2__item-title"><?= Lang::t('Animals') ?></div>
                     </a>
                 <?php endif; ?>
                 <?php if (Yii::$app->user->canView(\backend\modules\core\Constants::RES_FARM)): ?>
                     <a href="<?= Url::to(['/core/farm/index']) ?>" class="kt-grid-nav-v2__item">
                         <div class="kt-grid-nav-v2__item-icon"><i class="far fa-tractor"></i></div>
-                        <div class="kt-grid-nav-v2__item-title">Farms</div>
+                        <div class="kt-grid-nav-v2__item-title"><?= Lang::t('Farms') ?></div>
                     </a>
                 <?php endif; ?>
                 <?php if (Yii::$app->user->canView(\backend\modules\core\Constants::RES_CLIENT)): ?>
                     <a href="#" class="kt-grid-nav-v2__item">
                         <div class="kt-grid-nav-v2__item-icon"><i class="far fa-users"></i></div>
-                        <div class="kt-grid-nav-v2__item-title">Clients/Projects</div>
+                        <div class="kt-grid-nav-v2__item-title"><?= Lang::t('Clients') ?></div>
                     </a>
                 <?php endif; ?>
-                <?php if (Yii::$app->user->canView(\backend\modules\core\Constants::RES_ANIMAL_EVENTS)): ?>
+                <?php if (Yii::$app->user->canView(\backend\modules\core\Constants::RES_COUNTRY)): ?>
 
                     <a href="<?= Url::to(['/core/country/index']) ?>" class="kt-grid-nav-v2__item">
                         <div class="kt-grid-nav-v2__item-icon"><i class="far fa-calendar-day"></i></div>
-                        <div class="kt-grid-nav-v2__item-title">Countries</div>
+                        <div class="kt-grid-nav-v2__item-title"><?= Lang::t('Countries') ?></div>
                     </a>
                 <?php endif; ?>
                 <?php if (Yii::$app->user->canView(\backend\modules\auth\Constants::RES_USER)): ?>
                     <a href="<?= Url::to(['/auth/user/index']) ?>" class="kt-grid-nav-v2__item">
                         <div class="kt-grid-nav-v2__item-icon"><i class="far fa-users"></i></div>
-                        <div class="kt-grid-nav-v2__item-title">Users</div>
+                        <div class="kt-grid-nav-v2__item-title"><?= Lang::t('Users') ?></div>
                     </a>
                 <?php endif; ?>
                 <?php if (Yii::$app->user->canView(\backend\modules\conf\Constants::RES_SETTINGS)): ?>
                     <a href="<?= Url::to(['/conf/settings/index']) ?>" class="kt-grid-nav-v2__item">
                         <div class="kt-grid-nav-v2__item-icon"><i class="far fa-cog"></i></div>
-                        <div class="kt-grid-nav-v2__item-title">Settings</div>
+                        <div class="kt-grid-nav-v2__item-title"><?= Lang::t('Settings') ?></div>
                     </a>
                 <?php endif; ?>
             </div>
