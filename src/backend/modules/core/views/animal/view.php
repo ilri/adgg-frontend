@@ -121,9 +121,6 @@ $this->params['breadcrumbs'][] = $this->title;
                             'attribute' => 'sire_tag_id',
                         ],
                         [
-                            'attribute' => 'bull_straw_id',
-                        ],
-                        [
                             'attribute' => 'sire_name',
                         ],
                     ],

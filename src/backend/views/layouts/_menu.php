@@ -183,8 +183,8 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
                 <i class="kt-menu__section-icon flaticon-more-v2"></i>
             </li>
             <?php if (Yii::$app->user->canView(Constants::RES_COUNTRY)): ?>
-                <li class="kt-menu__item kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'core/organization-ref' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
-                    <a href="<?= Url::to(['/core/organization-ref/index']) ?>" class="kt-menu__link">
+                <li class="kt-menu__item kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'core/country' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
+                    <a href="<?= Url::to(['/core/country/index']) ?>" class="kt-menu__link">
                         <i class="kt-menu__link-icon far fa-globe-africa"></i>
                         <span class="kt-menu__link-text">COUNTRIES</span>
                     </a>

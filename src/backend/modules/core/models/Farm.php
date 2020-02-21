@@ -52,6 +52,7 @@ use yii\helpers\Html;
  * @property Users $fieldAgent
  * @property Animal $animals
  * @property AnimalHerd [] $herds
+ * @property Client $client
  */
 class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInterface, TableAttributeInterface
 {
@@ -86,7 +87,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             [['farm_type'], 'string', 'max' => 30],
             [['gender_code'], 'string', 'max' => 10],
             [['reg_date'], 'date', 'format' => 'Y-m-d'],
-            [['code'], 'unique', 'targetAttribute' => ['country_id', 'code'], 'message' => '{attribute} already exists', 'except' => self::SCENARIO_UPLOAD],
+            [['code'], 'unique', 'targetAttribute' => ['country_id', 'org_id', 'code'], 'message' => '{attribute} already exists', 'except' => self::SCENARIO_UPLOAD],
             [$this->getAdditionalAttributes(), 'safe'],
             [['additional_attributes', 'org_id', 'client_id'], 'safe'],
             ['odk_code', 'unique', 'targetAttribute' => ['country_id', 'odk_code'], 'message' => '{attribute} already exists.', 'on' => self::SCENARIO_UPLOAD],
@@ -275,6 +276,14 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getClient()
+    {
+        return $this->hasOne(Client::class, ['id' => 'client_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getAnimals()
     {
         return $this->hasMany(Animal::class, ['farm_id' => 'id']);
@@ -328,10 +337,5 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     public function getFieldAgent()
     {
         return $this->hasOne(Users::class, ['id' => 'field_agent_id']);
-    }
-
-    public function getCountry()
-    {
-        return $this->hasOne(Country::class, ['id' => 'country_id']);
     }
 }

@@ -12,16 +12,15 @@ use yii\bootstrap\Html;
 /* @var $countryModel Country */
 $controller = Yii::$app->controller;
 $this->title = $controller->getPageTitle();
-$this->params['breadcrumbs'][] = ['label' => Lang::t('Countries'), 'url' => ['organization-ref/index']];
-$this->params['breadcrumbs'][] = ['label' => \common\helpers\Lang::t('Countries'), 'url' => ['organization-ref/index']];
-$this->params['breadcrumbs'][] = ['label' => Html::encode($countryModel->name), 'url' => ['organization-ref/view', 'id' => $countryModel->uuid]];
+$this->params['breadcrumbs'][] = ['label' => Lang::t('Countries'), 'url' => ['country/index']];
+$this->params['breadcrumbs'][] = ['label' => Html::encode($countryModel->name), 'url' => ['country/view', 'id' => $countryModel->uuid]];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="row">
     <div class="col-lg-12">
-        <?= $this->render('@coreModule/views/organization-ref/_tab', ['model' => $countryModel]); ?>
+        <?= $this->render('@coreModule/views/country/_tab', ['model' => $countryModel]); ?>
         <div class="tab-content">
-            <?= $this->render('_grid', ['model' => $searchModel]) ?>
+            <?= $this->render('_grid', ['model' => $searchModel, 'countryModel' => $countryModel]) ?>
         </div>
     </div>
 </div>

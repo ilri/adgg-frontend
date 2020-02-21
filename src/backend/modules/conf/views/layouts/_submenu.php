@@ -25,7 +25,7 @@ $controller = Yii::$app->controller;
                     </a>
                 </li>
                 <li class="kt-nav__item<?= ($controller->activeSubMenu === Constants::SUBMENU_MASTER_DATA) ? ' kt-nav__item--active' : '' ?>">
-                    <a href="<?= Url::to(['/core/country/index']) ?>" class="kt-nav__link">
+                    <a href="<?= Url::to(['/core/country-ref/index']) ?>" class="kt-nav__link">
                         <span class="kt-nav__link-text"><?= Lang::t('Master Data') ?></span>
                     </a>
                 </li>

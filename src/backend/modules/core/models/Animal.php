@@ -41,7 +41,6 @@ use yii\helpers\Inflector;
  * @property int $sire_id
  * @property string $sire_tag_id
  * @property string $sire_name
- * @property string $bull_straw_id
  * @property int $dam_id
  * @property string $dam_tag_id
  * @property string $dam_name
@@ -62,6 +61,7 @@ use yii\helpers\Inflector;
  * @property string $updated_at
  * @property int $updated_by
  * @property string|array $additional_attributes
+ * @property string $animal_eartag_id
  *
  * @property Farm $farm
  * @property Animal $sire
@@ -107,7 +107,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             [['birthdate', 'deformities', 'entry_date'], 'safe'],
             [['purchase_cost'], 'number'],
             [['birthdate', 'entry_date'], 'validateNoFutureDate'],
-            [['name', 'tag_id', 'sire_tag_id', 'sire_name', 'bull_straw_id', 'dam_tag_id', 'dam_name', 'color'], 'string', 'max' => 128],
+            [['name', 'tag_id', 'sire_tag_id', 'sire_name', 'dam_tag_id', 'dam_name', 'color'], 'string', 'max' => 128],
             [['animal_photo', 'map_address'], 'string', 'max' => 255],
             [['farm_id'], 'exist', 'skipOnError' => true, 'targetClass' => Farm::class, 'targetAttribute' => ['farm_id' => 'id']],
             ['tag_id', 'unique', 'targetAttribute' => ['country_id', 'tag_id'], 'message' => '{attribute} already exists.'],
@@ -226,7 +226,6 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             [$alias . '.name', 'name'],
             [$alias . '.color', 'color'],
             [$alias . '.sire_name', 'sire_name'],
-            [$alias . '.bull_straw_id', 'bull_straw_id'],
             [$alias . '.sire_tag_id', 'sire_tag_id'],
             [$alias . '.dam_tag_id', 'dam_tag_id'],
             [$alias . '.dam_name', 'dam_name'],
@@ -441,7 +440,6 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'animal_sireknown',
             'sire_tag_id',
             'sire_name',
-            'bull_straw_id',
             'animal_damknown',
             'dam_tag_id',
             'dam_name',

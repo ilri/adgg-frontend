@@ -1,8 +1,8 @@
 <?php
 /**
- * Created by PhpStorm.
- * @author: Fred <fred@btimillman.com>
- * Date & Time: 2017-06-23 7:46 PM
+ * @author Fred <mconyango@gmail.com>
+ * Date: 2016/01/11
+ * Time: 3:58 PM
  */
 return [
     'class' => \yii\db\Connection::class,

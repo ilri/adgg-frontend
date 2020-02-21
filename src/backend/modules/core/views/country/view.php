@@ -25,25 +25,25 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?php if (Yii::$app->user->canCreate()): ?>
                     <div class="btn-group">
                         <a class="btn btn-secondary btn-space"
-                           href="<?= Url::to(['organization-ref-units/upload', 'country_id' => $model->id, 'level' => CountryUnits::LEVEL_REGION]) ?>">
+                           href="<?= Url::to(['country-units/upload', 'country_id' => $model->id, 'level' => CountryUnits::LEVEL_REGION]) ?>">
                             <i class="fas fa-file-excel"></i> <?= Lang::t('Upload {units}', ['units' => Inflector::pluralize(Html::encode($model->unit1_name))]) ?>
                         </a>
                     </div>
                     <div class="btn-group">
                         <a class="btn btn-secondary btn-space"
-                           href="<?= Url::to(['organization-ref-units/upload', 'country_id' => $model->id, 'level' => CountryUnits::LEVEL_DISTRICT]) ?>">
+                           href="<?= Url::to(['country-units/upload', 'country_id' => $model->id, 'level' => CountryUnits::LEVEL_DISTRICT]) ?>">
                             <i class="fas fa-file-excel"></i> <?= Lang::t('Upload {units}', ['units' => Inflector::pluralize(Html::encode($model->unit2_name))]) ?>
                         </a>
                     </div>
                     <div class="btn-group">
                         <a class="btn btn-secondary btn-space"
-                           href="<?= Url::to(['organization-ref-units/upload', 'country_id' => $model->id, 'level' => CountryUnits::LEVEL_WARD]) ?>">
+                           href="<?= Url::to(['country-units/upload', 'country_id' => $model->id, 'level' => CountryUnits::LEVEL_WARD]) ?>">
                             <i class="fas fa-file-excel"></i> <?= Lang::t('Upload {units}', ['units' => Inflector::pluralize(Html::encode($model->unit3_name))]) ?>
                         </a>
                     </div>
                     <div class="btn-group">
                         <a class="btn btn-secondary"
-                           href="<?= Url::to(['organization-ref-units/upload', 'country_id' => $model->id, 'level' => CountryUnits::LEVEL_VILLAGE]) ?>">
+                           href="<?= Url::to(['country-units/upload', 'country_id' => $model->id, 'level' => CountryUnits::LEVEL_VILLAGE]) ?>">
                             <i class="fas fa-file-excel"></i> <?= Lang::t('Upload {units}', ['units' => Inflector::pluralize(Html::encode($model->unit4_name))]) ?>
                         </a>
                     </div>

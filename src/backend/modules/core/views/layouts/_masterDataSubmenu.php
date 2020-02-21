@@ -6,7 +6,7 @@ use yii\helpers\Url;
 ?>
 <ul class="nav nav-tabs my-nav" role="tablist">
     <li class="nav-item">
-        <a class="nav-link" href="<?= Url::to(['/core/country/index']) ?>"><?= Lang::t('Countries') ?></a>
+        <a class="nav-link" href="<?= Url::to(['/core/country-ref/index']) ?>"><?= Lang::t('Master Countries') ?></a>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="<?= Url::to(['/core/currency/index']) ?>"><?= Lang::t('Currencies') ?></a>
