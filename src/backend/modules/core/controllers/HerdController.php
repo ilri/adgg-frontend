@@ -23,7 +23,7 @@ class HerdController extends Controller
     {
         parent::init();
 
-        $this->resource = Constants::RES_FARM;
+        $this->resource = Constants::RES_HERD;
         $this->resourceLabel = 'Herd';
     }
 

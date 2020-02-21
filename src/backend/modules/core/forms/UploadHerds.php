@@ -80,7 +80,7 @@ class UploadHerds extends ExcelUploadForm implements ImportInterface
         }
 
         $model = new AnimalHerd(['country_id' => $this->country_id]);
-        $this->save($insert_data, $model, true, ['herd_code' => '{herd_code}', 'country_id' => $this->country_id]);
+        $this->save($insert_data, $model, true, ['' => '{}', 'country_id' => $this->country_id]);
     }
 
     protected function getFarmId($row)

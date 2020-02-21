@@ -35,7 +35,18 @@ use common\widgets\grid\GridView;
         ],
         [
             'class' => common\widgets\grid\ActionColumn::class,
-            'template' => '{update}',
+            'template' => '{update}{view}',
+            'visibleButtons' => [
+                'update' => function (\backend\modules\core\models\Organization $model) {
+                    return Yii::$app->user->canUpdate();
+                }
+            ],
+            'updateOptions' => ['data-pjax' => 0, 'title' => 'Update', 'modal' => true, 'data-use-uuid' => true],
+            'viewOptions' => [
+                'label' => '<i class="fa fa-eye"></i>',
+                'data-pjax' => 0,
+                'class' => 'show_modal_form',
+            ],
         ],
     ],
 ]);

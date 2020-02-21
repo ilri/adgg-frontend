@@ -53,7 +53,7 @@ use yii\bootstrap4\Html;
                                     'id' => Html::getInputId($model, 'region_id'),
                                     'placeholder' => "",
                                     'class' => 'form-control select2 parent-depdropdown',
-                                    'data-url' => Url::to(['OrganizationRef-units/get-list', 'country_id' => 'idV', 'level' => CountryUnits::LEVEL_REGION]),
+                                    'data-url' => Url::to(['country-units/get-list', 'country_id' => 'idV', 'level' => CountryUnits::LEVEL_REGION]),
                                     'data-selected' => $model->region_id,
                                     'data-child-selectors' => [
                                         '#' . Html::getInputId($model, 'district_id'),
@@ -76,7 +76,7 @@ use yii\bootstrap4\Html;
                                     'id' => Html::getInputId($model, 'district_id'),
                                     'placeholder' => "",
                                     'class' => 'form-control select2 parent-depdropdown',
-                                    'data-url' => Url::to(['OrganizationRef-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_DISTRICT]),
+                                    'data-url' => Url::to(['country-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_DISTRICT]),
                                     'data-selected' => $model->district_id,
                                     'data-child-selectors' => [
                                         '#' . Html::getInputId($model, 'ward_id'),
@@ -99,7 +99,7 @@ use yii\bootstrap4\Html;
                                     'id' => Html::getInputId($model, 'ward_id'),
                                     'placeholder' => "",
                                     'class' => 'form-control select2 parent-depdropdown',
-                                    'data-url' => Url::to(['OrganizationRef-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_WARD]),
+                                    'data-url' => Url::to(['country-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_WARD]),
                                     'data-selected' => $model->ward_id,
                                     'data-child-selectors' => [
                                         '#' . Html::getInputId($model, 'village_id'),
@@ -122,7 +122,7 @@ use yii\bootstrap4\Html;
                                     'id' => Html::getInputId($model, 'village_id'),
                                     'placeholder' => "",
                                     'class' => 'form-control select2',
-                                    'data-url' => Url::to(['OrganizationRef-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_VILLAGE]),
+                                    'data-url' => Url::to(['country-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_VILLAGE]),
                                     'data-selected' => $model->village_id,
                                 ],
                                 'pluginOptions' => [

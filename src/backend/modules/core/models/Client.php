@@ -19,8 +19,7 @@ use common\models\ActiveSearchTrait;
  * @property string $created_at The date the record was created
  * @property int|null $created_by Id of the user who created the records
  *
- * @property Country $country
- * @property Organization $organization
+ * @property Organization $org
  *
  */
 class Client extends ActiveRecord implements ActiveSearchInterface, TableAttributeInterface
@@ -90,12 +89,7 @@ class Client extends ActiveRecord implements ActiveSearchInterface, TableAttribu
         return ExtendableTable::TABLE_CLIENTS;
     }
 
-    public function getCountry()
-    {
-        return $this->hasOne(Country::class, ['id' => 'country_id']);
-    }
-
-    public function getOrganization()
+    public function getOrg()
     {
         return $this->hasOne(Organization::class, ['id' => 'org_id']);
 

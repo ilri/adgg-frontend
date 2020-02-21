@@ -141,7 +141,7 @@ $controller = Yii::$app->controller;
                 <?php endif; ?>
                 <?php if (Yii::$app->user->canView(\backend\modules\core\Constants::RES_ANIMAL_EVENTS)): ?>
 
-                    <a href="<?= Url::to(['/core/organization-ref/index']) ?>" class="kt-grid-nav-v2__item">
+                    <a href="<?= Url::to(['/core/country/index']) ?>" class="kt-grid-nav-v2__item">
                         <div class="kt-grid-nav-v2__item-icon"><i class="far fa-calendar-day"></i></div>
                         <div class="kt-grid-nav-v2__item-title">Countries</div>
                     </a>

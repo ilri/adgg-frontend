@@ -1,8 +1,5 @@
 <?php
 
-use backend\controllers\BackendController;
-use backend\modules\core\models\Country;
-use backend\modules\core\models\Organization;
 use common\helpers\Lang;
 use common\widgets\select2\Select2;
 use yii\bootstrap4\ActiveForm;
@@ -10,8 +7,8 @@ use yii\helpers\Html;
 
 /* @var $this \yii\web\View */
 /* @var $form ActiveForm */
-/* @var $controller BackendController */
-/* @var $model Organization */
+/* @var $controller \backend\controllers\BackendController */
+/* @var $model \backend\modules\core\models\CountryRef */
 $controller = Yii::$app->controller;
 $this->title = $controller->getPageTitle();
 
@@ -41,20 +38,18 @@ $form = ActiveForm::begin([
 
 <div class="modal-body">
     <div class="hidden" id="my-modal-notif"></div>
+    <?= $form->field($model, 'iso2', []) ?>
     <?= $form->field($model, 'name', []) ?>
-    <?= $form->field($model, 'country_id')->widget(Select2::class, [
-        'data' => Country::getListData(),
+    <?= $form->field($model, 'call_code', []) ?>
+    <?= $form->field($model, 'currency')->widget(Select2::class, [
+        'data' => \backend\modules\core\models\Currency::getListData(),
         'modal' => true,
-        'value' => $model->country->id,
-        'disabled' => true,
         'theme' => Select2::THEME_BOOTSTRAP,
         'pluginOptions' => [
             'allowClear' => false
         ],
     ]) ?>
-    <?php if (!$model->isNewRecord): ?>
-        <?= $form->field($model, 'is_active', [])->checkbox() ?>
-    <?php endif; ?>
+    <?= $form->field($model, 'is_active', [])->checkbox() ?>
 </div>
 
 <div class="modal-footer">
