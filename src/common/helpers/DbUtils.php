@@ -38,7 +38,7 @@ class DbUtils
                 $condition .= ' ' . $conditionConnector . ' ';
             $i = rand(1, 100);
             $escapedColumn = $column;
-            if (!strpos($column, '(')) {
+            if (!strpos($column, '(') && !strpos($column, '.')) {
                 $escapedColumn = '[[' . $column . ']]';
             } else {
                 $paramKey = random_int(1, 10000000);
@@ -73,10 +73,8 @@ class DbUtils
             $db = Yii::$app->db;
 
         switch ($db->getDriverName()) {
-            case self::DRIVER_MYSQL:
-                return $default;
-                break;
             case self::DRIVER_POSTGRES:
+            case self::DRIVER_MYSQL:
                 return $default;
                 break;
             default:
@@ -169,6 +167,7 @@ class DbUtils
      * @param array $params
      * @param string $operator IN | NOT IN
      * @return array
+     * @throws \Exception
      */
     public static function appendInCondition($column, $values, $condition = '', $params = [], $operator = 'IN')
     {
@@ -180,17 +179,25 @@ class DbUtils
         if (!empty($condition))
             $condition .= ' AND ';
         $param_count = 0;
-        $param_prefix = ':mc_' . $column;
+        $escapedColumn = $column;
+
+        if (!strpos($column, '(') && !strpos($column, '.')) {
+            $paramKey = $column;
+            $escapedColumn = '[[' . $column . ']]';
+        } else {
+            $paramKey = random_int(1, 10000000);
+        }
+        $param_prefix = ':mc_' . $paramKey;
         if (($n = count($values)) < 1)
             $condition .= '0=1';
         // 0=1 is used because in MSSQL value alone can't be used in WHERE
         elseif ($n === 1) {
             $value = reset($values);
             if ($value === null)
-                $condition .= '[[' . $column . ']]' . ' IS NULL';
+                $condition .= $escapedColumn . ' IS NULL';
             else {
                 $operator = strtolower($operator) === 'in' ? '=' : '<>';
-                $condition .= '[[' . $column . ']]' . $operator . $param_prefix . $param_count;
+                $condition .= $escapedColumn . $operator . $param_prefix . $param_count;
                 $params[$param_prefix . $param_count] = $value;
             }
         } else {
@@ -199,7 +206,7 @@ class DbUtils
                 $in[] = $param_prefix . $param_count;
                 $params[$param_prefix . $param_count++] = $value;
             }
-            $condition .= '[[' . $column . ']]' . ' ' . $operator . ' (' . implode(', ', $in) . ')';
+            $condition .= $escapedColumn . ' ' . $operator . ' (' . implode(', ', $in) . ')';
         }
 
         return [$condition, $params];
