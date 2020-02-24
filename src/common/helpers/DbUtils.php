@@ -204,7 +204,11 @@ class DbUtils
         return [$condition, $params];
     }
 
-    public static function escapeColumn($column)
+    /**
+     * @param string $column
+     * @return string
+     */
+    public static function escapeColumn(string $column): string
     {
         if (!strpos($column, '(') && !strpos($column, '.') && !strpos($column, '[')) {
             $column = '[[' . $column . ']]';
