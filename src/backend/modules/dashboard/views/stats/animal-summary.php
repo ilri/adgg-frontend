@@ -20,7 +20,7 @@ use yii\helpers\Json;
 /* @var $country Country */
 $controller = Yii::$app->controller;
 $this->title = Lang::t('Animals Registered');
-$this->params['breadcrumbs'][] = ['label' => Lang::t('Quick Reports'), 'url' => ['dash']];
+$this->params['breadcrumbs'][] = ['label' => Lang::t('Quick Reports'), 'url' => ['dash', 'country_id' => $country->id]];
 $graphType = $graphType ?? HighChart::GRAPH_PIE;
 ?>
 <h3>

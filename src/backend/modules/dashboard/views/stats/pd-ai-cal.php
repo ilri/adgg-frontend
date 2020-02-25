@@ -19,7 +19,7 @@ use yii\helpers\Json;
 /* @var $country Country */
 $controller = Yii::$app->controller;
 $this->title = Lang::t('Insemination,PD And Calving');
-$this->params['breadcrumbs'][] = ['label' => Lang::t('Quick Reports'), 'url' => ['dash']];
+$this->params['breadcrumbs'][] = ['label' => Lang::t('Quick Reports'), 'url' => ['dash', 'country_id' => $country->id]];
 $graphType = $graphType ?? HighChart::GRAPH_PIE;
 ?>
 <div class="row">
@@ -57,9 +57,9 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                         </div>
                         <div id="chartContainer" title=""></div>
                         <?php if (Session::isWardUser()): ?>
-                            <?php $chart_data = CountriesDashboardStats::getMaleCalvesGroupedByVillages($country->id, Session::getRegionId(), Session::getDistrictId(), Session::getWardId()); ?>
+                            <?php $chart_data = CountriesDashboardStats::getMaleCalvesGroupedByVillages($country->id, Session::getWardId()); ?>
                         <?php elseif (Session::isDistrictUser()): ?>
-                            <?php $chart_data = CountriesDashboardStats::getMaleCalvesGroupedByWards($country->id, Session::getRegionId(), Session::getDistrictId()); ?>
+                            <?php $chart_data = CountriesDashboardStats::getMaleCalvesGroupedByWards($country->id, Session::getDistrictId()); ?>
                         <?php elseif (Session::isRegionUser()): ?>
                             <?php $chart_data = CountriesDashboardStats::getMaleCalvesGroupedByDistricts($country->id, Session::getRegionId()); ?>
                         <?php else: ?>
