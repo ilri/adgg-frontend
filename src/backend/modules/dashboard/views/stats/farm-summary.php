@@ -123,7 +123,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                     'data' => $data,
                 ]];
                 $graphOptions = [];
-                $containerId = 'chartContainer';
+                $containerId = 'chartContainer2';
                 $this->registerJs("MyApp.modules.dashboard.piechart('" . $containerId . "', " . Json::encode($series) . "," . Json::encode($graphOptions) . ");");
 
                 ?>
