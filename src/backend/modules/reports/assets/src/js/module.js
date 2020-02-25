@@ -295,3 +295,87 @@ MyApp.modules.reports = {};
 
 }(jQuery));
 
+// standard report
+
+(function ($) {
+    "use strict";
+    var STDREPORT = function (options) {
+        let defaultOptions = {
+            filterFormSelector: '#std-report-form',
+            submitButtonSelector: '#buildReport',
+            reportContainerSelector: '#reportContainer'
+        };
+        this.options = $.extend({}, defaultOptions, options || {});
+    }
+
+    STDREPORT.prototype.init = function () {
+        let $this = this;
+
+        let _load = function (e) {
+            let form = $($this.options.filterFormSelector),
+                url = form.attr('action');
+            $.ajax({
+                url: url,
+                type: form.attr('method'),
+                dataType: 'json',
+                data: form.serialize(),
+                success: function (response) {
+                    if(response.success){
+                        let message = '<div class="alert alert-outline-success">' + response.message + '</div>';
+                        swal("SUCCESS!", message, "success");
+                        if(response.redirectUrl !== ''){
+                            MyApp.utils.reload(response.redirectUrl, 2000);
+                        }
+                    }
+                    else {
+                        if (typeof response.message === 'string' || response.message instanceof String) {
+                            let message = '<div class="alert alert-outline-danger">' + response.message + '</div>';
+                            swal("ERROR!", message, "error");
+                        } else {
+                            let summary = '<ul>';
+                            if (typeof response.message === 'object') {
+                                $.each(response.message, function (i) {
+                                    if ($.isArray(response.message[i])) {
+                                        $.each(response.message[i], function (j, msg) {
+                                            let $input = $('#' + i);
+                                            $input.addClass('is-invalid');
+                                            $input.next('.invalid-feedback').html(msg);
+                                            summary += '<li>' + msg + '</li>';
+                                        });
+                                    }
+                                });
+                            }
+                            summary += '</ul>';
+                            swal("ERROR!", summary, "error");
+                        }
+                    }
+                },
+                beforeSend: function () {
+                    MyApp.utils.startBlockUI();
+                },
+                complete: function () {
+                    MyApp.utils.stopBlockUI();
+                },
+                error: function (xhr) {
+                    if (MyApp.DEBUG_MODE) {
+                        console.log(xhr);
+                    }
+                }
+            })
+        }
+
+        //on click
+        $($this.options.filterFormSelector).find('button[type="submit"]').on('click', function (event) {
+            event.preventDefault();
+            _load(this);
+        });
+
+    }
+
+    MyApp.modules.reports.stdreport = function (options) {
+        let obj = new STDREPORT(options);
+        obj.init();
+    }
+
+}(jQuery));
+

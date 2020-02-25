@@ -110,6 +110,9 @@ class ReportGenerator extends BaseObject implements JobInterface
 
     protected function fetchData(){
         $connection = Yii::$app->getDb();
+        $options = $this->_jsonArr;
+        $decodeFields = $options['decodeFields'] ?? [];
+        $fieldAliasMapping = $options['fieldAliasMapping'] ?? [];
         try {
             //$connection->setQueryBuilder();
             $command = $connection->createCommand($this->_sql);
@@ -121,11 +124,49 @@ class ReportGenerator extends BaseObject implements JobInterface
             if ($count > 0) {
                 $this->createDataCSV();
                 while ($row = $reader->read()) {
+                    // we want to replace value of column with the decoded value
+                    if(count($decodeFields)){
+                        try {
+                            foreach ($decodeFields as $field => $rules){
+                                // check if field to decode is in generated mapping
+                                if(array_key_exists($field, $fieldAliasMapping)){
+                                    $columnAlias = $fieldAliasMapping[$field]; // this is the column as it appears in the $row
+                                    // get the decoded value of this field, e.g main_breed in Animal class
+                                    $function = $rules['function'];
+                                    $decodedValue = null;
+                                    // check if there are params, params must be in the order that they should be called
+                                    if(count($rules['params'])){
+                                        // check if param is fieldValue, if so, we pass the value of this column in each $row
+                                        $params = [];
+                                        foreach ($rules['params'] as $r_param){
+                                            $param = $r_param;
+                                            if($r_param == 'fieldValue'){
+                                                $fieldValue = $row[$columnAlias]; // get value we want to decode from $row
+                                                $param = $fieldValue;
+                                            }
+                                            $params[] = $param;
+                                        }
+                                        $decodedValue = $function(...$params);
+                                    }else {
+                                        $decodedValue = $function();
+                                    }
+                                    if ($decodedValue !== null){
+                                        $row[$columnAlias] = $decodedValue;
+                                    }
+                                }
+                            }
+                        }
+                        catch (\Exception $e) {
+                            Yii::$app->controller->stdout("{$e->getMessage()} \n");
+                            Yii::debug($e->getMessage());
+                        }
+
+                    }
                     $rows[] = $row;
                 }
                 $first = $rows[0];
                 $columns = array_keys($first);
-
+                /*
                 $batch = 500;
                 $batches = [];
                 if ($count <= $batch) {
@@ -133,6 +174,7 @@ class ReportGenerator extends BaseObject implements JobInterface
                 } else {
                     $batches = array_chunk($rows, $batch);
                 }
+                */
                 $this->populateCSV($columns, $rows);
             }
             else {

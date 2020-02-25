@@ -15,6 +15,7 @@ use backend\modules\core\models\PDEvent;
 use backend\modules\core\models\SyncEvent;
 use backend\modules\core\models\TableAttribute;
 use backend\modules\core\models\WeightEvent;
+use common\helpers\ArrayHelper;
 use common\helpers\DbUtils;
 use common\helpers\Str;
 use common\helpers\Utils;
@@ -38,9 +39,42 @@ class ReportBuilder extends Model
      */
     public $filterValues;
     /**
+     * Fields that are needed to generate the correct query, e.g filtering but do not need to be in the final user-viewable report
+     * keys are the field names
+     * @var array
+     */
+    public $excludeFromReport = [];
+    /**
+     * Extra SQL expressions that need to be appended to the report, e.g an inner select or computed queries
+     * @var array
+     */
+    public $extraSelectExpressions = [];
+    /**
+     * @var array
+     */
+    /**
+     * Extra SQL expressions that need to be appended to the where clauses, e.g a date range filter
+     * @var array
+     */
+    public $extraFilterExpressions = [];
+    /**
+     * Fields that need decoding and how to decode them
+     * keys are the field names
+     * @var array
+     */
+    public $decodeFields = [];
+    /**
      * @var array
      */
     public $fields;
+    /**
+     * @var array
+     */
+    public $fieldAliases;
+    /**
+     * @var array
+     */
+    public $fieldAliasMapping = [];
     /**
      * @var int
      */
@@ -331,11 +365,23 @@ class ReportBuilder extends Model
             # field with table alias
             $aliasedField = static::getFullColumnName($field, $class);
             # field with table and column alias
-            $selectField = static::getFullColumnName($field, $class, null, true);
+            $field_alias = ArrayHelper::getValue($this->fieldAliases, $field);
+            $selectField = static::getFullColumnName($field, $class, $field_alias, true);
 
             // add field to select
             //$query->addSelect(new Expression( $aliasedField . ' AS "' . $field . '"'));
-            $query->addSelect(new Expression($selectField));
+
+            if (!in_array($field, $this->excludeFromReport)){
+                $query->addSelect(new Expression($selectField));
+            }
+            // extract alias from selectField
+
+            $field_alias_array = explode('AS', $selectField);
+            $generated_alias = str_replace('[[','', $field_alias_array[1]);
+            $generated_alias = str_replace(']]','', $generated_alias);
+            $generated_alias = trim($generated_alias);
+
+            $this->fieldAliasMapping[$field] = $generated_alias;
 
             // build the condition
             if (!empty($conditionOperator)){
@@ -407,6 +453,18 @@ class ReportBuilder extends Model
             $aliasedField = static::getFullColumnName('country_id', $class);
             $sqlCondition = static::buildCondition('=', $aliasedField, $this->country_id);
             $query->andWhere($sqlCondition);
+        }
+        // append extra filters from elsewhere
+        if(count($this->extraFilterExpressions)){
+            foreach ($this->extraFilterExpressions as $expression){
+                $query->andWhere($expression);
+            }
+        }
+        // append extra select expressions, from elsewhere not in the UI
+        if(count($this->extraSelectExpressions)){
+            foreach ($this->extraSelectExpressions as $expression){
+                $query->addSelect($expression);
+            }
         }
         return $query;
 
