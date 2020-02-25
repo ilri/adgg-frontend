@@ -69,7 +69,6 @@ class DefaultController extends Controller
                 $builder = null;
                 $query = null;
         }
-        //print_r($query);
 
         if($builder){
             $success_msg = Lang::t('Report Queued Successfully. You will be notified once your report is ready for download');
@@ -88,6 +87,7 @@ class DefaultController extends Controller
                     'fieldAliases' => $builder->fieldAliases,
                     'decodeFields' => $builder->decodeFields,
                     'fieldAliasMapping' => $builder->fieldAliasMapping,
+                    'rowTransformer' => $builder->rowTransformer,
                     'limit' => $builder->limit,
                     'orderby' => $builder->orderBy,
                     'country_id' => $builder->country_id,

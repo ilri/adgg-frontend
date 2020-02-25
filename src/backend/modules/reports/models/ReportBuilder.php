@@ -64,6 +64,13 @@ class ReportBuilder extends Model
      */
     public $decodeFields = [];
     /**
+     * full name of function to modify each row when populating csv
+     * e.g, add additional columns, decode data etc.
+     * this will replace the need to populate $decodeFields[]
+     * @var string
+     */
+    public $rowTransformer = null;
+    /**
      * @var array
      */
     public $fields;
@@ -118,8 +125,11 @@ class ReportBuilder extends Model
                 'class' => MilkingEvent::class,
                 'title' => 'Milking Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_MILKING],
-                'relations' => ['lactation','animal', 'region', 'district', 'ward', 'village'],
-                'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
+                'relations' => ['lactation', 'animal', 'region', 'district', 'ward', 'village'],
+                'sub_relations' => [
+                    'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.herd' => ['animal.herd_id' => 'herd.id'],
+                ],
             ],
             'Insemination_Event' => [
                 'class' => AIEvent::class,
@@ -355,7 +365,7 @@ class ReportBuilder extends Model
                     $relationName = (explode('.', $field)[0]); // animal
                     $subRelationName = (explode('.', $field)[1]); // farm
                     // add subrelation to other joins
-                    $other_joins[$relationName] = $subRelationName;
+                    $other_joins[$subRelationName] = $relationName;
                 }
                 else {
                     $relationName = (explode('.', $field)[0]);
@@ -410,8 +420,9 @@ class ReportBuilder extends Model
                 ]);
             }
         }
+        //dd($joins, $other_joins);
         if (count($other_joins)){
-            foreach (array_unique($other_joins) as $relationName => $subRelationName){
+            foreach ($other_joins as $subRelationName => $relationName){
                 $link = $reportableModelOptions['sub_relations'][$relationName. '.' . $subRelationName];
                 $modelClass = static::getRelationClass($class, $relationName); // Animal::class
                 $subRelationClass = static::getRelationClass($modelClass, $subRelationName); // Farm::class

@@ -113,10 +113,10 @@ class ReportGenerator extends BaseObject implements JobInterface
         $options = $this->_jsonArr;
         $decodeFields = $options['decodeFields'] ?? [];
         $fieldAliasMapping = $options['fieldAliasMapping'] ?? [];
+        $rowTransformer = $options['rowTransformer'] ?? '';
         try {
             //$connection->setQueryBuilder();
             $command = $connection->createCommand($this->_sql);
-            //$result = $command->queryAll();
             $reader = $command->query();
             $count = $reader->rowCount;
             $rows = [];
@@ -125,6 +125,9 @@ class ReportGenerator extends BaseObject implements JobInterface
                 $this->createDataCSV();
                 while ($row = $reader->read()) {
                     // we want to replace value of column with the decoded value
+                    if($rowTransformer != ''){
+                        $row = $rowTransformer($row, $options);
+                    }
                     if(count($decodeFields)){
                         try {
                             foreach ($decodeFields as $field => $rules){
