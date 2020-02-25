@@ -191,6 +191,13 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
                     'fieldValue', // the value of this field
                 ]
             ],
+            'birthdate' => [
+                'function' => '\common\helpers\DateUtils::formatDate',
+                'params' => [
+                    'fieldValue',
+                    'd/m/Y',
+                ]
+            ]
         ];
 
         $excludeFromReport = array_keys($filterValues);
