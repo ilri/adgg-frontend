@@ -4,6 +4,7 @@
 namespace backend\modules\core\models;
 
 
+use backend\modules\auth\Session;
 use backend\modules\conf\settings\SystemSettings;
 use common\helpers\DbUtils;
 use common\helpers\Lang;
@@ -51,9 +52,9 @@ class CountriesDashboardStats extends Model
 
             //2.Farm boxes
             $farmBox1 = Farm::getCount(['country_id' => $country_id]);
-            $farmBox2 = Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => 1])->andWhere(['country_id' => $country_id])->count();
-            $farmBox3 = Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => 2])->andWhere(['country_id' => $country_id])->count();
-            $farmBox4 = Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => [1, 2]])->andWhere(['country_id' => $country_id])->count();
+            $farmBox2 = Farm::find()->andFilterWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => 1])->andFilterWhere(['country_id' => $country_id])->count();
+            $farmBox3 = Farm::find()->andFilterWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => 2])->andFilterWhere(['country_id' => $country_id])->count();
+            $farmBox4 = Farm::find()->andFilterWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => [1, 2]])->andFilterWhere(['country_id' => $country_id])->count();
             $data[] = [
                 'Charts' => [
                     'Farms Grouped By Regions' => $farmsGroupedByRegions,
@@ -194,12 +195,83 @@ class CountriesDashboardStats extends Model
         return $data;
     }
 
-    /**
-     * @param null $country_id
-     * @return array
-     * @throws \Exception
-     */
-    public static function getFarmsGroupedByFarmType($country_id = null)
+    public static function getFarmsGroupedByDistricts($country_id = null, $region_id = null)
+    {
+        $condition = '';
+        $params = [];
+        list($condition, $params) = Farm::appendOrgSessionIdCondition($condition, $params);
+        $data = [];
+        // get districts
+        $districts = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_DISTRICT]);
+        foreach ($districts as $id => $label) {
+            list($newcondition, $newparams) = DbUtils::appendCondition('district_id', $id, $condition, $params);
+
+            $count = Farm::find()->andWhere($newcondition, $newparams)
+                ->andFilterWhere(['country_id' => $country_id])
+                ->andFilterWhere(['region_id' => $region_id])
+                ->count();
+            if ($count > 0) {
+                $data[] = [
+                    'label' => $label,
+                    'value' => floatval(number_format($count, 2, '.', '')),
+                ];
+            }
+        };
+        return $data;
+    }
+
+    public static function getFarmsGroupedByWards($country_id = null, $district_id = null)
+    {
+        $condition = '';
+        $params = [];
+        list($condition, $params) = Farm::appendOrgSessionIdCondition($condition, $params);
+        $data = [];
+        // get wards
+        $wards = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_WARD]);
+        foreach ($wards as $id => $label) {
+            list($newcondition, $newparams) = DbUtils::appendCondition('ward_id', $id, $condition, $params);
+
+            $count = Farm::find()->andWhere($newcondition, $newparams)
+                ->andFilterWhere(['country_id' => $country_id])
+                ->andFilterWhere(['district_id' => $district_id])
+                ->count();
+            if ($count > 0) {
+                $data[] = [
+                    'label' => $label,
+                    'value' => floatval(number_format($count, 2, '.', '')),
+                ];
+            }
+        };
+        return $data;
+    }
+
+    public static function getFarmsGroupedByVillages($country_id = null, $ward_id = null)
+    {
+        $condition = '';
+        $params = [];
+        list($condition, $params) = Farm::appendOrgSessionIdCondition($condition, $params);
+        $data = [];
+        // get villages
+        $villages = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_VILLAGE]);
+        foreach ($villages as $id => $label) {
+            list($newcondition, $newparams) = DbUtils::appendCondition('village_id', $id, $condition, $params);
+
+            $count = Farm::find()->andWhere($newcondition, $newparams)
+                ->andFilterWhere(['country_id' => $country_id])
+                ->andFilterWhere(['ward_id' => $ward_id])
+                ->count();
+            if ($count > 0) {
+                $data[] = [
+                    'label' => $label,
+                    'value' => floatval(number_format($count, 2, '.', '')),
+                ];
+            }
+        };
+        return $data;
+    }
+
+
+    public static function getFarmsGroupedByFarmType($country_id = null, $param = [])
     {
         $condition = '';
         $params = [];
@@ -212,6 +284,7 @@ class CountriesDashboardStats extends Model
             list($newcondition, $newparams) = DbUtils::appendCondition('farm_type', $type, $condition, $params);
             $count = Farm::find()->andWhere($newcondition, $newparams)
                 ->andFilterWhere(['country_id' => $country_id])
+                ->andFilterWhere($param)
                 ->count();
             if ($count > 0) {
                 $data[] = [
@@ -239,6 +312,7 @@ class CountriesDashboardStats extends Model
         foreach ($regions as $id => $label) {
             list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
 
+
             $count = Animal::find()->andWhere($newcondition, $newparams)
                 ->andFilterWhere(['country_id' => $country_id])
                 ->count();
@@ -252,16 +326,92 @@ class CountriesDashboardStats extends Model
         return $data;
     }
 
-    /**
-     * @param null $country_id
-     * @return array
-     * @throws \Exception
-     */
-    public static function getAnimalsGroupedByBreeds($country_id = null)
+    public static function getAnimalsGroupedByDistricts($country_id = null, $region_id = null)
     {
         $condition = '';
         $params = [];
         list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
+        $data = [];
+        // get districts
+        $districts = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_DISTRICT]);
+        foreach ($districts as $id => $label) {
+            list($newcondition, $newparams) = DbUtils::appendCondition('district_id', $id, $condition, $params);
+
+            $count = Animal::find()->andWhere($newcondition, $newparams)
+                ->andFilterWhere(['country_id' => $country_id])
+                ->andFilterWhere(['region_id' => $region_id])
+                ->count();
+            if ($count > 0) {
+                $data[] = [
+                    'label' => $label,
+                    'value' => floatval(number_format($count, 2, '.', '')),
+                ];
+            }
+        };
+        return $data;
+    }
+
+    public static function getAnimalsGroupedByWards($country_id = null, $district_id = null)
+    {
+        $condition = '';
+        $params = [];
+        list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
+        $data = [];
+        // get wards
+        $wards = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_WARD]);
+        foreach ($wards as $id => $label) {
+            list($newcondition, $newparams) = DbUtils::appendCondition('ward_id', $id, $condition, $params);
+
+            $count = Animal::find()->andWhere($newcondition, $newparams)
+                ->andFilterWhere(['country_id' => $country_id])
+                ->andFilterWhere(['district_id' => $district_id])
+                ->count();
+            if ($count > 0) {
+                $data[] = [
+                    'label' => $label,
+                    'value' => floatval(number_format($count, 2, '.', '')),
+                ];
+            }
+        };
+        return $data;
+    }
+
+    public static function getAnimalsGroupedByVillages($country_id = null, $ward_id = null)
+    {
+        $condition = '';
+        $params = [];
+        list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
+        $data = [];
+        // get villages
+        $villages = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_VILLAGE]);
+        foreach ($villages as $id => $label) {
+            list($newcondition, $newparams) = DbUtils::appendCondition('village_id', $id, $condition, $params);
+
+            $count = Animal::find()->andWhere($newcondition, $newparams)
+                ->andFilterWhere(['country_id' => $country_id])
+                ->andFilterWhere(['ward_id' => $ward_id])
+                ->count();
+            if ($count > 0) {
+                $data[] = [
+                    'label' => $label,
+                    'value' => floatval(number_format($count, 2, '.', '')),
+                ];
+            }
+        };
+        return $data;
+    }
+
+    /**
+     * @param null $country_id
+     * @param array $param
+     * @return array
+     * @throws \Exception
+     */
+    public static function getAnimalsGroupedByBreeds($country_id = null, $param = [])
+    {
+        $condition = '';
+        $params = [];
+        //list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
         $data = [];
         // get breeds
         $breeds = Choices::getList(\backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS);
@@ -270,6 +420,8 @@ class CountriesDashboardStats extends Model
 
             $count = Animal::find()->andWhere($newcondition, $newparams)
                 ->andFilterWhere(['country_id' => $country_id])
+                ->andFilterWhere($param)
+                //  ->andFilterWhere([Farm::tableName() . '.field_agent_id' => $field_agent_id])
                 ->count();
             if ($count > 0) {
                 $data[] = [
@@ -313,12 +465,83 @@ class CountriesDashboardStats extends Model
 
     }
 
-    /**
-     * @param null $country_id
-     * @return array
-     * @throws \Exception
-     */
-    public static function getLSFAnimalsGroupedByBreeds($country_id = null)
+    public static function getLSFGroupedByDistricts($country_id = null, $region_id = null)
+    {
+        $condition = '';
+        $params = [];
+        list($condition, $params) = Farm::appendOrgSessionIdCondition($condition, $params);
+        $data = [];
+        // get districts
+        $districts = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_DISTRICT]);
+        foreach ($districts as $id => $label) {
+            list($newcondition, $newparams) = DbUtils::appendCondition('district_id', $id, $condition, $params);
+
+            $count = Farm::find()->andWhere($newcondition, $newparams)
+                ->andFilterWhere(['farm_type' => 'LSF', 'country_id' => $country_id])
+                ->andFilterWhere(['region_id' => $region_id])
+                ->count();
+            if ($count > 0) {
+                $data[] = [
+                    'label' => $label,
+                    'value' => floatval(number_format($count, 2, '.', '')),
+                ];
+            }
+        };
+        return $data;
+    }
+
+    public static function getLSFGroupedByWards($country_id = null, $district_id = null)
+    {
+        $condition = '';
+        $params = [];
+        list($condition, $params) = Farm::appendOrgSessionIdCondition($condition, $params);
+        $data = [];
+        // get wards
+        $wards = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_WARD]);
+        foreach ($wards as $id => $label) {
+            list($newcondition, $newparams) = DbUtils::appendCondition('ward_id', $id, $condition, $params);
+
+            $count = Animal::find()->andWhere($newcondition, $newparams)
+                ->andFilterWhere(['farm_type' => 'LSF', 'country_id' => $country_id])
+                ->andFilterWhere(['district_id' => $district_id])
+                ->count();
+            if ($count > 0) {
+                $data[] = [
+                    'label' => $label,
+                    'value' => floatval(number_format($count, 2, '.', '')),
+                ];
+            }
+        };
+        return $data;
+    }
+
+    public static function getLSFGroupedByVillages($country_id = null, $ward_id = null)
+    {
+        $condition = '';
+        $params = [];
+        list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
+        $data = [];
+        // get villages
+        $villages = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_VILLAGE]);
+        foreach ($villages as $id => $label) {
+            list($newcondition, $newparams) = DbUtils::appendCondition('village_id', $id, $condition, $params);
+
+            $count = Farm::find()->andWhere($newcondition, $newparams)
+                ->andFilterWhere(['farm_type' => 'LSF', 'country_id' => $country_id])
+                ->andFilterWhere(['ward_id' => $ward_id])
+                ->count();
+            if ($count > 0) {
+                $data[] = [
+                    'label' => $label,
+                    'value' => floatval(number_format($count, 2, '.', '')),
+                ];
+            }
+        };
+        return $data;
+    }
+
+
+    public static function getLSFAnimalsGroupedByBreeds($country_id = null, $param = [])
     {
         $condition = '';
         $params = [];
@@ -330,8 +553,9 @@ class CountriesDashboardStats extends Model
             list($newCondition, $newParams) = DbUtils::appendCondition('main_breed', $id, $condition, $params);
             $count = Animal::find()->joinWith('farm')
                 ->andWhere($newCondition, $newParams)
-                ->andWhere([Farm::tableName() . '.farm_type' => 'LSF'])
+                ->andFilterWhere([Farm::tableName() . '.farm_type' => 'LSF'])
                 ->andFilterWhere([Farm::tableName() . '.country_id' => $country_id])
+                ->andFilterWhere($param)
                 ->count();
             if ($count > 0) {
                 $data[] = [
@@ -360,7 +584,7 @@ class CountriesDashboardStats extends Model
         foreach ($regions as $id => $label) {
             list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
 
-            $count = AnimalEvent::find()->where($newcondition, $newparams)
+            $count = AnimalEvent::find()->andWhere($newcondition, $newparams)
                 ->andFilterWhere(['event_type' => AnimalEvent::EVENT_TYPE_MILKING, 'country_id' => $country_id])
                 ->count();
             if ($count > 0) {
@@ -373,6 +597,81 @@ class CountriesDashboardStats extends Model
         };
         return $data;
 
+    }
+
+    public static function getTestDayMilkGroupedByDistricts($country_id = null, $region_id = null)
+    {
+        $condition = '';
+        $params = [];
+        //list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
+        $data = [];
+        // get districts
+        $districts = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_DISTRICT]);
+        foreach ($districts as $id => $label) {
+            list($newcondition, $newparams) = DbUtils::appendCondition('district_id', $id, $condition, $params);
+
+            $count = AnimalEvent::find()->andWhere($newcondition, $newparams)
+                ->andFilterWhere(['event_type' => AnimalEvent::EVENT_TYPE_MILKING, 'country_id' => $country_id])
+                ->andFilterWhere(['region_id' => $region_id])
+                ->count();
+            if ($count > 0) {
+                $data[] = [
+                    'label' => $label,
+                    'value' => floatval(number_format($count, 2, '.', '')),
+                ];
+            }
+        };
+        return $data;
+    }
+
+    public static function getTestDayMilkGroupedByWards($country_id = null, $district_id = null)
+    {
+        $condition = '';
+        $params = [];
+        //list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
+        $data = [];
+        // get wards
+        $wards = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_WARD]);
+        foreach ($wards as $id => $label) {
+            list($newcondition, $newparams) = DbUtils::appendCondition('ward_id', $id, $condition, $params);
+
+            $count = AnimalEvent::find()->andWhere($newcondition, $newparams)
+                ->andFilterWhere(['event_type' => AnimalEvent::EVENT_TYPE_MILKING, 'country_id' => $country_id])
+                ->andFilterWhere(['district_id' => $district_id])
+                ->count();
+            if ($count > 0) {
+                $data[] = [
+                    'label' => $label,
+                    'value' => floatval(number_format($count, 2, '.', '')),
+                ];
+            }
+        };
+        return $data;
+    }
+
+    public static function getTestDayMilkGroupedByVillages($country_id = null, $ward_id = null)
+    {
+        $condition = '';
+        $params = [];
+        //list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
+        $data = [];
+        // get villages
+        $villages = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_VILLAGE]);
+        foreach ($villages as $id => $label) {
+            list($newcondition, $newparams) = DbUtils::appendCondition('village_id', $id, $condition, $params);
+
+            $count = AnimalEvent::find()->andWhere($newcondition, $newparams)
+                ->andFilterWhere(['event_type' => AnimalEvent::EVENT_TYPE_MILKING, 'country_id' => $country_id])
+                ->andFilterWhere(['ward_id' => $ward_id])
+                ->count();
+            if ($count > 0) {
+                $data[] = [
+                    'label' => $label,
+                    'value' => floatval(number_format($count, 2, '.', '')),
+                ];
+            }
+        };
+        return $data;
     }
 
     /**
@@ -391,9 +690,87 @@ class CountriesDashboardStats extends Model
         foreach ($regions as $id => $label) {
             list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
 
-            $count = Animal::find()->where($newcondition, $newparams)
-                ->andWhere(['animal_type' => Animal::ANIMAL_TYPE_MALE_CALF])
+            $count = Animal::find()->andWhere($newcondition, $newparams)
+                ->andFilterWhere(['animal_type' => Animal::ANIMAL_TYPE_MALE_CALF])
                 ->andFilterWhere(['country_id' => $country_id])
+                ->count();
+            if ($count > 0) {
+                $data[] = [
+                    'label' => $label,
+                    'value' => floatval(number_format($count, 2, '.', '')),
+                ];
+            }
+        };
+        return $data;
+    }
+
+    public static function getMaleCalvesGroupedByDistricts($country_id = null, $region_id = null)
+    {
+        $condition = '';
+        $params = [];
+        list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
+        $data = [];
+        // get districts
+        $districts = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_DISTRICT]);
+        foreach ($districts as $id => $label) {
+            list($newcondition, $newparams) = DbUtils::appendCondition('district_id', $id, $condition, $params);
+
+            $count = Animal::find()->andWhere($newcondition, $newparams)
+                ->andFilterWhere(['animal_type' => Animal::ANIMAL_TYPE_MALE_CALF])
+                ->andFilterWhere(['country_id' => $country_id])
+                ->andFilterWhere(['region_id' => $region_id])
+                ->count();
+            if ($count > 0) {
+                $data[] = [
+                    'label' => $label,
+                    'value' => floatval(number_format($count, 2, '.', '')),
+                ];
+            }
+        };
+        return $data;
+    }
+
+    public static function getMaleCalvesGroupedByWards($country_id = null, $district_id = null)
+    {
+        $condition = '';
+        $params = [];
+        list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
+        $data = [];
+        // get wards
+        $wards = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_WARD]);
+        foreach ($wards as $id => $label) {
+            list($newcondition, $newparams) = DbUtils::appendCondition('ward_id', $id, $condition, $params);
+
+            $count = Animal::find()->andWhere($newcondition, $newparams)
+                ->andFilterWhere(['animal_type' => Animal::ANIMAL_TYPE_MALE_CALF])
+                ->andFilterWhere(['country_id' => $country_id])
+                ->andFilterWhere(['district_id' => $district_id])
+                ->count();
+            if ($count > 0) {
+                $data[] = [
+                    'label' => $label,
+                    'value' => floatval(number_format($count, 2, '.', '')),
+                ];
+            }
+        };
+        return $data;
+    }
+
+    public static function getMaleCalvesGroupedByVillages($country_id = null, $ward_id = null)
+    {
+        $condition = '';
+        $params = [];
+        list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
+        $data = [];
+        // get villages
+        $villages = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_VILLAGE]);
+        foreach ($villages as $id => $label) {
+            list($newcondition, $newparams) = DbUtils::appendCondition('village_id', $id, $condition, $params);
+
+            $count = Animal::find()->andWhere($newcondition, $newparams)
+                ->andFilterWhere(['animal_type' => Animal::ANIMAL_TYPE_MALE_CALF])
+                ->andFilterWhere(['country_id' => $country_id])
+                ->andFilterWhere(['ward_id' => $ward_id])
                 ->count();
             if ($count > 0) {
                 $data[] = [
@@ -422,8 +799,8 @@ class CountriesDashboardStats extends Model
         foreach ($regions as $id => $label) {
             list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
 
-            $count = Animal::find()->where($newcondition, $newparams)
-                ->andWhere(['animal_type' => Animal::ANIMAL_TYPE_FEMALE_CALF])
+            $count = Animal::find()->andWhere($newcondition, $newparams)
+                ->andFilterWhere(['animal_type' => Animal::ANIMAL_TYPE_FEMALE_CALF])
                 ->andFilterWhere(['country_id' => $country_id])
                 ->count();
             if ($count > 0) {
@@ -436,13 +813,93 @@ class CountriesDashboardStats extends Model
         return $data;
     }
 
-    public static function getGetAnimalsMilkingRecords($country_id = null)
+    public static function getFemaleCalvesGroupedByDistricts($country_id = null, $region_id = null)
+    {
+        $condition = '';
+        $params = [];
+        list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
+        $data = [];
+        // get districts
+        $districts = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_DISTRICT]);
+        foreach ($districts as $id => $label) {
+            list($newcondition, $newparams) = DbUtils::appendCondition('district_id', $id, $condition, $params);
+
+            $count = Animal::find()->andWhere($newcondition, $newparams)
+                ->andFilterWhere(['animal_type' => Animal::ANIMAL_TYPE_FEMALE_CALF])
+                ->andFilterWhere(['country_id' => $country_id])
+                ->andFilterWhere(['region_id' => $region_id])
+                ->count();
+            if ($count > 0) {
+                $data[] = [
+                    'label' => $label,
+                    'value' => floatval(number_format($count, 2, '.', '')),
+                ];
+            }
+        };
+        return $data;
+    }
+
+    public static function getFemaleCalvesGroupedByWards($country_id = null, $district_id = null)
+    {
+        $condition = '';
+        $params = [];
+        list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
+        $data = [];
+        // get wards
+        $wards = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_WARD]);
+        foreach ($wards as $id => $label) {
+            list($newcondition, $newparams) = DbUtils::appendCondition('ward_id', $id, $condition, $params);
+
+            $count = Animal::find()->andWhere($newcondition, $newparams)
+                ->andFilterWhere(['animal_type' => Animal::ANIMAL_TYPE_FEMALE_CALF])
+                ->andFilterWhere(['country_id' => $country_id])
+                ->andFilterWhere(['district_id' => $district_id])
+                ->count();
+            if ($count > 0) {
+                $data[] = [
+                    'label' => $label,
+                    'value' => floatval(number_format($count, 2, '.', '')),
+                ];
+            }
+        };
+        return $data;
+    }
+
+    public static function getFemaleCalvesGroupedByVillages($country_id = null, $ward_id = null)
+    {
+        $condition = '';
+        $params = [];
+        list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
+        $data = [];
+        // get villages
+        $villages = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_VILLAGE]);
+        foreach ($villages as $id => $label) {
+            list($newcondition, $newparams) = DbUtils::appendCondition('village_id', $id, $condition, $params);
+
+            $count = Animal::find()->andWhere($newcondition, $newparams)
+                ->andFilterWhere(['animal_type' => Animal::ANIMAL_TYPE_FEMALE_CALF])
+                ->andFilterWhere(['country_id' => $country_id])
+                ->andFilterWhere(['ward_id' => $ward_id])
+                ->count();
+            if ($count > 0) {
+                $data[] = [
+                    'label' => $label,
+                    'value' => floatval(number_format($count, 2, '.', '')),
+                ];
+            }
+        };
+        return $data;
+    }
+
+    public static function getGetAnimalsMilkingRecords($country_id = null, $params = [])
     {
         $query = AnimalEvent::find();
         $query->addSelect('animal.name,animal.tag_id,animal.main_breed');
         $query->innerJoin(Animal::tableName() . ' animal', 'animal.id = core_animal_event.animal_id');
-        $query->andWhere(['core_animal_event.event_type' => AnimalEvent::EVENT_TYPE_MILKING]);
-        $query->andWhere(['core_animal_event.country_id' => $country_id]);
+        $query->andFilterWhere(['core_animal_event.event_type' => AnimalEvent::EVENT_TYPE_MILKING]);
+        $query->andFilterWhere(['core_animal_event.country_id' => $country_id]);
+        $query->andFilterWhere($params);
+
         $milkCount = new Expression('COUNT(' . AnimalEvent::tableName() . '.id) as milkRecordsCount');
         $average = new Expression('AVG(JSON_EXTRACT(' . AnimalEvent::tableName() . '.additional_attributes, \'$."62"\')) as average');
         $query->addSelect([$milkCount, $average]);

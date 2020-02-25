@@ -204,6 +204,9 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             if (empty($this->name)) {
                 $this->name = $this->farmer_name;
             }
+            if (empty($this->field_agent_name)) {
+                $this->fieldAgent->name;
+            }
             $this->setAdditionalAttributesValues();
 
             return true;

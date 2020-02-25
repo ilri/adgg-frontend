@@ -9,6 +9,7 @@
 namespace backend\modules\dashboard\controllers;
 
 
+use backend\modules\auth\Session;
 use backend\modules\core\models\CountriesDashboardStats;
 use backend\modules\core\models\MilkingReport;
 use backend\modules\core\models\Country;
@@ -39,33 +40,53 @@ class StatsController extends Controller
         }
         $country = Country::findOne(['id' => $country_id]);
         return $this->render('dashboards', [
-            'country_id' => $country_id,
             'country' => $country,
         ]);
     }
 
     public function actionFarmSummary($country_id = null)
     {
+        $user = \Yii::$app->user->identity;
+        if ($user->country_id !== null) {
+            $country_id = $user->country_id;
+        }
         $country = Country::findOne(['id' => $country_id]);
         return $this->render('farm-summary', [
-            'country_id' => $country_id,
             'country' => $country,
         ]);
     }
 
     public function actionAnimalSummary($country_id = null)
     {
+        $user = \Yii::$app->user->identity;
+        if ($user->country_id !== null) {
+            $country_id = $user->country_id;
+        }
         $country = Country::findOne(['id' => $country_id]);
         return $this->render('animal-summary', [
-            'country_id' => $country_id,
             'country' => $country
         ]);
     }
 
     public function actionDash1($country_id = null)
     {
+        $user = \Yii::$app->user->identity;
+        if ($user->country_id !== null) {
+            $country_id = $user->country_id;
+        }
         $country = Country::findOne(['id' => $country_id]);
-        $dataProvider = MilkingReport::getLargeScaleFarmMilkDetails($country_id);
+        $dataProvider = null;
+        if (Session::isVillageUser()) {
+            $dataProvider = MilkingReport::getLargeScaleFarmMilkDetails($country_id, ['core_animal_event.village_id' => Session::getVillageId()]);
+        } elseif (Session::isWardUser()) {
+            $dataProvider = MilkingReport::getLargeScaleFarmMilkDetails($country_id, ['core_animal_event.ward_id' => Session::getWardId()]);
+        } elseif (Session::isDistrictUser()) {
+            $dataProvider = MilkingReport::getLargeScaleFarmMilkDetails($country_id, ['core_animal_event.district_id' => Session::getDistrictId()]);
+        } elseif (Session::isRegionUser()) {
+            $dataProvider = MilkingReport::getLargeScaleFarmMilkDetails($country_id, ['core_animal_event.region_id' => Session::getRegionId()]);
+        } else {
+            $dataProvider = MilkingReport::getLargeScaleFarmMilkDetails($country_id);
+        }
         return $this->render('lsf', [
             'dataProvider' => $dataProvider,
             'country_id' => $country_id,
@@ -75,7 +96,22 @@ class StatsController extends Controller
 
     public function actionDash2($country_id = null)
     {
-        $dataProvider = CountriesDashboardStats::getGetAnimalsMilkingRecords($country_id);
+        $user = \Yii::$app->user->identity;
+        if ($user->country_id !== null) {
+            $country_id = $user->country_id;
+        }
+        $dataProvider = null;
+        if (Session::isVillageUser()) {
+            $dataProvider = CountriesDashboardStats::getGetAnimalsMilkingRecords($country_id, ['core_animal_event.village_id' => Session::getVillageId()]);
+        } elseif (Session::isWardUser()) {
+            $dataProvider = CountriesDashboardStats::getGetAnimalsMilkingRecords($country_id, ['core_animal_event.ward_id' => Session::getWardId()]);
+        } elseif (Session::isDistrictUser()) {
+            $dataProvider = CountriesDashboardStats::getGetAnimalsMilkingRecords($country_id, ['core_animal_event.district_id' => Session::getDistrictId()]);
+        } elseif (Session::isRegionUser()) {
+            $dataProvider = CountriesDashboardStats::getGetAnimalsMilkingRecords($country_id, ['core_animal_event.region_id' => Session::getRegionId()]);
+        } else {
+            $dataProvider = CountriesDashboardStats::getGetAnimalsMilkingRecords($country_id);
+        }
         $country = Country::findOne(['id' => $country_id]);
         return $this->render('test-day', [
             'country_id' => $country_id,
@@ -86,6 +122,10 @@ class StatsController extends Controller
 
     public function actionDash3($country_id = null)
     {
+        $user = \Yii::$app->user->identity;
+        if ($user->country_id !== null) {
+            $country_id = $user->country_id;
+        }
         $country = Country::findOne(['id' => $country_id]);
         return $this->render('genotyped-animals', [
             'country_id' => $country_id,
@@ -95,6 +135,10 @@ class StatsController extends Controller
 
     public function actionDash4($country_id = null)
     {
+        $user = \Yii::$app->user->identity;
+        if ($user->country_id !== null) {
+            $country_id = $user->country_id;
+        }
         $country = Country::findOne(['id' => $country_id]);
         return $this->render('pd-ai-cal', [
             'country_id' => $country_id,

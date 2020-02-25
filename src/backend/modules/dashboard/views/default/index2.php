@@ -12,6 +12,7 @@ use yii\helpers\Html;
 /* @var $controller \backend\controllers\BackendController */
 /* @var $graphFilterOptions array */
 /* @var $countries \backend\modules\core\models\Country[] */
+/* @var $farm Farm */
 $controller = Yii::$app->controller;
 $this->title = Lang::t('Dashboard');
 $this->params['breadcrumbs'] = [
@@ -42,7 +43,7 @@ $this->params['breadcrumbs'] = [
                                 <h5 class="text-center font-weight-bold"><?= Lang::t('Number Of Farms') ?></h5>
                                 <h1 class="text-center kt-font-info">
                                     <?php if (Session::isVillageUser()): ?>
-                                        <?= Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country->id, 'village_id' => Session::getVillageId()])) ?>
+                                        <?= Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country->id, 'village_id' => Session::getVillageId(), 'field_agent_id' => Session::getUserId()])) ?>
                                     <?php elseif (Session::isWardUser()): ?>
                                         <?= Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country->id, 'ward_id' => Session::getWardId()])) ?>
                                     <?php elseif (Session::isDistrictUser()): ?>
