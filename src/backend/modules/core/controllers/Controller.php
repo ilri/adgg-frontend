@@ -23,7 +23,7 @@ class Controller extends BackendController
         parent::init();
 
         if (empty($this->activeMenu))
-            $this->activeMenu = Constants::MENU_ORGANIZATION;
+            $this->activeMenu = Constants::MENU_ORGANIZATION_REF;
         if (empty($this->resource))
             $this->resource = Constants::RES_COUNTRY;
 
@@ -58,6 +58,7 @@ class Controller extends BackendController
                             'process',
                             'download-file',
                             'download-error',
+                            'event-list',
                         ],
                         'allow' => true,
                         'roles' => ['@'],

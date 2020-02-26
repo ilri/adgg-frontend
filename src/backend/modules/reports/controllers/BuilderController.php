@@ -3,6 +3,7 @@
 namespace backend\modules\reports\controllers;
 
 use backend\modules\auth\Acl;
+use backend\modules\reports\Constants;
 use backend\modules\reports\models\AdhocReport;
 use backend\modules\reports\models\ReportBuilder;
 use common\helpers\Lang;
@@ -23,16 +24,17 @@ class BuilderController extends Controller
     public function init()
     {
         parent::init();
+        $this->resource = \backend\modules\core\Constants::RES_REPORT_BUILDER;
         $this->hasPrivilege(Acl::ACTION_CREATE);
     }
 
-    public function actionIndex($org_id)
+    public function actionIndex($country_id)
     {
         $models = ReportBuilder::reportableModels();
 
-        return $this->render('index',[
+        return $this->render('index', [
             'models' => $models,
-            'org_id' => $org_id,
+            'country_id' => $country_id,
         ]);
     }
 
@@ -44,7 +46,7 @@ class BuilderController extends Controller
         $filterValues = $req->post('filterValue', []); // array
         $limit = $req->post('limit', 100);
         $orderBy = $req->post('orderby', '');
-        $org_id = $req->post('org_id', '');
+        $country_id = $req->post('country_id', '');
         $name = $req->post('name', time());
 
         $builder = new ReportBuilder();
@@ -53,7 +55,7 @@ class BuilderController extends Controller
         $builder->filterValues = $filterValues;
         $builder->orderBy = $orderBy;
         $builder->limit = $limit;
-        $builder->org_id = $org_id;
+        $builder->country_id = $country_id;
         $builder->name = $name;
 
         return $builder;
@@ -87,13 +89,14 @@ class BuilderController extends Controller
                 'filterValues' => $builder->filterValues,
                 'limit' => $builder->limit,
                 'orderby' => $builder->orderBy,
-                'org_id' => $builder->org_id,
+                'country_id' => $builder->country_id,
                 'reportModel' => $builder->model,
             ]);
             if($report->save()){
                 $transaction->commit();
                 ReportGenerator::push(['queueId' => $report->id]);
-                return Json::encode(['success' => true, 'message' => $success_msg, 'redirectUrl' => '', 'forceRedirect' => false]);
+                $redirect = Url::to(['/reports/adhoc-report/index']);
+                return Json::encode(['success' => true, 'message' => $success_msg, 'redirectUrl' => $redirect, 'forceRedirect' => false]);
             }
             else{
                 Yii::debug($report->getErrors());

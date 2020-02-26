@@ -202,10 +202,34 @@ trait TableAttributeTrait
                 return $attributes;
             };
         }
+
+        //herd attributes without the relations
+        if (isset($this->herd)) {
+            $fields['herd'] = function () {
+                $attributes = $this->herd->attributes;
+                unset($attributes['additional_attributes'], $attributes['latlng']);
+                return $attributes;
+            };
+        }
         //country
+        if (isset($this->country)) {
+            $fields['country'] = function () {
+                return $this->country;
+            };
+        }
+        //organization
         if (isset($this->org)) {
             $fields['org'] = function () {
                 return $this->org;
+            };
+        }
+
+        //client attributes without the relations
+        if (isset($this->client)) {
+            $fields['client'] = function () {
+                $attributes = $this->client->attributes;
+                unset($attributes['additional_attributes']);
+                return $attributes;
             };
         }
         //region
@@ -240,6 +264,7 @@ trait TableAttributeTrait
                 return $attributes;
             };
         }
+
         //excluded fields
         if ($this->hasAttribute('latlng')) {
             $excludedFields = ['latlng'];

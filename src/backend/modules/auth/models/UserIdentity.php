@@ -188,18 +188,23 @@ abstract class UserIdentity extends ActiveRecord implements IdentityInterface
 
     public function behaviors()
     {
+        if (!Utils::isWebApp()) {
+            return [];
+        }
+        $ip = Yii::$app->request->getUserIP();
+        $host = @gethostbyaddr(Yii::$app->request->getUserIP());
+        $url = Yii::$app->request->getAbsoluteUrl();
+        $userAgent = Yii::$app->request->getUserAgent();
         return [
             'authLog' => [
                 'class' => AuthLogIdentityBehavior::class,
                 'authLogRelation' => 'authLogs',
-                'defaultAuthLogData' => function ($model) {
-                    return [
-                        'ip' => Yii::$app->request->getUserIP(),
-                        'host' => @gethostbyaddr(Yii::$app->request->getUserIP()),
-                        'url' => Yii::$app->request->getAbsoluteUrl(),
-                        'userAgent' => Yii::$app->request->getUserAgent(),
-                    ];
-                },
+                'defaultAuthLogData' => [
+                    'ip' => $ip,
+                    'host' => $host,
+                    'url' => $url,
+                    'userAgent' => $userAgent,
+                ],
             ],
         ];
     }
@@ -235,18 +240,33 @@ abstract class UserIdentity extends ActiveRecord implements IdentityInterface
      * Finds user by password reset token.
      *
      * @param string $token Password reset token.
+     * @param bool $is_api
      * @return $this
+     * @throws \yii\web\NotFoundHttpException
      */
-    public static function findByPasswordResetToken($token)
+    public static function findByPasswordResetToken($token, $is_api = false)
     {
-        if (!static::isPasswordResetTokenValid($token)) {
-            return null;
-        }
+        if (!$is_api) {
+            if (!static::isPasswordResetTokenValid($token)) {
+                return null;
+            }
 
-        return static::findOne([
-            'password_reset_token' => $token,
-            'status' => self::STATUS_ACTIVE,
-        ]);
+            return static::findOne([
+                'password_reset_token' => $token,
+                'status' => self::STATUS_ACTIVE,
+            ]);
+        } else {
+            $user_id = PasswordResetCodes::isValid($token);
+            if (!$user_id) {
+                return null;
+            }
+            $user = static::loadModel(['id' => $user_id, 'status' => self::STATUS_ACTIVE], false);
+            if (null === $user) {
+                return null;
+            }
+
+            return $user;
+        }
     }
 
     /**
@@ -362,10 +382,15 @@ abstract class UserIdentity extends ActiveRecord implements IdentityInterface
 
     /**
      * Removes password reset token.
+     * @param bool $is_api
      */
-    public function removePasswordResetToken()
+    public function removePasswordResetToken($is_api = false)
     {
-        $this->password_reset_token = null;
+        if (!$is_api) {
+            $this->password_reset_token = null;
+        } else {
+            PasswordResetCodes::updateAll(['is_active' => 0], ['user_id' => $this->id]);
+        }
     }
 
     /**
@@ -448,26 +473,20 @@ abstract class UserIdentity extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * @return array
+     * @throws \Exception
      */
     public function passwordHistoryValidator()
     {
-        return [
-            'password',
-            function () {
-                $limit = 5;
-                //@todo define in settings
-                $passwordHistory = PasswordResetHistory::getColumnData('old_password_hash', ['user_id' => $this->id], [], ['orderBy' => ['id' => SORT_DESC], 'limit' => $limit]);
-                foreach ($passwordHistory as $p) {
-                    if (Yii::$app->security->validatePassword($this->password, $p)) {
-                        $this->addError('password', Lang::t('You cannot use a recent password.'));
-                        return false;
-                    }
+        if (!$this->hasErrors() && ($this->scenario === self::SCENARIO_CHANGE_PASSWORD || $this->scenario === self::SCENARIO_RESET_PASSWORD)) {
+            $limit = 5;
+            $passwordHistory = PasswordResetHistory::getColumnData('old_password_hash', ['user_id' => $this->id], [], ['orderBy' => ['id' => SORT_DESC], 'limit' => $limit]);
+            foreach ($passwordHistory as $p) {
+                if (Yii::$app->security->validatePassword($this->password, $p)) {
+                    $this->addError('password', Lang::t('You cannot use a recent password.'));
+                    return;
                 }
-                return true;
-            },
-            'on' => [self::SCENARIO_CHANGE_PASSWORD, self::SCENARIO_RESET_PASSWORD]
-        ];
+            }
+        }
     }
 
     public function validateCurrentPassword()

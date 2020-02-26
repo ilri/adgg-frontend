@@ -3,49 +3,52 @@
 use backend\modules\core\models\Country;
 use common\helpers\Utils;
 use common\widgets\grid\GridView;
+use yii\helpers\Html;
 
-/* @var $this yii\web\View */
-/* @var $filterOptions array */
+/* @var $this \yii\web\View */
 /* @var $model Country */
 ?>
 <?= GridView::widget([
     'searchModel' => $model,
     'filterModel' => $model,
-    'createButton' => ['visible' => Yii::$app->user->canCreate(), 'modal' => true],
+    'createButton' => ['visible' => Yii::$app->user->canCreate(), 'modal' => false],
     'columns' => [
-        [
-            'attribute' => 'iso2',
-        ],
         [
             'attribute' => 'name',
         ],
         [
-            'attribute' => 'call_code',
+            'attribute' => 'contact_person',
         ],
         [
-            'attribute' => 'currency',
-            'filter' => \backend\modules\core\models\Currency::getListData()
+            'attribute' => 'contact_phone',
+        ],
+        [
+            'attribute' => 'contact_email',
+            'format' => 'email',
+        ],
+        [
+            'attribute' => 'dialing_code',
+        ],
+        [
+            'attribute' => 'code',
         ],
         [
             'attribute' => 'is_active',
             'value' => function (Country $model) {
-                return \yii\helpers\Html::tag('span', Utils::decodeBoolean($model->is_active), ['class' => $model->is_active ? 'kt-badge  kt-badge--success kt-badge--inline kt-badge--pill' : 'kt-badge  kt-badge--metal kt-badge--inline kt-badge--pill']);
+                return Html::tag('span', Utils::decodeBoolean($model->is_active), ['class' => $model->is_active ? 'kt-badge  kt-badge--success kt-badge--inline kt-badge--pill' : 'kt-badge  kt-badge--metal kt-badge--inline kt-badge--pill']);
             },
             'format' => 'raw',
-            'hiddenFromExport' => true,
             'filter' => Utils::booleanOptions(),
         ],
         [
-            'attribute' => 'is_active',
-            'value' => function (Country $model) {
-                return Utils::decodeBoolean($model->is_active);
-            },
-            'hidden' => true,
-            'filter' => false,
-        ],
-        [
             'class' => common\widgets\grid\ActionColumn::class,
-            'template' => '{update}',
+            'template' => '{view}{update}',
+            'visibleButtons' => [
+                'update' => function (Country $model) {
+                    return Yii::$app->user->canUpdate();
+                }
+            ],
+            'updateOptions' => ['data-pjax' => 0, 'title' => 'Update', 'modal' => false, 'data-use-uuid' => true],
         ],
     ],
 ]);

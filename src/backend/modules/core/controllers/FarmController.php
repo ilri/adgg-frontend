@@ -31,9 +31,10 @@ class FarmController extends Controller
         $this->resourceLabel = 'Farm';
     }
 
-    public function actionIndex($org_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $name = null, $code = null, $phone = null, $project = null, $farm_type = null, $gender_code = null, $is_active = null, $odk_code = null)
+    public function actionIndex($country_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $name = null, $code = null, $phone = null, $project = null, $farm_type = null, $gender_code = null, $is_active = null, $odk_code = null)
     {
-        $org_id = Session::getOrgId($org_id);
+        $this->hasPrivilege(Acl::ACTION_VIEW);
+        $country_id = Session::getCountryId($country_id);
         $region_id = Session::getRegionId($region_id);
         $district_id = Session::getDistrictId($district_id);
         $ward_id = Session::getWardId($ward_id);
@@ -44,9 +45,9 @@ class FarmController extends Controller
             'defaultOrder' => ['id' => SORT_DESC],
             'condition' => $condition,
             'params' => $params,
-            'with' => ['org', 'region', 'district', 'ward', 'village', 'fieldAgent'],
+            'with' => ['country', 'region', 'district', 'ward', 'village', 'fieldAgent'],
         ]);
-        $searchModel->org_id = $org_id;
+        $searchModel->country_id = $country_id;
         $searchModel->region_id = $region_id;
         $searchModel->district_id = $district_id;
         $searchModel->ward_id = $ward_id;
@@ -65,9 +66,10 @@ class FarmController extends Controller
         ]);
     }
 
-    public function actionCreate($org_id = null)
+    public function actionCreate($country_id = null)
     {
-        $model = new Farm(['org_id' => $org_id, 'is_active' => 1]);
+        $this->hasPrivilege(Acl::ACTION_CREATE);
+        $model = new Farm(['country_id' => $country_id, 'is_active' => 1]);
         if ($this->handlePostedData($model)) {
             Yii::$app->session->setFlash('success', Lang::t('SUCCESS_MESSAGE'));
             return $this->redirect(Url::getReturnUrl(['index', 'id' => $model->id]));
@@ -80,6 +82,7 @@ class FarmController extends Controller
 
     public function actionView($id)
     {
+        $this->hasPrivilege(Acl::ACTION_VIEW);
         $model = Farm::loadModel($id);
 
         return $this->render('view', [
@@ -89,6 +92,7 @@ class FarmController extends Controller
 
     public function actionUpdate($id)
     {
+        $this->hasPrivilege(Acl::ACTION_UPDATE);
         $model = $this->loadModel($id);
         if ($this->handlePostedData($model)) {
             Yii::$app->session->setFlash('success', Lang::t('SUCCESS_MESSAGE'));

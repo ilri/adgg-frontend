@@ -15,12 +15,13 @@ use yii\base\InvalidArgumentException;
 class ExtendableTable
 {
     //tables
+    const TABLE_CLIENTS = 1;
     const TABLE_FARM = 2;
     const TABLE_ANIMAL_ATTRIBUTES = 3;
     const TABLE_ANIMAL_EVENTS = 4;
     const TABLE_ANIMAL_REPEATS = 5;
     const TABLE_FARM_REPEATS = 6;
-    const TABLE_CLIENT_REPEATS = 7;
+    const TABLE_HERDS = 7;
     const TABLE_USERS = 8;
 
     /**
@@ -30,18 +31,20 @@ class ExtendableTable
     public static function decodeTableId($intVal)
     {
         switch ($intVal) {
+            case self::TABLE_CLIENTS:
+                return 'Client';
             case self::TABLE_FARM:
-                return 'Farm Attributes';
+                return 'Farm';
             case self::TABLE_ANIMAL_ATTRIBUTES:
-                return 'Animal Attributes';
+                return 'Animal';
             case self::TABLE_ANIMAL_EVENTS:
                 return 'Animal Events';
             case self::TABLE_ANIMAL_REPEATS:
                 return 'Animal Repeats';
             case self::TABLE_FARM_REPEATS:
                 return 'Farm Repeats';
-            case self::TABLE_CLIENT_REPEATS:
-                return 'Client/Person Repeats';
+            case self::TABLE_HERDS:
+                return 'Herds';
             case self::TABLE_USERS:
                 return 'Users';
             default:
@@ -57,13 +60,13 @@ class ExtendableTable
     {
         return Utils::appendDropDownListPrompt([
             self::TABLE_FARM => static::decodeTableId(self::TABLE_FARM),
-            self::TABLE_FARM_REPEATS => static::decodeTableId(self::TABLE_FARM_REPEATS),
-            //self::TABLE_CLIENT => static::decodeTableId(self::TABLE_CLIENT),
-            //self::TABLE_CLIENT_REPEATS => static::decodeTableId(self::TABLE_CLIENT_REPEATS),
+            //self::TABLE_FARM_REPEATS => static::decodeTableId(self::TABLE_FARM_REPEATS),
+            self::TABLE_HERDS => static::decodeTableId(self::TABLE_HERDS),
             self::TABLE_ANIMAL_ATTRIBUTES => static::decodeTableId(self::TABLE_ANIMAL_ATTRIBUTES),
-            self::TABLE_ANIMAL_REPEATS => static::decodeTableId(self::TABLE_ANIMAL_REPEATS),
+            //self::TABLE_ANIMAL_REPEATS => static::decodeTableId(self::TABLE_ANIMAL_REPEATS),
             self::TABLE_ANIMAL_EVENTS => static::decodeTableId(self::TABLE_ANIMAL_EVENTS),
             self::TABLE_USERS => static::decodeTableId(self::TABLE_USERS),
+            self::TABLE_CLIENTS => static::decodeTableId(self::TABLE_CLIENTS),
         ], $prompt);
     }
 }

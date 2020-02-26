@@ -2,7 +2,7 @@
 
 /* @var $this yii\web\View */
 
-use backend\modules\core\models\Organization;
+use backend\modules\core\models\Country;
 use backend\modules\reports\models\ReportBuilder;
 use backend\modules\reports\models\Reports;
 use common\helpers\Lang;
@@ -16,36 +16,37 @@ $this->title = 'Report Builder';
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
-<div class="row">
-    <div class="col-md-12">
-        <div class="well">
-            <h3 class="text-muted"><?= Lang::t('REPORT BUILDER') ?> [<?= strtoupper(Organization::getScalar('name', ['id' => $org_id])) ?>]</h3>
-            <hr>
-            <form method="POST" id="report-builder-form" >
+    <div class="row">
+        <div class="col-md-12">
+            <div class="well">
+                <h3 class="text-muted"><?= Lang::t('REPORT BUILDER') ?>
+                    [<?= strtoupper(Country::getScalar('name', ['id' => $country_id])) ?>]</h3>
+                <hr>
+                <form method="POST" id="report-builder-form">
 
-                <input type="hidden" name="<?= Yii::$app->request->csrfParam ?>" value="<?= Yii::$app->request->csrfToken ?>" />
-                <input type="hidden" name="model" id="model" />
-                <input type="hidden" name="org_id" id="org_id" value="<?= $org_id ?>"/>
-            <div class="row" id="report-builder-container">
-                <div class="panel panel-default bs-item z-depth-2 col-md-3">
-                    <div class="panel-body">
-                        <?php
-                        foreach ($models as $name => $modelData){
-                            /* @var $class ActiveRecord */
-                            $class = new $modelData['class']();
-                            $title = $modelData['title'] ?? $name;
-                            //$name = $class::shortClassName();
-                            $all_attributes = $class->reportBuilderFields();
-                            $main_attributes = [];
-                            $additional_attributes = [];
-                            // check if attribute is main or additional
-                            ## not necessary anymore, logic pushed to ReportBuilder
-                            foreach ($all_attributes as $attr){
-                                if (!$class->isAdditionalAttribute($attr)){
-                                    $main_attributes[] = $attr;
-                                }
-                                else {
-                                    $additional_attributes[] = $attr;
+                    <input type="hidden" name="<?= Yii::$app->request->csrfParam ?>"
+                           value="<?= Yii::$app->request->csrfToken ?>"/>
+                    <input type="hidden" name="model" id="model"/>
+                    <input type="hidden" name="country_id" id="country_id" value="<?= $country_id ?>"/>
+                    <div class="row" id="report-builder-container">
+                        <div class="panel panel-default bs-item z-depth-2 col-md-3">
+                            <div class="panel-body">
+                                <?php
+                                foreach ($models as $name => $modelData) {
+                                    /* @var $class ActiveRecord */
+                                    $class = new $modelData['class']();
+                                    $title = $modelData['title'] ?? $name;
+                                    //$name = $class::shortClassName();
+                                    $all_attributes = $class->reportBuilderFields();
+                                    $main_attributes = [];
+                                    $additional_attributes = [];
+                                    // check if attribute is main or additional
+                                    ## not necessary anymore, logic pushed to ReportBuilder
+                                    foreach ($all_attributes as $attr) {
+                                        if (!$class->isAdditionalAttribute($attr)) {
+                                            $main_attributes[] = $attr;
+                                        } else {
+                                            $additional_attributes[] = $attr;
                                 }
                             }
                             # filter out additional_attributes field
@@ -62,7 +63,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <div class="card card-body kt-scroll ps ps--active-y" style="height: 550px; overflow: hidden;" data-scroll="true">
                                     <ul>
                                     <?php foreach ($attributes as $attr): ?>
-                                        <li class="attribute" data-toggle="kt-tooltip" data-skin="dark" data-original-title="<?= $class->getAttributeLabel($attr) ?>" data-model="<?= $name ?>" data-parent-model="<?= $name ?>" data-parent-model-title="<?= $title ?>" data-name="<?= $attr ?>"><?= $class->getAttributeLabel($attr) ?></li>
+                                        <li class="attribute" data-original-title="<?= $class->getAttributeLabel($attr) ?>" data-model="<?= $name ?>" data-parent-model="<?= $name ?>" data-parent-model-title="<?= $title ?>" data-name="<?= $attr ?>"><?= $class->getAttributeLabel($attr) ?></li>
                                     <?php endforeach; ?>
                                     <?php
                                     if(count($modelData['relations'])){
@@ -86,7 +87,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                             <div class="collapse" id="collapse<?= $relationName ?>" style="">
                                                 <ul>
                                                     <?php foreach ($relationAttributes as $attr): ?>
-                                                        <li class="attribute" data-model="<?= $className ?>" data-parent-model="<?= $name ?>" data-parent-model-title="<?= $title ?>" data-name="<?= $relationName.'.'.$attr ?>"><?= $relationModelClass->getAttributeLabel($attr) ?></li>
+                                                        <li class="attribute" data-original-title="<?= $relationName. '.'.$relationModelClass->getAttributeLabel($attr) ?>" data-model="<?= $className ?>" data-parent-model="<?= $name ?>" data-parent-model-title="<?= $title ?>" data-name="<?= $relationName.'.'.$attr ?>"><?= $relationModelClass->getAttributeLabel($attr) ?></li>
                                                     <?php endforeach; ?>
                                                     <?php
                                                     if(count($sub_relations)){
@@ -104,7 +105,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                                             <div class="collapse" id="collapse<?= $sub_id ?>" style="">
                                                                 <ul>
                                                                     <?php foreach ($relationAttributes as $attr): ?>
-                                                                        <li class="attribute" data-model="<?= $className ?>" data-parent-model="<?= $name ?>" data-parent-model-title="<?= $title ?>" data-name="<?= $main.'.'.$sub.'.'.$attr ?>"><?= $relationClass->getAttributeLabel($attr) ?></li>
+                                                                        <li class="attribute" data-original-title="<?= $main. '.'. $sub. '.' .$relationClass->getAttributeLabel($attr) ?>" data-model="<?= $className ?>" data-parent-model="<?= $name ?>" data-parent-model-title="<?= $title ?>" data-name="<?= $main.'.'.$sub.'.'.$attr ?>"><?= $relationClass->getAttributeLabel($attr) ?></li>
                                                                     <?php endforeach; ?>
                                                                 </ul>
                                                             </div>

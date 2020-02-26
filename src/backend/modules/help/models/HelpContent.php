@@ -2,16 +2,23 @@
 
 namespace backend\modules\help\models;
 
+use backend\modules\auth\models\UserLevels;
+use backend\modules\auth\Session;
+use backend\modules\conf\settings\SystemSettings;
 use backend\modules\help\Help;
+use common\helpers\DateUtils;
+use common\helpers\Lang;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
+use kartik\mpdf\Pdf;
 
 /**
  * This is the model class for table "help_content".
  *
  * @property integer $id
  * @property integer $module_id
+ * @property integer $user_level_id
  * @property string $name
  * @property string $slug
  * @property string $content
@@ -25,6 +32,7 @@ use common\models\ActiveSearchTrait;
  * @property integer $is_active
  *
  * @property HelpModules $module
+ * @property UserLevels $userLevel
  */
 class HelpContent extends ActiveRecord implements ActiveSearchInterface
 {
@@ -47,7 +55,7 @@ class HelpContent extends ActiveRecord implements ActiveSearchInterface
     {
         return [
             [['module_id', 'name', 'content'], 'required'],
-            [['module_id', 'is_active',], 'integer'],
+            [['module_id', 'user_level_id', 'is_active',], 'integer'],
             [['content'], 'string'],
             [['name'], 'string', 'max' => 255],
             [['slug'], 'string', 'max' => 128],
@@ -64,6 +72,7 @@ class HelpContent extends ActiveRecord implements ActiveSearchInterface
         return [
             'id' => 'ID',
             'module_id' => 'Module',
+            'user_level_id' => 'User Level',
             'name' => 'Help Topic',
             'slug' => 'Slug',
             'content' => 'Content',
@@ -84,7 +93,8 @@ class HelpContent extends ActiveRecord implements ActiveSearchInterface
         return [
             'id',
             'name',
-            'module_id'
+            'module_id',
+            'user_level_id',
         ];
     }
 
@@ -94,6 +104,14 @@ class HelpContent extends ActiveRecord implements ActiveSearchInterface
     public function getModule()
     {
         return $this->hasOne(HelpModules::class, ['id' => 'module_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUserLevel()
+    {
+        return $this->hasOne(UserLevels::class, ['id' => 'user_level_id']);
     }
 
     /**
@@ -129,6 +147,18 @@ class HelpContent extends ActiveRecord implements ActiveSearchInterface
         $this->slug = str_slug($this->name);
         // these dummy tags will allow us to find partial search results
         $this->tags = self::getPermissions($this->permissions);
+        if (empty($this->user_level_id)) {
+            $this->user_level_id = UserLevels::getScalar('id', ['id' => $this->user_level_id]);
+        } else {
+            $this->user_level_id = UserLevels::getScalar('id', ['id' => $this->user_level_id]);
+        }
+        /* if (!empty($this->user_level_id)) {
+             if (is_string($this->user_level_id)) {
+                 $this->user_level_id = array_map('trim', explode(' ', $this->user_level_id));
+             }
+         } else {
+             $this->user_level_id = [];
+         }*/
         // just fill all permissions by default
         $this->permissions = json_encode(array_keys(Help::$permissions));
         return parent::beforeSave($insert);
@@ -140,7 +170,98 @@ class HelpContent extends ActiveRecord implements ActiveSearchInterface
     public function afterFind()
     {
         $this->permissions = json_decode($this->permissions);
+        $this->user_level_id = UserLevels::getScalar('id', ['id' => $this->user_level_id]);
         parent::afterFind();
+    }
+
+    public static function exportPdf($content, $options = [])
+    {
+        $file_name = 'ADGG Help Content';
+        $destination = Pdf::DEST_BROWSER;
+        $paperSize = 'A4';
+        $title = 'ADGG Help Content';
+        $pdfHeader = [
+            'L' => [
+                //'content' => $model->org->name,
+                'content' => SystemSettings::getAppName(),
+                'font-size' => 8,
+                'color' => '#333333',
+            ],
+            'C' => [
+                'content' => $title,
+                //'content' => '',
+                'font-size' => 16,
+                'color' => '#333333',
+            ],
+            'R' => [
+                'content' => '',
+                'font-size' => 8,
+                'color' => '#333333',
+            ],
+        ];
+        $footer = [
+            'L' => [
+                'content' => '',
+                'font-size' => 8,
+                'color' => '#333333'
+            ],
+            'C' => [
+                'content' => Lang::t('Generated') . ': ' . DateUtils::formatToLocalDate(date(time()), "D, d-M-Y g:i a"),
+                'font-size' => 8,
+                'color' => '#333333'
+            ],
+            'R' => [
+                'content' => '',
+                'font-size' => 8,
+                'color' => '#333333'
+            ],
+        ];
+
+        $config = [
+            'mode' => 'UTF-8',
+            'format' => 'A4-L',
+            'destination' => 'D',
+            'marginTop' => 15,
+            'marginBottom' => 0,
+            'cssInline' =>
+                '.table {margin-bottom:5px;}' .
+                'p,th,td{font-size:11px!important;line-height: normal!important;}' .
+                'th,td {border:none!important;padding: 2px!important;line-height: 1!important;}' .
+                'hr {margin-top:2px;margin-bottom:2px;}' .
+                'h1,h3 {line-height:normal;margin:30 0 30 0;}' .
+                'h1,h3,h2,h4,h5 {font-weight:bold;}' .
+                'h1 {font-size: 18px;}' .
+                'h3 {font-size: 14px;}' .
+                'p {margin-bottom:5px;}' .
+                'img {width:1024!important;}',
+            'methods' => [
+                'SetHeader' => [
+                    ['odd' => $pdfHeader, 'even' => $pdfHeader],
+                ],
+                'SetFooter' => [
+                    ['odd' => $footer, 'even' => $footer],
+                ],
+            ],
+            'options' => [
+                'title' => $title,
+            ],
+        ];
+
+        $html = $content;
+
+        $config['filename'] = "{$file_name}.pdf";
+        $config['methods']['SetAuthor'] = [SystemSettings::getAppName()];
+        $config['methods']['SetCreator'] = [Session::getName()];
+        $config['options']['CSSselectMedia'] = 'mpdf';
+        $config['content'] = $html;
+        //$config['format'] = [100, 300];
+        $config['format'] = $paperSize;
+        $config['destination'] = $destination;
+        $config['options']['img_dpi'] = 92;
+
+        $pdf = new Pdf($config);
+        return $pdf->render();
+
     }
 
 }

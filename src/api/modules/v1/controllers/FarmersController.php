@@ -28,6 +28,8 @@ class FarmersController extends ActiveController
 
     public function actionIndex($farm_name = null, $farmer_phone = null, $farm_type = null, $project = null)
     {
+        $user = \Yii::$app->user->identity;
+
         $searchModel = Farm::searchModel([
             'defaultOrder' => ['id' => SORT_ASC],
             'pageSize' => SystemSettings::getPaginationSize(),
@@ -37,6 +39,7 @@ class FarmersController extends ActiveController
         $searchModel->phone = $farmer_phone;
         $searchModel->farm_type = $farm_type;
         $searchModel->project = $project;
+        $searchModel->country_id = $user->country_id;
         return $searchModel->search();
     }
 }

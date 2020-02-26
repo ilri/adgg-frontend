@@ -20,7 +20,7 @@ abstract class UploadAnimalEvent extends ExcelUploadForm
     /**
      * @var int
      */
-    public $org_id;
+    public $country_id;
 
     /**
      * @var int
@@ -46,7 +46,7 @@ abstract class UploadAnimalEvent extends ExcelUploadForm
     public function rules()
     {
         return array_merge($this->excelValidationRules(), [
-            [['org_id', 'event_type', 'sampleExcelFileName'], 'required'],
+            [['country_id', 'event_type', 'sampleExcelFileName'], 'required'],
         ]);
     }
 
@@ -56,7 +56,7 @@ abstract class UploadAnimalEvent extends ExcelUploadForm
     public function attributeLabels()
     {
         return array_merge($this->excelAttributeLabels(), [
-            'org_id' => Lang::t('Country'),
+            'country_id' => Lang::t('Country'),
             'event_type' => Lang::t('Event Type'),
         ]);
     }
@@ -64,7 +64,7 @@ abstract class UploadAnimalEvent extends ExcelUploadForm
     protected function getAnimalId($tagId)
     {
         $tagId = trim($tagId);
-        $animalId = Animal::getScalar('id', ['org_id' => $this->org_id, 'tag_id' => $tagId]);
+        $animalId = Animal::getScalar('id', ['country_id' => $this->country_id, 'tag_id' => $tagId]);
         if (empty($animalId)) {
             return null;
         }
@@ -78,7 +78,7 @@ abstract class UploadAnimalEvent extends ExcelUploadForm
      */
     protected function setDefaultAttributes(array $row)
     {
-        $row['org_id'] = $this->org_id;
+        $row['country_id'] = $this->country_id;
         $row['event_date'] = static::getDateColumnData($row['event_date']);
         $row['animal_id'] = $this->getAnimalId($row['animalTagId']);
         return $row;

@@ -16,11 +16,13 @@ use yii\helpers\Html;
  * @property int $id
  * @property string $code
  * @property string $name
- * @property int $org_id
+ * @property int $country_id
  * @property int $region_id
  * @property int $district_id
  * @property int $ward_id
  * @property int $village_id
+ * @property int $org_id
+ * @property int $client_id
  * @property string $reg_date
  * @property string $farmer_name
  * @property string $phone
@@ -50,10 +52,11 @@ use yii\helpers\Html;
  * @property Users $fieldAgent
  * @property Animal $animals
  * @property AnimalHerd [] $herds
+ * @property Client $client
  */
 class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInterface, TableAttributeInterface
 {
-    use ActiveSearchTrait, OrganizationUnitDataTrait, TableAttributeTrait;
+    use ActiveSearchTrait, CountryUnitDataTrait, TableAttributeTrait;
 
     /**
      * @var
@@ -74,9 +77,9 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     public function rules()
     {
         return [
-            [['farmer_name', 'org_id'], 'required'],
+            [['farmer_name', 'country_id'], 'required'],
             [['name'], 'required', 'except' => [self::SCENARIO_UPLOAD]],
-            [['org_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'field_agent_id', 'is_active', 'farmer_is_hh_head'], 'safe'],
+            [['country_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'field_agent_id', 'is_active', 'farmer_is_hh_head'], 'safe'],
             [['latitude', 'longitude', 'phone'], 'number'],
             [['code', 'name', 'project', 'field_agent_name', 'farmer_name'], 'string', 'max' => 128],
             [['phone'], 'string', 'min' => 9, 'max' => 12, 'message' => '{attribute} should contain between 9 and 12 digits', 'except' => self::SCENARIO_UPLOAD],
@@ -84,10 +87,10 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             [['farm_type'], 'string', 'max' => 30],
             [['gender_code'], 'string', 'max' => 10],
             [['reg_date'], 'date', 'format' => 'Y-m-d'],
-            [['code'], 'unique', 'targetAttribute' => ['org_id', 'code'], 'message' => '{attribute} already exists', 'except' => self::SCENARIO_UPLOAD],
+            [['code'], 'unique', 'targetAttribute' => ['country_id', 'org_id', 'code'], 'message' => '{attribute} already exists', 'except' => self::SCENARIO_UPLOAD],
             [$this->getAdditionalAttributes(), 'safe'],
-            [['additional_attributes'], 'safe'],
-            ['odk_code', 'unique', 'targetAttribute' => ['org_id', 'odk_code'], 'message' => '{attribute} already exists.', 'on' => self::SCENARIO_UPLOAD],
+            [['additional_attributes', 'org_id', 'client_id'], 'safe'],
+            ['odk_code', 'unique', 'targetAttribute' => ['country_id', 'odk_code'], 'message' => '{attribute} already exists.', 'on' => self::SCENARIO_UPLOAD],
             [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
 
@@ -101,13 +104,15 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     {
         $labels = [
             'id' => 'ID',
-            'code' => 'Code.',
+            'code' => 'Code',
             'name' => 'Farm Name',
-            'org_id' => 'Country',
-            'region_id' => $this->org !== null ? Html::encode($this->org->unit1_name) : 'Region',
-            'district_id' => $this->org !== null ? Html::encode($this->org->unit2_name) : 'District',
-            'ward_id' => $this->org !== null ? Html::encode($this->org->unit3_name) : 'Ward',
-            'village_id' => $this->org !== null ? Html::encode($this->org->unit4_name) : 'Village',
+            'country_id' => 'Country',
+            'region_id' => $this->country !== null ? Html::encode($this->country->unit1_name) . ' ID' : 'Region ID',
+            'district_id' => $this->country !== null ? Html::encode($this->country->unit2_name) . ' ID' : 'District ID',
+            'ward_id' => $this->country !== null ? Html::encode($this->country->unit3_name) . ' ID' : 'Ward ID',
+            'village_id' => $this->country !== null ? Html::encode($this->country->unit4_name) . ' ID' : 'Village ID',
+            'org_id' => 'External Organization ID',
+            'client_id' => 'Client ID',
             'farmer_name' => 'Farmer Name',
             'reg_date' => 'Reg Date',
             'phone' => 'Farmer Phone No.',
@@ -148,11 +153,13 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             ['project', 'project'],
             ['farmer_name', 'farmer_name'],
             ['odk_code', 'odk_code'],
-            'org_id',
+            'country_id',
             'region_id',
             'district_id',
             'ward_id',
             'village_id',
+            'org_id',
+            'client_id',
             'field_agent_id',
             'farm_type',
             'gender_code',
@@ -196,6 +203,9 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             }
             if (empty($this->name)) {
                 $this->name = $this->farmer_name;
+            }
+            if (empty($this->field_agent_name)) {
+                $this->fieldAgent->name;
             }
             $this->setAdditionalAttributesValues();
 
@@ -264,6 +274,14 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             'hhproblems',
             'hhproblems_other',
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getClient()
+    {
+        return $this->hasOne(Client::class, ['id' => 'client_id']);
     }
 
     /**

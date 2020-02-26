@@ -1,6 +1,5 @@
 <?php
 
-use backend\modules\core\models\OrganizationUnits;
 use common\helpers\Lang;
 use common\widgets\select2\Select2;
 use yii\bootstrap4\ActiveForm;
@@ -9,7 +8,7 @@ use yii\helpers\Html;
 /* @var $this \yii\web\View */
 /* @var $form ActiveForm */
 /* @var $controller \backend\controllers\BackendController */
-/* @var $model OrganizationUnits */
+/* @var $model \backend\modules\core\models\CountryRef */
 $controller = Yii::$app->controller;
 $this->title = $controller->getPageTitle();
 
@@ -39,23 +38,18 @@ $form = ActiveForm::begin([
 
 <div class="modal-body">
     <div class="hidden" id="my-modal-notif"></div>
-    <?= $form->field($model, 'code', []) ?>
+    <?= $form->field($model, 'iso2', []) ?>
     <?= $form->field($model, 'name', []) ?>
-    <?php if ($model->level > OrganizationUnits::LEVEL_REGION): ?>
-        <?= $form->field($model, 'parent_id')->widget(Select2::class, [
-            'data' => OrganizationUnits::getListData('id', 'name', false, ['level' => $model->level - 1, 'org_id' => $model->org_id]),
-            'modal' => true,
-            'pluginOptions' => [
-                'allowClear' => false
-            ],
-        ]) ?>
-    <?php endif; ?>
-    <?= $form->field($model, 'contact_name', []) ?>
-    <?= $form->field($model, 'contact_phone', []) ?>
-    <?= $form->field($model, 'contact_email', []) ?>
-    <?php if (!$model->isNewRecord): ?>
-        <?= $form->field($model, 'is_active', [])->checkbox() ?>
-    <?php endif; ?>
+    <?= $form->field($model, 'call_code', []) ?>
+    <?= $form->field($model, 'currency')->widget(Select2::class, [
+        'data' => \backend\modules\core\models\Currency::getListData(),
+        'modal' => true,
+        'theme' => Select2::THEME_BOOTSTRAP,
+        'pluginOptions' => [
+            'allowClear' => false
+        ],
+    ]) ?>
+    <?= $form->field($model, 'is_active', [])->checkbox() ?>
 </div>
 
 <div class="modal-footer">

@@ -29,6 +29,7 @@ MyApp.modules.reports = {};
         let selectedFields = [];
         let selectedFilterOperators = {};
         let selectedFilterValues = {};
+        let selectedFieldLabels = {};
         let selectedParentModel = null;
         let selectedParentModelTitle = null;
 
@@ -80,6 +81,9 @@ MyApp.modules.reports = {};
                     if(response.success){
                         let message = '<div class="alert alert-outline-success">' + response.message + '</div>';
                         swal("SUCCESS!", message, "success");
+                        if(response.redirectUrl !== ''){
+                            MyApp.utils.reload(response.redirectUrl, 2000);
+                        }
                     }
                     else {
                         if (typeof response.message === 'string' || response.message instanceof String) {
@@ -120,16 +124,22 @@ MyApp.modules.reports = {};
 
         let _populateSelected = function(e){
             var name = $(e).data('name');
+            var label = $(e).data('original-title');
             var parentModel = $(e).data('parent-model');
             var parentModelTitle = $(e).data('parent-model-title');
+
             // if parentModel changes, prompt to clear selectedFields
             if(selectedParentModel !== parentModel){
                 selectedFields.length = 0;
+                selectedFieldLabels = {};
             }
             // check for duplicates
             var index = selectedFields.indexOf(name);
             if (index <= -1) {
                 selectedFields.push(name);
+            }
+            if (selectedFieldLabels[name] === undefined){
+                selectedFieldLabels[name] = label;
             }
             //selectedFields.push(name);
             selectedParentModel = parentModel;
@@ -137,14 +147,17 @@ MyApp.modules.reports = {};
             //console.log(selectedParentModel);
             //console.log(name);
             //console.log(selectedFields);
+            //console.log(selectedFieldLabels);
             // write to html
             _showSelected();
         }
         let _removeSelected = function(e){
             var name = $(e).data('name');
             selectedFields = selectedFields.filter(function(e) { return e !== name; });
+            delete selectedFieldLabels[name];
             //console.log(name);
             //console.log(selectedFields);
+            //console.log(selectedFieldLabels);
             // write to html
             _showSelected();
             //_toggleQueryOptions();
@@ -159,7 +172,7 @@ MyApp.modules.reports = {};
                 var dropdown = _buildDropdownSelect(fieldName);
                 var filterInput = '<div class="col-md-4 mr-0 pr-0"><input name="filterValue['+fieldName+']" class="form-control form-control-sm" type="text" /></div>';
                 var removeBtn = '<div class="col-md-1 pt-2"><span class="flaticon2-delete removeField" data-name="'+fieldName+'"></span></div>';
-                var nameElem = '<div class="col-md-3"><span class="text-wrap word-wrap">'+ fieldName +'</span></div>';
+                var nameElem = '<div class="col-md-3"><span class="text-wrap word-wrap">'+ selectedFieldLabels[fieldName] +'</span></div>';
                 var item = '<li class="list-group-item d-flex pr-0 pl-0" data-index="'+index+'" data-name="'+fieldName+'">'+ nameElem + dropdown + filterInput + removeBtn +'</li>';
                 $($this.options.selectedFieldsHolder).append(item);
             });
@@ -198,7 +211,7 @@ MyApp.modules.reports = {};
         let _buildOrderByDropdown = function(){
             let options = '<option value=""> - Select Field - </option>';
             selectedFields.forEach(function (item, index) {
-                var option = '<option value="'+item+'">'+item+'</option>';
+                var option = '<option value="'+item+'">'+selectedFieldLabels[item]+'</option>';
                 options += option;
             });
             $($this.options.orderBySelector).html(options);
@@ -222,7 +235,7 @@ MyApp.modules.reports = {};
             _saveReport(this);
         });
 
-        $('#select_org_id').on('change', function (event) {
+        $('#select_country_id').on('change', function (event) {
             event.preventDefault();
             var elem = $('#report-builder-container');
             if($(elem).hasClass('hidden')){
@@ -259,6 +272,7 @@ MyApp.modules.reports = {};
             autofocus: true,
             extraKeys: {"Ctrl-Space": "autocomplete"},
             foldGutter: true,
+            readOnly: true,
         });
         const copy = new ClipboardJS('.btn-clipboard', {
             text: function (trigger) {
@@ -277,6 +291,90 @@ MyApp.modules.reports = {};
             console.error('Action:',e.action);
             console.error('Trigger:',e.trigger);
         });
+    }
+
+}(jQuery));
+
+// standard report
+
+(function ($) {
+    "use strict";
+    var STDREPORT = function (options) {
+        let defaultOptions = {
+            filterFormSelector: '#std-report-form',
+            submitButtonSelector: '#buildReport',
+            reportContainerSelector: '#reportContainer'
+        };
+        this.options = $.extend({}, defaultOptions, options || {});
+    }
+
+    STDREPORT.prototype.init = function () {
+        let $this = this;
+
+        let _load = function (e) {
+            let form = $($this.options.filterFormSelector),
+                url = form.attr('action');
+            $.ajax({
+                url: url,
+                type: form.attr('method'),
+                dataType: 'json',
+                data: form.serialize(),
+                success: function (response) {
+                    if(response.success){
+                        let message = '<div class="alert alert-outline-success">' + response.message + '</div>';
+                        swal("SUCCESS!", message, "success");
+                        if(response.redirectUrl !== ''){
+                            MyApp.utils.reload(response.redirectUrl, 2000);
+                        }
+                    }
+                    else {
+                        if (typeof response.message === 'string' || response.message instanceof String) {
+                            let message = '<div class="alert alert-outline-danger">' + response.message + '</div>';
+                            swal("ERROR!", message, "error");
+                        } else {
+                            let summary = '<ul>';
+                            if (typeof response.message === 'object') {
+                                $.each(response.message, function (i) {
+                                    if ($.isArray(response.message[i])) {
+                                        $.each(response.message[i], function (j, msg) {
+                                            let $input = $('#' + i);
+                                            $input.addClass('is-invalid');
+                                            $input.next('.invalid-feedback').html(msg);
+                                            summary += '<li>' + msg + '</li>';
+                                        });
+                                    }
+                                });
+                            }
+                            summary += '</ul>';
+                            swal("ERROR!", summary, "error");
+                        }
+                    }
+                },
+                beforeSend: function () {
+                    MyApp.utils.startBlockUI();
+                },
+                complete: function () {
+                    MyApp.utils.stopBlockUI();
+                },
+                error: function (xhr) {
+                    if (MyApp.DEBUG_MODE) {
+                        console.log(xhr);
+                    }
+                }
+            })
+        }
+
+        //on click
+        $($this.options.filterFormSelector).find('button[type="submit"]').on('click', function (event) {
+            event.preventDefault();
+            _load(this);
+        });
+
+    }
+
+    MyApp.modules.reports.stdreport = function (options) {
+        let obj = new STDREPORT(options);
+        obj.init();
     }
 
 }(jQuery));

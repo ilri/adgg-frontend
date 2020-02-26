@@ -44,7 +44,7 @@ class UploadMilkEvent extends UploadAnimalEvent implements ImportInterface
             $insert_data[$k] = $row;
         }
 
-        $model = new MilkingEvent(['org_id' => $this->org_id, 'event_type' => $this->event_type]);
+        $model = new MilkingEvent(['country_id' => $this->country_id, 'event_type' => $this->event_type]);
         $this->save($insert_data, $model, false);
     }
 

@@ -8,7 +8,7 @@ use api\controllers\ActiveController;
 use api\controllers\JwtAuthTrait;
 use backend\modules\conf\settings\SystemSettings;
 use backend\modules\core\models\CountriesDashboardStats;
-use backend\modules\core\models\Organization;
+use backend\modules\core\models\Country;
 
 class CountriesStatsController extends ActiveController
 {
@@ -26,11 +26,13 @@ class CountriesStatsController extends ActiveController
      */
     public function actionCountriesList()
     {
-        $searchModel = Organization::searchModel([
+        $user = \Yii::$app->user->identity;
+        $searchModel = Country::searchModel([
             'defaultOrder' => ['id' => SORT_ASC],
             'pageSize' => SystemSettings::getPaginationSize(),
             'enablePagination' => true,
         ]);
+        $searchModel->id = $user->country_id;
         return $searchModel->search();
     }
 
@@ -40,7 +42,7 @@ class CountriesStatsController extends ActiveController
     public function actionLanding()
     {
         $data = [];
-        $countries = Organization::find()->orderBy(['id' => SORT_ASC])->all();
+        $countries = Country::find()->orderBy(['id' => SORT_ASC])->all();
         foreach ($countries as $country) {
             $data[] = [
                 'Country Dashboard' => [
@@ -55,13 +57,17 @@ class CountriesStatsController extends ActiveController
     }
 
     /**
-     * @param null $report_id
-     * @param null $org_id
+     * @param $report_id
+     * @param $country_id
      * @return array
+     * @throws \Exception
      */
-    public function actionCountryReport($report_id = null, $org_id = null)
+    public function actionCountryReport($report_id, $country_id)
     {
-        $country = Organization::findOne(['id' => $org_id]);
-        return CountriesDashboardStats::getCountryReports($report_id, $country->id);
+        $user = \Yii::$app->user->identity;
+        if ($user->country_id !== null){
+            $country_id = $user->country_id;
+        }
+        return CountriesDashboardStats::getCountryReports($report_id, $country_id);
     }
 }

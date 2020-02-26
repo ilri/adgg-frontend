@@ -102,11 +102,10 @@ class ExcelUploadForm extends Model implements JobInterface
             $this->saveFile();
             $queue = Yii::$app->queue;
             $this->setUploadType();
-            $importQueue = ExcelImport::addToQueue($this->_uploadType, $this->file, $this->org_id ?? null);
+            $importQueue = ExcelImport::addToQueue($this->_uploadType, $this->file, $this->country_id ?? null);
             $this->itemId = $importQueue->id;
             $this->created_by = $importQueue->created_by;
             $id = $queue->push($this);
-
             return $id;
         } catch (Exception $e) {
             Yii::error($e->getMessage());

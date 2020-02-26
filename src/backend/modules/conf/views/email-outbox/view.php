@@ -10,8 +10,10 @@ use yii\widgets\DetailView;
 $this->title = Lang::t('Email Outbox #{id}', ['id' => $model->id]);
 ?>
 <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h4 class="modal-title"><?= Html::encode($this->title); ?></h4>
+    <h5 class="modal-title"><?= Html::encode($this->title); ?></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
 </div>
 <div class="modal-body">
     <?= DetailView::widget([

@@ -37,8 +37,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     'options' => ['class' => 'table detail-view table-striped'],
                     'attributes' => [
                         [
-                            'attribute' => 'org_id',
-                            'value' => $model->org->name,
+                            'attribute' => 'country_id',
+                            'value' => $model->country->name,
                         ],
                         [
                             'attribute' => 'farm_id',
@@ -119,9 +119,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         [
                             'attribute' => 'sire_tag_id',
-                        ],
-                        [
-                            'attribute' => 'bull_straw_id',
                         ],
                         [
                             'attribute' => 'sire_name',

@@ -15,7 +15,11 @@ use api\modules\v1\forms\ProvideEmail;
 use api\modules\v1\forms\ResetPassword;
 use api\modules\v1\models\User;
 use backend\modules\auth\forms\PasswordResetRequestForm;
+use backend\modules\auth\forms\ResetPasswordForm;
+use backend\modules\auth\models\PasswordResetCodes;
 use Yii;
+use yii\base\InvalidArgumentException;
+use yii\web\BadRequestHttpException;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 
@@ -25,7 +29,7 @@ class AuthController extends Controller
 
     public function getUnAuthenticatedActions()
     {
-        return ['login', 'begin-reset-password', 'complete-reset-password'];
+        return ['login', 'activation-code', 'new-password'];
     }
 
     /**
@@ -126,5 +130,40 @@ class AuthController extends Controller
             }
         }
         return $model;
+    }
+
+    public function actionActivationCode($username)
+    {
+        $model = PasswordResetCodes::createCode($username);
+        if (empty($model)) {
+            return ['success' => false, 'message' => 'Could not create the activation code'];
+        } else {
+            return ['success' => true, 'message' => 'Activation code successfully created.'];
+        }
+    }
+
+    /**
+     * @param string $token
+     * @return array
+     * @throws BadRequestHttpException (
+     * @throws \yii\base\Exception
+     * @throws \yii\base\InvalidConfigException
+     */
+
+    public function actionNewPassword($token)
+    {
+        try {
+            $model = new ResetPasswordForm($token, ['is_api' => true]);
+        } catch (InvalidArgumentException $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
+
+        $model->attributes = Yii::$app->getRequest()->getBodyParams();
+        if ($model->validate() && $model->resetPassword()) {
+            $msg = 'New password saved successfully';
+            return ['success' => true, 'message' => $msg];
+        }
+        Yii::$app->response->statusCode = 400;
+        return ['success' => false, 'error' => $model->getErrors()];
     }
 }

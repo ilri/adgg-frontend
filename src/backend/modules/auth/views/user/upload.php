@@ -10,7 +10,7 @@ use yii\helpers\Inflector;
 
 $controller = Yii::$app->controller;
 $this->title = Lang::t('Upload {resource}', ['resource' => Inflector::pluralize($controller->resourceLabel)]);
-$this->params['breadcrumbs'][] = ['label' => Utils::pluralize($controller->resourceLabel), 'url' => ['index', 'org_id' => $model->org_id, 'level_id' => $model->level_id]];
+$this->params['breadcrumbs'][] = ['label' => Utils::pluralize($controller->resourceLabel), 'url' => ['index', 'country_id' => $model->country_id, 'level_id' => $model->level_id]];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 

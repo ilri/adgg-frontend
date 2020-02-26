@@ -19,17 +19,12 @@ use yii\helpers\Url;
     },
     'columns' => [
         [
-            'attribute' => 'herd_id',
-        ],
-        [
-            'attribute' => 'herd_code',
-        ],
-        [
             'attribute' => 'name',
         ],
         [
             'attribute' => 'reg_date',
             'format' => ['date', 'php:d-M-Y'],
+            'visible' => false,
         ],
         [
             'attribute' => 'farmerName',
@@ -48,9 +43,6 @@ use yii\helpers\Url;
             'value' => function (AnimalHerd $model) {
                 return $model->getRelationAttributeValue('farm', 'email');
             },
-        ],
-        [
-            'attribute' => 'project',
         ],
         [
             'class' => common\widgets\grid\ActionColumn::class,

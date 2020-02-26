@@ -6,8 +6,9 @@ use backend\modules\core\models\ChoiceTypes;
 use common\helpers\Lang;
 use common\widgets\grid\GridView;
 use yii\helpers\Url;
+use yii\web\View;
 
-/* @var $this \yii\web\View */
+/* @var $this View */
 /* @var $model AnimalEvent */
 ?>
 <?= GridView::widget([

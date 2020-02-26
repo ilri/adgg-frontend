@@ -12,43 +12,44 @@ namespace backend\modules\core\models;
 use backend\modules\auth\Session;
 use common\helpers\DbUtils;
 use common\helpers\Utils;
+use common\models\ActiveRecord;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 
 /**
- * Trait OrganizationDataTrait
+ *
  * @package backend\modules\core\models
  *
- * @property Organization $org
+ * @property Country $country
  */
-trait OrganizationDataTrait
+trait CountryDataTrait
 {
     /**
      * @param string $condition
      * @param array $params
      * @param bool $strict
-     * @param string $orgIdAttribute
+     * @param string $countryIdAttribute
      * @return array
      * @throws \Exception
      */
-    public static function appendOrgSessionIdCondition($condition = '', $params = [], $strict = false, $orgIdAttribute = 'org_id')
+    public static function appendOrgSessionIdCondition($condition = '', $params = [], $strict = false, $countryIdAttribute = 'country_id')
     {
-        if (Utils::isWebApp() && Session::isOrganization()) {
+        if (Utils::isWebApp() && Session::isCountry()) {
             if (is_array($condition)) {
-                $condition[$orgIdAttribute] = Session::getOrgId();
+                $condition[$countryIdAttribute] = Session::getCountryId();
             } else {
-                list($condition, $params) = DbUtils::appendCondition($orgIdAttribute, Session::getOrgId(), $condition, $params);
+                list($condition, $params) = DbUtils::appendCondition($countryIdAttribute, Session::getCountryId(), $condition, $params);
             }
-        } elseif ($strict && Utils::isWebApp() && !Session::isOrganization()) {
+        } elseif ($strict && Utils::isWebApp() && !Session::isCountry()) {
             if (is_array($condition)) {
-                if (!isset($condition[$orgIdAttribute])) {
-                    $condition[$orgIdAttribute] = null;
+                if (!isset($condition[$countryIdAttribute])) {
+                    $condition[$countryIdAttribute] = null;
                 }
             } else {
                 if (!empty($condition)) {
                     $condition .= ' AND ';
                 }
-                $condition .= '[[' . $orgIdAttribute . ']] IS NULL';
+                $condition .= '[[' . $countryIdAttribute . ']] IS NULL';
             }
         }
         return [$condition, $params];
@@ -57,12 +58,12 @@ trait OrganizationDataTrait
     /**
      * @param $condition
      * @param bool $throwException
-     * @param string $orgIdAttribute
-     * @return $this
+     * @param string $countryIdAttribute
+     * @return $this|ActiveRecord
      * @throws ForbiddenHttpException
      * @throws NotFoundHttpException
      */
-    public static function loadModel($condition, $throwException = true, $orgIdAttribute = 'org_id')
+    public static function loadModel($condition, $throwException = true, $countryIdAttribute = 'country_id')
     {
         if (is_string($condition) && !is_numeric($condition)) {
             $model = parent::loadModel(['uuid' => $condition], false);
@@ -73,7 +74,7 @@ trait OrganizationDataTrait
             if ($throwException) {
                 throw new NotFoundHttpException('The requested resource was not found.');
             }
-        } elseif (Utils::isWebApp() && Session::isOrganization() && $model->{$orgIdAttribute} != Session::getOrgId()) {
+        } elseif (Utils::isWebApp() && Session::isCountry() && $model->{$countryIdAttribute} != Session::getCountryId()) {
             throw new ForbiddenHttpException();
         }
         return $model;
@@ -92,8 +93,8 @@ trait OrganizationDataTrait
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getOrg()
+    public function getCountry()
     {
-        return $this->hasOne(Organization::class, ['id' => 'org_id']);
+        return $this->hasOne(Country::class, ['id' => 'country_id']);
     }
 }

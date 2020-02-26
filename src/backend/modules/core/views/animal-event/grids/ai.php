@@ -9,6 +9,8 @@ use yii\helpers\Url;
 
 /* @var $this \yii\web\View */
 /* @var $model AnimalEvent */
+/* @var $upload_url string */
+
 ?>
 <?= GridView::widget([
     'searchModel' => $model,

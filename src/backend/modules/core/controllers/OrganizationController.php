@@ -1,111 +1,79 @@
 <?php
 /**
  * Created by PhpStorm.
- * @author: Fred <mconyango@gmail.com>
- * Date: 2019-05-23
- * Time: 2:46 PM
+ * @author: Fred <fred@btimillman.com>
+ * Date & Time: 2017-09-27 3:03 PM
  */
 
 namespace backend\modules\core\controllers;
 
 
+use backend\modules\auth\Acl;
 use backend\modules\core\Constants;
+use backend\modules\core\models\Country;
 use backend\modules\core\models\Organization;
-use common\helpers\Lang;
-use Yii;
-use yii\db\Exception;
-use common\helpers\Url;
 
 class OrganizationController extends Controller
 {
-
+    /**
+     * @inheritdoc
+     */
     public function init()
     {
         parent::init();
-        $this->resource = Constants::RES_COUNTRY;
-        $this->resourceLabel = 'Country';
+        $this->resourceLabel = 'Organization';
+        $this->resource = Constants::RES_ORGANIZATION;
     }
 
-
-    public function actionIndex()
+    public function actionIndex($country_id)
     {
+        $this->hasPrivilege(Acl::ACTION_VIEW);
+        $countryModel = Country::loadModel(['id' => $country_id]);
         $searchModel = Organization::searchModel([
-            'defaultOrder' => ['name' => SORT_ASC],
+            'defaultOrder' => ['id' => SORT_ASC],
         ]);
         $searchModel->is_active = 1;
+        $searchModel->country_id = $countryModel->id;
 
         return $this->render('index', [
             'searchModel' => $searchModel,
+            'countryModel' => $countryModel,
         ]);
+    }
+
+    public function actionCreate($country_id = null)
+    {
+        $this->hasPrivilege(Acl::ACTION_CREATE);
+        $model = new Organization(['is_active' => 1, 'country_id' => $country_id]);
+        return $model->simpleAjaxSave();
     }
 
     public function actionView($id)
     {
-        $model = $this->loadModel($id);
-        return $this->render('view', ['model' => $model]);
-    }
+        $this->hasPrivilege(Acl::ACTION_VIEW);
+        $model = Organization::loadModel($id);
 
-    public function actionCreate()
-    {
-        $model = new Organization([]);
-
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $transaction = Yii::$app->db->beginTransaction();
-            try {
-                $model->save(false);
-                $transaction->commit();
-
-                Yii::$app->session->setFlash('success', Lang::t('SUCCESS_MESSAGE'));
-
-                return $this->redirect(Url::getReturnUrl(['view', 'id' => $model->id]));
-            } catch (\Exception $e) {
-                $transaction->rollBack();
-                throw new Exception($e->getMessage());
-            }
-        }
-
-        return $this->render('create', [
+        return $this->renderAjax('view', [
             'model' => $model,
         ]);
     }
 
     public function actionUpdate($id)
     {
-        $model = $this->loadModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $transaction = Yii::$app->db->beginTransaction();
-            try {
-                $model->save(false);
-                $transaction->commit();
-
-                Yii::$app->session->setFlash('success', Lang::t('SUCCESS_MESSAGE'));
-
-                return $this->redirect(Url::getReturnUrl(['view', 'id' => $model->id]));
-            } catch (\Exception $e) {
-                $transaction->rollBack();
-                throw new Exception($e->getMessage());
-            }
-        }
-
-        return $this->render('update', [
-            'model' => $model,
-        ]);
+        $this->hasPrivilege(Acl::ACTION_UPDATE);
+        $model = Organization::loadModel($id);
+        return $model->simpleAjaxSave();
     }
 
-    /**
-     * @param $id
-     * @return Organization
-     * @throws \yii\web\NotFoundHttpException
-     */
-    protected function loadModel($id)
+    public function actionDelete($id)
     {
-        if (is_string($id) && !is_numeric($id)) {
-            $model = Organization::loadModel(['uuid' => $id]);
-        } else {
-            $model = Organization::loadModel($id);
-        }
+        $this->hasPrivilege(Acl::ACTION_DELETE);
+        return Organization::softDelete($id);
+    }
 
-        return $model;
+    public function actionGetList($country_id = null, $placeholder = false)
+    {
+        $data = Organization::getListData('id', 'name', $placeholder, ['country_id' => $country_id]);
+        return json_encode($data);
     }
 }

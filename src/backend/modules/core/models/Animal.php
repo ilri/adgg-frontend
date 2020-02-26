@@ -14,7 +14,6 @@ use common\models\CustomValidationsTrait;
 use common\widgets\highchart\HighChart;
 use common\widgets\highchart\HighChartInterface;
 use Yii;
-use yii\base\InvalidArgumentException;
 use yii\db\Expression;
 use yii\helpers\Inflector;
 
@@ -26,11 +25,13 @@ use yii\helpers\Inflector;
  * @property string $tag_id
  * @property int $farm_id
  * @property int $herd_id
- * @property int $org_id
+ * @property int $country_id
  * @property int $region_id
  * @property int $district_id
  * @property int $ward_id
  * @property int $village_id
+ * @property int $org_id
+ * @property int $client_id
  * @property int $animal_type
  * @property string $color
  * @property string $birthdate
@@ -40,7 +41,6 @@ use yii\helpers\Inflector;
  * @property int $sire_id
  * @property string $sire_tag_id
  * @property string $sire_name
- * @property string $bull_straw_id
  * @property int $dam_id
  * @property string $dam_tag_id
  * @property string $dam_name
@@ -61,6 +61,7 @@ use yii\helpers\Inflector;
  * @property string $updated_at
  * @property int $updated_by
  * @property string|array $additional_attributes
+ * @property string $animal_eartag_id
  *
  * @property Farm $farm
  * @property Animal $sire
@@ -71,7 +72,7 @@ use yii\helpers\Inflector;
  */
 class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttributeInterface, UploadExcelInterface, HighChartInterface
 {
-    use ActiveSearchTrait, OrganizationUnitDataTrait, TableAttributeTrait, CustomValidationsTrait, AnimalValidators;
+    use ActiveSearchTrait, CountryUnitDataTrait, TableAttributeTrait, CustomValidationsTrait, AnimalValidators;
 
     const ANIMAL_TYPE_HEIFER = 1;
     const ANIMAL_TYPE_COW = 2;
@@ -102,18 +103,18 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     {
         return [
             [['farm_id', 'tag_id'], 'required'],
-            [['farm_id', 'herd_id', 'org_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'animal_type', 'is_derived_birthdate', 'sire_type', 'sire_id', 'dam_id', 'main_breed', 'breed_composition', 'secondary_breed', 'entry_type'], 'integer'],
+            [['farm_id', 'herd_id', 'country_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'animal_type', 'is_derived_birthdate', 'sire_type', 'sire_id', 'dam_id', 'main_breed', 'breed_composition', 'secondary_breed', 'entry_type'], 'integer'],
             [['birthdate', 'deformities', 'entry_date'], 'safe'],
             [['purchase_cost'], 'number'],
             [['birthdate', 'entry_date'], 'validateNoFutureDate'],
-            [['name', 'tag_id', 'sire_tag_id', 'sire_name', 'bull_straw_id', 'dam_tag_id', 'dam_name', 'color'], 'string', 'max' => 128],
+            [['name', 'tag_id', 'sire_tag_id', 'sire_name', 'dam_tag_id', 'dam_name', 'color'], 'string', 'max' => 128],
             [['animal_photo', 'map_address'], 'string', 'max' => 255],
             [['farm_id'], 'exist', 'skipOnError' => true, 'targetClass' => Farm::class, 'targetAttribute' => ['farm_id' => 'id']],
-            ['tag_id', 'unique', 'targetAttribute' => ['org_id', 'tag_id'], 'message' => '{attribute} already exists.'],
+            ['tag_id', 'unique', 'targetAttribute' => ['country_id', 'tag_id'], 'message' => '{attribute} already exists.'],
             [['sire_tag_id', 'dam_tag_id'], 'validateSireOrDam'],
             ['sire_tag_id', 'validateSireBisexual'],
             ['dam_tag_id', 'validateDamBisexual'],
-            [['tmp_animal_photo', 'additional_attributes'], 'safe'],
+            [['tmp_animal_photo', 'additional_attributes', 'org_id', 'client_id'], 'safe'],
             [$this->getAdditionalAttributes(), 'safe'],
             [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
@@ -129,13 +130,15 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'id' => 'ID',
             'name' => 'Animal Name',
             'tag_id' => 'Animal Tag ID',
-            'farm_id' => 'Farm',
-            'herd_id' => 'Herd',
-            'org_id' => 'Country',
-            'region_id' => 'Region',
-            'district_id' => 'District',
-            'ward_id' => 'Ward',
-            'village_id' => 'Village',
+            'farm_id' => 'Farm ID',
+            'herd_id' => 'Herd ID',
+            'country_id' => 'Country ID',
+            'region_id' => 'Region ID',
+            'district_id' => 'District ID',
+            'ward_id' => 'Ward ID',
+            'village_id' => 'Village ID',
+            'org_id' => 'External Organization ID',
+            'client_id' => 'Client ID',
             'animal_type' => 'Animal Type',
             'color' => 'Animal Color',
             'birthdate' => 'Date of Birth',
@@ -217,27 +220,29 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
      */
     public function searchParams()
     {
+        $alias = static::tableName();
         return [
-            ['tag_id', 'tag_id'],
-            ['name', 'name'],
-            ['color', 'color'],
-            ['sire_name', 'sire_name'],
-            ['bull_straw_id', 'bull_straw_id'],
-            ['sire_tag_id', 'sire_tag_id'],
-            ['dam_tag_id', 'dam_tag_id'],
-            ['dam_name', 'dam_name'],
-            'farm_id',
-            'org_id',
-            'region_id',
-            'district_id',
-            'ward_id',
-            'village_id',
-            'animal_type',
-            'dam_id',
-            'sire_id',
-            'herd_id',
-            'entry_type',
-            'main_breed',
+            [$alias . '.tag_id', 'tag_id'],
+            [$alias . '.name', 'name'],
+            [$alias . '.color', 'color'],
+            [$alias . '.sire_name', 'sire_name'],
+            [$alias . '.sire_tag_id', 'sire_tag_id'],
+            [$alias . '.dam_tag_id', 'dam_tag_id'],
+            [$alias . '.dam_name', 'dam_name'],
+            [$alias . '.farm_id', 'farm_id', '', '='],
+            [$alias . '.country_id', 'country_id', '', '='],
+            [$alias . '.region_id', 'region_id', '', '='],
+            [$alias . '.district_id', 'district_id', '', '='],
+            [$alias . '.ward_id', 'ward_id', '', '='],
+            [$alias . '.village_id', 'village_id', '', '='],
+            [$alias . '.org_id', 'org_id', '', '='],
+            [$alias . '.client_id', 'client_id', '', '='],
+            [$alias . '.animal_type', 'animal_type', '', '='],
+            [$alias . '.dam_id', 'dam_id', '', '='],
+            [$alias . '.sire_id', 'sire_id', '', '='],
+            [$alias . '.herd_id', 'herd_id', '', '='],
+            [$alias . '.entry_type', 'entry_type', '', '='],
+            [$alias . '.main_breed', 'main_breed', '', '='],
         ];
     }
 
@@ -282,6 +287,15 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
         return $fields;
     }
 
+    public static function decodeDeformities($deformities){
+        $deformities = json_decode($deformities);
+        $decoded = [];
+        foreach ($deformities as $key => $value) {
+            $decoded[] = Choices::getLabel(ChoiceTypes::CHOICE_TYPE_CALVE_DEFORMITY, $value);
+        };
+        return implode(',', $decoded);
+    }
+
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
@@ -290,11 +304,13 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
                 $this->latlng = new Expression("ST_GeomFromText('POINT({$this->latitude} {$this->longitude})')");
             }
             $this->setImage('animal_photo');
-            $this->org_id = $this->farm->org_id;
+            $this->country_id = $this->farm->country_id;
             $this->region_id = $this->farm->region_id;
             $this->district_id = $this->farm->district_id;
             $this->ward_id = $this->farm->ward_id;
             $this->village_id = $this->farm->village_id;
+            $this->org_id = $this->farm->org_id;
+            $this->client_id = $this->farm->client_id;
             if (!empty($this->deformities)) {
                 if (is_string($this->deformities)) {
                     $this->deformities = array_map('trim', explode(' ', $this->deformities));
@@ -313,6 +329,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
         }
         return false;
     }
+
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
@@ -432,7 +449,6 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'animal_sireknown',
             'sire_tag_id',
             'sire_name',
-            'bull_straw_id',
             'animal_damknown',
             'dam_tag_id',
             'dam_name',
@@ -553,5 +569,11 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
                 ]
             ];
         }
+    }
+
+    public static function getListData($valueColumn = 'id', $textColumn = 'name', $prompt = false, $condition = '', $params = [], $options = [])
+    {
+        $options['orderBy'] = ['id' => SORT_ASC];
+        return parent::getListData($valueColumn, $textColumn, $prompt, $condition, $params, $options);
     }
 }

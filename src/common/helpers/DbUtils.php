@@ -29,7 +29,7 @@ class DbUtils
      */
     public static function appendCondition($column, $value, $condition = '', $params = [], $conditionConnector = 'AND', $operator = '=')
     {
-        $paramKey = $column;
+        $paramKey = Str::removeNonAlphaNumericCharacters($column);
         if (!is_array($condition)) {
             if (strtolower($operator) === 'like') {
                 $value = '%' . $value . '%';
@@ -37,12 +37,7 @@ class DbUtils
             if (!empty($condition))
                 $condition .= ' ' . $conditionConnector . ' ';
             $i = rand(1, 100);
-            $escapedColumn = $column;
-            if (!strpos($column, '(')) {
-                $escapedColumn = '[[' . $column . ']]';
-            } else {
-                $paramKey = random_int(1, 10000000);
-            }
+            $escapedColumn = static::escapeColumn($column);
             if ($value === null && ($operator === '=' || $operator === '<>' || $operator === '!=')) {
                 if ($operator === '=') {
                     $condition .= $escapedColumn . ' IS NULL';
@@ -62,21 +57,20 @@ class DbUtils
     }
 
     /**
-     * @param $date_field
+     * @param $dateField
      * @param Connection $db
      * @return string
      */
-    public static function castDATE($date_field, $db = null)
+    public static function castDATE($dateField, $db = null)
     {
-        $default = 'DATE([[' . $date_field . ']])';
+        $escapedDateField = static::escapeColumn($dateField);
+        $default = 'DATE(' . $escapedDateField . ')';
         if (is_null($db))
             $db = Yii::$app->db;
 
         switch ($db->getDriverName()) {
-            case self::DRIVER_MYSQL:
-                return $default;
-                break;
             case self::DRIVER_POSTGRES:
+            case self::DRIVER_MYSQL:
                 return $default;
                 break;
             default:
@@ -85,9 +79,10 @@ class DbUtils
         }
     }
 
-    public static function castMONTH($date_field, $db = null)
+    public static function castMONTH($dateField, $db = null)
     {
-        $default = 'MONTH([[' . $date_field . ']])';
+        $escapedDateField = static::escapeColumn($dateField);
+        $default = 'MONTH(' . $escapedDateField . ')';
         if (is_null($db))
             $db = Yii::$app->db;
 
@@ -96,7 +91,7 @@ class DbUtils
                 return $default;
                 break;
             case self::DRIVER_POSTGRES:
-                return 'extract(month from [[' . $date_field . ']])';
+                return 'extract(month from ' . $escapedDateField . ')';
                 break;
             default:
                 return $default;
@@ -105,13 +100,14 @@ class DbUtils
     }
 
     /**
-     * @param $date_field
+     * @param $dateField
      * @param Connection $db
      * @return string
      */
-    public static function castYEAR($date_field, $db = null)
+    public static function castYEAR($dateField, $db = null)
     {
-        $default = 'YEAR([[' . $date_field . ']])';
+        $escapedDateField = static::escapeColumn($dateField);
+        $default = 'YEAR(' . $escapedDateField . ')';
         if (is_null($db))
             $db = Yii::$app->db;
 
@@ -120,7 +116,7 @@ class DbUtils
                 return $default;
                 break;
             case self::DRIVER_POSTGRES:
-                return 'extract(year from [[' . $date_field . ']])';
+                return 'extract(year from ' . $escapedDateField . ')';
                 break;
             default:
                 return $default;
@@ -143,15 +139,15 @@ class DbUtils
             $db = Yii::$app->db;
         if (!empty($condition))
             $condition .= ' AND ';
-
+        $escapedDateField = static::escapeColumn($dateField);
 
         switch ($db->getDriverName()) {
             case self::DRIVER_MYSQL:
-                $condition .= 'YEARWEEK([[' . $dateField . ']],1)=YEARWEEK(:' . $dateField . ',1)';
+                $condition .= 'YEARWEEK(' . $escapedDateField . ',1)=YEARWEEK(:' . $dateField . ',1)';
                 $params[':' . $dateField] = $dateValue;
                 break;
             case self::DRIVER_POSTGRES:
-                $condition .= 'to_char([[' . $dateField . ']],\'IYYY_IW\')=to_char(:' . $dateField . '::date,\'IYYY_IW\')';
+                $condition .= 'to_char(' . $escapedDateField . ',\'IYYY_IW\')=to_char(:' . $dateField . '::date,\'IYYY_IW\')';
                 $params[':' . $dateField] = $dateValue;
                 break;
             default:
@@ -169,6 +165,7 @@ class DbUtils
      * @param array $params
      * @param string $operator IN | NOT IN
      * @return array
+     * @throws \Exception
      */
     public static function appendInCondition($column, $values, $condition = '', $params = [], $operator = 'IN')
     {
@@ -180,17 +177,19 @@ class DbUtils
         if (!empty($condition))
             $condition .= ' AND ';
         $param_count = 0;
-        $param_prefix = ':mc_' . $column;
+        $escapedColumn = static::escapeColumn($column);
+        $paramKey = Str::removeNonAlphaNumericCharacters($column);
+        $param_prefix = ':mc_' . $paramKey;
         if (($n = count($values)) < 1)
             $condition .= '0=1';
         // 0=1 is used because in MSSQL value alone can't be used in WHERE
         elseif ($n === 1) {
             $value = reset($values);
             if ($value === null)
-                $condition .= '[[' . $column . ']]' . ' IS NULL';
+                $condition .= $escapedColumn . ' IS NULL';
             else {
                 $operator = strtolower($operator) === 'in' ? '=' : '<>';
-                $condition .= '[[' . $column . ']]' . $operator . $param_prefix . $param_count;
+                $condition .= $escapedColumn . $operator . $param_prefix . $param_count;
                 $params[$param_prefix . $param_count] = $value;
             }
         } else {
@@ -199,9 +198,21 @@ class DbUtils
                 $in[] = $param_prefix . $param_count;
                 $params[$param_prefix . $param_count++] = $value;
             }
-            $condition .= '[[' . $column . ']]' . ' ' . $operator . ' (' . implode(', ', $in) . ')';
+            $condition .= $escapedColumn . ' ' . $operator . ' (' . implode(', ', $in) . ')';
         }
 
         return [$condition, $params];
+    }
+
+    /**
+     * @param string $column
+     * @return string
+     */
+    public static function escapeColumn(string $column): string
+    {
+        if (!strpos($column, '(') && !strpos($column, '.') && !strpos($column, '[')) {
+            $column = '[[' . $column . ']]';
+        }
+        return $column;
     }
 }

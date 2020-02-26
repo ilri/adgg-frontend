@@ -9,6 +9,7 @@
 namespace backend\modules\core\controllers;
 
 
+use backend\modules\auth\Acl;
 use backend\modules\core\Constants;
 use backend\modules\core\models\ExcelImport;
 use common\helpers\FileManager;
@@ -24,8 +25,9 @@ class ExcelUploadStatusController extends Controller
     }
 
 
-    public function actionIndex($id = null)
+    public function actionIndex($id = null, $country_id = null)
     {
+        $this->hasPrivilege(Acl::ACTION_VIEW);
         $condition = '';
         $params = [];
         $searchModel = ExcelImport::searchModel([
@@ -34,6 +36,7 @@ class ExcelUploadStatusController extends Controller
             'params' => $params,
             'with' => [],
         ]);
+        $searchModel->country_id = $country_id;
 
         if (is_numeric($id)) {
             $searchModel->id = $id;
@@ -48,6 +51,7 @@ class ExcelUploadStatusController extends Controller
 
     public function actionDownloadFile($id)
     {
+        $this->hasPrivilege(Acl::ACTION_UPDATE);
         $model = ExcelImport::loadModel($id);
         FileManager::downloadFile($model->getFilePath(), Str::removeWhitespace($model->file_name));
     }
@@ -61,6 +65,7 @@ class ExcelUploadStatusController extends Controller
 
     public function actionDelete($id)
     {
+        $this->hasPrivilege(Acl::ACTION_DELETE);
         return ExcelImport::softDelete($id);
     }
 }

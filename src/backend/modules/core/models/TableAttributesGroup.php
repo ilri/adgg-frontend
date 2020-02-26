@@ -56,7 +56,7 @@ class TableAttributesGroup extends ActiveRecord implements ActiveSearchInterface
             'id' => 'ID',
             'name' => 'Group Name',
             'description' => 'Description',
-            'table_id' => 'Table',
+            'table_id' => 'Table ID',
             'is_active' => 'Active',
             'created_at' => 'Created At',
             'created_by' => 'Created By',

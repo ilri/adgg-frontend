@@ -9,6 +9,7 @@
 namespace backend\modules\core\controllers;
 
 
+use backend\modules\auth\Acl;
 use backend\modules\core\models\ExtendableTable;
 use backend\modules\core\models\TableAttribute;
 use backend\modules\core\models\TableAttributesGroup;
@@ -34,9 +35,10 @@ class ExtendableTableController extends MasterDataController
 
     public function actionIndex($table_id = ExtendableTable::TABLE_FARM)
     {
+        $this->hasPrivilege(Acl::ACTION_VIEW);
         $this->setResourceLabel($table_id);
         $searchModel = TableAttribute::searchModel([
-            'defaultOrder' => ['group_id' => SORT_ASC, 'attribute_key' => SORT_ASC],
+            'defaultOrder' => ['group_id' => SORT_ASC, 'id' => SORT_ASC],
             'with' => ['group', 'listType'],
         ]);
         $searchModel->is_active = 1;

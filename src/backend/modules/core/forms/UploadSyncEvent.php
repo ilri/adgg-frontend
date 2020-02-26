@@ -44,7 +44,7 @@ class UploadSyncEvent extends UploadAnimalEvent implements ImportInterface
             $insert_data[$k] = $row;
         }
 
-        $model = new SyncEvent(['org_id' => $this->org_id, 'event_type' => $this->event_type]);
+        $model = new SyncEvent(['country_id' => $this->country_id, 'event_type' => $this->event_type]);
         $this->save($insert_data, $model, false);
     }
 

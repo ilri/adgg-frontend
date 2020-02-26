@@ -16,11 +16,13 @@ use common\models\CustomValidationsTrait;
  * @property int $id
  * @property int $animal_id
  * @property int $event_type
- * @property int $org_id
+ * @property int $country_id
  * @property int $region_id
  * @property int $district_id
  * @property int $ward_id
  * @property int $village_id
+ * @property int $org_id
+ * @property int $client_id
  * @property string $event_date
  * @property string $latitude
  * @property string $longitude
@@ -36,13 +38,13 @@ use common\models\CustomValidationsTrait;
  * @property string $lactation_number
  * @property string|array $additional_attributes
  * @property Animal $animal
+ * @property Country $country
  * @property Users $fieldAgent
  * @property AnimalEvent $lactation
- * @property
  */
 class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAttributeInterface
 {
-    use ActiveSearchTrait, OrganizationUnitDataTrait, TableAttributeTrait, CustomValidationsTrait, AnimalEventValidators;
+    use ActiveSearchTrait, CountryUnitDataTrait, TableAttributeTrait, CustomValidationsTrait, AnimalEventValidators;
 
     const EVENT_TYPE_CALVING = 1;
     const EVENT_TYPE_MILKING = 2;
@@ -73,12 +75,13 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     {
         return [
             [['animal_id', 'event_type', 'event_date'], 'required'],
-            [['animal_id', 'event_type', 'org_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'field_agent_id'], 'integer'],
+            [['animal_id', 'event_type', 'country_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'field_agent_id'], 'integer'],
             [['event_date'], 'date', 'format' => 'php:Y-m-d'],
             [['latitude', 'longitude'], 'number'],
             [['map_address', 'uuid'], 'string', 'max' => 255],
             ['event_date', 'validateNoFutureDate'],
-            ['event_date', 'unique', 'targetAttribute' => ['org_id', 'animal_id', 'event_type', 'event_date'], 'message' => '{attribute} should be unique per animal'],
+            ['event_date', 'unique', 'targetAttribute' => ['country_id', 'animal_id', 'event_type', 'event_date'], 'message' => '{attribute} should be unique per animal'],
+            [['org_id', 'client_id'], 'safe'],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
     }
@@ -90,13 +93,15 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     {
         $labels = [
             'id' => 'ID',
-            'animal_id' => 'Animal',
+            'animal_id' => 'Animal ID',
             'event_type' => 'Event Type',
-            'org_id' => 'Country',
-            'region_id' => 'Region',
-            'district_id' => 'District',
-            'ward_id' => 'Ward',
-            'village_id' => 'Village',
+            'country_id' => 'Country ID',
+            'region_id' => 'Region ID',
+            'district_id' => 'District ID',
+            'ward_id' => 'Ward ID',
+            'village_id' => 'Village ID',
+            'org_id' => 'External Organization ID',
+            'client_id' => 'Client ID',
             'event_date' => 'Event Date',
             'latitude' => 'Latitude',
             'longitude' => 'Longitude',
@@ -108,7 +113,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             'updated_at' => 'Updated At',
             'updated_by' => 'Updated By',
             'animalTagId' => 'Animal Tag Id',
-            'field_agent_id' => 'Field Agent'
+            'field_agent_id' => 'Field Agent ID'
         ];
 
         return array_merge($labels, $this->getOtherAttributeLabels());
@@ -147,11 +152,13 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
         return [
             'animal_id',
             'event_type',
-            'org_id',
+            'country_id',
             'region_id',
             'district_id',
             'ward_id',
             'village_id',
+            'org_id',
+            'client_id',
             'field_agent_id',
         ];
     }
@@ -170,11 +177,13 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
         if (parent::beforeSave($insert)) {
             $this->ignoreAdditionalAttributes = true;
             $this->setLocationData();
-            $this->org_id = $this->animal->org_id;
+            $this->country_id = $this->animal->country_id;
             $this->region_id = $this->animal->region_id;
             $this->district_id = $this->animal->district_id;
             $this->ward_id = $this->animal->ward_id;
             $this->village_id = $this->animal->village_id;
+            $this->org_id = $this->animal->org_id;
+            $this->client_id = $this->animal->client_id;
             $this->setAdditionalAttributesValues();
             $this->setLactationId();
             return true;

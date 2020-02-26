@@ -14,11 +14,14 @@ use backend\modules\auth\Session;
 use backend\modules\core\Constants;
 use backend\modules\core\forms\UploadAnimals;
 use backend\modules\core\models\Animal;
+use backend\modules\core\models\Country;
+use backend\modules\core\models\Farm;
 use common\controllers\UploadExcelTrait;
 use common\helpers\Lang;
 use common\helpers\Url;
 use Yii;
 use yii\db\Exception;
+use function foo\func;
 
 class AnimalController extends Controller
 {
@@ -31,22 +34,27 @@ class AnimalController extends Controller
         $this->resourceLabel = 'Animal';
     }
 
-    public function actionIndex($org_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $animal_type = null, $farm_id = null, $main_breed = null, $name = null, $tag_id = null, $sire_tag_id = null, $dam_tag_id = null)
+    public function actionIndex($country_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $animal_type = null, $farm_id = null, $farm_type = null, $main_breed = null, $name = null, $tag_id = null, $sire_tag_id = null, $dam_tag_id = null)
     {
-        $org_id = Session::getOrgId($org_id);
+        $this->hasPrivilege(Acl::ACTION_VIEW);
+        $country_id = Session::getCountryId($country_id);
         $region_id = Session::getRegionId($region_id);
         $district_id = Session::getDistrictId($district_id);
         $ward_id = Session::getWardId($ward_id);
         $village_id = Session::getVillageId($village_id);
+        $country = Country::findOne(['id' => $country_id]);
         $condition = '';
         $params = [];
         $searchModel = Animal::searchModel([
             'defaultOrder' => ['id' => SORT_ASC],
             'condition' => $condition,
             'params' => $params,
+            'joinWith' => ['farm' => function (yii\db\ActiveQuery $query) use ($farm_type) {
+                $query->andFilterWhere([Farm::tableName() . '.farm_type' => $farm_type]);
+            }],
             'with' => ['farm', 'region', 'district', 'ward', 'village', 'sire', 'dam'],
         ]);
-        $searchModel->org_id = $org_id;
+        $searchModel->country_id = $country_id;
         $searchModel->region_id = $region_id;
         $searchModel->district_id = $district_id;
         $searchModel->ward_id = $ward_id;
@@ -61,12 +69,14 @@ class AnimalController extends Controller
 
         return $this->render('index', [
             'searchModel' => $searchModel,
+            'country' => $country,
         ]);
     }
 
 
     public function actionView($id)
     {
+        $this->hasPrivilege(Acl::ACTION_VIEW);
         $model = Animal::loadModel($id);
 
         return $this->render('view', [
@@ -76,6 +86,7 @@ class AnimalController extends Controller
 
     public function actionCreate($farm_id = null, $animal_type = null)
     {
+        $this->hasPrivilege(Acl::ACTION_CREATE);
         $model = new Animal(['farm_id' => $farm_id, 'animal_type' => $animal_type]);
         if ($this->handlePostedData($model)) {
             Yii::$app->session->setFlash('success', Lang::t('SUCCESS_MESSAGE'));
@@ -89,6 +100,7 @@ class AnimalController extends Controller
 
     public function actionUpdate($id)
     {
+        $this->hasPrivilege(Acl::ACTION_UPDATE);
         $model = Animal::loadModel($id);
         if ($this->handlePostedData($model)) {
             Yii::$app->session->setFlash('success', Lang::t('SUCCESS_MESSAGE'));
@@ -139,6 +151,7 @@ class AnimalController extends Controller
 
     public function actionDelete($id)
     {
+        $this->hasPrivilege(Acl::ACTION_DELETE);
         return Animal::softDelete($id);
     }
 }

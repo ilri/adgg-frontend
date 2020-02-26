@@ -20,6 +20,13 @@ $user = Yii::$app->user->identity;
 
     <!-- begin:: Header Topbar -->
     <div class="kt-header__topbar">
+        <div class="kt-header__topbar-item">
+            <a class="pt-3" href="<?= Url::to(['/help/help-content/index']) ?>">
+                <div class="kt-header__topbar-wrapper">
+                    <span class="kt-header__topbar-icon" title="Help"><i class="flaticon2-information"></i></span>
+                </div>
+            </a>
+        </div>
         <!--begin: Notifications -->
         <?= $this->render('@confModule/views/notif/notif2') ?>
         <!--end: Notifications -->
@@ -27,7 +34,7 @@ $user = Yii::$app->user->identity;
         <!--begin: Quick Actions -->
         <div class="kt-header__topbar-item">
             <div class="kt-header__topbar-wrapper" id="kt_offcanvas_toolbar_quick_actions_toggler_btn">
-                <span class="kt-header__topbar-icon"><i class="flaticon2-gear"></i></span>
+                <span class="kt-header__topbar-icon" title="Settings"><i class="flaticon2-gear"></i></span>
             </div>
         </div>
 
@@ -60,7 +67,7 @@ $user = Yii::$app->user->identity;
                 </div>
                 <ul class="kt-nav kt-margin-b-10">
                     <li class="kt-nav__item">
-                        <a href="<?= Url::to(['/auth/user/update', 'id' => Yii::$app->user->id]) ?>"
+                        <a href="<?= Url::to(['/auth/user/view', 'id' => Yii::$app->user->id]) ?>"
                            class="kt-nav__link">
                             <span class="kt-nav__link-icon"><i class="flaticon2-calendar-3"></i></span>
                             <span class="kt-nav__link-text">My Account</span>

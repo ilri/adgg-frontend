@@ -1,61 +1,85 @@
 <?php
 
-use common\helpers\Lang;
+use backend\modules\core\models\CountryRef;
+use backend\modules\core\models\Country;
+use common\forms\ActiveField;
 use common\widgets\select2\Select2;
+use yii\bootstrap\Html;
+use common\helpers\Url;
+use common\helpers\Lang;
 use yii\bootstrap4\ActiveForm;
-use yii\helpers\Html;
 
-/* @var $this \yii\web\View */
+/* @var $this yii\web\View */
+/* @var $model Country */
 /* @var $form ActiveForm */
-/* @var $controller \backend\controllers\BackendController */
-/* @var $model \backend\modules\core\models\Country */
-$controller = Yii::$app->controller;
-$this->title = $controller->getPageTitle();
-
-$form = ActiveForm::begin([
-    'id' => 'my-modal-form',
-    'layout' => 'horizontal',
-    'options' => ['class'=>'kt-form kt-form--label-right'],
-    'fieldClass' => \common\forms\ActiveField::class,
-    'fieldConfig' => [
-        'template' => "{label}\n{beginWrapper}\n{input}\n{hint}\n{error}\n{endWrapper}",
-        'horizontalCssClasses' => [
-            'label' => 'col-md-3 col-form-label',
-            'offset' => 'offset-md-3',
-            'wrapper' => 'col-md-6',
-            'error' => '',
-            'hint' => '',
-        ],
-    ],
-]);
 ?>
-<div class="modal-header">
-    <h5 class="modal-title"><?= Html::encode($this->title); ?></h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-    </button>
-</div>
-
-<div class="modal-body">
-    <div class="hidden" id="my-modal-notif"></div>
-    <?= $form->field($model, 'iso2', []) ?>
-    <?= $form->field($model, 'name', []) ?>
-    <?= $form->field($model, 'call_code', []) ?>
-    <?= $form->field($model, 'currency')->widget(Select2::class, [
-        'data' => \backend\modules\core\models\Currency::getListData(),
-        'modal' => true,
-        'theme' => Select2::THEME_BOOTSTRAP,
-        'pluginOptions' => [
-            'allowClear' => false
+<div class="kt-portlet">
+    <div class="kt-portlet__head">
+        <div class="kt-portlet__head-label">
+            <h3 class="kt-portlet__head-title"><?= Html::encode($this->title) ?></h3>
+        </div>
+    </div>
+    <?php
+    $form = ActiveForm::begin([
+        'id' => 'OrganizationRef-form',
+        'layout' => 'horizontal',
+        'options' => ['class' => 'kt-form kt-form--label-right'],
+        'fieldClass' => ActiveField::class,
+        'fieldConfig' => [
+            'template' => "{label}\n{beginWrapper}\n{input}\n{hint}\n{error}\n{endWrapper}",
+            'horizontalCssClasses' => [
+                'label' => 'col-md-4 col-form-label',
+                'offset' => 'offset-md-4',
+                'wrapper' => 'col-md-7',
+                'error' => '',
+                'hint' => '',
+            ],
         ],
-    ]) ?>
-    <?= $form->field($model, 'is_active', [])->checkbox() ?>
-</div>
+    ]);
+    ?>
+    <div class="kt-portlet__body">
+        <?= Html::errorSummary($model, ['class' => 'alert alert-warning', 'header' => '']); ?>
+        <div class="kt-section kt-section--first">
+            <div class="kt-section__body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <?= $form->field($model, 'country')->widget(Select2::class, [
+                            'data' => CountryRef::getListData('iso2', 'name', false),
+                            'options' => ['placeholder' => '[select one]'],
+                            'pluginOptions' => [
+                                'allowClear' => false
+                            ],
+                        ]) ?>
+                        <?= $form->field($model, 'dialing_code') ?>
+                        <?= $form->field($model, 'code') ?>
+                        <?= $form->field($model, 'contact_person') ?>
+                        <?= $form->field($model, 'contact_phone') ?>
+                        <?= $form->field($model, 'contact_email') ?>
+                        <?= $form->field($model, 'unit1_name') ?>
+                        <?= $form->field($model, 'unit2_name') ?>
+                        <?= $form->field($model, 'unit3_name') ?>
+                        <?= $form->field($model, 'unit4_name') ?>
+                        <?php if (!$model->isNewRecord): ?>
+                            <?= $form->field($model, 'is_active')->checkbox() ?>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<div class="modal-footer">
-    <button type="submit" class="btn btn-primary">
-        <?= Lang::t($model->isNewRecord ? 'Create' : 'Save changes') ?>
-    </button>
-    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+    <div class="kt-portlet__foot">
+        <div class="kt-form__actions">
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+                    <button type="submit"
+                            class="btn btn-success"><?= Lang::t($model->isNewRecord ? 'Create' : 'Save changes') ?></button>
+                    <a class="btn btn-secondary" href="<?= Url::getReturnUrl(Url::to(['index'])) ?>">
+                        <?= Lang::t('Cancel') ?>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php ActiveForm::end(); ?>
 </div>
-<?php ActiveForm::end(); ?>

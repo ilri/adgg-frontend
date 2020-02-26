@@ -10,18 +10,18 @@ namespace backend\modules\core\forms;
 
 
 use backend\modules\core\models\ExcelImport;
-use backend\modules\core\models\OrganizationUnits;
+use backend\modules\core\models\CountryUnits;
 use common\excel\ExcelUploadForm;
 use common\excel\ImportInterface;
 use yii\base\InvalidArgumentException;
 
-class UploadOrganizationUnits extends ExcelUploadForm implements ImportInterface
+class UploadOrganizationRefUnits extends ExcelUploadForm implements ImportInterface
 {
 
     /**
      * @var int
      */
-    public $org_id;
+    public $country_id;
 
     /**
      * @var int
@@ -43,7 +43,7 @@ class UploadOrganizationUnits extends ExcelUploadForm implements ImportInterface
     public function rules()
     {
         return array_merge($this->excelValidationRules(), [
-            [['org_id', 'level'], 'required'],
+            [['country_id', 'level'], 'required'],
         ]);
     }
 
@@ -53,7 +53,7 @@ class UploadOrganizationUnits extends ExcelUploadForm implements ImportInterface
     public function attributeLabels()
     {
         return array_merge($this->excelAttributeLabels(), [
-            'org_id' => 'Country',
+            'country_id' => 'Country',
             'level' => 'Level',
         ]);
     }
@@ -73,7 +73,7 @@ class UploadOrganizationUnits extends ExcelUploadForm implements ImportInterface
             if (empty($row))
                 continue;
 
-            $row['org_id'] = $this->org_id;
+            $row['country_id'] = $this->country_id;
             $row['level'] = $this->level;
 
             if (!empty($row['parent_code'])) {
@@ -83,8 +83,8 @@ class UploadOrganizationUnits extends ExcelUploadForm implements ImportInterface
             $insert_data[$k] = $row;
         }
 
-        $model = new OrganizationUnits(['org_id' => $this->org_id, 'level' => $this->level]);
-        $this->save($insert_data, $model, true, ['code' => '{code}', 'org_id' => $this->org_id, 'level' => $this->level]);
+        $model = new CountryUnits(['country_id' => $this->country_id, 'level' => $this->level]);
+        $this->save($insert_data, $model, true, ['code' => '{code}', 'country_id' => $this->country_id, 'level' => $this->level]);
     }
 
     /**
@@ -94,25 +94,25 @@ class UploadOrganizationUnits extends ExcelUploadForm implements ImportInterface
      */
     protected function getParentId($code)
     {
-        if ($this->level == OrganizationUnits::LEVEL_REGION) {
+        if ($this->level == CountryUnits::LEVEL_REGION) {
             return null;
         }
         $parentLevel = null;
         switch ($this->level) {
-            case OrganizationUnits::LEVEL_DISTRICT:
-                $parentLevel = OrganizationUnits::LEVEL_REGION;
+            case CountryUnits::LEVEL_DISTRICT:
+                $parentLevel = CountryUnits::LEVEL_REGION;
                 break;
-            case OrganizationUnits::LEVEL_WARD:
-                $parentLevel = OrganizationUnits::LEVEL_DISTRICT;
+            case CountryUnits::LEVEL_WARD:
+                $parentLevel = CountryUnits::LEVEL_DISTRICT;
                 break;
-            case OrganizationUnits::LEVEL_VILLAGE:
-                $parentLevel = OrganizationUnits::LEVEL_WARD;
+            case CountryUnits::LEVEL_VILLAGE:
+                $parentLevel = CountryUnits::LEVEL_WARD;
                 break;
             default:
                 throw new InvalidArgumentException();
         }
 
-        $parentId = OrganizationUnits::getScalar('id', ['org_id' => $this->org_id, 'level' => $parentLevel, 'code' => $code]);
+        $parentId = CountryUnits::getScalar('id', ['country_id' => $this->country_id, 'level' => $parentLevel, 'code' => $code]);
         if (empty($parentId)) {
             return null;
         }
@@ -124,6 +124,6 @@ class UploadOrganizationUnits extends ExcelUploadForm implements ImportInterface
      */
     public function setUploadType()
     {
-        $this->_uploadType = ExcelImport::TYPE_ORGANIZATION_UNITS;
+        $this->_uploadType = ExcelImport::TYPE_ORGANIZATION_REF_UNITS;
     }
 }

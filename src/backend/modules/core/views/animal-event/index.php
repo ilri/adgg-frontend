@@ -1,11 +1,16 @@
 <?php
 
+use backend\controllers\BackendController;
+use backend\modules\core\models\AnimalEvent;
 use common\helpers\Lang;
+use yii\web\View;
 
-/* @var $this \yii\web\View */
-/* @var $searchModel \backend\modules\core\models\AnimalEvent */
-/* @var $controller \backend\controllers\BackendController */
+/* @var $this View */
+/* @var $searchModel AnimalEvent */
+/* @var $controller BackendController */
 /* @var $grid string */
+/* @var $upload_url string */
+
 $controller = Yii::$app->controller;
 
 $this->title = Lang::t('{resource} data', ['resource' => $controller->resourceLabel]);

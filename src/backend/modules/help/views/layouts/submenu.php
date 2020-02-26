@@ -5,8 +5,8 @@ use common\helpers\Url;
 
 ?>
 <div class="list-group my-list-group">
-    <a href="<?= Url::to(['/conf/number-format/index']) ?>" class="list-group-item">
-        <i class="fa fa-backward"></i>&nbsp;<?= Lang::t('Back To Settings') ?>
+    <a href="<?= Url::to(['/help/help-content/index']) ?>" class="list-group-item">
+        <i class="fa fa-backward"></i>&nbsp;<?= Lang::t('Back') ?>
     </a>
 </div>
 <hr>

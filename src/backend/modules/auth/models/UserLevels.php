@@ -31,6 +31,8 @@ class UserLevels extends ActiveRecord implements ActiveSearchInterface
     const LEVEL_DISTRICT = 5;
     const LEVEL_WARD = 6;
     const LEVEL_VILLAGE = 7;
+    const LEVEL_FARMER = 8;
+    const LEVEL_EXTERNAL_ORGANIZATION = 9;
 
     /**
      * @inheritdoc
@@ -131,6 +133,15 @@ class UserLevels extends ActiveRecord implements ActiveSearchInterface
     public function getParent()
     {
         return $this->hasOne(static::class, ['id' => 'parent_id']);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getListData($valueColumn = 'id', $textColumn = 'name', $prompt = false, $condition = '', $params = [], $options = [])
+    {
+        $options['orderBy'] = ['id' => SORT_ASC];
+        return parent::getListData($valueColumn, $textColumn, $prompt, $condition, $params, $options);
     }
 
 

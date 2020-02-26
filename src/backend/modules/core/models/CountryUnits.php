@@ -9,13 +9,13 @@ use common\models\ActiveSearchTrait;
 use yii\helpers\Html;
 
 /**
- * This is the model class for table "organization_units".
+ * This is the model class for table "country_units".
  *
  * @property int $id
  * @property string $code
  * @property string $name
  * @property int $level
- * @property int $org_id
+ * @property int $country_id
  * @property int $parent_id
  * @property string $contact_name
  * @property string $contact_phone
@@ -27,10 +27,10 @@ use yii\helpers\Html;
  * @property string $updated_at
  * @property int $updated_by
  *
- * @property Organization $org
- * @property OrganizationUnits $parent
+ * @property Country $country
+ * @property CountryUnits $parent
  */
-class OrganizationUnits extends ActiveRecord implements ActiveSearchInterface, UploadExcelInterface
+class CountryUnits extends ActiveRecord implements ActiveSearchInterface, UploadExcelInterface
 {
     use ActiveSearchTrait;
 
@@ -46,7 +46,7 @@ class OrganizationUnits extends ActiveRecord implements ActiveSearchInterface, U
      */
     public static function tableName()
     {
-        return '{{%organization_units}}';
+        return '{{%country_units}}';
     }
 
     /**
@@ -55,13 +55,13 @@ class OrganizationUnits extends ActiveRecord implements ActiveSearchInterface, U
     public function rules()
     {
         return [
-            [['code', 'name', 'level', 'org_id'], 'required'],
-            [['level', 'org_id', 'parent_id', 'is_active'], 'integer'],
+            [['code', 'name', 'level', 'country_id'], 'required'],
+            [['level', 'country_id', 'parent_id', 'is_active'], 'integer'],
             [['code', 'contact_name'], 'string', 'max' => 128],
             [['name', 'contact_email'], 'string', 'max' => 255],
             [['contact_phone'], 'string', 'min' => 8, 'max' => 20],
-            ['code', 'unique', 'targetAttribute' => ['org_id', 'level', 'code'], 'message' => Lang::t('{attribute} already exists.')],
-            [['org_id'], 'exist', 'skipOnError' => true, 'targetClass' => Organization::class, 'targetAttribute' => ['org_id' => 'id']],
+            ['code', 'unique', 'targetAttribute' => ['country_id', 'level', 'code'], 'message' => Lang::t('{attribute} already exists.')],
+            [['country_id'], 'exist', 'skipOnError' => true, 'targetClass' => Country::class, 'targetAttribute' => ['country_id' => 'id']],
             ['contact_email', 'email'],
             ['parent_id', 'required', 'when' => function (self $model) {
                 return $model->level != self::LEVEL_REGION;
@@ -88,7 +88,7 @@ class OrganizationUnits extends ActiveRecord implements ActiveSearchInterface, U
             'code' => 'Code',
             'name' => 'Name',
             'level' => 'Level',
-            'org_id' => 'Country',
+            'country_id' => 'Country ID',
             'contact_name' => 'Contact Name',
             'contact_phone' => 'Contact Phone',
             'contact_email' => 'Contact Email',
@@ -101,16 +101,16 @@ class OrganizationUnits extends ActiveRecord implements ActiveSearchInterface, U
         ];
 
         $parentIdLabel = 'Parent';
-        if ($this->org !== null) {
+        if ($this->country !== null) {
             switch ($this->level) {
                 case self::LEVEL_DISTRICT:
-                    $parentIdLabel = Html::encode($this->org->unit1_name);
+                    $parentIdLabel = Html::encode($this->country->unit1_name);
                     break;
                 case self::LEVEL_WARD:
-                    $parentIdLabel = Html::encode($this->org->unit2_name);
+                    $parentIdLabel = Html::encode($this->country->unit2_name);
                     break;
                 case self::LEVEL_VILLAGE:
-                    $parentIdLabel = Html::encode($this->org->unit3_name);
+                    $parentIdLabel = Html::encode($this->country->unit3_name);
                     break;
             }
         }
@@ -123,9 +123,9 @@ class OrganizationUnits extends ActiveRecord implements ActiveSearchInterface, U
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getOrg()
+    public function getCountry()
     {
-        return $this->hasOne(Organization::class, ['id' => 'org_id']);
+        return $this->hasOne(Country::class, ['id' => 'country_id']);
     }
 
     /**
@@ -133,7 +133,7 @@ class OrganizationUnits extends ActiveRecord implements ActiveSearchInterface, U
      */
     public function getParent()
     {
-        return $this->hasOne(OrganizationUnits::class, ['id' => 'parent_id']);
+        return $this->hasOne(CountryUnits::class, ['id' => 'parent_id']);
     }
 
     /**
@@ -145,7 +145,7 @@ class OrganizationUnits extends ActiveRecord implements ActiveSearchInterface, U
             ['code', 'code'],
             ['name', 'name'],
             'level',
-            'org_id',
+            'country_id',
             'parent_id',
             'is_active',
         ];
