@@ -320,6 +320,19 @@ a:hover {
     .kt-header-mobile .kt-header-mobile__toolbar .kt-header-mobile__toolbar-toggler span, .kt-header-mobile .kt-header-mobile__toolbar .kt-header-mobile__toolbar-toggler span::before, .kt-header-mobile .kt-header-mobile__toolbar .kt-header-mobile__toolbar-toggler span::after{
         background: #5b206e;
     }
+
+    .kt-header-mobile .kt-header-mobile__toolbar .kt-header-mobile__toolbar-toggler span:hover, .kt-header-mobile .kt-header-mobile__toolbar .kt-header-mobile__toolbar-toggler span:hover::before, .kt-header-mobile .kt-header-mobile__toolbar .kt-header-mobile__toolbar-toggler span:hover::after {
+        background: #38997a;
+    }
+
+    .kt-header-mobile .kt-header-mobile__toolbar .kt-header-mobile__toolbar-topbar-toggler.kt-header-mobile__toolbar-topbar-toggler--active i, .kt-header-mobile .kt-header-mobile__toolbar .kt-header-mobile__toolbar-topbar-toggler:hover i {
+        color: #38997a;
+    }
+
+    .kt-header .kt-header__topbar .kt-header__topbar-item .kt-header__topbar-icon i {
+        color: #5b206e;
+        font-size: 2.2rem;
+    }
 }
 
 #kt_login_v2 .kt-grid__item .kt-login-v2__body .kt-login-v2__wrapper .kt-login-v2__container {
