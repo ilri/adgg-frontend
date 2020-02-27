@@ -1,94 +1,61 @@
 <?php
 
 use backend\controllers\BackendController;
+use backend\modules\auth\Session;
 use backend\modules\core\models\AnimalEvent;
 use common\helpers\Lang;
+use yii\helpers\Html;
+use yii\helpers\Inflector;
 use yii\helpers\Url;
 
 /* @var $controller BackendController */
 /* @var $model AnimalEvent */
+/* @var $events */
 $controller = Yii::$app->controller;
+$events = AnimalEvent::eventTypeOptions();
 ?>
 <ul class="nav nav-tabs my-nav" role="tablist">
+    <?php foreach ($events as $key => $name): ?>
+        <?php
+        $url = null;
+        if ($key == AnimalEvent::EVENT_TYPE_CALVING) {
+            $url = 'calving-event/index';
+        } elseif ($key == AnimalEvent::EVENT_TYPE_MILKING) {
+            $url = 'milking-event/index';
+        } elseif ($key == AnimalEvent::EVENT_TYPE_AI) {
+            $url = 'insemination-event/index';
+        } elseif ($key == AnimalEvent::EVENT_TYPE_PREGNANCY_DIAGNOSIS) {
+            $url = 'pd-event/index';
+        } elseif ($key == AnimalEvent::EVENT_TYPE_SYNCHRONIZATION) {
+            $url = 'synchronization-event/index';
+        } elseif ($key == AnimalEvent::EVENT_TYPE_WEIGHTS) {
+            $url = 'weight-event/index';
+        } elseif ($key == AnimalEvent::EVENT_TYPE_HEALTH) {
+            $url = 'health-event/index';
+        } elseif ($key == AnimalEvent::EVENT_TYPE_FEEDING) {
+            $url = 'feeding-event/index';
+        } elseif ($key == AnimalEvent::EVENT_TYPE_EXITS) {
+            $url = 'exit-event/index';
+        }
+        ?>
     <li class="nav-item">
         <a class="nav-link"
-           href="<?= Url::to(['/core/calving-event/index']) ?>">
-            <?= Lang::t('Calving') ?>
-            <span class="badge badge-important badge-pill">
-                (<?= number_format(AnimalEvent::getCount(['event_type' => AnimalEvent::EVENT_TYPE_CALVING])) ?>)
-            </span>
+            href="<?= Url::to([$url, 'country_id' => Session::getCountryId(), 'event_type' => $key]) ?>">
+            <?= Lang::t('{name}', ['name' => $name]); ?>
+        <span class="badge badge-secondary badge-pill">
+            <?php if (Session::isVillageUser()): ?>
+                <?= Yii::$app->formatter->asDecimal(AnimalEvent::find()->andFilterWhere(['country_id' => Session::getCountryId(), 'village_id' => Session::getVillageId(), 'event_type' => $key])->count()) ?>
+            <?php elseif (Session::isWardUser()): ?>
+                <?= Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => Session::getCountryId(), 'ward_id' => Session::getWardId(), 'event_type' => $key])) ?>
+            <?php elseif (Session::isDistrictUser()): ?>
+                <?= Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => Session::getCountryId(), 'district_id' => Session::getDistrictId(), 'event_type' => $key])) ?>
+            <?php elseif (Session::isRegionUser()): ?>
+                <?= Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => Session::getCountryId(), 'region_id' => Session::getRegionId(), 'event_type' => $key])) ?>
+            <?php else: ?>
+                <?= Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => Session::getCountryId(), 'event_type' => $key])) ?>
+            <?php endif; ?>
+        </span>
         </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link"
-           href="<?= Url::to(['/core/milking-event/index']) ?>">
-            <?= Lang::t('Milking') ?>
-            <span class="badge badge-important badge-pill">
-                (<?= number_format(AnimalEvent::getCount(['event_type' => AnimalEvent::EVENT_TYPE_MILKING])) ?>)
-            </span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link"
-           href="<?= Url::to(['/core/insemination-event/index']) ?>">
-            <?= Lang::t('Insemination') ?>
-            <span class="badge badge-important badge-pill">
-                (<?= number_format(AnimalEvent::getCount(['event_type' => AnimalEvent::EVENT_TYPE_AI])) ?>)
-            </span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link"
-           href="<?= Url::to(['/core/pd-event/index']) ?>">
-            <?= Lang::t('Pregnancy Diagnosis') ?>
-            <span class="badge badge-important badge-pill">
-                (<?= number_format(AnimalEvent::getCount(['event_type' => AnimalEvent::EVENT_TYPE_PREGNANCY_DIAGNOSIS])) ?>)
-            </span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link"
-           href="<?= Url::to(['/core/synchronization-event/index']) ?>">
-            <?= Lang::t('Synchronization') ?>
-            <span class="badge badge-important badge-pill">
-                (<?= number_format(AnimalEvent::getCount(['event_type' => AnimalEvent::EVENT_TYPE_SYNCHRONIZATION])) ?>)
-            </span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link"
-           href="<?= Url::to(['/core/weight-event/index']) ?>">
-            <?= Lang::t('Weights') ?>
-            <span class="badge badge-important badge-pill">
-                (<?= number_format(AnimalEvent::getCount(['event_type' => AnimalEvent::EVENT_TYPE_WEIGHTS])) ?>)
-            </span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link"
-           href="<?= Url::to(['/core/health-event/index']) ?>">
-            <?= Lang::t('Health') ?>
-            <span class="badge badge-important badge-pill">
-                (<?= number_format(AnimalEvent::getCount(['event_type' => AnimalEvent::EVENT_TYPE_HEALTH])) ?>)
-            </span>
-        </a>
-    </li>
-    <li class="nav-item hidden">
-        <a class="nav-link"
-           href="<?= Url::to(['#']) ?>">
-            <?= Lang::t('Feeding') ?>
-            <span class="badge badge-important badge-pill">
-                (<?= number_format(AnimalEvent::getCount(['event_type' => AnimalEvent::EVENT_TYPE_FEEDING])) ?>)
-            </span>
-        </a>
-    </li>
-    <li class="nav-item hidden">
-        <a class="nav-link"
-           href="<?= Url::to(['#']) ?>">
-            <?= Lang::t('Exits') ?>
-            <span class="badge badge-important badge-pill">
-                (<?= number_format(AnimalEvent::getCount(['event_type' => AnimalEvent::EVENT_TYPE_EXITS])) ?>)
-            </span>
-        </a>
-    </li>
+        </li>
+    <?php endforeach; ?>
 </ul>
