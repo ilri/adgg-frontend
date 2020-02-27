@@ -321,3 +321,7 @@ a:hover {
         background: #5b206e;
     }
 }
+
+#kt_login_v2 .kt-grid__item .kt-login-v2__body .kt-login-v2__wrapper .kt-login-v2__container {
+    background-color: #f2f3f8;
+}
