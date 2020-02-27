@@ -13,13 +13,12 @@ body {
 
 .kt-header {
     background-color: #5b206e;
-    border-bottom: 1px solid #eff0f6;
 }
 
 .kt-header-mobile {
-    background-color: #5b206e;
-    -webkit-box-shadow: 0 1px 9px -3px rgba(0, 0, 0, 0.1);
-    box-shadow: 0 1px 9px -3px rgba(0, 0, 0, 0.1);
+    background-color: rgb(242, 243, 248);
+    -webkit-box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
 }
 
 .kt-subheader {
@@ -311,4 +310,14 @@ a:hover {
 
 .nav-tabs.nav-tabs-line.nav.nav-tabs .nav-link:hover, .nav-tabs.nav-tabs-line.nav.nav-tabs .nav-link.active, .nav-tabs.nav-tabs-line a.nav-link:hover, .nav-tabs.nav-tabs-line a.nav-link.active {
     border-bottom: 1px solid #38997a;
+}
+
+@media (max-width: 1024px) {
+    .kt-header-mobile .kt-header-mobile__toolbar .kt-header-mobile__toolbar-topbar-toggler i {
+        color: #5b206e;
+    }
+
+    .kt-header-mobile .kt-header-mobile__toolbar .kt-header-mobile__toolbar-toggler span, .kt-header-mobile .kt-header-mobile__toolbar .kt-header-mobile__toolbar-toggler span::before, .kt-header-mobile .kt-header-mobile__toolbar .kt-header-mobile__toolbar-toggler span::after{
+        background: #5b206e;
+    }
 }
