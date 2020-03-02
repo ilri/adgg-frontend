@@ -43,6 +43,9 @@ class Controller extends BackendController
                             'save-report',
                             'download-file',
                             'requeue',
+                            'generate',
+                            'process',
+
                         ],
                         'allow' => true,
                         'roles' => ['@'],

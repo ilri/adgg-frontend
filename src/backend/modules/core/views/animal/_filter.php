@@ -69,9 +69,9 @@ use yii\bootstrap4\Html;
                                 'data' => CountryUnits::getListData('id', 'name', false, ['country_id' => $model->country_id, 'level' => CountryUnits::LEVEL_REGION]),
                                 'options' => [
                                     'id' => Html::getInputId($model, 'region_id'),
-                                    'placeholder' => "",
+                                    'placeholder' => '[select one]',
                                     'class' => 'form-control select2 parent-depdropdown',
-                                    'data-url' => Url::to(['country-units/get-list', 'country_id' => 'idV', 'level' => CountryUnits::LEVEL_REGION]),
+                                    'data-url' => Url::to(['country-units/get-list', 'country_id' => 'idV', 'level' => CountryUnits::LEVEL_REGION, 'placeholder' => true]),
                                     'data-selected' => $model->region_id,
                                     'data-child-selectors' => [
                                         '#' . Html::getInputId($model, 'district_id'),
@@ -92,9 +92,9 @@ use yii\bootstrap4\Html;
                                 'data' => CountryUnits::getListData('id', 'name', false, ['parent_id' => $model->region_id, 'level' => CountryUnits::LEVEL_DISTRICT]),
                                 'options' => [
                                     'id' => Html::getInputId($model, 'district_id'),
-                                    'placeholder' => "",
+                                    'placeholder' => '[select one]',
                                     'class' => 'form-control select2 parent-depdropdown',
-                                    'data-url' => Url::to(['country-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_DISTRICT]),
+                                    'data-url' => Url::to(['country-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_DISTRICT, 'placeholder' => true]),
                                     'data-selected' => $model->district_id,
                                     'data-child-selectors' => [
                                         '#' . Html::getInputId($model, 'ward_id'),
@@ -115,9 +115,9 @@ use yii\bootstrap4\Html;
                                 'data' => CountryUnits::getListData('id', 'name', false, ['parent_id' => $model->district_id, 'level' => CountryUnits::LEVEL_WARD]),
                                 'options' => [
                                     'id' => Html::getInputId($model, 'ward_id'),
-                                    'placeholder' => "",
+                                    'placeholder' => '[select one]',
                                     'class' => 'form-control select2 parent-depdropdown',
-                                    'data-url' => Url::to(['country-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_WARD]),
+                                    'data-url' => Url::to(['country-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_WARD, 'placeholder' => true]),
                                     'data-selected' => $model->ward_id,
                                     'data-child-selectors' => [
                                         '#' . Html::getInputId($model, 'village_id'),
@@ -138,9 +138,9 @@ use yii\bootstrap4\Html;
                                 'data' => CountryUnits::getListData('id', 'name', false, ['parent_id' => $model->ward_id, 'level' => CountryUnits::LEVEL_VILLAGE]),
                                 'options' => [
                                     'id' => Html::getInputId($model, 'village_id'),
-                                    'placeholder' => "",
+                                    'placeholder' => '[select one]',
                                     'class' => 'form-control select2',
-                                    'data-url' => Url::to(['country-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_VILLAGE]),
+                                    'data-url' => Url::to(['country-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_VILLAGE, 'placeholder' => true]),
                                     'data-selected' => $model->village_id,
                                 ],
                                 'pluginOptions' => [

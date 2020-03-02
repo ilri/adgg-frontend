@@ -221,11 +221,9 @@ class UserController extends Controller
         return json_encode($response);
     }
 
-    public function actionGetList($country_id = null)
+    public function actionGetList($country_id = null, $placeholder = false)
     {
-        if (empty($country_id))
-            $country_id = null;
-        $data = Users::getListData('id', 'name', false, ['country_id' => $country_id]);
+        $data = Users::getListData('id', 'name', $placeholder, ['country_id' => $country_id]);
         return json_encode($data);
     }
 

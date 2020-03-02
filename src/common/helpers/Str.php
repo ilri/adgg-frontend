@@ -78,4 +78,13 @@ class Str extends \Illuminate\Support\Str
         return $acronym;
     }
 
+    /**
+     * @param string $string
+     * @return string
+     */
+    public static function removeNonAlphaNumericCharacters(string $string): string
+    {
+        return preg_replace("/[^A-Za-z0-9 ]/", '', $string);
+    }
+
 }

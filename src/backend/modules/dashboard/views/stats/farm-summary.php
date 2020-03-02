@@ -2,12 +2,10 @@
 
 use backend\controllers\BackendController;
 use backend\modules\auth\Session;
-use backend\modules\core\models\Choices;
 use backend\modules\core\models\CountriesDashboardStats;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\Country;
 use backend\modules\core\models\CountryUnits;
-use common\helpers\DbUtils;
 use common\helpers\Lang;
 use common\widgets\highchart\HighChart;
 use yii\helpers\Html;
@@ -19,18 +17,18 @@ use yii\helpers\Json;
 /* @var $country Country */
 $controller = Yii::$app->controller;
 $this->title = 'Farms Registered';
-$this->params['breadcrumbs'][] = ['label' => Lang::t('Quick Reports'), 'url' => ['dash']];
+$this->params['breadcrumbs'][] = ['label' => Lang::t('Quick Reports'), 'url' => ['dash', 'country_id' => $country->id]];
 $graphType = $graphType ?? HighChart::GRAPH_PIE;
 ?>
 <h3>
     <?php if (Session::isVillageUser()): ?>
-        <?php $unitName = Lang::t('Farms Registered in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getVillageId(), 'level' => CountryUnits::LEVEL_VILLAGE]) . ' ' . 'Village' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+        <?= Lang::t('Farms Registered in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getVillageId(), 'level' => CountryUnits::LEVEL_VILLAGE]) . ' ' . 'Village' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
     <?php elseif (Session::isWardUser()): ?>
-        <?= $unitName = Lang::t('Farms Registered in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getWardId(), 'level' => CountryUnits::LEVEL_WARD]) . ' ' . 'Ward' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+        <?= Lang::t('Farms Registered in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getWardId(), 'level' => CountryUnits::LEVEL_WARD]) . ' ' . 'Ward' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
     <?php elseif (Session::isDistrictUser()): ?>
-        <?= $unitName = Lang::t('Farms Registered in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+        <?= Lang::t('Farms Registered in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
     <?php elseif (Session::isRegionUser()): ?>
-        <?= $unitName = Lang::t('Farms Registered in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+        <?= Lang::t('Farms Registered in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
     <?php else: ?>
         <?= Lang::t('Farms Registered in {country}', ['country' => $country->name]) ?>
     <?php endif; ?>
@@ -42,24 +40,28 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
         <div class="kt-portlet">
             <div class="col-md-12 kt-iconbox kt-iconbox--active">
                 <div class="kt-iconbox__title">
-                    <?php if (Session::isVillageUser()): ?>
-                        <?php $unitName = Lang::t('Registered Farms Grouped by Farm Type in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getVillageId(), 'level' => CountryUnits::LEVEL_VILLAGE]) . ' ' . 'Village' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
-                    <?php elseif (Session::isWardUser()): ?>
-                        <?= $unitName = Lang::t('Registered Farms Grouped by Villages in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getWardId(), 'level' => CountryUnits::LEVEL_WARD]) . ' ' . 'Ward' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                    <?php if (Session::isWardUser()): ?>
+                        <?= Lang::t('Registered Farms Grouped by Villages in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getWardId(), 'level' => CountryUnits::LEVEL_WARD]) . ' ' . 'Ward' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                     <?php elseif (Session::isDistrictUser()): ?>
-                        <?= $unitName = Lang::t('Registered Farms Grouped by Wards in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                        <?= Lang::t('Registered Farms Grouped by Wards in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                     <?php elseif (Session::isRegionUser()): ?>
-                        <?= $unitName = Lang::t('Registered Farms Grouped by Districts in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                        <?= Lang::t('Registered Farms Grouped by Districts in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                     <?php else: ?>
                         <?= Lang::t('Registered Farms Grouped by Regions  in {country}', ['country' => $country->name]) ?>
                     <?php endif; ?>
                 </div>
                 <div id="chartContainer"></div>
+                <?php if (Session::isWardUser()): ?>
+                    <?php $chart_data = CountriesDashboardStats::getFarmsGroupedByVillages($country->id, Session::getWardId()); ?>
+                <?php elseif (Session::isDistrictUser()): ?>
+                    <?php $chart_data = CountriesDashboardStats::getFarmsGroupedByWards($country->id, Session::getDistrictId()); ?>
+                <?php elseif (Session::isRegionUser()): ?>
+                    <?php $chart_data = CountriesDashboardStats::getFarmsGroupedByDistricts($country->id, Session::getRegionId()); ?>
+                <?php else: ?>
+                    <?php $chart_data = CountriesDashboardStats::getFarmsGroupedByRegions($country->id); ?>
+                <?php endif; ?>
                 <?php
                 $data = [];
-
-                $chart_data = CountriesDashboardStats::getFarmsGroupedByRegions($country->id);
-
                 if (count($chart_data) > 0) {
                     foreach ($chart_data as $cdata) {
                         $data[] = [
@@ -83,23 +85,31 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
             <div class="col-md-12 kt-iconbox kt-iconbox--active">
                 <div class="kt-iconbox__title">
                     <?php if (Session::isVillageUser()): ?>
-                        <?php $unitName = Lang::t('Registered Farms Grouped by Farm Type in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getVillageId(), 'level' => CountryUnits::LEVEL_VILLAGE]) . ' ' . 'Village' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                        <?= Lang::t('Registered Farms Grouped by Farm Type in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getVillageId(), 'level' => CountryUnits::LEVEL_VILLAGE]) . ' ' . 'Village' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                     <?php elseif (Session::isWardUser()): ?>
-                        <?= $unitName = Lang::t('Registered Farms Grouped by Farm Type in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getWardId(), 'level' => CountryUnits::LEVEL_WARD]) . ' ' . 'Ward' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                        <?= Lang::t('Registered Farms Grouped by Farm Type in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getWardId(), 'level' => CountryUnits::LEVEL_WARD]) . ' ' . 'Ward' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                     <?php elseif (Session::isDistrictUser()): ?>
-                        <?= $unitName = Lang::t('Registered Farms Grouped by Farm Type in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                        <?= Lang::t('Registered Farms Grouped by Farm Type in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                     <?php elseif (Session::isRegionUser()): ?>
-                        <?= $unitName = Lang::t('Registered Farms Grouped by Farm Type in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                        <?= Lang::t('Registered Farms Grouped by Farm Type in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                     <?php else: ?>
                         <?= Lang::t('Registered Farms Grouped by Farm Type in {country}', ['country' => $country->name]) ?>
                     <?php endif; ?>
                 </div>
                 <div id="chartContainer2"></div>
+                <?php if (Session::isVillageUser()): ?>
+                    <?php $chart_data = CountriesDashboardStats::getFarmsGroupedByFarmType($country->id, ['village_id' => Session::getVillageId()]); ?>
+                <?php elseif (Session::isWardUser()): ?>
+                    <?php $chart_data = CountriesDashboardStats::getFarmsGroupedByFarmType($country->id, ['ward_id' => Session::getWardId()]); ?>
+                <?php elseif (Session::isDistrictUser()): ?>
+                    <?php $chart_data = CountriesDashboardStats::getFarmsGroupedByFarmType($country->id, ['district_id' => Session::getDistrictId()]); ?>
+                <?php elseif (Session::isRegionUser()): ?>
+                    <?php $chart_data = CountriesDashboardStats::getFarmsGroupedByFarmType($country->id, ['region_id' => Session::getRegionId()]); ?>
+                <?php else: ?>
+                    <?php $chart_data = CountriesDashboardStats::getFarmsGroupedByFarmType($country->id); ?>
+                <?php endif; ?>
                 <?php
                 $data = [];
-
-                $chart_data = CountriesDashboardStats::getFarmsGroupedByFarmType($country->id);
-
                 if (count($chart_data) > 0) {
                     foreach ($chart_data as $cdata) {
                         $data[] = [
@@ -117,6 +127,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                 $this->registerJs("MyApp.modules.dashboard.piechart('" . $containerId . "', " . Json::encode($series) . "," . Json::encode($graphOptions) . ");");
 
                 ?>
+
             </div>
             <!--end::Portlet-->
         </div>
@@ -128,7 +139,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                     <div class="kt-iconbox__icon-bg"></div>
                     <span>
                         <?php if (Session::isVillageUser()): ?>
-                            <?= Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country->id, 'village_id' => Session::getVillageId()])) ?>
+                            <?= Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country->id, 'village_id' => Session::getVillageId(), 'field_agent_id' => Session::getUserId()])) ?>
                         <?php elseif (Session::isWardUser()): ?>
                             <?= Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country->id, 'ward_id' => Session::getWardId()])) ?>
                         <?php elseif (Session::isDistrictUser()): ?>
@@ -141,7 +152,8 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                     </span>
                 </div>
                 <div class="kt-iconbox__title">
-                    <?= Lang::t('Number Of Farms'); ?>                </div>
+                    <?= Lang::t('Number Of Farms'); ?>
+                </div>
             </div>
         </div>
         <div class="kt-portlet">
@@ -150,7 +162,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                     <div class="kt-iconbox__icon-bg"></div>
                     <span>
                         <?php if (Session::isVillageUser()): ?>
-                            <?= Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => 1])->andWhere(['country_id' => $country->id, 'village_id' => Session::getVillageId()])->count()) ?>
+                            <?= Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => 1])->andWhere(['country_id' => $country->id, 'village_id' => Session::getVillageId(), 'field_agent_id' => Session::getUserId()])->count()) ?>
                         <?php elseif (Session::isWardUser()): ?>
                             <?= Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => 1])->andWhere(['country_id' => $country->id, 'ward_id' => Session::getWardId()])->count()) ?>
                         <?php elseif (Session::isDistrictUser()): ?>
@@ -173,7 +185,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                     <div class="kt-iconbox__icon-bg"></div>
                     <span>
                         <?php if (Session::isVillageUser()): ?>
-                            <?= Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => 2])->andWhere(['country_id' => $country->id, 'village_id' => Session::getVillageId()])->count()) ?>
+                            <?= Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => 2])->andWhere(['country_id' => $country->id, 'village_id' => Session::getVillageId(), 'field_agent_id' => Session::getUserId()])->count()) ?>
                         <?php elseif (Session::isWardUser()): ?>
                             <?= Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => 2])->andWhere(['country_id' => $country->id, 'ward_id' => Session::getWardId()])->count()) ?>
                         <?php elseif (Session::isDistrictUser()): ?>
@@ -195,7 +207,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                     <div class="kt-iconbox__icon-bg"></div>
                     <span>
                         <?php if (Session::isVillageUser()): ?>
-                            <?= Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => [1, 2]])->andWhere(['country_id' => $country->id, 'village_id' => Session::getVillageId()])->count()) ?>
+                            <?= Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => [1, 2]])->andWhere(['country_id' => $country->id, 'village_id' => Session::getVillageId(), 'field_agent_id' => Session::getUserId()])->count()) ?>
                         <?php elseif (Session::isWardUser()): ?>
                             <?= Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => [1, 2]])->andWhere(['country_id' => $country->id, 'ward_id' => Session::getWardId()])->count()) ?>
                         <?php elseif (Session::isDistrictUser()): ?>

@@ -37,6 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => 'raw_sql',
+                    'visible' => false,
                 ],
                 [
                     'attribute' => 'status',

@@ -287,6 +287,15 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
         return $fields;
     }
 
+    public static function decodeDeformities($deformities){
+        $deformities = json_decode($deformities);
+        $decoded = [];
+        foreach ($deformities as $key => $value) {
+            $decoded[] = Choices::getLabel(ChoiceTypes::CHOICE_TYPE_CALVE_DEFORMITY, $value);
+        };
+        return implode(',', $decoded);
+    }
+
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {

@@ -8,6 +8,7 @@ use common\helpers\Lang;
 use common\helpers\Url;
 use common\widgets\select2\Select2;
 use yii\bootstrap\Html;
+use yii\helpers\Json;
 
 /* @var $country_id int */
 /* @var $filterOptions array */
@@ -22,7 +23,8 @@ $this->params['breadcrumbs'][] = $this->title;
             <h3><?= Lang::t(strtoupper($this->title)) ?></h3>
             <hr>
             <div class="card card-body">
-                <?= Html::beginForm('generate', 'post', ['class' => '', 'id' => 'grid-filter-form']) ?>
+                <?= Html::beginForm(Url::to(['generate', 'type' => 'milkdata']), 'post', ['class' => '', 'id' => 'std-report-form']) ?>
+                <?= Html::hiddenInput('country_id', $country_id) ?>
                 <div class="form-row align-items-center">
                     <div class="col-lg-2">
                         <?= Html::label('Region ID') ?>
@@ -127,4 +129,8 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 </div>
+    <?php
+    $options = [];
+    $this->registerJs("MyApp.modules.reports.stdreport(" . Json::encode($options) . ");");
+    ?>
 <?php endif; ?>
