@@ -44,15 +44,15 @@ $events = AnimalEvent::eventTypeOptions();
             <?= Lang::t('{name}', ['name' => $name]); ?>
         <span class="badge badge-secondary badge-pill">
             <?php if (Session::isVillageUser()): ?>
-                <?= Yii::$app->formatter->asDecimal(AnimalEvent::find()->andFilterWhere(['country_id' => Session::getCountryId(), 'village_id' => Session::getVillageId(), 'event_type' => $key])->count()) ?>
+                <?= Yii::$app->formatter->asDecimal(AnimalEvent::find()->andFilterWhere(['country_id' => $country->id, 'village_id' => Session::getVillageId(), 'event_type' => $key])->count()) ?>
             <?php elseif (Session::isWardUser()): ?>
-                <?= Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => Session::getCountryId(), 'ward_id' => Session::getWardId(), 'event_type' => $key])) ?>
+                <?= Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => $country->id, 'ward_id' => Session::getWardId(), 'event_type' => $key])) ?>
             <?php elseif (Session::isDistrictUser()): ?>
-                <?= Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => Session::getCountryId(), 'district_id' => Session::getDistrictId(), 'event_type' => $key])) ?>
+                <?= Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => $country->id, 'district_id' => Session::getDistrictId(), 'event_type' => $key])) ?>
             <?php elseif (Session::isRegionUser()): ?>
-                <?= Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => Session::getCountryId(), 'region_id' => Session::getRegionId(), 'event_type' => $key])) ?>
+                <?= Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => $country->id, 'region_id' => Session::getRegionId(), 'event_type' => $key])) ?>
             <?php else: ?>
-                <?= Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => Session::getCountryId(), 'event_type' => $key])) ?>
+                <?= Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => $country->id, 'event_type' => $key])) ?>
             <?php endif; ?>
         </span>
         </a>
