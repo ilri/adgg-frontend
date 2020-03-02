@@ -11,6 +11,7 @@ use yii\helpers\Url;
 
 /* @var $controller backend\controllers\BackendController */
 /* @var $model Farm */
+/* @var $country \backend\modules\core\models\Country */
 $controller = Yii::$app->controller;
 $farmType = Yii::$app->request->get('farm_type', null);
 ?>
@@ -21,15 +22,15 @@ $farmType = Yii::$app->request->get('farm_type', null);
             <?= Lang::t('All Farms') ?>
             <span class="badge badge-secondary badge-pill">
                 <?php if (Session::isVillageUser()): ?>
-                    <?= Yii::$app->formatter->asDecimal(Farm::find()->andFilterWhere(['country_id' => Session::getCountryId(), 'village_id' => Session::getVillageId()])->count()) ?>
+                    <?= Yii::$app->formatter->asDecimal(Farm::find()->andFilterWhere(['country_id' => $country->id, 'village_id' => Session::getVillageId()])->count()) ?>
                 <?php elseif (Session::isWardUser()): ?>
-                    <?= Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => Session::getCountryId(), 'ward_id' => Session::getWardId()])) ?>
+                    <?= Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country->id, 'ward_id' => Session::getWardId()])) ?>
                 <?php elseif (Session::isDistrictUser()): ?>
-                    <?= Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => Session::getCountryId(), 'district_id' => Session::getDistrictId()])) ?>
+                    <?= Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country->id, 'district_id' => Session::getDistrictId()])) ?>
                 <?php elseif (Session::isRegionUser()): ?>
-                    <?= Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => Session::getCountryId(), 'region_id' => Session::getRegionId()])) ?>
+                    <?= Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country->id, 'region_id' => Session::getRegionId()])) ?>
                 <?php else: ?>
-                    <?= Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => Session::getCountryId()])) ?>
+                    <?= Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country->id])) ?>
                 <?php endif; ?>
             </span>
         </a>
@@ -43,13 +44,13 @@ $farmType = Yii::$app->request->get('farm_type', null);
                      <?php if (Session::isVillageUser()): ?>
                          <?= Yii::$app->formatter->asDecimal(Farm::find()->andFilterWhere(['country_id' => Session::getCountryId(), 'village_id' => Session::getVillageId(), 'farm_type' => $value])->count()) ?>
                      <?php elseif (Session::isWardUser()): ?>
-                         <?= Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => Session::getCountryId(), 'ward_id' => Session::getWardId(), 'farm_type' => $value])) ?>
+                         <?= Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country->id, 'ward_id' => Session::getWardId(), 'farm_type' => $value])) ?>
                      <?php elseif (Session::isDistrictUser()): ?>
-                         <?= Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => Session::getCountryId(), 'district_id' => Session::getDistrictId(), 'farm_type' => $value])) ?>
+                         <?= Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country->id, 'district_id' => Session::getDistrictId(), 'farm_type' => $value])) ?>
                      <?php elseif (Session::isRegionUser()): ?>
-                         <?= Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => Session::getCountryId(), 'region_id' => Session::getRegionId(), 'farm_type' => $value])) ?>
+                         <?= Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country->id, 'region_id' => Session::getRegionId(), 'farm_type' => $value])) ?>
                      <?php else: ?>
-                         <?= Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => Session::getCountryId(), 'farm_type' => $value])) ?>
+                         <?= Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country->id, 'farm_type' => $value])) ?>
                      <?php endif; ?>
                 </span>
             </a>
