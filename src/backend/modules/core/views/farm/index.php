@@ -14,7 +14,10 @@ $this->params['breadcrumbs'] = [
 ?>
 <div class="row">
     <div class="col-lg-12">
-        <?= $this->render('_filter', ['model' => $searchModel,]) ?>
-        <?= $this->render('_grid', ['model' => $searchModel]) ?>
+        <?= $this->render('@coreModule/views/farm/_tab', ['model' => $searchModel]) ?>
+        <div class="tab-content">
+            <?= $this->render('_filter', ['model' => $searchModel,]) ?>
+            <?= $this->render('_grid', ['model' => $searchModel]) ?>
+        </div>
     </div>
 </div>

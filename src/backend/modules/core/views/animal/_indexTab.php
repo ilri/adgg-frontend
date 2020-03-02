@@ -20,7 +20,7 @@ $animalType = Yii::$app->request->get('animal_type', null);
         <a class="nav-link<?= empty($animalType) ? ' active' : '' ?>"
            href="<?= Url::to(['index', 'animal_type' => null]) ?>">
             <?= Lang::t('All Animals') ?>
-            <span class="badge badge-important badge-pill">
+            <span class="badge badge-secondary badge-pill">
                 <?php if (Session::isVillageUser()): ?>
                     <?= Yii::$app->formatter->asDecimal(Animal::find()->andFilterWhere(['country_id' => Session::getCountryId(), 'village_id' => Session::getVillageId()])->count()) ?>
                 <?php elseif (Session::isWardUser()): ?>
@@ -40,7 +40,7 @@ $animalType = Yii::$app->request->get('animal_type', null);
             <a class="nav-link<?= $animalType == $value ? ' active' : '' ?>"
                href="<?= Url::to(['index', 'animal_type' => $value]) ?>">
                 <?= strtoupper(Html::encode(Inflector::pluralize($label))) ?>
-                <span class="badge badge-important badge-pill">
+                <span class="badge badge-secondary badge-pill">
                      <?php if (Session::isVillageUser()): ?>
                          <?= Yii::$app->formatter->asDecimal(Animal::find()->andFilterWhere(['country_id' => Session::getCountryId(), 'village_id' => Session::getVillageId(), 'animal_type' => $value])->count()) ?>
                      <?php elseif (Session::isWardUser()): ?>
