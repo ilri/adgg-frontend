@@ -92,7 +92,8 @@ use yii\helpers\Json;
                                         'theme' => Select2::THEME_BOOTSTRAP,
                                         'options' => [
                                             'class' => 'form-control parent-depdropdown',
-                                            'data-url' => Url::to(['/core/country-units/get-list', 'country_id' => 'idV', 'level' => CountryUnits::LEVEL_REGION]),
+                                            'placeholder' => '[select one]',
+                                            'data-url' => Url::to(['/core/country-units/get-list', 'country_id' => 'idV', 'level' => CountryUnits::LEVEL_REGION, 'placeholder' => true]),
                                             'data-selected' => $model->region_id,
                                             'data-child-selectors' => [
                                                 '#' . Html::getInputId($model, 'district_id'),
@@ -109,7 +110,8 @@ use yii\helpers\Json;
                                         'theme' => Select2::THEME_BOOTSTRAP,
                                         'options' => [
                                             'class' => 'form-control parent-depdropdown',
-                                            'data-url' => Url::to(['/core/country-units/get-list', 'country_id' => $model->country_id, 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_DISTRICT]),
+                                            'placeholder' => '[select one]',
+                                            'data-url' => Url::to(['/core/country-units/get-list', 'country_id' => $model->country_id, 'placeholder' => true, 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_DISTRICT]),
                                             'data-selected' => $model->district_id,
                                             'data-child-selectors' => [
                                                 '#' . Html::getInputId($model, 'ward_id'),
@@ -126,7 +128,8 @@ use yii\helpers\Json;
                                         'theme' => Select2::THEME_BOOTSTRAP,
                                         'options' => [
                                             'class' => 'form-control parent-depdropdown',
-                                            'data-url' => Url::to(['/core/country-units/get-list', 'country_id' => $model->country_id, 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_WARD]),
+                                            'placeholder' => '[select one]',
+                                            'data-url' => Url::to(['/core/country-units/get-list', 'country_id' => $model->country_id, 'placeholder' => true, 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_WARD]),
                                             'data-selected' => $model->ward_id,
                                             'data-child-selectors' => [
                                                 '#' . Html::getInputId($model, 'village_id'),
@@ -142,7 +145,8 @@ use yii\helpers\Json;
                                         'data' => CountryUnits::getListData('id', 'name', true, ['country_id' => $model->country_id, 'level' => CountryUnits::LEVEL_VILLAGE, 'parent_id' => $model->ward_id]),
                                         'theme' => Select2::THEME_BOOTSTRAP,
                                         'options' => [
-                                            'data-url' => Url::to(['/core/country-units/get-list', 'country_id' => $model->country_id, 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_VILLAGE]),
+                                            'placeholder' => '[select one]',
+                                            'data-url' => Url::to(['/core/country-units/get-list', 'country_id' => $model->country_id, 'placeholder' => true, 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_VILLAGE]),
                                             'data-selected' => $model->village_id,
                                         ],
                                         'pluginOptions' => [
@@ -156,7 +160,7 @@ use yii\helpers\Json;
                                     'data' => \backend\modules\auth\models\Roles::getListData('id', 'name', false, Session::isCountry() ? ['level_id' => UserLevels::LEVEL_COUNTRY] : []),
                                     'theme' => Select2::THEME_BOOTSTRAP,
                                     'options' => [
-                                        'data-url' => Url::to(['role/get-list', 'level_id' => 'idV']),
+                                        'data-url' => Url::to(['role/get-list', 'level_id' => 'idV', 'placeholder' => true]),
                                         'data-selected' => $model->role_id,
                                     ],
                                     'pluginOptions' => [

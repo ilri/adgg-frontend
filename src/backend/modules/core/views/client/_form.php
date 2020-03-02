@@ -58,7 +58,7 @@ $this->title = $controller->getPageTitle();
             ],
         ],
         'pluginOptions' => [
-            'allowClear' => false
+            'allowClear' => true
         ],
     ]) ?>
     <?= $form->field($model, 'org_id')->widget(Select2::class, [
@@ -66,7 +66,7 @@ $this->title = $controller->getPageTitle();
         'options' => [
             'class' => 'form-control parent-depdropdown',
             'placeholder' => '[select one]',
-            'data-url' => Url::to(['organization/get-list', 'country_id' => 'idV']),
+            'data-url' => Url::to(['organization/get-list', 'country_id' => 'idV', 'placeholder' => true]),
             'data-selected' => $model->org_id,
         ],
         'pluginOptions' => [

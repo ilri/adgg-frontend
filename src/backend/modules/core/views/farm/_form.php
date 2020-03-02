@@ -72,7 +72,7 @@ use yii\bootstrap4\ActiveForm;
                                     'data-child-selectors' => [
                                         '#' . Html::getInputId($model, 'district_id'),
                                     ],
-                                    'data-url' => Url::to(['OrganizationRef-units/get-list', 'country_id' => 'idV', 'level' => CountryUnits::LEVEL_REGION]),
+                                    'data-url' => Url::to(['OrganizationRef-units/get-list', 'country_id' => 'idV', 'level' => CountryUnits::LEVEL_REGION, 'placeholder' => true]),
                                     'data-selected' => $model->region_id,
                                 ],
                                 'pluginOptions' => [
@@ -91,7 +91,7 @@ use yii\bootstrap4\ActiveForm;
                                     'data-child-selectors' => [
                                         '#' . Html::getInputId($model, 'ward_id'),
                                     ],
-                                    'data-url' => Url::to(['OrganizationRef-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_DISTRICT]),
+                                    'data-url' => Url::to(['OrganizationRef-units/get-list', 'parent_id' => 'idV', 'placeholder' => true, 'level' => CountryUnits::LEVEL_DISTRICT]),
                                     'data-selected' => $model->district_id,
                                 ],
                                 'pluginOptions' => [
@@ -110,7 +110,7 @@ use yii\bootstrap4\ActiveForm;
                                     'data-child-selectors' => [
                                         '#' . Html::getInputId($model, 'village_id'),
                                     ],
-                                    'data-url' => Url::to(['OrganizationRef-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_WARD]),
+                                    'data-url' => Url::to(['OrganizationRef-units/get-list', 'parent_id' => 'idV', 'placeholder' => true, 'level' => CountryUnits::LEVEL_WARD]),
                                     'data-selected' => $model->ward_id,
                                 ],
                                 'pluginOptions' => [
@@ -126,7 +126,7 @@ use yii\bootstrap4\ActiveForm;
                                 'options' => [
                                     'class' => 'form-control parent-depdropdown',
                                     'placeholder' => '[select one]',
-                                    'data-url' => Url::to(['OrganizationRef-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_VILLAGE]),
+                                    'data-url' => Url::to(['OrganizationRef-units/get-list', 'parent_id' => 'idV', 'placeholder' => true, 'level' => CountryUnits::LEVEL_VILLAGE]),
                                     'data-selected' => $model->village_id,
                                 ],
                                 'pluginOptions' => [

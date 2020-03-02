@@ -80,4 +80,10 @@ class HerdController extends Controller
         return $form->previewAction();
     }
 
+    public function actionGetList($farm_id = null, $placeholder = false)
+    {
+        $data = AnimalHerd::getListData('id', 'name', $placeholder, ['farm_id' => $farm_id]);
+        return json_encode($data);
+    }
+
 }
