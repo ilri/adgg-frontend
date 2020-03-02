@@ -31,9 +31,10 @@ use yii\bootstrap4\Html;
                             <?= Select2::widget([
                                 'name' => 'country_id',
                                 'value' => $model->country_id,
-                                'data' => Country::getListData('id', 'name', SystemSettings::getCompanyName()),
+                                'data' => Country::getListData('id', 'name', false),
                                 'options' => [
                                     'class' => 'form-control select2 parent-depdropdown',
+                                    'placeholder' => '[select one]',
                                     'data-child-selectors' => [
                                         '#' . Html::getInputId($model, 'user_id'),
                                     ],
@@ -52,9 +53,9 @@ use yii\bootstrap4\Html;
                             'data' => Users::getListData('id', 'name', false),
                             'options' => [
                                 'id' => Html::getInputId($model, 'user_id'),
-                                'data-url' => Url::to(['user/get-list', 'country_id' => 'idV']),
+                                'placeholder' => '[Select One]',
+                                'data-url' => Url::to(['user/get-list', 'country_id' => 'idV', 'placeholder' => true]),
                                 'data-selected' => $model->user_id,
-                                'placeholder' => '[all]',
                                 'class' => 'form-control select2',
                             ],
                             'pluginOptions' => [

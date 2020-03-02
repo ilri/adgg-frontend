@@ -1,9 +1,12 @@
 <?php
 
+use backend\modules\auth\Session;
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\Country;
+use backend\modules\core\models\CountryUnits;
 use common\helpers\Lang;
 use common\helpers\Url;
+use yii\helpers\Html;
 
 /* @var $country Country */
 /* @var $events */
@@ -13,7 +16,19 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="row">
     <div class="col-md-12" title="Click to view details">
         <div class="well">
-            <h3><?= Lang::t('List Of Animal  Events In {country}', ['country' => $country->name]) ?></h3>
+            <h3>
+                <?php if (Session::isVillageUser()): ?>
+                    <?= Lang::t('List of Animal Events in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getVillageId(), 'level' => CountryUnits::LEVEL_VILLAGE]) . ' ' . 'Village' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                <?php elseif (Session::isWardUser()): ?>
+                    <?= Lang::t('List of Animal Events in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getWardId(), 'level' => CountryUnits::LEVEL_WARD]) . ' ' . 'Ward' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                <?php elseif (Session::isDistrictUser()): ?>
+                    <?= Lang::t('List of Animal Events in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                <?php elseif (Session::isRegionUser()): ?>
+                    <?= Lang::t('List of Animal Events in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                <?php else: ?>
+                    <?= Lang::t('List of Animal Events in {country}', ['country' => $country->name]) ?>
+                <?php endif; ?>
+            </h3>
             <hr>
             <div class="row">
                 <?php foreach ($events as $key => $name): ?>

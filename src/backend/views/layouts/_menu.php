@@ -247,7 +247,19 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
                                            class="kt-menu__link ">
                                             <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
                                             <span
-                                                    class="kt-menu__link-text"><?= Lang::t('{country}', ['country' => $country->name]) ?></span>
+                                                    class="kt-menu__link-text">
+                                                 <?php if (Session::isVillageUser()): ?>
+                                                     <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getVillageId(), 'level' => CountryUnits::LEVEL_VILLAGE]) . ' ' . 'Village' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                 <?php elseif (Session::isWardUser()): ?>
+                                                     <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getWardId(), 'level' => CountryUnits::LEVEL_WARD]) . ' ' . 'Ward' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                 <?php elseif (Session::isDistrictUser()): ?>
+                                                     <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                 <?php elseif (Session::isRegionUser()): ?>
+                                                     <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                 <?php else: ?>
+                                                     <?= Html::encode($country->name) ?>
+                                                 <?php endif; ?>
+                                            </span>
                                         </a>
                                     </li>
                                 <?php endif; ?>

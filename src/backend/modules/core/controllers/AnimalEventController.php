@@ -10,6 +10,7 @@ namespace backend\modules\core\controllers;
 
 
 use backend\modules\auth\Acl;
+use backend\modules\auth\Session;
 use backend\modules\core\Constants;
 use backend\modules\core\forms\UploadFarms;
 use backend\modules\core\models\AnimalEvent;
@@ -40,6 +41,7 @@ class AnimalEventController extends Controller
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
         $events = AnimalEvent::eventTypeOptions();
+        $country_id = Session::getCountryId($country_id);
         $country = Country::findOne(['id' => $country_id]);
         return $this->render('/animal-event/event-lists', [
             'country' => $country,

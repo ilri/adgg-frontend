@@ -14,6 +14,7 @@ use backend\modules\auth\Session;
 use backend\modules\core\Constants;
 use backend\modules\core\forms\UploadAnimals;
 use backend\modules\core\models\Animal;
+use backend\modules\core\models\Country;
 use backend\modules\core\models\Farm;
 use common\controllers\UploadExcelTrait;
 use common\helpers\Lang;
@@ -41,6 +42,7 @@ class AnimalController extends Controller
         $district_id = Session::getDistrictId($district_id);
         $ward_id = Session::getWardId($ward_id);
         $village_id = Session::getVillageId($village_id);
+        $country = Country::findOne(['id' => $country_id]);
         $condition = '';
         $params = [];
         $searchModel = Animal::searchModel([
@@ -67,6 +69,7 @@ class AnimalController extends Controller
 
         return $this->render('index', [
             'searchModel' => $searchModel,
+            'country' => $country,
         ]);
     }
 

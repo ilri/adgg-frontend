@@ -11,6 +11,7 @@ namespace backend\modules\core\controllers;
 
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\AnimalEvent;
+use backend\modules\core\models\Country;
 use common\helpers\DateUtils;
 use Yii;
 
@@ -23,6 +24,7 @@ trait AnimalEventTrait
         $dateFilter = DateUtils::getDateFilterParams($from, $to, 'event_date', false, false);
         $condition = $dateFilter['condition'];
         $params = [];
+        $country = Country::findOne(['id' => $country_id]);
         $searchModel = AnimalEvent::searchModel([
             'defaultOrder' => ['id' => SORT_DESC],
             'condition' => $condition,
@@ -73,6 +75,7 @@ trait AnimalEventTrait
         return $this->render('@coreModule/views/animal-event/index', [
             'searchModel' => $searchModel,
             'grid' => $grid,
+            'country' => $country,
         ]);
     }
 }
