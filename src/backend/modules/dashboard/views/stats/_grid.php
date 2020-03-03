@@ -9,7 +9,7 @@ use common\widgets\grid\GridView;
 
 <?= GridView::widget([
     'dataProvider' => $dataProvider,
-    'title' => 'Test Day Milk',
+    'title' => 'Large Scale Farms Test Day Milk',
     'createButton' => ['visible' => false],
     'columns' => [
         [
