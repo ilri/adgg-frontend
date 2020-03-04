@@ -33,15 +33,15 @@ class DateUtils
     {
         switch ($type) {
             case 'hour':
-                return Carbon::parse($date)->addHour($length)->format($format);
+                return Carbon::parse($date)->addHours($length)->format($format);
             case 'day':
-                return Carbon::parse($date)->addDay($length)->format($format);
+                return Carbon::parse($date)->addDays($length)->format($format);
             case 'week':
-                return Carbon::parse($date)->addWeek($length)->format($format);
+                return Carbon::parse($date)->addWeeks($length)->format($format);
             case 'month':
-                return Carbon::parse($date)->addMonth($length)->format($format);
+                return Carbon::parse($date)->addMonths($length)->format($format);
             case 'year':
-                return Carbon::parse($date)->addYear($length)->format($format);
+                return Carbon::parse($date)->addYears($length)->format($format);
             default:
                 return $date;
         }
