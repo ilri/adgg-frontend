@@ -426,11 +426,11 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
                     </div>
                 </li>
             <?php endif; ?>
-            <li class="kt-menu__section ">
-                <h4 class="kt-menu__section-text">HELP</h4>
-                <i class="kt-menu__section-icon flaticon-more-v2"></i>
-            </li>
             <?php if (Yii::$app->user->canView(HelpConstants::RES_HELP)): ?>
+                <li class="kt-menu__section ">
+                    <h4 class="kt-menu__section-text">HELP</h4>
+                    <i class="kt-menu__section-icon flaticon-more-v2"></i>
+                </li>
                 <li class="kt-menu__item kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'help/help-content' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
                     <?php if (Session::isPrivilegedAdmin()): ?>
                         <?php $url = Url::to(['/help/help-content/index']) ?>
