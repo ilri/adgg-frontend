@@ -9,6 +9,7 @@
 namespace backend\modules\core\controllers;
 
 
+use backend\modules\auth\Session;
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\Country;
@@ -36,6 +37,9 @@ trait AnimalEventTrait
             $animal_id = Animal::getScalar('id', ['tag_id' => $animalTagId]);
         }
         $searchModel->animal_id = $animal_id;
+        if (Session::isVillageUser()) {
+            $searchModel->field_agent_id = Session::getUserId();
+        }
         $searchModel->event_type = $event_type;
         $searchModel->_dateFilterFrom = $dateFilter['from'];
         $searchModel->_dateFilterTo = $dateFilter['to'];

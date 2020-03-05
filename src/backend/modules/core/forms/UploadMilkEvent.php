@@ -40,7 +40,6 @@ class UploadMilkEvent extends UploadAnimalEvent implements ImportInterface
                 continue;
             }
             $row = $this->setDefaultAttributes($row);
-            $row['milk_qty_is_tested'] = static::encodeBoolean($row['milk_qty_is_tested'], $row['milk_qty_is_tested']);
             $insert_data[$k] = $row;
         }
 

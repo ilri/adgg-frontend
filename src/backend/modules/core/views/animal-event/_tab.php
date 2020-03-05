@@ -44,7 +44,7 @@ $events = AnimalEvent::eventTypeOptions();
             <?= Lang::t('{name}', ['name' => $name]); ?>
         <span class="badge badge-secondary badge-pill">
             <?php if (Session::isVillageUser()): ?>
-                <?= Yii::$app->formatter->asDecimal(AnimalEvent::find()->andFilterWhere(['country_id' => $country->id, 'village_id' => Session::getVillageId(), 'event_type' => $key])->count()) ?>
+                <?= Yii::$app->formatter->asDecimal(AnimalEvent::find()->andFilterWhere(['country_id' => $country->id, 'village_id' => Session::getVillageId(), 'event_type' => $key, 'field_agent_id' => Session::getUserId()])->count()) ?>
             <?php elseif (Session::isWardUser()): ?>
                 <?= Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => $country->id, 'ward_id' => Session::getWardId(), 'event_type' => $key])) ?>
             <?php elseif (Session::isDistrictUser()): ?>

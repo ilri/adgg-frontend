@@ -62,7 +62,9 @@ class FarmController extends Controller
         $searchModel->gender_code = $gender_code;
         $searchModel->is_active = $is_active;
         $searchModel->odk_code = $odk_code;
-
+        if (Session::isVillageUser()) {
+            $searchModel->field_agent_id = Session::getUserId();
+        }
         return $this->render('index', [
             'searchModel' => $searchModel,
             'country' => $country,

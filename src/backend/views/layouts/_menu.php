@@ -426,23 +426,21 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
                     </div>
                 </li>
             <?php endif; ?>
-            <li class="kt-menu__section ">
-                <h4 class="kt-menu__section-text">HELP</h4>
-                <i class="kt-menu__section-icon flaticon-more-v2"></i>
-            </li>
             <?php if (Yii::$app->user->canView(HelpConstants::RES_HELP)): ?>
+                <li class="kt-menu__section ">
+                    <h4 class="kt-menu__section-text">HELP</h4>
+                    <i class="kt-menu__section-icon flaticon-more-v2"></i>
+                </li>
                 <li class="kt-menu__item kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'help/help-content' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
                     <?php if (Session::isPrivilegedAdmin()): ?>
-                        <a href="<?= Url::to(['/help/help-content/index']) ?>" class="kt-menu__link">
-                            <i class="kt-menu__link-icon far fa-info-circle"></i>
-                            <span class="kt-menu__link-text">HELP CONTENT</span>
-                        </a>
+                        <?php $url = Url::to(['/help/help-content/index']) ?>
                     <?php else: ?>
-                        <a href="<?= Url::to(['/help/help-content/read']) ?>" class="kt-menu__link">
-                            <i class="kt-menu__link-icon far fa-info-circle"></i>
-                            <span class="kt-menu__link-text">HELP CONTENT</span>
-                        </a>
+                        <?php $url = Url::to(['/help/help-content/read']) ?>
                     <?php endif; ?>
+                    <a href="<?= $url ?>" class="kt-menu__link">
+                        <i class="kt-menu__link-icon far fa-info-circle"></i>
+                        <span class="kt-menu__link-text">HELP CONTENT</span>
+                    </a>
                 </li>
             <?php endif; ?>
         </ul>
