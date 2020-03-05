@@ -15,6 +15,7 @@ use backend\modules\core\forms\UploadWeightEvent;
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\WeightEvent;
 use common\controllers\UploadExcelTrait;
+use Yii;
 
 class WeightEventController extends Controller
 {
@@ -39,7 +40,7 @@ class WeightEventController extends Controller
         $this->hasPrivilege(Acl::ACTION_CREATE);
 
         $form = new UploadWeightEvent(WeightEvent::class);
-        $resp = $this->uploadExcelConsole($form, 'weight-event/index', []);
+        $resp = $this->uploadExcelConsole($form, 'weight-event/index', Yii::$app->request->queryParams);
         if ($resp !== false) {
             return $resp;
         }

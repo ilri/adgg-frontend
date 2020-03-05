@@ -8,6 +8,7 @@
 namespace backend\modules\auth;
 
 
+use backend\modules\auth\models\Roles;
 use backend\modules\auth\models\UserLevels;
 use Yii;
 
@@ -124,6 +125,16 @@ class Session
     public static function isPrivilegedAdmin()
     {
         return static::isDev() || static::isSuperAdmin() || static::isSystemAdmin();
+    }
+
+    /**
+     * @return bool
+     */
+    public static function isFieldAgent()
+    {
+        $userRole = Yii::$app->user->identity->role_id;
+        $model = Roles::findOne(['id' => $userRole]);
+        return $model->isFieldAgent();
     }
 
     /**

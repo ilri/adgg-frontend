@@ -42,14 +42,22 @@ $this->params['breadcrumbs'] = [
                             <div class="col-12 col-md-6">
                                 <h5 class="text-center font-weight-bold"><?= Lang::t('Number Of Farms') ?></h5>
                                 <h1 class="text-center kt-font-info">
-                                    <?php if (Session::isVillageUser()): ?>
+                                    <?php if (Session::isVillageUser() && !Session::isFieldAgent()): ?>
+                                        <?= Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country->id, 'village_id' => Session::getVillageId()])) ?>
+                                    <?php elseif (Session::isVillageUser() && Session::isFieldAgent()): ?>
                                         <?= Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country->id, 'village_id' => Session::getVillageId(), 'field_agent_id' => Session::getUserId()])) ?>
-                                    <?php elseif (Session::isWardUser()): ?>
+                                    <?php elseif (Session::isWardUser() && !Session::isFieldAgent()): ?>
                                         <?= Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country->id, 'ward_id' => Session::getWardId()])) ?>
-                                    <?php elseif (Session::isDistrictUser()): ?>
+                                    <?php elseif (Session::isWardUser() && Session::isFieldAgent()): ?>
+                                        <?= Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country->id, 'ward_id' => Session::getWardId(), 'field_agent_id' => Session::getUserId()])) ?>
+                                    <?php elseif (Session::isDistrictUser() && !Session::isFieldAgent()): ?>
                                         <?= Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country->id, 'district_id' => Session::getDistrictId()])) ?>
-                                    <?php elseif (Session::isRegionUser()): ?>
+                                    <?php elseif (Session::isDistrictUser() && Session::isFieldAgent()): ?>
+                                        <?= Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country->id, 'district_id' => Session::getDistrictId(), 'field_agent_id' => Session::getUserId()])) ?>
+                                    <?php elseif (Session::isRegionUser() && !Session::isFieldAgent()): ?>
                                         <?= Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country->id, 'region_id' => Session::getRegionId()])) ?>
+                                    <?php elseif (Session::isRegionUser() && Session::isFieldAgent()): ?>
+                                        <?= Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country->id, 'region_id' => Session::getRegionId(), 'field_agent_id' => Session::getUserId()])) ?>
                                     <?php else: ?>
                                         <?= Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country->id])) ?>
                                     <?php endif; ?>
