@@ -37,6 +37,8 @@ use common\models\CustomValidationsTrait;
  * @property int $lactation_id
  * @property string $lactation_number
  * @property string|array $additional_attributes
+ * @property string $migration_id
+ *
  * @property Animal $animal
  * @property Country $country
  * @property Users $fieldAgent
@@ -82,6 +84,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             ['event_date', 'validateNoFutureDate'],
             ['event_date', 'unique', 'targetAttribute' => ['country_id', 'animal_id', 'event_type', 'event_date'], 'message' => '{attribute} should be unique per animal'],
             [['org_id', 'client_id'], 'safe'],
+            ['migration_id', 'unique'],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
     }

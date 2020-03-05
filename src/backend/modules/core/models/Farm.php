@@ -47,6 +47,7 @@ use yii\helpers\Html;
  * @property int $deleted_by
  * @property string $odk_code
  * @property string|array $additional_attributes
+ * @property string $migration_id
  *
  * @property Users $fieldAgent
  * @property Animal $animals
@@ -91,6 +92,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             [['additional_attributes', 'org_id', 'client_id'], 'safe'],
             ['odk_code', 'unique', 'targetAttribute' => ['country_id', 'odk_code'], 'message' => '{attribute} already exists.', 'on' => self::SCENARIO_UPLOAD],
             [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
+            ['migration_id', 'unique'],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
 
         ];
