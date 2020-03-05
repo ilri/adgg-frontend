@@ -28,7 +28,6 @@ use yii\helpers\Html;
  * @property string $phone
  * @property string $email
  * @property int $field_agent_id
- * @property string $field_agent_name
  * @property string $project
  * @property string $farm_type
  * @property string $gender_code
@@ -81,7 +80,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             [['name'], 'required', 'except' => [self::SCENARIO_UPLOAD]],
             [['country_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'field_agent_id', 'is_active', 'farmer_is_hh_head'], 'safe'],
             [['latitude', 'longitude', 'phone'], 'number'],
-            [['code', 'name', 'project', 'field_agent_name', 'farmer_name'], 'string', 'max' => 128],
+            [['code', 'name', 'project','farmer_name'], 'string', 'max' => 128],
             [['phone'], 'string', 'min' => 9, 'max' => 12, 'message' => '{attribute} should contain between 9 and 12 digits', 'except' => self::SCENARIO_UPLOAD],
             [['email', 'map_address'], 'string', 'max' => 255],
             [['farm_type'], 'string', 'max' => 30],
@@ -118,7 +117,6 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             'phone' => 'Farmer Phone No.',
             'email' => 'Farmer Email',
             'field_agent_id' => 'AITech/PRA Id',
-            'field_agent_name' => 'AITech/PRA Name',
             'field_agent_code' => 'AITech/PRA Code',
             'field_agent_code2' => 'Data Collector Code',
             'project' => 'Project',
@@ -203,9 +201,6 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             }
             if (empty($this->name)) {
                 $this->name = $this->farmer_name;
-            }
-            if (empty($this->field_agent_name)) {
-                $this->fieldAgent->name;
             }
             $this->setAdditionalAttributesValues();
 
