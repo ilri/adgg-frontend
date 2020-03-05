@@ -10,7 +10,9 @@ namespace backend\modules\dashboard\controllers;
 
 
 use backend\modules\auth\Session;
+use backend\modules\core\models\Animal;
 use backend\modules\core\models\CountriesDashboardStats;
+use backend\modules\core\models\Farm;
 use backend\modules\core\models\MilkingReport;
 use backend\modules\core\models\Country;
 
@@ -77,7 +79,7 @@ class StatsController extends Controller
         $country = Country::findOne(['id' => $country_id]);
         $dataProvider = null;
         if (Session::isVillageUser()) {
-            $dataProvider = MilkingReport::getLargeScaleFarmMilkDetails($country_id, ['core_animal_event.village_id' => Session::getVillageId()]);
+            $dataProvider = MilkingReport::getLargeScaleFarmMilkDetails($country_id, ['core_animal_event.village_id' => Session::getVillageId(), 'core_animal_event.field_agent_id' => Session::getUserId()]);
         } elseif (Session::isWardUser()) {
             $dataProvider = MilkingReport::getLargeScaleFarmMilkDetails($country_id, ['core_animal_event.ward_id' => Session::getWardId()]);
         } elseif (Session::isDistrictUser()) {
@@ -102,7 +104,7 @@ class StatsController extends Controller
         }
         $dataProvider = null;
         if (Session::isVillageUser()) {
-            $dataProvider = CountriesDashboardStats::getGetAnimalsMilkingRecords($country_id, ['core_animal_event.village_id' => Session::getVillageId()]);
+            $dataProvider = CountriesDashboardStats::getGetAnimalsMilkingRecords($country_id, ['core_animal_event.village_id' => Session::getVillageId(), 'core_animal_event.field_agent_id' => Session::getUserId()]);
         } elseif (Session::isWardUser()) {
             $dataProvider = CountriesDashboardStats::getGetAnimalsMilkingRecords($country_id, ['core_animal_event.ward_id' => Session::getWardId()]);
         } elseif (Session::isDistrictUser()) {

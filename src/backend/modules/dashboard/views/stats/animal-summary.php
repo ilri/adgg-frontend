@@ -142,7 +142,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                     <div class="kt-iconbox__icon-bg"></div>
                     <span>
                         <?php if (Session::isVillageUser()): ?>
-                            <?= Yii::$app->formatter->asDecimal(Animal::find()->andFilterWhere(['country_id' => $country->id, 'village_id' => Session::getVillageId(), 'animal_type' => Animal::ANIMAL_TYPE_COW])->count()) ?>
+                            <?= Yii::$app->formatter->asDecimal(Animal::find()->joinWith('farm')->andFilterWhere(['core_animal.country_id' => $country->id, 'core_animal.village_id' => Session::getVillageId(), 'core_animal.animal_type' => Animal::ANIMAL_TYPE_COW])->andFilterWhere([Farm::tableName() . '.field_agent_id' => Session::getUserId()])->count()) ?>
                         <?php elseif (Session::isWardUser()): ?>
                             <?= Yii::$app->formatter->asDecimal(Animal::getCount(['country_id' => $country->id, 'ward_id' => Session::getWardId(), 'animal_type' => Animal::ANIMAL_TYPE_COW])) ?>
                         <?php elseif (Session::isDistrictUser()): ?>
@@ -165,7 +165,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                     <div class="kt-iconbox__icon-bg"></div>
                     <span>
                           <?php if (Session::isVillageUser()): ?>
-                              <?= Yii::$app->formatter->asDecimal(Animal::find()->andFilterWhere(['country_id' => $country->id, 'village_id' => Session::getVillageId(), 'animal_type' => Animal::ANIMAL_TYPE_HEIFER])->count()) ?>
+                              <?= Yii::$app->formatter->asDecimal(Animal::find()->joinWith('farm')->andFilterWhere(['core_animal.country_id' => $country->id, 'core_animal.village_id' => Session::getVillageId(), 'core_animal.animal_type' => Animal::ANIMAL_TYPE_HEIFER])->andFilterWhere([Farm::tableName() . '.field_agent_id' => Session::getUserId()])->count()) ?>
                           <?php elseif (Session::isWardUser()): ?>
                               <?= Yii::$app->formatter->asDecimal(Animal::getCount(['country_id' => $country->id, 'ward_id' => Session::getWardId(), 'animal_type' => Animal::ANIMAL_TYPE_HEIFER])) ?>
                           <?php elseif (Session::isDistrictUser()): ?>
@@ -188,7 +188,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                     <div class="kt-iconbox__icon-bg"></div>
                     <span>
                       <?php if (Session::isVillageUser()): ?>
-                          <?= Yii::$app->formatter->asDecimal(Animal::find()->andFilterWhere(['country_id' => $country->id, 'village_id' => Session::getVillageId(), 'animal_type' => Animal::ANIMAL_TYPE_BULL])->count()) ?>
+                          <?= Yii::$app->formatter->asDecimal(Animal::find()->joinWith('farm')->andFilterWhere(['core_animal.country_id' => $country->id, 'core_animal.village_id' => Session::getVillageId(), 'core_animal.animal_type' => Animal::ANIMAL_TYPE_BULL])->andFilterWhere([Farm::tableName() . '.field_agent_id' => Session::getUserId()])->count()) ?>
                       <?php elseif (Session::isWardUser()): ?>
                           <?= Yii::$app->formatter->asDecimal(Animal::getCount(['country_id' => $country->id, 'ward_id' => Session::getWardId(), 'animal_type' => Animal::ANIMAL_TYPE_BULL])) ?>
                       <?php elseif (Session::isDistrictUser()): ?>
@@ -211,7 +211,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                     <div class="kt-iconbox__icon-bg"></div>
                     <span>
                          <?php if (Session::isVillageUser()): ?>
-                             <?= Yii::$app->formatter->asDecimal(Animal::find()->andFilterWhere(['country_id' => $country->id, 'village_id' => Session::getVillageId(), 'animal_type' => Animal::ANIMAL_TYPE_MALE_CALF])->count()) ?>
+                             <?= Yii::$app->formatter->asDecimal(Animal::find()->joinWith('farm')->andFilterWhere(['core_animal.country_id' => $country->id, 'core_animal.village_id' => Session::getVillageId(), 'core_animal.animal_type' => Animal::ANIMAL_TYPE_MALE_CALF])->andFilterWhere([Farm::tableName() . '.field_agent_id' => Session::getUserId()])->count()) ?>
                          <?php elseif (Session::isWardUser()): ?>
                              <?= Yii::$app->formatter->asDecimal(Animal::getCount(['country_id' => $country->id, 'ward_id' => Session::getWardId(), 'animal_type' => Animal::ANIMAL_TYPE_MALE_CALF])) ?>
                          <?php elseif (Session::isDistrictUser()): ?>
@@ -234,7 +234,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                     <div class="kt-iconbox__icon-bg"></div>
                     <span>
                          <?php if (Session::isVillageUser()): ?>
-                             <?= Yii::$app->formatter->asDecimal(Animal::find()->andFilterWhere(['country_id' => $country->id, 'village_id' => Session::getVillageId(), 'animal_type' => Animal::ANIMAL_TYPE_FEMALE_CALF])->count()) ?>
+                             <?= Yii::$app->formatter->asDecimal(Animal::find()->joinWith('farm')->andFilterWhere(['core_animal.country_id' => $country->id, 'core_animal.village_id' => Session::getVillageId(), 'core_animal.animal_type' => Animal::ANIMAL_TYPE_FEMALE_CALF])->andFilterWhere([Farm::tableName() . '.field_agent_id' => Session::getUserId()])->count()) ?>
                          <?php elseif (Session::isWardUser()): ?>
                              <?= Yii::$app->formatter->asDecimal(Animal::getCount(['country_id' => $country->id, 'ward_id' => Session::getWardId(), 'animal_type' => Animal::ANIMAL_TYPE_FEMALE_CALF])) ?>
                          <?php elseif (Session::isDistrictUser()): ?>

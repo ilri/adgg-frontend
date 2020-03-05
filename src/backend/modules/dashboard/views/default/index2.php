@@ -57,7 +57,7 @@ $this->params['breadcrumbs'] = [
                                 <h6 class="text-center font-weight-bold"><?= Lang::t('Number Of Animals') ?></h6>
                                 <h1 class="text-center kt-font-info">
                                     <?php if (Session::isVillageUser()): ?>
-                                        <?= Yii::$app->formatter->asDecimal(Animal::getCount(['country_id' => $country->id, 'village_id' => Session::getVillageId()])) ?>
+                                        <?= Yii::$app->formatter->asDecimal(Animal::find()->joinWith('farm')->andFilterWhere(['core_animal.country_id' => $country->id, 'core_animal.village_id' => Session::getVillageId()])->andFilterWhere([Farm::tableName() . '.field_agent_id' => Session::getUserId()])->count()) ?>
                                     <?php elseif (Session::isWardUser()): ?>
                                         <?= Yii::$app->formatter->asDecimal(Animal::getCount(['country_id' => $country->id, 'ward_id' => Session::getWardId()])) ?>
                                     <?php elseif (Session::isDistrictUser()): ?>

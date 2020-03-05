@@ -4,6 +4,7 @@ use backend\controllers\BackendController;
 use backend\modules\auth\Session;
 use backend\modules\core\models\CountriesDashboardStats;
 use backend\modules\core\models\CountryUnits;
+use backend\modules\core\models\Farm;
 use backend\modules\core\models\MilkingReport;
 use backend\modules\core\models\Country;
 use common\helpers\Lang;
@@ -91,7 +92,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                             <div class="kt-iconbox__icon-bg"></div>
                             <span>
                                 <?php if (Session::isVillageUser()): ?>
-                                    <?= MilkingReport::getFarmersWithAnimalsWithMilkingRecord($country->id, ['core_animal.village_id' => Session::getVillageId()]) ?>
+                                    <?= MilkingReport::getFarmersWithAnimalsWithMilkingRecord($country->id, ['core_animal.village_id' => Session::getVillageId(), Farm::tableName() . '.field_agent_id' => Session::getUserId()]) ?>
                                 <?php elseif (Session::isWardUser()): ?>
                                     <?= MilkingReport::getFarmersWithAnimalsWithMilkingRecord($country->id, ['core_animal.ward_id' => Session::getWardId()]) ?>
                                 <?php elseif (Session::isDistrictUser()): ?>
@@ -113,7 +114,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                             <?php elseif (Session::isRegionUser()): ?>
                                 <?= Lang::t('Number Of Farmers  With Cows With Test Day Milk Record in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                             <?php else: ?>
-                                <?= Lang::t('Test Day Milk Records Grouped By Region in {country}', ['country' => $country->name]) ?>
+                                <?= Lang::t('Number Of Farmers  With Cows With Test Day Milk Record in {country}', ['country' => $country->name]) ?>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -124,7 +125,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                             <div class="kt-iconbox__icon-bg"></div>
                             <span>
                                 <?php if (Session::isVillageUser()): ?>
-                                    <?= MilkingReport::getAnimalsWithMilkingRecord($country->id, ['core_animal_event.village_id' => Session::getVillageId()]) ?>
+                                    <?= MilkingReport::getAnimalsWithMilkingRecord($country->id, ['core_animal_event.village_id' => Session::getVillageId(), 'core_animal_event.field_agent_id' => Session::getUserId()]) ?>
                                 <?php elseif (Session::isWardUser()): ?>
                                     <?= MilkingReport::getAnimalsWithMilkingRecord($country->id, ['core_animal_event.ward_id' => Session::getWardId()]) ?>
                                 <?php elseif (Session::isDistrictUser()): ?>
