@@ -15,6 +15,7 @@ use backend\modules\core\forms\UploadHealthEvent;
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\HealthEvent;
 use common\controllers\UploadExcelTrait;
+use Yii;
 
 class HealthEventController extends Controller
 {
@@ -39,7 +40,7 @@ class HealthEventController extends Controller
         $this->hasPrivilege(Acl::ACTION_CREATE);
 
         $form = new UploadHealthEvent(HealthEvent::class);
-        $resp = $this->uploadExcelConsole($form, 'health-event/index', []);
+        $resp = $this->uploadExcelConsole($form, 'health-event/index', Yii::$app->request->queryParams);
         if ($resp !== false) {
             return $resp;
         }

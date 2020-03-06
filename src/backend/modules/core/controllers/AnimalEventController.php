@@ -46,7 +46,6 @@ class AnimalEventController extends Controller
         return $this->render('/animal-event/event-lists', [
             'country' => $country,
             'events' => $events,
-            'country_id' => $country_id,
         ]);
     }
 

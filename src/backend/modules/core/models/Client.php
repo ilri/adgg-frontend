@@ -18,6 +18,7 @@ use common\models\ActiveSearchTrait;
  * @property string|null $additional_attributes
  * @property string $created_at The date the record was created
  * @property int|null $created_by Id of the user who created the records
+ * @property string $migration_id
  *
  * @property Organization $org
  *
@@ -45,6 +46,7 @@ class Client extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             [['name', 'description'], 'string', 'max' => 255],
             [['additional_attributes'], 'safe'],
             [$this->getAdditionalAttributes(), 'safe'],
+            ['migration_id', 'unique'],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
 
         ];
