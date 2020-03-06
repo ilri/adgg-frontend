@@ -8,6 +8,7 @@ use yii\web\View;
 /* @var $this View */
 /* @var $searchModel AnimalEvent */
 /* @var $controller BackendController */
+/* @var $country \backend\modules\core\models\Country */
 /* @var $grid string */
 /* @var $upload_url string */
 

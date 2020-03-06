@@ -13,8 +13,10 @@ use backend\modules\auth\Acl;
 use backend\modules\core\Constants;
 use backend\modules\core\forms\UploadMilkEvent;
 use backend\modules\core\models\AnimalEvent;
+use backend\modules\core\models\Country;
 use backend\modules\core\models\MilkingEvent;
 use common\controllers\UploadExcelTrait;
+use Yii;
 
 class MilkingEventController extends Controller
 {
@@ -37,9 +39,8 @@ class MilkingEventController extends Controller
     public function actionUpload()
     {
         $this->hasPrivilege(Acl::ACTION_CREATE);
-
         $form = new UploadMilkEvent(MilkingEvent::class);
-        $resp = $this->uploadExcelConsole($form, 'milking-event/index', []);
+        $resp = $this->uploadExcelConsole($form, 'milking-event/index', Yii::$app->request->queryParams);
         if ($resp !== false) {
             return $resp;
         }

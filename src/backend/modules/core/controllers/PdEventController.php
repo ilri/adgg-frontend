@@ -15,6 +15,7 @@ use backend\modules\core\forms\UploadPDEvent;
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\PDEvent;
 use common\controllers\UploadExcelTrait;
+use Yii;
 
 class PdEventController extends Controller
 {
@@ -39,7 +40,7 @@ class PdEventController extends Controller
         $this->hasPrivilege(Acl::ACTION_CREATE);
 
         $form = new UploadPDEvent(PDEvent::class);
-        $resp = $this->uploadExcelConsole($form, 'pd-event/index', []);
+        $resp = $this->uploadExcelConsole($form, 'pd-event/index', Yii::$app->request->queryParams);
         if ($resp !== false) {
             return $resp;
         }

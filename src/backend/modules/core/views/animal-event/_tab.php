@@ -10,6 +10,7 @@ use yii\helpers\Url;
 
 /* @var $controller BackendController */
 /* @var $model AnimalEvent */
+/* @var $country \backend\modules\core\models\Country */
 /* @var $events */
 $controller = Yii::$app->controller;
 $events = AnimalEvent::eventTypeOptions();
@@ -38,11 +39,11 @@ $events = AnimalEvent::eventTypeOptions();
             $url = 'exit-event/index';
         }
         ?>
-    <li class="nav-item">
-        <a class="nav-link"
-            href="<?= Url::to([$url, 'country_id' => Session::getCountryId(), 'event_type' => $key]) ?>">
-            <?= Lang::t('{name}', ['name' => $name]); ?>
-        <span class="badge badge-secondary badge-pill">
+        <li class="nav-item">
+            <a class="nav-link"
+               href="<?= Url::to([$url, 'country_id' => $country->id, 'event_type' => $key]) ?>">
+                <?= Lang::t('{name}', ['name' => $name]); ?>
+                <span class="badge badge-secondary badge-pill">
             <?php if (Session::isVillageUser()): ?>
                 <?= Yii::$app->formatter->asDecimal(AnimalEvent::find()->andFilterWhere(['country_id' => $country->id, 'village_id' => Session::getVillageId(), 'event_type' => $key, 'field_agent_id' => Session::getUserId()])->count()) ?>
             <?php elseif (Session::isWardUser()): ?>
