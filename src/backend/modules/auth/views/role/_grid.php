@@ -44,6 +44,13 @@ use yii\helpers\Url;
             'filter' => Utils::booleanOptions(),
         ],
         [
+            'attribute' => 'is_field_agent',
+            'value' => function (Roles $model) {
+                return Utils::decodeBoolean($model->is_field_agent);
+            },
+            'filter' => Utils::booleanOptions(),
+        ],
+        [
             'class' => common\widgets\grid\ActionColumn::class,
             'template' => '{view}{update}',
             'viewOptions' => ['label' => 'Update Privileges'],

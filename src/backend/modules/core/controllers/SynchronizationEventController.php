@@ -15,6 +15,7 @@ use backend\modules\core\forms\UploadSyncEvent;
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\SyncEvent;
 use common\controllers\UploadExcelTrait;
+use Yii;
 
 class SynchronizationEventController extends Controller
 {
@@ -38,8 +39,8 @@ class SynchronizationEventController extends Controller
     {
         $this->hasPrivilege(Acl::ACTION_CREATE);
 
-        $form = new UploadSyncEvent( SyncEvent::class);
-        $resp = $this->uploadExcelConsole($form, 'synchronization-event/index', []);
+        $form = new UploadSyncEvent(SyncEvent::class);
+        $resp = $this->uploadExcelConsole($form, 'synchronization-event/index', Yii::$app->request->queryParams);
         if ($resp !== false) {
             return $resp;
         }

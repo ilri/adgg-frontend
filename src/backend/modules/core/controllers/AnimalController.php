@@ -50,7 +50,11 @@ class AnimalController extends Controller
             'condition' => $condition,
             'params' => $params,
             'joinWith' => ['farm' => function (yii\db\ActiveQuery $query) use ($farm_type) {
-                $query->andFilterWhere([Farm::tableName() . '.farm_type' => $farm_type, Farm::tableName() . '.field_agent_id' => Session::getUserId()]);
+                if (Session::isVillageUser()) {
+                    $query->andFilterWhere([Farm::tableName() . '.farm_type' => $farm_type, Farm::tableName() . '.field_agent_id' => Session::getUserId()]);
+                } else {
+                    $query->andFilterWhere([Farm::tableName() . '.farm_type' => $farm_type]);
+                }
             }],
             'with' => ['farm', 'region', 'district', 'ward', 'village', 'sire', 'dam'],
         ]);
