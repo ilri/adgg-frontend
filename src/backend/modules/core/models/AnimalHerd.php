@@ -32,6 +32,7 @@ use common\models\ActiveSearchTrait;
  * @property string $reg_date
  * @property string $project
  * @property string $additional_attributes
+ * @property string $migration_id
  *
  * @property Farm $farm
  * @property Country $country
@@ -69,6 +70,7 @@ class AnimalHerd extends ActiveRecord implements ActiveSearchInterface, ImportAc
             [['name'], 'unique', 'targetAttribute' => ['farm_id', 'name'], 'message' => '{attribute} already exists.'],
             [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
             [$this->getAdditionalAttributes(), 'safe'],
+            ['migration_id', 'unique'],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
     }

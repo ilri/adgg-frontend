@@ -62,6 +62,7 @@ use yii\helpers\Inflector;
  * @property int $updated_by
  * @property string|array $additional_attributes
  * @property string $animal_eartag_id
+ * @property string $migration_id
  *
  * @property Farm $farm
  * @property Animal $sire
@@ -117,6 +118,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             [['tmp_animal_photo', 'additional_attributes', 'org_id', 'client_id'], 'safe'],
             [$this->getAdditionalAttributes(), 'safe'],
             [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
+            ['migration_id', 'unique'],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
     }
