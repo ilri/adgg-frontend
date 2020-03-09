@@ -15,7 +15,7 @@ use yii\widgets\DetailView;
 /* @var $controller \backend\controllers\BackendController */
 $controller = Yii::$app->controller;
 $this->title = Html::encode($model->name);
-$this->params['breadcrumbs'][] = ['label' => Inflector::pluralize($controller->resourceLabel), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Inflector::pluralize($controller->resourceLabel), 'url' => ['index', 'country_id' => $model->country_id]];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <?= $this->render('_profileHeader', ['model' => $model]) ?>

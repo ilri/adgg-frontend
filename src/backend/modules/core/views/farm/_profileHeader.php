@@ -63,7 +63,9 @@ use yii\helpers\Url;
             <li class="nav-item">
                 <?php foreach ($model->animals as $animal): ?>
                 <?php endforeach; ?>
-                <a class="nav-link" href="<?= Url::to(['animal/index', 'farm_id' => $model->id]) ?>" role="tab"
+                <a class="nav-link"
+                   href="<?= Url::to(['animal/index', 'farm_id' => $model->id, 'country_id' => $model->country_id]) ?>"
+                   role="tab"
                    title="Click To view">
                     <?= Lang::t('Animals') ?>
                     <span class="badge badge-secondary badge-pill">

@@ -138,11 +138,11 @@ use yii\helpers\Url;
                 <?php if (($model->animal_type == Animal::ANIMAL_TYPE_COW)): ?>
                     <li class="nav-item">
                         <a class="nav-link" title="Click To View"
-                           href="<?= Url::to(['animal-event/index', 'animal_id' => $model->id, 'event_type' => AnimalEvent::EVENT_TYPE_CALVING]) ?>"
+                           href="<?= Url::to(['animal-event/index', 'animal_id' => $model->id, 'event_type' => AnimalEvent::EVENT_TYPE_CALVING, 'country_id' => $model->country_id]) ?>"
                            role="tab">
                             <?= Lang::t('Calving') ?>
                             <span class="badge badge-secondary badge-pill">
-                        <?= AnimalEvent::getCount(['animal_id' => $model->id, 'event_type' => AnimalEvent::EVENT_TYPE_CALVING]) ?>
+                        <?= AnimalEvent::getCount(['animal_id' => $model->id, 'event_type' => AnimalEvent::EVENT_TYPE_CALVING, 'country_id' => $model->country_id]) ?>
                     </span>
                         </a>
                     </li>
@@ -153,38 +153,38 @@ use yii\helpers\Url;
                            role="tab">
                             <?= Lang::t('Milk Collection') ?>
                             <span class="badge badge-secondary badge-pill">
-                        <?= AnimalEvent::getCount(['animal_id' => $model->id, 'event_type' => AnimalEvent::EVENT_TYPE_MILKING]) ?>
+                        <?= AnimalEvent::getCount(['animal_id' => $model->id, 'event_type' => AnimalEvent::EVENT_TYPE_MILKING, 'country_id' => $model->country_id]) ?>
                     </span>
                         </a>
                     </li>
 
                     <li class="nav-item">
                         <a class="nav-link" title="Click To View"
-                           href="<?= Url::to(['animal-event/index', 'animal_id' => $model->id, 'event_type' => AnimalEvent::EVENT_TYPE_AI]) ?>"
+                           href="<?= Url::to(['animal-event/index', 'animal_id' => $model->id, 'event_type' => AnimalEvent::EVENT_TYPE_AI, 'country_id' => $model->country_id]) ?>"
                            role="tab">
                             <?= Lang::t('AI') ?>
                             <span class="badge badge-secondary badge-pill">
-                        <?= AnimalEvent::getCount(['animal_id' => $model->id, 'event_type' => AnimalEvent::EVENT_TYPE_AI]) ?>
+                        <?= AnimalEvent::getCount(['animal_id' => $model->id, 'event_type' => AnimalEvent::EVENT_TYPE_AI, 'country_id' => $model->country_id]) ?>
                     </span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" title="Click To View"
-                           href="<?= Url::to(['animal-event/index', 'animal_id' => $model->id, 'event_type' => AnimalEvent::EVENT_TYPE_PREGNANCY_DIAGNOSIS]) ?>"
+                           href="<?= Url::to(['animal-event/index', 'animal_id' => $model->id, 'event_type' => AnimalEvent::EVENT_TYPE_PREGNANCY_DIAGNOSIS, 'country_id' => $model->country_id]) ?>"
                            role="tab">
                             <?= Lang::t('Pregnancy Diagnosis') ?>
                             <span class="badge badge-secondary badge-pill">
-                        <?= AnimalEvent::getCount(['animal_id' => $model->id, 'event_type' => AnimalEvent::EVENT_TYPE_PREGNANCY_DIAGNOSIS]) ?>
+                        <?= AnimalEvent::getCount(['animal_id' => $model->id, 'event_type' => AnimalEvent::EVENT_TYPE_PREGNANCY_DIAGNOSIS, 'country_id' => $model->country_id]) ?>
                     </span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" title="Click To View"
-                           href="<?= Url::to(['animal-event/index', 'animal_id' => $model->id, 'event_type' => AnimalEvent::EVENT_TYPE_SYNCHRONIZATION]) ?>"
+                           href="<?= Url::to(['animal-event/index', 'animal_id' => $model->id, 'event_type' => AnimalEvent::EVENT_TYPE_SYNCHRONIZATION, 'country_id' => $model->country_id]) ?>"
                            role="tab">
                             <?= Lang::t('Synchronization') ?>
                             <span class="badge badge-secondary badge-pill">
-                        <?= AnimalEvent::getCount(['animal_id' => $model->id, 'event_type' => AnimalEvent::EVENT_TYPE_SYNCHRONIZATION]) ?>
+                        <?= AnimalEvent::getCount(['animal_id' => $model->id, 'event_type' => AnimalEvent::EVENT_TYPE_SYNCHRONIZATION, 'country_id' => $model->country_id]) ?>
                     </span>
                         </a>
                     </li>
