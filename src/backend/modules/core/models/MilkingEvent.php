@@ -26,11 +26,12 @@ use common\helpers\DbUtils;
  * @property float $milklact
  * @property float $milksmc
  * @property float $milkurea
- * @property int $milk_qty_tested
  * @property int $milk_sample_type
- *
+ * @property string $dry_date
+ * @property string $milk_notes
+ * @property float $weight
  */
-class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface
+class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, AnimalEventInterface
 {
     public function rules()
     {
@@ -62,23 +63,6 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface
         return $this->hasOne(CalvingEvent::class, ['id' => 'lactation_id']);
     }
 
-    public function reportBuilderFields(){
-        $this->ignoreAdditionalAttributes = true;
-        $attributes = $this->attributes();
-        $attrs = [];
-        $fields = TableAttribute::getData(['attribute_key'], ['table_id' => self::getDefinedTableId(), 'event_type' => self::EVENT_TYPE_MILKING]);
-
-        foreach ($fields as $k => $field){
-            $attrs[] = $field['attribute_key'];
-        }
-        $attrs = array_merge($attributes, $attrs);
-        $unwanted = array_merge($this->reportBuilderUnwantedFields(), []);
-        $attrs = array_diff($attrs, $unwanted);
-        sort($attrs);
-        return $attrs;
-    }
-
-
     /**
      * @return array
      */
@@ -86,16 +70,70 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface
     {
         return [
             'animalTagId',
+            'dry_date',
+            'milk_animalcalvdate',
             'event_date',
             'milkmor',
             'milkmid',
             'milkeve',
-            'milk_qty_is_tested',
+            'milk_quality',
             'milk_sample_type',
             'milkfat',
             'milkprot',
             'milksmc',
+            'milk_notes',
+            'date_serviced',
+            'service_type',
+            'service_source',
+            'service_source_other',
+            'service_cost',
+            'sire_tag_id',
+            'sire_name',
+            'sire_country',
+            'sire_breed',
+            'sire_breed_other',
+            'sire_breed_composition',
+            'sire_breed_composition_other',
+            'straw_id',
+            'straw_country',
+            'straw_breed',
+            'straw_breed_other',
+            'straw_breed_composition',
+            'straw_breed_composition_other',
+            'vaccination_date',
+            'vaccination_type',
+            'vaccination_type_other',
+            'vaccination_service_provider',
+            'vaccination_service_provider_other',
+            'vaccine_drug_cost',
+            'vaccination_service_cost',
+            'parasite_treatment_date',
+            'parasite_type',
+            'parasite_type_other',
+            'parasite_treatment_service_provider',
+            'parasite_treatment_service_provider_other',
+            'parasite_treatment_total_cost',
+            'parasite_treatment_service_cost',
+            'injury_date',
+            'injury_type',
+            'injury_type_other',
+            'injury_treatment_service_provider',
+            'injury_treatment_service_provider_other',
+            'injury_treatment_total_cost',
+            'injury_treatment_service_cost',
+            'feed_type',
+            'water_type',
+            'milking_heartgirth',
+            'weight',
+            'milking_bodyscore',
             'milkurea',
+            'milklact',
+            'milking_ai_service_source',
+            'bull_service_source',
+            'paid_straw_id',
+            'land_size',
+            'calf_status',
+            'calf_tag_id',
         ];
     }
 
@@ -131,4 +169,19 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface
         return parent::getDashboardStats($durationType, $sum, $filters, $dateField, $from, $to, $condition, $params);
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function getEventType(): int
+    {
+        return self::EVENT_TYPE_MILKING;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function reportBuilderAdditionalUnwantedFields(): array
+    {
+        return [];
+    }
 }

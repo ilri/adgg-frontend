@@ -3,8 +3,6 @@
 namespace backend\modules\reports\models;
 
 use backend\modules\core\models\Animal;
-use backend\modules\core\models\Choices;
-use backend\modules\core\models\ChoiceTypes;
 use backend\modules\core\models\MilkingEvent;
 use common\helpers\ArrayHelper;
 use common\helpers\DbUtils;
@@ -104,7 +102,9 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         $fieldAliasMapping = $options['fieldAliasMapping'] ?? [];
 
         //$row['Total Milk'] = floatval($row[$fieldAliasMapping['milkmor']]) + floatval($row[$fieldAliasMapping['milkmid']] ) + floatval($row[$fieldAliasMapping['milkeve']]);
-
+        $row['TDNo'] = '';
+        $row['CalvDate'] = '';
+        $row['DIM'] = '';
         return $row;
     }
 

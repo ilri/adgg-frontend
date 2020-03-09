@@ -138,17 +138,8 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                         <div class="kt-iconbox__icon mb-0">
                             <div class="kt-iconbox__icon-bg"></div>
                             <span>
-                                 <?php if (Session::isVillageUser()): ?>
-                                     <?= Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => $country->id, 'village_id' => Session::getVillageId(), 'event_type' => AnimalEvent::EVENT_TYPE_CALVING, 'field_agent_id' => Session::getUserId()])) ?>
-                                 <?php elseif (Session::isWardUser()): ?>
-                                     <?= Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => $country->id, 'ward_id' => Session::getWardId(), 'event_type' => AnimalEvent::EVENT_TYPE_CALVING])) ?>
-                                 <?php elseif (Session::isDistrictUser()): ?>
-                                     <?= Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => $country->id, 'district_id' => Session::getDistrictId(), 'event_type' => AnimalEvent::EVENT_TYPE_CALVING])) ?>
-                                 <?php elseif (Session::isRegionUser()): ?>
-                                     <?= Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => $country->id, 'region_id' => Session::getRegionId(), 'event_type' => AnimalEvent::EVENT_TYPE_CALVING])) ?>
-                                 <?php else: ?>
-                                     <?= Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => $country->id, 'event_type' => AnimalEvent::EVENT_TYPE_CALVING])) ?>
-                                 <?php endif; ?>
+                             <?= CountriesDashboardStats::getEventCounts($country->id, AnimalEvent::EVENT_TYPE_CALVING) ?>
+
                             </span>
                         </div>
                         <div class="kt-iconbox__title">
@@ -171,17 +162,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                         <div class="kt-iconbox__icon mb-0">
                             <div class="kt-iconbox__icon-bg"></div>
                             <span>
-                                <?php if (Session::isVillageUser()): ?>
-                                    <?= Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => $country->id, 'village_id' => Session::getVillageId(), 'event_type' => AnimalEvent::EVENT_TYPE_AI, 'field_agent_id' => Session::getUserId()])) ?>
-                                <?php elseif (Session::isWardUser()): ?>
-                                    <?= Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => $country->id, 'ward_id' => Session::getWardId(), 'event_type' => AnimalEvent::EVENT_TYPE_AI])) ?>
-                                <?php elseif (Session::isDistrictUser()): ?>
-                                    <?= Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => $country->id, 'district_id' => Session::getDistrictId(), 'event_type' => AnimalEvent::EVENT_TYPE_AI])) ?>
-                                <?php elseif (Session::isRegionUser()): ?>
-                                    <?= Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => $country->id, 'region_id' => Session::getRegionId(), 'event_type' => AnimalEvent::EVENT_TYPE_AI])) ?>
-                                <?php else: ?>
-                                    <?= Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => $country->id, 'event_type' => AnimalEvent::EVENT_TYPE_AI])) ?>
-                                <?php endif; ?>
+                             <?= CountriesDashboardStats::getEventCounts($country->id, AnimalEvent::EVENT_TYPE_AI) ?>
                             </span>
                         </div>
                         <div class="kt-iconbox__title">
@@ -204,17 +185,8 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                         <div class="kt-iconbox__icon mb-0">
                             <div class="kt-iconbox__icon-bg"></div>
                             <span>
-                                <?php if (Session::isVillageUser()): ?>
-                                    <?= Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => $country->id, 'village_id' => Session::getVillageId(), 'event_type' => AnimalEvent::EVENT_TYPE_PREGNANCY_DIAGNOSIS, 'field_agent_id' => Session::getUserId()])) ?>
-                                <?php elseif (Session::isWardUser()): ?>
-                                    <?= Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => $country->id, 'ward_id' => Session::getWardId(), 'event_type' => AnimalEvent::EVENT_TYPE_PREGNANCY_DIAGNOSIS])) ?>
-                                <?php elseif (Session::isDistrictUser()): ?>
-                                    <?= Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => $country->id, 'district_id' => Session::getDistrictId(), 'event_type' => AnimalEvent::EVENT_TYPE_PREGNANCY_DIAGNOSIS])) ?>
-                                <?php elseif (Session::isRegionUser()): ?>
-                                    <?= Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => $country->id, 'region_id' => Session::getRegionId(), 'event_type' => AnimalEvent::EVENT_TYPE_PREGNANCY_DIAGNOSIS])) ?>
-                                <?php else: ?>
-                                    <?= Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => $country->id, 'event_type' => AnimalEvent::EVENT_TYPE_PREGNANCY_DIAGNOSIS])) ?>
-                                <?php endif; ?>
+                              <?= CountriesDashboardStats::getEventCounts($country->id, AnimalEvent::EVENT_TYPE_PREGNANCY_DIAGNOSIS) ?>
+
                             </span>
                         </div>
                         <div class="kt-iconbox__title">
@@ -237,17 +209,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                         <div class="kt-iconbox__icon mb-0">
                             <div class="kt-iconbox__icon-bg"></div>
                             <span>
-                                <?php if (Session::isVillageUser()): ?>
-                                    <?= Yii::$app->formatter->asDecimal(Animal::find()->joinWith('farm')->andFilterWhere(['core_animal.country_id' => $country->id, 'core_animal.village_id' => Session::getVillageId(), 'core_animal.animal_type' => Animal::ANIMAL_TYPE_MALE_CALF])->andFilterWhere([Farm::tableName() . '.field_agent_id' => Session::getUserId()])->count()) ?>
-                                <?php elseif (Session::isWardUser()): ?>
-                                    <?= Yii::$app->formatter->asDecimal(Animal::getCount(['country_id' => $country->id, 'ward_id' => Session::getWardId(), 'animal_type' => Animal::ANIMAL_TYPE_MALE_CALF])) ?>
-                                <?php elseif (Session::isDistrictUser()): ?>
-                                    <?= Yii::$app->formatter->asDecimal(Animal::getCount(['country_id' => $country->id, 'district_id' => Session::getDistrictId(), 'animal_type' => Animal::ANIMAL_TYPE_MALE_CALF])) ?>
-                                <?php elseif (Session::isRegionUser()): ?>
-                                    <?= Yii::$app->formatter->asDecimal(Animal::getCount(['country_id' => $country->id, 'region_id' => Session::getRegionId(), 'animal_type' => Animal::ANIMAL_TYPE_MALE_CALF])) ?>
-                                <?php else: ?>
-                                    <?= Yii::$app->formatter->asDecimal(Animal::getCount(['country_id' => $country->id, 'animal_type' => Animal::ANIMAL_TYPE_MALE_CALF])) ?>
-                                <?php endif; ?>
+                                <?= CountriesDashboardStats::getAnimalCounts($country->id, Animal::ANIMAL_TYPE_MALE_CALF) ?>
                             </span>
                         </div>
                         <div class="kt-iconbox__title">
@@ -270,17 +232,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                         <div class="kt-iconbox__icon mb-0">
                             <div class="kt-iconbox__icon-bg"></div>
                             <span>
-                                <?php if (Session::isVillageUser()): ?>
-                                    <?= Yii::$app->formatter->asDecimal(Animal::find()->joinWith('farm')->andFilterWhere(['core_animal.country_id' => $country->id, 'core_animal.village_id' => Session::getVillageId(), 'core_animal.animal_type' => Animal::ANIMAL_TYPE_FEMALE_CALF])->andFilterWhere([Farm::tableName() . '.field_agent_id' => Session::getUserId()])->count()) ?>
-                                <?php elseif (Session::isWardUser()): ?>
-                                    <?= Yii::$app->formatter->asDecimal(Animal::getCount(['country_id' => $country->id, 'ward_id' => Session::getWardId(), 'animal_type' => Animal::ANIMAL_TYPE_FEMALE_CALF])) ?>
-                                <?php elseif (Session::isDistrictUser()): ?>
-                                    <?= Yii::$app->formatter->asDecimal(Animal::getCount(['country_id' => $country->id, 'district_id' => Session::getDistrictId(), 'animal_type' => Animal::ANIMAL_TYPE_FEMALE_CALF])) ?>
-                                <?php elseif (Session::isRegionUser()): ?>
-                                    <?= Yii::$app->formatter->asDecimal(Animal::getCount(['country_id' => $country->id, 'region_id' => Session::getRegionId(), 'animal_type' => Animal::ANIMAL_TYPE_FEMALE_CALF])) ?>
-                                <?php else: ?>
-                                    <?= Yii::$app->formatter->asDecimal(Animal::getCount(['country_id' => $country->id, 'animal_type' => Animal::ANIMAL_TYPE_FEMALE_CALF])) ?>
-                                <?php endif; ?>
+                                <?= CountriesDashboardStats::getAnimalCounts($country->id, Animal::ANIMAL_TYPE_FEMALE_CALF) ?>
                             </span>
                         </div>
                         <div class="kt-iconbox__title">
