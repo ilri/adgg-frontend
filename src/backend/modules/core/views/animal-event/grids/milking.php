@@ -73,16 +73,12 @@ use yii\web\View;
             'enableSorting' => false,
         ],
         [
-            'attribute' => 'milk_qty_is_tested',
-            'format' => 'boolean',
-            'enableSorting' => false,
-        ],
-        [
             'attribute' => 'milk_sample_type',
             'value' => function (AnimalEvent $model) {
                 return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_MILK_SAMPLE_TYPE, $model->milk_sample_type);
             },
             'enableSorting' => false,
+            'visible' => false,
         ],
     ],
 ]);
