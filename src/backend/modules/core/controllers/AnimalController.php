@@ -137,7 +137,7 @@ class AnimalController extends Controller
         $this->hasPrivilege(Acl::ACTION_CREATE);
 
         $form = new UploadAnimals(Animal::class);
-        $resp = $this->uploadExcelConsole($form, 'index', []);
+        $resp = $this->uploadExcelConsole($form, 'index', Yii::$app->request->queryParams);
         if ($resp !== false) {
             return $resp;
         }

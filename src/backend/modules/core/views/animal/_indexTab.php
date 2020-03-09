@@ -20,7 +20,7 @@ $animalType = Yii::$app->request->get('animal_type', null);
 <ul class="nav nav-tabs" role="tablist">
     <li class="nav-item">
         <a class="nav-link<?= empty($animalType) ? ' active' : '' ?>"
-           href="<?= Url::to(['index', 'animal_type' => null]) ?>">
+           href="<?= Url::to(['index', 'animal_type' => null, 'country_id' => $country->id]) ?>">
             <?= Lang::t('All Animals') ?>
             <span class="badge badge-secondary badge-pill">
                 <?= CountriesDashboardStats::getAnimalCounts($country->id) ?>
@@ -30,7 +30,7 @@ $animalType = Yii::$app->request->get('animal_type', null);
     <?php foreach (Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, false) as $value => $label): ?>
         <li class="nav-item">
             <a class="nav-link<?= $animalType == $value ? ' active' : '' ?>"
-               href="<?= Url::to(['index', 'animal_type' => $value]) ?>">
+               href="<?= Url::to(['index', 'animal_type' => $value, 'country_id' => $country->id]) ?>">
                 <?= strtoupper(Html::encode(Inflector::pluralize($label))) ?>
                 <span class="badge badge-secondary badge-pill">
                     <?= CountriesDashboardStats::getAnimalCounts($country->id, $value) ?>

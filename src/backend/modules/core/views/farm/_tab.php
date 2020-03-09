@@ -19,7 +19,7 @@ $farmType = Yii::$app->request->get('farm_type', null);
 <ul class="nav nav-tabs" role="tablist">
     <li class="nav-item">
         <a class="nav-link<?= empty($farmType) ? ' active' : '' ?>"
-           href="<?= Url::to(['index', 'farm_type' => null]) ?>">
+           href="<?= Url::to(['index', 'farm_type' => null, 'country_id' => $country->id]) ?>">
             <?= Lang::t('All Farms') ?>
             <span class="badge badge-secondary badge-pill">
                 <?= CountriesDashboardStats::getFarmCounts($country->id, false, null, null) ?>
@@ -30,7 +30,7 @@ $farmType = Yii::$app->request->get('farm_type', null);
     <?php foreach (Choices::getList(ChoiceTypes::CHOICE_TYPE_FARM_TYPE, false) as $value => $label): ?>
         <li class="nav-item">
             <a class="nav-link<?= ($farmType == $value) ? ' active' : '' ?>"
-               href="<?= Url::to(['index', 'farm_type' => $value]) ?>">
+               href="<?= Url::to(['index', 'farm_type' => $value, 'country_id' => $country->id]) ?>">
                 <?= strtoupper(Html::encode($label)) ?>
                 <span class="badge badge-secondary badge-pill">
                     <?= CountriesDashboardStats::getFarmCounts($country->id, false, null, $value) ?>
