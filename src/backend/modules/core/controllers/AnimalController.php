@@ -132,7 +132,7 @@ class AnimalController extends Controller
         return false;
     }
 
-    public function actionUpload($type = null)
+    public function actionUpload()
     {
         $this->hasPrivilege(Acl::ACTION_CREATE);
 
