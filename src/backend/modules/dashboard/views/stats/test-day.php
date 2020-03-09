@@ -157,6 +157,6 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
         </div>
     </div>
     <div class="col-md-12">
-        <?= $this->render('_animalGrid', ['dataProvider' => $dataProvider]) ?>
+        <?php //$this->render('_animalGrid', ['dataProvider' => $dataProvider]) ?>
     </div>
 </div>
