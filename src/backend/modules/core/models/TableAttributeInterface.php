@@ -48,5 +48,10 @@ interface TableAttributeInterface
      */
     public function getOriginalAttributesListData();
 
+    /**
+     * @return array
+     */
+    public function reportBuilderAdditionalUnwantedFields(): array;
+
 
 }
