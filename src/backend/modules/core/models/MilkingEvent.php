@@ -26,47 +26,12 @@ use common\helpers\DbUtils;
  * @property float $milklact
  * @property float $milksmc
  * @property float $milkurea
- * @property int $milk_qty_tested
  * @property int $milk_sample_type
  * @property string $dry_date
- * @property string $milk_animalcalvdate
  * @property string $milk_notes
- * @property string $date_serviced
- * @property string $service_type
- * @property string $service_type_other
- * @property float $service_cost
- * @property string $sire_tag_id
- * @property string $sire_name
- * @property string $sire_country
- * @property string $sire_breed
- * @property string $sire_breed_other
- * @property string $sire_breed_composition
- * @property string $sire_breed_composition_other
- * @property string $straw_id
- * @property string $straw_country
- * @property string $straw_breed
- * @property string $straw_breed_other
- * @property string $straw_breed_composition
- * @property string $straw_breed_composition_other
- * @property string $vaccination_date
- * @property string $vaccination_type
- * @property string $vaccination_type_other
- * @property string $vaccination_service_provider
- * @property string $vaccination_service_provider_other
- * @property float $vaccine_drug_cost
- * @property float $vaccination_service_cost
- * @property string $parasite_treatment_date
- * @property string $parasite_type
- * @property string $parasite_type_other
- * @property string $parasite_treatment_service_provider
- * @property string $parasite_treatment_service_provider_other
- * @property float $parasite_treatment_total_cost
- * @property float $parasite_treatment_service_cost
  * @property float $weight
- * @property float $milking_heartgirth
- * @property float $milking_bodyscore
  */
-class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface
+class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, AnimalEventInterface
 {
     public function rules()
     {
@@ -97,24 +62,6 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface
     {
         return $this->hasOne(CalvingEvent::class, ['id' => 'lactation_id']);
     }
-
-    public function reportBuilderFields()
-    {
-        $this->ignoreAdditionalAttributes = true;
-        $attributes = $this->attributes();
-        $attrs = [];
-        $fields = TableAttribute::getData(['attribute_key'], ['table_id' => self::getDefinedTableId(), 'event_type' => self::EVENT_TYPE_MILKING]);
-
-        foreach ($fields as $k => $field) {
-            $attrs[] = $field['attribute_key'];
-        }
-        $attrs = array_merge($attributes, $attrs);
-        $unwanted = array_merge($this->reportBuilderUnwantedFields(), []);
-        $attrs = array_diff($attrs, $unwanted);
-        sort($attrs);
-        return $attrs;
-    }
-
 
     /**
      * @return array
@@ -222,4 +169,19 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface
         return parent::getDashboardStats($durationType, $sum, $filters, $dateField, $from, $to, $condition, $params);
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function getEventType(): int
+    {
+        return self::EVENT_TYPE_MILKING;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function reportBuilderAdditionalUnwantedFields(): array
+    {
+        return [];
+    }
 }
