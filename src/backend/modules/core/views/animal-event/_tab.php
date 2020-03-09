@@ -3,6 +3,7 @@
 use backend\controllers\BackendController;
 use backend\modules\auth\Session;
 use backend\modules\core\models\AnimalEvent;
+use backend\modules\core\models\CountriesDashboardStats;
 use common\helpers\Lang;
 use yii\helpers\Html;
 use yii\helpers\Inflector;
@@ -44,19 +45,9 @@ $events = AnimalEvent::eventTypeOptions();
                href="<?= Url::to([$url, 'country_id' => $country->id, 'event_type' => $key]) ?>">
                 <?= Lang::t('{name}', ['name' => $name]); ?>
                 <span class="badge badge-secondary badge-pill">
-            <?php if (Session::isVillageUser()): ?>
-                <?= Yii::$app->formatter->asDecimal(AnimalEvent::find()->andFilterWhere(['country_id' => $country->id, 'village_id' => Session::getVillageId(), 'event_type' => $key, 'field_agent_id' => Session::getUserId()])->count()) ?>
-            <?php elseif (Session::isWardUser()): ?>
-                <?= Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => $country->id, 'ward_id' => Session::getWardId(), 'event_type' => $key])) ?>
-            <?php elseif (Session::isDistrictUser()): ?>
-                <?= Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => $country->id, 'district_id' => Session::getDistrictId(), 'event_type' => $key])) ?>
-            <?php elseif (Session::isRegionUser()): ?>
-                <?= Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => $country->id, 'region_id' => Session::getRegionId(), 'event_type' => $key])) ?>
-            <?php else: ?>
-                <?= Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => $country->id, 'event_type' => $key])) ?>
-            <?php endif; ?>
+                    <?= CountriesDashboardStats::getEventCounts($country->id, $key) ?>
         </span>
-        </a>
+            </a>
         </li>
     <?php endforeach; ?>
 </ul>
