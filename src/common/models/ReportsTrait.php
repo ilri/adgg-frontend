@@ -37,7 +37,8 @@ trait ReportsTrait
         return static::getStats($durationType, $condition, $params, $sum, $dateField, $from, $to);
     }
 
-    public function reportBuilderUnwantedFields(){
+    public function reportBuilderUnwantedFields()
+    {
         return [
             'country_id', 'test', 'additional_attributes', 'created_at', 'created_by', 'updated_at', 'updated_by', 'is_active', 'is_deleted', 'deleted_at', 'deleted_by',
             'password', 'password_hash', 'password_reset_token', 'profile_image', 'account_activation_token', 'auth_key', 'auto_generate_password',
@@ -46,11 +47,21 @@ trait ReportsTrait
         ];
     }
 
-    public function reportBuilderFields(){
+    public function reportBuilderFields()
+    {
         $unwanted = $this->reportBuilderUnwantedFields();
         $attributes = $this->attributes();
         $attrs = array_diff($attributes, $unwanted);
         sort($attrs);
         return $attrs;
+    }
+
+    /**
+     * @return array
+     * This can be used to add Model Specific unwanted fields
+     */
+    public function reportBuilderAdditionalUnwantedFields(): array
+    {
+        return [];
     }
 }

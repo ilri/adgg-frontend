@@ -9,33 +9,27 @@
 namespace backend\modules\core\models;
 
 
-use common\excel\ImportActiveRecordInterface;
-use common\helpers\ArrayHelper;
-use common\helpers\DbUtils;
-
 /**
  * Class ExitsEvent
  * @package backend\modules\core\models
  *
  *
  */
-class ExitsEvent extends AnimalEvent
+class ExitsEvent extends AnimalEvent implements AnimalEventInterface
 {
-    public function reportBuilderFields()
+    /**
+     * @inheritDoc
+     */
+    public function getEventType(): int
     {
-        $this->ignoreAdditionalAttributes = true;
-        $attributes = $this->attributes();
-        $attrs = [];
-        $fields = TableAttribute::getData(['attribute_key'], ['table_id' => self::getDefinedTableId(), 'event_type' => self::EVENT_TYPE_EXITS]);
-
-        foreach ($fields as $k => $field) {
-            $attrs[] = $field['attribute_key'];
-        }
-        $attrs = array_merge($attributes, $attrs);
-        $unwanted = array_merge($this->reportBuilderUnwantedFields(), ['lactation_id', 'lactation_number']);
-        $attrs = array_diff($attrs, $unwanted);
-        sort($attrs);
-        return $attrs;
+        return self::EVENT_TYPE_EXITS;
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function reportBuilderAdditionalUnwantedFields(): array
+    {
+        return ['lactation_id', 'lactation_number'];
+    }
 }

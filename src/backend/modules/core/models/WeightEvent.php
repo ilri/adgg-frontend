@@ -22,7 +22,7 @@ use yii\helpers\ArrayHelper;
  * @property string $heartgirth
  * @property string $weight_kg
  */
-class WeightEvent extends AnimalEvent implements ImportActiveRecordInterface
+class WeightEvent extends AnimalEvent implements ImportActiveRecordInterface, AnimalEventInterface
 {
     public function rules()
     {
@@ -37,23 +37,6 @@ class WeightEvent extends AnimalEvent implements ImportActiveRecordInterface
             'event_date' => 'Weight Date',
         ]);
     }
-
-    public function reportBuilderFields(){
-        $this->ignoreAdditionalAttributes = true;
-        $attributes = $this->attributes();
-        $attrs = [];
-        $fields = TableAttribute::getData(['attribute_key'], ['table_id' => self::getDefinedTableId(), 'event_type' => self::EVENT_TYPE_WEIGHTS]);
-
-        foreach ($fields as $k => $field){
-            $attrs[] = $field['attribute_key'];
-        }
-        $attrs = array_merge($attributes, $attrs);
-        $unwanted = array_merge($this->reportBuilderUnwantedFields(), ['lactation_id', 'lactation_number']);
-        $attrs = array_diff($attrs, $unwanted);
-        sort($attrs);
-        return $attrs;
-    }
-
 
     /**
      * @return array
@@ -94,5 +77,21 @@ class WeightEvent extends AnimalEvent implements ImportActiveRecordInterface
     {
         list($condition, $params) = DbUtils::appendCondition('event_type', self::EVENT_TYPE_WEIGHTS, $condition, $params);
         return parent::getDashboardStats($durationType, $sum, $filters, $dateField, $from, $to, $condition, $params);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEventType(): int
+    {
+        return self::EVENT_TYPE_WEIGHTS;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function reportBuilderAdditionalUnwantedFields(): array
+    {
+        return ['lactation_id', 'lactation_number'];
     }
 }

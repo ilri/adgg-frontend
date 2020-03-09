@@ -383,4 +383,25 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
         list($condition, $params) = static::appendOrgSessionIdCondition($condition, $params, false);
         return parent::getDashboardStats($durationType, $sum, $filters, $dateField, $from, $to, $condition, $params);
     }
+
+    /**
+     * @return array
+     * @throws \Exception
+     */
+    public function reportBuilderFields()
+    {
+        $this->ignoreAdditionalAttributes = true;
+        $attributes = $this->attributes();
+        $attrs = [];
+        $fields = TableAttribute::getData(['attribute_key'], ['table_id' => self::getDefinedTableId(), 'event_type' => $this->getEventType()]);
+
+        foreach ($fields as $k => $field) {
+            $attrs[] = $field['attribute_key'];
+        }
+        $attrs = array_merge($attributes, $attrs);
+        $unwanted = array_merge($this->reportBuilderUnwantedFields(), $this->reportBuilderAdditionalUnwantedFields());
+        $attrs = array_diff($attrs, $unwanted);
+        sort($attrs);
+        return $attrs;
+    }
 }
