@@ -40,6 +40,10 @@ class UploadMilkEvent extends UploadAnimalEvent implements ImportInterface
                 continue;
             }
             $row = $this->setDefaultAttributes($row);
+            $row['dry_date'] = static::getDateColumnData($row['dry_date']);
+            if (empty($row['event_date']) && !empty($row['dry_date'])) {
+                $row['event_date'] = $row['dry_date'];
+            }
             $insert_data[$k] = $row;
         }
 
