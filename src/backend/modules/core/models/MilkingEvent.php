@@ -11,6 +11,7 @@ namespace backend\modules\core\models;
 
 use common\excel\ImportActiveRecordInterface;
 use common\helpers\ArrayHelper;
+use common\helpers\DateUtils;
 use common\helpers\DbUtils;
 
 /**
@@ -33,6 +34,8 @@ use common\helpers\DbUtils;
  * @property float $milk_estimated_weight
  * @property float $milk_heartgirth
  * @property float $milk_bodyscore
+ * @property int $dim
+ * @property int $testday_no
  */
 class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, AnimalEventInterface
 {
@@ -99,11 +102,42 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
             if (empty($this->milkday)) {
                 $this->milkday = ((float)$this->milkmor + (float)$this->milkeve + (float)$this->milkmid);
             }
+            $this->setDIM();
             $this->ignoreAdditionalAttributes = true;
 
             return true;
         }
         return false;
+    }
+
+    protected function setDIM()
+    {
+        if ($this->event_type != self::EVENT_TYPE_MILKING || null === $this->lactation || empty($this->lactation->event_date) || empty($this->event_date)) {
+            return;
+        }
+        $diff = DateUtils::getDateDiff($this->lactation->event_date, $this->event_date);
+        $this->dim = $diff->days;
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+        $this->setTestDayNumber();
+    }
+
+
+    protected function setTestDayNumber()
+    {
+        if ($this->event_type != self::EVENT_TYPE_MILKING || null === $this->lactation) {
+            return;
+        }
+
+        $data = static::getData('id', ['event_type' => self::EVENT_TYPE_MILKING, 'animal_id' => $this->animal_id, 'lactation_id' => $this->lactation_id], [], ['orderBy' => ['event_date' => SORT_ASC]]);
+        $n = 1;
+        foreach ($data as $row) {
+            static::updateAll(['testday_no' => $n], ['id' => $row['id']]);
+            $n++;
+        }
     }
 
     /**
