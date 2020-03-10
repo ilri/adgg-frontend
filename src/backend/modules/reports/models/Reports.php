@@ -102,7 +102,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
     public static function transformMilkDataRow($row, $options = []){
         $fieldAliasMapping = $options['fieldAliasMapping'] ?? [];
 
-        $row['cattletotalowned'] = floatval($row['total_cattle_owned_by_female']) + floatval($row['total_cattle_owned_by_male']);
+        $row['cattletotalowned'] = floatval($row['total_cattle_owned_by_female']) + floatval($row['total_cattle_owned_by_male'] + floatval($row['total_cattle_owned_joint']));
         unset($row['total_cattle_owned_by_female'], $row['total_cattle_owned_by_male']);
         return $row;
     }
@@ -122,6 +122,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'animal.farm.total_cattle_owned' => null,
             'animal.farm.total_cattle_owned_by_female' => null,
             'animal.farm.total_cattle_owned_by_male' => null,
+            'animal.farm.total_cattle_owned_joint' => null,
             'animal.tag_id' => null,
             'lactation.event_date' => null,
             'event_date' => null,
@@ -163,6 +164,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'animal.farm.total_cattle_owned' => 'cattletotalowned',
             'animal.farm.total_cattle_owned_by_female' => 'total_cattle_owned_by_female',
             'animal.farm.total_cattle_owned_by_male' => 'total_cattle_owned_by_male',
+            'animal.farm.total_cattle_owned_joint' => 'total_cattle_owned_joint',
             'event_date' => 'milkdate',
             'testday_no' => 'TDNo',
             'milkmor' => 'milkmor',
