@@ -38,8 +38,8 @@ trait AnimalEventValidators
 
     public function validateMilkingDate($attribute, $params)
     {
-        if ($this->event_type == AnimalEvent::EVENT_TYPE_MILKING || $this->hasErrors()) {
-            return false;
+        if ($this->event_type != AnimalEvent::EVENT_TYPE_MILKING || $this->hasErrors()) {
+            return;
         }
         if (!empty($this->{$attribute})) {
             $eventDate = $this->{$attribute};
