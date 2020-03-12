@@ -167,7 +167,7 @@ class Herds extends MigrationBase implements MigrationInterface
                 $newModel = clone $model;
                 $newModel->migration_id = Helper::getMigrationId($dataModel->Herds_ID);
                 $newModel->farm_id = self::getFarmId($dataModel->Herds_Farm);
-                $newModel->reg_date = $dataModel->Herds_StartDate;
+                $newModel->regdate = $dataModel->Herds_StartDate;
                 $newModel->exit_date = $dataModel->Herds_StopDate;
                 $newModel->centre_id = $dataModel->Herds_CentreID;
                 $newModel->name = $dataModel->Herds_Name;

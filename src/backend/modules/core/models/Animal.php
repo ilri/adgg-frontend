@@ -33,6 +33,7 @@ use yii\helpers\Inflector;
  * @property int $org_id
  * @property int $client_id
  * @property int $animal_type
+ * @property int $sex
  * @property string $color
  * @property string $birthdate
  * @property int $is_derived_birthdate
@@ -63,6 +64,7 @@ use yii\helpers\Inflector;
  * @property string|array $additional_attributes
  * @property string $animal_eartag_id
  * @property string $migration_id
+ * @property string $breed_composition_details
  *
  * @property Farm $farm
  * @property Animal $sire
@@ -89,6 +91,9 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
      */
     public $tmp_animal_photo;
 
+
+    const SCENARIO_BULL_UPLOAD = 'BullUpload';
+
     /**
      * {@inheritdoc}
      */
@@ -103,10 +108,12 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     public function rules()
     {
         return [
-            [['farm_id', 'tag_id'], 'required'],
-            [['farm_id', 'herd_id', 'country_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'animal_type', 'is_derived_birthdate', 'sire_type', 'sire_id', 'dam_id', 'main_breed', 'breed_composition', 'secondary_breed', 'entry_type'], 'integer'],
+            [['tag_id'], 'required'],
+            [['farm_id'], 'required', 'except' => self::SCENARIO_BULL_UPLOAD],
+            [['farm_id', 'herd_id', 'country_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'animal_type', 'is_derived_birthdate', 'sire_type', 'sire_id', 'dam_id', 'main_breed', 'breed_composition', 'secondary_breed', 'entry_type', 'sex'], 'integer'],
             [['birthdate', 'deformities', 'entry_date'], 'safe'],
             [['purchase_cost'], 'number'],
+            [['birthdate', 'entry_date'], 'date', 'format' => 'php:Y-m-d'],
             [['birthdate', 'entry_date'], 'validateNoFutureDate'],
             [['name', 'tag_id', 'sire_tag_id', 'sire_name', 'dam_tag_id', 'dam_name', 'color'], 'string', 'max' => 128],
             [['animal_photo', 'map_address'], 'string', 'max' => 255],
@@ -142,6 +149,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'org_id' => 'External Organization ID',
             'client_id' => 'Client ID',
             'animal_type' => 'Animal Type',
+            'sex' => 'Sex',
             'color' => 'Animal Color',
             'birthdate' => 'Date of Birth',
             'is_derived_birthdate' => 'Is Derived Birthdate',
@@ -156,6 +164,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'dam_name' => 'Dam Name',
             'main_breed' => 'Main Breed',
             'breed_composition' => 'Breed Composition',
+            'breed_composition_details' => 'Breed Composition details',
             'secondary_breed' => 'Secondary Breed',
             'entry_type' => 'Entry Type',
             'entry_date' => 'Entry Date',
@@ -289,7 +298,8 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
         return $fields;
     }
 
-    public static function decodeDeformities($deformities){
+    public static function decodeDeformities($deformities)
+    {
         $deformities = json_decode($deformities);
         $decoded = [];
         foreach ($deformities as $key => $value) {
