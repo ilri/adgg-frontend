@@ -34,8 +34,8 @@ class DataMigrationController extends Controller
 
     protected function doKeMigration()
     {
-        Clients::migrateData();
-        Farms::migrateData();
+        //Clients::migrateData();
+        //Farms::migrateData();
         Herds::migrateData();
         Cows::migrateData();
     }
