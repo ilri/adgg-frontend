@@ -66,14 +66,17 @@ use yii\helpers\Url;
         ],
         [
             'class' => common\widgets\grid\ActionColumn::class,
-            'template' => '{view}{update}{reload}',
+            'template' => '{view}{update}{reload}{delete}',
             'visibleButtons' => [
                 'update' => false,
-                'reload' => function(AdhocReport $model){
+                'reload' => function (AdhocReport $model) {
+                    return ($model->status == AdhocReport::STATUS_COMPLETED || $model->status == AdhocReport::STATUS_ERROR);
+                },
+                'delete' => function (AdhocReport $model) {
                     return ($model->status == AdhocReport::STATUS_COMPLETED || $model->status == AdhocReport::STATUS_ERROR);
                 },
             ],
-            'buttons'=>[
+            'buttons' => [
                 'reload' => function ($url, AdhocReport $model) {
                     $url = Url::to(['requeue', 'id' => $model->id]);
                     return Html::a('<i class="fas fa-redo"></i>', '#', ['title' => 'Re-generate Report', 'data-pjax' => 0, 'data-toggle' => 'modal', 'class' => '_grid-update', 'data-grid' => $model->getPjaxWidgetId(), 'data-href' => $url]);
