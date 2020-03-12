@@ -9,6 +9,8 @@ namespace console\controllers;
 
 
 use backend\modules\core\models\AnimalEvent;
+use backend\modules\core\models\CalvingEvent;
+use backend\modules\core\models\MilkingEvent;
 use backend\modules\core\models\OdkJsonQueue;
 use backend\modules\core\models\Country;
 use common\helpers\FileManager;
@@ -131,9 +133,9 @@ class FakerController extends Controller
 
     public function actionResetMilkingModels()
     {
-        $query = AnimalEvent::find()->andWhere(['event_type' => AnimalEvent::EVENT_TYPE_MILKING]);
+        $query = MilkingEvent::find()->andWhere(['event_type' => AnimalEvent::EVENT_TYPE_MILKING]);
         $n = 1;
-        /* @var $models AnimalEvent[] */
+        /* @var $models MilkingEvent[] */
         foreach ($query->batch() as $i => $models) {
             foreach ($models as $model) {
                 $model->save(false);
@@ -145,9 +147,9 @@ class FakerController extends Controller
 
     public function actionResetCalvingModels()
     {
-        $query = AnimalEvent::find()->andWhere(['event_type' => AnimalEvent::EVENT_TYPE_CALVING]);
+        $query = CalvingEvent::find()->andWhere(['event_type' => AnimalEvent::EVENT_TYPE_CALVING]);
         $n = 1;
-        /* @var $models AnimalEvent[] */
+        /* @var $models CalvingEvent[] */
         foreach ($query->batch() as $i => $models) {
             foreach ($models as $model) {
                 $model->save(false);
