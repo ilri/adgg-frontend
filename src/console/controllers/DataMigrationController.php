@@ -11,6 +11,7 @@ namespace console\controllers;
 
 use console\dataMigration\ke\models\Bulls;
 use console\dataMigration\ke\models\Clients;
+use console\dataMigration\ke\models\Cows;
 use console\dataMigration\ke\models\Farms;
 use console\dataMigration\ke\models\Herds;
 use yii\console\Controller;
@@ -33,9 +34,10 @@ class DataMigrationController extends Controller
 
     protected function doKeMigration()
     {
-        Clients::migrateData();
-        Farms::migrateData();
-        Herds::migrateData();
+        //Clients::migrateData();
+        //Farms::migrateData();
+        //Herds::migrateData();
+        Cows::migrateData();
     }
 
     protected function migrateKeBulls()
