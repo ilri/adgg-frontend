@@ -190,7 +190,7 @@ class FakerController extends Controller
                     }
                 }
                 $model->save(false);
-                $this->stdout("Processed {$n} animal records\n");
+                $this->stdout("Updated {$n} animal records\n");
                 $n++;
             }
         }
