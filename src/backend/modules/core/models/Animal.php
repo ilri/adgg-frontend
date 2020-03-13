@@ -92,7 +92,8 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     public $tmp_animal_photo;
 
 
-    const SCENARIO_BULL_UPLOAD = 'BullUpload';
+    const SCENARIO_KLBA_BULL_UPLOAD = 'BullUpload';
+    const SCENARIO_KLBA_COW_UPLOAD = 'CowUpload';
 
     /**
      * {@inheritdoc}
@@ -109,7 +110,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     {
         return [
             [['tag_id'], 'required'],
-            [['farm_id'], 'required', 'except' => self::SCENARIO_BULL_UPLOAD],
+            [['farm_id'], 'required', 'except' => self::SCENARIO_KLBA_BULL_UPLOAD],
             [['farm_id', 'herd_id', 'country_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'animal_type', 'is_derived_birthdate', 'sire_type', 'sire_id', 'dam_id', 'main_breed', 'breed_composition', 'secondary_breed', 'entry_type', 'sex'], 'integer'],
             [['birthdate', 'deformities', 'entry_date'], 'safe'],
             [['purchase_cost'], 'number'],
@@ -117,11 +118,10 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             [['birthdate', 'entry_date'], 'validateNoFutureDate'],
             [['name', 'tag_id', 'sire_tag_id', 'sire_name', 'dam_tag_id', 'dam_name', 'color'], 'string', 'max' => 128],
             [['animal_photo', 'map_address'], 'string', 'max' => 255],
-            [['farm_id'], 'exist', 'skipOnError' => true, 'targetClass' => Farm::class, 'targetAttribute' => ['farm_id' => 'id']],
             ['tag_id', 'unique', 'targetAttribute' => ['country_id', 'tag_id'], 'message' => '{attribute} already exists.'],
             [['sire_tag_id', 'dam_tag_id'], 'validateSireOrDam'],
-            ['sire_tag_id', 'validateSireBisexual'],
-            ['dam_tag_id', 'validateDamBisexual'],
+            ['sire_tag_id', 'validateSireBisexual', 'except' => [self::SCENARIO_KLBA_BULL_UPLOAD, self::SCENARIO_KLBA_COW_UPLOAD]],
+            ['dam_tag_id', 'validateDamBisexual', 'except' => [self::SCENARIO_KLBA_BULL_UPLOAD, self::SCENARIO_KLBA_COW_UPLOAD]],
             [['tmp_animal_photo', 'additional_attributes', 'org_id', 'client_id'], 'safe'],
             [$this->getAdditionalAttributes(), 'safe'],
             [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
@@ -590,5 +590,12 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     {
         $options['orderBy'] = ['id' => SORT_ASC];
         return parent::getListData($valueColumn, $textColumn, $prompt, $condition, $params, $options);
+    }
+    /**
+     * @inheritDoc
+     */
+    public function reportBuilderAdditionalUnwantedFields(): array
+    {
+        return ['sire_id', 'sire_name', 'animal_sireknown','animal_damknown', 'sire_tag_id', 'sire_type', 'dam_id', 'dam_name', 'dam_tag_id'];
     }
 }

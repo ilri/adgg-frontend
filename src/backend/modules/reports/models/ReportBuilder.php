@@ -119,7 +119,11 @@ class ReportBuilder extends Model
                 'title' => 'Calving Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_CALVING],
                 'relations' => ['animal', 'region', 'district', 'ward', 'village'],
-                'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
+                'sub_relations' => [
+                    'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.sire' => ['animal.sire_id' => 'sire.id'],
+                    'animal.dam' => ['animal.dam_id' => 'dam.id'],
+                ],
             ],
             'Milking_Event' => [
                 'class' => MilkingEvent::class,
@@ -129,6 +133,8 @@ class ReportBuilder extends Model
                 'sub_relations' => [
                     'animal.farm' => ['animal.farm_id' => 'farm.id'],
                     'animal.herd' => ['animal.herd_id' => 'herd.id'],
+                    'animal.sire' => ['animal.sire_id' => 'sire.id'],
+                    'animal.dam' => ['animal.dam_id' => 'dam.id'],
                 ],
             ],
             'Insemination_Event' => [
@@ -136,49 +142,82 @@ class ReportBuilder extends Model
                 'title' => 'Insemination Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_AI],
                 'relations' => ['animal', 'region', 'district', 'ward', 'village'],
-                'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
+                'sub_relations' => [
+                    'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.sire' => ['animal.sire_id' => 'sire.id'],
+                    'animal.dam' => ['animal.dam_id' => 'dam.id'],
+                ],
             ],
             'Pregnancy_Diagnosis_Event' => [
                 'class' => PDEvent::class,
                 'title' => 'Pregnancy Diagnosis Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_PREGNANCY_DIAGNOSIS],
                 'relations' => ['animal', 'region', 'district', 'ward', 'village'],
-                'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
+                'sub_relations' => [
+                    'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.sire' => ['animal.sire_id' => 'sire.id'],
+                    'animal.dam' => ['animal.dam_id' => 'dam.id'],
+
+                ],
             ],
             'Synchronization_Event' => [
                 'class' => SyncEvent::class,
                 'title' => 'Synchronization Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_SYNCHRONIZATION],
                 'relations' => ['animal', 'region', 'district', 'ward', 'village'],
-                'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
+                'sub_relations' => [
+                    'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.sire' => ['animal.sire_id' => 'sire.id'],
+                    'animal.dam' => ['animal.dam_id' => 'dam.id'],
+
+                ],
             ],
             'Weights_Event' => [
                 'class' => WeightEvent::class,
                 'title' => 'Weights Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_WEIGHTS],
                 'relations' => ['animal', 'region', 'district', 'ward', 'village'],
-                'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
+                'sub_relations' => ['animal.farm' => [
+                    'animal.farm_id' => 'farm.id'],
+                    'animal.sire' => ['animal.sire_id' => 'sire.id'],
+                    'animal.dam' => ['animal.dam_id' => 'dam.id'],
+                ],
             ],
             'Health_Event' => [
                 'class' => HealthEvent::class,
                 'title' => 'Health Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_HEALTH],
                 'relations' => ['animal', 'region', 'district', 'ward', 'village'],
-                'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
+                'sub_relations' => [
+                    'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.sire' => ['animal.sire_id' => 'sire.id'],
+                    'animal.dam' => ['animal.dam_id' => 'dam.id'],
+
+                ],
             ],
             'Feeding_Event' => [
                 'class' => FeedingEvent::class,
                 'title' => 'Feeding Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_FEEDING],
                 'relations' => ['animal', 'region', 'district', 'ward', 'village'],
-                'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
+                'sub_relations' => [
+                    'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.sire' => ['animal.sire_id' => 'sire.id'],
+                    'animal.dam' => ['animal.dam_id' => 'dam.id'],
+
+                ],
             ],
             'Exits_Event' => [
                 'class' => ExitsEvent::class,
                 'title' => 'Exits Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_EXITS],
                 'relations' => ['animal', 'region', 'district', 'ward', 'village'],
-                'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
+                'sub_relations' => [
+                    'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.sire' => ['animal.sire_id' => 'sire.id'],
+                    'animal.dam' => ['animal.dam_id' => 'dam.id'],
+
+                ],
             ],
         ];
 
