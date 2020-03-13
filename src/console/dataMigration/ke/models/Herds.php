@@ -156,7 +156,7 @@ class Herds extends MigrationBase implements MigrationInterface
 
     public static function migrateData()
     {
-        $query = static::find()->andWhere(['Herds_HideFlag' => 0, 'Herds_Species' => 0]);
+        $query = static::find()->andWhere(['Herds_HideFlag' => 0]);
         /* @var $dataModels $this[] */
         $n = 1;
         $countryId = Helper::getCountryId(Constants::KENYA_COUNTRY_CODE);

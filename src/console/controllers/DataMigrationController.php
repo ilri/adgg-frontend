@@ -36,7 +36,7 @@ class DataMigrationController extends Controller
     {
         //Clients::migrateData();
         //Farms::migrateData();
-        //Herds::migrateData();
+        Herds::migrateData();
         Cows::migrateData();
     }
 
