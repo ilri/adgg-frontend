@@ -316,13 +316,16 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
                 $this->latlng = new Expression("ST_GeomFromText('POINT({$this->latitude} {$this->longitude})')");
             }
             $this->setImage('animal_photo');
-            $this->country_id = $this->farm->country_id;
-            $this->region_id = $this->farm->region_id;
-            $this->district_id = $this->farm->district_id;
-            $this->ward_id = $this->farm->ward_id;
-            $this->village_id = $this->farm->village_id;
-            $this->org_id = $this->farm->org_id;
-            $this->client_id = $this->farm->client_id;
+            if (null !== $this->farm) {
+                $this->country_id = $this->farm->country_id;
+                $this->region_id = $this->farm->region_id;
+                $this->district_id = $this->farm->district_id;
+                $this->ward_id = $this->farm->ward_id;
+                $this->village_id = $this->farm->village_id;
+                $this->org_id = $this->farm->org_id;
+                $this->client_id = $this->farm->client_id;
+            }
+
             if (!empty($this->deformities)) {
                 if (is_string($this->deformities)) {
                     $this->deformities = array_map('trim', explode(' ', $this->deformities));
