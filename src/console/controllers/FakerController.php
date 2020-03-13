@@ -162,12 +162,16 @@ class FakerController extends Controller
 
     public function actionRandom()
     {
-        $condition = '[[migration_id]] IS NOT NULL';
-        $query = Animal::find()->andWhere($condition);
+        $condition = '';
+        $params = [];
+        $query = Animal::find()->andWhere($condition, $params);
         $n = 1;
         /* @var $models Animal[] */
         foreach ($query->batch() as $i => $models) {
             foreach ($models as $model) {
+                if (empty($model->migration_id)) {
+                    continue;
+                }
                 if (!empty($model->sire_tag_id)) {
                     $sire = Animal::find()->andWhere(['migration_id' => $model->sire_tag_id])->one();
                     if (null !== $sire) {
