@@ -46,7 +46,8 @@ class JobManagerController extends BaseController
     {
         //Clients::migrateData();
         //Farms::migrateData();
-        Herds::migrateData();
-        Cows::migrateData();
+        //Herds::migrateData();
+        //Cows::migrateData();
+        Cows::updateSiresAndDams();
     }
 }
