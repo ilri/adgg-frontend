@@ -338,4 +338,40 @@ class Cows extends MigrationBase implements MigrationInterface
 
         return $map[$id] ?? $id;
     }
+
+    public static function updateSiresAndDams()
+    {
+        $condition = '';
+        $params = [];
+        $query = Animal::find()->andWhere($condition, $params);
+        $n = 1;
+        /* @var $models Animal[] */
+        foreach ($query->batch() as $i => $models) {
+            foreach ($models as $model) {
+                if (empty($model->migration_id)) {
+                    Yii::$app->controller->stdout("The animal id: {$model->id} is not from KLBA. Ignored\n");
+                    continue;
+                }
+                if (!empty($model->sire_tag_id)) {
+                    $sire = Animal::getOneRow(['id', 'tag_id'], ['migration_id' => $model->sire_tag_id]);
+                    if (!empty($sire)) {
+                        $model->sire_id = $sire['id'];
+                        $model->sire_tag_id = $sire['tag_id'];
+                        $model->sire_tag_id = null;
+                    }
+                }
+                if (!empty($model->dam_tag_id)) {
+                    $dam = Animal::getOneRow(['id', 'tag_id'], ['migration_id' => $model->dam_tag_id]);
+                    if (!empty($dam)) {
+                        $model->dam_id = $dam['id'];
+                        $model->dam_tag_id = $dam['tag_id'];
+                        $model->dam_tag_id = null;
+                    }
+                }
+                $model->save(false);
+                Yii::$app->controller->stdout("Updated {$n} animal records\n");
+                $n++;
+            }
+        }
+    }
 }
