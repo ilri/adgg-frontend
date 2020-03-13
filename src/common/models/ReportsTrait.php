@@ -49,7 +49,7 @@ trait ReportsTrait
 
     public function reportBuilderFields()
     {
-        $unwanted = $this->reportBuilderUnwantedFields();
+        $unwanted = array_merge($this->reportBuilderUnwantedFields(), $this->reportBuilderAdditionalUnwantedFields());
         $attributes = $this->attributes();
         $attrs = array_diff($attributes, $unwanted);
         sort($attrs);

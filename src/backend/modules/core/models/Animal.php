@@ -588,4 +588,11 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
         $options['orderBy'] = ['id' => SORT_ASC];
         return parent::getListData($valueColumn, $textColumn, $prompt, $condition, $params, $options);
     }
+    /**
+     * @inheritDoc
+     */
+    public function reportBuilderAdditionalUnwantedFields(): array
+    {
+        return ['sire_id', 'sire_name', 'animal_sireknown','animal_damknown', 'sire_tag_id', 'sire_type', 'dam_id', 'dam_name', 'dam_tag_id'];
+    }
 }
