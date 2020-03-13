@@ -8,6 +8,7 @@
 namespace console\controllers;
 
 
+use backend\modules\core\models\Animal;
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\CalvingEvent;
 use backend\modules\core\models\MilkingEvent;
@@ -154,6 +155,37 @@ class FakerController extends Controller
             foreach ($models as $model) {
                 $model->save(false);
                 $this->stdout("Processed {$n} Calving records\n");
+                $n++;
+            }
+        }
+    }
+
+    public function actionRandom()
+    {
+        $condition = '[[migration_id]] IS NOT NULL';
+        $query = Animal::find()->andWhere($condition);
+        $n = 1;
+        /* @var $models Animal[] */
+        foreach ($query->batch() as $i => $models) {
+            foreach ($models as $model) {
+                if (!empty($model->sire_tag_id)) {
+                    $sire = Animal::find()->andWhere(['migration_id' => $model->sire_tag_id])->one();
+                    if (null !== $sire) {
+                        $model->sire_id = $sire->id;
+                        $model->sire_tag_id = $sire->tag_id;
+                        $model->sire_tag_id = null;
+                    }
+                }
+                if (!empty($model->dam_tag_id)) {
+                    $dam = Animal::find()->andWhere(['migration_id' => $model->dam_tag_id])->one();
+                    if (null !== $dam) {
+                        $model->dam_id = $dam->id;
+                        $model->dam_tag_id = $dam->tag_id;
+                        $model->dam_tag_id = null;
+                    }
+                }
+                $model->save(false);
+                $this->stdout("Processed {$n} animal records\n");
                 $n++;
             }
         }
