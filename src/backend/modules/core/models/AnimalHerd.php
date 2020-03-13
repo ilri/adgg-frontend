@@ -67,7 +67,7 @@ class AnimalHerd extends ActiveRecord implements ActiveSearchInterface, ImportAc
             [['latitude', 'longitude'], 'number'],
             [['farm_id'], 'exist', 'skipOnError' => true, 'targetClass' => Farm::class, 'targetAttribute' => ['farm_id' => 'id']],
             [['reg_date'], 'date', 'format' => 'php:Y-m-d'],
-            [['name'], 'unique', 'targetAttribute' => ['farm_id', 'name'], 'message' => '{attribute} already exists.'],
+            //[['name'], 'unique', 'targetAttribute' => ['farm_id', 'name'], 'message' => '{attribute} already exists.'],
             [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
             [$this->getAdditionalAttributes(), 'safe'],
             ['migration_id', 'unique'],

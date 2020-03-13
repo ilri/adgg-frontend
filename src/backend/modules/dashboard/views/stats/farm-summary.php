@@ -35,7 +35,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
 </h3>
 <hr>
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-lg-6 col-md-7 col-sm-8">
         <!--begin::Portlet-->
         <div class="kt-portlet">
             <div class="col-md-12 kt-iconbox kt-iconbox--active">
@@ -132,7 +132,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
             <!--end::Portlet-->
         </div>
     </div>
-    <div class="col-md-6">
+    <div class=" col-lg-6 col-md-5 col-sm-4">
         <div class="kt-portlet">
             <div class="kt-iconbox kt-iconbox--active">
                 <div class="kt-iconbox__icon mb-0">

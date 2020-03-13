@@ -161,7 +161,7 @@ class Bulls extends MigrationBase implements MigrationInterface
                     $newModel->herd_id = $herdModel->id;
                     $newModel->farm_id = $herdModel->farm_id;
                 } else {
-                    Yii::$app->controller->stdout("Herd ID {$dataModel->Cows_Herd} does not exist. Ignored.\n");
+                    //Yii::$app->controller->stdout("Herd ID {$dataModel->Bulls_Herd} does not exist. Ignored.\n");
                 }
                 $newModel->migration_id = Helper::getMigrationId($dataModel->Bulls_ID, self::MIGRATION_ID_PREFIX);
                 $newModel->tag_id = $dataModel->Bulls_Nasis1;
@@ -171,6 +171,9 @@ class Bulls extends MigrationBase implements MigrationInterface
                 $newModel->animal_eartag_id = $dataModel->Bulls_EarTag;
                 $newModel->sex = 1;
                 $newModel->birthdate = $dataModel->Bulls_Birth;
+                if ($newModel->birthdate == '0000-00-00') {
+                    $newModel->birthdate = null;
+                }
                 $newModel->sire_tag_id = Helper::getMigrationId($dataModel->Bulls_Sire, self::MIGRATION_ID_PREFIX);
                 $newModel->dam_tag_id = Helper::getMigrationId($dataModel->Bulls_Dam, Cows::MIGRATION_ID_PREFIX);
                 $newModel->breed_composition_details = $dataModel->Bulls_BreedS;

@@ -34,22 +34,10 @@ class DataMigrationController extends Controller
 
     protected function doKeMigration()
     {
-        Clients::migrateData();
-        Farms::migrateData();
-        Herds::migrateData();
-        Cows::migrateData();
-    }
-
-    protected function migrateKeBulls()
-    {
-        $query = Bulls::find()->andWhere([]);
-        /* @var $models Bulls[] */
-        $n = 1;
-        foreach ($query->batch() as $i => $models) {
-            foreach ($models as $model) {
-                $this->stdout("Bulls: Processing Record {$n}\n");
-                $n++;
-            }
-        }
+        //Clients::migrateData();
+        //Farms::migrateData();
+        //Herds::migrateData();
+        //Cows::migrateData();
+        Bulls::migrateData();
     }
 }
