@@ -357,7 +357,6 @@ class Cows extends MigrationBase implements MigrationInterface
                     if (!empty($sire)) {
                         $model->sire_id = $sire['id'];
                         $model->sire_tag_id = $sire['tag_id'];
-                        $model->sire_tag_id = null;
                     }
                 }
                 if (!empty($model->dam_tag_id)) {
@@ -365,7 +364,6 @@ class Cows extends MigrationBase implements MigrationInterface
                     if (!empty($dam)) {
                         $model->dam_id = $dam['id'];
                         $model->dam_tag_id = $dam['tag_id'];
-                        $model->dam_tag_id = null;
                     }
                 }
                 $model->save(false);
