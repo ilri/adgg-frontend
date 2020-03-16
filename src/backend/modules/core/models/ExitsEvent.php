@@ -32,4 +32,15 @@ class ExitsEvent extends AnimalEvent implements AnimalEventInterface
     {
         return ['lactation_id', 'lactation_number'];
     }
+
+    /**
+     * @return array
+     */
+    public function getExcelColumns()
+    {
+        return [
+            'animalTagId',
+            'event_date',
+        ];
+    }
 }
