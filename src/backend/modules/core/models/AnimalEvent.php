@@ -62,6 +62,8 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
 
     public $animalTagId;
 
+    const SCENARIO_KLBA_UPLOAD = 'KLBA_UPLOAD';
+
     /**
      * {@inheritdoc}
      */
@@ -82,7 +84,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             [['latitude', 'longitude'], 'number'],
             [['map_address', 'uuid'], 'string', 'max' => 255],
             ['event_date', 'validateNoFutureDate'],
-            ['event_date', 'unique', 'targetAttribute' => ['country_id', 'animal_id', 'event_type', 'event_date'], 'message' => '{attribute} should be unique per animal'],
+            ['event_date', 'unique', 'targetAttribute' => ['country_id', 'animal_id', 'event_type', 'event_date'], 'message' => '{attribute} should be unique per animal', 'except' => [self::SCENARIO_KLBA_UPLOAD]],
             [['org_id', 'client_id'], 'safe'],
             ['migration_id', 'unique'],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
