@@ -5,8 +5,11 @@ namespace backend\modules\core\controllers;
 
 use backend\modules\auth\Acl;
 use backend\modules\core\Constants;
+use backend\modules\core\forms\UploadFeedingEvent;
 use backend\modules\core\models\AnimalEvent;
+use backend\modules\core\models\FeedingEvent;
 use common\controllers\UploadExcelTrait;
+use Yii;
 
 class FeedingEventController extends Controller
 {
@@ -29,10 +32,21 @@ class FeedingEventController extends Controller
     public function actionUpload()
     {
         $this->hasPrivilege(Acl::ACTION_CREATE);
+
+        $form = new UploadFeedingEvent(FeedingEvent::class);
+        $resp = $this->uploadExcelConsole($form, 'feeding-event/index', Yii::$app->request->queryParams);
+        if ($resp !== false) {
+            return $resp;
+        }
+
+        return $this->render('@coreModule/views/animal-event/upload', [
+            'model' => $form,
+        ]);
     }
 
     public function actionUploadPreview()
     {
-
+        $form = new UploadFeedingEvent(FeedingEvent::class);
+        return $form->previewAction();
     }
 }

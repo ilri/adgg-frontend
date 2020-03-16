@@ -14,6 +14,8 @@ use console\dataMigration\ke\models\Clients;
 use console\dataMigration\ke\models\Cows;
 use console\dataMigration\ke\models\Farms;
 use console\dataMigration\ke\models\Herds;
+use console\dataMigration\ke\models\Lacts;
+use console\dataMigration\ke\models\Testdays;
 use yii\console\Controller;
 
 class DataMigrationController extends Controller
@@ -38,6 +40,8 @@ class DataMigrationController extends Controller
         //Farms::migrateData();
         //Herds::migrateData();
         //Cows::migrateData();
-        Bulls::migrateData();
+        //Bulls::migrateData();
+        //Lacts::migrateData();
+        Testdays::migrateData();
     }
 }
