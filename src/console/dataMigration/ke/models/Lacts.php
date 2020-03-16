@@ -4,6 +4,7 @@ namespace console\dataMigration\ke\models;
 
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\AnimalEvent;
+use backend\modules\core\models\CalvingEvent;
 use Yii;
 
 /**
@@ -104,7 +105,7 @@ class Lacts extends MigrationBase implements MigrationInterface
         $n = 1;
         $countryId = Helper::getCountryId(Constants::KENYA_COUNTRY_CODE);
         $orgId = Helper::getOrgId(Constants::KLBA_ORG_NAME);
-        $model = new AnimalEvent(['country_id' => $countryId, 'org_id' => $orgId, 'event_type' => AnimalEvent::EVENT_TYPE_CALVING]);
+        $model = new CalvingEvent(['country_id' => $countryId, 'org_id' => $orgId, 'event_type' => AnimalEvent::EVENT_TYPE_CALVING,'scenario' =>CalvingEvent::SCENARIO_KLBA_UPLOAD ]);
         foreach ($query->batch() as $i => $dataModels) {
             foreach ($dataModels as $dataModel) {
                 $newModel = clone $model;

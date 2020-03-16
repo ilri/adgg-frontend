@@ -149,7 +149,7 @@ class Testdays extends MigrationBase implements MigrationInterface
         $n = 1;
         $countryId = Helper::getCountryId(Constants::KENYA_COUNTRY_CODE);
         $orgId = Helper::getOrgId(Constants::KLBA_ORG_NAME);
-        $model = new MilkingEvent(['country_id' => $countryId, 'org_id' => $orgId, 'event_type' => AnimalEvent::EVENT_TYPE_MILKING]);
+        $model = new MilkingEvent(['country_id' => $countryId, 'org_id' => $orgId, 'event_type' => AnimalEvent::EVENT_TYPE_MILKING, 'scenario' => MilkingEvent::SCENARIO_KLBA_UPLOAD]);
         $t = 1;
         foreach ($query->batch() as $i => $dataModels) {
             foreach ($dataModels as $dataModel) {
@@ -158,7 +158,7 @@ class Testdays extends MigrationBase implements MigrationInterface
                         continue;
                     }
                     $newModel = clone $model;
-                    $newModel->migration_id = Helper::getMigrationId($dataModel->Lacts_ID, self::MIGRATION_ID_PREFIX);
+                    $newModel->migration_id = Helper::getMigrationId($milkRecord->CowTests_ID, self::MIGRATION_ID_PREFIX);
                     $newModel->animal_id = Lacts::getAnimalId($milkRecord->CowTests_CowID);
                     $newModel->event_date = $dataModel->TestDays_Date;
                     if ($newModel->event_date == '0000-00-00') {
@@ -176,7 +176,7 @@ class Testdays extends MigrationBase implements MigrationInterface
                     static::saveModel($newModel, $n);
                     $n++;
                 }
-                Yii::$app->controller->stdout("Processed TestDay record {$n} successfully\n");
+               // Yii::$app->controller->stdout("Processed TestDay record {$n} successfully\n");
                 $t++;
             }
         }
