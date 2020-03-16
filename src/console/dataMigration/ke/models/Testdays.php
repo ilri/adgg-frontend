@@ -2,8 +2,6 @@
 
 namespace console\dataMigration\ke\models;
 
-use backend\modules\core\models\AnimalEvent;
-use backend\modules\core\models\MilkingEvent;
 use Yii;
 
 /**
@@ -48,7 +46,7 @@ use Yii;
  *
  * @property Cowtests $milkRecords
  */
-class Testdays extends MigrationBase implements MigrationInterface
+class Testdays extends MigrationBase
 {
     const MIGRATION_ID_PREFIX = 'KLBA_MILKING_EVENT_';
 
@@ -139,62 +137,5 @@ class Testdays extends MigrationBase implements MigrationInterface
     public function getMilkRecords()
     {
         return $this->hasMany(Cowtests::class, ['CowTests_TDayID' => 'TestDays_ID']);
-    }
-
-    public static function migrateData()
-    {
-        $query = static::find()->andWhere(['TestDays_HideFlag' => 0]);
-        /* @var $dataModels $this[] */
-        /* @var $milkRecord Cowtests */
-        $n = 1;
-        $countryId = Helper::getCountryId(Constants::KENYA_COUNTRY_CODE);
-        $orgId = Helper::getOrgId(Constants::KLBA_ORG_NAME);
-        $model = new MilkingEvent(['country_id' => $countryId, 'org_id' => $orgId, 'event_type' => AnimalEvent::EVENT_TYPE_MILKING, 'scenario' => MilkingEvent::SCENARIO_KLBA_UPLOAD]);
-        $model->setAdditionalAttributes();
-        $t = 1;
-        foreach ($query->batch() as $i => $dataModels) {
-            foreach ($dataModels as $dataModel) {
-                foreach ($dataModel->milkRecords as $milkRecord) {
-                    if ($milkRecord->CowTests_HideFlag == 1) {
-                        continue;
-                    }
-                    $newModel = clone $model;
-                    $newModel->migration_id = Helper::getMigrationId($milkRecord->CowTests_ID, self::MIGRATION_ID_PREFIX);
-                    $newModel->animal_id = Lacts::getAnimalId($milkRecord->CowTests_CowID);
-                    $newModel->event_date = $dataModel->TestDays_Date;
-                    if ($newModel->event_date == '0000-00-00') {
-                        $newModel->event_date = null;
-                    }
-                    $newModel->milk_test_type = $dataModel->TestDays_TestType;
-                    $newModel->milkmor = ((float)$milkRecord->CowTests_AMYield) / 10;
-                    $newModel->milkeve = ((float)$milkRecord->CowTests_PMYield) / 10;
-                    $newModel->milkday = ((float)$milkRecord->CowTests_Yield1) / 10;
-                    $newModel->milkfat = ((float)$milkRecord->CowTests_FatP) / 100;
-                    $newModel->milkprot = ((float)$milkRecord->CowTests_ProtP) / 100;
-                    $newModel->milklact = ((float)$milkRecord->CowTests_LactP) / 100;
-                    $newModel->milksmc = $milkRecord->CowTests_ICCC;
-                    $newModel->lactation_id = self::getLactationId($milkRecord->CowTests_LactID);
-                    static::saveModel($newModel, $n);
-                    $n++;
-                }
-               // Yii::$app->controller->stdout("Processed TestDay record {$n} successfully\n");
-                $t++;
-            }
-        }
-    }
-
-    /**
-     * @param $oldLactationId
-     * @return string|null
-     * @throws \Exception
-     */
-    public static function getLactationId($oldLactationId)
-    {
-        $migrationId = Helper::getMigrationId($oldLactationId, Lacts::MIGRATION_ID_PREFIX);
-        $lactationId = AnimalEvent::getScalar('id', ['migration_id' => $migrationId]);
-        if (empty($lactationId)) {
-            return null;
-        }
-        return $lactationId;
     }
 }
