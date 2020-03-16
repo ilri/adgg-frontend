@@ -17,10 +17,11 @@ abstract class MigrationBase extends ActiveRecord
     /**
      * @param ActiveRecord $model
      * @param null $n
+     * @param bool $validate
      */
-    protected static function saveModel(ActiveRecord $model, $n = null)
+    protected static function saveModel(ActiveRecord $model, $n = null, $validate = true)
     {
-        $saved = $model->save();
+        $saved = $model->save($validate);
         $className = get_class($model);
         if ($saved) {
             Yii::$app->controller->stdout($className . ": saved record {$n} successfully\n");
