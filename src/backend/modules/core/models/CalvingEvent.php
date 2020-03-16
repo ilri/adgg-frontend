@@ -30,6 +30,8 @@ use common\helpers\DbUtils;
  */
 class CalvingEvent extends AnimalEvent implements ImportActiveRecordInterface, AnimalEventInterface
 {
+    const SCENARIO_KLBA_UPLOAD = 'KLBA_UPLOAD';
+
     public function rules()
     {
         return ArrayHelper::merge(parent::rules(), [
