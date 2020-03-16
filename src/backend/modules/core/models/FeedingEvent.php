@@ -32,4 +32,15 @@ class FeedingEvent extends AnimalEvent implements AnimalEventInterface
     {
         return self::EVENT_TYPE_FEEDING;
     }
+
+    /**
+     * @return array
+     */
+    public function getExcelColumns()
+    {
+        return [
+            'animalTagId',
+            'event_date',
+        ];
+    }
 }

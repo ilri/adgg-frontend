@@ -5,8 +5,11 @@ namespace backend\modules\core\controllers;
 
 use backend\modules\auth\Acl;
 use backend\modules\core\Constants;
+use backend\modules\core\forms\UploadExitEvent;
 use backend\modules\core\models\AnimalEvent;
+use backend\modules\core\models\ExitsEvent;
 use common\controllers\UploadExcelTrait;
+use Yii;
 
 class ExitEventController extends Controller
 {
@@ -30,9 +33,21 @@ class ExitEventController extends Controller
     {
         $this->hasPrivilege(Acl::ACTION_CREATE);
 
+        $form = new UploadExitEvent(ExitsEvent::class);
+        $resp = $this->uploadExcelConsole($form, 'exit-event/index', Yii::$app->request->queryParams);
+        if ($resp !== false) {
+            return $resp;
+        }
+
+        return $this->render('@coreModule/views/animal-event/upload', [
+            'model' => $form,
+        ]);
+
     }
 
     public function actionUploadPreview()
     {
+        $form = new UploadExitEvent(ExitsEvent::class);
+        return $form->previewAction();
     }
 }
