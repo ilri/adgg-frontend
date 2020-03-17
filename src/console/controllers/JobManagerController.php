@@ -9,6 +9,7 @@ namespace console\controllers;
 
 
 use console\dataMigration\ke\models\Cows;
+use console\dataMigration\ke\models\Cowtests;
 use console\dataMigration\ke\models\Herds;
 use console\dataMigration\ke\models\Lacts;
 use console\dataMigration\ke\models\Testdays;
@@ -52,6 +53,6 @@ class JobManagerController extends BaseController
         //Cows::migrateData();
         //Cows::updateSiresAndDams();
         Lacts::migrateData();
-        Testdays::migrateData();
+        Cowtests::migrateData();
     }
 }
