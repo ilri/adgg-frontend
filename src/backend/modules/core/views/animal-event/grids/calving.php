@@ -58,6 +58,7 @@ use yii\helpers\Url;
                 return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_BIRTH_TYPE, $model->birthtyp);
             },
             'enableSorting' => false,
+            'visible' => false,
         ],
         [
             'attribute' => 'calfsex',

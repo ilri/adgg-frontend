@@ -8,12 +8,14 @@
 namespace console\controllers;
 
 
+use backend\modules\core\models\Animal;
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\CalvingEvent;
 use backend\modules\core\models\MilkingEvent;
 use backend\modules\core\models\OdkJsonQueue;
 use backend\modules\core\models\Country;
 use common\helpers\FileManager;
+use console\dataMigration\ke\models\Cows;
 use Yii;
 use yii\console\Controller;
 
@@ -157,5 +159,10 @@ class FakerController extends Controller
                 $n++;
             }
         }
+    }
+
+    public function actionRandom()
+    {
+        Cows::updateSiresAndDams();
     }
 }

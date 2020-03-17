@@ -11,8 +11,10 @@ namespace console\controllers;
 
 use console\dataMigration\ke\models\Bulls;
 use console\dataMigration\ke\models\Clients;
+use console\dataMigration\ke\models\Cows;
 use console\dataMigration\ke\models\Farms;
 use console\dataMigration\ke\models\Herds;
+use console\dataMigration\ke\models\Lacts;
 use yii\console\Controller;
 
 class DataMigrationController extends Controller
@@ -33,21 +35,11 @@ class DataMigrationController extends Controller
 
     protected function doKeMigration()
     {
-        Clients::migrateData();
-        Farms::migrateData();
-        Herds::migrateData();
-    }
-
-    protected function migrateKeBulls()
-    {
-        $query = Bulls::find()->andWhere([]);
-        /* @var $models Bulls[] */
-        $n = 1;
-        foreach ($query->batch() as $i => $models) {
-            foreach ($models as $model) {
-                $this->stdout("Bulls: Processing Record {$n}\n");
-                $n++;
-            }
-        }
+        //Clients::migrateData();
+        //Farms::migrateData();
+        //Herds::migrateData();
+        //Cows::migrateData();
+        //Bulls::migrateData();
+        Lacts::migrateData();
     }
 }

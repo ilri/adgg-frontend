@@ -33,6 +33,7 @@ use yii\helpers\Inflector;
  * @property int $org_id
  * @property int $client_id
  * @property int $animal_type
+ * @property int $sex
  * @property string $color
  * @property string $birthdate
  * @property int $is_derived_birthdate
@@ -63,6 +64,7 @@ use yii\helpers\Inflector;
  * @property string|array $additional_attributes
  * @property string $animal_eartag_id
  * @property string $migration_id
+ * @property string $breed_composition_details
  *
  * @property Farm $farm
  * @property Animal $sire
@@ -89,6 +91,10 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
      */
     public $tmp_animal_photo;
 
+
+    const SCENARIO_KLBA_BULL_UPLOAD = 'BullUpload';
+    const SCENARIO_KLBA_COW_UPLOAD = 'CowUpload';
+
     /**
      * {@inheritdoc}
      */
@@ -103,18 +109,19 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     public function rules()
     {
         return [
-            [['farm_id', 'tag_id'], 'required'],
-            [['farm_id', 'herd_id', 'country_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'animal_type', 'is_derived_birthdate', 'sire_type', 'sire_id', 'dam_id', 'main_breed', 'breed_composition', 'secondary_breed', 'entry_type'], 'integer'],
+            [['tag_id'], 'required'],
+            [['farm_id'], 'required', 'except' => self::SCENARIO_KLBA_BULL_UPLOAD],
+            [['farm_id', 'herd_id', 'country_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'animal_type', 'is_derived_birthdate', 'sire_type', 'sire_id', 'dam_id', 'main_breed', 'breed_composition', 'secondary_breed', 'entry_type', 'sex'], 'integer'],
             [['birthdate', 'deformities', 'entry_date'], 'safe'],
             [['purchase_cost'], 'number'],
+            [['birthdate', 'entry_date'], 'date', 'format' => 'php:Y-m-d'],
             [['birthdate', 'entry_date'], 'validateNoFutureDate'],
             [['name', 'tag_id', 'sire_tag_id', 'sire_name', 'dam_tag_id', 'dam_name', 'color'], 'string', 'max' => 128],
             [['animal_photo', 'map_address'], 'string', 'max' => 255],
-            [['farm_id'], 'exist', 'skipOnError' => true, 'targetClass' => Farm::class, 'targetAttribute' => ['farm_id' => 'id']],
             ['tag_id', 'unique', 'targetAttribute' => ['country_id', 'tag_id'], 'message' => '{attribute} already exists.'],
             [['sire_tag_id', 'dam_tag_id'], 'validateSireOrDam'],
-            ['sire_tag_id', 'validateSireBisexual'],
-            ['dam_tag_id', 'validateDamBisexual'],
+            ['sire_tag_id', 'validateSireBisexual', 'except' => [self::SCENARIO_KLBA_BULL_UPLOAD, self::SCENARIO_KLBA_COW_UPLOAD]],
+            ['dam_tag_id', 'validateDamBisexual', 'except' => [self::SCENARIO_KLBA_BULL_UPLOAD, self::SCENARIO_KLBA_COW_UPLOAD]],
             [['tmp_animal_photo', 'additional_attributes', 'org_id', 'client_id'], 'safe'],
             [$this->getAdditionalAttributes(), 'safe'],
             [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
@@ -142,6 +149,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'org_id' => 'External Organization ID',
             'client_id' => 'Client ID',
             'animal_type' => 'Animal Type',
+            'sex' => 'Sex',
             'color' => 'Animal Color',
             'birthdate' => 'Date of Birth',
             'is_derived_birthdate' => 'Is Derived Birthdate',
@@ -156,6 +164,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'dam_name' => 'Dam Name',
             'main_breed' => 'Main Breed',
             'breed_composition' => 'Breed Composition',
+            'breed_composition_details' => 'Breed Composition details',
             'secondary_breed' => 'Secondary Breed',
             'entry_type' => 'Entry Type',
             'entry_date' => 'Entry Date',
@@ -289,7 +298,8 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
         return $fields;
     }
 
-    public static function decodeDeformities($deformities){
+    public static function decodeDeformities($deformities)
+    {
         $deformities = json_decode($deformities);
         $decoded = [];
         foreach ($deformities as $key => $value) {
@@ -306,13 +316,16 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
                 $this->latlng = new Expression("ST_GeomFromText('POINT({$this->latitude} {$this->longitude})')");
             }
             $this->setImage('animal_photo');
-            $this->country_id = $this->farm->country_id;
-            $this->region_id = $this->farm->region_id;
-            $this->district_id = $this->farm->district_id;
-            $this->ward_id = $this->farm->ward_id;
-            $this->village_id = $this->farm->village_id;
-            $this->org_id = $this->farm->org_id;
-            $this->client_id = $this->farm->client_id;
+            if (null !== $this->farm) {
+                $this->country_id = $this->farm->country_id;
+                $this->region_id = $this->farm->region_id;
+                $this->district_id = $this->farm->district_id;
+                $this->ward_id = $this->farm->ward_id;
+                $this->village_id = $this->farm->village_id;
+                $this->org_id = $this->farm->org_id;
+                $this->client_id = $this->farm->client_id;
+            }
+
             if (!empty($this->deformities)) {
                 if (is_string($this->deformities)) {
                     $this->deformities = array_map('trim', explode(' ', $this->deformities));
@@ -577,5 +590,12 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     {
         $options['orderBy'] = ['id' => SORT_ASC];
         return parent::getListData($valueColumn, $textColumn, $prompt, $condition, $params, $options);
+    }
+    /**
+     * @inheritDoc
+     */
+    public function reportBuilderAdditionalUnwantedFields(): array
+    {
+        return ['sire_id', 'sire_name', 'animal_sireknown','animal_damknown', 'sire_tag_id', 'sire_type', 'dam_id', 'dam_name', 'dam_tag_id'];
     }
 }
