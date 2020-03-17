@@ -56,13 +56,13 @@ class DefaultController extends Controller
         $name = '';
         switch ($type){
             case 'milkdata':
-                $name = 'Milk_data';
                 $builder = Reports::milkDataReport(\Yii::$app->request->post());
+                $name = $builder->name;
                 $query = null;
                 break;
             case 'pedigree':
-                $name = 'Pedigree';
                 $builder = Reports::pedigreeDataReport(\Yii::$app->request->post());
+                $name = $builder->name;
                 $query = null;
                 break;
             default:

@@ -106,6 +106,7 @@ class Lacts extends MigrationBase implements MigrationInterface
         $countryId = Helper::getCountryId(Constants::KENYA_COUNTRY_CODE);
         $orgId = Helper::getOrgId(Constants::KLBA_ORG_NAME);
         $model = new CalvingEvent(['country_id' => $countryId, 'org_id' => $orgId, 'event_type' => AnimalEvent::EVENT_TYPE_CALVING, 'scenario' => CalvingEvent::SCENARIO_KLBA_UPLOAD]);
+        $model->setAdditionalAttributes();
         foreach ($query->batch(1000) as $i => $dataModels) {
             Yii::$app->controller->stdout("Batch processing  started...\n");
             $migrationIds = [];
