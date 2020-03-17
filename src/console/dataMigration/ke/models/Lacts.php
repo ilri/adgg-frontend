@@ -105,16 +105,55 @@ class Lacts extends MigrationBase implements MigrationInterface
         $n = 1;
         $countryId = Helper::getCountryId(Constants::KENYA_COUNTRY_CODE);
         $orgId = Helper::getOrgId(Constants::KLBA_ORG_NAME);
-        $model = new CalvingEvent(['country_id' => $countryId, 'org_id' => $orgId, 'event_type' => AnimalEvent::EVENT_TYPE_CALVING,'scenario' =>CalvingEvent::SCENARIO_KLBA_UPLOAD ]);
-        foreach ($query->batch() as $i => $dataModels) {
+        $model = new CalvingEvent(['country_id' => $countryId, 'org_id' => $orgId, 'event_type' => AnimalEvent::EVENT_TYPE_CALVING, 'scenario' => CalvingEvent::SCENARIO_KLBA_UPLOAD]);
+        foreach ($query->batch(1000) as $i => $dataModels) {
+            Yii::$app->controller->stdout("Batch processing  started...\n");
+            $migrationIds = [];
+            $oldAnimalIds = [];
+            $animalData = [];
+            foreach ($dataModels as $dataModel) {
+                //migration_id must be unique
+                $migrationIds[] = Helper::getMigrationId($dataModel->Lacts_ID, self::MIGRATION_ID_PREFIX);
+                $animalMigId = Helper::getMigrationId($dataModel->Lacts_CowID, Cows::MIGRATION_ID_PREFIX);
+                $oldAnimalIds[$animalMigId] = $animalMigId;
+            }
+            $existingMigrationIds = AnimalEvent::getColumnData(['migration_id'], ['migration_id' => $migrationIds]);
+            //animal Data
+            //Yii::$app->controller->stdout("Setting animal data...\n");
+            foreach (Animal::getData(['id', 'migration_id'], ['migration_id' => $oldAnimalIds]) as $animalDatum) {
+                $animalData[$animalDatum['migration_id']] = $animalDatum['id'];
+            }
+
             foreach ($dataModels as $dataModel) {
                 $newModel = clone $model;
                 $newModel->migration_id = Helper::getMigrationId($dataModel->Lacts_ID, self::MIGRATION_ID_PREFIX);
-                $newModel->animal_id = self::getAnimalId($dataModel->Lacts_CowID);
+                if (in_array($newModel->migration_id, $existingMigrationIds)) {
+                    Yii::$app->controller->stdout("Calving record {$n} with migration id: {$newModel->migration_id} already saved. Ignored\n");
+                    $n++;
+                    continue;
+                }
+
+                $animalMigId = Helper::getMigrationId($dataModel->Lacts_CowID, Cows::MIGRATION_ID_PREFIX);
+                $newModel->animal_id = $animalData[$animalMigId] ?? null;
+
                 $newModel->event_date = $dataModel->Lacts_InitDate;
                 if ($newModel->event_date == '0000-00-00') {
                     $newModel->event_date = null;
                 }
+
+
+                //'animal_id','event_date' are required
+                if (empty($newModel->animal_id)) {
+                    Yii::$app->controller->stdout("Validation error on calving record {$n}: Animal Id cannot be blank.\n");
+                    $n++;
+                    continue;
+                }
+                if (empty($newModel->event_date)) {
+                    Yii::$app->controller->stdout("Validation error on calving record {$n}: Event date cannot be blank.\n");
+                    $n++;
+                    continue;
+                }
+
                 if ($dataModel->Lacts_InitCode == 0) {
                     $newModel->calvtype = 1;
                     $newModel->calving_method = 1;
@@ -125,7 +164,7 @@ class Lacts extends MigrationBase implements MigrationInterface
                     $newModel->calvtype = 4;
                 }
                 $newModel->calving_dry_date = $dataModel->Lacts_TermDate;
-                static::saveModel($newModel, $n);
+                static::saveModel($newModel, $n, false);
                 $n++;
             }
         }

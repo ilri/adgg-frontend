@@ -159,7 +159,6 @@ class Cowtests extends MigrationBase implements MigrationInterface
         foreach ($query->batch(1000) as $i => $dataModels) {
             Yii::$app->controller->stdout("Batch processing  started...\n");
             $migrationIds = [];
-            $oldIds = [];
             $testDayIds = [];
             $oldAnimalIds = [];
             $testDayData = [];
@@ -171,7 +170,6 @@ class Cowtests extends MigrationBase implements MigrationInterface
                 //migration_id must be unique
                 $migrationIds[] = Helper::getMigrationId($dataModel->CowTests_ID, Testdays::MIGRATION_ID_PREFIX);
                 //query db
-                $oldIds[] = $dataModel->CowTests_ID;
                 $testDayIds[$dataModel->CowTests_TDayID] = $dataModel->CowTests_TDayID;
                 $animalMigId = Helper::getMigrationId($dataModel->CowTests_CowID, Cows::MIGRATION_ID_PREFIX);
                 $oldAnimalIds[$animalMigId] = $animalMigId;
@@ -198,9 +196,6 @@ class Cowtests extends MigrationBase implements MigrationInterface
             }
 
             foreach ($dataModels as $dataModel) {
-                if ($dataModel->CowTests_HideFlag == 1) {
-                    continue;
-                }
                 $newModel = clone $model;
                 $newModel->migration_id = Helper::getMigrationId($dataModel->CowTests_ID, Testdays::MIGRATION_ID_PREFIX);
                 if (in_array($newModel->migration_id, $existingMigrationIds)) {
