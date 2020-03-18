@@ -161,7 +161,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                         <code id="" class="language-sql text-wrap word-wrap" data-lang="sql"></code>
                                     </pre>
                                 </figure>
-                                <textarea id="queryHolder" class="language-sql text-wrap word-wrap" ></textarea>
+                                <textarea id="queryHolder" class="language-sql text-wrap word-wrap"></textarea>
                             </div>
                             <div class="row mt-2">
                                 <div class="col-md-3"><label for="name">Report Name: </label></div>

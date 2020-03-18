@@ -107,7 +107,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             'id' => 'ID',
             'code' => 'Code',
             'name' => 'Farm Name',
-            'country_id' => 'Country',
+            'country_id' => 'Country id',
             'region_id' => $this->country !== null ? Html::encode($this->country->unit1_name) . ' ID' : 'Region ID',
             'district_id' => $this->country !== null ? Html::encode($this->country->unit2_name) . ' ID' : 'District ID',
             'ward_id' => $this->country !== null ? Html::encode($this->country->unit3_name) . ' ID' : 'Ward ID',
@@ -337,5 +337,12 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     public function getFieldAgent()
     {
         return $this->hasOne(Users::class, ['id' => 'field_agent_id']);
+    }
+    /**
+     * @inheritDoc
+     */
+    public function reportBuilderAdditionalUnwantedFields(): array
+    {
+        return ['farm_country'];
     }
 }
