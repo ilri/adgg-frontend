@@ -47,8 +47,8 @@ MyApp.modules.reports = {};
                 dataType: 'html',
                 data: form.serialize(),
                 success: function (data) {
-                    //$($this.options.queryHolderContainer).text(data);
-                    //$($this.options.queryHolderContainer).parent().attr('contenteditable','true');
+                    $($this.options.queryHolderContainer).text(data);
+                    $($this.options.queryHolderContainer).parent().attr('contenteditable', 'false');
                     window.editor.setValue(data);
                 },
                 beforeSend: function (xhr) {
@@ -262,17 +262,17 @@ MyApp.modules.reports = {};
     MyApp.modules.reports.reportbuilder = function (options) {
         let obj = new REPORTBUILDER(options);
         obj.init();
-        window.editor = CodeMirror.fromTextArea(document.getElementById('queryHolder'), {
+        window.editor = new CodeMirror.fromTextArea(document.getElementById('queryHolder'), {
             value: '',
             mode: 'text/x-mysql',
             indentWithTabs: true,
             smartIndent: true,
             lineNumbers: false,
             lineWrapping: true,
-            matchBrackets : true,
+            matchBrackets: true,
             autofocus: true,
             extraKeys: {"Ctrl-Space": "autocomplete"},
-            foldGutter: true,
+            foldGutter: false,
             readOnly: true,
         });
         const copy = new ClipboardJS('.btn-clipboard', {
