@@ -201,7 +201,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     </pre>
                                     </figure>
                                     <textarea id="queryHolder"
-                                              class="language-sql text-wrap word-wrap pre-scrollable"></textarea>
+                                              class="language-sql text-wrap word-wrap"></textarea>
                                 </div>
                                 <!--                            <div class="row mt-2">-->
                                 <!--                                <div class="col-md-8"><label for="name">Report Name: </label></div>-->
@@ -261,13 +261,3 @@ $options = [
 ];
 $this->registerJs("MyApp.modules.reports.reportbuilder(" . Json::encode($options) . ");");
 ?>
-
-<script>
-
-
-    $(document).ready(function () {
-        //     $('button#askForName').click(function () {
-        //         $("#inputName").modal('show');
-        //     });
-    });
-</script>
