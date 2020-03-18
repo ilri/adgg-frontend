@@ -112,6 +112,6 @@ class CalvingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
      */
     public function reportBuilderAdditionalUnwantedFields(): array
     {
-        return [];
+        return ['animal_id', 'bull_id'];
     }
 }
