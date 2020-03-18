@@ -2,13 +2,14 @@
 
 /* @var $this yii\web\View */
 
-/* @var $models */
-
 use backend\modules\core\models\Country;
 use backend\modules\reports\models\ReportBuilder;
+use backend\modules\reports\models\Reports;
 use common\helpers\Lang;
 use common\helpers\Url;
 use common\models\ActiveRecord;
+use common\widgets\select2\Select2;
+use yii\bootstrap\Html;
 use yii\helpers\Json;
 
 $this->title = 'Report Builder';
@@ -65,14 +66,11 @@ $this->params['breadcrumbs'][] = $this->title;
                                              style="height: 550px; overflow: hidden;" data-scroll="true">
                                             <ul>
                                                 <?php foreach ($attributes as $attr): ?>
-                                                    <?php $attrTitle = $class->getAttributeLabel($attr) ?>
-                                                    <li class="attribute" data-original-title="<?= $attr ?>"
+                                                    <li class="attribute"
+                                                        data-original-title="<?= $class->getAttributeLabel($attr) ?>"
                                                         data-model="<?= $name ?>" data-parent-model="<?= $name ?>"
                                                         data-parent-model-title="<?= $title ?>"
-                                                        data-name="<?= $attr ?> "
-                                                        title="<?= $attrTitle ?>">
-                                                        <?= $attr ?>
-                                                    </li>
+                                                        data-name="<?= $attr ?>"><?= $class->getAttributeLabel($attr) ?></li>
                                                 <?php endforeach; ?>
                                                 <?php
                                                 if (count($modelData['relations'])) {
@@ -102,11 +100,11 @@ $this->params['breadcrumbs'][] = $this->title;
                                                             <ul>
                                                                 <?php foreach ($relationAttributes as $attr): ?>
                                                                     <li class="attribute"
-                                                                        data-original-title="<?= $relationName . '.' . $attr ?>"
+                                                                        data-original-title="<?= $relationName . '.' . $relationModelClass->getAttributeLabel($attr) ?>"
                                                                         data-model="<?= $className ?>"
                                                                         data-parent-model="<?= $name ?>"
                                                                         data-parent-model-title="<?= $title ?>"
-                                                                        data-name="<?= $relationName . '.' . $attr ?>"><?= $attr ?></li>
+                                                                        data-name="<?= $relationName . '.' . $attr ?>"><?= $relationModelClass->getAttributeLabel($attr) ?></li>
                                                                 <?php endforeach; ?>
                                                                 <?php
                                                                 if (count($sub_relations)) {
@@ -130,11 +128,11 @@ $this->params['breadcrumbs'][] = $this->title;
                                                                                 <ul>
                                                                                     <?php foreach ($relationAttributes as $attr): ?>
                                                                                         <li class="attribute"
-                                                                                            data-original-title="<?= $main . '.' . $sub . '.' . $attr ?>"
+                                                                                            data-original-title="<?= $main . '.' . $sub . '.' . $relationClass->getAttributeLabel($attr) ?>"
                                                                                             data-model="<?= $className ?>"
                                                                                             data-parent-model="<?= $name ?>"
                                                                                             data-parent-model-title="<?= $title ?>"
-                                                                                            data-name="<?= $main . '.' . $sub . '.' . $attr ?>"><?= $attr ?></li>
+                                                                                            data-name="<?= $main . '.' . $sub . '.' . $attr ?>"><?= $relationClass->getAttributeLabel($attr) ?></li>
                                                                                     <?php endforeach; ?>
                                                                                 </ul>
                                                                             </div>

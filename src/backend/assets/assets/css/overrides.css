@@ -296,6 +296,34 @@ a:hover {
     border-color: #38997a;
 }
 
+.form-group.required .control-group:after {
+    color: red;
+    content: "*";
+    position: absolute;
+    margin-left: 2px;
+    top: 2px;
+}
+
+.centerdiv {
+    text-align: center;
+}
+
+.centerddiv {
+    display: inline-block;
+}
+
+.groupeditem {
+    background-color: #dcdcdc;
+    margin-bottom: 8px;
+}
+
+
+.btn-generatequery {
+    color: #38997a;
+    background-color: #fff;
+    border-color: #38997a;
+}
+
 .kt-portlet, .card {
     -moz-box-shadow: 0 7px 14px 0 rgba(59, 65, 94, .1), 0 3px 6px 0 rgba(0, 0, 0, .07);;
     box-shadow: 0 7px 14px 0 rgba(59, 65, 94, .1), 0 3px 6px 0 rgba(0, 0, 0, .07);
