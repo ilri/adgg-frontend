@@ -200,8 +200,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                         <code id="" class="language-sql text-wrap word-wrap" data-lang="sql"></code>
                                     </pre>
                                     </figure>
-                                    <textarea id="queryHolder"
-                                              class="language-sql text-wrap word-wrap"></textarea>
+                                    <textarea id="queryHolder" class="language-sql text-wrap word-wrap"></textarea>
                                 </div>
                                 <!--                            <div class="row mt-2">-->
                                 <!--                                <div class="col-md-8"><label for="name">Report Name: </label></div>-->
@@ -221,18 +220,18 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 </div>
 
-<div id="inputName" role="dialog" class="modal fade">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <!--Modal header-->
-            <div class="modal-header mt-2">
-                <h4 class="modal-title">Save Generated Report: </h4>
-                <button type="button" class="close" data-dismiss="modal">
-                    <span aria-hidden="true">&times;</span>
-                    <span class="sr-only">Close</span>
-                </button>
+    <div id="inputName" role="dialog" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!--Modal header-->
+                <div class="modal-header mt-2">
+                    <h4 class="modal-title">Save Generated Report: </h4>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                        <span class="sr-only">Close</span>
+                    </button>
 
-            </div>
+                </div>
             <!--Modal Body-->
             <div class="modal-body">
                 <div class="form-group required">
