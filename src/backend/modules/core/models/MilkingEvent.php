@@ -43,14 +43,14 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
     public function rules()
     {
         return ArrayHelper::merge(parent::rules(), [
-            [['milkmor', 'milkmid', 'milkmid'], 'number', 'min' => 0, 'max' => 30],
-            [['milkday'], 'number', 'min' => 0, 'max' => 60],
-            [['milkfat'], 'number', 'min' => 1.5, 'max' => 9],
-            [['milkprot'], 'number', 'min' => 1.5, 'max' => 5],
-            [['milksmc'], 'number', 'min' => 30000, 'max' => 99999999999],
-            ['milkurea', 'number', 'min' => 8, 'max' => 25],
-            ['milklact', 'number', 'min' => 3, 'max' => 7],
-            ['event_date', 'validateMilkingDate'],
+            [['milkmor', 'milkmid', 'milkmid'], 'number', 'min' => 0, 'max' => 30, 'except' => [self::SCENARIO_KLBA_UPLOAD]],
+            [['milkday'], 'number', 'min' => 0, 'max' => 60, 'except' => [self::SCENARIO_KLBA_UPLOAD]],
+            [['milkfat'], 'number', 'min' => 1.5, 'max' => 9, 'except' => [self::SCENARIO_KLBA_UPLOAD]],
+            [['milkprot'], 'number', 'min' => 1.5, 'max' => 5, 'except' => [self::SCENARIO_KLBA_UPLOAD]],
+            [['milksmc'], 'number', 'min' => 30000, 'max' => 99999999999, 'except' => [self::SCENARIO_KLBA_UPLOAD]],
+            ['milkurea', 'number', 'min' => 8, 'max' => 25, 'except' => [self::SCENARIO_KLBA_UPLOAD]],
+            ['milklact', 'number', 'min' => 3, 'max' => 7, 'except' => [self::SCENARIO_KLBA_UPLOAD]],
+            ['event_date', 'validateMilkingDate', 'except' => [self::SCENARIO_KLBA_UPLOAD]],
             [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
         ]);
     }
@@ -132,14 +132,17 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
         if ($this->event_type != self::EVENT_TYPE_MILKING || null === $this->lactation) {
             return;
         }
+        if ($this->scenario == self::SCENARIO_KLBA_UPLOAD) {
+            return;
+        }
 
         $data = static::getData(['id'], ['event_type' => self::EVENT_TYPE_MILKING, 'animal_id' => $this->animal_id, 'lactation_id' => $this->lactation_id], [], ['orderBy' => ['event_date' => SORT_ASC]]);
         $n = 1;
         foreach ($data as $row) {
             static::updateAll(['testday_no' => $n], ['id' => $row['id']]);
             if (!Utils::isWebApp()) {
-                $id = $row['id'];
-                \Yii::$app->controller->stdout("Updated milk record {$id}\n");
+                //$id = $row['id'];
+                //\Yii::$app->controller->stdout("Updated milk record {$id}\n");
             }
             $n++;
         }

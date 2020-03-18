@@ -12,9 +12,11 @@ namespace console\controllers;
 use console\dataMigration\ke\models\Bulls;
 use console\dataMigration\ke\models\Clients;
 use console\dataMigration\ke\models\Cows;
+use console\dataMigration\ke\models\Cowtests;
 use console\dataMigration\ke\models\Farms;
 use console\dataMigration\ke\models\Herds;
 use console\dataMigration\ke\models\Lacts;
+use console\dataMigration\ke\models\Testdays;
 use yii\console\Controller;
 
 class DataMigrationController extends Controller
@@ -41,5 +43,6 @@ class DataMigrationController extends Controller
         //Cows::migrateData();
         //Bulls::migrateData();
         Lacts::migrateData();
+        Cowtests::migrateData();
     }
 }

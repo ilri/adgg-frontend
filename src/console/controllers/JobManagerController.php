@@ -9,7 +9,10 @@ namespace console\controllers;
 
 
 use console\dataMigration\ke\models\Cows;
+use console\dataMigration\ke\models\Cowtests;
 use console\dataMigration\ke\models\Herds;
+use console\dataMigration\ke\models\Lacts;
+use console\dataMigration\ke\models\Testdays;
 
 /**
  * Runs all the system jobs (daemon and cronjobs)
@@ -48,6 +51,8 @@ class JobManagerController extends BaseController
         //Farms::migrateData();
         //Herds::migrateData();
         //Cows::migrateData();
-        Cows::updateSiresAndDams();
+        //Cows::updateSiresAndDams();
+        Lacts::migrateData();
+        Cowtests::migrateData();
     }
 }
