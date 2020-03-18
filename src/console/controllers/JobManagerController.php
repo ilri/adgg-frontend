@@ -8,10 +8,6 @@
 namespace console\controllers;
 
 
-use backend\modules\core\models\AnimalEvent;
-use backend\modules\core\models\CalvingEvent;
-use backend\modules\core\models\MilkingEvent;
-
 /**
  * Runs all the system jobs (daemon and cronjobs)
  *
@@ -45,33 +41,5 @@ class JobManagerController extends BaseController
 
     protected function dataMigration()
     {
-        $condition = '[[event_type]]=:event_type AND [[migration_id]] IS NOT NULL';
-        $params = [':event_type' => AnimalEvent::EVENT_TYPE_CALVING];
-        $query = CalvingEvent::find()->andWhere($condition, $params);
-        $n = 1;
-        /* @var $models CalvingEvent[] */
-        $className = CalvingEvent::class;
-        foreach ($query->batch() as $i => $models) {
-            foreach ($models as $model) {
-                $model->save(false);
-                //$this->stdout("{$className}: Updated {$n} records\n");
-                $n++;
-            }
-        }
-
-        $condition = '[[event_type]]=:event_type AND [[migration_id]] IS NOT NULL';
-        $params = [':event_type' => AnimalEvent::EVENT_TYPE_MILKING];
-        $query = MilkingEvent::find()->andWhere($condition, $params);
-        $n = 1;
-        /* @var $models MilkingEvent[] */
-        $className = CalvingEvent::class;
-        foreach ($query->batch() as $i => $models) {
-            foreach ($models as $model) {
-                $model->save(false);
-                // $this->stdout("{$className}: Updated {$n} records\n");
-                $n++;
-            }
-        }
-
     }
 }

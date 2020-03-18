@@ -140,7 +140,7 @@ class FakerController extends Controller
         $query = MilkingEvent::find()->andWhere($condition, $params);
         $n = 1;
         /* @var $models MilkingEvent[] */
-        $className = CalvingEvent::class;
+        $className = MilkingEvent::class;
         foreach ($query->batch() as $i => $models) {
             foreach ($models as $model) {
                 $model->save(false);
