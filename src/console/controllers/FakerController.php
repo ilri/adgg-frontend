@@ -135,13 +135,16 @@ class FakerController extends Controller
 
     public function actionResetMilkingModels()
     {
-        $query = MilkingEvent::find()->andWhere(['event_type' => AnimalEvent::EVENT_TYPE_MILKING]);
+        $condition = '[[event_type]]=:event_type AND [[migration_id]] IS NOT NULL';
+        $params = [':event_type' => AnimalEvent::EVENT_TYPE_MILKING];
+        $query = MilkingEvent::find()->andWhere($condition, $params);
         $n = 1;
         /* @var $models MilkingEvent[] */
+        $className = MilkingEvent::class;
         foreach ($query->batch() as $i => $models) {
             foreach ($models as $model) {
                 $model->save(false);
-                $this->stdout("Processed {$n} Milking records\n");
+                $this->stdout("{$className}: Updated {$n} records\n");
                 $n++;
             }
         }
@@ -149,13 +152,16 @@ class FakerController extends Controller
 
     public function actionResetCalvingModels()
     {
-        $query = CalvingEvent::find()->andWhere(['event_type' => AnimalEvent::EVENT_TYPE_CALVING]);
+        $condition = '[[event_type]]=:event_type AND [[migration_id]] IS NOT NULL';
+        $params = [':event_type' => AnimalEvent::EVENT_TYPE_CALVING];
+        $query = CalvingEvent::find()->andWhere($condition, $params);
         $n = 1;
         /* @var $models CalvingEvent[] */
+        $className = CalvingEvent::class;
         foreach ($query->batch() as $i => $models) {
             foreach ($models as $model) {
                 $model->save(false);
-                $this->stdout("Processed {$n} Calving records\n");
+                $this->stdout("{$className}: Updated {$n} records\n");
                 $n++;
             }
         }
@@ -163,6 +169,6 @@ class FakerController extends Controller
 
     public function actionRandom()
     {
-        Cows::updateSiresAndDams();
+        //Cows::updateSiresAndDams();
     }
 }

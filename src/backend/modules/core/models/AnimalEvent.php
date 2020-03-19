@@ -62,6 +62,8 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
 
     public $animalTagId;
 
+    const SCENARIO_KLBA_UPLOAD = 'KLBA_UPLOAD';
+
     /**
      * {@inheritdoc}
      */
@@ -82,7 +84,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             [['latitude', 'longitude'], 'number'],
             [['map_address', 'uuid'], 'string', 'max' => 255],
             ['event_date', 'validateNoFutureDate'],
-            ['event_date', 'unique', 'targetAttribute' => ['country_id', 'animal_id', 'event_type', 'event_date'], 'message' => '{attribute} should be unique per animal'],
+            ['event_date', 'unique', 'targetAttribute' => ['country_id', 'animal_id', 'event_type', 'event_date'], 'message' => '{attribute} should be unique per animal', 'except' => [self::SCENARIO_KLBA_UPLOAD]],
             [['org_id', 'client_id'], 'safe'],
             ['migration_id', 'unique'],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
@@ -215,8 +217,14 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
 
     protected function setLactationId()
     {
+        if (!empty($this->lactation_id)) {
+            return;
+        }
         //only done for milking event
         if ($this->event_type != self::EVENT_TYPE_MILKING) {
+            return;
+        }
+        if ($this->scenario == MilkingEvent::SCENARIO_KLBA_UPLOAD) {
             return;
         }
         $this->lactation_id = static::fetchLactationId($this->animal_id, $this->event_date);
@@ -228,11 +236,11 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
         $this->setLactationNumber();
         if ($this->event_type == self::EVENT_TYPE_CALVING) {
             //update milk records
-            $data = static::getData(['id', 'event_date'], ['event_type' => self::EVENT_TYPE_MILKING, 'animal_id' => $this->animal_id]);
+            /*$data = static::getData(['id', 'event_date'], ['event_type' => self::EVENT_TYPE_MILKING, 'animal_id' => $this->animal_id]);
             foreach ($data as $row) {
                 $lactation_id = static::fetchLactationId($this->animal_id, $row['event_date']);
                 static::updateAll(['lactation_id' => $lactation_id], ['id' => $row['id']]);
-            }
+            }*/
         }
     }
 
@@ -240,6 +248,9 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     {
         //only done for calving/lactation event
         if ($this->event_type != self::EVENT_TYPE_CALVING) {
+            return;
+        }
+        if ($this->scenario == CalvingEvent::SCENARIO_KLBA_UPLOAD) {
             return;
         }
         $data = static::getData('id', ['event_type' => self::EVENT_TYPE_CALVING, 'animal_id' => $this->animal_id], [], ['orderBy' => ['event_date' => SORT_ASC]]);

@@ -103,22 +103,23 @@ class ReportBuilder extends Model
      * @return array
      */
     public static function reportableModels(){
+        $eventRelations= ['animal', 'country', 'region', 'district', 'ward', 'village', 'org', 'client'];
         return [
             'Farm' => [
                 'class' => Farm::class,
                 'title' => 'Farm',
-                'relations' => ['fieldAgent', 'region', 'district', 'ward', 'village'],
+                'relations' => ['fieldAgent','country', 'region', 'district', 'ward', 'village', 'org', 'client'],
             ],
             'Animal' => [
                 'class' => Animal::class,
                 'title' => 'Animal',
-                'relations' => ['farm', 'herd', 'sire', 'dam', 'region', 'district', 'ward', 'village'],
+                'relations' => ['farm', 'herd', 'sire', 'dam', 'country', 'region', 'district', 'ward', 'village', 'org', 'client'],
             ],
             'Calving_Event' => [
                 'class' => CalvingEvent::class,
                 'title' => 'Calving Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_CALVING],
-                'relations' => ['animal', 'region', 'district', 'ward', 'village'],
+                'relations' => $eventRelations,
                 'sub_relations' => [
                     'animal.farm' => ['animal.farm_id' => 'farm.id'],
                     'animal.sire' => ['animal.sire_id' => 'sire.id'],
@@ -129,7 +130,7 @@ class ReportBuilder extends Model
                 'class' => MilkingEvent::class,
                 'title' => 'Milking Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_MILKING],
-                'relations' => ['lactation', 'animal', 'region', 'district', 'ward', 'village'],
+                'relations' => $eventRelations,
                 'sub_relations' => [
                     'animal.farm' => ['animal.farm_id' => 'farm.id'],
                     'animal.herd' => ['animal.herd_id' => 'herd.id'],
@@ -141,7 +142,7 @@ class ReportBuilder extends Model
                 'class' => AIEvent::class,
                 'title' => 'Insemination Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_AI],
-                'relations' => ['animal', 'region', 'district', 'ward', 'village'],
+                'relations' => $eventRelations,
                 'sub_relations' => [
                     'animal.farm' => ['animal.farm_id' => 'farm.id'],
                     'animal.sire' => ['animal.sire_id' => 'sire.id'],
@@ -152,7 +153,7 @@ class ReportBuilder extends Model
                 'class' => PDEvent::class,
                 'title' => 'Pregnancy Diagnosis Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_PREGNANCY_DIAGNOSIS],
-                'relations' => ['animal', 'region', 'district', 'ward', 'village'],
+                'relations' => $eventRelations,
                 'sub_relations' => [
                     'animal.farm' => ['animal.farm_id' => 'farm.id'],
                     'animal.sire' => ['animal.sire_id' => 'sire.id'],
@@ -164,7 +165,7 @@ class ReportBuilder extends Model
                 'class' => SyncEvent::class,
                 'title' => 'Synchronization Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_SYNCHRONIZATION],
-                'relations' => ['animal', 'region', 'district', 'ward', 'village'],
+                'relations' => $eventRelations,
                 'sub_relations' => [
                     'animal.farm' => ['animal.farm_id' => 'farm.id'],
                     'animal.sire' => ['animal.sire_id' => 'sire.id'],
@@ -176,7 +177,7 @@ class ReportBuilder extends Model
                 'class' => WeightEvent::class,
                 'title' => 'Weights Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_WEIGHTS],
-                'relations' => ['animal', 'region', 'district', 'ward', 'village'],
+                'relations' => $eventRelations,
                 'sub_relations' => ['animal.farm' => [
                     'animal.farm_id' => 'farm.id'],
                     'animal.sire' => ['animal.sire_id' => 'sire.id'],
@@ -187,7 +188,7 @@ class ReportBuilder extends Model
                 'class' => HealthEvent::class,
                 'title' => 'Health Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_HEALTH],
-                'relations' => ['animal', 'region', 'district', 'ward', 'village'],
+                'relations' => $eventRelations,
                 'sub_relations' => [
                     'animal.farm' => ['animal.farm_id' => 'farm.id'],
                     'animal.sire' => ['animal.sire_id' => 'sire.id'],
@@ -199,7 +200,7 @@ class ReportBuilder extends Model
                 'class' => FeedingEvent::class,
                 'title' => 'Feeding Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_FEEDING],
-                'relations' => ['animal', 'region', 'district', 'ward', 'village'],
+                'relations' => $eventRelations,
                 'sub_relations' => [
                     'animal.farm' => ['animal.farm_id' => 'farm.id'],
                     'animal.sire' => ['animal.sire_id' => 'sire.id'],
@@ -211,7 +212,7 @@ class ReportBuilder extends Model
                 'class' => ExitsEvent::class,
                 'title' => 'Exits Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_EXITS],
-                'relations' => ['animal', 'region', 'district', 'ward', 'village'],
+                'relations' => $eventRelations,
                 'sub_relations' => [
                     'animal.farm' => ['animal.farm_id' => 'farm.id'],
                     'animal.sire' => ['animal.sire_id' => 'sire.id'],

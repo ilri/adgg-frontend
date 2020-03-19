@@ -3,6 +3,7 @@
 namespace backend\modules\reports\models;
 
 use backend\modules\core\models\Animal;
+use backend\modules\core\models\Country;
 use backend\modules\core\models\MilkingEvent;
 use common\helpers\ArrayHelper;
 use common\helpers\DateUtils;
@@ -102,8 +103,8 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
     public static function transformMilkDataRow($row, $options = []){
         $fieldAliasMapping = $options['fieldAliasMapping'] ?? [];
 
-        $row['cattletotalowned'] = floatval($row['total_cattle_owned_by_female']) + floatval($row['total_cattle_owned_by_male'] + floatval($row['total_cattle_owned_joint']));
-        unset($row['total_cattle_owned_by_female'], $row['total_cattle_owned_by_male']);
+        $row['cattletotalowned'] = floatval($row['total_cattle_owned_by_female']) + floatval($row['total_cattle_owned_by_male']) + floatval($row['total_cattle_owned_joint']);
+        unset($row['total_cattle_owned_by_female'], $row['total_cattle_owned_by_male'], $row['total_cattle_owned_joint']);
         return $row;
     }
 
@@ -221,7 +222,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         $builder->orderBy = $orderBy;
         //$builder->limit = 50;
         $builder->country_id = $filter['country_id'] ?? null;
-        $builder->name = 'Milk Data';
+        $builder->name = 'Milk_Data_' . ($filter['country_id'] ? Country::getScalar('name', ['id' => $filter['country_id']]) : '');
 
         if (!empty($from) && !empty($to)) {
             $casted_date = DbUtils::castDATE(MilkingEvent::tableName().'.[[event_date]]');
@@ -351,7 +352,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         $builder->orderBy = $orderBy;
         //$builder->limit = 50;
         $builder->country_id = $filter['country_id'] ?? null;
-        $builder->name = 'Pedigree';
+        $builder->name = 'Pedigree_' . ($filter['country_id'] ? Country::getScalar('name', ['id' => $filter['country_id']]) : '');
 
         if (!empty($from) && !empty($to)) {
             $casted_date = DbUtils::castDATE(Animal::tableName().'.[[birthdate]]');
