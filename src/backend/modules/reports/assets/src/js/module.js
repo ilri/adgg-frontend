@@ -47,8 +47,8 @@ MyApp.modules.reports = {};
                 dataType: 'html',
                 data: form.serialize(),
                 success: function (data) {
-                    //$($this.options.queryHolderContainer).text(data);
-                    //$($this.options.queryHolderContainer).parent().attr('contenteditable','true');
+                    $($this.options.queryHolderContainer).text(data);
+                    $($this.options.queryHolderContainer).parent().attr('contenteditable', 'false');
                     window.editor.setValue(data);
                 },
                 beforeSend: function (xhr) {
@@ -170,10 +170,11 @@ MyApp.modules.reports = {};
             $($this.options.selectedFieldsHolder).html('');
             arr.forEach(function (fieldName, index){
                 var dropdown = _buildDropdownSelect(fieldName);
-                var filterInput = '<div class="col-md-4 mr-0 pr-0"><input name="filterValue['+fieldName+']" class="form-control form-control-sm" type="text" /></div>';
-                var removeBtn = '<div class="col-md-1 pt-2"><span class="flaticon2-delete removeField" data-name="'+fieldName+'"></span></div>';
-                var nameElem = '<div class="col-md-3"><span class="text-wrap word-wrap">'+ selectedFieldLabels[fieldName] +'</span></div>';
-                var item = '<li class="list-group-item d-flex pr-0 pl-0" data-index="'+index+'" data-name="'+fieldName+'">'+ nameElem + dropdown + filterInput + removeBtn +'</li>';
+                var filterInput = '<div class="centerdiv"><div class="col-md-10 mr-0 pr-0 mt-2 centerddiv"><input name="filterValue[' + fieldName + ']" class="form-control form-control-sm" type="text" /></div>';
+                var removeBtn = '<div class="col-md-1 ml-auto mb-3"><span class="flaticon2-delete removeField" data-name="' + fieldName + '"></span></div>';
+                var nameElem = '<div class="col-md-10 mb-3 "><span class="text-wrap word-wrap">' + selectedFieldLabels[fieldName] + '</span></div>';
+                var title = '<div class="col-md-15 d-flex">' + nameElem + removeBtn + '</div>';
+                var item = '<li class="list-group-item pr-0 pl-0 groupeditem" data-index="' + index + '" data-name="' + fieldName + '">' + title + dropdown + filterInput + '</li>';
                 $($this.options.selectedFieldsHolder).append(item);
             });
             // display the query options
@@ -195,7 +196,7 @@ MyApp.modules.reports = {};
         }
 
         let _buildDropdownSelect = function(fieldName){
-            var input = '<div class="col-md-4 mr-0 pr-0"><select name="filterCondition['+fieldName+']" class="form-control form-control-sm p-0">';
+            var input = '<div class="centerdiv"><div class="col-md-10 mr-0 pr-0 centerddiv"><select name="filterCondition[' + fieldName + ']" class="form-control form-control-sm p-0">';
             input += '<option value=""> - Select Operator - </option>';
             var options = $this.options.inputSelectOptions;
             for (var prop in options) {
@@ -204,7 +205,7 @@ MyApp.modules.reports = {};
                     input += option;
                 }
             }
-            input += '</select></div>';
+            input += '</select></div></div>';
             return input;
         }
 
@@ -261,17 +262,17 @@ MyApp.modules.reports = {};
     MyApp.modules.reports.reportbuilder = function (options) {
         let obj = new REPORTBUILDER(options);
         obj.init();
-        window.editor = CodeMirror.fromTextArea(document.getElementById('queryHolder'), {
+        window.editor = new CodeMirror.fromTextArea(document.getElementById('queryHolder'), {
             value: '',
             mode: 'text/x-mysql',
             indentWithTabs: true,
             smartIndent: true,
             lineNumbers: false,
             lineWrapping: true,
-            matchBrackets : true,
+            matchBrackets: true,
             autofocus: true,
             extraKeys: {"Ctrl-Space": "autocomplete"},
-            foldGutter: true,
+            foldGutter: false,
             readOnly: true,
         });
         const copy = new ClipboardJS('.btn-clipboard', {
