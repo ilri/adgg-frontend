@@ -1,13 +1,15 @@
 <?php
 
-/* @var $this yii\web\View */
-
 use backend\modules\core\models\Country;
 use backend\modules\reports\models\ReportBuilder;
 use common\helpers\Lang;
 use common\helpers\Url;
 use common\models\ActiveRecord;
 use yii\helpers\Json;
+
+/* @var $this yii\web\View */
+/* @var $country_id int */
+/* @var $models ReportBuilder */
 
 $this->title = 'Report Builder';
 $this->params['breadcrumbs'][] = $this->title;
@@ -16,8 +18,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="row">
         <div class="col-md-12">
             <div class="well">
-                <h3 class="text-muted"><?= Lang::t('REPORT BUILDER: ') ?>
-                    <?= strtoupper(Country::getScalar('name', ['id' => $country_id])) ?></h3>
+                <h3 class="text-muted"><?= Lang::t('REPORT BUILDER') ?>
+                    : <?= strtoupper(Country::getScalar('name', ['id' => $country_id])) ?></h3>
                 <hr>
                 <form method="POST" id="report-builder-form">
 
@@ -29,7 +31,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         <div class="panel panel-default bs-item z-depth-2 col-md-3">
                             <div class="panel-body">
                                 <?php
-                                foreach ($models as $name => $modelData) {
+                                foreach ($models
+
+                                         as $name => $modelData) {
                                     /* @var $class ActiveRecord */
                                     $class = new $modelData['class']();
                                     $title = $modelData['title'] ?? $name;
@@ -51,7 +55,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                         return $attr != 'additional_attributes';
                                     });
                                     ?>
-                                    <div class="d-flex p-2 border rounded mb-3 builder-fields" data-toggle="collapse"
+                                    <div class="d-flex p-2 border rounded mb-3 builder-fields"
+                                         data-toggle="collapse"
                                          data-target="#collapse<?= $name ?>" aria-expanded="false"
                                          aria-controls="collapse<?= $name ?>">
                                         <div>
@@ -69,12 +74,16 @@ $this->params['breadcrumbs'][] = $this->title;
                                                     <?php $attrTitle = $class->getAttributeLabel($attr) ?>
                                                     <li class="attribute"
                                                         data-original-title="<?= $class->getAttributeLabel($attr) ?>"
-                                                        data-model="<?= $name ?>" data-parent-model="<?= $name ?>"
+                                                        data-model="<?= $name ?>"
+                                                        data-parent-model="<?= $name ?>"
                                                         data-parent-model-title="<?= $title ?>"
-                                                        data-name="<?= $attr ?>" title="<?= $attrTitle ?>"><input
+                                                        data-name="<?= $attr ?>" title="<?= $attrTitle ?>">
+                                                        <input
                                                                 type="checkbox"
-                                                                value="<?= $attr ?>"><label
-                                                                for="<?= $attr ?>"><?= $attr ?></label>
+                                                                value="<?= $attr ?>">
+                                                        <label
+                                                                for="<?= $attr ?>"><?= $attr ?>
+                                                        </label>
                                                     </li>
                                                 <?php endforeach; ?>
                                                 <?php
@@ -184,11 +193,13 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <div id="queryOptions" class="hidden">
                                     <h3>Query Options</h3>
                                     <div class="row row-no-gutters mt-3">
-                                        <div class="col-md-8"><label for="limit">Limit by: </label></div>
+                                        <div class="col-md-8"><label for="limit">Limit: </label></div>
                                     </div>
                                     <div class="row row-no-gutters mb-2">
-                                        <div class="col-md-10"><input name="limit" id="limit" type="number" value=""
-                                                                      class="form-control form-control-sm"/></div>
+                                        <div class="col-md-10"><input name="limit" id="limit" type="number"
+                                                                      value=""
+                                                                      class="form-control form-control-sm"/>
+                                        </div>
                                     </div>
                                     <div class="row row-no-gutters mt-2">
                                         <div class="col-md-3"><label for="orderby">Order By: </label></div>
@@ -202,7 +213,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                     </div>
                                     <div class="mt-4">
                                         <button id="askForName" role="button" class="btn btn-primary col-md-10"
-                                                data-toggle="modal" data-target="#inputName">Generate & Save Report
+                                                data-toggle="modal" data-target="#inputName">Generate & Save
+                                            Report
                                         </button>
                                     </div>
                                     <div class="mt-2">
@@ -211,7 +223,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                             Preview Query
                                         </button>
                                     </div>
-                                    <div class="row card card-body mt-4 mb-4 col-md-10">
+
+                                    <div class="row card card-body mt-4 mb-4 col-md-10 hidden"
+                                         id="previewQueryCard">
                                         <div class="bd-clipboard">
                                             <button type="button" data-clipboard-target="#queryHolder"
                                                     class="btn-clipboard">Copy
@@ -222,16 +236,49 @@ $this->params['breadcrumbs'][] = $this->title;
                                         <code id="" class="language-sql text-wrap word-wrap" data-lang="sql"></code>
                                     </pre>
                                         </figure>
-                                        <textarea id="queryHolder" class="language-sql text-wrap word-wrap"></textarea>
+                                        <textarea id="queryHolder" class="language-sql text-wrap word-wrap"
+                                                  style="width: 100%"></textarea>
                                     </div>
-                                    <!--                            <div class="row mt-2">-->
-                                    <!--                                <div class="col-md-8"><label for="name">Report Name: </label></div>-->
-                                    <!--                            </div>-->
-                                    <!--                            <div class="row row-no-gutters mb-2">-->
-                                    <!--                                <div class="col-md-10"><input name="name" id="name" type="text" value="" class="form-control form-control-sm" /></div>-->
-                                    <!--                            </div>-->
 
+                                    <div id="inputName" role="dialog" class="modal fade">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <!--Modal header-->
+                                                <div class="modal-header mt-2">
+                                                    <h4 class="modal-title">Save Generated Report: </h4>
+                                                    <button type="button" class="close" data-dismiss="modal">
+                                                        <span aria-hidden="true">&times;</span>
+                                                        <span class="sr-only">Close</span>
+                                                    </button>
 
+                                                </div>
+                                                <!--Modal Body-->
+                                                <div class="modal-body">
+                                                    <div id="reportNameMessage"></div>
+                                                    <div class="form-group required">
+                                                        <div class="row row-no-gutters mt-2">
+                                                            <div class="col-md-10 mx-auto"><label for="name"
+                                                                                                  class="control-group">Report
+                                                                    Name</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row row-no-gutters mt-2">
+                                                            <div class="col-md-10 mx-auto"><input name="name" id="name"
+                                                                                                  type="text" value=""
+                                                                                                  class="form-control form-control-sm"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button id="saveReport" role="button"
+                                                            class="btn btn-success col-md-10 mx-auto">Generate & Save
+                                                        Report
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -241,41 +288,6 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
     </div>
-
-    <div id="inputName" role="dialog" class="modal fade">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <!--Modal header-->
-                <div class="modal-header mt-2">
-                    <h4 class="modal-title">Save Generated Report: </h4>
-                    <button type="button" class="close" data-dismiss="modal">
-                        <span aria-hidden="true">&times;</span>
-                        <span class="sr-only">Close</span>
-                    </button>
-
-                </div>
-                <!--Modal Body-->
-                <div class="modal-body">
-                    <div class="form-group required">
-                        <div class="row row-no-gutters mt-2">
-                            <div class="col-md-10 mx-auto"><label for="name" class="control-group">Report Name</label>
-                            </div>
-                        </div>
-                        <div class="row row-no-gutters mt-2">
-                            <div class="col-md-10 mx-auto"><input name="name" id="name" type="text" value=""
-                                                                  class="form-control form-control-sm"/></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button id="saveReport" role="button" class="btn btn-success col-md-10 mx-auto">Generate & Save
-                        Report
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
 <?php
 $options = [
     'inputSelectOptions' => ReportBuilder::fieldConditionOptions(),
