@@ -19,8 +19,8 @@ MyApp.modules.reports = {};
         this.options = $.extend({}, defaultOptions, options || {});
     }
 
-    Array.prototype.move = function(from,to){
-        this.splice(to,0,this.splice(from,1)[0]);
+    Array.prototype.move = function (from, to) {
+        this.splice(to, 0, this.splice(from, 1)[0]);
         return this;
     };
 
@@ -33,13 +33,15 @@ MyApp.modules.reports = {};
         let selectedParentModel = null;
         let selectedParentModelTitle = null;
 
-        //console.log($this.options.inputSelectOptions);
-
         let _generateQuery = function (e) {
             let form = $($this.options.builderFormSelector),
                 url = $this.options.generateQueryURL;
-            let data =  JSON.stringify( form.serializeArray() );
-            //console.log(data);
+            let data = JSON.stringify(form.serializeArray());
+            var elem = $('#previewQueryCard');
+
+            if ($(elem).hasClass('hidden')) {
+                $(elem).removeClass('hidden');
+            }
 
             $.ajax({
                 url: url,
@@ -66,11 +68,12 @@ MyApp.modules.reports = {};
 
         }
 
-        let _saveReport = function(e){
+        let _saveReport = function (e) {
             let form = $($this.options.builderFormSelector),
                 originalButtonHtml = $(e).html(),
                 url = $this.options.saveReportURL;
-            let data =  JSON.stringify( form.serializeArray() );
+            let data = JSON.stringify(form.serializeArray());
+            let errorMsgContainer = '#reportNameMessage';
 
             $.ajax({
                 url: url,
@@ -78,17 +81,17 @@ MyApp.modules.reports = {};
                 dataType: 'json',
                 data: form.serialize(),
                 success: function (response) {
-                    if(response.success){
-                        let message = '<div class="alert alert-outline-success">' + response.message + '</div>';
-                        swal("SUCCESS!", message, "success");
-                        if(response.redirectUrl !== ''){
+                    if (response.success) {
+                        let {message} = response;
+                        MyApp.utils.showAlertMessage(message, 'success', errorMsgContainer);
+
+                        if (response.redirectUrl !== '') {
                             MyApp.utils.reload(response.redirectUrl, 2000);
                         }
-                    }
-                    else {
+                    } else {
                         if (typeof response.message === 'string' || response.message instanceof String) {
-                            let message = '<div class="alert alert-outline-danger">' + response.message + '</div>';
-                            swal("ERROR!", message, "error");
+                            let {message} = response;
+                            MyApp.utils.showAlertMessage(message, 'error', errorMsgContainer);
                         } else {
                             let summary = '<ul>';
                             if (typeof response.message === 'object') {
@@ -104,7 +107,8 @@ MyApp.modules.reports = {};
                                 });
                             }
                             summary += '</ul>';
-                            swal("ERROR!", summary, "error");
+
+                            MyApp.utils.showAlertMessage(summary, 'error', errorMsgContainer);
                         }
                     }
                 },
@@ -122,23 +126,27 @@ MyApp.modules.reports = {};
             })
         }
 
-        let _populateSelected = function(e){
+        let _populateSelected = function (e) {
             var name = $(e).data('name');
             var label = $(e).data('original-title');
             var parentModel = $(e).data('parent-model');
             var parentModelTitle = $(e).data('parent-model-title');
 
             // if parentModel changes, prompt to clear selectedFields
-            if(selectedParentModel !== parentModel){
+            if (selectedParentModel !== parentModel) {
                 selectedFields.length = 0;
                 selectedFieldLabels = {};
             }
             // check for duplicates
             var index = selectedFields.indexOf(name);
+
             if (index <= -1) {
                 selectedFields.push(name);
+            } else {
+                _removeSelected(e);
             }
-            if (selectedFieldLabels[name] === undefined){
+
+            if (selectedFieldLabels[name] === undefined) {
                 selectedFieldLabels[name] = label;
             }
             //selectedFields.push(name);
@@ -149,32 +157,54 @@ MyApp.modules.reports = {};
             //console.log(selectedFields);
             //console.log(selectedFieldLabels);
             // write to html
-            _showSelected();
+            _showSelected(e);
         }
-        let _removeSelected = function(e){
+        let _removeSelected = function (e) {
             var name = $(e).data('name');
-            selectedFields = selectedFields.filter(function(e) { return e !== name; });
+            selectedFields = selectedFields.filter(function (e) {
+                return e !== name;
+            });
             delete selectedFieldLabels[name];
             //console.log(name);
             //console.log(selectedFields);
             //console.log(selectedFieldLabels);
             // write to html
-            _showSelected();
+            _showSelected(e);
             //_toggleQueryOptions();
         }
 
-        let _showSelected = function(){
-            $('#selectedModel').html(selectedParentModelTitle);
+        let _showSelected = function (e) {
+            var name = $(e).data('name');
+            let elem = $('.builder-attributes li[data-name="' + name + '"]');
+            let checkbox = elem.find('input[type=checkbox]');
+            //check if name is in array
+            let checkedItem = selectedFields.find(i => i === name);
+
+
+            // toggle checkbox state
+            if (checkedItem) {
+                checkbox.prop('checked', true);
+            } else {
+                checkbox.prop('checked', false);
+            }
+
+            if (selectedFields.length !== 0) {
+                $('#selectedModel').html(selectedParentModelTitle);
+            } else {
+                $('#selectedModel').html('');
+            }
+
             $('input#model').val(selectedParentModel);
             let arr = selectedFields;
             $($this.options.selectedFieldsHolder).html('');
-            arr.forEach(function (fieldName, index){
+            arr.forEach(function (fieldName, index) {
                 var dropdown = _buildDropdownSelect(fieldName);
-                var filterInput = '<div class="centerdiv"><div class="col-md-10 mr-0 pr-0 mt-2 centerddiv"><input name="filterValue[' + fieldName + ']" class="form-control form-control-sm" type="text" /></div>';
-                var removeBtn = '<div class="col-md-1 ml-auto mb-3"><span class="flaticon2-delete removeField" data-name="' + fieldName + '"></span></div>';
-                var nameElem = '<div class="col-md-10 mb-3 "><span class="text-wrap word-wrap">' + selectedFieldLabels[fieldName] + '</span></div>';
-                var title = '<div class="col-md-15 d-flex">' + nameElem + removeBtn + '</div>';
-                var item = '<li class="list-group-item pr-0 pl-0 groupeditem" data-index="' + index + '" data-name="' + fieldName + '">' + title + dropdown + filterInput + '</li>';
+                var filterInput = '<div class="col-md-4 p-0"><input name="filterValue[' + fieldName + ']" class="form-control form-control-sm" type="text" /></div>';
+                var operandSelector = '<div class="d-flex">' + dropdown + filterInput + '</div>';
+                var removeBtn = '<div class="ml-auto"><span class="flaticon2-delete removeField" data-name="' + fieldName + '"></span></div>';
+                var nameElem = '<div class=""><span class="text-wrap word-wrap">' + fieldName + '</span></div>';
+                var title = '<div class="d-flex mb-3">' + nameElem + removeBtn + '</div>';
+                var item = '<li class="groupeditem p-3 mb-1" data-index="' + index + '" data-name="' + fieldName + '">' + title + operandSelector + '</li>';
                 $($this.options.selectedFieldsHolder).append(item);
             });
             // display the query options
@@ -183,36 +213,35 @@ MyApp.modules.reports = {};
             _buildOrderByDropdown();
         }
 
-        let _toggleQueryOptions = function(){
+        let _toggleQueryOptions = function () {
             var elem = $this.options.queryOptionsContainer;
-            if(selectedFields.length > 0){
-                if($(elem).hasClass('hidden')){
+            if (selectedFields.length > 0) {
+                if ($(elem).hasClass('hidden')) {
                     $(elem).removeClass('hidden');
                 }
-            }
-            else {
+            } else {
                 $(elem).addClass('hidden');
             }
         }
 
-        let _buildDropdownSelect = function(fieldName){
-            var input = '<div class="centerdiv"><div class="col-md-10 mr-0 pr-0 centerddiv"><select name="filterCondition[' + fieldName + ']" class="form-control form-control-sm p-0">';
+        let _buildDropdownSelect = function (fieldName) {
+            var input = '<div class="col-md-8 p-0 mr-2"><select name="filterCondition[' + fieldName + ']" class="form-control form-control-sm">';
             input += '<option value=""> - Select Operator - </option>';
             var options = $this.options.inputSelectOptions;
             for (var prop in options) {
                 if (Object.prototype.hasOwnProperty.call(options, prop)) {
-                    var option = '<option value="'+prop+'">'+options[prop]+'</option>';
+                    var option = '<option value="' + prop + '">' + options[prop] + '</option>';
                     input += option;
                 }
             }
-            input += '</select></div></div>';
+            input += '</select></div>';
             return input;
         }
 
-        let _buildOrderByDropdown = function(){
+        let _buildOrderByDropdown = function () {
             let options = '<option value=""> - Select Field - </option>';
             selectedFields.forEach(function (item, index) {
-                var option = '<option value="'+item+'">'+selectedFieldLabels[item]+'</option>';
+                var option = '<option value="' + item + '">' + item + '</option>';
                 options += option;
             });
             $($this.options.orderBySelector).html(options);
@@ -223,7 +252,7 @@ MyApp.modules.reports = {};
             event.preventDefault();
             _populateSelected(this);
         });
-        $('body').on('click','.removeField', function (event) {
+        $('body').on('click', '.removeField', function (event) {
             event.preventDefault();
             _removeSelected(this);
         });
@@ -239,13 +268,13 @@ MyApp.modules.reports = {};
         $('#select_country_id').on('change', function (event) {
             event.preventDefault();
             var elem = $('#report-builder-container');
-            if($(elem).hasClass('hidden')){
+            if ($(elem).hasClass('hidden')) {
                 $(elem).removeClass('hidden');
             }
         });
         // enable sorting of the selected items
         $($this.options.selectedFieldsHolder).sortable({
-            stop: function( event, ui ) {
+            stop: function (event, ui) {
                 var item = ui.item;
                 var newIndex = item.index();
                 var formerIndex = item.data('index');
@@ -275,22 +304,23 @@ MyApp.modules.reports = {};
             foldGutter: false,
             readOnly: true,
         });
+
         const copy = new ClipboardJS('.btn-clipboard', {
             text: function (trigger) {
                 return window.editor.getValue();
             }
         });
 
-        copy.on('success',function(e){
+        copy.on('success', function (e) {
             e.clearSelection();
             $(e.trigger).text("Copied!");
             setTimeout(function () {
                 $(e.trigger).text("Copy");
             }, 2500);
         });
-        copy.on('error',function(e){
-            console.error('Action:',e.action);
-            console.error('Trigger:',e.trigger);
+        copy.on('error', function (e) {
+            console.error('Action:', e.action);
+            console.error('Trigger:', e.trigger);
         });
     }
 
@@ -321,14 +351,13 @@ MyApp.modules.reports = {};
                 dataType: 'json',
                 data: form.serialize(),
                 success: function (response) {
-                    if(response.success){
+                    if (response.success) {
                         let message = '<div class="alert alert-outline-success">' + response.message + '</div>';
                         swal("SUCCESS!", message, "success");
-                        if(response.redirectUrl !== ''){
+                        if (response.redirectUrl !== '') {
                             MyApp.utils.reload(response.redirectUrl, 2000);
                         }
-                    }
-                    else {
+                    } else {
                         if (typeof response.message === 'string' || response.message instanceof String) {
                             let message = '<div class="alert alert-outline-danger">' + response.message + '</div>';
                             swal("ERROR!", message, "error");

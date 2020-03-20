@@ -304,17 +304,9 @@ a:hover {
     top: 2px;
 }
 
-.centerdiv {
-    text-align: center;
-}
-
-.centerddiv {
-    display: inline-block;
-}
-
 .groupeditem {
-    background-color: #dcdcdc;
-    margin-bottom: 8px;
+    background-color: #f2f3f8;
+    list-style-type: none;
 }
 
 
