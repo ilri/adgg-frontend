@@ -25,6 +25,7 @@ class Asset extends AssetBundle
 
     public $css = [
         'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.51.0/codemirror.min.css',
+        'css/report-builder.css'
     ];
 
     public $depends = [

@@ -47,8 +47,8 @@ MyApp.modules.reports = {};
                 dataType: 'html',
                 data: form.serialize(),
                 success: function (data) {
-                    //$($this.options.queryHolderContainer).text(data);
-                    //$($this.options.queryHolderContainer).parent().attr('contenteditable','true');
+                    $($this.options.queryHolderContainer).text(data);
+                    $($this.options.queryHolderContainer).parent().attr('contenteditable', 'false');
                     window.editor.setValue(data);
                 },
                 beforeSend: function (xhr) {
@@ -135,9 +135,13 @@ MyApp.modules.reports = {};
             }
             // check for duplicates
             var index = selectedFields.indexOf(name);
+
             if (index <= -1) {
                 selectedFields.push(name);
+            } else{
+                _removeSelected(e);
             }
+
             if (selectedFieldLabels[name] === undefined){
                 selectedFieldLabels[name] = label;
             }
@@ -149,7 +153,7 @@ MyApp.modules.reports = {};
             //console.log(selectedFields);
             //console.log(selectedFieldLabels);
             // write to html
-            _showSelected();
+            _showSelected(e);
         }
         let _removeSelected = function(e){
             var name = $(e).data('name');
@@ -159,21 +163,42 @@ MyApp.modules.reports = {};
             //console.log(selectedFields);
             //console.log(selectedFieldLabels);
             // write to html
-            _showSelected();
+            _showSelected(e);
             //_toggleQueryOptions();
         }
 
-        let _showSelected = function(){
-            $('#selectedModel').html(selectedParentModelTitle);
+        let _showSelected = function(e){
+            var name = $(e).data('name');
+            let elem = $('.builder-attributes li[data-name="'+name+'"]');
+            let checkbox = elem.find('input[type=checkbox]');
+            //check if name is in array
+            let checkedItem = selectedFields.find(i => i === name);
+
+
+            // toggle checkbox state
+            if(checkedItem){
+                checkbox.prop('checked', true);
+            } else {
+                checkbox.prop('checked', false);
+            }
+
+            if (selectedFields.length !== 0) {
+                $('#selectedModel').html(selectedParentModelTitle);
+            } else {
+                $('#selectedModel').html('');
+            }
+
             $('input#model').val(selectedParentModel);
             let arr = selectedFields;
             $($this.options.selectedFieldsHolder).html('');
             arr.forEach(function (fieldName, index){
                 var dropdown = _buildDropdownSelect(fieldName);
-                var filterInput = '<div class="col-md-4 mr-0 pr-0"><input name="filterValue['+fieldName+']" class="form-control form-control-sm" type="text" /></div>';
-                var removeBtn = '<div class="col-md-1 pt-2"><span class="flaticon2-delete removeField" data-name="'+fieldName+'"></span></div>';
-                var nameElem = '<div class="col-md-3"><span class="text-wrap word-wrap">'+ selectedFieldLabels[fieldName] +'</span></div>';
-                var item = '<li class="list-group-item d-flex pr-0 pl-0" data-index="'+index+'" data-name="'+fieldName+'">'+ nameElem + dropdown + filterInput + removeBtn +'</li>';
+                var filterInput = '<div class=""><input name="filterValue['+fieldName+']" class="form-control form-control-sm" type="text" /></div>';
+                var operandSelector = '<div class="d-flex">' + dropdown + filterInput + '</div>';
+                var removeBtn = '<div class="ml-auto"><span class="flaticon2-delete removeField" data-name="'+fieldName+'"></span></div>';
+                var nameElem = '<div class=""><span class="text-wrap word-wrap">'+ fieldName +'</span></div>';
+                var title = '<div class="d-flex mb-3">'+ nameElem + removeBtn +'</div>';
+                var item = '<li class="groupeditem p-3 mb-1" data-index="'+index+'" data-name="'+fieldName+'">'+ title + operandSelector +'</li>';
                 $($this.options.selectedFieldsHolder).append(item);
             });
             // display the query options
@@ -195,7 +220,7 @@ MyApp.modules.reports = {};
         }
 
         let _buildDropdownSelect = function(fieldName){
-            var input = '<div class="col-md-4 mr-0 pr-0"><select name="filterCondition['+fieldName+']" class="form-control form-control-sm p-0">';
+            var input = '<div class="mr-3"><select name="filterCondition['+fieldName+']" class="form-control form-control-sm">';
             input += '<option value=""> - Select Operator - </option>';
             var options = $this.options.inputSelectOptions;
             for (var prop in options) {
@@ -211,7 +236,7 @@ MyApp.modules.reports = {};
         let _buildOrderByDropdown = function(){
             let options = '<option value=""> - Select Field - </option>';
             selectedFields.forEach(function (item, index) {
-                var option = '<option value="'+item+'">'+selectedFieldLabels[item]+'</option>';
+                var option = '<option value="'+item+'">'+ item +'</option>';
                 options += option;
             });
             $($this.options.orderBySelector).html(options);
@@ -261,17 +286,17 @@ MyApp.modules.reports = {};
     MyApp.modules.reports.reportbuilder = function (options) {
         let obj = new REPORTBUILDER(options);
         obj.init();
-        window.editor = CodeMirror.fromTextArea(document.getElementById('queryHolder'), {
+        window.editor = new CodeMirror.fromTextArea(document.getElementById('queryHolder'), {
             value: '',
             mode: 'text/x-mysql',
             indentWithTabs: true,
             smartIndent: true,
             lineNumbers: false,
             lineWrapping: true,
-            matchBrackets : true,
+            matchBrackets: true,
             autofocus: true,
             extraKeys: {"Ctrl-Space": "autocomplete"},
-            foldGutter: true,
+            foldGutter: false,
             readOnly: true,
         });
         const copy = new ClipboardJS('.btn-clipboard', {
