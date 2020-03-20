@@ -184,7 +184,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <div id="queryOptions" class="hidden">
                                     <h3>Query Options</h3>
                                     <div class="row row-no-gutters mt-3">
-                                        <div class="col-md-8"><label for="limit">Limit by: </label></div>
+                                        <div class="col-md-8"><label for="limit">Limit: </label></div>
                                     </div>
                                     <div class="row row-no-gutters mb-2">
                                         <div class="col-md-10"><input name="limit" id="limit" type="number" value=""
@@ -211,7 +211,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                             Preview Query
                                         </button>
                                     </div>
-                                    <div class="row card card-body mt-4 mb-4 col-md-10">
+
+                                    <div class="row card card-body mt-4 mb-4 col-md-10 hidden" id="previewQueryCard">
                                         <div class="bd-clipboard">
                                             <button type="button" data-clipboard-target="#queryHolder"
                                                     class="btn-clipboard">Copy
@@ -222,56 +223,55 @@ $this->params['breadcrumbs'][] = $this->title;
                                         <code id="" class="language-sql text-wrap word-wrap" data-lang="sql"></code>
                                     </pre>
                                         </figure>
-                                        <textarea id="queryHolder" class="language-sql text-wrap word-wrap"></textarea>
+                                        <textarea id="queryHolder" class="language-sql text-wrap word-wrap"
+                                                  style="width: 100%"></textarea>
                                     </div>
-                                    <!--                            <div class="row mt-2">-->
-                                    <!--                                <div class="col-md-8"><label for="name">Report Name: </label></div>-->
-                                    <!--                            </div>-->
-                                    <!--                            <div class="row row-no-gutters mb-2">-->
-                                    <!--                                <div class="col-md-10"><input name="name" id="name" type="text" value="" class="form-control form-control-sm" /></div>-->
-                                    <!--                            </div>-->
 
+                                    <div id="inputName" role="dialog" class="modal fade">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <!--Modal header-->
+                                                <div class="modal-header mt-2">
+                                                    <h4 class="modal-title">Save Generated Report: </h4>
+                                                    <button type="button" class="close" data-dismiss="modal">
+                                                        <span aria-hidden="true">&times;</span>
+                                                        <span class="sr-only">Close</span>
+                                                    </button>
 
+                                                </div>
+                                                <!--Modal Body-->
+                                                <div class="modal-body">
+                                                    <div id="reportNameMessage"></div>
+                                                    <div class="form-group required">
+                                                        <div class="row row-no-gutters mt-2">
+                                                            <div class="col-md-10 mx-auto"><label for="name"
+                                                                                                  class="control-group">Report
+                                                                    Name</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row row-no-gutters mt-2">
+                                                            <div class="col-md-10 mx-auto"><input name="name" id="name"
+                                                                                                  type="text" value=""
+                                                                                                  class="form-control form-control-sm"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button id="saveReport" role="button"
+                                                            class="btn btn-success col-md-10 mx-auto">Generate & Save
+                                                        Report
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                     </div>
                 </form>
-            </div>
-        </div>
-    </div>
-
-    <div id="inputName" role="dialog" class="modal fade">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <!--Modal header-->
-                <div class="modal-header mt-2">
-                    <h4 class="modal-title">Save Generated Report: </h4>
-                    <button type="button" class="close" data-dismiss="modal">
-                        <span aria-hidden="true">&times;</span>
-                        <span class="sr-only">Close</span>
-                    </button>
-
-                </div>
-                <!--Modal Body-->
-                <div class="modal-body">
-                    <div class="form-group required">
-                        <div class="row row-no-gutters mt-2">
-                            <div class="col-md-10 mx-auto"><label for="name" class="control-group">Report Name</label>
-                            </div>
-                        </div>
-                        <div class="row row-no-gutters mt-2">
-                            <div class="col-md-10 mx-auto"><input name="name" id="name" type="text" value=""
-                                                                  class="form-control form-control-sm"/></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button id="saveReport" role="button" class="btn btn-success col-md-10 mx-auto">Generate & Save
-                        Report
-                    </button>
-                </div>
             </div>
         </div>
     </div>

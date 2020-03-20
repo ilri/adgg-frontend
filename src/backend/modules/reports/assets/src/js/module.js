@@ -33,13 +33,15 @@ MyApp.modules.reports = {};
         let selectedParentModel = null;
         let selectedParentModelTitle = null;
 
-        //console.log($this.options.inputSelectOptions);
-
         let _generateQuery = function (e) {
             let form = $($this.options.builderFormSelector),
                 url = $this.options.generateQueryURL;
             let data =  JSON.stringify( form.serializeArray() );
-            //console.log(data);
+            var elem = $('#previewQueryCard');
+
+            if($(elem).hasClass('hidden')){
+                $(elem).removeClass('hidden');
+            }
 
             $.ajax({
                 url: url,
@@ -71,6 +73,7 @@ MyApp.modules.reports = {};
                 originalButtonHtml = $(e).html(),
                 url = $this.options.saveReportURL;
             let data =  JSON.stringify( form.serializeArray() );
+            let errorMsgContainer = '#reportNameMessage';
 
             $.ajax({
                 url: url,
@@ -79,16 +82,17 @@ MyApp.modules.reports = {};
                 data: form.serialize(),
                 success: function (response) {
                     if(response.success){
-                        let message = '<div class="alert alert-outline-success">' + response.message + '</div>';
-                        swal("SUCCESS!", message, "success");
+                        let { message } = response;
+                        MyApp.utils.showAlertMessage(message, 'success', errorMsgContainer);
+
                         if(response.redirectUrl !== ''){
                             MyApp.utils.reload(response.redirectUrl, 2000);
                         }
                     }
                     else {
                         if (typeof response.message === 'string' || response.message instanceof String) {
-                            let message = '<div class="alert alert-outline-danger">' + response.message + '</div>';
-                            swal("ERROR!", message, "error");
+                            let { message } = response;
+                            MyApp.utils.showAlertMessage(message, 'error', errorMsgContainer);
                         } else {
                             let summary = '<ul>';
                             if (typeof response.message === 'object') {
@@ -104,7 +108,8 @@ MyApp.modules.reports = {};
                                 });
                             }
                             summary += '</ul>';
-                            swal("ERROR!", summary, "error");
+
+                            MyApp.utils.showAlertMessage(summary, 'error', errorMsgContainer);
                         }
                     }
                 },
@@ -193,7 +198,7 @@ MyApp.modules.reports = {};
             $($this.options.selectedFieldsHolder).html('');
             arr.forEach(function (fieldName, index){
                 var dropdown = _buildDropdownSelect(fieldName);
-                var filterInput = '<div class=""><input name="filterValue['+fieldName+']" class="form-control form-control-sm" type="text" /></div>';
+                var filterInput = '<div class="col-md-4 p-0"><input name="filterValue['+fieldName+']" class="form-control form-control-sm" type="text" /></div>';
                 var operandSelector = '<div class="d-flex">' + dropdown + filterInput + '</div>';
                 var removeBtn = '<div class="ml-auto"><span class="flaticon2-delete removeField" data-name="'+fieldName+'"></span></div>';
                 var nameElem = '<div class=""><span class="text-wrap word-wrap">'+ fieldName +'</span></div>';
@@ -220,7 +225,7 @@ MyApp.modules.reports = {};
         }
 
         let _buildDropdownSelect = function(fieldName){
-            var input = '<div class="mr-3"><select name="filterCondition['+fieldName+']" class="form-control form-control-sm">';
+            var input = '<div class="col-md-8 p-0 mr-2"><select name="filterCondition['+fieldName+']" class="form-control form-control-sm">';
             input += '<option value=""> - Select Operator - </option>';
             var options = $this.options.inputSelectOptions;
             for (var prop in options) {
@@ -299,6 +304,7 @@ MyApp.modules.reports = {};
             foldGutter: false,
             readOnly: true,
         });
+
         const copy = new ClipboardJS('.btn-clipboard', {
             text: function (trigger) {
                 return window.editor.getValue();
