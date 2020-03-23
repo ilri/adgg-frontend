@@ -80,7 +80,7 @@ return [
         'class' => \yii\rest\UrlRule::class,
         'pluralize' => false,
         'controller' => [
-            'odk-web-hook' => 'v1/odk-web-hook',
+            'odk' => 'v1/odk',
         ],
         'extraPatterns' => [
             'GET receive' => 'receive',
