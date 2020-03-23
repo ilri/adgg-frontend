@@ -6,7 +6,7 @@
 }
 
 .builder-fields:hover {
-    transform: scale(1.01);
+    /*transform: scale(1.01);*/
     /*background-color: #f8f9fa;*/
 }
 
@@ -25,12 +25,13 @@
     border: 1px solid;
     background-color: #f2f3f8;
     border-radius: 0;
+    margin-bottom: 10px;
 }
 
 ul.builder-attributes {
     list-style-type: none;
 }
-
+/*
 .builder-attributes input[type=checkbox] {
     display:none;
 }
@@ -54,4 +55,7 @@ ul.builder-attributes {
 .builder-attributes input[type=checkbox]:checked + label:before {
     letter-spacing: 0.5rem;
 }
-
+*/
+li[data-toggle="collapse"] {
+    cursor:pointer;
+}

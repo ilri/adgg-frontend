@@ -7,6 +7,7 @@ use common\helpers\Utils;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
+use common\models\ReportBuilderInterface;
 use yii\db\Expression;
 use yii\helpers\Html;
 
@@ -344,5 +345,29 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     public function reportBuilderAdditionalUnwantedFields(): array
     {
         return ['farm_country'];
+    }
+    /**
+     * @inheritDoc
+     */
+    public function reportBuilderFieldsMapping(): array{
+        return [
+            'farm_type' => [
+                'tooltip' => function($field){
+                    return static::buildChoicesTooltip(ChoiceTypes::CHOICE_TYPE_FARM_TYPE, []);
+                },
+            ],
+            'gender_code' => [
+                'tooltip' => function($field){
+                    $choices = Choices::getGenderListData();
+                    return static::buildChoicesTooltip(null, $choices);
+                },
+            ]
+        ];
+    }
+    /**
+     * @inheritDoc
+     */
+    public function reportBuilderRelations(){
+        return array_merge(['fieldAgent'], $this->reportBuilderCommonRelations(), ['country', 'region', 'district', 'ward', 'village', 'org', 'client']);
     }
 }

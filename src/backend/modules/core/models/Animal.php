@@ -598,4 +598,18 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     {
         return ['sire_id', 'sire_name', 'animal_sireknown', 'farm_id', 'herd_id','animal_damknown', 'sire_tag_id', 'sire_type', 'dam_id', 'dam_name', 'dam_tag_id'];
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function reportBuilderFieldsMapping(): array{
+        return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function reportBuilderRelations(){
+        return array_merge(['farm'], $this->reportBuilderCommonRelations(), ['country', 'region', 'district', 'ward', 'village', 'org', 'client']);
+    }
 }
