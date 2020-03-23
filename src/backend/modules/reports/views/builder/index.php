@@ -78,11 +78,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                                         $relationAttributes = $relationModelClass->reportBuilderFields();
                                                         $className = $relationModelClass::shortClassName();
 
-                                                        # filter out additional_attributes field
-                                                        $relationAttributes = array_filter($relationAttributes, function ($attr) {
-                                                            return $attr != 'additional_attributes';
-                                                        });
-
                                                         ?>
                                                         <li data-toggle="collapse"
                                                             data-target="#collapse<?= $relationName ?>"
