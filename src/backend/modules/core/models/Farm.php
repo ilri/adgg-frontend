@@ -361,7 +361,13 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
                     $choices = Choices::getGenderListData();
                     return static::buildChoicesTooltip(null, $choices);
                 },
-            ]
+            ],
+            'farmer_is_hh_head' => [
+                'tooltip' => function($field){
+                    $choices = Utils::booleanOptions();
+                    return static::buildChoicesTooltip(null, $choices);
+                }
+            ],
         ];
     }
     /**
