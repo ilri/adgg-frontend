@@ -27,7 +27,7 @@
         <button id="generateQuery" role="button" class="btn btn-generatequery col-md-10">Preview Query</button>
     </div>
 
-    <div class="row card card-body mt-4 mb-4 col-md-10 hidden"
+    <div class="row card card-body mt-4 mb-4 col-md-12 hidden"
          id="previewQueryCard">
         <div class="bd-clipboard">
             <button type="button" data-clipboard-target="#queryHolder" class="btn-clipboard">Copy</button>
