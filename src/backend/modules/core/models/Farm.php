@@ -352,29 +352,14 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     public function reportBuilderFieldsMapping(): array{
         return [
             'farm_type' => [
-                'tooltip' => function(){
-                    $choices = Choices::getFarmTypeListData();
-                    $content = "<div class='field-tooltip-content'>";
-                    $content .= "<p><b>Value</b> : <b>Label</b>";
-                    foreach ($choices as $value => $label){
-                        $content .= "<p>".$value." : ".$label."</p>";
-                    }
-                    $content .= "<p><i>Pass the value in the filter field</i></p>";
-                    $content .= "</div>";
-                    return $content;
+                'tooltip' => function($field){
+                    return static::buildChoicesTooltip(ChoiceTypes::CHOICE_TYPE_FARM_TYPE, []);
                 },
             ],
             'gender_code' => [
                 'tooltip' => function($field){
                     $choices = Choices::getGenderListData();
-                    $content = "<div class='field-tooltip-content'>";
-                    $content .= "<p><b>Value</b> : <b>Label</b>";
-                    foreach ($choices as $value => $label){
-                        $content .= "<p>".$value." : ".$label."</p>";
-                    }
-                    $content .= "<p><i>Pass the value in the filter field</i></p>";
-                    $content .= "</div>";
-                    return $content;
+                    return static::buildChoicesTooltip(null, $choices);
                 },
             ]
         ];

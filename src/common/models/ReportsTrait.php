@@ -9,7 +9,10 @@
 namespace common\models;
 
 
+use backend\modules\core\models\Choices;
+use backend\modules\core\models\ChoiceTypes;
 use common\helpers\DbUtils;
+use Yii;
 
 trait ReportsTrait
 {
@@ -83,6 +86,26 @@ trait ReportsTrait
             return $tooltip;
         }
         return $this->getAttributeLabel($field);
+    }
+
+    public static function buildChoicesTooltip($choiceType = null, $choices = []){
+        if($choiceType === null && empty($choices)){
+            return 'nothing';
+        }
+        if($choiceType !== null && empty($choices)){
+            $choices = Choices::getList($choiceType, false, null, [], []);
+        }
+        if (!empty($choices)){
+            $content = "<div class='field-tooltip-content'>";
+            $content .= "<p><b>Value</b> : <b>Label</b>";
+            foreach ($choices as $value => $label){
+                $content .= "<p>".$value." : ".$label."</p>";
+            }
+            $content .= "<p><i>Pass the value in the filter field</i></p>";
+            $content .= "</div>";
+            return $content;
+        }
+        return 'no choices';
     }
 
     public function reportBuilderUnwantedFields()
