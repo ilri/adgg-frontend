@@ -38,8 +38,9 @@ class BuilderController extends Controller
         ]);
     }
 
-    protected function build(){
-        $req =   \Yii::$app->request;
+    protected function build()
+    {
+        $req = \Yii::$app->request;
         //$post = \Yii::$app->request->post();
         $modelName = $req->post('model');
         $filterConditions = $req->post('filterCondition', []); // array
@@ -61,7 +62,8 @@ class BuilderController extends Controller
         return $builder;
     }
 
-    protected function generateQuery(){
+    protected function generateQuery()
+    {
         return $this->build()->rawQuery();
     }
 
@@ -71,7 +73,8 @@ class BuilderController extends Controller
         exit;
     }
 
-    public function actionSaveReport(){
+    public function actionSaveReport()
+    {
         $success_msg = Lang::t('Report Queued Successfully. You will be notified once your report is ready for download');
         $transaction = Yii::$app->db->beginTransaction();
         try {
@@ -92,19 +95,17 @@ class BuilderController extends Controller
                 'country_id' => $builder->country_id,
                 'reportModel' => $builder->model,
             ]);
-            if($report->save()){
+            if ($report->save()) {
                 $transaction->commit();
                 ReportGenerator::push(['queueId' => $report->id]);
                 $redirect = Url::to(['/reports/adhoc-report/index']);
                 return Json::encode(['success' => true, 'message' => $success_msg, 'redirectUrl' => $redirect, 'forceRedirect' => false]);
-            }
-            else{
+            } else {
                 Yii::debug($report->getErrors());
                 return Json::encode(['success' => false, 'message' => $report->getErrors()]);
             }
 
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             $transaction->rollBack();
             Yii::debug($e->getTrace());
             return Json::encode(['success' => false, 'message' => $e->getMessage()]);

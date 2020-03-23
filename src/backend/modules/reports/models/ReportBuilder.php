@@ -102,13 +102,14 @@ class ReportBuilder extends Model
     /**
      * @return array
      */
-    public static function reportableModels(){
-        $eventRelations= ['animal', 'country', 'region', 'district', 'ward', 'village', 'org', 'client'];
+    public static function reportableModels()
+    {
+        $eventRelations = ['animal', 'country', 'region', 'district', 'ward', 'village', 'org', 'client'];
         return [
             'Farm' => [
                 'class' => Farm::class,
                 'title' => 'Farm',
-                'relations' => ['fieldAgent','country', 'region', 'district', 'ward', 'village', 'org', 'client'],
+                'relations' => ['fieldAgent', 'country', 'region', 'district', 'ward', 'village', 'org', 'client'],
             ],
             'Animal' => [
                 'class' => Animal::class,
@@ -240,10 +241,39 @@ class ReportBuilder extends Model
     }
 
     /**
+     * @param string $reportModel
      * @return array
      */
-    public static function buildAttributeList(){
-        return [];
+    public static function buildAttributeList(string $reportModel)
+    {
+        /* @var $modelClass ActiveRecord */
+        $modelClass = static::getReportModelClass($reportModel);
+        return static::buildModelTree($modelClass, $level = 1);
+    }
+
+    /**
+     * @param ActiveRecord $model
+     * @param int $currentLevel
+     * @param int $maxLevel
+     * @return array
+     */
+    public static function buildModelTree(ActiveRecord $model, $currentLevel, $maxLevel = 2)
+    {
+        /* @var $model ActiveRecord */
+        $attributes = $model->reportBuilderFields();
+        $relations = $model->reportBuilderRelations();
+        $tree = [];
+        $tree['attributes'] = $attributes;
+        //$tree['relations'] = $relations;
+        // build attribute tree for each relation, recursively...
+        // this loop might get out of hand and result in a deeply nested relation tree
+        # TODO: define a limit for how many levels we need to go deeper in the relations tree
+        foreach ($relations as $relation){
+            # TODO: check what level in the tree this relation is in and stop building the tree if $maxLevel is reached
+            $relationClass = static::getRelationClass($model, $relation);
+            $tree['relations'][$relation] = static::buildModelTree($relationClass, 1);
+        }
+        return $tree;
     }
 
     /**
@@ -255,7 +285,7 @@ class ReportBuilder extends Model
     public static function buildCondition($operator, $column, $value)
     {
         $null = new Expression('NULL');
-        switch ($operator){
+        switch ($operator) {
             //case '>':
             //case '<':
             //case '<=':
@@ -276,7 +306,8 @@ class ReportBuilder extends Model
      * @param string $relationName
      * @return \yii\db\ActiveRecord
      */
-    public static function getRelationClass($class, $relationName){
+    public static function getRelationClass($class, $relationName)
+    {
         /* @var $class ActiveRecord */
         $relation = $class->getRelation($relationName);
         /* @var $relationModelClass ActiveRecord */
@@ -288,7 +319,8 @@ class ReportBuilder extends Model
      * @param string $modelName
      * @return \yii\db\ActiveRecord
      */
-    public static function getReportModelClass($modelName){
+    public static function getReportModelClass($modelName)
+    {
         $className = static::reportableModels()[$modelName]['class'];
         return new $className();
     }
@@ -300,10 +332,11 @@ class ReportBuilder extends Model
      * @param bool append_field_alias
      * @return string
      */
-    public static function getFullColumnName($field, $class, $field_alias = null, $append_field_alias = false){
+    public static function getFullColumnName($field, $class, $field_alias = null, $append_field_alias = false)
+    {
         // check if field is a joined relation
-        if(strpos($field, '.')){
-            if(substr_count($field, '.') > 1){
+        if (strpos($field, '.')) {
+            if (substr_count($field, '.') > 1) {
                 // animal.farm.farmer_name
                 $relationName = (explode('.', $field)[0]); // animal
                 $subRelationName = (explode('.', $field)[1]); // farm
@@ -314,8 +347,7 @@ class ReportBuilder extends Model
                 $modelClass = $subRelationClass;
                 $tableAlias = $subRelationName;
                 $fieldLabelAlias = ucfirst($subRelationName);
-            }
-            else{
+            } else {
                 // farm.farmer_name
                 $relationName = (explode('.', $field)[0]); // farm
                 $fieldName = (explode('.', $field)[1]); // farmer_name
@@ -325,8 +357,7 @@ class ReportBuilder extends Model
                 $tableAlias = $relationName;
                 $fieldLabelAlias = ucfirst($relationName);
             }
-        }
-        else {
+        } else {
             $modelClass = $class;
             // append table name to field to remove ambiguity.
             $fieldName = $field;
@@ -337,18 +368,18 @@ class ReportBuilder extends Model
         $tableAlias = \Yii::$app->db->quoteTableName($tableAlias);
 
         # append alias to field to remove ambiguity
-        $aliasedField = $tableAlias.'. [['.$fieldName.']]';
+        $aliasedField = $tableAlias . '. [[' . $fieldName . ']]';
 
         # additional columns
-        if($modelClass->hasMethod('isAdditionalAttribute')){
-            if ($modelClass->isAdditionalAttribute($fieldName)){
+        if ($modelClass->hasMethod('isAdditionalAttribute')) {
+            if ($modelClass->isAdditionalAttribute($fieldName)) {
                 # for additional attributes, find a way to get their values
                 $attributeModel = TableAttribute::find()->andWhere(['attribute_key' => $fieldName, 'table_id' => $modelClass::getDefinedTableId()])->one();
                 $id = $attributeModel->id;
                 $attributesColumn = "{$tableAlias}.[[additional_attributes]]";
                 # get the value of this field from the json payload
                 # e.g JSON_EXTRACT(`core_farm`.`additional_attributes`, '$."34"')
-                $aliasedField = new Expression('JSON_UNQUOTE(JSON_EXTRACT('.$attributesColumn.', '."'".'$."'.$id.'"'."'".'))');
+                $aliasedField = new Expression('JSON_UNQUOTE(JSON_EXTRACT(' . $attributesColumn . ', ' . "'" . '$."' . $id . '"' . "'" . '))');
 
             }
         }
@@ -359,21 +390,19 @@ class ReportBuilder extends Model
 
         # convert label to camelCase if there are spaces in the word
         $attrLabel = Inflector::camelize($attrLabel);
-        if(strpos($modelClass->getAttributeLabel($fieldName), ' ' )){
+        if (strpos($modelClass->getAttributeLabel($fieldName), ' ')) {
             $attrLabel = Inflector::variablize($attrLabel);
         }
 
-        $fieldAlias = $fieldLabelAlias . '_' .$attrLabel;
+        $fieldAlias = $fieldLabelAlias . '_' . $attrLabel;
 
-        if($append_field_alias){
-            if($field_alias === null){
-                return $aliasedField . ' AS [[' . $fieldAlias .']]';
+        if ($append_field_alias) {
+            if ($field_alias === null) {
+                return $aliasedField . ' AS [[' . $fieldAlias . ']]';
+            } else {
+                return $aliasedField . ' AS [[' . $field_alias . ']]';
             }
-            else {
-                return $aliasedField . ' AS [[' . $field_alias .']]';
-            }
-        }
-        else{
+        } else {
             return $aliasedField;
         }
     }
@@ -381,7 +410,8 @@ class ReportBuilder extends Model
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function generateQuery(){
+    public function generateQuery()
+    {
         //$className = static::reportableModels()[$this->model]['class'];
         /* @var $class ActiveRecord */
         //$class = new $className();
@@ -396,18 +426,17 @@ class ReportBuilder extends Model
         // start the query
         $query = $class::find();
         // get the attributes for select
-        foreach ($this->filterConditions as $field => $conditionOperator){
-            $fieldAlias = str_replace('.','_', $field);
+        foreach ($this->filterConditions as $field => $conditionOperator) {
+            $fieldAlias = str_replace('.', '_', $field);
 
-            if(strpos($field, '.')){
-                if(substr_count($field, '.') > 1){
+            if (strpos($field, '.')) {
+                if (substr_count($field, '.') > 1) {
                     // animal.farm.farmer_name
                     $relationName = (explode('.', $field)[0]); // animal
                     $subRelationName = (explode('.', $field)[1]); // farm
                     // add subrelation to other joins
                     $other_joins[$subRelationName] = $relationName;
-                }
-                else {
+                } else {
                     $relationName = (explode('.', $field)[0]);
                     $joins[] = $relationName;
                 }
@@ -421,20 +450,20 @@ class ReportBuilder extends Model
             // add field to select
             //$query->addSelect(new Expression( $aliasedField . ' AS "' . $field . '"'));
 
-            if (!in_array($field, $this->excludeFromReport)){
+            if (!in_array($field, $this->excludeFromReport)) {
                 $query->addSelect(new Expression($selectField));
             }
             // extract alias from selectField
 
             $field_alias_array = explode('AS', $selectField);
-            $generated_alias = str_replace('[[','', $field_alias_array[1]);
-            $generated_alias = str_replace(']]','', $generated_alias);
+            $generated_alias = str_replace('[[', '', $field_alias_array[1]);
+            $generated_alias = str_replace(']]', '', $generated_alias);
             $generated_alias = trim($generated_alias);
 
             $this->fieldAliasMapping[$field] = $generated_alias;
 
             // build the condition
-            if (!empty($conditionOperator)){
+            if (!empty($conditionOperator)) {
                 // get the condition value for this field
                 $filter = $this->filterValues[$field];
                 $sqlCondition = static::buildCondition($conditionOperator, $aliasedField, $filter);
@@ -444,30 +473,30 @@ class ReportBuilder extends Model
         // do the select
         //$query->addSelect($attributes);
         // do the joins
-        if (count($joins)){
-            foreach (array_unique($joins) as $join){
+        if (count($joins)) {
+            foreach (array_unique($joins) as $join) {
                 //$query->joinWith($join . ' as ' . $join);
                 $query->joinWith([
-                    $join => function(\yii\db\ActiveQuery $q) use ($join, $class){
+                    $join => function (\yii\db\ActiveQuery $q) use ($join, $class) {
                         $object = static::getRelationClass($class, $join);
                         $q->from([$join => $object::tableName()]);
                         $q->alias($join);
                         $q->where([]);
                         if ($object->hasAttribute('is_deleted')) {
-                            $q->andWhere(['[['.$join.']]' . '.[[is_deleted]]' => 0]);
+                            $q->andWhere(['[[' . $join . ']]' . '.[[is_deleted]]' => 0]);
                         }
                     }
                 ]);
             }
         }
         //dd($joins, $other_joins);
-        if (count($other_joins)){
-            foreach ($other_joins as $subRelationName => $relationName){
-                $link = $reportableModelOptions['sub_relations'][$relationName. '.' . $subRelationName];
+        if (count($other_joins)) {
+            foreach ($other_joins as $subRelationName => $relationName) {
+                $link = $reportableModelOptions['sub_relations'][$relationName . '.' . $subRelationName];
                 $modelClass = static::getRelationClass($class, $relationName); // Animal::class
                 $subRelationClass = static::getRelationClass($modelClass, $subRelationName); // Farm::class
                 $on = '';
-                foreach ($link as $k => $f){
+                foreach ($link as $k => $f) {
                     // animal.farm_id
                     $on .= static::getFullColumnName($k, $class);
                     $on .= ' = ';
@@ -479,15 +508,15 @@ class ReportBuilder extends Model
         }
 
         // do limit and orderBy
-        if($this->limit){
+        if ($this->limit) {
             $query->limit($this->limit);
         }
-        if ($this->orderBy){
+        if ($this->orderBy) {
             // should be a fully qualified column name
             $query->orderBy(static::getFullColumnName($this->orderBy, $class));
         }
         // if reportable model has extraCondition to be enforced, add it here
-        if(array_key_exists('extraCondition', $reportableModelOptions)){
+        if (array_key_exists('extraCondition', $reportableModelOptions)) {
             $condition = $reportableModelOptions['extraCondition'];
             if (count($condition)) {
                 foreach ($condition as $f => $value) {
@@ -506,14 +535,14 @@ class ReportBuilder extends Model
             $query->andWhere($sqlCondition);
         }
         // append extra filters from elsewhere
-        if(count($this->extraFilterExpressions)){
-            foreach ($this->extraFilterExpressions as $expression){
+        if (count($this->extraFilterExpressions)) {
+            foreach ($this->extraFilterExpressions as $expression) {
                 $query->andWhere($expression);
             }
         }
         // append extra select expressions, from elsewhere not in the UI
-        if(count($this->extraSelectExpressions)){
-            foreach ($this->extraSelectExpressions as $expression){
+        if (count($this->extraSelectExpressions)) {
+            foreach ($this->extraSelectExpressions as $expression) {
                 $query->addSelect($expression);
             }
         }
@@ -524,20 +553,21 @@ class ReportBuilder extends Model
     /**
      * @return string
      */
-    public function rawQuery(){
+    public function rawQuery()
+    {
         return $this->generateQuery()->createCommand()->rawSql;
     }
 
-    public function saveReport(){
+    public function saveReport()
+    {
         // save name, raw_query
         $report = new AdhocReport();
         $report->name = $this->name;
         $report->raw_sql = $this->rawQuery();
         $report->status = AdhocReport::STATUS_QUEUED;
-        if($report->save()){
+        if ($report->save()) {
             return true;
-        }
-        else{
+        } else {
             return $report->getErrors();
         }
     }
