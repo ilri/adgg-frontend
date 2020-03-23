@@ -67,10 +67,10 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <div class="collapse" id="collapse<?= $name ?>" style="">
                                         <div class="card card-body kt-scroll ps ps--active-y builder-card rounded-0"
                                              style="height: 550px; overflow: hidden;" data-scroll="true">
-                                            <ul class="builder-attributes pl-0">
+                                            <ul class="kt-checkbox-list builder-attributes pl-0">
                                                 <?php foreach ($attributes as $attr): ?>
                                                     <?php $attrTitle = $class->getAttributeLabel($attr) ?>
-                                                    <li class="attribute"
+                                                    <label class="attribute kt-checkbox"
                                                         data-original-title="<?= $class->getAttributeLabel($attr) ?>"
                                                         data-model="<?= $name ?>"
                                                         data-parent-model="<?= $name ?>"
@@ -82,9 +82,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                                         data-content="<?= Html::encode($class->getFieldTooltipContent($attr)) ?>"
                                                         data-html="true"
                                                         data-placement="left">
-                                                        <input type="checkbox" value="<?= $attr ?>" >
-                                                        <label for="<?= $attr ?>"><?= $attr ?></label>
-                                                    </li>
+                                                        <input type="checkbox" value="<?= $attr ?>" > <?= $attr ?>
+                                                        <span></span>
+                                                    </label>
                                                 <?php endforeach; ?>
                                                 <?php
                                                 if (count($modelData['relations'])) {

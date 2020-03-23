@@ -175,11 +175,10 @@ MyApp.modules.reports = {};
 
         let _showSelected = function (e) {
             var name = $(e).data('name');
-            let elem = $('.builder-attributes li[data-name="' + name + '"]');
+            let elem = $('.builder-attributes label[data-name="' + name + '"]');
             let checkbox = elem.find('input[type=checkbox]');
             //check if name is in array
             let checkedItem = selectedFields.find(i => i === name);
-
 
             // toggle checkbox state
             if (checkedItem) {

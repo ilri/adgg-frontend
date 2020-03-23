@@ -30,7 +30,7 @@
 ul.builder-attributes {
     list-style-type: none;
 }
-
+/*
 .builder-attributes input[type=checkbox] {
     display:none;
 }
@@ -54,4 +54,4 @@ ul.builder-attributes {
 .builder-attributes input[type=checkbox]:checked + label:before {
     letter-spacing: 0.5rem;
 }
-
+*/
