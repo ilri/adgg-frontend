@@ -82,7 +82,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                                         data-content="<?= Html::encode($class->getFieldTooltipContent($attr)) ?>"
                                                         data-html="true"
                                                         data-placement="left">
-                                                        <input type="checkbox" value="<?= $attr ?>" > <?= $attr ?>
+                                                        <input type="checkbox" data-name="<?= $attr ?>" value="<?= $attr ?>" > <?= $attr ?>
                                                         <span></span>
                                                     </label>
                                                 <?php endforeach; ?>
@@ -109,25 +109,27 @@ $this->params['breadcrumbs'][] = $this->title;
                                                             aria-expanded="false"
                                                             aria-controls="collapse<?= $relationName ?>">
                                                             > <?= $relationName ?></li>
-                                                        <div class="collapse" id="collapse<?= $relationName ?>"
-                                                             style="">
+                                                        <div class="collapse" id="collapse<?= $relationName ?>" style="">
                                                             <ul class="builder-attributes">
                                                                 <?php foreach ($relationAttributes as $attr): ?>
                                                                     <?php $attrTitle = $class->getAttributeLabel($attr) ?>
-                                                                    <li class="attribute"
-                                                                        data-original-title="<?= $relationName . '.' . $relationModelClass->getAttributeLabel($attr) ?>"
-                                                                        data-model="<?= $className ?>"
-                                                                        data-parent-model="<?= $name ?>"
-                                                                        data-parent-model-title="<?= $title ?>"
-                                                                        data-name="<?= $relationName . '.' . $attr ?>"
-                                                                        title="<?= $attrTitle ?>"
-                                                                        data-toggle="popover"
-                                                                        data-trigger="hover"
-                                                                        data-content="<?= Html::encode($relationModelClass->getFieldTooltipContent($attr)) ?>"
-                                                                        data-html="true"
-                                                                        data-placement="left">
-                                                                        <input type="checkbox" value="<?= $relationName . '.' . $attr ?>"/>
-                                                                        <label for="<?= $relationName . '.' . $attr ?>"><?= $attr ?></label>
+                                                                    <li>
+                                                                        <label class="kt-checkbox attribute"
+                                                                               data-original-title="<?= $relationName . '.' . $relationModelClass->getAttributeLabel($attr) ?>"
+                                                                               data-model="<?= $className ?>"
+                                                                               data-parent-model="<?= $name ?>"
+                                                                               data-parent-model-title="<?= $title ?>"
+                                                                               data-name="<?= $relationName . '.' . $attr ?>"
+                                                                               title="<?= $attrTitle ?>"
+                                                                               data-toggle="popover"
+                                                                               data-trigger="hover"
+                                                                               data-content="<?= Html::encode($relationModelClass->getFieldTooltipContent($attr)) ?>"
+                                                                               data-html="true"
+                                                                               data-placement="left">
+                                                                            <input type="checkbox" data-name="<?= $relationName . '.' . $attr ?>" value="<?= $relationName . '.' . $attr ?>"/>
+                                                                            <?= $relationName . '.' . $attr ?>
+                                                                            <span></span>
+                                                                        </label>
                                                                     </li>
                                                                 <?php endforeach; ?>
                                                                 <?php
@@ -147,26 +149,27 @@ $this->params['breadcrumbs'][] = $this->title;
                                                                                 aria-expanded="false"
                                                                                 aria-controls="collapse<?= $sub_id ?>">
                                                                                 > <?= $sub ?></li>
-                                                                            <div class="collapse"
-                                                                                 id="collapse<?= $sub_id ?>" style="">
+                                                                            <div class="collapse" id="collapse<?= $sub_id ?>" style="">
                                                                                 <ul class="builder-attributes">
                                                                                     <?php foreach ($relationAttributes as $attr): ?>
                                                                                         <?php $attrTitle = $class->getAttributeLabel($attr) ?>
-                                                                                        <li class="attribute"
-                                                                                            data-original-title="<?= $main . '.' . $sub . '.' . $relationClass->getAttributeLabel($attr) ?>"
-                                                                                            data-model="<?= $className ?>"
-                                                                                            data-parent-model="<?= $name ?>"
-                                                                                            data-parent-model-title="<?= $title ?>"
-                                                                                            data-name="<?= $main . '.' . $sub . '.' . $attr ?>"
-                                                                                            title="<?= $attrTitle ?>"
-                                                                                            data-toggle="popover"
-                                                                                            data-trigger="hover"
-                                                                                            data-content="<?= Html::encode($relationClass->getFieldTooltipContent($attr)) ?>"
-                                                                                            data-html="true"
-                                                                                            data-placement="left">
-                                                                                            <input type="checkbox"
-                                                                                                   value="<?= $main . '.' . $sub . '.' . $attr ?>"><label
-                                                                                                    for="<?= $main . '.' . $sub . '.' . $attr ?>"><?= $attr ?></label>
+                                                                                        <li>
+                                                                                            <label class="attribute kt-checkbox"
+                                                                                                data-original-title="<?= $main . '.' . $sub . '.' . $relationClass->getAttributeLabel($attr) ?>"
+                                                                                                data-model="<?= $className ?>"
+                                                                                                data-parent-model="<?= $name ?>"
+                                                                                                data-parent-model-title="<?= $title ?>"
+                                                                                                data-name="<?= $main . '.' . $sub . '.' . $attr ?>"
+                                                                                                title="<?= $attrTitle ?>"
+                                                                                                data-toggle="popover"
+                                                                                                data-trigger="hover"
+                                                                                                data-content="<?= Html::encode($relationClass->getFieldTooltipContent($attr)) ?>"
+                                                                                                data-html="true"
+                                                                                                data-placement="left">
+                                                                                                <input type="checkbox" data-name="<?= $main . '.' . $sub . '.' . $attr ?>" value="<?= $main . '.' . $sub . '.' . $attr ?>"/>
+                                                                                                <?= $main . '.' . $sub . '.' . $attr ?>
+                                                                                                <span></span>
+                                                                                            </label>
                                                                                         </li>
                                                                                     <?php endforeach; ?>
                                                                                 </ul>

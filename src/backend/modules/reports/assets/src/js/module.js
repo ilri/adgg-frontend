@@ -136,6 +136,9 @@ MyApp.modules.reports = {};
             if (selectedParentModel !== parentModel) {
                 selectedFields.length = 0;
                 selectedFieldLabels = {};
+                // uncheck all previously checked checkboxes,
+                // where data-name is not this field
+                $('label.attribute input[type=checkbox]').not("[data-name='"+name+"']").prop('checked', false);
             }
             // check for duplicates
             var index = selectedFields.indexOf(name);
@@ -198,7 +201,7 @@ MyApp.modules.reports = {};
             $($this.options.selectedFieldsHolder).html('');
             arr.forEach(function (fieldName, index) {
                 var dropdown = _buildDropdownSelect(fieldName);
-                var filterInput = '<div class="col-md-4 p-0"><input name="filterValue[' + fieldName + ']" class="form-control form-control-sm" type="text" /></div>';
+                var filterInput = '<div class="col-md-7 p-0"><input name="filterValue[' + fieldName + ']" class="form-control form-control-sm" type="text" /></div>';
                 var operandSelector = '<div class="d-flex">' + dropdown + filterInput + '</div>';
                 var removeBtn = '<div class="ml-auto"><span class="flaticon2-delete removeField" data-name="' + fieldName + '"></span></div>';
                 var nameElem = '<div class=""><span class="text-wrap word-wrap">' + fieldName + '</span></div>';
@@ -224,7 +227,7 @@ MyApp.modules.reports = {};
         }
 
         let _buildDropdownSelect = function (fieldName) {
-            var input = '<div class="col-md-8 p-0 mr-2"><select name="filterCondition[' + fieldName + ']" class="form-control form-control-sm">';
+            var input = '<div class="col-md-5 p-0 mr-2"><select name="filterCondition[' + fieldName + ']" class="form-control form-control-sm">';
             input += '<option value=""> - Select Operator - </option>';
             var options = $this.options.inputSelectOptions;
             for (var prop in options) {
