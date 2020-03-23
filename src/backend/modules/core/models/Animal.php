@@ -603,7 +603,49 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
      * @inheritDoc
      */
     public function reportBuilderFieldsMapping(): array{
-        return [];
+        return [
+            'animal_type' => [
+                'tooltip' => function($field){
+                    return static::buildChoicesTooltip(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, []);
+                },
+            ],
+            'sire_type' => [
+                'tooltip' => function($field){
+                    return static::buildChoicesTooltip(ChoiceTypes::CHOICE_TYPE_SIRE_TYPE, []);
+                },
+            ],
+            'breed_composition' => [
+                'tooltip' => function($field){
+                    return static::buildChoicesTooltip(ChoiceTypes::CHOICE_TYPE_BREED_COMPOSITION, []);
+                }
+            ],
+            'main_breed' => [
+                'tooltip' => function($field){
+                    return static::buildChoicesTooltip(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, []);
+                }
+            ],
+            'secondary_breed' => [
+                'tooltip' => function($field){
+                    return static::buildChoicesTooltip(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, []);
+                }
+            ],
+            'entry_type' => [
+                'tooltip' => function($field){
+                    return static::buildChoicesTooltip(ChoiceTypes::CHOICE_TYPE_ANIMAL_ENTRY_TYPE, []);
+                }
+            ],
+            'deformities'=> [
+                'tooltip' => function($field){
+                    return static::buildChoicesTooltip(ChoiceTypes::CHOICE_TYPE_CALVE_DEFORMITY, []);
+                }
+            ],
+            'is_derived_birthdate' => [
+                'tooltip' => function($field){
+                    $choices = Utils::booleanOptions();
+                    return static::buildChoicesTooltip(null, $choices);
+                }
+            ],
+        ];
     }
 
     /**
