@@ -26,9 +26,11 @@ class OdkController extends Controller
     {
         $payload = Yii::$app->request->getBodyParams();
 
+        Yii::info('ODK POST DATA: ' . json_encode($payload));
+
         return [
-            'success'=>true,
-            'payload'=>$payload,
+            'success' => true,
+            'payload' => $payload,
         ];
     }
 }
