@@ -241,11 +241,39 @@ class ReportBuilder extends Model
     }
 
     /**
+     * @param string $reportModel
      * @return array
      */
-    public static function buildAttributeList()
+    public static function buildAttributeList(string $reportModel)
     {
-        return [];
+        /* @var $modelClass ActiveRecord */
+        $modelClass = static::getReportModelClass($reportModel);
+        return static::buildModelTree($modelClass, $level = 1);
+    }
+
+    /**
+     * @param ActiveRecord $model
+     * @param int $currentLevel
+     * @param int $maxLevel
+     * @return array
+     */
+    public static function buildModelTree(ActiveRecord $model, $currentLevel, $maxLevel = 2)
+    {
+        /* @var $model ActiveRecord */
+        $attributes = $model->reportBuilderFields();
+        $relations = $model->reportBuilderRelations();
+        $tree = [];
+        $tree['attributes'] = $attributes;
+        //$tree['relations'] = $relations;
+        // build attribute tree for each relation, recursively...
+        // this loop might get out of hand and result in a deeply nested relation tree
+        # TODO: define a limit for how many levels we need to go deeper in the relations tree
+        foreach ($relations as $relation){
+            # TODO: check what level in the tree this relation is in and stop building the tree if $maxLevel is reached
+            $relationClass = static::getRelationClass($model, $relation);
+            $tree['relations'][$relation] = static::buildModelTree($relationClass, 1);
+        }
+        return $tree;
     }
 
     /**

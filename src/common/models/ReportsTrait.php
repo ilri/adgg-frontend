@@ -9,7 +9,10 @@
 namespace common\models;
 
 
+use backend\modules\core\models\Choices;
+use backend\modules\core\models\ChoiceTypes;
 use common\helpers\DbUtils;
+use Yii;
 
 trait ReportsTrait
 {
@@ -35,6 +38,74 @@ trait ReportsTrait
             }
         }
         return static::getStats($durationType, $condition, $params, $sum, $dateField, $from, $to);
+    }
+
+    /**
+     * Defines fiels to be displayed in the report builder and their types for each model
+     *
+     *  e.g
+     *  'farm_type' => [
+     *       'type' => 'text', ** this can be text, number, dropdown, date
+     *       'tooltip' => 'html to be displayed when hovering the field. can contain title, '
+     *   ]
+     *
+     * @return array
+     */
+    public function reportBuilderFieldsMapping(): array{
+        return [];
+    }
+
+    /**
+     * @return array
+     */
+    public function reportBuilderCommonRelations(){
+        // relations common to all models
+        //return ['country', 'region', 'district', 'ward', 'village', 'org', 'client'];
+        return [];
+    }
+    /**
+     * @return array
+     */
+    public function reportBuilderRelations(){
+        return $this->reportBuilderCommonRelations();
+    }
+
+    /**
+     * @param string $field
+     * @return string
+     * TODO: define some generic text tooltips in $this->attributeHints() method of each model
+     * and fetch with $this->getAttributeHint($attribute) method
+     */
+    public function getFieldTooltipContent(string $field){
+        if(array_key_exists($field, $this->reportBuilderFieldsMapping())){
+            $field_map = $this->reportBuilderFieldsMapping()[$field];
+            $tooltip = $field_map['tooltip'];
+            if(is_callable($tooltip)){
+                return call_user_func($tooltip, $field);
+            }
+            return $tooltip;
+        }
+        return $this->getAttributeLabel($field);
+    }
+
+    public static function buildChoicesTooltip($choiceType = null, $choices = []){
+        if($choiceType === null && empty($choices)){
+            return 'nothing';
+        }
+        if($choiceType !== null && empty($choices)){
+            $choices = Choices::getList($choiceType, false, null, [], []);
+        }
+        if (!empty($choices)){
+            $content = "<div class='field-tooltip-content'>";
+            $content .= "<p><b>Value</b> : <b>Label</b>";
+            foreach ($choices as $value => $label){
+                $content .= "<p>".$value." : ".$label."</p>";
+            }
+            $content .= "<p><i>Pass the value in the filter field</i></p>";
+            $content .= "</div>";
+            return $content;
+        }
+        return 'no choices';
     }
 
     public function reportBuilderUnwantedFields()
