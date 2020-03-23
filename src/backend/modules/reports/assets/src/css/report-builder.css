@@ -59,3 +59,8 @@ ul.builder-attributes {
 li[data-toggle="collapse"] {
     cursor:pointer;
 }
+.CodeMirror{
+    resize: both;
+    max-width: inherit;
+    height: auto;
+}
