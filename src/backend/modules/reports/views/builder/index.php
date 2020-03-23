@@ -5,6 +5,7 @@ use backend\modules\reports\models\ReportBuilder;
 use common\helpers\Lang;
 use common\helpers\Url;
 use common\models\ActiveRecord;
+use yii\helpers\Html;
 use yii\helpers\Json;
 
 /* @var $this yii\web\View */
@@ -22,7 +23,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     : <?= strtoupper(Country::getScalar('name', ['id' => $country_id])) ?></h3>
                 <hr>
                 <form method="POST" id="report-builder-form">
-
                     <input type="hidden" name="<?= Yii::$app->request->csrfParam ?>"
                            value="<?= Yii::$app->request->csrfToken ?>"/>
                     <input type="hidden" name="model" id="model"/>
@@ -31,9 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <div class="panel panel-default bs-item z-depth-2 col-md-3">
                             <div class="panel-body">
                                 <?php
-                                foreach ($models
-
-                                         as $name => $modelData) {
+                                foreach ($models as $name => $modelData) {
                                     /* @var $class ActiveRecord */
                                     $class = new $modelData['class']();
                                     $title = $modelData['title'] ?? $name;
@@ -77,13 +75,15 @@ $this->params['breadcrumbs'][] = $this->title;
                                                         data-model="<?= $name ?>"
                                                         data-parent-model="<?= $name ?>"
                                                         data-parent-model-title="<?= $title ?>"
-                                                        data-name="<?= $attr ?>" title="<?= $attrTitle ?>">
-                                                        <input
-                                                                type="checkbox"
-                                                                value="<?= $attr ?>">
-                                                        <label
-                                                                for="<?= $attr ?>"><?= $attr ?>
-                                                        </label>
+                                                        data-name="<?= $attr ?>"
+                                                        title="<?= $attrTitle ?>"
+                                                        data-toggle="popover"
+                                                        data-trigger="hover"
+                                                        data-content="<?= Html::encode($class->getFieldTooltipContent($attr)) ?>"
+                                                        data-html="true"
+                                                        data-placement="left">
+                                                        <input type="checkbox" value="<?= $attr ?>" >
+                                                        <label for="<?= $attr ?>"><?= $attr ?></label>
                                                     </li>
                                                 <?php endforeach; ?>
                                                 <?php
@@ -120,10 +120,14 @@ $this->params['breadcrumbs'][] = $this->title;
                                                                         data-parent-model="<?= $name ?>"
                                                                         data-parent-model-title="<?= $title ?>"
                                                                         data-name="<?= $relationName . '.' . $attr ?>"
-                                                                        title="<?= $attrTitle ?>">
-                                                                        <input type="checkbox"
-                                                                               value="<?= $relationName . '.' . $attr ?>"/><label
-                                                                                for="<?= $relationName . '.' . $attr ?>"><?= $attr ?></label>
+                                                                        title="<?= $attrTitle ?>"
+                                                                        data-toggle="popover"
+                                                                        data-trigger="hover"
+                                                                        data-content="<?= Html::encode($relationModelClass->getFieldTooltipContent($attr)) ?>"
+                                                                        data-html="true"
+                                                                        data-placement="left">
+                                                                        <input type="checkbox" value="<?= $relationName . '.' . $attr ?>"/>
+                                                                        <label for="<?= $relationName . '.' . $attr ?>"><?= $attr ?></label>
                                                                     </li>
                                                                 <?php endforeach; ?>
                                                                 <?php
@@ -154,7 +158,12 @@ $this->params['breadcrumbs'][] = $this->title;
                                                                                             data-parent-model="<?= $name ?>"
                                                                                             data-parent-model-title="<?= $title ?>"
                                                                                             data-name="<?= $main . '.' . $sub . '.' . $attr ?>"
-                                                                                            title="<?= $attrTitle ?>">
+                                                                                            title="<?= $attrTitle ?>"
+                                                                                            data-toggle="popover"
+                                                                                            data-trigger="hover"
+                                                                                            data-content="<?= Html::encode($relationClass->getFieldTooltipContent($attr)) ?>"
+                                                                                            data-html="true"
+                                                                                            data-placement="left">
                                                                                             <input type="checkbox"
                                                                                                    value="<?= $main . '.' . $sub . '.' . $attr ?>"><label
                                                                                                     for="<?= $main . '.' . $sub . '.' . $attr ?>"><?= $attr ?></label>
