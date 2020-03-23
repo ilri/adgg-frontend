@@ -36,22 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     $class = new $modelData['class']();
                                     $title = $modelData['title'] ?? $name;
                                     //$name = $class::shortClassName();
-                                    $all_attributes = $class->reportBuilderFields();
-                                    $main_attributes = [];
-                                    $additional_attributes = [];
-                                    // check if attribute is main or additional
-                                    ## not necessary anymore, logic pushed to ReportBuilder
-                                    foreach ($all_attributes as $attr) {
-                                        if (!$class->isAdditionalAttribute($attr)) {
-                                            $main_attributes[] = $attr;
-                                        } else {
-                                            $additional_attributes[] = $attr;
-                                        }
-                                    }
-                                    # filter out additional_attributes field
-                                    $attributes = array_filter($all_attributes, function ($attr) {
-                                        return $attr != 'additional_attributes';
-                                    });
+                                    $attributes = $class->reportBuilderFields();
                                     ?>
                                     <div class="d-flex p-2 border rounded mb-3 builder-fields"
                                          data-toggle="collapse"
@@ -70,6 +55,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                             <ul class="kt-checkbox-list builder-attributes pl-0">
                                                 <?php foreach ($attributes as $attr): ?>
                                                     <?php $attrTitle = $class->getAttributeLabel($attr) ?>
+                                                <li>
                                                     <label class="attribute kt-checkbox"
                                                         data-original-title="<?= $class->getAttributeLabel($attr) ?>"
                                                         data-model="<?= $name ?>"
@@ -85,6 +71,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                                         <input type="checkbox" data-name="<?= $attr ?>" value="<?= $attr ?>" > <?= $attr ?>
                                                         <span></span>
                                                     </label>
+                                                </li>
                                                 <?php endforeach; ?>
                                                 <?php
                                                 if (count($modelData['relations'])) {
