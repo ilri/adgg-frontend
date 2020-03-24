@@ -652,6 +652,6 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
      * @inheritDoc
      */
     public function reportBuilderRelations(){
-        return array_merge(['farm'], $this->reportBuilderCommonRelations(), $this->reportBuilderCoreDataRelations());
+        return array_merge(['farm', 'herd', 'sire', 'dam'], $this->reportBuilderCommonRelations(), $this->reportBuilderCoreDataRelations());
     }
 }

@@ -123,6 +123,7 @@ class ReportBuilder extends Model
                 'relations' => $eventRelations,
                 'sub_relations' => [
                     'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.herd' => ['animal.herd_id' => 'herd.id'],
                     'animal.sire' => ['animal.sire_id' => 'sire.id'],
                     'animal.dam' => ['animal.dam_id' => 'dam.id'],
                 ],
@@ -146,6 +147,7 @@ class ReportBuilder extends Model
                 'relations' => $eventRelations,
                 'sub_relations' => [
                     'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.herd' => ['animal.herd_id' => 'herd.id'],
                     'animal.sire' => ['animal.sire_id' => 'sire.id'],
                     'animal.dam' => ['animal.dam_id' => 'dam.id'],
                 ],
@@ -157,9 +159,9 @@ class ReportBuilder extends Model
                 'relations' => $eventRelations,
                 'sub_relations' => [
                     'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.herd' => ['animal.herd_id' => 'herd.id'],
                     'animal.sire' => ['animal.sire_id' => 'sire.id'],
                     'animal.dam' => ['animal.dam_id' => 'dam.id'],
-
                 ],
             ],
             'Synchronization_Event' => [
@@ -169,9 +171,9 @@ class ReportBuilder extends Model
                 'relations' => $eventRelations,
                 'sub_relations' => [
                     'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.herd' => ['animal.herd_id' => 'herd.id'],
                     'animal.sire' => ['animal.sire_id' => 'sire.id'],
                     'animal.dam' => ['animal.dam_id' => 'dam.id'],
-
                 ],
             ],
             'Weights_Event' => [
@@ -179,8 +181,9 @@ class ReportBuilder extends Model
                 'title' => 'Weights Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_WEIGHTS],
                 'relations' => $eventRelations,
-                'sub_relations' => ['animal.farm' => [
-                    'animal.farm_id' => 'farm.id'],
+                'sub_relations' => [
+                    'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.herd' => ['animal.herd_id' => 'herd.id'],
                     'animal.sire' => ['animal.sire_id' => 'sire.id'],
                     'animal.dam' => ['animal.dam_id' => 'dam.id'],
                 ],
@@ -192,9 +195,9 @@ class ReportBuilder extends Model
                 'relations' => $eventRelations,
                 'sub_relations' => [
                     'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.herd' => ['animal.herd_id' => 'herd.id'],
                     'animal.sire' => ['animal.sire_id' => 'sire.id'],
                     'animal.dam' => ['animal.dam_id' => 'dam.id'],
-
                 ],
             ],
             'Feeding_Event' => [
@@ -204,9 +207,9 @@ class ReportBuilder extends Model
                 'relations' => $eventRelations,
                 'sub_relations' => [
                     'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.herd' => ['animal.herd_id' => 'herd.id'],
                     'animal.sire' => ['animal.sire_id' => 'sire.id'],
                     'animal.dam' => ['animal.dam_id' => 'dam.id'],
-
                 ],
             ],
             'Exits_Event' => [
@@ -216,9 +219,9 @@ class ReportBuilder extends Model
                 'relations' => $eventRelations,
                 'sub_relations' => [
                     'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.herd' => ['animal.herd_id' => 'herd.id'],
                     'animal.sire' => ['animal.sire_id' => 'sire.id'],
                     'animal.dam' => ['animal.dam_id' => 'dam.id'],
-
                 ],
             ],
         ];
