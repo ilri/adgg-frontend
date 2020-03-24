@@ -83,8 +83,7 @@ return [
             'odk' => 'v1/odk',
         ],
         'extraPatterns' => [
-            'GET receive' => 'receive',
-            'POST receive' => 'receive',
+            'POST,GET receive' => 'receive',
             'OPTIONS <action>' => 'options',
         ],
     ],
