@@ -131,7 +131,7 @@ class ReportBuilder extends Model
                 'class' => MilkingEvent::class,
                 'title' => 'Milking Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_MILKING],
-                'relations' => $eventRelations,
+                'relations' => array_merge(['lactation'], $eventRelations),
                 'sub_relations' => [
                     'animal.farm' => ['animal.farm_id' => 'farm.id'],
                     'animal.herd' => ['animal.herd_id' => 'herd.id'],

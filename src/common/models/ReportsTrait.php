@@ -58,11 +58,19 @@ trait ReportsTrait
     /**
      * @return array
      */
+    public function reportBuilderCoreDataRelations(){
+        // relations common ONLY to core data models - Animal, Events, Farm
+        return ['country', 'region', 'district', 'ward', 'village', 'org', 'client'];
+    }
+
+    /**
+     * @return array
+     */
     public function reportBuilderCommonRelations(){
         // relations common to all models
-        //return ['country', 'region', 'district', 'ward', 'village', 'org', 'client'];
         return [];
     }
+
     /**
      * @return array
      */
@@ -90,7 +98,7 @@ trait ReportsTrait
 
     public static function buildChoicesTooltip($choiceType = null, $choices = []){
         if($choiceType === null && empty($choices)){
-            return 'nothing';
+            return '';
         }
         if($choiceType !== null && empty($choices)){
             $choices = Choices::getList($choiceType, false, null, [], []);
@@ -105,7 +113,7 @@ trait ReportsTrait
             $content .= "</div>";
             return $content;
         }
-        return 'no choices';
+        return '';
     }
 
     public function reportBuilderUnwantedFields()

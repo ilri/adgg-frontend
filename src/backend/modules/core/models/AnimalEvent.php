@@ -415,4 +415,25 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
         sort($attrs);
         return $attrs;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function reportBuilderFieldsMapping(): array{
+        return [
+            'event_type' => [
+                'tooltip' => function($field){
+                    $choices = static::eventTypeOptions();
+                    return static::buildChoicesTooltip(null, $choices);
+                },
+            ],
+
+        ];
+    }
+    /**
+     * @inheritDoc
+     */
+    public function reportBuilderRelations(){
+        return array_merge(['animal'], $this->reportBuilderCommonRelations(), $this->reportBuilderCoreDataRelations());
+    }
 }

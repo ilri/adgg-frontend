@@ -374,6 +374,6 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
      * @inheritDoc
      */
     public function reportBuilderRelations(){
-        return array_merge(['fieldAgent'], $this->reportBuilderCommonRelations(), ['country', 'region', 'district', 'ward', 'village', 'org', 'client']);
+        return array_merge(['fieldAgent'], $this->reportBuilderCommonRelations(), $this->reportBuilderCoreDataRelations());
     }
 }
