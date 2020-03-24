@@ -35,6 +35,7 @@ class OdkController extends Controller
         Yii::info('Request Host: ' . json_encode(Yii::$app->request->userHost));
         Yii::info('Request User Agent: ' . json_encode(Yii::$app->request->userAgent));
         Yii::info('Request User IP: ' . json_encode(Yii::$app->request->userIP));
+        Yii::info('ADGG Server Host Info: ' . json_encode(Yii::$app->request->hostInfo));
 
         return [
             'success' => true,
