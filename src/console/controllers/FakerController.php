@@ -120,7 +120,7 @@ class FakerController extends Controller
         foreach (new \RecursiveIteratorIterator($it) as $file) {
             if ($file->getExtension() == 'json') {
                 $newModel = clone $model;
-                $newModel->setJsonAttributes($file);
+                $newModel->setJsonContent($file);
                 $file_name = $newModel->uuid . '.json';
                 $new_path = $newModel->getDir() . DIRECTORY_SEPARATOR . $file_name;
                 if (copy($file, $new_path)) {

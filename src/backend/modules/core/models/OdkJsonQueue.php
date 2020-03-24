@@ -20,7 +20,7 @@ use yii\web\UploadedFile;
  * @property int $country_id
  * @property int $has_errors
  * @property string $error_message
- * @property string $file_contents
+ * @property string|array $file_contents
  * @property int $is_locked
  * @property string $created_at
  * @property int $created_by
@@ -56,13 +56,11 @@ class OdkJsonQueue extends ActiveRecord implements ActiveSearchInterface
     public function rules()
     {
         return [
-            [['uuid'], 'required'],
-            ['tmp_file', 'required', 'on' => [self::SCENARIO_UPLOAD, self::SCENARIO_API_PUSH]],
+            [['file_contents'], 'required'],
+            ['tmp_file', 'required', 'on' => [self::SCENARIO_UPLOAD]],
             [['is_processed', 'country_id', 'has_errors', 'is_locked'], 'integer'],
             [['error_message', 'file_contents'], 'string'],
             [['uuid', 'file'], 'string', 'max' => 255],
-            //[['uuid'], 'unique', 'message' => Lang::t('{attribute} already exists.')],
-            [['jsonFile'], 'file', 'skipOnEmpty' => true, 'extensions' => ['json', 'xml'], 'checkExtensionByMimeType' => false, 'on' => self::SCENARIO_API_PUSH],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
     }
@@ -105,9 +103,25 @@ class OdkJsonQueue extends ActiveRecord implements ActiveSearchInterface
     {
         if (parent::beforeSave($insert)) {
             $this->setFile();
+            if (is_string($this->file_contents)) {
+                $this->file_contents = json_decode($this->file_contents, true);
+            }
+            $this->uuid = $this->file_contents['_uuid'] ?? null;
+
+
             return true;
         }
         return false;
+    }
+
+    protected function setCountryId()
+    {
+        if (!empty($this->file_contents['activities_country'])) {
+            $countryId = Country::getScalar('id', ['code' => $this->file_contents['activities_country']]);
+            if (!empty($countryId)) {
+                $this->country_id = $countryId;
+            }
+        }
     }
 
     public function afterSave($insert, $changedAttributes)
@@ -124,7 +138,7 @@ class OdkJsonQueue extends ActiveRecord implements ActiveSearchInterface
     {
         if (parent::beforeValidate()) {
             if (!empty($this->tmp_file)) {
-                $this->setJsonAttributes($this->tmp_file);
+                $this->setJsonContent($this->tmp_file);
             }
 
             return true;
@@ -136,11 +150,10 @@ class OdkJsonQueue extends ActiveRecord implements ActiveSearchInterface
      * @param string $file
      * @return void
      */
-    public function setJsonAttributes($file)
+    public function setJsonContent($file)
     {
         $jsonStr = file_get_contents($file);
         $json = json_decode($jsonStr, true);
-        $this->uuid = $json['_uuid'];
         $this->file_contents = $json;
     }
 
