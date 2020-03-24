@@ -28,12 +28,13 @@ class OdkController extends Controller
             $payload = Yii::$app->request->getBodyParams();
             Yii::info('ODK POST JSON DATA: ' . json_encode($payload));
             Yii::info('$_POST: ' . json_encode($_POST));
-            Yii::info('Request Host: ' . json_encode(Yii::$app->request->userHost));
-            Yii::info('Request User Agent: ' . json_encode(Yii::$app->request->userAgent));
-            Yii::info('Request User IP: ' . json_encode(Yii::$app->request->userIP));
         } else {
             Yii::info('GET REQUEST DATA:' . json_encode($_GET));
         }
+
+        Yii::info('Request Host: ' . json_encode(Yii::$app->request->userHost));
+        Yii::info('Request User Agent: ' . json_encode(Yii::$app->request->userAgent));
+        Yii::info('Request User IP: ' . json_encode(Yii::$app->request->userIP));
 
         return [
             'success' => true,
