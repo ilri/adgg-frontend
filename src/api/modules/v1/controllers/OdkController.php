@@ -19,7 +19,7 @@ class OdkController extends Controller
 
     public function getUnAuthenticatedActions()
     {
-        return ['receive'];
+        return ['receive', 'options'];
     }
 
     public function actionReceive()
