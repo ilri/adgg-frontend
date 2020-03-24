@@ -59,7 +59,6 @@ class OdkJsonQueue extends ActiveRecord implements ActiveSearchInterface
             [['file_contents'], 'required'],
             ['tmp_file', 'required', 'on' => [self::SCENARIO_UPLOAD]],
             [['is_processed', 'country_id', 'has_errors', 'is_locked'], 'integer'],
-            [['error_message', 'file_contents'], 'string'],
             [['uuid', 'file'], 'string', 'max' => 255],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
