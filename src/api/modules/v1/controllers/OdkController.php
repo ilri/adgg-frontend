@@ -24,13 +24,16 @@ class OdkController extends Controller
 
     public function actionReceive()
     {
-        $payload = Yii::$app->request->getBodyParams();
+        if (Yii::$app->request->isPost) {
+            $payload = Yii::$app->request->getBodyParams();
+            Yii::info('ODK POST DATA: ' . json_encode($_POST));
+        } else {
+            Yii::info('GET REQUEST DATA:' . json_encode($_GET));
+        }
 
-        Yii::info('ODK POST DATA: ' . json_encode($payload));
 
         return [
             'success' => true,
-            'payload' => $payload,
         ];
     }
 }
