@@ -35,9 +35,11 @@ class OdkController extends Controller
             Yii::info('GET REQUEST DATA:' . json_encode($_GET));
         }
 
-
         return [
             'success' => true,
+            'request' => Yii::$app->request,
+            'isGet' => Yii::$app->request->isGet,
+            'isPost' => Yii::$app->request->isPost,
         ];
     }
 }
