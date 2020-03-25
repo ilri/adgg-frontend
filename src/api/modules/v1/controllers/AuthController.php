@@ -11,7 +11,6 @@ use api\controllers\Controller;
 use api\controllers\JwtAuthTrait;
 use api\modules\v1\forms\ChangePassword;
 use api\modules\v1\forms\LoginForm;
-use api\modules\v1\forms\ProvideEmail;
 use api\modules\v1\forms\ResetPassword;
 use api\modules\v1\models\User;
 use backend\modules\auth\forms\PasswordResetRequestForm;

@@ -181,4 +181,12 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
     {
         return [];
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function reportBuilderRelations()
+    {
+        return array_merge(['lactation'], parent::reportBuilderRelations());
+    }
 }

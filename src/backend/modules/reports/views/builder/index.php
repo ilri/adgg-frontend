@@ -36,22 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     $class = new $modelData['class']();
                                     $title = $modelData['title'] ?? $name;
                                     //$name = $class::shortClassName();
-                                    $all_attributes = $class->reportBuilderFields();
-                                    $main_attributes = [];
-                                    $additional_attributes = [];
-                                    // check if attribute is main or additional
-                                    ## not necessary anymore, logic pushed to ReportBuilder
-                                    foreach ($all_attributes as $attr) {
-                                        if (!$class->isAdditionalAttribute($attr)) {
-                                            $main_attributes[] = $attr;
-                                        } else {
-                                            $additional_attributes[] = $attr;
-                                        }
-                                    }
-                                    # filter out additional_attributes field
-                                    $attributes = array_filter($all_attributes, function ($attr) {
-                                        return $attr != 'additional_attributes';
-                                    });
+                                    $attributes = $class->reportBuilderFields();
                                     ?>
                                     <div class="d-flex p-2 border rounded mb-3 builder-fields"
                                          data-toggle="collapse"
@@ -67,24 +52,19 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <div class="collapse" id="collapse<?= $name ?>" style="">
                                         <div class="card card-body kt-scroll ps ps--active-y builder-card rounded-0"
                                              style="height: 550px; overflow: hidden;" data-scroll="true">
-                                            <ul class="kt-checkbox-list builder-attributes pl-0">
+                                            <ul class="builder-attributes pl-0">
                                                 <?php foreach ($attributes as $attr): ?>
-                                                    <?php $attrTitle = $class->getAttributeLabel($attr) ?>
-                                                    <label class="attribute kt-checkbox"
-                                                        data-original-title="<?= $class->getAttributeLabel($attr) ?>"
-                                                        data-model="<?= $name ?>"
-                                                        data-parent-model="<?= $name ?>"
-                                                        data-parent-model-title="<?= $title ?>"
-                                                        data-name="<?= $attr ?>"
-                                                        title="<?= $attrTitle ?>"
-                                                        data-toggle="popover"
-                                                        data-trigger="hover"
-                                                        data-content="<?= Html::encode($class->getFieldTooltipContent($attr)) ?>"
-                                                        data-html="true"
-                                                        data-placement="left">
-                                                        <input type="checkbox" value="<?= $attr ?>" > <?= $attr ?>
-                                                        <span></span>
-                                                    </label>
+                                                    <?= $this->render('partials/_attribute', [
+                                                        'attribute' => $attr,
+                                                        'attributeTitle' => $class->getAttributeLabel($attr),
+                                                        'attributeName' => $attr,
+                                                        'attributeLabel' => $class->getAttributeLabel($attr),
+                                                        'class' => $class,
+                                                        'modelName' => $name,
+                                                        'parentModelName' => $name,
+                                                        'parentModelTitle' => $title,
+                                                    ])
+                                                    ?>
                                                 <?php endforeach; ?>
                                                 <?php
                                                 if (count($modelData['relations'])) {
@@ -98,11 +78,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                                         $relationAttributes = $relationModelClass->reportBuilderFields();
                                                         $className = $relationModelClass::shortClassName();
 
-                                                        # filter out additional_attributes field
-                                                        $relationAttributes = array_filter($relationAttributes, function ($attr) {
-                                                            return $attr != 'additional_attributes';
-                                                        });
-
                                                         ?>
                                                         <li data-toggle="collapse"
                                                             data-target="#collapse<?= $relationName ?>"
@@ -113,22 +88,18 @@ $this->params['breadcrumbs'][] = $this->title;
                                                              style="">
                                                             <ul class="builder-attributes">
                                                                 <?php foreach ($relationAttributes as $attr): ?>
-                                                                    <?php $attrTitle = $class->getAttributeLabel($attr) ?>
-                                                                    <li class="attribute"
-                                                                        data-original-title="<?= $relationName . '.' . $relationModelClass->getAttributeLabel($attr) ?>"
-                                                                        data-model="<?= $className ?>"
-                                                                        data-parent-model="<?= $name ?>"
-                                                                        data-parent-model-title="<?= $title ?>"
-                                                                        data-name="<?= $relationName . '.' . $attr ?>"
-                                                                        title="<?= $attrTitle ?>"
-                                                                        data-toggle="popover"
-                                                                        data-trigger="hover"
-                                                                        data-content="<?= Html::encode($relationModelClass->getFieldTooltipContent($attr)) ?>"
-                                                                        data-html="true"
-                                                                        data-placement="left">
-                                                                        <input type="checkbox" value="<?= $relationName . '.' . $attr ?>"/>
-                                                                        <label for="<?= $relationName . '.' . $attr ?>"><?= $attr ?></label>
-                                                                    </li>
+                                                                    <?= $this->render('partials/_attribute', [
+                                                                        'attribute' => $attr,
+                                                                        'attributeTitle' => $relationName . '.' . $relationModelClass->getAttributeLabel($attr),
+                                                                        'attributeName' => $relationName . '.' . $attr,
+                                                                        'attributeLabel' => $relationModelClass->getAttributeLabel($attr),
+                                                                        'class' => $relationModelClass,
+                                                                        'modelName' => $className,
+                                                                        'parentModelName' => $name,
+                                                                        'parentModelTitle' => $title,
+                                                                    ])
+                                                                    ?>
+
                                                                 <?php endforeach; ?>
                                                                 <?php
                                                                 if (count($sub_relations)) {
@@ -151,23 +122,17 @@ $this->params['breadcrumbs'][] = $this->title;
                                                                                  id="collapse<?= $sub_id ?>" style="">
                                                                                 <ul class="builder-attributes">
                                                                                     <?php foreach ($relationAttributes as $attr): ?>
-                                                                                        <?php $attrTitle = $class->getAttributeLabel($attr) ?>
-                                                                                        <li class="attribute"
-                                                                                            data-original-title="<?= $main . '.' . $sub . '.' . $relationClass->getAttributeLabel($attr) ?>"
-                                                                                            data-model="<?= $className ?>"
-                                                                                            data-parent-model="<?= $name ?>"
-                                                                                            data-parent-model-title="<?= $title ?>"
-                                                                                            data-name="<?= $main . '.' . $sub . '.' . $attr ?>"
-                                                                                            title="<?= $attrTitle ?>"
-                                                                                            data-toggle="popover"
-                                                                                            data-trigger="hover"
-                                                                                            data-content="<?= Html::encode($relationClass->getFieldTooltipContent($attr)) ?>"
-                                                                                            data-html="true"
-                                                                                            data-placement="left">
-                                                                                            <input type="checkbox"
-                                                                                                   value="<?= $main . '.' . $sub . '.' . $attr ?>"><label
-                                                                                                    for="<?= $main . '.' . $sub . '.' . $attr ?>"><?= $attr ?></label>
-                                                                                        </li>
+                                                                                        <?= $this->render('partials/_attribute', [
+                                                                                            'attribute' => $attr,
+                                                                                            'attributeTitle' => $main . '.' . $sub . '.' . $relationClass->getAttributeLabel($attr),
+                                                                                            'attributeName' => $main . '.' . $sub . '.' . $attr,
+                                                                                            'attributeLabel' => $relationClass->getAttributeLabel($attr),
+                                                                                            'class' => $relationClass,
+                                                                                            'modelName' => $className,
+                                                                                            'parentModelName' => $name,
+                                                                                            'parentModelTitle' => $title,
+                                                                                        ])
+                                                                                        ?>
                                                                                     <?php endforeach; ?>
                                                                                 </ul>
                                                                             </div>
@@ -199,96 +164,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         </div>
                         <div class="panel panel-default bs-item z-depth-2 col-md-5">
                             <div class="panel-body pt-3 pr-3 pl-3">
-                                <div id="queryOptions" class="hidden">
-                                    <h3>Query Options</h3>
-                                    <div class="row row-no-gutters mt-3">
-                                        <div class="col-md-8"><label for="limit">Limit: </label></div>
-                                    </div>
-                                    <div class="row row-no-gutters mb-2">
-                                        <div class="col-md-10"><input name="limit" id="limit" type="number"
-                                                                      value=""
-                                                                      class="form-control form-control-sm"/>
-                                        </div>
-                                    </div>
-                                    <div class="row row-no-gutters mt-2">
-                                        <div class="col-md-3"><label for="orderby">Order By: </label></div>
+                                <?= $this->render('partials/_query_options') ?>
 
-                                    </div>
-                                    <div class="row row-no-gutters mt-2">
-                                        <div class="col-md-10">
-                                            <select name="orderby" id="orderby" type="text"
-                                                    class="form-control form-control-sm"></select>
-                                        </div>
-                                    </div>
-                                    <div class="mt-4">
-                                        <button id="askForName" role="button" class="btn btn-primary col-md-10"
-                                                data-toggle="modal" data-target="#inputName">Generate & Save
-                                            Report
-                                        </button>
-                                    </div>
-                                    <div class="mt-2">
-                                        <button id="generateQuery" role="button"
-                                                class="btn btn-generatequery col-md-10">
-                                            Preview Query
-                                        </button>
-                                    </div>
-
-                                    <div class="row card card-body mt-4 mb-4 col-md-10 hidden"
-                                         id="previewQueryCard">
-                                        <div class="bd-clipboard">
-                                            <button type="button" data-clipboard-target="#queryHolder"
-                                                    class="btn-clipboard">Copy
-                                            </button>
-                                        </div>
-                                        <figure class="highlight hidden">
-                                    <pre class="pre-scrollable">
-                                        <code id="" class="language-sql text-wrap word-wrap" data-lang="sql"></code>
-                                    </pre>
-                                        </figure>
-                                        <textarea id="queryHolder" class="language-sql text-wrap word-wrap"
-                                                  style="width: 100%"></textarea>
-                                    </div>
-
-                                    <div id="inputName" role="dialog" class="modal fade">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <!--Modal header-->
-                                                <div class="modal-header mt-2">
-                                                    <h4 class="modal-title">Save Generated Report: </h4>
-                                                    <button type="button" class="close" data-dismiss="modal">
-                                                        <span aria-hidden="true">&times;</span>
-                                                        <span class="sr-only">Close</span>
-                                                    </button>
-
-                                                </div>
-                                                <!--Modal Body-->
-                                                <div class="modal-body">
-                                                    <div id="reportNameMessage"></div>
-                                                    <div class="form-group required">
-                                                        <div class="row row-no-gutters mt-2">
-                                                            <div class="col-md-10 mx-auto"><label for="name"
-                                                                                                  class="control-group">Report
-                                                                    Name</label>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row row-no-gutters mt-2">
-                                                            <div class="col-md-10 mx-auto"><input name="name" id="name"
-                                                                                                  type="text" value=""
-                                                                                                  class="form-control form-control-sm"/>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button id="saveReport" role="button"
-                                                            class="btn btn-success col-md-10 mx-auto">Generate & Save
-                                                        Report
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
 

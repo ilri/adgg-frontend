@@ -352,33 +352,28 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     public function reportBuilderFieldsMapping(): array{
         return [
             'farm_type' => [
-                'tooltip' => function(){
-                    $choices = Choices::getFarmTypeListData();
-                    $content = '<div class="field-tooltip-content">';
-                    foreach ($choices as $value => $label){
-                        $content .= '<p>'.$value.': '.$label.'</p>';
-                    }
-                    $content = '</div>';
-                    return $content;
+                'tooltip' => function ($field) {
+                    return static::buildChoicesTooltip(ChoiceTypes::CHOICE_TYPE_FARM_TYPE, []);
                 },
             ],
             'gender_code' => [
-                'tooltip' => function($field){
+                'tooltip' => function ($field) {
                     $choices = Choices::getGenderListData();
-                    $content = '<div class="field-tooltip-content">';
-                    foreach ($choices as $value => $label){
-                        $content .= '<p>'.$value.': '.$label.'</p>';
-                    }
-                    $content = '</div>';
-                    return $content;
+                    return static::buildChoicesTooltip(null, $choices);
                 },
-            ]
+            ],
+            'farmer_is_hh_head' => [
+                'tooltip' => function ($field) {
+                    $choices = Utils::booleanOptions();
+                    return static::buildChoicesTooltip(null, $choices);
+                }
+            ],
         ];
     }
     /**
      * @inheritDoc
      */
     public function reportBuilderRelations(){
-        return array_merge(['fieldAgent'], $this->reportBuilderCommonRelations(), ['country', 'region', 'district', 'ward', 'village', 'org', 'client']);
+        return array_merge(['fieldAgent'], $this->reportBuilderCommonRelations(), $this->reportBuilderCoreDataRelations());
     }
 }

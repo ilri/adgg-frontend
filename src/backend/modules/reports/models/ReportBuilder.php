@@ -123,6 +123,7 @@ class ReportBuilder extends Model
                 'relations' => $eventRelations,
                 'sub_relations' => [
                     'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.herd' => ['animal.herd_id' => 'herd.id'],
                     'animal.sire' => ['animal.sire_id' => 'sire.id'],
                     'animal.dam' => ['animal.dam_id' => 'dam.id'],
                 ],
@@ -131,7 +132,7 @@ class ReportBuilder extends Model
                 'class' => MilkingEvent::class,
                 'title' => 'Milking Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_MILKING],
-                'relations' => $eventRelations,
+                'relations' => array_merge(['lactation'], $eventRelations),
                 'sub_relations' => [
                     'animal.farm' => ['animal.farm_id' => 'farm.id'],
                     'animal.herd' => ['animal.herd_id' => 'herd.id'],
@@ -146,6 +147,7 @@ class ReportBuilder extends Model
                 'relations' => $eventRelations,
                 'sub_relations' => [
                     'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.herd' => ['animal.herd_id' => 'herd.id'],
                     'animal.sire' => ['animal.sire_id' => 'sire.id'],
                     'animal.dam' => ['animal.dam_id' => 'dam.id'],
                 ],
@@ -157,9 +159,9 @@ class ReportBuilder extends Model
                 'relations' => $eventRelations,
                 'sub_relations' => [
                     'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.herd' => ['animal.herd_id' => 'herd.id'],
                     'animal.sire' => ['animal.sire_id' => 'sire.id'],
                     'animal.dam' => ['animal.dam_id' => 'dam.id'],
-
                 ],
             ],
             'Synchronization_Event' => [
@@ -169,9 +171,9 @@ class ReportBuilder extends Model
                 'relations' => $eventRelations,
                 'sub_relations' => [
                     'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.herd' => ['animal.herd_id' => 'herd.id'],
                     'animal.sire' => ['animal.sire_id' => 'sire.id'],
                     'animal.dam' => ['animal.dam_id' => 'dam.id'],
-
                 ],
             ],
             'Weights_Event' => [
@@ -179,8 +181,9 @@ class ReportBuilder extends Model
                 'title' => 'Weights Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_WEIGHTS],
                 'relations' => $eventRelations,
-                'sub_relations' => ['animal.farm' => [
-                    'animal.farm_id' => 'farm.id'],
+                'sub_relations' => [
+                    'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.herd' => ['animal.herd_id' => 'herd.id'],
                     'animal.sire' => ['animal.sire_id' => 'sire.id'],
                     'animal.dam' => ['animal.dam_id' => 'dam.id'],
                 ],
@@ -192,9 +195,9 @@ class ReportBuilder extends Model
                 'relations' => $eventRelations,
                 'sub_relations' => [
                     'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.herd' => ['animal.herd_id' => 'herd.id'],
                     'animal.sire' => ['animal.sire_id' => 'sire.id'],
                     'animal.dam' => ['animal.dam_id' => 'dam.id'],
-
                 ],
             ],
             'Feeding_Event' => [
@@ -204,9 +207,9 @@ class ReportBuilder extends Model
                 'relations' => $eventRelations,
                 'sub_relations' => [
                     'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.herd' => ['animal.herd_id' => 'herd.id'],
                     'animal.sire' => ['animal.sire_id' => 'sire.id'],
                     'animal.dam' => ['animal.dam_id' => 'dam.id'],
-
                 ],
             ],
             'Exits_Event' => [
@@ -216,9 +219,9 @@ class ReportBuilder extends Model
                 'relations' => $eventRelations,
                 'sub_relations' => [
                     'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.herd' => ['animal.herd_id' => 'herd.id'],
                     'animal.sire' => ['animal.sire_id' => 'sire.id'],
                     'animal.dam' => ['animal.dam_id' => 'dam.id'],
-
                 ],
             ],
         ];
@@ -248,7 +251,7 @@ class ReportBuilder extends Model
     {
         /* @var $modelClass ActiveRecord */
         $modelClass = static::getReportModelClass($reportModel);
-        return static::buildModelTree($modelClass, $level = 1);
+        return static::buildModelTree($modelClass);
     }
 
     /**
@@ -257,21 +260,23 @@ class ReportBuilder extends Model
      * @param int $maxLevel
      * @return array
      */
-    public static function buildModelTree(ActiveRecord $model, $currentLevel, $maxLevel = 2)
+    public static function buildModelTree(ActiveRecord $model, $currentLevel = 0, $maxLevel = 2)
     {
         /* @var $model ActiveRecord */
         $attributes = $model->reportBuilderFields();
         $relations = $model->reportBuilderRelations();
         $tree = [];
         $tree['attributes'] = $attributes;
-        //$tree['relations'] = $relations;
         // build attribute tree for each relation, recursively...
-        // this loop might get out of hand and result in a deeply nested relation tree
-        # TODO: define a limit for how many levels we need to go deeper in the relations tree
-        foreach ($relations as $relation){
-            # TODO: check what level in the tree this relation is in and stop building the tree if $maxLevel is reached
-            $relationClass = static::getRelationClass($model, $relation);
-            $tree['relations'][$relation] = static::buildModelTree($relationClass, 1);
+        // increment $currentLevel each time this function is called
+        $currentLevel++;
+        // check if we have reached the maxLevel for nesting the relations, to avoid an infinite loop or deep nesting
+        if ($currentLevel <= $maxLevel) {
+            foreach ($relations as $relation) {
+                $relationClass = static::getRelationClass($model, $relation);
+                $tree['level'] = $currentLevel;
+                $tree['relations'][$relation] = static::buildModelTree($relationClass, $currentLevel);
+            }
         }
         return $tree;
     }

@@ -24,20 +24,23 @@ $controller = Yii::$app->controller;
         <title><?= !empty($this->title) ? Html::encode($this->title) : SystemSettings::getAppName() ?></title>
         <?php $this->head(); ?>
     </head>
-    <body class="kt-login-v2--enabled kt-quick-panel--right kt-demo-panel--right kt-offcanvas-panel--right kt-header--fixed kt-header-mobile--fixed kt-subheader--enabled kt-subheader--transparent kt-aside--enabled kt-aside--fixed kt-page--loading" >
+    <body class="kt-login-v2--enabled kt-quick-panel--right kt-demo-panel--right kt-offcanvas-panel--right kt-header--fixed kt-header-mobile--fixed kt-subheader--enabled kt-subheader--transparent kt-aside--enabled kt-aside--fixed kt-page--loading">
     <?php $this->beginBody() ?>
     <!-- begin:: Page -->
-    <div class="kt-grid kt-grid--ver kt-grid--root" style="background-image: linear-gradient(to bottom, rgba(242,243,248, 0.8), rgba(242,243,248, -0.3)), url('<?= Yii::$app->view->theme->baseUrl ?>/assets/img/image 1.png');background-size: cover; background-position: center center;" >
+    <div class="kt-grid kt-grid--ver kt-grid--root"
+         style="background-image: linear-gradient(to bottom, rgba(242,243,248, 0.8), rgba(242,243,248, -0.3)), url('<?= Yii::$app->view->theme->baseUrl ?>/assets/img/backImage.jpg');background-size: cover; background-position: center center;">
         <div class="kt-grid__item   kt-grid__item--fluid kt-grid  kt-grid kt-grid--hor kt-login-v2" id="kt_login_v2">
 
             <!--begin::Item-->
             <div class="kt-grid__item  kt-grid--hor">
 
                 <!--begin::Heade-->
-                <div class="kt-login-v2__head" style="background-color: linear-gradient(to bottom, rgba(242,243,248, 1.29), rgba(242,243,248, 0.29)),">
+                <div class="kt-login-v2__head"
+                     style="background-color: linear-gradient(to bottom, rgba(242,243,248, 1.29), rgba(242,243,248, 0.29)),">
                     <div class="kt-login-v2__logo">
                         <a href="<?= Yii::$app->homeUrl ?>">
-                            <img src="<?= Yii::$app->view->theme->baseUrl ?>/assets/img/login/adggLogo1.png" style="max-width: 250px; max-height: 200px;" alt=""/>
+                            <img src="<?= Yii::$app->view->theme->baseUrl ?>/assets/img/login/adggLogo1.png"
+                                 style="max-width: 250px; max-height: 200px;" alt=""/>
                         </a>
                     </div>
                     <div class="kt-login-v2__signup">

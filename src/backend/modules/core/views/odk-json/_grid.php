@@ -15,7 +15,7 @@ use yii\helpers\Url;
     'createButton' => ['visible' => Yii::$app->user->canCreate(), 'modal' => false],
     'columns' => [
         [
-            'attribute' => 'uuid',
+            'attribute' => 'form_uuid',
         ],
         [
             'attribute' => 'is_processed',

@@ -13,7 +13,7 @@ use yii\helpers\Url;
 $this->title = Lang::t('Request Password Reset');
 ?>
 
-<div class="kt-login-v2__container" style="padding: 1.2rem;">
+<div class="kt-login-v2__container" style="padding: 1.2rem; background-color:#f2f3f8">
     <div class="kt-login-v2__title">
         <h3 style="color: #004730;font-size: 24px;font-weight: 600;">Request Password Reset</h3>
     </div>
