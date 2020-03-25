@@ -145,7 +145,7 @@ class FakerController extends Controller
 
     public function actionRandom()
     {
-        $condition = '';
+        $condition = ['country_id' => null];
         $params = [];
         $query = OdkJsonQueue::find()->andWhere($condition, $params);
         $n = 1;
