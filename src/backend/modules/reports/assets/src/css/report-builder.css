@@ -5,11 +5,6 @@
     line-height: 1.7rem;
 }
 
-.builder-fields:hover {
-    /*transform: scale(1.01);*/
-    /*background-color: #f8f9fa;*/
-}
-
 .builder-fields builder-chevron i {
     font-size: 1rem;
 }
@@ -31,31 +26,7 @@
 ul.builder-attributes {
     list-style-type: none;
 }
-/*
-.builder-attributes input[type=checkbox] {
-    display:none;
-}
 
-.builder-attributes input[type=checkbox] + label:before {
-    font-family: FontAwesome;
-    display: inline-block;
-}
-
-.builder-attributes input[type=checkbox] + label:before {
-    content: "\f096";
-}
-
-.builder-attributes input[type=checkbox] + label:before {
-    letter-spacing: 0.5rem;
-}
-
-.builder-attributes input[type=checkbox]:checked + label:before {
-    content: "\f046";
-}
-.builder-attributes input[type=checkbox]:checked + label:before {
-    letter-spacing: 0.5rem;
-}
-*/
 li[data-toggle="collapse"] {
     cursor: pointer;
 }

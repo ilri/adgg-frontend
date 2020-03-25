@@ -52,6 +52,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <div class="collapse" id="collapse<?= $name ?>" style="">
                                         <div class="card card-body kt-scroll ps ps--active-y builder-card rounded-0"
                                              style="height: 550px; overflow: hidden;" data-scroll="true">
+                                            <input class="form-control-sm mb-3 search-attributes"
+                                                   data-model="<?= $name ?>" type="text" placeholder="Search attributes"
+                                                   aria-label="Search">
                                             <ul class="builder-attributes pl-0">
                                                 <?php foreach ($attributes as $attr): ?>
                                                     <?= $this->render('partials/_attribute', [
