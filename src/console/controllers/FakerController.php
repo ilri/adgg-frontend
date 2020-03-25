@@ -109,30 +109,6 @@ class FakerController extends Controller
         }
     }
 
-    public function actionUploadJson()
-    {
-        $it = new \RecursiveDirectoryIterator(FileManager::getUploadsDir() . DIRECTORY_SEPARATOR . 'json');
-
-        // Loop through files
-        $n = 1;
-        $country_id = Country::getScalar('id', ['code' => 3]);
-        $model = new OdkJsonQueue(['country_id' => $country_id]);
-        foreach (new \RecursiveIteratorIterator($it) as $file) {
-            if ($file->getExtension() == 'json') {
-                $newModel = clone $model;
-                $newModel->setJsonContent($file);
-                $file_name = $newModel->uuid . '.json';
-                $new_path = $newModel->getDir() . DIRECTORY_SEPARATOR . $file_name;
-                if (copy($file, $new_path)) {
-                    $newModel->file = $file_name;
-                    $newModel->save(false);
-                }
-                $this->stdout("Parsed $n JSON Files: $file\n");
-                $n++;
-            }
-        }
-    }
-
     public function actionResetMilkingModels()
     {
         $condition = '[[event_type]]=:event_type AND [[migration_id]] IS NOT NULL';

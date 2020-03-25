@@ -15,6 +15,7 @@ MyApp.modules.reports = {};
             inputSelectOptions: {},
             generateQueryURL: '',
             saveReportURL: '',
+            searchAttributesSelector: '.search-attributes',
         };
         this.options = $.extend({}, defaultOptions, options || {});
     }
@@ -138,7 +139,7 @@ MyApp.modules.reports = {};
                 selectedFieldLabels = {};
                 // uncheck all previously checked checkboxes,
                 // where data-name is not this field
-                $('label.attribute input[type=checkbox]').not("[data-name='"+name+"']").prop('checked', false);
+                $('label.attribute input[type=checkbox]').not("[data-name='" + name + "']").prop('checked', false);
             }
             // check for duplicates
             var index = selectedFields.indexOf(name);
@@ -249,7 +250,36 @@ MyApp.modules.reports = {};
             $($this.options.orderBySelector).html(options);
         }
 
+        let _searchAttributes = function (e) {
+            let model = $(e).data('model');
+            let inputField = document.querySelector('#collapse' + model + ' .search-attributes');
+            let searchValue = inputField.value.toLowerCase();
+            let attributes = document.querySelectorAll('#collapse' + model + ' ul li label');
+            let relations = document.querySelectorAll('#collapse' + model + ' ul div.collapse');
+
+            for(let i = 0; i < relations.length; i++) {
+                if(searchValue.length > 0 && !(relations[i].classList.contains('show'))) {
+                    relations[i].classList.add('show');
+                } else if(searchValue.length === 0 && relations[i].classList.contains('show')) {
+                    relations[i].classList.remove('show');
+                }
+            }
+
+            for(let i = 0; i < attributes.length; i++) {
+                if(attributes[i].innerText.toLowerCase().indexOf(searchValue) > -1) {
+                    attributes[i].parentElement.style.display = "";
+                } else {
+                    attributes[i].parentElement.style.display = "none";
+                }
+            }
+        }
+
         //on click
+        $($this.options.searchAttributesSelector).on('keyup', function (event) {
+            event.preventDefault();
+            _searchAttributes(this);
+        });
+
         $($this.options.fieldSelector).on('click', function (event) {
             event.preventDefault();
             _populateSelected(this);

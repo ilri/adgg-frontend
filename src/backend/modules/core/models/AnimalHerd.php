@@ -199,7 +199,8 @@ class AnimalHerd extends ActiveRecord implements ActiveSearchInterface, ImportAc
     /**
      * @inheritDoc
      */
-    public function reportBuilderRelations(){
+    public function reportBuilderRelations()
+    {
         return array_merge(['farm'], $this->reportBuilderCommonRelations(), $this->reportBuilderCoreDataRelations());
     }
 }

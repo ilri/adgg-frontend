@@ -21,7 +21,9 @@
         </div>
     </div>
     <div class="mt-4">
-        <button id="askForName" role="button" class="btn btn-primary col-md-10" data-toggle="modal" data-target="#inputName">Generate & Save Report</button>
+        <button id="askForName" role="button" class="btn btn-primary col-md-10" data-toggle="modal"
+                data-target="#inputName">Generate & Save Report
+        </button>
     </div>
     <div class="mt-2">
         <button id="generateQuery" role="button" class="btn btn-generatequery col-md-10">Preview Query</button>
@@ -68,7 +70,9 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button id="saveReport" role="button" class="btn btn-success col-md-10 mx-auto">Generate & Save Report</button>
+                    <button id="saveReport" role="button" class="btn btn-success col-md-10 mx-auto">Generate & Save
+                        Report
+                    </button>
                 </div>
             </div>
         </div>

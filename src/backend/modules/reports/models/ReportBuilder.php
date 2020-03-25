@@ -271,8 +271,8 @@ class ReportBuilder extends Model
         // increment $currentLevel each time this function is called
         $currentLevel++;
         // check if we have reached the maxLevel for nesting the relations, to avoid an infinite loop or deep nesting
-        if($currentLevel <= $maxLevel){
-            foreach ($relations as $relation){
+        if ($currentLevel <= $maxLevel) {
+            foreach ($relations as $relation) {
                 $relationClass = static::getRelationClass($model, $relation);
                 $tree['level'] = $currentLevel;
                 $tree['relations'][$relation] = static::buildModelTree($relationClass, $currentLevel);
