@@ -139,7 +139,7 @@ MyApp.modules.reports = {};
                 selectedFieldLabels = {};
                 // uncheck all previously checked checkboxes,
                 // where data-name is not this field
-                $('label.attribute input[type=checkbox]').not("[data-name='"+name+"']").prop('checked', false);
+                $('label.attribute input[type=checkbox]').not("[data-name='" + name + "']").prop('checked', false);
             }
             // check for duplicates
             var index = selectedFields.indexOf(name);

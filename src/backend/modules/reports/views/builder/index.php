@@ -16,22 +16,24 @@ $this->title = 'Report Builder';
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
-<div class="row">
-    <div class="col-md-12">
-        <div class="well">
-            <h3 class="text-muted"><?= Lang::t('REPORT BUILDER') ?>
-                : <?= strtoupper(Country::getScalar('name', ['id' => $country_id])) ?></h3>
-            <hr>
-            <form method="POST" id="report-builder-form">
-                <input type="hidden" name="<?= Yii::$app->request->csrfParam ?>"
-                       value="<?= Yii::$app->request->csrfToken ?>"/>
-                <input type="hidden" name="model" id="model"/>
-                <input type="hidden" name="country_id" id="country_id" value="<?= $country_id ?>"/>
-                <div class="row" id="report-builder-container">
-                    <div class="panel panel-default bs-item z-depth-2 col-md-3">
-                        <div class="panel-body">
-                            <?php
-                            foreach ($models as $name => $modelData) {
+    <div class="row">
+        <div class="col-md-12">
+            <div class="well">
+                <h3 class="text-muted"><?= Lang::t('REPORT BUILDER') ?>
+                    : <?= strtoupper(Country::getScalar('name', ['id' => $country_id])) ?></h3>
+                <hr>
+                <form method="POST" id="report-builder-form">
+                    <input type="hidden" name="<?= Yii::$app->request->csrfParam ?>"
+                           value="<?= Yii::$app->request->csrfToken ?>"/>
+                    <input type="hidden" name="model" id="model"/>
+                    <input type="hidden" name="country_id" id="country_id" value="<?= $country_id ?>"/>
+                    <div class="row" id="report-builder-container">
+                        <div class="panel panel-default bs-item z-depth-2 col-md-3">
+                            <div class="panel-body">
+                                <?php
+                                foreach ($models
+
+                                as $name => $modelData) {
                                 /* @var $class ActiveRecord */
                                 $class = new $modelData['class']();
                                 $title = $modelData['title'] ?? $name;
@@ -49,108 +51,112 @@ $this->params['breadcrumbs'][] = $this->title;
                                         <span><i class="fas fa-chevron-right"></i></span>
                                     </div>
                                 </div>
-                                <div class="collapse" id="collapse<?= $name ?>" style="">
-                                    <div class="card card-body kt-scroll ps ps--active-y builder-card rounded-0"
-                                         style="height: 550px; overflow: hidden;" data-scroll="true">
-                                        <input class="form-control-sm mb-3 search-attributes" data-model="<?= $name ?>" type="text" placeholder="Search attributes" aria-label="Search">
-                                        <ul class="builder-attributes pl-0">
-                                            <?php foreach ($attributes as $attr): ?>
-                                                <?= $this->render('partials/_attribute', [
-                                                        'attribute' => $attr,
-                                                        'attributeTitle' => $class->getAttributeLabel($attr),
-                                                        'attributeName' => $attr,
-                                                        'attributeLabel' => $class->getAttributeLabel($attr),
-                                                        'class' => $class,
-                                                        'modelName' => $name,
-                                                        'parentModelName' => $name,
-                                                        'parentModelTitle' => $title,
-                                                    ])
+                            </div>
+                            <div class="collapse" id="collapse<?= $name ?>" style="">
+                                <div class="card card-body kt-scroll ps ps--active-y builder-card rounded-0"
+                                     style="height: 550px; overflow: hidden;" data-scroll="true">
+                                    <input class="form-control-sm mb-3 search-attributes" data-model="<?= $name ?>"
+                                           type="text" placeholder="Search attributes" aria-label="Search">
+                                    <ul class="builder-attributes pl-0">
+                                        <?php foreach ($attributes as $attr): ?>
+                                            <?= $this->render('partials/_attribute', [
+                                                'attribute' => $attr,
+                                                'attributeTitle' => $class->getAttributeLabel($attr),
+                                                'attributeName' => $attr,
+                                                'attributeLabel' => $class->getAttributeLabel($attr),
+                                                'class' => $class,
+                                                'modelName' => $name,
+                                                'parentModelName' => $name,
+                                                'parentModelTitle' => $title,
+                                            ])
+                                            ?>
+                                        <?php endforeach; ?>
+                                        <?php
+                                        if (count($modelData['relations'])) {
+                                            $relations = $modelData['relations'];
+                                            $sub_relations = $modelData['sub_relations'] ?? [];
+                                            foreach ($relations as $relationName) {
+                                                $relation = $class->getRelation($relationName);
+                                                /* @var $relationModelClass ActiveRecord */
+                                                $relationModelClass = new $relation->modelClass();
+                                                //$class = $relationModelClass;
+                                                $relationAttributes = $relationModelClass->reportBuilderFields();
+                                                $className = $relationModelClass::shortClassName();
+
                                                 ?>
-                                            <?php endforeach; ?>
-                                            <?php
-                                            if (count($modelData['relations'])) {
-                                                $relations = $modelData['relations'];
-                                                $sub_relations = $modelData['sub_relations'] ?? [];
-                                                foreach ($relations as $relationName) {
-                                                    $relation = $class->getRelation($relationName);
-                                                    /* @var $relationModelClass ActiveRecord */
-                                                    $relationModelClass = new $relation->modelClass();
-                                                    //$class = $relationModelClass;
-                                                    $relationAttributes = $relationModelClass->reportBuilderFields();
-                                                    $className = $relationModelClass::shortClassName();
+                                                <li data-toggle="collapse"
+                                                    data-target="#collapse<?= $relationName ?>"
+                                                    aria-expanded="false"
+                                                    aria-controls="collapse<?= $relationName ?>">
+                                                    > <?= $relationName ?></li>
+                                                <div class="collapse" id="collapse<?= $relationName ?>"
+                                                     style="">
+                                                    <ul class="builder-attributes">
+                                                        <?php foreach ($relationAttributes as $attr): ?>
+                                                            <?= $this->render('partials/_attribute', [
+                                                                'attribute' => $attr,
+                                                                'attributeTitle' => $relationName . '.' . $relationModelClass->getAttributeLabel($attr),
+                                                                'attributeName' => $relationName . '.' . $attr,
+                                                                'attributeLabel' => $relationModelClass->getAttributeLabel($attr),
+                                                                'class' => $relationModelClass,
+                                                                'modelName' => $className,
+                                                                'parentModelName' => $name,
+                                                                'parentModelTitle' => $title,
+                                                            ])
+                                                            ?>
 
-                                                    ?>
-                                                    <li data-toggle="collapse"
-                                                        data-target="#collapse<?= $relationName ?>"
-                                                        aria-expanded="false"
-                                                        aria-controls="collapse<?= $relationName ?>">
-                                                        > <?= $relationName ?></li>
-                                                    <div class="collapse" id="collapse<?= $relationName ?>" style="">
-                                                        <ul class="builder-attributes">
-                                                            <?php foreach ($relationAttributes as $attr): ?>
-                                                                <?= $this->render('partials/_attribute', [
-                                                                    'attribute' => $attr,
-                                                                    'attributeTitle' => $relationName . '.' . $relationModelClass->getAttributeLabel($attr),
-                                                                    'attributeName' => $relationName . '.' . $attr,
-                                                                    'attributeLabel' => $relationModelClass->getAttributeLabel($attr),
-                                                                    'class' => $relationModelClass,
-                                                                    'modelName' => $className,
-                                                                    'parentModelName' => $name,
-                                                                    'parentModelTitle' => $title,
-                                                                ])
-                                                                ?>
+                                                        <?php endforeach; ?>
+                                                        <?php
+                                                        if (count($sub_relations)) {
+                                                            foreach ($sub_relations as $sub_relation => $on_options) {
+                                                                $main = explode('.', $sub_relation)[0];
+                                                                $sub = explode('.', $sub_relation)[1];
+                                                                $sub_id = $main . '_' . $sub;
+                                                                if ($main == $relationName) {
+                                                                    $relation = $relationModelClass->getRelation($sub);
+                                                                    $relationClass = new $relation->modelClass();
+                                                                    $className = $relationModelClass::shortClassName();
+                                                                    $relationAttributes = $relationClass->reportBuilderFields();
+                                                                    ?>
+                                                                    <li data-toggle="collapse"
+                                                                        data-target="#collapse<?= $sub_id ?>"
+                                                                        aria-expanded="false"
+                                                                        aria-controls="collapse<?= $sub_id ?>">
+                                                                        > <?= $sub ?></li>
+                                                                    <div class="collapse"
+                                                                         id="collapse<?= $sub_id ?>" style="">
+                                                                        <ul class="builder-attributes">
+                                                                            <?php foreach ($relationAttributes as $attr): ?>
+                                                                                <?= $this->render('partials/_attribute', [
+                                                                                    'attribute' => $attr,
+                                                                                    'attributeTitle' => $main . '.' . $sub . '.' . $relationClass->getAttributeLabel($attr),
+                                                                                    'attributeName' => $main . '.' . $sub . '.' . $attr,
+                                                                                    'attributeLabel' => $relationClass->getAttributeLabel($attr),
+                                                                                    'class' => $relationClass,
+                                                                                    'modelName' => $className,
+                                                                                    'parentModelName' => $name,
+                                                                                    'parentModelTitle' => $title,
+                                                                                ])
+                                                                                ?>
+                                                                            <?php endforeach; ?>
+                                                                        </ul>
+                                                                    </div>
+                                                                    <?php
 
-                                                            <?php endforeach; ?>
-                                                            <?php
-                                                            if (count($sub_relations)) {
-                                                                foreach ($sub_relations as $sub_relation => $on_options) {
-                                                                    $main = explode('.', $sub_relation)[0];
-                                                                    $sub = explode('.', $sub_relation)[1];
-                                                                    $sub_id = $main . '_' . $sub;
-                                                                    if ($main == $relationName) {
-                                                                        $relation = $relationModelClass->getRelation($sub);
-                                                                        $relationClass = new $relation->modelClass();
-                                                                        $className = $relationModelClass::shortClassName();
-                                                                        $relationAttributes = $relationClass->reportBuilderFields();
-                                                                        ?>
-                                                                        <li data-toggle="collapse"
-                                                                            data-target="#collapse<?= $sub_id ?>"
-                                                                            aria-expanded="false"
-                                                                            aria-controls="collapse<?= $sub_id ?>">
-                                                                            > <?= $sub ?></li>
-                                                                        <div class="collapse" id="collapse<?= $sub_id ?>" style="">
-                                                                            <ul class="builder-attributes">
-                                                                                <?php foreach ($relationAttributes as $attr): ?>
-                                                                                    <?= $this->render('partials/_attribute', [
-                                                                                        'attribute' => $attr,
-                                                                                        'attributeTitle' => $main . '.' . $sub . '.' . $relationClass->getAttributeLabel($attr),
-                                                                                        'attributeName' => $main . '.' . $sub . '.' . $attr,
-                                                                                        'attributeLabel' => $relationClass->getAttributeLabel($attr),
-                                                                                        'class' => $relationClass,
-                                                                                        'modelName' => $className,
-                                                                                        'parentModelName' => $name,
-                                                                                        'parentModelTitle' => $title,
-                                                                                    ])
-                                                                                    ?>
-                                                                                <?php endforeach; ?>
-                                                                            </ul>
-                                                                        </div>
-                                                                        <?php
-
-                                                                    }
                                                                 }
                                                             }
-                                                            ?>
-                                                        </ul>
-                                                    </div>
-                                                    <?php
-                                                }
+                                                        }
+                                                        ?>
+                                                    </ul>
+                                                </div>
+                                                <?php
                                             }
-                                            ?>
-                                        </ul>
-                                    </div>
+                                        }
+                                        ?>
+                                    </ul>
                                 </div>
-                                <?php
+                            </div>
+                            <?php
                             }
                             ?>
                         </div>
@@ -168,11 +174,11 @@ $this->params['breadcrumbs'][] = $this->title;
                         </div>
                     </div>
 
-                </div>
+            </div>
             </form>
         </div>
     </div>
-</div>
+    </div>
 <?php
 $options = [
     'inputSelectOptions' => ReportBuilder::fieldConditionOptions(),

@@ -28,7 +28,7 @@ $attrTitle = $class->getAttributeLabel($attribute);
            data-content="<?= Html::encode($class->getFieldTooltipContent($attribute)) ?>"
            data-html="true"
            data-placement="left">
-        <input type="checkbox" data-name="<?= $attributeName ?>" value="<?= $attributeName ?>" >
+        <input type="checkbox" data-name="<?= $attributeName ?>" value="<?= $attributeName ?>">
         <?= $attributeName ?>
         <span></span>
     </label>
