@@ -82,5 +82,5 @@ $controller = Yii::$app->controller;
 
     <?php $this->endBody() ?>
     </body>
-    </html>
+</html>
 <?php $this->endPage() ?>

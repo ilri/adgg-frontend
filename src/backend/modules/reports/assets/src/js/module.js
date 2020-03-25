@@ -257,16 +257,16 @@ MyApp.modules.reports = {};
             let attributes = document.querySelectorAll('#collapse' + model + ' ul li label');
             let relations = document.querySelectorAll('#collapse' + model + ' ul div.collapse');
 
-            for(let i = 0; i < relations.length; i++) {
-                if(searchValue.length > 0 && !(relations[i].classList.contains('show'))) {
+            for (let i = 0; i < relations.length; i++) {
+                if (searchValue.length > 0 && !(relations[i].classList.contains('show'))) {
                     relations[i].classList.add('show');
-                } else if(searchValue.length === 0 && relations[i].classList.contains('show')) {
+                } else if (searchValue.length === 0 && relations[i].classList.contains('show')) {
                     relations[i].classList.remove('show');
                 }
             }
 
-            for(let i = 0; i < attributes.length; i++) {
-                if(attributes[i].innerText.toLowerCase().indexOf(searchValue) > -1) {
+            for (let i = 0; i < attributes.length; i++) {
+                if (attributes[i].innerText.toLowerCase().indexOf(searchValue) > -1) {
                     attributes[i].parentElement.style.display = "";
                 } else {
                     attributes[i].parentElement.style.display = "none";
