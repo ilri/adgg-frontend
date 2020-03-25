@@ -145,6 +145,18 @@ class FakerController extends Controller
 
     public function actionRandom()
     {
-        //Cows::updateSiresAndDams();
+        $condition = ['country_id' => null];
+        $params = [];
+        $query = OdkJsonQueue::find()->andWhere($condition, $params);
+        $n = 1;
+        /* @var $models OdkJsonQueue[] */
+        $className = OdkJsonQueue::class;
+        foreach ($query->batch() as $i => $models) {
+            foreach ($models as $model) {
+                $model->save(false);
+                $this->stdout("{$className}: Updated {$n} records\n");
+                $n++;
+            }
+        }
     }
 }
