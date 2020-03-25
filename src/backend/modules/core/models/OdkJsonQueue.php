@@ -89,7 +89,7 @@ class OdkJsonQueue extends ActiveRecord implements ActiveSearchInterface
                 $this->form_data = json_decode($this->form_data, true);
             }
             $this->form_uuid = $this->form_data['_uuid'] ?? null;
-
+            $this->setCountryId();
 
             return true;
         }

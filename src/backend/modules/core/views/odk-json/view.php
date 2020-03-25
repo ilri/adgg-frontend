@@ -9,7 +9,7 @@ use yii\widgets\DetailView;
 /* @var $model backend\modules\core\models\OdkJsonQueue */
 
 $this->title = Lang::t('JSON File Details');
-$this->params['breadcrumbs'][] = ['label' => 'ODK-JSON-Files', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'ODK-JSON-Files', 'url' => ['index', 'country_id' => $model->country_id]];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
     <style type="text/css">
