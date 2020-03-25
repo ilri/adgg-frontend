@@ -61,14 +61,20 @@ $controller = Yii::$app->controller;
             </div>
             <!--end::Item-->
             <!--begin::Item-->
-            <div class="kt-grid__item" >
+            <div class="kt-grid__item">
                 <div class="kt-login-v2__footer">
                     <div class="kt-login-v2__link">
-                        <a href="https://africadgg.wordpress.com/category/adgg/" target="_blank" class="kt-link kt-font-brand" style="color: #004730;">Website</a>
+                        <a href="https://africadgg.wordpress.com/category/adgg/" target="_blank"
+                           class="kt-link kt-font-brand" style="color: #004730;">Website</a>
                     </div>
                     <div class="kt-login-v2__info">
-                        <a href="#"
-                           class="kt-link" style="color: white;">&copy; <?= date('Y') ?> <?= SystemSettings::getCompanyName() ?></a>
+
+                        <span style="color: white;">
+                           <?= \backend\modules\conf\settings\SystemSettings::getCompanyName() ?>
+                          | <?= date('Y'); ?>&nbsp;&copy&nbsp;
+                          - Developed By <a href="https://competamillman.co.ke/"
+                                            target="_blank"><?= \common\helpers\Lang::t('Competa Millman') ?></a>
+                       </span>
                     </div>
                 </div>
             </div>
@@ -78,5 +84,5 @@ $controller = Yii::$app->controller;
 
     <?php $this->endBody() ?>
     </body>
-    </html>
+</html>
 <?php $this->endPage() ?>
