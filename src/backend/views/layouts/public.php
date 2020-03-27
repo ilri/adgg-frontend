@@ -25,9 +25,8 @@ $controller = Yii::$app->controller;
     <?php $this->beginBody() ?>
     <!-- begin:: Page -->
     <div class="kt-grid kt-grid--ver kt-grid--root"
-         style="background-image: linear-gradient(to bottom, rgba(242,243,248, 0.8), rgba(242,243,248, -0.3)), url('<?= Yii::$app->view->theme->baseUrl ?>/assets/img/backImage.jpg');background-size: cover; background-position: center center;">
-        <div class="kt-grid__item   kt-grid__item--fluid kt-grid  kt-grid kt-grid--hor kt-login-v2" id="kt_login_v2"
-             style="background-image: linear-gradient(to top, rgba(242,243,248, 0.4), rgba(242,243,248, -0.3));">
+         style="background-image: linear-gradient(to bottom, rgba(242,243,248, 0.8), rgba(242,243,248, -0.3)), url('<?= Yii::$app->view->theme->baseUrl ?>/assets/img/backImage1.jpg');background-size: cover; background-position: center center;">
+        <div class="kt-grid__item   kt-grid__item--fluid kt-grid  kt-grid kt-grid--hor kt-login-v2" id="kt_login_v2">
             <!--begin::Item-->
             <div class="kt-grid__item  kt-grid--hor">
                 <!--begin::Heade-->
@@ -40,7 +39,7 @@ $controller = Yii::$app->controller;
                     </div>
                     <div class="kt-login-v2__signup">
                         <a href="https://africadgg.wordpress.com/category/adgg/" target="_blank"
-                           class="kt-link kt-font-brand" style="color: #782c56 !important;">Move to ADGG Website</a>
+                           class="kt-link kt-font-brand" style="color: #004730;">Move to ADGG Website</a>
                     </div>
                 </div>
                 <!--begin::Head-->
@@ -67,11 +66,11 @@ $controller = Yii::$app->controller;
                            class="kt-link kt-font-brand" style="color: #004730;">Website</a>
                     </div>
                     <div class="kt-login-v2__info">
-                        <span style="color: white;">
+                        <span style="color: white; font-size: medium;">
                            <?= SystemSettings::getCompanyName() ?>
                           | <?= date('Y'); ?>&nbsp;&copy&nbsp;
                           - Developed By <a href="https://competamillman.co.ke/"
-                                            target="_blank"><?= \common\helpers\Lang::t('Competa Millman') ?></a>
+                                            target="_blank" style="color: #004730; font-weight: bold;"><?= \common\helpers\Lang::t('Competa Millman') ?></a>
                        </span>
                     </div>
                 </div>
