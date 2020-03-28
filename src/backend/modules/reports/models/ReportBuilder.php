@@ -260,25 +260,110 @@ class ReportBuilder extends Model
      * @param int $maxLevel
      * @return array
      */
-    public static function buildModelTree(ActiveRecord $model, $currentLevel = 0, $maxLevel = 2)
+    public static function buildModelTree(ActiveRecord $model, $currentLevel = 0, $maxLevel = 2, $parent = null, $isRelation = false, $relationName = null)
     {
+        // increment $currentLevel each time this function is called
+        $currentLevel++;
         /* @var $model ActiveRecord */
         $attributes = $model->reportBuilderFields();
         $relations = $model->reportBuilderRelations();
+        $name = $model::shortClassName();
         $tree = [];
+        $tree['parent'] = $parent;
+        $tree['level'] = $currentLevel;
+        $tree['is_relation'] = $isRelation;
+        $tree['relation_name'] = $relationName;
+        /*
+        foreach ($attributes as $attribute){
+            //$level = $currentLevel;
+            $parentToArray = explode('.', $parent);
+            //$parentToArray = [$parent, $relationName];
+            $tree['parents'] = $parentToArray;
+            if($currentLevel == 2){
+                $tree['selected_parents'] = array_slice($parentToArray, -1, 1);
+            }
+            elseif($currentLevel > 2) {
+                // 3-1 = 2, get the second item in parents
+                $toget = $currentLevel - 1;
+                $filtered = array_merge(array_slice($parentToArray, -$toget, $toget), array_slice($parentToArray, -1, 1));
+                $tree['selected_parents'] = array_unique($filtered);
+            }else {
+
+            }
+
+            $tree['attributes'][] = $parent !== null ? $parent . '.' . $attribute : $attribute;
+        }
+        */
         $tree['attributes'] = $attributes;
-        // build attribute tree for each relation, recursively...
-        // increment $currentLevel each time this function is called
-        $currentLevel++;
-        // check if we have reached the maxLevel for nesting the relations, to avoid an infinite loop or deep nesting
+        //$parent = null;
+        // check if we have reached the maxLevel for nesting the relations, to avoid an infinite loop or deep
         if ($currentLevel <= $maxLevel) {
+            // build attribute tree for each relation, recursively...
             foreach ($relations as $relation) {
                 $relationClass = static::getRelationClass($model, $relation);
+                $parent = $parent !== null ? $parent . '.' .$relation : $relation;
+                //$parent = $relationName;
+                //$parent = $relation;
                 $tree['level'] = $currentLevel;
-                $tree['relations'][$relation] = static::buildModelTree($relationClass, $currentLevel);
+                $tree['relations'][$relation] = static::buildModelTree($relationClass, $currentLevel, $maxLevel, $parent,true, $relation);
             }
         }
         return $tree;
+    }
+
+    public static function buildAttributesHTML(array $attributes){
+        $html = '';
+    }
+
+    public static function renderReportModelHTML(string $reportModel){
+        $modelOptions = static::reportableModels()[$reportModel];
+        /* @var $class ActiveRecord */
+        $class = new $modelOptions['class']();
+        //$title = $modelOptions['title'] ?? $reportModel;
+        $modelOptions['name'] = $reportModel;
+        $modelOptions['currentLevel'] = 0;
+        $modelOptions['maxLevel'] = 1;
+        $html = '';
+        $html .= self::renderModelHTML($class, $modelOptions);
+        return $html;
+    }
+
+    public static function renderModelHTML(ActiveRecord $model, array $reportModelOptions, $parents = [], $is_relation = false){
+        $name = $reportModelOptions['name'];
+        $title = $reportModelOptions['title'] ?? $reportModelOptions['name'];
+        $tree = static::buildModelTree($model, $reportModelOptions['currentLevel'], $reportModelOptions['maxLevel']);
+        $html = '';
+        //$html .= static::buildAttributesHTML($tree['attributes']);
+        foreach ($tree['attributes'] as $attribute){
+            // check how many parents this model has so that we can appropriately name the attributes
+            $html .= \Yii::$app->controller->renderPartial('partials/_attribute', [
+                'attribute' => $attribute,
+                'attributeTitle' => count($parents) ? (implode('.', $parents) . ' . '. $model->getAttributeLabel($attribute)) : $model->getAttributeLabel($attribute),
+                'attributeName' => count($parents) ? (implode('.', $parents) . ' . '. $attribute) : $attribute,
+                'attributeLabel' => $model->getAttributeLabel($attribute),
+                'class' => $model,
+                'modelName' => $name,
+                'parentModelName' => $name,
+                'parentModelTitle' => $title,
+            ]);
+        }
+        if(array_key_exists('relations', $tree)){
+            foreach ($tree['relations'] as $relation => $attrs){
+                $relationName = $relation;
+                $html .= '<li data-toggle="collapse"';
+                $html .= '   data-target="#collapse'.$relationName .'"';
+                $html .= '  aria-expanded="false"';
+                $html .= '  aria-controls="collapse'.$relationName .'">';
+                $html .= '  > '.$relationName .'</li>';
+
+                $relationClass = static::getRelationClass($model, $relation);
+                // set all the parents of this relation and use it when determining the attribute names to display
+                $rparents[] = $relationName;
+                $html .= static::renderModelHTML($relationClass, $reportModelOptions, $rparents, true);
+            }
+        }
+        return $html;
+
     }
 
     /**

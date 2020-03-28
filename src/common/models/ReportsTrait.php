@@ -84,8 +84,6 @@ trait ReportsTrait
     /**
      * @param string $field
      * @return string
-     * TODO: define some generic text tooltips in $this->attributeHints() method of each model
-     * and fetch with $this->getAttributeHint($attribute) method
      */
     public function getFieldTooltipContent(string $field){
         if(array_key_exists($field, $this->reportBuilderFieldsMapping())){
@@ -96,6 +94,19 @@ trait ReportsTrait
             }
             return $tooltip;
         }
+        if($this->hasMethod('isAdditionalAttribute')){
+            if($this->isAdditionalAttribute($field)){
+                if ($this->isSingleSelectAttribute($field) || $this->isMultiSelectAttribute($field)) {
+                    $listTypeIds = $this->getAdditionalAttributesListTypeIds();
+                    $listTypeId = $listTypeIds[$field] ?? null;
+                    if (null === $listTypeId) {
+                        return $this->getAttributeLabel($field);
+                    }
+                    return static::buildChoicesTooltip($listTypeId);
+                }
+            }
+        }
+
         return $this->getAttributeLabel($field);
     }
 
