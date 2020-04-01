@@ -43,7 +43,6 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
     const TYPE_ANIMAL_EVENT_PD = 34;
     const TYPE_ANIMAL_EVENT_WEIGHT = 35;
     const TYPE_ANIMAL_EVENT_HEALTH = 36;
-    const TYPE_ANIMAL_EVENT_FEEDING = 37;
     const TYPE_ANIMAL_EVENT_EXITS = 38;
     const TYPE_ORGANIZATION_REF_UNITS = 40;
     const TYPE_USERS = 60;
@@ -176,8 +175,6 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
                 return 'Weight';
             case self::TYPE_ANIMAL_EVENT_HEALTH:
                 return 'Health';
-            case self::TYPE_ANIMAL_EVENT_FEEDING:
-                return 'Feeding';
             case self::TYPE_ANIMAL_EVENT_EXITS:
                 return 'Exits';
             case self::TYPE_ORGANIZATION_REF_UNITS:
@@ -207,7 +204,6 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
             self::TYPE_ANIMAL_EVENT_PD => static::decodeType(self::TYPE_ANIMAL_EVENT_PD),
             self::TYPE_ANIMAL_EVENT_WEIGHT => static::decodeType(self::TYPE_ANIMAL_EVENT_WEIGHT),
             self::TYPE_ANIMAL_EVENT_HEALTH => static::decodeType(self::TYPE_ANIMAL_EVENT_HEALTH),
-            self::TYPE_ANIMAL_EVENT_FEEDING => static::decodeType(self::TYPE_ANIMAL_EVENT_FEEDING),
             self::TYPE_ANIMAL_EVENT_EXITS => static::decodeType(self::TYPE_ANIMAL_EVENT_EXITS),
             self::TYPE_ORGANIZATION_REF_UNITS => static::decodeType(self::TYPE_ORGANIZATION_REF_UNITS),
             self::TYPE_USERS => static::decodeType(self::TYPE_USERS),
