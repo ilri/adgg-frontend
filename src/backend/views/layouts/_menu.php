@@ -65,7 +65,7 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
             <?php endif; ?>
             <?php
             $eventControllers = ['core/animal-event', 'core/calving-event', 'core/milking-event', 'core/insemination-event', 'core/pd-event',
-                'core/synchronization-event', 'core/weight-event', 'core/health-event', 'core/feeding-event', 'core/exits-event',
+                'core/synchronization-event', 'core/weight-event', 'core/health-event', 'core/exits-event',
             ];
             $animalEventsActive = in_array(Yii::$app->controller->uniqueId, $eventControllers);
             ?>

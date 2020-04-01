@@ -48,8 +48,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         $url = 'weight-event/index';
                     } elseif ($key == AnimalEvent::EVENT_TYPE_HEALTH) {
                         $url = 'health-event/index';
-                    } elseif ($key == AnimalEvent::EVENT_TYPE_FEEDING) {
-                        $url = 'feeding-event/index';
                     } elseif ($key == AnimalEvent::EVENT_TYPE_EXITS) {
                         $url = 'exit-event/index';
                     }
