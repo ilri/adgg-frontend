@@ -16,7 +16,7 @@ trait AnimalEventValidators
 {
     public function validateCalvingDate($attribute, $params)
     {
-        if ($this->event_type == AnimalEvent::EVENT_TYPE_CALVING || $this->hasErrors()) {
+        if ($this->event_type !== AnimalEvent::EVENT_TYPE_CALVING || $this->hasErrors()) {
             return false;
         }
         if (!empty($this->{$attribute})) {
@@ -38,7 +38,7 @@ trait AnimalEventValidators
 
     public function validateMilkingDate($attribute, $params)
     {
-        if ($this->event_type != AnimalEvent::EVENT_TYPE_MILKING || $this->hasErrors()) {
+        if ($this->event_type !== AnimalEvent::EVENT_TYPE_MILKING || $this->hasErrors()) {
             return;
         }
         if (!empty($this->{$attribute})) {
