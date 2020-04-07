@@ -30,6 +30,7 @@ use kartik\mpdf\Pdf;
  * @property string $updated_at
  * @property integer $updated_by
  * @property integer $is_active
+ * @property  integer $is_for_android
  *
  * @property HelpModules $module
  * @property UserLevels $userLevel
@@ -55,7 +56,7 @@ class HelpContent extends ActiveRecord implements ActiveSearchInterface
     {
         return [
             [['module_id', 'name', 'content'], 'required'],
-            [['module_id', 'user_level_id', 'is_active',], 'integer'],
+            [['module_id', 'user_level_id', 'is_active', 'is_for_android'], 'integer'],
             [['content'], 'string'],
             [['name'], 'string', 'max' => 255],
             [['slug'], 'string', 'max' => 128],
@@ -82,6 +83,7 @@ class HelpContent extends ActiveRecord implements ActiveSearchInterface
             'updated_at' => 'Updated At',
             'updated_by' => 'Updated By',
             'is_active' => 'Active',
+            'is_for_android' => 'Is For Android',
         ];
     }
 
@@ -95,6 +97,7 @@ class HelpContent extends ActiveRecord implements ActiveSearchInterface
             'name',
             'module_id',
             'user_level_id',
+            'is_for_android'
         ];
     }
 

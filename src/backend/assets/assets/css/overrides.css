@@ -21,7 +21,14 @@ body {
     -webkit-box-shadow: 0 1px 9px -3px rgba(0, 0, 0, 0.1);
     box-shadow: 0 1px 9px -3px rgba(0, 0, 0, 0.1);
 }
-
+.kt-header-mobile__logo img{
+    height: -webkit-fill-available;
+}
+@media (max-width: 1024px) {
+    #kt_header_mobile_toggler{
+        visibility: hidden;
+    }
+}
 .kt-subheader {
     padding: 10px 25px;
 }

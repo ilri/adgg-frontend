@@ -18,6 +18,7 @@ use common\models\ActiveSearchTrait;
  * @property string $updated_at
  * @property integer $updated_by
  * @property integer $is_active
+ * @property integer $is_for_android
  *
  * @property HelpContent[] $helpContents
  */
@@ -42,7 +43,7 @@ class HelpModules extends ActiveRecord implements ActiveSearchInterface
     {
         return [
             [['name'], 'required'],
-            [['is_active'], 'integer'],
+            [['is_active', 'is_for_android'], 'integer'],
             [['resource_name'], 'string', 'max' => 50],
             [['name', 'slug'], 'string', 'max' => 255],
             [['slug', 'name'], 'unique'],
@@ -65,6 +66,7 @@ class HelpModules extends ActiveRecord implements ActiveSearchInterface
             'updated_at' => 'Updated At',
             'updated_by' => 'Updated By',
             'is_active' => 'Active',
+            'is_for_android' => 'Is For Android',
         ];
     }
 
@@ -82,7 +84,8 @@ class HelpModules extends ActiveRecord implements ActiveSearchInterface
     public function searchParams()
     {
         return [
-            'name', 'resource_name'
+            'name', 'resource_name',
+            'is_for_android'
         ];
     }
 
