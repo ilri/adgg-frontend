@@ -61,18 +61,20 @@ class HelpContentController extends Controller
         ]);
     }
 
-    public function actionRead($format = null, $module = null, $name = null)
+    public function actionRead($format = null, $module = null, $name = null, $forAndroid = false)
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
         $models = HelpContent::find();
         $models->andFilterWhere(['LIKE', 'name', $name]);
         $models->andFilterWhere(['module_id' => $module]);
-
+        if ($forAndroid == true) {
+            $models->andFilterWhere(['is_for_android' => 1]);
+        }
         if ($format !== null) {
-            $content = $this->renderPartial('read',[
+            $content = $this->renderPartial('read', [
                 'models' => $models->all(),
             ]);
-            switch ($format){
+            switch ($format) {
                 case 'pdf':
                 default:
                     $options = [];
