@@ -31,6 +31,8 @@ class HelpModulesController extends Controller
         ]);
         if ($forAndroid == true) {
             $searchModel->is_for_android = 1;
+        } else {
+            $searchModel->is_for_android = 0;
         }
         return $this->render('index', [
             'searchModel' => $searchModel,
