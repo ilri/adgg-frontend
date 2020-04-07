@@ -40,38 +40,21 @@ class HelpContentController extends Controller
         ]);
     }
 
-    public function actionManual()
+    public function actionManual($forAndroid = false)
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
 
         $searchModel = HelpContent::searchModel(['defaultOrder' => ['id' => SORT_ASC]]);
+        if ($forAndroid == true) {
+            $this->resource = Constants::RES_ANDROID_APP_MANUAL;
+            $searchModel->is_for_android = 1;
+        } else {
+            $searchModel->is_for_android = 0;
+        }
         return $this->render('grid', [
             'searchModel' => $searchModel,
         ]);
     }
-
-    public function actionApiDoc()
-    {
-        $this->resource = Constants::RES_API_DOC;
-        $this->hasPrivilege(Acl::ACTION_VIEW);
-
-        $searchModel = HelpContent::searchModel(['defaultOrder' => ['id' => SORT_ASC]]);
-        return $this->render('grid', [
-            'searchModel' => $searchModel,
-        ]);
-    }
-
-    public function actionDbDoc()
-    {
-        $this->resource = Constants::RES_DB_DOC;
-        $this->hasPrivilege(Acl::ACTION_VIEW);
-
-        $searchModel = HelpContent::searchModel(['defaultOrder' => ['id' => SORT_ASC]]);
-        return $this->render('grid', [
-            'searchModel' => $searchModel,
-        ]);
-    }
-
     public function actionView($id)
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
@@ -80,18 +63,22 @@ class HelpContentController extends Controller
         ]);
     }
 
-    public function actionRead($format = null, $module = null, $name = null)
+    public function actionRead($format = null, $module = null, $name = null, $forAndroid = false)
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
         $models = HelpContent::find();
         $models->andFilterWhere(['LIKE', 'name', $name]);
         $models->andFilterWhere(['module_id' => $module]);
-
+        if ($forAndroid == true) {
+            $models->andFilterWhere(['is_for_android' => 1]);
+        } else {
+            $models->andFilterWhere(['is_for_android' => 0]);
+        }
         if ($format !== null) {
-            $content = $this->renderPartial('read',[
+            $content = $this->renderPartial('read', [
                 'models' => $models->all(),
             ]);
-            switch ($format){
+            switch ($format) {
                 case 'pdf':
                 default:
                     $options = [];

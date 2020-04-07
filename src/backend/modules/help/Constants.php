@@ -14,6 +14,7 @@ class Constants
     const MENU_HELP = "Help";
     const RES_HELP = 'HELP';
     const RES_API_DOC = 'API_DOC';
+    const RES_ANDROID_APP_MANUAL = 'ANDROID_APP_MANUAL';
     const RES_DB_DOC = 'DB_DOC';
 
     const HELP_MODULE_NAME = "Help";

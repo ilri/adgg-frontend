@@ -7,14 +7,24 @@ use common\widgets\grid\GridView;
 use common\helpers\Url;
 
 ?>
+<?php
+$case = Yii::$app->request->get('forAndroid');
+if ($case == true) {
+    $webUrl = ['read', 'forAndroid' => true];
+    $pdfUrl = ['read', 'forAndroid' => true, 'format' => 'pdf'];
+} else {
+    $webUrl = ['read', 'forAndroid' => false];
+    $pdfUrl = ['read', 'forAndroid' => false, 'format' => 'pdf'];
+}
+?>
 <?= GridView::widget([
     'searchModel' => $model,
     'filterModel' => $model,
     'createButton' => ['visible' => Yii::$app->user->canCreate(), 'modal' => false],
     'refreshUrl' => array_merge(['index'], Yii::$app->controller->actionParams),
     'toolbarButtons' => [
-        Yii::$app->user->canView() ? '<a target="_blank" class="btn btn-brand btn-bold btn-upper btn-font-sm btn-space" href="' . Url::to(['read']) . '" data-pjax="0"><i class="far fa-browser"></i> ' . Lang::t('Read on Web') . '</a> ' : '',
-        Yii::$app->user->canView() ? '<a target="_blank" class="btn btn-brand btn-bold btn-upper btn-font-sm btn-space" href="' . Url::to(['read', 'format' => 'pdf']) . '" data-pjax="0"><i class="far fa-file-pdf"></i> ' . Lang::t('Read as PDF') . '</a> ' : '',
+        Yii::$app->user->canView() ? '<a target="_blank" class="btn btn-brand btn-bold btn-upper btn-font-sm btn-space" href="' . Url::to($webUrl) . '" data-pjax="0"><i class="far fa-browser"></i> ' . Lang::t('Read on Web') . '</a> ' : '',
+        Yii::$app->user->canView() ? '<a target="_blank" class="btn btn-brand btn-bold btn-upper btn-font-sm btn-space" href="' . Url::to($pdfUrl) . '" data-pjax="0"><i class="far fa-file-pdf"></i> ' . Lang::t('Read as PDF') . '</a> ' : '',
     ],
     'showExportButton' => false,
     'rowOptions' => function (HelpContent $model) {

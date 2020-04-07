@@ -432,12 +432,7 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
                     <i class="kt-menu__section-icon flaticon-more-v2"></i>
                 </li>
                 <li class="kt-menu__item kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'help/help-content' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
-                    <?php if (Session::isPrivilegedAdmin()): ?>
-                        <?php $url = Url::to(['/help/help-content/index']) ?>
-                    <?php else: ?>
-                        <?php $url = Url::to(['/help/help-content/read']) ?>
-                    <?php endif; ?>
-                    <a href="<?= $url ?>" class="kt-menu__link">
+                    <a href="<?= Url::to(['/help/help-content/index']) ?>" class="kt-menu__link">
                         <i class="kt-menu__link-icon far fa-info-circle"></i>
                         <span class="kt-menu__link-text">HELP CONTENT</span>
                     </a>
