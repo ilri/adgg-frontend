@@ -48,6 +48,8 @@ class HelpContentController extends Controller
         if ($forAndroid == true) {
             $this->resource = Constants::RES_ANDROID_APP_MANUAL;
             $searchModel->is_for_android = 1;
+        } else {
+            $searchModel->is_for_android = 0;
         }
         return $this->render('grid', [
             'searchModel' => $searchModel,
@@ -69,6 +71,8 @@ class HelpContentController extends Controller
         $models->andFilterWhere(['module_id' => $module]);
         if ($forAndroid == true) {
             $models->andFilterWhere(['is_for_android' => 1]);
+        } else {
+            $models->andFilterWhere(['is_for_android' => 0]);
         }
         if ($format !== null) {
             $content = $this->renderPartial('read', [
