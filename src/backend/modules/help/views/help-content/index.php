@@ -30,16 +30,33 @@ $this->params['breadcrumbs'][] = $this->title;
                     </div>
                     <!--end::Portlet-->
                 </div>
+                <?php if (Yii::$app->user->canView(Constants::RES_ANDROID_APP_MANUAL)): ?>
+                    <div class="col-lg-4 col-xl-4 order-lg-2 order-xl-2">
+                        <!--begin::Portlet-->
+                        <div class="kt-portlet">
+                            <a href="<?= Url::to(['manual', 'forAndroid' => true]) ?>"
+                               class="kt-iconbox kt-iconbox--active">
+                                <div class="kt-iconbox__icon">
+                                    <div class="kt-iconbox__icon-bg"></div>
+                                    <i class="far fa-mobile-alt"></i>
+                                </div>
+                                <div class="kt-iconbox__title"><?= Lang::t('Android App Manual'); ?></div>
+                            </a>
+                        </div>
+                        <!--end::Portlet-->
+                    </div>
+                <?php endif; ?>
                 <?php if (Yii::$app->user->canView(Constants::RES_API_DOC)): ?>
-                <div class="col-lg-4 col-xl-4 order-lg-2 order-xl-2">
-                    <!--begin::Portlet-->
-                    <div class="kt-portlet">
-                        <a href="http://www.adgg.ilri.org/api-doc" class="kt-iconbox kt-iconbox--active" target="_blank">
-                            <div class="kt-iconbox__icon">
-                                <div class="kt-iconbox__icon-bg"></div>
-                                <i class="far fa-code"></i>
-                            </div>
-                            <div class="kt-iconbox__title"><?= Lang::t('API Documentation'); ?></div>
+                    <div class="col-lg-4 col-xl-4 order-lg-2 order-xl-2">
+                        <!--begin::Portlet-->
+                        <div class="kt-portlet">
+                            <a href="http://www.adgg.ilri.org/api-doc" class="kt-iconbox kt-iconbox--active"
+                               target="_blank">
+                                <div class="kt-iconbox__icon">
+                                    <div class="kt-iconbox__icon-bg"></div>
+                                    <i class="far fa-code"></i>
+                                </div>
+                                <div class="kt-iconbox__title"><?= Lang::t('API Documentation'); ?></div>
                         </a>
                     </div>
                     <!--end::Portlet-->

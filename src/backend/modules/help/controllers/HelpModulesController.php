@@ -21,17 +21,17 @@ class HelpModulesController extends Controller
         parent::init();
     }
 
-    /**
-     * Lists all HelpModules models.
-     * @return mixed
-     */
-    public function actionIndex()
+
+    public function actionIndex($forAndroid = false)
     {
         $searchModel = HelpModules::searchModel([
             'defaultOrder' => ['id' => SORT_ASC],
             // skip the default one from the results
             'condition' => ['<>', 'slug', Help::DEFAULT_SLUG]
         ]);
+        if ($forAndroid == true) {
+            $searchModel->is_for_android = 1;
+        }
         return $this->render('index', [
             'searchModel' => $searchModel,
         ]);

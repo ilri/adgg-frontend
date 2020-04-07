@@ -1,5 +1,6 @@
 <?php
 
+use backend\modules\auth\models\UserLevels;
 use backend\modules\help\models\HelpContent;
 use backend\modules\help\models\HelpSection;
 use common\helpers\Lang;
@@ -30,7 +31,7 @@ use yii\widgets\ActiveForm;
 <?= $form->field($model, 'user_level_id')->widget(\common\widgets\select2\Select2::class, [
     'name' => 'user_level_id',
     'value' => $model->user_level_id,
-    'data' => \backend\modules\auth\models\UserLevels::getListData('id', 'name'),
+    'data' => UserLevels::getListData('id', 'name'),
     'options' => [
         'placeholder' => "---Select User Level---",
         'class' => 'form-control select2',
@@ -40,6 +41,7 @@ use yii\widgets\ActiveForm;
     ],]); ?>
 
 <?= $form->field($model, 'name')->textInput() ?>
+<?= $form->field($model, 'is_for_android')->checkbox() ?>
 
 <?= $form->field($model, 'content')->widget(Widget::class, [
     'settings' => [
