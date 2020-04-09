@@ -502,7 +502,7 @@ class CountriesDashboardStats extends Model
         foreach ($wards as $id => $label) {
             list($newcondition, $newparams) = DbUtils::appendCondition('ward_id', $id, $condition, $params);
 
-            $count = Animal::find()->andWhere($newcondition, $newparams)
+            $count = Farm::find()->andWhere($newcondition, $newparams)
                 ->andFilterWhere(['farm_type' => 'LSF', 'country_id' => $country_id])
                 ->andFilterWhere(['district_id' => $district_id])
                 ->count();
