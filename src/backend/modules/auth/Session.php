@@ -133,8 +133,11 @@ class Session
     public static function isFieldAgent()
     {
         $userRole = Yii::$app->user->identity->role_id;
-        $model = Roles::findOne(['id' => $userRole]);
-        return $model->isFieldAgent();
+        if ($userRole !== null) {
+            $model = Roles::findOne(['id' => $userRole]);
+            return $model->isFieldAgent();
+        }
+        return false;
     }
 
     /**

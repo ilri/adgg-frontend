@@ -119,14 +119,14 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                                     ->andWhere($newCondition, $newParams)
                                     ->andFilterWhere([Farm::tableName() . '.farm_type' => 'LSF'])
                                     ->andFilterWhere([Farm::tableName() . '.country_id' => $country->id])
-                                    ->andFilterWhere(['ward_id' => Session::getWardId()])
+                                    ->andFilterWhere([Farm::tableName() . 'ward_id' => Session::getWardId()])
                                     ->count();
                             } elseif (Session::isDistrictUser()) {
                                 $count = Animal::find()->joinWith('farm')
                                     ->andWhere($newCondition, $newParams)
                                     ->andFilterWhere([Farm::tableName() . '.farm_type' => 'LSF'])
                                     ->andFilterWhere([Farm::tableName() . '.country_id' => $country->id])
-                                    ->andFilterWhere(['district_id' => Session::getDistrictId()])
+                                    ->andFilterWhere([Farm::tableName() . '.district_id' => Session::getDistrictId()])
                                     ->count();
                             } elseif (Session::isRegionUser()) {
                                 $count = Animal::find()->joinWith('farm')
