@@ -46,6 +46,7 @@ use yii\helpers\Url;
         ],
         [
             'attribute' => 'country_id',
+            'label' => 'Country',
             'value' => function (Users $model) {
                 return $model->getRelationAttributeValue('country', 'name');
             },

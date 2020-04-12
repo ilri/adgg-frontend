@@ -57,15 +57,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                             <?php endif; ?>
                         </div>
                         <div id="chartContainer" title=""></div>
-                        <?php if (Session::isWardUser()): ?>
-                            <?php $chart_data = CountriesDashboardStats::getLSFGroupedByVillages($country->id, Session::getWardId()); ?>
-                        <?php elseif (Session::isDistrictUser()): ?>
-                            <?php $chart_data = CountriesDashboardStats::getLSFGroupedByWards($country->id, Session::getDistrictId()); ?>
-                        <?php elseif (Session::isRegionUser()): ?>
-                            <?php $chart_data = CountriesDashboardStats::getLSFGroupedByDistricts($country->id, Session::getRegionId()); ?>
-                        <?php else: ?>
-                            <?php $chart_data = CountriesDashboardStats::getLSFGroupedByRegions($country->id); ?>
-                        <?php endif; ?>
+                        <?php $chart_data = CountriesDashboardStats::getLSFGroupedByRegions($country->id); ?>
                         <?php
                         $data = [];
                         if (count($chart_data) > 0) {

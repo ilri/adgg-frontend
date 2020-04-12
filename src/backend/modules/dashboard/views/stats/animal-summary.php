@@ -54,15 +54,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                     <?php endif; ?>
                 </div>
                 <div id="chartContainer"></div>
-                <?php if (Session::isWardUser()): ?>
-                    <?php $chart_data = CountriesDashboardStats::getAnimalsGroupedByVillages($country->id, Session::getWardId()); ?>
-                <?php elseif (Session::isDistrictUser()): ?>
-                    <?php $chart_data = CountriesDashboardStats::getAnimalsGroupedByWards($country->id, Session::getDistrictId()); ?>
-                <?php elseif (Session::isRegionUser()): ?>
-                    <?php $chart_data = CountriesDashboardStats::getAnimalsGroupedByDistricts($country->id, Session::getRegionId()); ?>
-                <?php else: ?>
-                    <?php $chart_data = CountriesDashboardStats::getAnimalsGroupedByRegions($country->id); ?>
-                <?php endif; ?>
+                <?php $chart_data = CountriesDashboardStats::getAnimalsGroupedByRegions($country->id); ?>
                 <?php
                 $data = [];
                 if (count($chart_data) > 0) {
@@ -100,17 +92,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                     <?php endif; ?>
                 </div>
                 <div id="chartContainer2"></div>
-                <?php if (Session::isVillageUser()): ?>
-                    <?php $chart_data = CountriesDashboardStats::getAnimalsGroupedByBreeds($country->id, ['village_id' => Session::getVillageId()]); ?>
-                <?php elseif (Session::isWardUser()): ?>
-                    <?php $chart_data = CountriesDashboardStats::getAnimalsGroupedByBreeds($country->id, ['ward_id' => Session::getWardId()]); ?>
-                <?php elseif (Session::isDistrictUser()): ?>
-                    <?php $chart_data = CountriesDashboardStats::getAnimalsGroupedByBreeds($country->id, ['district_id' => Session::getDistrictId()]); ?>
-                <?php elseif (Session::isRegionUser()): ?>
-                    <?php $chart_data = CountriesDashboardStats::getAnimalsGroupedByBreeds($country->id, ['region_id' => Session::getRegionId()]); ?>
-                <?php else: ?>
-                    <?php $chart_data = CountriesDashboardStats::getAnimalsGroupedByBreeds($country->id); ?>
-                <?php endif; ?>
+                <?php $chart_data = CountriesDashboardStats::getAnimalsGroupedByBreeds($country->id); ?>
                 <?php
                 $data = [];
                 if (count($chart_data) > 0) {
