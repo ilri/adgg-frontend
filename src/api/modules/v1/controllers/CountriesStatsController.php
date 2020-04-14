@@ -35,27 +35,6 @@ class CountriesStatsController extends ActiveController
         $searchModel->id = $user->country_id;
         return $searchModel->search();
     }
-
-    /**
-     * @return array
-     */
-    public function actionLanding()
-    {
-        $data = [];
-        $countries = Country::find()->orderBy(['id' => SORT_ASC])->all();
-        foreach ($countries as $country) {
-            $data[] = [
-                'Country Dashboard' => [
-                    'country_id' => $country->id,
-                    'Name' => $country->name,
-                    'No Of Farms' => CountriesDashboardStats::getLandingPageStats($country->id, CountriesDashboardStats::FARM),
-                    'No of Animals ' => CountriesDashboardStats::getLandingPageStats($country->id, CountriesDashboardStats::ANIMAL),
-                ]
-            ];
-        }
-        return $data;
-    }
-
     /**
      * @param $report_id
      * @param $country_id

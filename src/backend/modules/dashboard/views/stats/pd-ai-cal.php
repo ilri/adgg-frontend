@@ -57,15 +57,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                             <?php endif; ?>
                         </div>
                         <div id="chartContainer" title=""></div>
-                        <?php if (Session::isWardUser()): ?>
-                            <?php $chart_data = CountriesDashboardStats::getMaleCalvesGroupedByVillages($country->id, Session::getWardId()); ?>
-                        <?php elseif (Session::isDistrictUser()): ?>
-                            <?php $chart_data = CountriesDashboardStats::getMaleCalvesGroupedByWards($country->id, Session::getDistrictId()); ?>
-                        <?php elseif (Session::isRegionUser()): ?>
-                            <?php $chart_data = CountriesDashboardStats::getMaleCalvesGroupedByDistricts($country->id, Session::getRegionId()); ?>
-                        <?php else: ?>
-                            <?php $chart_data = CountriesDashboardStats::getMaleCalvesByRegions($country->id); ?>
-                        <?php endif; ?>
+                        <?php $chart_data = CountriesDashboardStats::getCalvesByRegions(Animal::ANIMAL_TYPE_MALE_CALF, $country->id); ?>
                         <?php
                         $data = [];
                         if (count($chart_data) > 0) {
@@ -101,15 +93,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                             <?php endif; ?>
                         </div>
                         <div id="chartContainer2" title=""></div>
-                        <?php if (Session::isWardUser()): ?>
-                            <?php $chart_data = CountriesDashboardStats::getFemaleCalvesGroupedByVillages($country->id, Session::getWardId()); ?>
-                        <?php elseif (Session::isDistrictUser()): ?>
-                            <?php $chart_data = CountriesDashboardStats::getFemaleCalvesGroupedByWards($country->id, Session::getDistrictId()); ?>
-                        <?php elseif (Session::isRegionUser()): ?>
-                            <?php $chart_data = CountriesDashboardStats::getFemaleCalvesGroupedByDistricts($country->id, Session::getRegionId()); ?>
-                        <?php else: ?>
-                            <?php $chart_data = CountriesDashboardStats::getFemaleCalvesByRegions($country->id); ?>
-                        <?php endif; ?>
+                        <?php $chart_data = CountriesDashboardStats::getCalvesByRegions(Animal::ANIMAL_TYPE_FEMALE_CALF, $country->id); ?>
                         <?php
                         $data = [];
                         if (count($chart_data) > 0) {
