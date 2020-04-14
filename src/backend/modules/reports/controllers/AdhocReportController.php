@@ -46,6 +46,7 @@ class AdhocReportController extends Controller
             'defaultOrder' => ['id' => SORT_DESC],
             'condition' => $condition,
             'params' => $params,
+            'with' => ['extractedBy'],
         ]);
         $searchModel->name = $name;
         $searchModel->created_by = $created_by;

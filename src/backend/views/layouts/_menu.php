@@ -21,11 +21,90 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
                     <span class="kt-menu__link-text">DASHBOARD</span>
                 </a>
             </li>
-            <?php if (Yii::$app->user->canView(Constants::RES_ANIMAL)): ?>
                 <li class="kt-menu__section ">
-                    <h4 class="kt-menu__section-text">ANIMALS, FARMS AND CLIENTS</h4>
+                    <h4 class="kt-menu__section-text">DATA LISTS</h4>
                     <i class="kt-menu__section-icon flaticon-more-v2"></i>
                 </li>
+
+            <?php if (Yii::$app->user->canView(Constants::RES_FARM)): ?>
+                    <li class="kt-menu__item  kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'core/farm' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
+                        <a href="#" class="kt-menu__link kt-menu__toggle">
+                            <i class="kt-menu__link-icon far fa-tractor"></i>
+                            <span class="kt-menu__link-text">FARMS</span>
+                            <i class="kt-menu__ver-arrow la la-angle-right"></i>
+                        </a>
+                        <div class="kt-menu__submenu">
+                            <span class="kt-menu__arrow"></span>
+                            <ul class="kt-menu__subnav">
+                                <?php foreach ($countries as $country): ?>
+                                    <?php if (Session::getCountryId() == $country->id || Session::isPrivilegedAdmin()): ?>
+                                        <li class="kt-menu__item">
+                                            <a href="<?= Url::to(['/core/farm/index', 'country_id' => $country->id]) ?>"
+                                               class="kt-menu__link ">
+                                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                                <span
+                                                    class="kt-menu__link-text">
+                                                    <?php if (Session::isVillageUser()): ?>
+                                                        <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getVillageId(), 'level' => CountryUnits::LEVEL_VILLAGE]) . ' ' . 'Village' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                    <?php elseif (Session::isWardUser()): ?>
+                                                        <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getWardId(), 'level' => CountryUnits::LEVEL_WARD]) . ' ' . 'Ward' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                    <?php elseif (Session::isDistrictUser()): ?>
+                                                        <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                    <?php elseif (Session::isRegionUser()): ?>
+                                                        <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                    <?php else: ?>
+                                                        <?= Html::encode($country->name) ?>
+                                                    <?php endif; ?>
+                                            </span>
+                                            </a>
+                                        </li>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+
+                            </ul>
+                        </div>
+                    </li>
+                <?php endif; ?>
+            <?php if (Yii::$app->user->canView(Constants::RES_HERD)): ?>
+                    <li class="kt-menu__item  kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'core/herd' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
+                        <a href="#" class="kt-menu__link kt-menu__toggle">
+                            <i class="kt-menu__link-icon far fa-cow"></i>
+                            <span class="kt-menu__link-text">HERDS</span>
+                            <i class="kt-menu__ver-arrow la la-angle-right"></i>
+                        </a>
+                        <div class="kt-menu__submenu">
+                            <span class="kt-menu__arrow"></span>
+                            <ul class="kt-menu__subnav">
+                                <?php foreach ($countries as $country): ?>
+                                    <?php if (Session::getCountryId() == $country->id || Session::isPrivilegedAdmin()): ?>
+                                        <li class="kt-menu__item">
+                                            <a href="<?= Url::to(['/core/herd/index', 'country_id' => $country->id]) ?>"
+                                               class="kt-menu__link ">
+                                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                                <span
+                                                        class="kt-menu__link-text">
+                                                <?php if (Session::isVillageUser()): ?>
+                                                    <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getVillageId(), 'level' => CountryUnits::LEVEL_VILLAGE]) . ' ' . 'Village' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                <?php elseif (Session::isWardUser()): ?>
+                                                    <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getWardId(), 'level' => CountryUnits::LEVEL_WARD]) . ' ' . 'Ward' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                <?php elseif (Session::isDistrictUser()): ?>
+                                                    <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                <?php elseif (Session::isRegionUser()): ?>
+                                                    <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                <?php else: ?>
+                                                    <?= Html::encode($country->name) ?>
+                                                <?php endif; ?>
+                                            </span>
+                                            </a>
+                                        </li>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+
+                            </ul>
+                        </div>
+                    </li>
+                <?php endif; ?>
+            <?php if (Yii::$app->user->canView(Constants::RES_ANIMAL)): ?>
                 <li class="kt-menu__item  kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'core/animal' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
                     <a href="#" class="kt-menu__link kt-menu__toggle">
                         <i class="kt-menu__link-icon far fa-cow"></i>
@@ -74,7 +153,7 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
                     data-ktmenu-submenu-toggle="hover">
                     <a href="#" class="kt-menu__link kt-menu__toggle">
                         <i class="kt-menu__link-icon far fa-calendar"></i>
-                        <span class="kt-menu__link-text">ANIMALS EVENTS</span>
+                        <span class="kt-menu__link-text">ANIMAL EVENTS</span>
                         <i class="kt-menu__ver-arrow la la-angle-right"></i>
                     </a>
                     <div class="kt-menu__submenu">
@@ -108,84 +187,10 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
                     </div>
                 </li>
             <?php endif; ?>
-            <?php if (Yii::$app->user->canView(Constants::RES_HERD)): ?>
-                <li class="kt-menu__item  kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'core/herd' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
-                    <a href="#" class="kt-menu__link kt-menu__toggle">
-                        <i class="kt-menu__link-icon far fa-cow"></i>
-                        <span class="kt-menu__link-text">HERDS</span>
-                        <i class="kt-menu__ver-arrow la la-angle-right"></i>
-                    </a>
-                    <div class="kt-menu__submenu">
-                        <span class="kt-menu__arrow"></span>
-                        <ul class="kt-menu__subnav">
-                            <?php foreach ($countries as $country): ?>
-                                <?php if (Session::getCountryId() == $country->id || Session::isPrivilegedAdmin()): ?>
-                                    <li class="kt-menu__item">
-                                        <a href="<?= Url::to(['/core/herd/index', 'country_id' => $country->id]) ?>"
-                                           class="kt-menu__link ">
-                                            <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                            <span
-                                                class="kt-menu__link-text">
-                                                <?php if (Session::isVillageUser()): ?>
-                                                    <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getVillageId(), 'level' => CountryUnits::LEVEL_VILLAGE]) . ' ' . 'Village' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
-                                                <?php elseif (Session::isWardUser()): ?>
-                                                    <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getWardId(), 'level' => CountryUnits::LEVEL_WARD]) . ' ' . 'Ward' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
-                                                <?php elseif (Session::isDistrictUser()): ?>
-                                                    <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
-                                                <?php elseif (Session::isRegionUser()): ?>
-                                                    <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
-                                                <?php else: ?>
-                                                    <?= Html::encode($country->name) ?>
-                                                <?php endif; ?>
-                                            </span>
-                                        </a>
-                                    </li>
-                                <?php endif; ?>
-                            <?php endforeach; ?>
-
-                        </ul>
-                    </div>
-                </li>
-            <?php endif; ?>
-            <?php if (Yii::$app->user->canView(Constants::RES_FARM)): ?>
-                <li class="kt-menu__item  kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'core/farm' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
-                    <a href="#" class="kt-menu__link kt-menu__toggle">
-                        <i class="kt-menu__link-icon far fa-tractor"></i>
-                        <span class="kt-menu__link-text">FARMS</span>
-                        <i class="kt-menu__ver-arrow la la-angle-right"></i>
-                    </a>
-                    <div class="kt-menu__submenu">
-                        <span class="kt-menu__arrow"></span>
-                        <ul class="kt-menu__subnav">
-                            <?php foreach ($countries as $country): ?>
-                                <?php if (Session::getCountryId() == $country->id || Session::isPrivilegedAdmin()): ?>
-                                    <li class="kt-menu__item">
-                                        <a href="<?= Url::to(['/core/farm/index', 'country_id' => $country->id]) ?>"
-                                           class="kt-menu__link ">
-                                            <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                            <span
-                                                class="kt-menu__link-text">
-                                                    <?php if (Session::isVillageUser()): ?>
-                                                        <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getVillageId(), 'level' => CountryUnits::LEVEL_VILLAGE]) . ' ' . 'Village' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
-                                                    <?php elseif (Session::isWardUser()): ?>
-                                                        <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getWardId(), 'level' => CountryUnits::LEVEL_WARD]) . ' ' . 'Ward' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
-                                                    <?php elseif (Session::isDistrictUser()): ?>
-                                                        <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
-                                                    <?php elseif (Session::isRegionUser()): ?>
-                                                        <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
-                                                    <?php else: ?>
-                                                        <?= Html::encode($country->name) ?>
-                                                    <?php endif; ?>
-                                            </span>
-                                        </a>
-                                    </li>
-                                <?php endif; ?>
-                            <?php endforeach; ?>
-
-                        </ul>
-                    </div>
-                </li>
-            <?php endif; ?>
+            <li class="kt-menu__section ">
+                <h4 class="kt-menu__section-text">DATA EXTRACTIONS</h4>
+                <i class="kt-menu__section-icon flaticon-more-v2"></i>
+            </li>
             <?php if (Yii::$app->user->canView(Constants::RES_CLIENT)): ?>
                 <li class="kt-menu__item kt-menu__item--submenu hidden">
                     <a href="<?= Url::to(['/core/client/index']) ?>" class="kt-menu__link">
@@ -198,7 +203,7 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
                 <li class="kt-menu__item kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'reports/builder' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
                     <a href="#" class="kt-menu__link kt-menu__toggle">
                         <i class="kt-menu__link-icon far fa-chart-pie"></i>
-                        <span class="kt-menu__link-text">REPORT BUILDER</span>
+                        <span class="kt-menu__link-text">EXTRACT BUILDER</span>
                         <i class="kt-menu__ver-arrow la la-angle-right"></i>
                     </a>
                     <div class="kt-menu__submenu">
@@ -234,7 +239,7 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
                 <li class="kt-menu__item kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'reports/default' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
                     <a href="#" class="kt-menu__link kt-menu__toggle">
                         <i class="kt-menu__link-icon far fa-chart-line"></i>
-                        <span class="kt-menu__link-text">STANDARD REPORTS</span>
+                        <span class="kt-menu__link-text">STANDARD EXTRACTS</span>
                         <i class="kt-menu__ver-arrow la la-angle-right"></i>
                     </a>
                     <div class="kt-menu__submenu">
@@ -273,7 +278,7 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
                 <li class="kt-menu__item kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'reports/adhoc-report' ? 'kt-menu__item--here' : '' ?>">
                     <a href="<?= Url::to(['/reports/adhoc-report/index']) ?>" class="kt-menu__link">
                         <i class="kt-menu__link-icon flaticon2-browser-2"></i>
-                        <span class="kt-menu__link-text">REPORTS</span>
+                        <span class="kt-menu__link-text">DATA EXTRACTS</span>
                     </a>
                 </li>
             <?php endif; ?>

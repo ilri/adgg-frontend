@@ -49,6 +49,13 @@ use yii\helpers\Url;
             'filter' => false,
         ],
         [
+           'attribute' => 'created_by',
+           'label' => 'Extracted By',
+            'value' => function (AdhocReport $model) {
+            return $model->getRelationAttributeValue('extractedBy', 'name');
+        }
+        ],
+        [
             'label' => 'Date',
             'filter' => false,
             'format' => 'html',
