@@ -54,15 +54,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                             <?php endif; ?>
                         </div>
                         <div id="chartContainer" title=""></div>
-                        <?php if (Session::isWardUser()): ?>
-                            <?php $chart_data = CountriesDashboardStats::getTestDayMilkGroupedByVillages($country->id, Session::getWardId()); ?>
-                        <?php elseif (Session::isDistrictUser()): ?>
-                            <?php $chart_data = CountriesDashboardStats::getTestDayMilkGroupedByWards($country->id, Session::getDistrictId()); ?>
-                        <?php elseif (Session::isRegionUser()): ?>
-                            <?php $chart_data = CountriesDashboardStats::getTestDayMilkGroupedByDistricts($country->id, Session::getRegionId()); ?>
-                        <?php else: ?>
-                            <?php $chart_data = CountriesDashboardStats::getTestDayMilkGroupedByRegions($country->id); ?>
-                        <?php endif; ?>
+                        <?php $chart_data = CountriesDashboardStats::getTestDayMilkGroupedByRegions($country->id); ?>
                         <?php
                         $data = [];
                         if (count($chart_data) > 0) {
@@ -91,17 +83,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                         <div class="kt-iconbox__icon mb-0">
                             <div class="kt-iconbox__icon-bg"></div>
                             <span>
-                                <?php if (Session::isVillageUser()): ?>
-                                    <?= MilkingReport::getFarmersWithAnimalsWithMilkingRecord($country->id, ['core_animal.village_id' => Session::getVillageId(), Farm::tableName() . '.field_agent_id' => Session::getUserId()]) ?>
-                                <?php elseif (Session::isWardUser()): ?>
-                                    <?= MilkingReport::getFarmersWithAnimalsWithMilkingRecord($country->id, ['core_animal.ward_id' => Session::getWardId()]) ?>
-                                <?php elseif (Session::isDistrictUser()): ?>
-                                    <?= MilkingReport::getFarmersWithAnimalsWithMilkingRecord($country->id, ['core_animal.district_id' => Session::getDistrictId()]) ?>
-                                <?php elseif (Session::isRegionUser()): ?>
-                                    <?= MilkingReport::getFarmersWithAnimalsWithMilkingRecord($country->id, ['core_animal.region_id' => Session::getRegionId()]) ?>
-                                <?php else: ?>
-                                    <?= MilkingReport::getFarmersWithAnimalsWithMilkingRecord($country->id) ?>
-                                <?php endif; ?>
+                                    <?= MilkingReport::getTestDayRecord($country->id, false) ?>
                             </span>
                         </div>
                         <div class="kt-iconbox__title">
@@ -124,17 +106,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                         <div class="kt-iconbox__icon mb-0">
                             <div class="kt-iconbox__icon-bg"></div>
                             <span>
-                                <?php if (Session::isVillageUser()): ?>
-                                    <?= MilkingReport::getAnimalsWithMilkingRecord($country->id, ['core_animal_event.village_id' => Session::getVillageId(), 'core_animal_event.field_agent_id' => Session::getUserId()]) ?>
-                                <?php elseif (Session::isWardUser()): ?>
-                                    <?= MilkingReport::getAnimalsWithMilkingRecord($country->id, ['core_animal_event.ward_id' => Session::getWardId()]) ?>
-                                <?php elseif (Session::isDistrictUser()): ?>
-                                    <?= MilkingReport::getAnimalsWithMilkingRecord($country->id, ['core_animal_event.district_id' => Session::getDistrictId()]) ?>
-                                <?php elseif (Session::isRegionUser()): ?>
-                                    <?= MilkingReport::getAnimalsWithMilkingRecord($country->id, ['core_animal_event.region_id' => Session::getRegionId()]) ?>
-                                <?php else: ?>
-                                    <?= MilkingReport::getAnimalsWithMilkingRecord($country->id) ?>
-                                <?php endif; ?>
+                                <?= MilkingReport::getTestDayRecord($country->id, true) ?>
                             </span>
                         </div>
                         <div class="kt-iconbox__title">

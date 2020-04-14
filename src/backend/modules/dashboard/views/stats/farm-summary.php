@@ -19,6 +19,7 @@ $controller = Yii::$app->controller;
 $this->title = 'Farms Registered';
 $this->params['breadcrumbs'][] = ['label' => Lang::t('Quick Reports'), 'url' => ['dash', 'country_id' => $country->id]];
 $graphType = $graphType ?? HighChart::GRAPH_PIE;
+
 ?>
 <h3>
     <?php if (Session::isVillageUser()): ?>
@@ -51,15 +52,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                     <?php endif; ?>
                 </div>
                 <div id="chartContainer"></div>
-                <?php if (Session::isWardUser()): ?>
-                    <?php $chart_data = CountriesDashboardStats::getFarmsGroupedByVillages($country->id, Session::getWardId()); ?>
-                <?php elseif (Session::isDistrictUser()): ?>
-                    <?php $chart_data = CountriesDashboardStats::getFarmsGroupedByWards($country->id, Session::getDistrictId()); ?>
-                <?php elseif (Session::isRegionUser()): ?>
-                    <?php $chart_data = CountriesDashboardStats::getFarmsGroupedByDistricts($country->id, Session::getRegionId()); ?>
-                <?php else: ?>
-                    <?php $chart_data = CountriesDashboardStats::getFarmsGroupedByRegions($country->id); ?>
-                <?php endif; ?>
+                <?php $chart_data = CountriesDashboardStats::getFarmsGroupedByRegions($country->id); ?>
                 <?php
                 $data = [];
                 if (count($chart_data) > 0) {
@@ -97,17 +90,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                     <?php endif; ?>
                 </div>
                 <div id="chartContainer2"></div>
-                <?php if (Session::isVillageUser()): ?>
-                    <?php $chart_data = CountriesDashboardStats::getFarmsGroupedByFarmType($country->id, ['village_id' => Session::getVillageId()]); ?>
-                <?php elseif (Session::isWardUser()): ?>
-                    <?php $chart_data = CountriesDashboardStats::getFarmsGroupedByFarmType($country->id, ['ward_id' => Session::getWardId()]); ?>
-                <?php elseif (Session::isDistrictUser()): ?>
-                    <?php $chart_data = CountriesDashboardStats::getFarmsGroupedByFarmType($country->id, ['district_id' => Session::getDistrictId()]); ?>
-                <?php elseif (Session::isRegionUser()): ?>
-                    <?php $chart_data = CountriesDashboardStats::getFarmsGroupedByFarmType($country->id, ['region_id' => Session::getRegionId()]); ?>
-                <?php else: ?>
-                    <?php $chart_data = CountriesDashboardStats::getFarmsGroupedByFarmType($country->id); ?>
-                <?php endif; ?>
+                <?php $chart_data = CountriesDashboardStats::getFarmsGroupedByFarmType($country->id); ?>
                 <?php
                 $data = [];
                 if (count($chart_data) > 0) {

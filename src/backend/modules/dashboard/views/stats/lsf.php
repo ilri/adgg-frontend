@@ -57,15 +57,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                             <?php endif; ?>
                         </div>
                         <div id="chartContainer" title=""></div>
-                        <?php if (Session::isWardUser()): ?>
-                            <?php $chart_data = CountriesDashboardStats::getLSFGroupedByVillages($country->id, Session::getWardId()); ?>
-                        <?php elseif (Session::isDistrictUser()): ?>
-                            <?php $chart_data = CountriesDashboardStats::getLSFGroupedByWards($country->id, Session::getDistrictId()); ?>
-                        <?php elseif (Session::isRegionUser()): ?>
-                            <?php $chart_data = CountriesDashboardStats::getLSFGroupedByDistricts($country->id, Session::getRegionId()); ?>
-                        <?php else: ?>
-                            <?php $chart_data = CountriesDashboardStats::getLSFGroupedByRegions($country->id); ?>
-                        <?php endif; ?>
+                        <?php $chart_data = CountriesDashboardStats::getLSFGroupedByRegions($country->id); ?>
                         <?php
                         $data = [];
                         if (count($chart_data) > 0) {
@@ -127,14 +119,14 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                                     ->andWhere($newCondition, $newParams)
                                     ->andFilterWhere([Farm::tableName() . '.farm_type' => 'LSF'])
                                     ->andFilterWhere([Farm::tableName() . '.country_id' => $country->id])
-                                    ->andFilterWhere(['ward_id' => Session::getWardId()])
+                                    ->andFilterWhere([Farm::tableName() . 'ward_id' => Session::getWardId()])
                                     ->count();
                             } elseif (Session::isDistrictUser()) {
                                 $count = Animal::find()->joinWith('farm')
                                     ->andWhere($newCondition, $newParams)
                                     ->andFilterWhere([Farm::tableName() . '.farm_type' => 'LSF'])
                                     ->andFilterWhere([Farm::tableName() . '.country_id' => $country->id])
-                                    ->andFilterWhere(['district_id' => Session::getDistrictId()])
+                                    ->andFilterWhere([Farm::tableName() . '.district_id' => Session::getDistrictId()])
                                     ->count();
                             } elseif (Session::isRegionUser()) {
                                 $count = Animal::find()->joinWith('farm')
