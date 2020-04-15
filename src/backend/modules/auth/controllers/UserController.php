@@ -38,13 +38,17 @@ class UserController extends Controller
     }
 
 
-    public function actionIndex($level_id = null, $country_id = null, $name = null, $username = null, $email = null, $phone = null, $role_id = null, $status = Users::STATUS_ACTIVE, $from = null, $to = null)
+    public function actionIndex($level_id = null, $country_id = null, $org_id = null, $client_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $name = null, $username = null, $email = null, $phone = null, $role_id = null, $status = Users::STATUS_ACTIVE, $from = null, $to = null)
     {
         $countryModel = null;
-        if (Session::isCountry()) {
-            $country_id = Session::getCountryId();
-            $level_id = UserLevels::LEVEL_COUNTRY;
-        }
+        $this->hasPrivilege(Acl::ACTION_VIEW);
+        $country_id = Session::getCountryId($country_id);
+        $org_id = Session::getOrgId($org_id);
+        $client_id = Session::getClientId($client_id);
+        $region_id = Session::getRegionId($region_id);
+        $district_id = Session::getDistrictId($district_id);
+        $ward_id = Session::getWardId($ward_id);
+        $village_id = Session::getVillageId($village_id);
         if (!empty($country_id)) {
             $countryModel = Country::loadModel($country_id);
         }
@@ -60,6 +64,12 @@ class UserController extends Controller
             'with' => ['level', 'role', 'country'],
         ]);
         $searchModel->country_id = $country_id;
+        $searchModel->org_id = $org_id;
+        $searchModel->client_id = $client_id;
+        $searchModel->region_id = $region_id;
+        $searchModel->district_id = $district_id;
+        $searchModel->ward_id = $ward_id;
+        $searchModel->village_id = $village_id;
         $searchModel->level_id = $level_id;
         $searchModel->status = Users::STATUS_ACTIVE;
         $searchModel->name = $name;

@@ -166,15 +166,15 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
             'updated_at' => Lang::t('Updated At'),
             'last_login' => Lang::t('Last Login'),
             'send_email' => Lang::t('Email the login details to the user.'),
-            'country_id' => Lang::t('Country ID'),
+            'country_id' => Lang::t('Country'),
             'auto_generate_password' => Lang::t('Auto Generate Password'),
             'branch_id' => Lang::t('Branch'),
             'require_password_change' => Lang::t('Force password change on login'),
             'odk_code' => 'ODK Code',
-            'region_id' => $this->country !== null ? Html::encode($this->country->unit1_name) : 'Region ID',
-            'district_id' => $this->country !== null ? Html::encode($this->country->unit2_name) : 'District ID',
-            'ward_id' => $this->country !== null ? Html::encode($this->country->unit3_name) : 'Ward ID',
-            'village_id' => $this->country !== null ? Html::encode($this->country->unit4_name) : 'Village ID',
+            'region_id' => $this->country !== null ? Html::encode($this->country->unit1_name) : 'Region',
+            'district_id' => $this->country !== null ? Html::encode($this->country->unit2_name) : 'District',
+            'ward_id' => $this->country !== null ? Html::encode($this->country->unit3_name) : 'Ward',
+            'village_id' => $this->country !== null ? Html::encode($this->country->unit4_name) : 'Village',
         ];
     }
 

@@ -228,14 +228,16 @@ MyApp.modules.auth = {};
     }
 }(jQuery));
 
-//toggle OrganizationRef
+//toggle CountryRef
 (function ($) {
     "use strict";
     let FORM = function (options) {
         let defaultOptions = {
             OrganizationRefWrapperSelector: '#OrganizationRef-id-wrapper',
             levelIdFieldSelector: '#users-level_id',
-            orgIdFieldSelector: '#users-country_id',
+            countryIdFieldSelector: '#users-country_id',
+            orgIdFieldSelector: '#users-org_id',
+            clientIdFieldSelector: '#users-client_id',
             regionIdFieldSelector: '#users-region_id',
             districtIdFieldSelector: '#users-district_id',
             wardIdFieldSelector: '#users-ward_id',
@@ -250,9 +252,15 @@ MyApp.modules.auth = {};
                 selector = $this.options.levelIdFieldSelector;
             let _toggle = function (e) {
                 let val = $(e).val(),
-                    showOrganizationRefFlags = $(e).data('show-country'),
+                    showCountryFlags = $(e).data('show-country'),
+                    countrySelect = $($this.options.countryIdFieldSelector),
+                    countrySelectWrapper = $('#country-id-wrapper'),
+                    showOrgFlags = $(e).data('show-organization'),
                     orgSelect = $($this.options.orgIdFieldSelector),
                     orgSelectWrapper = $('#org-id-wrapper'),
+                    showClientFlags = $(e).data('show-client'),
+                    clientSelect = $($this.options.clientIdFieldSelector),
+                    clientSelectWrapper = $('#client-id-wrapper'),
                     showRegionFlags = $(e).data('show-region'),
                     regionSelect = $($this.options.regionIdFieldSelector),
                     regionSelectWrapper = $('#region-id-wrapper'),
@@ -265,11 +273,23 @@ MyApp.modules.auth = {};
                     showVillageFlags = $(e).data('show-village'),
                     villageSelect = $($this.options.villageIdFieldSelector),
                     villageSelectWrapper = $('#village-id-wrapper');
-                if (showOrganizationRefFlags.includes(parseInt(val))) {
+                if (showCountryFlags.includes(parseInt(val))) {
+                    countrySelectWrapper.show();
+                } else {
+                    countrySelectWrapper.hide();
+                    countrySelect.val('').trigger('change');
+                }
+                if (showOrgFlags.includes(parseInt(val))) {
                     orgSelectWrapper.show();
                 } else {
                     orgSelectWrapper.hide();
                     orgSelect.val('').trigger('change');
+                }
+                if (showClientFlags.includes(parseInt(val))) {
+                    clientSelectWrapper.show();
+                } else {
+                    clientSelectWrapper.hide();
+                    clientSelect.val('').trigger('change');
                 }
                 if (showRegionFlags.includes(parseInt(val))) {
                     regionSelectWrapper.show();

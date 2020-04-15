@@ -135,6 +135,20 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                                     ->andFilterWhere([Farm::tableName() . '.country_id' => $country->id])
                                     ->andFilterWhere([Farm::tableName() . '.region_id' => Session::getRegionId()])
                                     ->count();
+                            } elseif (Session::isOrganizationUser()) {
+                                $count = Animal::find()->joinWith('farm')
+                                    ->andWhere($newCondition, $newParams)
+                                    ->andFilterWhere([Farm::tableName() . '.farm_type' => 'LSF'])
+                                    ->andFilterWhere([Farm::tableName() . '.country_id' => $country->id])
+                                    ->andFilterWhere([Farm::tableName() . '.org_id' => Session::getOrgId()])
+                                    ->count();
+                            } elseif (Session::isOrganizationClientUser()) {
+                                $count = Animal::find()->joinWith('farm')
+                                    ->andWhere($newCondition, $newParams)
+                                    ->andFilterWhere([Farm::tableName() . '.farm_type' => 'LSF'])
+                                    ->andFilterWhere([Farm::tableName() . '.country_id' => $country->id])
+                                    ->andFilterWhere([Farm::tableName() . '.client_id' => Session::getClientId()])
+                                    ->count();
                             } else {
                                 $count = Animal::find()->joinWith('farm')
                                     ->andWhere($newCondition, $newParams)

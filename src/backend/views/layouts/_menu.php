@@ -2,7 +2,9 @@
 
 use backend\modules\auth\Session;
 use backend\modules\core\Constants;
+use backend\modules\core\models\Client;
 use backend\modules\core\models\CountryUnits;
+use backend\modules\core\models\Organization;
 use backend\modules\help\Constants as HelpConstants;
 use backend\modules\core\models\Country;
 use common\helpers\Lang;
@@ -52,6 +54,10 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
                                                         <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                                                     <?php elseif (Session::isRegionUser()): ?>
                                                         <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                    <?php elseif (Session::isOrganizationUser()): ?>
+                                                        <?= $unitName = Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                    <?php elseif (Session::isOrganizationClientUser()): ?>
+                                                        <?= $unitName = Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                                                     <?php else: ?>
                                                         <?= Html::encode($country->name) ?>
                                                     <?php endif; ?>
@@ -91,6 +97,10 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
                                                     <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                                                 <?php elseif (Session::isRegionUser()): ?>
                                                     <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                <?php elseif (Session::isOrganizationUser()): ?>
+                                                    <?= $unitName = Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                <?php elseif (Session::isOrganizationClientUser()): ?>
+                                                    <?= $unitName = Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                                                 <?php else: ?>
                                                     <?= Html::encode($country->name) ?>
                                                 <?php endif; ?>
@@ -130,6 +140,10 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
                                                     <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                                                 <?php elseif (Session::isRegionUser()): ?>
                                                     <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                <?php elseif (Session::isOrganizationUser()): ?>
+                                                    <?= $unitName = Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                <?php elseif (Session::isOrganizationClientUser()): ?>
+                                                    <?= $unitName = Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                                                 <?php else: ?>
                                                     <?= Html::encode($country->name) ?>
                                                 <?php endif; ?>
@@ -175,6 +189,10 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
                                                     <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                                                 <?php elseif (Session::isRegionUser()): ?>
                                                     <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                <?php elseif (Session::isOrganizationUser()): ?>
+                                                    <?= $unitName = Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                <?php elseif (Session::isOrganizationClientUser()): ?>
+                                                    <?= $unitName = Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                                                 <?php else: ?>
                                                     <?= Html::encode($country->name) ?>
                                                 <?php endif; ?>
@@ -225,6 +243,10 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
                                                             <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                                                         <?php elseif (Session::isRegionUser()): ?>
                                                             <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                        <?php elseif (Session::isOrganizationUser()): ?>
+                                                            <?= $unitName = Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                        <?php elseif (Session::isOrganizationClientUser()): ?>
+                                                            <?= $unitName = Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                                                         <?php else: ?>
                                                             <?= Html::encode($country->name) ?>
                                                         <?php endif; ?>
@@ -261,6 +283,10 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
                                                      <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                                                  <?php elseif (Session::isRegionUser()): ?>
                                                      <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                 <?php elseif (Session::isOrganizationUser()): ?>
+                                                     <?= $unitName = Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                 <?php elseif (Session::isOrganizationClientUser()): ?>
+                                                     <?= $unitName = Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                                                  <?php else: ?>
                                                      <?= Html::encode($country->name) ?>
                                                  <?php endif; ?>
@@ -332,6 +358,10 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
                                                     <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                                                 <?php elseif (Session::isRegionUser()): ?>
                                                     <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                <?php elseif (Session::isOrganizationUser()): ?>
+                                                    <?= $unitName = Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                <?php elseif (Session::isOrganizationClientUser()): ?>
+                                                    <?= $unitName = Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                                                 <?php else: ?>
                                                     <?= Html::encode($country->name) ?>
                                                 <?php endif; ?>
@@ -379,6 +409,10 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
                                                         <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                                                     <?php elseif (Session::isRegionUser()): ?>
                                                         <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                    <?php elseif (Session::isOrganizationUser()): ?>
+                                                        <?= $unitName = Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                    <?php elseif (Session::isOrganizationClientUser()): ?>
+                                                        <?= $unitName = Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                                                     <?php else: ?>
                                                         <?= Html::encode($country->name) ?>
                                                     <?php endif; ?>
@@ -418,6 +452,10 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
                                                         <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                                                     <?php elseif (Session::isRegionUser()): ?>
                                                         <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                    <?php elseif (Session::isOrganizationUser()): ?>
+                                                        <?= $unitName = Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                    <?php elseif (Session::isOrganizationClientUser()): ?>
+                                                        <?= $unitName = Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                                                     <?php else: ?>
                                                         <?= Html::encode($country->name) ?>
                                                     <?php endif; ?>
