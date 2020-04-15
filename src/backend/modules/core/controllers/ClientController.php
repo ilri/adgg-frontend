@@ -70,4 +70,10 @@ class ClientController extends Controller
         $this->hasPrivilege(Acl::ACTION_DELETE);
         return Client::softDelete($id);
     }
+
+    public function actionGetList($country_id = null, $org_id = null, $placeholder = false)
+    {
+        $data = Client::getListData('id', 'name', $placeholder, ['country_id' => $country_id, 'org_id' => $org_id]);
+        return json_encode($data);
+    }
 }

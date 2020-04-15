@@ -157,6 +157,8 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
             'currentPassword' => Lang::t('Current Password'),
             'level_id' => Lang::t('Account Type'),
             'role_id' => Lang::t('Role'),
+            'org_id' => Lang::t('Organization'),
+            'client_id' => Lang::t('Client'),
             'profile_image' => Lang::t('Profile Image'),
             'tmp_profile_image' => Lang::t('Profile Image'),
             'created_at' => Lang::t('Created At'),

@@ -3,7 +3,9 @@
 use backend\modules\auth\models\UserLevels;
 use backend\modules\auth\models\Users;
 use backend\modules\auth\Session;
+use backend\modules\core\models\Client;
 use backend\modules\core\models\CountryUnits;
+use backend\modules\core\models\Organization;
 use common\forms\ActiveField;
 use common\helpers\Lang;
 use common\helpers\Url;
@@ -59,7 +61,7 @@ use yii\helpers\Json;
                                         'data-child-selectors' => [
                                             '#' . Html::getInputId($model, 'role_id'),
                                         ],
-                                        'data-show-country' => [UserLevels::LEVEL_COUNTRY, UserLevels::LEVEL_REGION, UserLevels::LEVEL_DISTRICT, UserLevels::LEVEL_WARD, UserLevels::LEVEL_VILLAGE],
+                                        'data-show-country' => [UserLevels::LEVEL_COUNTRY, UserLevels::LEVEL_ORGANIZATION, UserLevels::LEVEL_ORGANIZATION_CLIENT, UserLevels::LEVEL_REGION, UserLevels::LEVEL_DISTRICT, UserLevels::LEVEL_WARD, UserLevels::LEVEL_VILLAGE],
                                         'data-show-region' => [UserLevels::LEVEL_REGION, UserLevels::LEVEL_DISTRICT, UserLevels::LEVEL_WARD, UserLevels::LEVEL_VILLAGE],
                                         'data-show-district' => [UserLevels::LEVEL_DISTRICT, UserLevels::LEVEL_WARD, UserLevels::LEVEL_VILLAGE],
                                         'data-show-ward' => [UserLevels::LEVEL_WARD, UserLevels::LEVEL_VILLAGE],
@@ -155,6 +157,39 @@ use yii\helpers\Json;
                                     ]) ?>
                                 </div>
                             <?php endif; ?>
+                            <div class="col-md-4" id="region-id-wrapper">
+                                <?= $form->field($model, 'org_id')->widget(Select2::class, [
+                                    'data' => Organization::getListData('id', 'name', true, ['country_id' => $model->country_id]),
+                                    'theme' => Select2::THEME_BOOTSTRAP,
+                                    'options' => [
+                                        'class' => 'form-control parent-depdropdown',
+                                        'placeholder' => '[select one]',
+                                        'data-url' => Url::to(['/core/organization/get-list', 'country_id' => 'idV', 'placeholder' => true]),
+                                        'data-selected' => $model->org_id,
+                                        'data-child-selectors' => [
+                                            '#' . Html::getInputId($model, 'client_id'),
+                                        ],
+                                    ],
+                                    'pluginOptions' => [
+                                        'allowClear' => false
+                                    ],
+                                ]) ?>
+                            </div>
+                            <div class="col-md-4" id="region-id-wrapper">
+                                <?= $form->field($model, 'client_id')->widget(Select2::class, [
+                                    'data' => Client::getListData('id', 'name', true, ['country_id' => $model->country_id]),
+                                    'theme' => Select2::THEME_BOOTSTRAP,
+                                    'options' => [
+                                        'class' => 'form-control parent-depdropdown',
+                                        'placeholder' => '[select one]',
+                                        'data-url' => Url::to(['/core/client/get-list', 'org_id' => 'idV', 'country_id' => $model->country_id, 'placeholder' => true]),
+                                        'data-selected' => $model->client_id,
+                                    ],
+                                    'pluginOptions' => [
+                                        'allowClear' => false
+                                    ],
+                                ]) ?>
+                            </div>
                             <div class="col-md-4">
                                 <?= $form->field($model, 'role_id')->widget(Select2::class, [
                                     'data' => \backend\modules\auth\models\Roles::getListData('id', 'name', false, Session::isCountry() ? ['level_id' => UserLevels::LEVEL_COUNTRY] : []),

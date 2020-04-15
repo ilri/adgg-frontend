@@ -2,9 +2,11 @@
 
 use backend\modules\auth\Session;
 use backend\modules\core\models\Animal;
+use backend\modules\core\models\Client;
 use backend\modules\core\models\CountriesDashboardStats;
 use backend\modules\core\models\CountryUnits;
 use backend\modules\core\models\Farm;
+use backend\modules\core\models\Organization;
 use common\helpers\Lang;
 use common\helpers\Url;
 use yii\helpers\Html;
@@ -34,6 +36,10 @@ $this->params['breadcrumbs'] = [
                             <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                         <?php elseif (Session::isRegionUser()): ?>
                             <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                        <?php elseif (Session::isOrganizationUser()): ?>
+                            <?= $unitName = Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                        <?php elseif (Session::isOrganizationClientUser()): ?>
+                            <?= $unitName = Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                         <?php else: ?>
                             <?= Html::encode($country->name) ?>
                         <?php endif; ?>

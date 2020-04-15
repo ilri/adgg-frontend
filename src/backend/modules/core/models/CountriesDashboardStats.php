@@ -394,7 +394,7 @@ class CountriesDashboardStats extends Model
                 }
             }
 
-        } elseif (Session::isDistrictUser() && !Session::isFieldAgent()) {
+        } elseif (Session::isDistrictUser()) {
             if (Session::isFieldAgent()) {
                 if ($household == false && $farm_type == null) {
                     return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'district_id' => Session::getDistrictId(), 'field_agent_id' => Session::getUserId()]));
@@ -415,7 +415,7 @@ class CountriesDashboardStats extends Model
                 }
             }
 
-        } elseif (Session::isRegionUser() && !Session::isFieldAgent()) {
+        } elseif (Session::isRegionUser()) {
             if (Session::isFieldAgent()) {
                 if ($household == false && $farm_type == null) {
                     return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'region_id' => Session::getRegionId(), 'field_agent_id' => Session::getUserId()]));
@@ -437,7 +437,7 @@ class CountriesDashboardStats extends Model
             }
 
 
-        } elseif (Session::isCountryUser() && !Session::isFieldAgent()) {
+        } elseif (Session::isCountryUser()) {
             if (Session::isFieldAgent()) {
                 if ($household == false && $farm_type == null) {
                     return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'field_agent_id' => Session::getUserId()]));
@@ -455,6 +455,48 @@ class CountriesDashboardStats extends Model
 
                 } else {
                     return Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => $params])->andWhere(['country_id' => $country_id])->count());
+                }
+            }
+
+        } elseif (Session::isOrganizationUser()) {
+            if (Session::isFieldAgent()) {
+                if ($household == false && $farm_type == null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'org_id' => Session::getOrgId(), 'field_agent_id' => Session::getUserId()]));
+                } elseif ($household == false && $farm_type !== null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'org_id' => Session::getOrgId(), 'field_agent_id' => Session::getUserId(), 'farm_type' => $farm_type]));
+
+                } else {
+                    return Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => $params])->andWhere(['country_id' => $country_id, 'org_id' => Session::getOrgId(), 'field_agent_id' => Session::getUserId()])->count());
+                }
+            } else {
+                if ($household == false && $farm_type == null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'org_id' => Session::getOrgId()]));
+                } elseif ($household == false && $farm_type !== null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'org_id' => Session::getOrgId(), 'farm_type' => $farm_type]));
+
+                } else {
+                    return Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => $params])->andWhere(['country_id' => $country_id, 'org_id' => Session::getOrgId()])->count());
+                }
+            }
+
+        } elseif (Session::isOrganizationClientUser()) {
+            if (Session::isFieldAgent()) {
+                if ($household == false && $farm_type == null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'client_id' => Session::getClientId(), 'field_agent_id' => Session::getUserId()]));
+                } elseif ($household == false && $farm_type !== null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'client_id' => Session::getClientId(), 'field_agent_id' => Session::getUserId(), 'farm_type' => $farm_type]));
+
+                } else {
+                    return Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => $params])->andWhere(['country_id' => $country_id, 'client_id' => Session::getClientId(), 'field_agent_id' => Session::getUserId()])->count());
+                }
+            } else {
+                if ($household == false && $farm_type == null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'client_id' => Session::getClientId()]));
+                } elseif ($household == false && $farm_type !== null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'client_id' => Session::getClientId(), 'farm_type' => $farm_type]));
+
+                } else {
+                    return Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => $params])->andWhere(['country_id' => $country_id, 'client_id' => Session::getClientId()])->count());
                 }
             }
 
@@ -525,6 +567,30 @@ class CountriesDashboardStats extends Model
                 return Yii::$app->formatter->asDecimal(Animal::find()->joinWith('farm')->andFilterWhere(['core_animal.country_id' => $country_id, 'core_animal.region_id' => Session::getRegionId(), 'core_animal.animal_type' => $animal_type])->andFilterWhere([Farm::tableName() . '.field_agent_id' => Session::getUserId()])->count());
             }
             return Yii::$app->formatter->asDecimal(Animal::find()->joinWith('farm')->andFilterWhere(['core_animal.country_id' => $country_id, 'core_animal.region_id' => Session::getRegionId()])->andFilterWhere([Farm::tableName() . '.field_agent_id' => Session::getUserId()])->count());
+        } elseif (Session::isOrganizationUser() && !Session::isFieldAgent()) {
+            if ($animal_type !== null) {
+                return Yii::$app->formatter->asDecimal(Animal::getCount(['country_id' => $country_id, 'org_id' => Session::getOrgId(), 'animal_type' => $animal_type]));
+            } else {
+                return Yii::$app->formatter->asDecimal(Animal::getCount(['country_id' => $country_id, 'org_id' => Session::getOrgId()]));
+            }
+        } elseif (Session::isOrganizationUser() && Session::isFieldAgent()) {
+            if ($animal_type !== null) {
+                return Yii::$app->formatter->asDecimal(Animal::find()->joinWith('farm')->andFilterWhere(['core_animal.country_id' => $country_id, 'core_animal.org_id' => Session::getOrgId(), 'core_animal.animal_type' => $animal_type])->andFilterWhere([Farm::tableName() . '.field_agent_id' => Session::getUserId()])->count());
+            } else {
+                return Yii::$app->formatter->asDecimal(Animal::find()->joinWith('farm')->andFilterWhere(['core_animal.country_id' => $country_id, 'core_animal.org_id' => Session::getOrgId()])->andFilterWhere([Farm::tableName() . '.field_agent_id' => Session::getUserId()])->count());
+            }
+        } elseif (Session::isOrganizationClientUser() && !Session::isFieldAgent()) {
+            if ($animal_type !== null) {
+                return Yii::$app->formatter->asDecimal(Animal::getCount(['country_id' => $country_id, 'client_id' => Session::getClientId(), 'animal_type' => $animal_type]));
+            } else {
+                return Yii::$app->formatter->asDecimal(Animal::getCount(['country_id' => $country_id, 'client_id' => Session::getClientId()]));
+            }
+        } elseif (Session::isOrganizationClientUser() && Session::isFieldAgent()) {
+            if ($animal_type !== null) {
+                return Yii::$app->formatter->asDecimal(Animal::find()->joinWith('farm')->andFilterWhere(['core_animal.country_id' => $country_id, 'core_animal.client_id' => Session::getClientId(), 'core_animal.animal_type' => $animal_type])->andFilterWhere([Farm::tableName() . '.field_agent_id' => Session::getUserId()])->count());
+            } else {
+                return Yii::$app->formatter->asDecimal(Animal::find()->joinWith('farm')->andFilterWhere(['core_animal.country_id' => $country_id, 'core_animal.client_id' => Session::getClientId()])->andFilterWhere([Farm::tableName() . '.field_agent_id' => Session::getUserId()])->count());
+            }
         } elseif (Session::isCountryUser() && !Session::isFieldAgent()) {
             if ($animal_type !== null) {
                 return Yii::$app->formatter->asDecimal(Animal::getCount(['country_id' => $country_id, 'animal_type' => $animal_type]));
@@ -569,6 +635,18 @@ class CountriesDashboardStats extends Model
         } elseif (Session::isRegionUser() && Session::isFieldAgent()) {
 
             return Yii::$app->formatter->asDecimal(AnimalEvent::find()->andFilterWhere(['country_id' => $country_id, 'region_id' => Session::getRegionId(), 'event_type' => $event_type])->andFilterWhere(['field_agent_id' => Session::getUserId()])->count());
+        } elseif (Session::isOrganizationUser() && !Session::isFieldAgent()) {
+
+            return Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => $country_id, 'org_id' => Session::getOrgId(), 'event_type' => $event_type]));
+        } elseif (Session::isOrganizationUser() && Session::isFieldAgent()) {
+
+            return Yii::$app->formatter->asDecimal(AnimalEvent::find()->andFilterWhere(['country_id' => $country_id, 'org_id' => Session::getOrgId(), 'event_type' => $event_type])->andFilterWhere(['field_agent_id' => Session::getUserId()])->count());
+        } elseif (Session::isOrganizationClientUser() && !Session::isFieldAgent()) {
+
+            return Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => $country_id, 'client_id' => Session::getClientId(), 'event_type' => $event_type]));
+        } elseif (Session::isOrganizationClientUser() && Session::isFieldAgent()) {
+
+            return Yii::$app->formatter->asDecimal(AnimalEvent::find()->andFilterWhere(['country_id' => $country_id, 'client_id' => Session::getClientId(), 'event_type' => $event_type])->andFilterWhere(['field_agent_id' => Session::getUserId()])->count());
         } elseif (Session::isCountryUser() && !Session::isFieldAgent()) {
 
             return Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => $country_id, 'event_type' => $event_type]));
