@@ -1,7 +1,9 @@
 <?php
 
 use backend\modules\auth\Session;
+use backend\modules\core\models\Client;
 use backend\modules\core\models\CountryUnits;
+use backend\modules\core\models\Organization;
 use common\helpers\Lang;
 use common\helpers\Url;
 use yii\helpers\Html;
@@ -22,6 +24,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?= $unitName = Lang::t('Quick Reports Dashboards for') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                 <?php elseif (Session::isRegionUser()): ?>
                     <?= $unitName = Lang::t('Quick Reports Dashboards for') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                <?php elseif (Session::isOrganizationUser()): ?>
+                    <?= $unitName = Lang::t('Quick Reports Dashboards for') . ' ' . Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                <?php elseif (Session::isOrganizationClientUser()): ?>
+                    <?= $unitName = Lang::t('Quick Reports Dashboards for') . ' ' . Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                 <?php else: ?>
                     <?= Lang::t('Quick Reports Dashboards for {country}', ['country' => $country->name]) ?>
                 <?php endif; ?>

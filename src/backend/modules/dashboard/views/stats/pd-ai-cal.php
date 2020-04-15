@@ -4,10 +4,12 @@ use backend\controllers\BackendController;
 use backend\modules\auth\Session;
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\AnimalEvent;
+use backend\modules\core\models\Client;
 use backend\modules\core\models\CountriesDashboardStats;
 use backend\modules\core\models\Country;
 use backend\modules\core\models\CountryUnits;
 use backend\modules\core\models\Farm;
+use backend\modules\core\models\Organization;
 use common\helpers\DbUtils;
 use common\helpers\Lang;
 use common\widgets\highchart\HighChart;
@@ -34,6 +36,10 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                 <?= Lang::t('Insemination,Pregnancy Diagnosis And Calving in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
             <?php elseif (Session::isRegionUser()): ?>
                 <?= Lang::t('Insemination,Pregnancy Diagnosis And Calving in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+            <?php elseif (Session::isOrganizationUser()): ?>
+                <?= Lang::t('Insemination,Pregnancy Diagnosis And Calving  in') . ' ' . Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+            <?php elseif (Session::isOrganizationClientUser()): ?>
+                <?= Lang::t('Insemination,Pregnancy Diagnosis And Calving in') . ' ' . Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
             <?php else: ?>
                 <?= Lang::t('Insemination,Pregnancy Diagnosis And Calving in {country}', ['country' => $country->name]) ?>
             <?php endif; ?>
@@ -52,6 +58,10 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                                 <?= Lang::t('Male Calves Registered Grouped By Region in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                             <?php elseif (Session::isRegionUser()): ?>
                                 <?= Lang::t('Male Calves Registered Grouped By Region in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                            <?php elseif (Session::isOrganizationUser()): ?>
+                                <?= Lang::t('Male Calves Registered Grouped By Region Report  in') . ' ' . Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                            <?php elseif (Session::isOrganizationClientUser()): ?>
+                                <?= Lang::t('Male Calves Registered Grouped By Region in') . ' ' . Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                             <?php else: ?>
                                 <?= Lang::t('Male Calves Registered Grouped By Region in {country}', ['country' => $country->name]) ?>
                             <?php endif; ?>
@@ -88,6 +98,10 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                                 <?= Lang::t('Female  Calves Registered Grouped By Wards in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                             <?php elseif (Session::isRegionUser()): ?>
                                 <?= Lang::t('Female  Calves Registered Grouped By Districts in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                            <?php elseif (Session::isOrganizationUser()): ?>
+                                <?= Lang::t('Female Calves Registered Grouped By Region in') . ' ' . Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                            <?php elseif (Session::isOrganizationClientUser()): ?>
+                                <?= Lang::t('Female Calves Registered Grouped By Region in') . ' ' . Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                             <?php else: ?>
                                 <?= Lang::t('Female  Calves Registered Grouped By Region in {country}', ['country' => $country->name]) ?>
                             <?php endif; ?>
@@ -135,6 +149,10 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                                 <?= Lang::t('Total Number Of Calving in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                             <?php elseif (Session::isRegionUser()): ?>
                                 <?= Lang::t('Total Number Of Calving in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                            <?php elseif (Session::isOrganizationUser()): ?>
+                                <?= Lang::t('Total Number Of Calving  in') . ' ' . Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                            <?php elseif (Session::isOrganizationClientUser()): ?>
+                                <?= Lang::t('Total Number Of Calving in') . ' ' . Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                             <?php else: ?>
                                 <?= Lang::t('Total Number Of Calving in {country}', ['country' => $country->name]) ?>
                             <?php endif; ?>
@@ -158,6 +176,10 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                                 <?= Lang::t('Total Number Of Insemination in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                             <?php elseif (Session::isRegionUser()): ?>
                                 <?= Lang::t('Total Number Of Insemination in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                            <?php elseif (Session::isOrganizationUser()): ?>
+                                <?= Lang::t('Total Number Of Insemination in') . ' ' . Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                            <?php elseif (Session::isOrganizationClientUser()): ?>
+                                <?= Lang::t('Total Number Of Insemination in') . ' ' . Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                             <?php else: ?>
                                 <?= Lang::t(' Total Number Of Insemination in {country}', ['country' => $country->name]) ?>
                             <?php endif; ?>
@@ -182,6 +204,10 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                                 <?= Lang::t('Total Number Of Pregnancy Diagnosis in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                             <?php elseif (Session::isRegionUser()): ?>
                                 <?= Lang::t('Total Number Of Pregnancy Diagnosis in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                            <?php elseif (Session::isOrganizationUser()): ?>
+                                <?= Lang::t('Total Number Of Pregnancy Diagnosis  in') . ' ' . Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                            <?php elseif (Session::isOrganizationClientUser()): ?>
+                                <?= Lang::t('Total Number Of Pregnancy Diagnosis in') . ' ' . Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                             <?php else: ?>
                                 <?= Lang::t(' Total Number Of Pregnancy Diagnosis in {country}', ['country' => $country->name]) ?>
                             <?php endif; ?>
@@ -205,6 +231,10 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                                 <?= Lang::t('Total Number Of Male Calves in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                             <?php elseif (Session::isRegionUser()): ?>
                                 <?= Lang::t('Total Number Of Male Calves in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                            <?php elseif (Session::isOrganizationUser()): ?>
+                                <?= Lang::t('Total Number Of Male Calves  in') . ' ' . Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                            <?php elseif (Session::isOrganizationClientUser()): ?>
+                                <?= Lang::t('Total Number Of Male Calves in') . ' ' . Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                             <?php else: ?>
                                 <?= Lang::t(' Total Number of Male Calves in {country}', ['country' => $country->name]) ?>
                             <?php endif; ?>
@@ -228,6 +258,10 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                                 <?= Lang::t('Total Number Of  Female Calves in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                             <?php elseif (Session::isRegionUser()): ?>
                                 <?= Lang::t('Total Number Of  Female Calves in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                            <?php elseif (Session::isOrganizationUser()): ?>
+                                <?= Lang::t('Total Number Of Female Calves  in') . ' ' . Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                            <?php elseif (Session::isOrganizationClientUser()): ?>
+                                <?= Lang::t('Total Number Of Female Calves in') . ' ' . Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                             <?php else: ?>
                                 <?= Lang::t(' Total Number of Female Calves in {country}', ['country' => $country->name]) ?>
                             <?php endif; ?>

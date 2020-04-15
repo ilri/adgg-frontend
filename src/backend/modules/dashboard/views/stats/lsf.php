@@ -4,10 +4,12 @@ use backend\controllers\BackendController;
 use backend\modules\auth\Session;
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\Choices;
+use backend\modules\core\models\Client;
 use backend\modules\core\models\CountriesDashboardStats;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\Country;
 use backend\modules\core\models\CountryUnits;
+use backend\modules\core\models\Organization;
 use common\helpers\DbUtils;
 use common\helpers\Lang;
 use common\widgets\highchart\HighChart;
@@ -36,6 +38,10 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                 <?= Lang::t('Large Scale Farm Report in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
             <?php elseif (Session::isRegionUser()): ?>
                 <?= Lang::t('Large Scale Farm Report in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+            <?php elseif (Session::isOrganizationUser()): ?>
+                <?= Lang::t('Large Scale Farm Report  in') . ' ' . Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+            <?php elseif (Session::isOrganizationClientUser()): ?>
+                <?= Lang::t('Large Scale Farm Reports in') . ' ' . Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
             <?php else: ?>
                 <?= Lang::t('Large Scale Farm Report in {country}', ['country' => $country->name]) ?>
             <?php endif; ?>
@@ -47,11 +53,15 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                     <div class="col-md-12 kt-iconbox kt-iconbox--active">
                         <div class="kt-iconbox__title">
                             <?php if (Session::isWardUser()): ?>
-                                <?= Lang::t('Large Scale Farms Grouped By Region in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getWardId(), 'level' => CountryUnits::LEVEL_WARD]) . ' ' . 'Ward' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                <?= Lang::t('Large Scale Farms Grouped By Regions in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getWardId(), 'level' => CountryUnits::LEVEL_WARD]) . ' ' . 'Ward' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                             <?php elseif (Session::isDistrictUser()): ?>
-                                <?= Lang::t('Large Scale Farms Grouped By Region in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                <?= Lang::t('Large Scale Farms Grouped By Regions in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                             <?php elseif (Session::isRegionUser()): ?>
-                                <?= Lang::t('Large Scale Farms Grouped By Region in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                <?= Lang::t('Large Scale Farms Grouped By Regions in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                            <?php elseif (Session::isOrganizationUser()): ?>
+                                <?= Lang::t('Large Scale Farms Grouped by Regions  in') . ' ' . Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                            <?php elseif (Session::isOrganizationClientUser()): ?>
+                                <?= Lang::t('Large Scale Farms Grouped by Regions in') . ' ' . Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                             <?php else: ?>
                                 <?= Lang::t('Large Scale Farms Grouped By Region in {country}', ['country' => $country->name]) ?>
                             <?php endif; ?>
@@ -92,6 +102,10 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                                 <?= Lang::t('Number of Animals Registered By Breeds  in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                             <?php elseif (Session::isRegionUser()): ?>
                                 <?= Lang::t('Number of Animals Registered By Breeds  in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                            <?php elseif (Session::isOrganizationUser()): ?>
+                                <?= Lang::t('Number of Animals Registered By Breeds   in') . ' ' . Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                            <?php elseif (Session::isOrganizationClientUser()): ?>
+                                <?= Lang::t('Number of Animals Registered By Breeds  in') . ' ' . Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                             <?php else: ?>
                                 <?= Lang::t('Number of Animals Registered By Breeds in {country}', ['country' => $country->name]) ?>
                             <?php endif; ?>
