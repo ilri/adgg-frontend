@@ -196,7 +196,7 @@ use yii\helpers\Json;
                             <?php endif; ?>
                             <div class="col-md-4">
                                 <?= $form->field($model, 'role_id')->widget(Select2::class, [
-                                    'data' => \backend\modules\auth\models\Roles::getListData('id', 'name', true, Session::isCountry() ? ['level_id' => UserLevels::LEVEL_COUNTRY] : []),
+                                    'data' => \backend\modules\auth\models\Roles::getListData('id', 'name', false, Session::isCountry() ? ['level_id' => UserLevels::LEVEL_COUNTRY] : []),
                                     'theme' => Select2::THEME_BOOTSTRAP,
                                     'options' => [
                                         'data-url' => Url::to(['role/get-list', 'level_id' => 'idV', 'placeholder' => true]),
