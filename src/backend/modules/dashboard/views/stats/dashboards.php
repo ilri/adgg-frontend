@@ -58,7 +58,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="col-lg-4 col-xl-4 order-lg-2 order-xl-2">
                     <!--begin::Portlet-->
                     <div class="kt-portlet" title="Click to view details">
-                        <a href="<?= Url::to(['/dashboard/stats/dash1', 'country_id' => $country->id]) ?>"
+                        <a href="<?= Url::to(['/dashboard/stats/lsf', 'country_id' => $country->id]) ?>"
                            class="kt-iconbox kt-iconbox--active">
                             <div class="kt-iconbox__title">
                                 <?= Lang::t('LSF Farm Stats'); ?>                            </div>
@@ -69,7 +69,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="col-lg-4 col-xl-4 order-lg-2 order-xl-2">
                     <!--begin::Portlet-->
                     <div class="kt-portlet">
-                        <a href="<?= Url::to(['/dashboard/stats/dash2', 'country_id' => $country->id]) ?>"
+                        <a href="<?= Url::to(['/dashboard/stats/test-day', 'country_id' => $country->id]) ?>"
                            class="kt-iconbox kt-iconbox--active">
                             <div class="kt-iconbox__title">
                                 <?= Lang::t('Milk Report(Test Day) '); ?>                            </div>
@@ -80,7 +80,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="col-lg-4 col-xl-4 order-lg-2 order-xl-2">
                     <!--begin::Portlet-->
                     <div class="kt-portlet">
-                        <a href="<?= Url::to(['/dashboard/stats/dash3', 'country_id' => $country->id]) ?>"
+                        <a href="<?= Url::to(['/dashboard/stats/genotype', 'country_id' => $country->id]) ?>"
                            class="kt-iconbox kt-iconbox--active">
                             <div class="kt-iconbox__title">
                                 <?= Lang::t('Genotyped Animals'); ?>                            </div>
@@ -91,7 +91,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="col-lg-4 col-xl-4 order-lg-2 order-xl-2">
                     <!--begin::Portlet-->
                     <div class="kt-portlet">
-                        <a href="<?= Url::to(['/dashboard/stats/dash4', 'country_id' => $country->id]) ?>"
+                        <a href="<?= Url::to(['/dashboard/stats/insemination-pd-calving', 'country_id' => $country->id]) ?>"
                            class="kt-iconbox kt-iconbox--active">
                             <div class="kt-iconbox__title">
                                 <?= Lang::t('Insemination,PD And Calving'); ?>

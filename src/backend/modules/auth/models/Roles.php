@@ -50,7 +50,8 @@ class Roles extends ActiveRecord implements ActiveSearchInterface
     {
         return [
             [['name'], 'required'],
-            [['readonly', 'level_id', 'is_active', 'is_field_agent'], 'integer'],
+            [['readonly', 'level_id', 'is_field_agent'], 'integer'],
+            [['is_active'], 'safe'],
             [['name'], 'string', 'max' => 128],
             [['description'], 'string', 'max' => 255],
             [['name'], 'unique', 'message' => Lang::t('{attribute} {value} already exists.')],

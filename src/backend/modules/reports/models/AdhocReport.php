@@ -2,6 +2,7 @@
 
 namespace backend\modules\reports\models;
 
+use backend\modules\auth\models\Users;
 use common\helpers\FileManager;
 use common\helpers\Lang;
 use common\helpers\Utils;
@@ -21,6 +22,8 @@ use common\models\ActiveSearchTrait;
  * @property string $status_remarks
  * @property string $created_at
  * @property int $created_by
+ *
+ * @property Users $extractedBy
  */
 class AdhocReport extends ActiveRecord implements ActiveSearchInterface
 {
@@ -78,6 +81,13 @@ class AdhocReport extends ActiveRecord implements ActiveSearchInterface
             'status',
             'created_by',
         ];
+    }
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getExtractedBy()
+    {
+        return $this->hasOne(Users::class, ['id' => 'created_by']);
     }
 
     /**

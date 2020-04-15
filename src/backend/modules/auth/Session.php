@@ -66,7 +66,9 @@ class Session
             UserLevels::LEVEL_WARD,
             UserLevels::LEVEL_VILLAGE,
             UserLevels::LEVEL_FARMER,
-            UserLevels::LEVEL_EXTERNAL_ORGANIZATION,
+            UserLevels::LEVEL_ORGANIZATION,
+            UserLevels::LEVEL_ORGANIZATION_CLIENT,
+
         ];
         return in_array(Yii::$app->user->identity->level_id, $countryUserLevels);
     }
@@ -79,12 +81,20 @@ class Session
         return Yii::$app->user->identity->level_id == UserLevels::LEVEL_COUNTRY;
     }
 
-    public static function isExternalOrgUser()
+    public static function isOrganizationUser()
     {
         if (Yii::$app->user->isGuest) {
             return false;
         }
-        return Yii::$app->user->identity->level_id == UserLevels::LEVEL_EXTERNAL_ORGANIZATION;
+        return Yii::$app->user->identity->level_id == UserLevels::LEVEL_ORGANIZATION;
+    }
+
+    public static function isOrganizationClientUser()
+    {
+        if (Yii::$app->user->isGuest) {
+            return false;
+        }
+        return Yii::$app->user->identity->level_id == UserLevels::LEVEL_ORGANIZATION_CLIENT;
     }
 
     public static function isRegionUser()
@@ -160,6 +170,14 @@ class Session
     {
         if (static::isCountry()) {
             return Yii::$app->user->identity->org_id ?? null;
+        }
+        return $default;
+    }
+
+    public static function getClientId($default = null)
+    {
+        if (static::isCountry()) {
+            return Yii::$app->user->identity->client_id ?? null;
         }
         return $default;
     }

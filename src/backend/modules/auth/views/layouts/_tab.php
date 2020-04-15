@@ -2,6 +2,7 @@
 
 use backend\modules\auth\Constants;
 use backend\modules\auth\models\Users;
+use backend\modules\auth\Session;
 use common\helpers\Lang;
 use yii\helpers\Url;
 
@@ -14,7 +15,24 @@ use yii\helpers\Url;
                href="<?= Url::to(['user/index', 'country_id' => !empty($countryModel) ? $countryModel->id : null]) ?>">
                 <?= Lang::t('Users/Administrators') ?>
                 <span
-                    class="badge badge-secondary badge-pill"><?= number_format(Users::getCount(!empty($countryModel) ? ['status' => Users::STATUS_ACTIVE, 'country_id' => $countryModel->id] : ['status' => Users::STATUS_ACTIVE])) ?></span>
+                        class="badge badge-secondary badge-pill">
+                    <?php if (Session::isOrganizationUser()): ?>
+                        <?= number_format(Users::getCount(!empty($countryModel) ? ['status' => Users::STATUS_ACTIVE, 'country_id' => $countryModel->id, 'org_id' => Session::getOrgId()] : ['status' => Users::STATUS_ACTIVE])) ?>
+                    <?php elseif (Session::isOrganizationClientUser()): ?>
+                        <?= number_format(Users::getCount(!empty($countryModel) ? ['status' => Users::STATUS_ACTIVE, 'country_id' => $countryModel->id, 'client_id' => Session::getClientId()] : ['status' => Users::STATUS_ACTIVE])) ?>
+                    <?php elseif (Session::isRegionUser()): ?>
+                        <?= number_format(Users::getCount(!empty($countryModel) ? ['status' => Users::STATUS_ACTIVE, 'country_id' => $countryModel->id, 'region_id' => Session::getRegionId()] : ['status' => Users::STATUS_ACTIVE])) ?>
+                    <?php elseif (Session::isDistrictUser()): ?>
+                        <?= number_format(Users::getCount(!empty($countryModel) ? ['status' => Users::STATUS_ACTIVE, 'country_id' => $countryModel->id, 'district_id' => Session::getDistrictId()] : ['status' => Users::STATUS_ACTIVE])) ?>
+                    <?php elseif (Session::isWardUser()): ?>
+                        <?= number_format(Users::getCount(!empty($countryModel) ? ['status' => Users::STATUS_ACTIVE, 'country_id' => $countryModel->id, 'ward_id' => Session::getWardId()] : ['status' => Users::STATUS_ACTIVE])) ?>
+                    <?php elseif (Session::isVillageUser()): ?>
+                        <?= number_format(Users::getCount(!empty($countryModel) ? ['status' => Users::STATUS_ACTIVE, 'country_id' => $countryModel->id, 'village_id' => Session::getVillageId()] : ['status' => Users::STATUS_ACTIVE])) ?>
+                    <?php else : ?>
+                        <?= number_format(Users::getCount(!empty($countryModel) ? ['status' => Users::STATUS_ACTIVE, 'country_id' => $countryModel->id] : ['status' => Users::STATUS_ACTIVE])) ?>
+                    <?php endif; ?>
+
+                </span>
             </a>
         </li>
     <?php endif; ?>
@@ -40,7 +58,7 @@ use yii\helpers\Url;
             </a>
         </li>
     <?php endif; ?>
-    <?php if (\backend\modules\auth\Session::isDev()): ?>
+    <?php if (Session::isDev()): ?>
         <li class="nav-item">
             <a class="nav-link" href="<?= Url::to(['resource/index']) ?>">
                 <?= Lang::t('System Resources') ?>

@@ -32,10 +32,12 @@ class FarmController extends Controller
         $this->resourceLabel = 'Farm';
     }
 
-    public function actionIndex($country_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $name = null, $code = null, $phone = null, $project = null, $farm_type = null, $gender_code = null, $is_active = null, $odk_code = null)
+    public function actionIndex($country_id = null, $org_id = null, $client_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $name = null, $code = null, $phone = null, $project = null, $farm_type = null, $gender_code = null, $is_active = null, $odk_code = null)
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
         $country_id = Session::getCountryId($country_id);
+        $org_id = Session::getOrgId($org_id);
+        $client_id = Session::getClientId($client_id);
         $region_id = Session::getRegionId($region_id);
         $district_id = Session::getDistrictId($district_id);
         $ward_id = Session::getWardId($ward_id);
@@ -47,9 +49,11 @@ class FarmController extends Controller
             'defaultOrder' => ['id' => SORT_DESC],
             'condition' => $condition,
             'params' => $params,
-            'with' => ['country', 'region', 'district', 'ward', 'village', 'fieldAgent'],
+            'with' => ['country', 'org', 'client', 'region', 'district', 'ward', 'village', 'fieldAgent'],
         ]);
         $searchModel->country_id = $country_id;
+        $searchModel->org_id = $org_id;
+        $searchModel->client_id = $client_id;
         $searchModel->region_id = $region_id;
         $searchModel->district_id = $district_id;
         $searchModel->ward_id = $ward_id;
