@@ -7,8 +7,14 @@ use common\helpers\Lang;
 use yii\helpers\Url;
 
 $activeStatus = Yii::$app->request->get('status', AdhocReport::STATUS_COMPLETED);
-$created_by = null;
-if (!Session::isDev()) {
+if (Session::isPrivilegedAdmin()) {
+    $reports = AdhocReport::find()->andWhere(['is_deleted' => 0])->orderBy(['id' => SORT_DESC])->all();
+    $data = [];
+    foreach ($reports as $report) {
+        $data[] = $report->created_by;
+    }
+    $created_by = $data;
+} else {
     $created_by = Yii::$app->user->identity->id;
 }
 ?>
