@@ -513,6 +513,7 @@ class ReportBuilder extends Model
                     $subRelationName = (explode('.', $field)[1]); // farm
                     // add subrelation to other joins
                     $other_joins[$subRelationName] = $relationName;
+                    $joins[] = $relationName;
                 } else {
                     $relationName = (explode('.', $field)[0]);
                     $joins[] = $relationName;

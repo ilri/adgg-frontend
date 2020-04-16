@@ -1,6 +1,10 @@
 <?php
 
+use backend\modules\auth\Session;
+use backend\modules\core\models\Client;
 use backend\modules\core\models\Country;
+use backend\modules\core\models\CountryUnits;
+use backend\modules\core\models\Organization;
 use backend\modules\reports\models\ReportBuilder;
 use common\helpers\Lang;
 use common\helpers\Url;
@@ -18,8 +22,23 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="row">
         <div class="col-md-12">
             <div class="well">
-                <h3 class="text-muted"><?= Lang::t('REPORT BUILDER') ?>
-                    : <?= strtoupper(Country::getScalar('name', ['id' => $country_id])) ?></h3>
+                <h3 class="text-muted">
+                    <?php if (Session::isVillageUser()): ?>
+                        <?= Lang::t('EXTRACT BUILDER') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getVillageId(), 'level' => CountryUnits::LEVEL_VILLAGE]) . ' ' . 'Village' . ' ' . '[' . Country::getScalar('name', ['id' => $country_id]) . ']'; ?>
+                    <?php elseif (Session::isWardUser()): ?>
+                        <?= Lang::t('EXTRACT BUILDER') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getWardId(), 'level' => CountryUnits::LEVEL_WARD]) . ' ' . 'Ward' . ' ' . '[' . Country::getScalar('name', ['id' => $country_id]) . ']'; ?>
+                    <?php elseif (Session::isDistrictUser()): ?>
+                        <?= Lang::t('EXTRACT BUILDER') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Country::getScalar('name', ['id' => $country_id]) . ']'; ?>
+                    <?php elseif (Session::isRegionUser()): ?>
+                        <?= Lang::t('EXTRACT BUILDER') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Country::getScalar('name', ['id' => $country_id]) . ']'; ?>
+                    <?php elseif (Session::isOrganizationUser()): ?>
+                        <?= Lang::t('EXTRACT BUILDER') . ' ' . Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country_id]) . ' ' . '[' . Country::getScalar('name', ['id' => $country_id]) . ']'; ?>
+                    <?php elseif (Session::isOrganizationClientUser()): ?>
+                        <?= Lang::t('EXTRACT BUILDER') . ' ' . Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country_id]) . ' ' . '[' . Country::getScalar('name', ['id' => $country_id]) . ']'; ?>
+                    <?php else: ?>
+                        <?= Lang::t('EXTRACT BUILDER') ?>
+                        : <?= strtoupper(Country::getScalar('name', ['id' => $country_id])) ?><?php endif; ?>
+                </h3>
                 <hr>
                 <form method="POST" id="report-builder-form">
                     <input type="hidden" name="<?= Yii::$app->request->csrfParam ?>"
