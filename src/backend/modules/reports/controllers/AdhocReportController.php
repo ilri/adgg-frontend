@@ -37,7 +37,9 @@ class AdhocReportController extends Controller
     public function actionIndex($name = null, $created_by = null, $status = null, $from = null, $to = null)
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
-        $created_by = Yii::$app->user->identity->id;
+        if (!Session::isDev()) {
+            $created_by = Yii::$app->user->identity->id;
+        }
         //dd($created_by);
         $date_filter = DateUtils::getDateFilterParams($from, $to, 'created_at', false, true);
         $condition = $date_filter['condition'];
