@@ -37,6 +37,7 @@ return [
             'animals' => 'v1/animals',
             'events' => 'v1/animal-event',
             'list-types' => 'v1/list-types',
+            'country-units' => 'v1/country-units',
             'event-types' => 'v1/event-types',
             'animal-types' => 'v1/animal-types',
             'breeds' => 'v1/breeds',

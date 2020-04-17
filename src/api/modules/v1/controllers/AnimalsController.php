@@ -5,6 +5,7 @@ namespace api\modules\v1\controllers;
 
 use api\controllers\ActiveController;
 use api\controllers\JwtAuthTrait;
+use backend\modules\auth\Session;
 use backend\modules\conf\settings\SystemSettings;
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\Farm;
@@ -21,25 +22,40 @@ class AnimalsController extends ActiveController
     }
 
 
-    public function actionIndex($farm_id = null, $farm_name = null, $tag_id = null, $animal_type = null, $breed = null)
+    public function actionIndex($country_id = null, $org_id = null, $client_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $farm_id = null, $farm_name = null, $tag_id = null, $animal_type = null, $breed = null)
     {
-        $user = \Yii::$app->user->identity;
-
+        $country_id = Session::getCountryId($country_id);
+        $org_id = Session::getOrgId($org_id);
+        $client_id = Session::getClientId($client_id);
+        $region_id = Session::getRegionId($region_id);
+        $district_id = Session::getDistrictId($district_id);
+        $ward_id = Session::getWardId($ward_id);
+        $village_id = Session::getVillageId($village_id);
+        $condition = '';
+        $params = [];
         $searchModel = Animal::searchModel([
             'defaultOrder' => ['id' => SORT_ASC],
             'enablePagination' => true,
+            'condition' => $condition,
+            'params' => $params,
             'pageSize' => SystemSettings::getPaginationSize(),
             'joinWith' => [
                 'farm' => function (\yii\db\ActiveQuery $query) use ($farm_name) {
                     $query->andFilterWhere(['LIKE', Farm::tableName() . '.name', $farm_name]);
                 },
-            ]
+            ],
+            'with' => ['country', 'org', 'client', 'farm', 'region', 'district', 'ward', 'village'],
         ]);
-        $searchModel->farm_id = $farm_id;
+        $searchModel->country_id = $country_id;
+        $searchModel->org_id = $org_id;
+        $searchModel->client_id = $client_id;
+        $searchModel->region_id = $region_id;
+        $searchModel->district_id = $district_id;
+        $searchModel->ward_id = $ward_id;
+        $searchModel->village_id = $village_id;
         $searchModel->tag_id = $tag_id;
         $searchModel->animal_type = $animal_type;
         $searchModel->main_breed = $breed;
-        $searchModel->country_id = $user->country_id;
         return $searchModel->search();
     }
 }

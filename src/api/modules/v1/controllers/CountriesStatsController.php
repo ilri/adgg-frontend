@@ -6,6 +6,7 @@ namespace api\modules\v1\controllers;
 
 use api\controllers\ActiveController;
 use api\controllers\JwtAuthTrait;
+use backend\modules\auth\Session;
 use backend\modules\conf\settings\SystemSettings;
 use backend\modules\core\models\CountriesDashboardStats;
 use backend\modules\core\models\Country;
