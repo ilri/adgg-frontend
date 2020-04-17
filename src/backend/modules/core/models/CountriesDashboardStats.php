@@ -6,6 +6,7 @@ namespace backend\modules\core\models;
 
 use backend\modules\auth\Session;
 use backend\modules\conf\settings\SystemSettings;
+use common\helpers\DateUtils;
 use common\helpers\DbUtils;
 use common\helpers\Lang;
 use Yii;
@@ -299,6 +300,42 @@ class CountriesDashboardStats extends Model
                 ];
             }
 
+        };
+        return $data;
+
+    }
+
+    public static function getDashboardDateCategories($max = 12, $format = 'Y-m-d'){
+        $date = new \DateTime('now');
+        $to = $date->format('Y-m-d');
+        $from = $date->modify('-1 year')->format('Y-m-d');
+        $max_label = $max;
+        $date_interval = DateUtils::getDateDiff($from, $to);
+        $days_interval = $date_interval->days;
+        $x_interval = (int)round(($days_interval / 30) / $max_label);
+
+        return  DateUtils::generateDateSpan($from, $to, $x_interval, 'month', $format);
+    }
+
+    public static function getTestDayMilkGroupedByCountries()
+    {
+        $data = [];
+        // get countries
+        $countries = Country::getListData('id', 'name', false);
+        foreach ($countries as $id => $label) {
+            $dates = static::getDashboardDateCategories();
+            foreach ($dates as $date){
+                $condition = [
+                    'event_type' => AnimalEvent::EVENT_TYPE_MILKING,
+                    'country_id' => $id,
+                ];
+                $totalMilkField = new Expression("JSON_UNQUOTE(JSON_EXTRACT(`core_animal_event`.`additional_attributes`, '$.\"62\"'))");
+                $sum = MilkingEvent::find()->select($totalMilkField)->andWhere($condition)->andWhere('YEAR(event_date) = YEAR(:date) AND MONTH(event_date) = MONTH(:date)', [':date' => $date])->sum($totalMilkField);
+                $data[$label][] = [
+                    'label' => $date,
+                    'value' => floatval(number_format($sum, 2, '.', '')),
+                ];
+            }
         };
         return $data;
 

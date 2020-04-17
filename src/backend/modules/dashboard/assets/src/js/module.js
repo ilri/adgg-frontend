@@ -84,3 +84,91 @@ MyApp.modules.dashboard = {};
     };
     //MyApp.plugin.gridPieChart = PLUGIN;
 }(jQuery));
+
+(function ($) {
+    'use strict';
+    var CHART = function (container, series, graphOptions) {
+        var defaultOptions = {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null, //null,
+                plotShadow: false,
+                backgroundColor: 'transparent',
+                spacingTop: 3,
+                type: 'line',
+            },
+            credits: {
+                enabled: false,
+            },
+            title: {
+                text: null,
+            },
+            subtitle: {
+                text: null,
+            },
+            tooltip: {
+                crosshairs: true,
+                shared: true,
+            },
+            yAxis: {
+                title: {
+                    text: null,
+                    style: {fontWeight: 'normal'},
+                },
+            },
+            xAxis: {
+                title: {
+                    text: null,
+                    style: {fontWeight: 'normal'},
+                },
+                accessibility: {
+                    rangeDescription: null
+                },
+                crosshair: true
+            },
+            legend: {
+                layout: 'horizontal',
+                align: 'center',
+                verticalAlign: 'bottom',
+                x: 0,
+                y: 0,
+                symbolHeight: 12,
+                symbolWidth: 12,
+                symbolRadius: 6,
+            },
+            plotOptions: {
+                series: {
+                    label: {
+                        connectorAllowed: false
+                    },
+                    pointStart: null
+                },
+                line: {
+                    dataLabels: {
+                        enabled: true
+                    }
+                },
+                column: {
+                    //colorByPoint: true
+                }
+            },
+            colors: [
+                '#771957',
+                '#7986CB',
+                '#7F5298',
+            ],
+        };
+        this.container = container;
+        this.series = series;
+        this.graphOptions = $.extend(true, {}, defaultOptions, graphOptions || {});
+        this.create();
+    };
+    CHART.prototype.create = function () {
+        var $this = this;
+        var options = $.extend(true, {}, $this.graphOptions, {series: $this.series});
+        $('#' + $this.container).highcharts(options);
+    };
+    MyApp.modules.dashboard.chart = function (container, series, graphOptions) {
+        var obj = new CHART(container, series, graphOptions);
+    };
+}(jQuery));
