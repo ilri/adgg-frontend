@@ -35,19 +35,19 @@ $this->params['breadcrumbs'] = [
     </div>
 </div>
 <div class="row mb-3">
-    <div class="col-md-6">
+    <div class="col-md-12">
         <div class="card card-body">
             <?= $this->render('partials/insemination', ['filterOptions' => []]) ?>
         </div>
     </div>
+</div>
+<div class="row mb-3">
     <div class="col-md-6">
         <div class="card card-body">
             <?= $this->render('partials/animals', ['filterOptions' => []]) ?>
         </div>
     </div>
-</div>
-<div class="row mb-3">
-    <div class="col-md-12">
+    <div class="col-md-6">
         <div class="card card-body">
             <?= $this->render('partials/table', ['filterOptions' => []]) ?>
         </div>
