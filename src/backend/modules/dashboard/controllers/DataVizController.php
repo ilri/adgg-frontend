@@ -23,28 +23,15 @@ class DataVizController extends Controller
 
     public function actionIndex()
     {
-        $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
         return $this->render('index', [
-            'countries' => $countries,
-            'filterOptions' => [
-
-            ]
+            'filterOptions' => []
         ]);
     }
 
-    public function actionGraph($graphType = null)
+    public function actionLoadChart($name)
     {
-        $dateRange = null;
-        return $this->renderPartial('graph/_widget', [
-            'graphType' => $graphType,
-            'dateRange' => $dateRange,
-            'filterOptions' => [
-                'country_id' => $country_id,
-                'region_id' => $region_id,
-                'district_id' => $district_id,
-                'ward_id' => $ward_id,
-                'village_id' => $village_id,
-            ],
+        return $this->renderAjax('partials/'. $name, [
+            'filterOptions' => [],
         ]);
     }
 

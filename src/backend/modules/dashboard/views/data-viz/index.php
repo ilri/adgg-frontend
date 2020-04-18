@@ -6,6 +6,8 @@ use backend\modules\core\models\Farm;
 use backend\modules\core\models\MilkingEvent;
 use common\helpers\DateUtils;
 use common\helpers\Lang;
+use common\helpers\Url;
+use yii\helpers\Json;
 
 /* @var $this yii\web\View */
 /* @var $controller \backend\controllers\BackendController */
@@ -18,38 +20,59 @@ $this->params['breadcrumbs'] = [
 
 ?>
 
-<div class="row">
-    <?= $this->render('partials/summary', ['filterOptions' => []]) ?>
-</div>
+<div class="row" id="summaryChart" style="display:flex;flex-direction:row;"></div>
 <br/>
 <div class="row mb-3">
     <div class="col-md-6">
-        <div class="card card-body">
-            <?= $this->render('partials/milk', ['filterOptions' => []]) ?>
-        </div>
+        <div class="card card-body" id="milkChart"></div>
     </div>
     <div class="col-md-6">
-        <div class="card card-body">
-            <?= $this->render('partials/calf', ['filterOptions' => []]) ?>
-        </div>
+        <div class="card card-body" id="calfChart"></div>
     </div>
 </div>
 <div class="row mb-3">
     <div class="col-md-12">
-        <div class="card card-body">
-            <?= $this->render('partials/insemination', ['filterOptions' => []]) ?>
-        </div>
+        <div class="card card-body" id="inseminationChart"></div>
     </div>
 </div>
 <div class="row mb-3">
     <div class="col-md-6">
-        <div class="card card-body">
-            <?= $this->render('partials/animals', ['filterOptions' => []]) ?>
-        </div>
+        <div class="card card-body" id="animalsChart"></div>
     </div>
     <div class="col-md-6">
-        <div class="card card-body">
-            <?= $this->render('partials/table', ['filterOptions' => []]) ?>
-        </div>
+        <div class="card card-body" id="tableChart"></div>
     </div>
 </div>
+<?php
+$options = [
+    'ajaxAction' => Url::to(['data-viz/load-chart']),
+    'ajaxCharts' => [
+        [
+            'name' => 'summary',
+            'renderContainer' => '#summaryChart'
+        ],
+        [
+            'name' => 'milk',
+            'renderContainer' => '#milkChart'
+        ],
+        [
+            'name' => 'calf',
+            'renderContainer' => '#calfChart'
+        ],
+        [
+            'name' => 'insemination',
+            'renderContainer' => '#inseminationChart'
+        ],
+        [
+            'name' => 'animals',
+            'renderContainer' => '#animalsChart'
+        ],
+        [
+            'name' => 'table',
+            'renderContainer' => '#tableChart'
+        ],
+
+    ]
+];
+$this->registerJs("MyApp.modules.dashboard.dataviz(" . Json::encode($options) . ");");
+?>

@@ -172,3 +172,64 @@ MyApp.modules.dashboard = {};
         var obj = new CHART(container, series, graphOptions);
     };
 }(jQuery));
+
+(function ($) {
+    "use strict";
+    var DATAVIZ = function (options) {
+        let defaultOptions = {
+            ajaxAction: '',
+            ajaxCharts: [
+                {
+                    name: 'milk',
+                    renderContainer: '#milkChart'
+                },
+                {
+                    name: 'calf',
+                    renderContainer: '#calfChart'
+                },
+            ],
+        };
+        this.options = $.extend({}, defaultOptions, options || {});
+    }
+
+    DATAVIZ.prototype.loadAjaxCharts = function () {
+        let $this = this;
+
+        let _load = function (chart) {
+            let url = chart.url;
+            let renderContainer = $(chart.renderContainer);
+            $.ajax({
+                url: url,
+                type: 'get',
+                dataType: 'html',
+                data: {name: chart.name},
+                success: function (data) {
+                    renderContainer.html(data).fadeIn("slow");
+                },
+                beforeSend: function (xhr) {
+                    renderContainer.html('<div class="col-md-12"><h1 class="text-center text-warning" style="margin:40px;"><i class="fa fa-spinner fa-spin fa-2x"></i> Loading...</h1></div>');
+                },
+                error: function (xhr) {
+                    renderContainer.html(xhr.responseText);
+                    if (MyApp.DEBUG_MODE) {
+                        console.log(xhr);
+                    }
+                }
+            })
+        }
+
+        $(window).on('load', function() {
+            let charts = $this.options.ajaxCharts;
+            charts.forEach(function (item, index) {
+                item.url = $this.options.ajaxAction;
+                _load(item);
+            })
+        });
+    }
+
+    MyApp.modules.dashboard.dataviz = function (options) {
+        let obj = new DATAVIZ(options);
+        obj.loadAjaxCharts();
+    }
+
+}(jQuery));
