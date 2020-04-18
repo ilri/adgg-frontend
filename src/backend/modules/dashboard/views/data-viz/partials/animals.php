@@ -11,16 +11,25 @@ use yii\helpers\Json;
     <div id="chartContainerAnimals" title="" style="width:100%;"></div>
 </div>
 <?php
-$chart_data = CountriesDashboardStats::getTestDayMilkGroupedByRegions();
+$chart_data = CountriesDashboardStats::getRegisteredAnimalsForDataViz();
+//dd($chart_data);
 $data = [];
 if (count($chart_data) > 0) {
-    foreach ($chart_data as $cdata) {
+    $values = [];
+    foreach ($chart_data as $country => $country_data) {
+        foreach ($country_data as $cdata){
+            $values[$cdata['label']][] = $cdata['value'];
+        }
+    }
+    foreach ($values as $t => $dv){
         $data[] = [
-            'name' => $cdata['label'],
-            'y' => floatval(number_format($cdata['value'], 2, '.', '')),
+            'name' => $t,
+            'data' => $dv,
         ];
     }
+    //dd($values, $data);
 }
+/*
 $series = [
     [
         'name' => 'Calf',
@@ -41,6 +50,8 @@ $series = [
         'color' => '#7986CB',
     ],
 ];
+*/
+$series = $data;
 $graphOptions = [
     'chart' => [
         'type' => 'column',
@@ -52,7 +63,7 @@ $graphOptions = [
             'text' => 'Countries',
             'style' => ['fontWeight' => 'normal'],
         ],
-        'categories' => ['KE', 'ET', 'TZ']
+        'categories' => CountriesDashboardStats::getDashboardCountryCategories()
     ],
     'yAxis' => [
         'title' => [

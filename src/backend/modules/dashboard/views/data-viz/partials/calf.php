@@ -11,16 +11,22 @@ use yii\helpers\Json;
     <div id="chartContainerCalf" title="" style="width:100%;"></div>
 </div>
 <?php
-$chart_data = CountriesDashboardStats::getTestDayMilkGroupedByRegions();
+$chart_data = CountriesDashboardStats::getCalfWeightGrowthForDataViz();
+//dd($chart_data);
 $data = [];
 if (count($chart_data) > 0) {
-    foreach ($chart_data as $cdata) {
+    foreach ($chart_data as $country => $country_data) {
+        $values = [];
+        foreach ($country_data as $cdata){
+            $values[] = $cdata['value'];
+        }
         $data[] = [
-            'name' => $cdata['label'],
-            'y' => floatval(number_format($cdata['value'], 2, '.', '')),
+            'name' => $country,
+            'data' => $values,
         ];
     }
 }
+/*
 $series = [
     [
         'name' => 'Kenya',
@@ -35,6 +41,8 @@ $series = [
         'color' => '#7986CB',
     ],
 ];
+*/
+$series = $data;
 $graphOptions = [
     'title' => ['text' => 'Calf Growth'],
     'subtitle' => ['text' => '12 Month trend'],
@@ -43,7 +51,10 @@ $graphOptions = [
             'text' => '',
             'style' => ['fontWeight' => 'normal'],
         ],
-        'categories' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        'categories' =>
+            array_map(function ($date){
+                return \common\helpers\DateUtils::formatDate($date, 'M Y');
+            }, CountriesDashboardStats::getDashboardDateCategories())
     ],
     'yAxis' => [
         'title' => [

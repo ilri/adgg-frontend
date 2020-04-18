@@ -11,7 +11,7 @@ use yii\helpers\Json;
     <div id="chartContainer" title="" style="width:100%;"></div>
 </div>
 <?php
-$chart_data = CountriesDashboardStats::getTestDayMilkGroupedByCountries();
+$chart_data = CountriesDashboardStats::getMilkProductionForDataViz();
 //dd($chart_data);
 $data = [];
 if (count($chart_data) > 0) {

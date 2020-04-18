@@ -145,7 +145,7 @@ MyApp.modules.dashboard = {};
                 },
                 line: {
                     dataLabels: {
-                        enabled: true
+                        enabled: false
                     }
                 },
                 column: {

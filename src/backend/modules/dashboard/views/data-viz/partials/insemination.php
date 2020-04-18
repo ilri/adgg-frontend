@@ -11,16 +11,29 @@ use yii\helpers\Json;
     <div id="chartContainerAI" title="" style="width:100%;"></div>
 </div>
 <?php
-$chart_data = CountriesDashboardStats::getTestDayMilkGroupedByRegions();
+$chart_data = CountriesDashboardStats::getAIForDataViz();
+//dd($chart_data);
 $data = [];
 if (count($chart_data) > 0) {
-    foreach ($chart_data as $cdata) {
-        $data[] = [
-            'name' => $cdata['label'],
-            'y' => floatval(number_format($cdata['value'], 2, '.', '')),
-        ];
+    $values = [];
+    foreach ($chart_data as $country => $country_data) {
+        foreach ($country_data as $cdata){
+            $values[$cdata['label']][] = $cdata['value'];
+        }
     }
+    foreach ($values as $t => $dv){
+        // remove those with zeros for all countries
+        $sum = array_sum($dv);
+        if($sum > 0){
+            $data[] = [
+                'name' => $t,
+                'data' => $dv,
+            ];
+        }
+    }
+    //dd($values, $data);
 }
+/*
 $series = [
     [
         'name' => 'Fresian',
@@ -41,6 +54,8 @@ $series = [
         'color' => '#7986CB',
     ],
 ];
+*/
+$series = $data;
 $graphOptions = [
     'chart' => [
         'type' => 'bar',
@@ -52,7 +67,7 @@ $graphOptions = [
             'text' => 'Countries',
             'style' => ['fontWeight' => 'normal'],
         ],
-        'categories' => ['KE', 'ET', 'TZ']
+        'categories' => CountriesDashboardStats::getDashboardCountryCategories()
     ],
     'yAxis' => [
         'title' => [

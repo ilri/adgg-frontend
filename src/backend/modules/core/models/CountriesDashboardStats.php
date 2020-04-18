@@ -305,6 +305,15 @@ class CountriesDashboardStats extends Model
 
     }
 
+    public static function getDashboardCountryCategories(){
+        $countries = Country::getListData('id', 'name', false);
+        $data = [];
+        foreach ($countries as $id => $label) {
+            $data[] = $label;
+        }
+        return $data;
+    }
+
     public static function getDashboardDateCategories($max = 12, $format = 'Y-m-d'){
         $date = new \DateTime('now');
         $to = $date->format('Y-m-d');
@@ -317,13 +326,13 @@ class CountriesDashboardStats extends Model
         return  DateUtils::generateDateSpan($from, $to, $x_interval, 'month', $format);
     }
 
-    public static function getTestDayMilkGroupedByCountries()
+    public static function getMilkProductionForDataViz()
     {
         $data = [];
         // get countries
         $countries = Country::getListData('id', 'name', false);
+        $dates = static::getDashboardDateCategories();
         foreach ($countries as $id => $label) {
-            $dates = static::getDashboardDateCategories();
             foreach ($dates as $date){
                 $condition = [
                     'event_type' => AnimalEvent::EVENT_TYPE_MILKING,
@@ -338,7 +347,69 @@ class CountriesDashboardStats extends Model
             }
         };
         return $data;
+    }
 
+    public static function getCalfWeightGrowthForDataViz(){
+        $data = [];
+        // get countries
+        $countries = Country::getListData('id', 'name', false);
+        $dates = static::getDashboardDateCategories();
+        foreach ($countries as $id => $label) {
+            foreach ($dates as $date){
+                $condition = [
+                    'event_type' => AnimalEvent::EVENT_TYPE_WEIGHTS,
+                    'country_id' => $id,
+                ];
+                $weightField = new Expression("JSON_UNQUOTE(JSON_EXTRACT(`core_animal_event`.`additional_attributes`, '$.\"136\"'))");
+                $sum = WeightEvent::find()->select($weightField)->andWhere($condition)->andWhere('YEAR(event_date) = YEAR(:date) AND MONTH(event_date) = MONTH(:date)', [':date' => $date])->average($weightField);
+                $data[$label][] = [
+                    'label' => $date,
+                    'value' => floatval(number_format($sum, 2, '.', '')),
+                ];
+            }
+        };
+        return $data;
+    }
+
+    public static function getRegisteredAnimalsForDataViz(){
+        $data = [];
+        $countries = Country::getListData('id', 'name', false);
+        $animal_types = Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, false);
+        foreach ($countries as $id => $country) {
+            foreach ($animal_types as $typeid => $type){
+                $condition = [
+                    'animal_type' => $typeid,
+                    'country_id' => $id,
+                ];
+                $count = Animal::getCount($condition);
+                $data[$country][] = [
+                    'label' => $type,
+                    'value' => floatval(number_format($count, 2, '.', '')),
+                ];
+            }
+        };
+        return $data;
+    }
+
+    public static function getAIForDataViz(){
+        $data = [];
+        $countries = Country::getListData('id', 'name', false);
+        $animal_breeds = Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, false);
+        foreach ($countries as $id => $country) {
+            foreach ($animal_breeds as $breedid => $type){
+                $condition = [
+                    'event_type' => AnimalEvent::EVENT_TYPE_AI,
+                    'country_id' => $id,
+                ];
+                $breedField = new Expression("JSON_UNQUOTE(JSON_EXTRACT(`core_animal_event`.`additional_attributes`, '$.\"111\"'))");
+                $count = AnimalEvent::find()->select('id')->andWhere($condition)->andWhere($breedField . ' = :breedId', ['breedId' => $breedid])->count();
+                $data[$country][] = [
+                    'label' => $type,
+                    'value' => floatval(number_format($count, 2, '.', '')),
+                ];
+            }
+        };
+        return $data;
     }
 
     public static function getCalvesByRegions($animal_type, $country_id = null)
