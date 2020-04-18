@@ -10,6 +10,7 @@ namespace backend\modules\dashboard\controllers;
 
 
 use backend\modules\core\models\Country;
+use common\helpers\Url;
 
 class DefaultController extends Controller
 {
@@ -22,6 +23,11 @@ class DefaultController extends Controller
     }
 
     public function actionIndex()
+    {
+        return $this->redirect(Url::to(['/dashboard/data-viz']));
+    }
+
+    public function actionIndex2()
     {
         $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
         return $this->render('index2', [
