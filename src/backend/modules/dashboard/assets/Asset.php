@@ -27,6 +27,7 @@ class Asset extends AssetBundle
 
     ];
     public $css = [
+        'css/dashboard-styles.css'
     ];
     public $depends = [
         AppAsset::class,
