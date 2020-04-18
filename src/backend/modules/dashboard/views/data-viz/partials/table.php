@@ -7,6 +7,7 @@ use backend\modules\core\models\Country;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\Organization;
 use common\helpers\Lang;
+use common\helpers\Url;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
@@ -35,7 +36,7 @@ $orgs = Organization::getListData('id', 'name', false);
                 </tr>
                 <?php foreach ($countries as $k => $name): ?>
                 <tr>
-                    <th class="dt-row-name"><?= Html::encode($name) ?></th>
+                    <th class="dt-row-name"><a href="<?= Url::to(['/dashboard/stats/dash', 'country_id' => $k]) ?>"><?= Html::encode($name) ?></a></th>
                     <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['country_id' => $k])) ?></td>
                     <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => 'LSF', 'country_id' => $k])) ?></td>
                     <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => 'SSF', 'country_id' => $k])) ?></td>
