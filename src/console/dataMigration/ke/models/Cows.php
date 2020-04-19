@@ -95,7 +95,7 @@ use Yii;
  */
 class Cows extends MigrationBase implements MigrationInterface
 {
-    const MIGRATION_ID_PREFIX = 'KLBA_COWS_';
+    const MIGRATION_ID_PREFIX = 'STANLEY_COWS_';
 
     /**
      * {@inheritdoc}
@@ -244,8 +244,8 @@ class Cows extends MigrationBase implements MigrationInterface
         /* @var $dataModels $this[] */
         $n = 1;
         $countryId = Helper::getCountryId(Constants::KENYA_COUNTRY_CODE);
-        $orgId = Helper::getOrgId(Constants::KLBA_ORG_NAME);
-        $model = new Animal(['country_id' => $countryId, 'org_id' => $orgId, 'scenario' => Animal::SCENARIO_KLBA_COW_UPLOAD]);
+        $orgId = Helper::getOrgId(Constants::ORG_NAME);
+        $model = new Animal(['country_id' => $countryId, 'org_id' => $orgId, 'scenario' => Animal::SCENARIO_MISTRO_DB_COW_UPLOAD]);
         foreach ($query->batch() as $i => $dataModels) {
             foreach ($dataModels as $dataModel) {
                 $herdModel = self::getHerd($dataModel->Cows_Herd);
@@ -341,7 +341,7 @@ class Cows extends MigrationBase implements MigrationInterface
 
     public static function updateSiresAndDams()
     {
-        $condition = '';
+        $condition = '[[migration_id]] IS NOT NULL AND ([[dam_id]] IS NULL OR [[sire_id]] IS NULL)';
         $params = [];
         $query = Animal::find()->andWhere($condition, $params);
         $n = 1;

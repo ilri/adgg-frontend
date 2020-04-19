@@ -32,7 +32,7 @@ use Yii;
  */
 class Lacts extends MigrationBase implements MigrationInterface
 {
-    const MIGRATION_ID_PREFIX = 'KLBA_CALVING_EVENT_';
+    const MIGRATION_ID_PREFIX = 'STANLEY_CALVING_EVENT_';
 
     /**
      * {@inheritdoc}
@@ -104,8 +104,8 @@ class Lacts extends MigrationBase implements MigrationInterface
         /* @var $dataModels $this[] */
         $n = 1;
         $countryId = Helper::getCountryId(Constants::KENYA_COUNTRY_CODE);
-        $orgId = Helper::getOrgId(Constants::KLBA_ORG_NAME);
-        $model = new CalvingEvent(['country_id' => $countryId, 'org_id' => $orgId, 'event_type' => AnimalEvent::EVENT_TYPE_CALVING, 'scenario' => CalvingEvent::SCENARIO_KLBA_UPLOAD]);
+        $orgId = Helper::getOrgId(Constants::ORG_NAME);
+        $model = new CalvingEvent(['country_id' => $countryId, 'org_id' => $orgId, 'event_type' => AnimalEvent::EVENT_TYPE_CALVING, 'scenario' => CalvingEvent::SCENARIO_MISTRO_DB_UPLOAD]);
         $model->setAdditionalAttributes();
         foreach ($query->batch(1000) as $i => $dataModels) {
             Yii::$app->controller->stdout("Batch processing  started...\n");
