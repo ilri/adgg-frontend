@@ -31,4 +31,15 @@ class CountryUnitsController extends ActiveController
         $searchModel->level = $level;
         return $searchModel->search();
     }
+
+    public function actionDependentLists($level, $country_id = null, $parent_id = null, $placeholder = false)
+    {
+        if ($level == CountryUnits::LEVEL_REGION) {
+            $data = CountryUnits::getListData('id', 'name', $placeholder, ['country_id' => $country_id, 'level' => $level]);
+        } else {
+            $data = CountryUnits::getListData('id', 'name', $placeholder, ['parent_id' => $parent_id, 'level' => $level]);
+        }
+        return $data;
+    }
+
 }
