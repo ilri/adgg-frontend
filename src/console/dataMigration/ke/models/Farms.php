@@ -122,6 +122,7 @@ class Farms extends MigrationBase implements MigrationInterface
                 $newModel->farm_town = $dataModel->Farms_Flags1;
                 $newModel->farm_country = $dataModel->Farms_Flags2;
                 $newModel->farmer_name = $newModel->client->contact_person ?? null;
+                $newModel->farm_type = 'LSF';
                 $newModel->name = $newModel->client->name ?? null;
                 if (empty($newModel->farmer_name)) {
                     $newModel->farmer_name = $newModel->code;
