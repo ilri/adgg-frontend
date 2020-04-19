@@ -48,7 +48,7 @@ use Yii;
  */
 class Testdays extends MigrationBase
 {
-    const MIGRATION_ID_PREFIX = 'KLBA_MILKING_EVENT_';
+    const MIGRATION_ID_PREFIX = 'STANLEY_MILKING_EVENT_';
 
     /**
      * {@inheritdoc}
