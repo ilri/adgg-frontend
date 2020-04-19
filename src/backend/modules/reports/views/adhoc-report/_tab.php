@@ -1,11 +1,22 @@
 <?php
 
+use backend\modules\auth\Session;
 use backend\modules\reports\Constants;
 use backend\modules\reports\models\AdhocReport;
 use common\helpers\Lang;
 use yii\helpers\Url;
 
 $activeStatus = Yii::$app->request->get('status', AdhocReport::STATUS_COMPLETED);
+if (Session::isPrivilegedAdmin()) {
+    $reports = AdhocReport::find()->andWhere(['is_deleted' => 0])->orderBy(['id' => SORT_DESC])->all();
+    $data = [];
+    foreach ($reports as $report) {
+        $data[] = $report->created_by;
+    }
+    $created_by = $data;
+} else {
+    $created_by = Yii::$app->user->identity->id;
+}
 ?>
 <ul class="nav nav-tabs" role="tablist">
     <?php if (Yii::$app->user->canView(Constants::RES_REPORTS)): ?>
@@ -14,7 +25,7 @@ $activeStatus = Yii::$app->request->get('status', AdhocReport::STATUS_COMPLETED)
                href="<?= Url::to(['adhoc-report/index', 'status' => AdhocReport::STATUS_COMPLETED]) ?>">
                 <?= Lang::t('Completed Reports') ?>
                 <span class="badge badge-secondary badge-pill">
-                    <?= number_format(AdhocReport::getCount(['status' => AdhocReport::STATUS_COMPLETED])) ?>
+                    <?= number_format(AdhocReport::getCount(['status' => AdhocReport::STATUS_COMPLETED, 'created_by' => $created_by])) ?>
                 </span>
             </a>
         </li>
@@ -25,7 +36,7 @@ $activeStatus = Yii::$app->request->get('status', AdhocReport::STATUS_COMPLETED)
                href="<?= Url::to(['adhoc-report/index', 'status' => AdhocReport::STATUS_QUEUED]) ?>">
                 <?= Lang::t('Queued Reports') ?>
                 <span class="badge badge-secondary badge-pill">
-                    <?= number_format(AdhocReport::getCount(['status' => AdhocReport::STATUS_QUEUED])) ?>
+                    <?= number_format(AdhocReport::getCount(['status' => AdhocReport::STATUS_QUEUED, 'created_by' => $created_by])) ?>
                 </span>
             </a>
         </li>
@@ -36,7 +47,7 @@ $activeStatus = Yii::$app->request->get('status', AdhocReport::STATUS_COMPLETED)
                href="<?= Url::to(['adhoc-report/index', 'status' => AdhocReport::STATUS_PROCESSING]) ?>">
                 <?= Lang::t('Running Reports') ?>
                 <span class="badge badge-secondary badge-pill">
-                    <?= number_format(AdhocReport::getCount(['status' => AdhocReport::STATUS_PROCESSING])) ?>
+                    <?= number_format(AdhocReport::getCount(['status' => AdhocReport::STATUS_PROCESSING, 'created_by' => $created_by])) ?>
                 </span>
             </a>
         </li>
@@ -47,7 +58,7 @@ $activeStatus = Yii::$app->request->get('status', AdhocReport::STATUS_COMPLETED)
                href="<?= Url::to(['adhoc-report/index', 'status' => AdhocReport::STATUS_ERROR]) ?>">
                 <?= Lang::t('Completed with Errors') ?>
                 <span class="badge badge-secondary badge-pill">
-                    <?= number_format(AdhocReport::getCount(['status' => AdhocReport::STATUS_ERROR])) ?>
+                    <?= number_format(AdhocReport::getCount(['status' => AdhocReport::STATUS_ERROR, 'created_by' => $created_by])) ?>
                 </span>
             </a>
         </li>

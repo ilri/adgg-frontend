@@ -52,6 +52,7 @@ class Controller extends BackendController
                             'test-day',
                             'genotype',
                             'insemination-pd-calving',
+                            'load-chart'
 
                         ],
                         'allow' => true,

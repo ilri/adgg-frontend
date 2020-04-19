@@ -80,6 +80,17 @@ return [
         'class' => \yii\rest\UrlRule::class,
         'pluralize' => false,
         'controller' => [
+            'country-units' => 'v1/country-units',
+        ],
+        'extraPatterns' => [
+            'GET dependent-lists' => 'dependent-lists',
+            'OPTIONS <action>' => 'options',
+        ],
+    ],
+    [
+        'class' => \yii\rest\UrlRule::class,
+        'pluralize' => false,
+        'controller' => [
             'odk' => 'v1/odk',
         ],
         'extraPatterns' => [
