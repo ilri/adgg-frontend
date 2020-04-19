@@ -43,29 +43,32 @@ MyApp.modules.dashboard = {};
         this.series = series;
         this.graphOptions = $.extend(true, {}, defaultOptions, graphOptions || {});
     };
-    PIE.prototype.screenSize = function ()
-    {
+    PIE.prototype.screenSize = function () {
         var smallScreen = window.matchMedia("(max-width: 768px)");
         var tinyScreen = window.matchMedia("(max-width: 359px)");
         var midScreen = window.matchMedia("(min-width: 769px) and (max-width: 1200px)");
         var largeScreen = window.matchMedia("(min-width: 1201px)");
-        if (smallScreen.matches){
+        if (smallScreen.matches) {
             this.innerSize = '10%';
             this.size = 100;
-        };
-        if (tinyScreen.matches){
+        }
+        ;
+        if (tinyScreen.matches) {
             this.innerSize = '1%';
             this.size = 90;
-        };
-        if (midScreen.matches){
+        }
+        ;
+        if (midScreen.matches) {
             this.innerSize = '10%';
             this.size = 150;
-        };
-        if (largeScreen.matches){
+        }
+        ;
+        if (largeScreen.matches) {
             this.innerSize = '25%';
             this.size = 250;
 
-        };
+        }
+        ;
         this.graphOptions.plotOptions.pie.innerSize = this.innerSize;
         this.graphOptions.plotOptions.pie.size = this.size;
         this.create()
@@ -78,7 +81,7 @@ MyApp.modules.dashboard = {};
     MyApp.modules.dashboard.piechart = function (container, series, graphOptions) {
         var obj = new PIE(container, series, graphOptions);
         obj.screenSize();
-        $( window ).resize(function () {
+        $(window).resize(function () {
             obj.screenSize();
         });
     };
@@ -153,10 +156,10 @@ MyApp.modules.dashboard = {};
                 }
             },
             colors: [
-                '#771957','#7986CB','#7F5298',
-                '#001D00','#9EEDB3','#004619',
-                '#056030','#2B7B48','#489661',
-                '#65B27C','#81D097','#002E00',
+                '#771957', '#7986CB', '#7F5298',
+                '#001D00', '#9EEDB3', '#004619',
+                '#056030', '#2B7B48', '#489661',
+                '#65B27C', '#81D097', '#002E00',
             ],
         };
         this.container = container;
@@ -218,14 +221,20 @@ MyApp.modules.dashboard = {};
                 }
             })
         }
+        //note that this code is executed in on load. So we don't need to call on load again, Otherwise this will fail to fire sometimes
+        /* $(window).on('load', function() {
+             let charts = $this.options.ajaxCharts;
+             charts.forEach(function (item, index) {
+                 item.url = $this.options.ajaxAction;
+                 _load(item);
+             })
+         });*/
 
-        $(window).on('load', function() {
-            let charts = $this.options.ajaxCharts;
-            charts.forEach(function (item, index) {
-                item.url = $this.options.ajaxAction;
-                _load(item);
-            })
-        });
+        let charts = $this.options.ajaxCharts;
+        charts.forEach(function (item, index) {
+            item.url = $this.options.ajaxAction;
+            _load(item);
+        })
     }
 
     MyApp.modules.dashboard.dataviz = function (options) {
