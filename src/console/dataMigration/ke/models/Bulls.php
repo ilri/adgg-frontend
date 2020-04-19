@@ -49,7 +49,7 @@ use Yii;
  */
 class Bulls extends MigrationBase implements MigrationInterface
 {
-    const MIGRATION_ID_PREFIX = 'KLBA_BULLS_';
+    const MIGRATION_ID_PREFIX = 'STANLEY_BULLS_';
 
     /**
      * {@inheritdoc}
@@ -151,8 +151,8 @@ class Bulls extends MigrationBase implements MigrationInterface
         /* @var $dataModels $this[] */
         $n = 1;
         $countryId = Helper::getCountryId(Constants::KENYA_COUNTRY_CODE);
-        $orgId = Helper::getOrgId(Constants::KLBA_ORG_NAME);
-        $model = new Animal(['country_id' => $countryId, 'org_id' => $orgId, 'scenario' => Animal::SCENARIO_KLBA_BULL_UPLOAD]);
+        $orgId = Helper::getOrgId(Constants::ORG_NAME);
+        $model = new Animal(['country_id' => $countryId, 'org_id' => $orgId, 'scenario' => Animal::SCENARIO_MISTRO_DB_BULL_UPLOAD]);
         foreach ($query->batch() as $i => $dataModels) {
             foreach ($dataModels as $dataModel) {
                 $herdModel = Cows::getHerd($dataModel->Bulls_Herd);

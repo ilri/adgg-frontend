@@ -103,17 +103,17 @@ class Farms extends MigrationBase implements MigrationInterface
 
     public static function migrateData()
     {
-        $query = static::find()->andWhere(['Farms_HideFlag' => 0]);
+        $query = static::find()->andWhere(['Farms_HideFlag' => 0, 'Farms_Owner' => '24180001']);
         /* @var $dataModels $this[] */
         $n = 1;
         $countryId = Helper::getCountryId(Constants::KENYA_COUNTRY_CODE);
-        $orgId = Helper::getOrgId(Constants::KLBA_ORG_NAME);
+        $orgId = Helper::getOrgId(Constants::ORG_NAME);
         $model = new Farm(['country_id' => $countryId, 'org_id' => $orgId]);
         foreach ($query->batch() as $i => $dataModels) {
             foreach ($dataModels as $dataModel) {
                 $newModel = clone $model;
                 $newModel->migration_id = Helper::getMigrationId($dataModel->Farms_ID);
-                $newModel->client_id = self::getClientId($dataModel->Farms_Owner);
+                //$newModel->client_id = self::getClientId($dataModel->Farms_Owner);
                 $newModel->code = $dataModel->Farms_SHNo;
                 $newModel->farm_postal_address = $dataModel->Farms_Address;
                 $newModel->latitude = $dataModel->Farms_Lat;

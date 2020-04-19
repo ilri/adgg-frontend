@@ -153,8 +153,8 @@ class Cowtests extends MigrationBase implements MigrationInterface
         /* @var $dataModels $this[] */
         $n = 1;
         $countryId = Helper::getCountryId(Constants::KENYA_COUNTRY_CODE);
-        $orgId = Helper::getOrgId(Constants::KLBA_ORG_NAME);
-        $model = new MilkingEvent(['country_id' => $countryId, 'org_id' => $orgId, 'event_type' => AnimalEvent::EVENT_TYPE_MILKING, 'scenario' => MilkingEvent::SCENARIO_KLBA_UPLOAD]);
+        $orgId = Helper::getOrgId(Constants::ORG_NAME);
+        $model = new MilkingEvent(['country_id' => $countryId, 'org_id' => $orgId, 'event_type' => AnimalEvent::EVENT_TYPE_MILKING, 'scenario' => MilkingEvent::SCENARIO_MISTRO_DB_UPLOAD]);
         $model->setAdditionalAttributes();
         foreach ($query->batch(1000) as $i => $dataModels) {
             Yii::$app->controller->stdout("Batch processing  started...\n");
@@ -223,9 +223,9 @@ class Cowtests extends MigrationBase implements MigrationInterface
                 }
                 $newModel->milk_test_type = $testDayData[$dataModel->CowTests_TDayID]['TestDays_TestType'] ?? null;
 
-                $newModel->milkmor = ((float)$dataModel->CowTests_AMYield) / 10;
-                $newModel->milkeve = ((float)$dataModel->CowTests_PMYield) / 10;
-                $newModel->milkday = ((float)$dataModel->CowTests_Yield1) / 10;
+                $newModel->milkmor = ((float)$dataModel->CowTests_AMYield) / 100;
+                $newModel->milkeve = ((float)$dataModel->CowTests_PMYield) / 100;
+                $newModel->milkday = ((float)$dataModel->CowTests_Yield1) / 100;
                 $newModel->milkfat = ((float)$dataModel->CowTests_FatP) / 100;
                 $newModel->milkprot = ((float)$dataModel->CowTests_ProtP) / 100;
                 $newModel->milklact = ((float)$dataModel->CowTests_LactP) / 100;

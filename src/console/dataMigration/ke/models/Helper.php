@@ -19,7 +19,7 @@ class Helper
      * @param string $prefix
      * @return string
      */
-    public static function getMigrationId($id, $prefix = Constants::KLBA_DATA_SOURCE_PREFIX)
+    public static function getMigrationId($id, $prefix = Constants::DATA_SOURCE_PREFIX)
     {
         return $prefix . $id;
     }
