@@ -25,7 +25,7 @@ class DataVizController extends Controller
 
     public function actionIndex()
     {
-        if (Session::isPrivilegedAdmin()){
+        if (Session::isPrivilegedAdmin() || Session::isCountryUser() || Session::isOrganizationUser()){
             return $this->render('index', [
                 'filterOptions' => []
             ]);

@@ -306,11 +306,26 @@ class CountriesDashboardStats extends Model
     }
 
     public static function getDashboardCountryCategories(){
-        $countries = Country::getListData('id', 'name', false);
+        $condition = [];
+        $params = [];
         $data = [];
-        foreach ($countries as $id => $label) {
-            $data[] = $label;
+        if (Session::isPrivilegedAdmin() || Session::isCountryUser()) {
+            if(Session::isCountryUser()){
+                $condition['id'] = Session::getCountryId();
+            }
+            $countries = Country::getListData('id', 'name', false, $condition, $params);
+            foreach ($countries as $id => $label) {
+                $data[$id] = $label;
+            }
         }
+        elseif (Session::isOrganizationUser()){
+            $condition['id'] = Session::getOrgId();
+            $orgs = Organization::getListData('id', 'name', false, $condition, $params);
+            foreach ($orgs as $id => $label) {
+                $data[$id] = $label;
+            }
+        }
+
         return $data;
     }
 
@@ -330,16 +345,23 @@ class CountriesDashboardStats extends Model
     {
         $data = [];
         // get countries
-        $countries = Country::getListData('id', 'name', false);
+        $countries = static::getDashboardCountryCategories();
         $dates = static::getDashboardDateCategories();
         foreach ($countries as $id => $label) {
             foreach ($dates as $date){
+                $params = [];
                 $condition = [
                     'event_type' => AnimalEvent::EVENT_TYPE_MILKING,
-                    'country_id' => $id,
+                    //'country_id' => $id,
                 ];
+                if (!Session::isPrivilegedAdmin()){
+                    list($condition, $params) = MilkingEvent::appendOrgSessionIdCondition($condition, $params);
+                }
+                else {
+                    list($condition, $params) = DbUtils::appendCondition('country_id', $id, $condition, $params);
+                }
                 $totalMilkField = new Expression("JSON_UNQUOTE(JSON_EXTRACT(`core_animal_event`.`additional_attributes`, '$.\"62\"'))");
-                $sum = MilkingEvent::find()->select($totalMilkField)->andWhere($condition)->andWhere('YEAR(event_date) = YEAR(:date) AND MONTH(event_date) = MONTH(:date)', [':date' => $date])->sum($totalMilkField);
+                $sum = MilkingEvent::find()->select($totalMilkField)->andWhere($condition, $params)->andWhere('YEAR(event_date) = YEAR(:date) AND MONTH(event_date) = MONTH(:date)', [':date' => $date])->sum($totalMilkField);
                 $data[$label][] = [
                     'label' => $date,
                     'value' => floatval(number_format($sum, 2, '.', '')),
@@ -352,16 +374,23 @@ class CountriesDashboardStats extends Model
     public static function getCalfWeightGrowthForDataViz(){
         $data = [];
         // get countries
-        $countries = Country::getListData('id', 'name', false);
+        $countries = static::getDashboardCountryCategories();
         $dates = static::getDashboardDateCategories();
         foreach ($countries as $id => $label) {
             foreach ($dates as $date){
+                $params = [];
                 $condition = [
                     'event_type' => AnimalEvent::EVENT_TYPE_WEIGHTS,
-                    'country_id' => $id,
+                    //'country_id' => $id,
                 ];
+                if (!Session::isPrivilegedAdmin()){
+                    list($condition, $params) = WeightEvent::appendOrgSessionIdCondition($condition, $params);
+                }
+                else {
+                    list($condition, $params) = DbUtils::appendCondition('country_id', $id, $condition, $params);
+                }
                 $weightField = new Expression("JSON_UNQUOTE(JSON_EXTRACT(`core_animal_event`.`additional_attributes`, '$.\"136\"'))");
-                $sum = WeightEvent::find()->select($weightField)->andWhere($condition)->andWhere('YEAR(event_date) = YEAR(:date) AND MONTH(event_date) = MONTH(:date)', [':date' => $date])->average($weightField);
+                $sum = WeightEvent::find()->select($weightField)->andWhere($condition, $params)->andWhere('YEAR(event_date) = YEAR(:date) AND MONTH(event_date) = MONTH(:date)', [':date' => $date])->average($weightField);
                 $data[$label][] = [
                     'label' => $date,
                     'value' => floatval(number_format($sum, 2, '.', '')),
@@ -373,15 +402,22 @@ class CountriesDashboardStats extends Model
 
     public static function getRegisteredAnimalsForDataViz(){
         $data = [];
-        $countries = Country::getListData('id', 'name', false);
+        $countries = static::getDashboardCountryCategories();
         $animal_types = Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, false);
         foreach ($countries as $id => $country) {
             foreach ($animal_types as $typeid => $type){
+                $params = [];
                 $condition = [
                     'animal_type' => $typeid,
-                    'country_id' => $id,
+                    //'country_id' => $id,
                 ];
-                $count = Animal::getCount($condition);
+                if (!Session::isPrivilegedAdmin()){
+                    list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
+                }
+                else {
+                    list($condition, $params) = DbUtils::appendCondition('country_id', $id, $condition, $params);
+                }
+                $count = Animal::getCount($condition, $params);
                 $data[$country][] = [
                     'label' => $type,
                     'value' => floatval(number_format($count, 2, '.', '')),
@@ -393,16 +429,23 @@ class CountriesDashboardStats extends Model
 
     public static function getAIForDataViz(){
         $data = [];
-        $countries = Country::getListData('id', 'name', false);
+        $countries = static::getDashboardCountryCategories();
         $animal_breeds = Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, false);
         foreach ($countries as $id => $country) {
             foreach ($animal_breeds as $breedid => $type){
+                $params = [];
                 $condition = [
                     'event_type' => AnimalEvent::EVENT_TYPE_AI,
-                    'country_id' => $id,
+                    //'country_id' => $id,
                 ];
+                if (!Session::isPrivilegedAdmin()){
+                    list($condition, $params) = AnimalEvent::appendOrgSessionIdCondition($condition, $params);
+                }
+                else {
+                    list($condition, $params) = DbUtils::appendCondition('country_id', $id, $condition, $params);
+                }
                 $breedField = new Expression("JSON_UNQUOTE(JSON_EXTRACT(`core_animal_event`.`additional_attributes`, '$.\"111\"'))");
-                $count = AnimalEvent::find()->select('id')->andWhere($condition)->andWhere($breedField . ' = :breedId', ['breedId' => $breedid])->count();
+                $count = AnimalEvent::find()->select('id')->andWhere($condition, $params)->andWhere($breedField . ' = :breedId', ['breedId' => $breedid])->count();
                 $data[$country][] = [
                     'label' => $type,
                     'value' => floatval(number_format($count, 2, '.', '')),

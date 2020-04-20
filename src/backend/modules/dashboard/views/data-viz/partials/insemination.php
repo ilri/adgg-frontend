@@ -1,5 +1,6 @@
 <?php
 
+use backend\modules\auth\Session;
 use backend\modules\core\models\CountriesDashboardStats;
 use common\helpers\Lang;
 use yii\helpers\Json;
@@ -12,7 +13,6 @@ use yii\helpers\Json;
 </div>
 <?php
 $chart_data = CountriesDashboardStats::getAIForDataViz();
-//dd($chart_data);
 $data = [];
 if (count($chart_data) > 0) {
     $values = [];
@@ -31,7 +31,6 @@ if (count($chart_data) > 0) {
             ];
         }
     }
-    //dd($values, $data);
 }
 /*
 $series = [
@@ -64,10 +63,10 @@ $graphOptions = [
     'subtitle' => ['text' => ''],
     'xAxis' => [
         'title' => [
-            'text' => 'Countries',
+            'text' => (Session::isPrivilegedAdmin() || Session::isCountryUser()) ? 'Countries' : '',
             'style' => ['fontWeight' => 'normal'],
         ],
-        'categories' => CountriesDashboardStats::getDashboardCountryCategories()
+        'categories' => array_values(CountriesDashboardStats::getDashboardCountryCategories())
     ],
     'yAxis' => [
         'title' => [
