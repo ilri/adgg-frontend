@@ -144,7 +144,8 @@ MyApp.modules.dashboard = {};
                     label: {
                         connectorAllowed: false
                     },
-                    pointStart: null
+                    pointStart: null,
+                    connectNulls: true,
                 },
                 line: {
                     dataLabels: {
