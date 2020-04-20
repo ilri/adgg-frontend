@@ -22,7 +22,9 @@ if (count($chart_data) > 0) {
         }
         $data[] = [
             'name' => $country,
-            'data' => $values,
+            'data' => array_sum($values) < 1 ? $values : array_map(function ($value){
+                return $value > 0 ? $value : null;
+            }, $values),
         ];
     }
 }
