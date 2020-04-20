@@ -158,6 +158,11 @@ class Cowtests extends MigrationBase implements MigrationInterface
         $model->setAdditionalAttributes();
         foreach ($query->batch(1000) as $i => $dataModels) {
             Yii::$app->controller->stdout("Batch processing  started...\n");
+            if ($n < 290000) {
+                Yii::$app->controller->stdout("Ignored record {$n}: Already saved.\n");
+                $n += 1000;
+                continue;
+            }
             $migrationIds = [];
             $testDayIds = [];
             $oldAnimalIds = [];

@@ -39,7 +39,14 @@ class CountryUnitsController extends ActiveController
         } else {
             $data = CountryUnits::getListData('id', 'name', $placeholder, ['parent_id' => $parent_id, 'level' => $level]);
         }
-        return $data;
+        $response = [];
+        foreach ($data as $id => $value) {
+            $response[] = [
+                'id' => $id,
+                'value' => $value,
+            ];
+        }
+        return $response;
     }
 
 }
