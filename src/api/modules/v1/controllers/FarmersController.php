@@ -27,7 +27,7 @@ class FarmersController extends ActiveController
     }
 
 
-    public function actionIndex($country_id = null, $org_id = null, $client_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $farm_name = null, $farmer_phone = null, $farm_type = null, $project = null)
+    public function actionIndex($pageSize = null, $country_id = null, $org_id = null, $client_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $farm_name = null, $farmer_phone = null, $farm_type = null, $project = null)
     {
         $country_id = Session::getCountryId($country_id);
         $org_id = Session::getOrgId($org_id);
@@ -36,12 +36,15 @@ class FarmersController extends ActiveController
         $district_id = Session::getDistrictId($district_id);
         $ward_id = Session::getWardId($ward_id);
         $village_id = Session::getVillageId($village_id);
+        if ($pageSize == null) {
+            $pageSize = SystemSettings::getPaginationSize();
+        }
         $condition = '';
         $params = [];
         $searchModel = Farm::searchModel([
-            'defaultOrder' => ['id' => SORT_ASC],
-            'pageSize' => SystemSettings::getPaginationSize(),
+            'defaultOrder' => ['id' => SORT_DESC],
             'enablePagination' => true,
+            'pageSize' => $pageSize,
             'condition' => $condition,
             'params' => $params,
             'with' => ['country', 'org', 'client', 'region', 'district', 'ward', 'village', 'fieldAgent'],

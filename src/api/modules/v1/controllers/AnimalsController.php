@@ -22,7 +22,7 @@ class AnimalsController extends ActiveController
     }
 
 
-    public function actionIndex($country_id = null, $org_id = null, $client_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $farm_id = null, $farm_name = null, $tag_id = null, $animal_type = null, $breed = null)
+    public function actionIndex($pageSize = null, $country_id = null, $org_id = null, $client_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $farm_name = null, $tag_id = null, $animal_type = null, $breed = null)
     {
         $country_id = Session::getCountryId($country_id);
         $org_id = Session::getOrgId($org_id);
@@ -31,14 +31,17 @@ class AnimalsController extends ActiveController
         $district_id = Session::getDistrictId($district_id);
         $ward_id = Session::getWardId($ward_id);
         $village_id = Session::getVillageId($village_id);
+        if ($pageSize == null) {
+            $pageSize = SystemSettings::getPaginationSize();
+        }
         $condition = '';
         $params = [];
         $searchModel = Animal::searchModel([
-            'defaultOrder' => ['id' => SORT_ASC],
+            'defaultOrder' => ['id' => SORT_DESC],
             'enablePagination' => true,
             'condition' => $condition,
             'params' => $params,
-            'pageSize' => SystemSettings::getPaginationSize(),
+            'pageSize' => $pageSize,
             'joinWith' => [
                 'farm' => function (\yii\db\ActiveQuery $query) use ($farm_name) {
                     $query->andFilterWhere(['LIKE', Farm::tableName() . '.name', $farm_name]);
