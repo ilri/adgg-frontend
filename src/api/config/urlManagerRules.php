@@ -72,6 +72,8 @@ return [
         'extraPatterns' => [
             'GET landing' => 'landing',
             'GET countries/list' => 'countries-list',
+            'GET orgs' => 'organizations',
+            'GET clients' => 'clients',
             'GET country-report' => 'country-report',
             'OPTIONS <action>' => 'options',
         ],
