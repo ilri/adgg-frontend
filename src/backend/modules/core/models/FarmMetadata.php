@@ -2,9 +2,11 @@
 
 namespace backend\modules\core\models;
 
+use common\helpers\Utils;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
+use yii\base\InvalidArgumentException;
 
 /**
  * This is the model class for table "core_farm_metadata".
@@ -23,7 +25,10 @@ class FarmMetadata extends ActiveRecord implements ActiveSearchInterface, TableA
     use ActiveSearchTrait, TableAttributeTrait;
 
     //types
-    const TYPE_FEEDING_TECHNIQUE = 1;
+    const TYPE_FEEDING_METADATA = 1;//feeding surveys
+    const TYPE_HEALTH_METADATA = 2;//health surveys
+    const TYPE_SOCIAL_ECONOMIC_METADATA = 3;//social economic surveys
+
 
     /**
      * {@inheritdoc}
@@ -79,5 +84,36 @@ class FarmMetadata extends ActiveRecord implements ActiveSearchInterface, TableA
     public static function getDefinedTableId(): int
     {
         return ExtendableTable::TABLE_FARM_METADATA;
+    }
+
+    /**
+     * @param int $intVal
+     * @return string
+     */
+    public static function decodeType($intVal): string
+    {
+        switch ($intVal) {
+            case self::TYPE_FEEDING_METADATA:
+                return 'Feeding Metadata';
+            case self::TYPE_HEALTH_METADATA:
+                return 'Health Metadata';
+            case self::TYPE_SOCIAL_ECONOMIC_METADATA:
+                return 'Social Economic Metadata';
+            default:
+                throw new InvalidArgumentException();
+        }
+    }
+
+    /**
+     * @param bool $prompt
+     * @return array
+     */
+    public static function typeOptions($prompt = false)
+    {
+        return Utils::appendDropDownListPrompt([
+            self::TYPE_FEEDING_METADATA => static::decodeType(self::TYPE_FEEDING_METADATA),
+            self::TYPE_HEALTH_METADATA => static::decodeType(self::TYPE_HEALTH_METADATA),
+            self::TYPE_SOCIAL_ECONOMIC_METADATA => static::decodeType(self::TYPE_SOCIAL_ECONOMIC_METADATA),
+        ], $prompt);
     }
 }

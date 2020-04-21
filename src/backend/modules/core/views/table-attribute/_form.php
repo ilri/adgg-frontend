@@ -53,6 +53,16 @@ $form = ActiveForm::begin([
             ],
         ]) ?>
     <?php endif ?>
+    <?php if ($model->table_id == ExtendableTable::TABLE_FARM_METADATA): ?>
+        <?= $form->field($model, 'farm_metadata_type')->widget(Select2::class, [
+            'data' => \backend\modules\core\models\FarmMetadata::typeOptions(false),
+            'modal' => true,
+            'options' => ['placeholder' => '[select one]'],
+            'pluginOptions' => [
+                'allowClear' => false
+            ],
+        ]) ?>
+    <?php endif ?>
     <?= $form->field($model, 'attribute_key', []) ?>
     <?= $form->field($model, 'attribute_label', []) ?>
     <?= \common\widgets\smartSelect\SmartSelect::widget([
