@@ -27,7 +27,6 @@ class TableAttributeController extends MasterDataController
     public function actionCreate($table_id, $event_type = null)
     {
         $model = new TableAttribute(['is_active' => 1, 'table_id' => $table_id, 'event_type' => $event_type]);
-        $model->setDefaultValues();
         return $model->simpleAjaxSave('_form', 'extendable-table/index', ['table_id' => $model->table_id]);
     }
 
