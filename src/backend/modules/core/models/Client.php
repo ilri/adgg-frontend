@@ -80,6 +80,7 @@ class Client extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'country_id',
             'org_id',
             'is_active',
+            'id',
         ];
     }
 
@@ -95,14 +96,6 @@ class Client extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     {
         return $this->hasOne(Organization::class, ['id' => 'org_id']);
 
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getDefinedType(): int
-    {
-        return TableAttribute::TYPE_ATTRIBUTE;
     }
 
     public function beforeSave($insert)

@@ -20,7 +20,7 @@ use yii\helpers\Url;
     'createButton' => [
         'visible' => Yii::$app->user->canCreate(),
         'modal' => true,
-        'url' => Url::to(['table-attribute/create', 'table_id' => $model->table_id,'event_type'=>$model->event_type]),
+        'url' => Url::to(['table-attribute/create', 'table_id' => $model->table_id, 'event_type' => $model->event_type]),
         'label' => '<i class="fa fa-plus-circle"></i> ' . Lang::t('Add Attribute'),
     ],
     'showExportButton' => false,
@@ -39,7 +39,7 @@ use yii\helpers\Url;
             'value' => function (TableAttribute $model) {
                 return AnimalEvent::decodeEventType($model->event_type);
             },
-            'visible' => ExtendableTable::TABLE_ANIMAL_EVENTS,
+            'visible' => $model->table_id == ExtendableTable::TABLE_ANIMAL_EVENTS,
             'filter' => AnimalEvent::eventTypeOptions(),
         ],
         [

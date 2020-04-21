@@ -79,6 +79,8 @@ class Organization extends ActiveRecord implements ActiveSearchInterface
             ['name', 'name'],
             'country_id',
             'is_active',
+            'id',
+
         ];
     }
 }

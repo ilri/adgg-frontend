@@ -21,11 +21,11 @@ use yii\base\InvalidArgumentException;
  * @property int $input_type
  * @property string $default_value
  * @property int $list_type_id
- * @property int $type
  * @property int $event_type
  * @property int $is_active
  * @property int $is_alias
  * @property string $alias_to
+ * @property int $farm_metadata_type
  * @property string $created_at
  * @property int $created_by
  *
@@ -45,9 +45,6 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
     const INPUT_TYPE_MULTI_SELECT = 6;
     const INPUT_TYPE_TEXTAREA = 7;
     const INPUT_TYPE_DATE = 8;
-    //type
-    const TYPE_ATTRIBUTE = 1;
-    const TYPE_EVENT = 2;
 
 
     public function init()
@@ -71,7 +68,7 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
     {
         return [
             [['attribute_key', 'attribute_label', 'table_id', 'input_type'], 'required'],
-            [['table_id', 'group_id', 'input_type', 'list_type_id', 'is_active', 'type', 'event_type', 'is_alias'], 'integer'],
+            [['table_id', 'group_id', 'input_type', 'list_type_id', 'is_active', 'event_type', 'is_alias', 'farm_metadata_type'], 'integer'],
             [['default_value'], 'string'],
             [['attribute_key', 'alias_to'], 'string', 'max' => 128],
             [['attribute_label'], 'string', 'max' => 255],
@@ -123,11 +120,11 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
             'input_type' => 'Input Type',
             'list_type_id' => 'List Type ID',
             'default_value' => 'Default Value',
-            'type' => 'Type',
             'event_type' => 'Animal Event Type',
             'is_active' => 'Active',
             'is_alias' => 'Is Alias',
             'alias_to' => 'Alias to',
+            'farm_metadata_type' => 'Metadata Type',
             'created_at' => 'Created At',
             'created_by' => 'Created By',
         ];
@@ -160,17 +157,16 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
             'table_id',
             'list_type_id',
             'group_id',
-            'type',
             'event_type',
             'is_active',
             'id',
+            'farm_metadata_type',
         ];
     }
 
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
-            $this->setDefaultValues();
             $this->default_value = serialize($this->default_value);
             if (!in_array($this->input_type, [self::INPUT_TYPE_SELECT, self::INPUT_TYPE_MULTI_SELECT])) {
                 $this->list_type_id = null;
@@ -178,20 +174,6 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
             return true;
         }
         return false;
-    }
-
-    public function setDefaultValues()
-    {
-        if (empty($this->type)) {
-            $eventTables = [
-                ExtendableTable::TABLE_ANIMAL_EVENTS,
-            ];
-            if (in_array($this->table_id, $eventTables)) {
-                $this->type = self::TYPE_EVENT;
-            } else {
-                $this->type = self::TYPE_ATTRIBUTE;
-            }
-        }
     }
 
     public function afterFind()
@@ -264,42 +246,13 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
     }
 
     /**
-     * @param int $intVal
-     * @return string
-     */
-    public static function decodeType($intVal)
-    {
-        switch ($intVal) {
-            case self::TYPE_ATTRIBUTE:
-                return 'ATTRIBUTE';
-            case self::TYPE_EVENT:
-                return 'EVENT';
-            default:
-                throw new InvalidArgumentException();
-        }
-    }
-
-    /**
-     * @param mixed $prompt
-     * @return array
-     */
-    public static function typeOptions($prompt = false)
-    {
-        return Utils::appendDropDownListPrompt([
-            self::TYPE_ATTRIBUTE => static::decodeType(self::TYPE_ATTRIBUTE),
-            self::TYPE_EVENT => static::decodeType(self::TYPE_EVENT),
-        ], $prompt);
-    }
-
-    /**
      * @param int $tableId
-     * @param int $type
      * @return mixed
      * @throws \Exception
      */
-    public static function getDefinedAttributes($tableId, $type)
+    public static function getDefinedAttributes($tableId)
     {
-        return static::getData(['id', 'attribute_key', 'input_type', 'list_type_id'], ['table_id' => $tableId, 'type' => $type, 'is_active' => 1]);
+        return static::getData(['id', 'attribute_key', 'input_type', 'list_type_id'], ['table_id' => $tableId, 'is_active' => 1]);
     }
 
     /**

@@ -275,14 +275,6 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     }
 
     /**
-     * @return int
-     */
-    public static function getDefinedType(): int
-    {
-        return TableAttribute::TYPE_EVENT;
-    }
-
-    /**
      * @param int $int
      * @return string
      */
