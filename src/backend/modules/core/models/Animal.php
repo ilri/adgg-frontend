@@ -371,14 +371,6 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     }
 
     /**
-     * @return int
-     */
-    public static function getDefinedType(): int
-    {
-        return TableAttribute::TYPE_ATTRIBUTE;
-    }
-
-    /**
      *
      * @return string
      */

@@ -98,14 +98,6 @@ class Client extends ActiveRecord implements ActiveSearchInterface, TableAttribu
 
     }
 
-    /**
-     * @inheritDoc
-     */
-    public static function getDefinedType(): int
-    {
-        return TableAttribute::TYPE_ATTRIBUTE;
-    }
-
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {

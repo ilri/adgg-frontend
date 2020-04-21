@@ -311,14 +311,6 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     }
 
     /**
-     * @return int
-     */
-    public static function getDefinedType(): int
-    {
-        return TableAttribute::TYPE_ATTRIBUTE;
-    }
-
-    /**
      * @param integer $durationType
      * @param bool|string $sum
      * @param array $filters array key=>$value pair where key is the attribute name and value is the attribute value

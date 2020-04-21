@@ -192,14 +192,6 @@ class AnimalHerd extends ActiveRecord implements ActiveSearchInterface, ImportAc
     /**
      * @inheritDoc
      */
-    public static function getDefinedType(): int
-    {
-        return TableAttribute::TYPE_ATTRIBUTE;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function reportBuilderRelations()
     {
         return array_merge(['farm'], $this->reportBuilderCommonRelations(), $this->reportBuilderCoreDataRelations());
