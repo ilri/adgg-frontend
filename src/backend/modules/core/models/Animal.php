@@ -3,6 +3,7 @@
 namespace backend\modules\core\models;
 
 use backend\modules\reports\Constants;
+use common\helpers\DateUtils;
 use common\helpers\DbUtils;
 use common\helpers\FileManager;
 use common\helpers\Lang;
@@ -36,6 +37,7 @@ use yii\helpers\Inflector;
  * @property int $sex
  * @property string $color
  * @property string $birthdate
+ * @property string $reg_date
  * @property int $is_derived_birthdate
  * @property array $deformities
  * @property int $sire_type
@@ -112,10 +114,10 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             [['tag_id'], 'required'],
             [['farm_id'], 'required', 'except' => self::SCENARIO_MISTRO_DB_BULL_UPLOAD],
             [['farm_id', 'herd_id', 'country_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'animal_type', 'is_derived_birthdate', 'sire_type', 'sire_id', 'dam_id', 'main_breed', 'breed_composition', 'secondary_breed', 'entry_type', 'sex'], 'integer'],
-            [['birthdate', 'deformities', 'entry_date'], 'safe'],
+            [['birthdate', 'deformities', 'entry_date', 'reg_date'], 'safe'],
             [['purchase_cost'], 'number'],
             [['birthdate', 'entry_date'], 'date', 'format' => 'php:Y-m-d'],
-            [['birthdate', 'entry_date'], 'validateNoFutureDate'],
+            [['birthdate', 'reg_date', 'entry_date'], 'validateNoFutureDate'],
             [['name', 'tag_id', 'sire_tag_id', 'sire_name', 'dam_tag_id', 'dam_name', 'color'], 'string', 'max' => 128],
             [['animal_photo', 'map_address'], 'string', 'max' => 255],
             ['tag_id', 'unique', 'targetAttribute' => ['country_id', 'tag_id'], 'message' => '{attribute} already exists.'],
@@ -168,6 +170,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'secondary_breed' => 'Secondary Breed',
             'entry_type' => 'Entry Type',
             'entry_date' => 'Entry Date',
+            'reg_date' => 'Registration Date',
             'purchase_cost' => 'Purchase Cost',
             'animal_photo' => 'Animal Photo',
             'tmp_animal_photo' => 'Animal Photo',
@@ -337,6 +340,9 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
                 $this->birthdate = $this->derivedBirthdate;
                 $this->is_derived_birthdate = 1;
             }
+            if (empty($this->reg_date)) {
+                $this->reg_date = DateUtils::getToday();
+            }
 
             $this->setAdditionalAttributesValues();
 
@@ -456,6 +462,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'animal_tagsequence',
             'name',
             'color',
+            'reg_date',
             'derivedBirthdate',
             'birthdate',
             'animal_approxage',
