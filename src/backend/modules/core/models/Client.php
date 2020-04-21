@@ -80,6 +80,7 @@ class Client extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'country_id',
             'org_id',
             'is_active',
+            'id',
         ];
     }
 

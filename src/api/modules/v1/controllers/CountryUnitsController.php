@@ -5,6 +5,7 @@ namespace api\modules\v1\controllers;
 
 use api\controllers\ActiveController;
 use api\controllers\JwtAuthTrait;
+use backend\modules\auth\Session;
 use backend\modules\conf\settings\SystemSettings;
 use backend\modules\core\models\CountryUnits;
 
@@ -45,6 +46,15 @@ class CountryUnitsController extends ActiveController
                 'id' => $id,
                 'value' => $value,
             ];
+        }
+        if (Session::isRegionUser() && $level == CountryUnits::LEVEL_REGION) {
+            return [$response['id' == Session::getRegionId()]];
+        } elseif (Session::isDistrictUser() && $level == CountryUnits::LEVEL_DISTRICT) {
+            return [$response['id' == Session::getDistrictId()]];
+        } elseif (Session::isDistrictUser() && $level == CountryUnits::LEVEL_WARD) {
+            return [$response['id' == Session::getWardId()]];
+        } elseif (Session::isDistrictUser() && $level == CountryUnits::LEVEL_VILLAGE) {
+            return [$response['id' == Session::getVillageId()]];
         }
         return $response;
     }
