@@ -3,6 +3,7 @@
 namespace backend\modules\core\models;
 
 use backend\modules\auth\models\Users;
+use common\helpers\DateUtils;
 use common\helpers\Utils;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
@@ -204,6 +205,9 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             }
             if (empty($this->name)) {
                 $this->name = $this->farmer_name;
+            }
+            if (empty($this->reg_date)) {
+                $this->reg_date = DateUtils::getToday();
             }
             $this->setAdditionalAttributesValues();
 
