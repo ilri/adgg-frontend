@@ -5,12 +5,14 @@ namespace api\modules\v1\controllers;
 
 use api\controllers\ActiveController;
 use api\controllers\JwtAuthTrait;
+use backend\modules\auth\Session;
 use backend\modules\conf\settings\SystemSettings;
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\Choices;
 use backend\modules\core\models\ChoiceTypes;
 use backend\modules\reports\Constants;
 use common\helpers\DateUtils;
+use yii\web\ForbiddenHttpException;
 
 class AnimalStatsController extends ActiveController
 {
@@ -82,6 +84,11 @@ class AnimalStatsController extends ActiveController
             }
         }
 
-        return $data;
+        if (Session::isPrivilegedAdmin() || Session::isCountryUser() || Session::isOrganizationUser()) {
+            return $data;
+        } else {
+            throw new ForbiddenHttpException("Not allowed to access this page");
+
+        }
     }
 }

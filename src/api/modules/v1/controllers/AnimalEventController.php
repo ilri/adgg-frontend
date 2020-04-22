@@ -9,6 +9,7 @@ use backend\modules\auth\Session;
 use backend\modules\conf\settings\SystemSettings;
 use backend\modules\core\models\AnimalEvent;
 use common\helpers\DateUtils;
+use yii\web\ForbiddenHttpException;
 
 class AnimalEventController extends ActiveController
 {
@@ -54,6 +55,11 @@ class AnimalEventController extends ActiveController
         $searchModel->village_id = $village_id;
         $searchModel->event_type = $event_type;
 
-        return $searchModel->search();
+        if (Session::isPrivilegedAdmin() || Session::isCountryUser() || Session::isOrganizationUser()) {
+            return $searchModel->search();
+        } else {
+            throw new ForbiddenHttpException("Not allowed to access this page");
+
+        }
     }
 }

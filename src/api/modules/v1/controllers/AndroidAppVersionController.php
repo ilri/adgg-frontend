@@ -2,7 +2,9 @@
 
 namespace api\modules\v1\controllers;
 
+use backend\modules\auth\Session;
 use backend\modules\conf\models\AndroidApps;
+use yii\web\ForbiddenHttpException;
 
 class AndroidAppVersionController extends \yii\rest\ActiveController
 {
@@ -25,7 +27,11 @@ class AndroidAppVersionController extends \yii\rest\ActiveController
         if (empty($versions)) {
             return [];
         }
+        if (Session::isPrivilegedAdmin() || Session::isCountryUser() || Session::isOrganizationUser()) {
+            return $versions[0];
+        } else {
+            throw new ForbiddenHttpException("Not allowed to access this page");
 
-        return $versions[0];
+        }
     }
 }

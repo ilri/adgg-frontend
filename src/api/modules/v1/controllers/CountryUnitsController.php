@@ -8,6 +8,7 @@ use api\controllers\JwtAuthTrait;
 use backend\modules\auth\Session;
 use backend\modules\conf\settings\SystemSettings;
 use backend\modules\core\models\CountryUnits;
+use yii\web\ForbiddenHttpException;
 
 class CountryUnitsController extends ActiveController
 {
@@ -30,7 +31,12 @@ class CountryUnitsController extends ActiveController
         ]);
         $searchModel->country_id = $country_id;
         $searchModel->level = $level;
-        return $searchModel->search();
+        if (Session::isPrivilegedAdmin() || Session::isCountryUser() || Session::isOrganizationUser()) {
+            return $searchModel->search();
+        } else {
+            throw new ForbiddenHttpException("Not allowed to access this page");
+
+        }
     }
 
     public function actionDependentLists($level, $country_id = null, $parent_id = null, $placeholder = false)

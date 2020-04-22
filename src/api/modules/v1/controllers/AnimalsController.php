@@ -9,6 +9,7 @@ use backend\modules\auth\Session;
 use backend\modules\conf\settings\SystemSettings;
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\Farm;
+use yii\web\ForbiddenHttpException;
 
 class AnimalsController extends ActiveController
 {
@@ -59,6 +60,11 @@ class AnimalsController extends ActiveController
         $searchModel->tag_id = $tag_id;
         $searchModel->animal_type = $animal_type;
         $searchModel->main_breed = $breed;
-        return $searchModel->search();
+        if (Session::isPrivilegedAdmin() || Session::isCountryUser() || Session::isOrganizationUser()) {
+            return $searchModel->search();
+        } else {
+            throw new ForbiddenHttpException("Not allowed to access this page");
+
+        }
     }
 }
