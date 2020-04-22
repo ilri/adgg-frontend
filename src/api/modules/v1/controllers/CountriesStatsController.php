@@ -42,36 +42,43 @@ class CountriesStatsController extends ActiveController
     }
 
 
-    public function actionOrganizations($pageSize = null, $country_id = null, $name = null)
+    public function actionOrganizations($pageSize = null, $country_id = null, $name = null, $id = null)
     {
         $user = \Yii::$app->user->identity;
         if ($pageSize == null) {
             $pageSize = SystemSettings::getPaginationSize();
         }
+        if ($id == null) {
+            $id = $user->org_id;
+        }
+
         $searchModel = Organization::searchModel([
             'defaultOrder' => ['id' => SORT_ASC],
             'pageSize' => $pageSize,
             'enablePagination' => true,
         ]);
-        $searchModel->id = $user->org_id;
+        $searchModel->id = $id;
         $searchModel->name = $name;
         $searchModel->country_id = $country_id;
         return $searchModel->search();
     }
 
 
-    public function actionClients($pageSize = null, $org_id = null, $country_id = null, $name = null)
+    public function actionClients($pageSize = null, $org_id = null, $country_id = null, $name = null, $id = null)
     {
         $user = \Yii::$app->user->identity;
         if ($pageSize == null) {
             $pageSize = SystemSettings::getPaginationSize();
+        }
+        if ($id == null) {
+            $id = $user->org_id;
         }
         $searchModel = Client::searchModel([
             'defaultOrder' => ['id' => SORT_ASC],
             'pageSize' => $pageSize,
             'enablePagination' => true,
         ]);
-        $searchModel->id = $user->client_id;
+        $searchModel->id = $id;
         $searchModel->country_id = $country_id;
         $searchModel->org_id = $org_id;
         $searchModel->name = $name;
