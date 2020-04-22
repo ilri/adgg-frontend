@@ -24,18 +24,20 @@ class CountriesStatsController extends ActiveController
         parent::init();
     }
 
-    /**
-     * @return \yii\data\ActiveDataProvider
-     */
-    public function actionCountriesList()
+
+    public function actionCountriesList($id = null, $name = null)
     {
         $user = \Yii::$app->user->identity;
+        if ($id == null) {
+            $id = $user->country_id;
+        }
         $searchModel = Country::searchModel([
             'defaultOrder' => ['id' => SORT_ASC],
             'pageSize' => SystemSettings::getPaginationSize(),
             'enablePagination' => true,
         ]);
-        $searchModel->id = $user->country_id;
+        $searchModel->id = $id;
+        $searchModel->name = $name;
         return $searchModel->search();
     }
 
