@@ -118,6 +118,19 @@ MyApp.modules.dashboard = {};
                     text: null,
                     style: {fontWeight: 'normal'},
                 },
+                stackLabels: {
+                    style: {
+                        color: '#000000',
+                        fontWeight: 'normal',
+                        textOutline: '1px contrast',
+                    },
+                    enabled: true,
+                    verticalAlign: 'bottom',
+                    formatter: function () {
+                        //console.log(this);
+                        return this.stack;
+                    }
+                }
             },
             xAxis: {
                 title: {
@@ -184,6 +197,7 @@ MyApp.modules.dashboard = {};
         let defaultOptions = {
             ajaxAction: '',
             ajaxCharts: [
+                /*
                 {
                     name: 'milk',
                     renderContainer: '#milkChart'
@@ -192,6 +206,7 @@ MyApp.modules.dashboard = {};
                     name: 'calf',
                     renderContainer: '#calfChart'
                 },
+                */
             ],
         };
         this.options = $.extend({}, defaultOptions, options || {});
@@ -222,14 +237,6 @@ MyApp.modules.dashboard = {};
                 }
             })
         }
-        //note that this code is executed in on load. So we don't need to call on load again, Otherwise this will fail to fire sometimes
-        /* $(window).on('load', function() {
-             let charts = $this.options.ajaxCharts;
-             charts.forEach(function (item, index) {
-                 item.url = $this.options.ajaxAction;
-                 _load(item);
-             })
-         });*/
 
         let charts = $this.options.ajaxCharts;
         charts.forEach(function (item, index) {

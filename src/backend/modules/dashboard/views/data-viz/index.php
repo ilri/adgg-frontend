@@ -11,7 +11,7 @@ use yii\helpers\Json;
 
 /* @var $this yii\web\View */
 /* @var $controller \backend\controllers\BackendController */
-/* @var $graphFilterOptions array */
+/* @var $filterOptions array */
 $controller = Yii::$app->controller;
 $this->title = Lang::t('Dashboard');
 $this->params['breadcrumbs'] = [
@@ -23,49 +23,44 @@ $this->params['breadcrumbs'] = [
 <div class="row" id="summaryChart" style="display:flex;flex-direction:row;"></div>
 <br/>
 <div class="row mb-3">
-    <div class="col-md-6">
-        <div class="card card-body" id="milkChart"></div>
-    </div>
-    <div class="col-md-6">
-        <div class="card card-body" id="calfChart"></div>
+    <div class="col-md-12">
+        <div class="card card-body" id="animalsWithMilkChart"></div>
     </div>
 </div>
 <div class="row mb-3">
     <div class="col-md-12">
-        <div class="card card-body" id="inseminationChart"></div>
+        <div class="card card-body" id="breedsByCountryChart"></div>
     </div>
 </div>
 <div class="row mb-3">
-    <div class="col-md-6">
-        <div class="card card-body" id="animalsChart"></div>
+    <div class="col-md-12">
+        <div class="card card-body" id="animalsByCategoryChart"></div>
     </div>
+</div>
+<div class="row mb-3">
     <div class="col-md-6">
         <div class="card card-body" id="tableChart"></div>
     </div>
 </div>
 <?php
 $options = [
-    'ajaxAction' => Url::to(['data-viz/load-chart']),
+    'ajaxAction' => Url::to(array_merge(['data-viz/load-chart'], $filterOptions)),
     'ajaxCharts' => [
         [
             'name' => 'summary',
             'renderContainer' => '#summaryChart'
         ],
         [
-            'name' => 'milk',
-            'renderContainer' => '#milkChart'
+            'name' => 'animalswithmilk',
+            'renderContainer' => '#animalsWithMilkChart'
         ],
         [
-            'name' => 'calf',
-            'renderContainer' => '#calfChart'
+            'name' => 'breeds',
+            'renderContainer' => '#breedsByCountryChart'
         ],
         [
-            'name' => 'insemination',
-            'renderContainer' => '#inseminationChart'
-        ],
-        [
-            'name' => 'animals',
-            'renderContainer' => '#animalsChart'
+            'name' => 'animalsbycategories',
+            'renderContainer' => '#animalsByCategoryChart'
         ],
         [
             'name' => 'table',

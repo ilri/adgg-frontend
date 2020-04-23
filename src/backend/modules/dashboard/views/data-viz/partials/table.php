@@ -4,6 +4,7 @@ use backend\modules\auth\Session;
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\Choices;
 use backend\modules\core\models\ChoiceTypes;
+use backend\modules\core\models\Client;
 use backend\modules\core\models\CountriesDashboardStats;
 use backend\modules\core\models\Country;
 use backend\modules\core\models\Farm;
@@ -18,13 +19,6 @@ use yii\helpers\Html;
 $countries = CountriesDashboardStats::getDashboardCountryCategories();
 $country_ids = array_keys($countries);
 $projects = Choices::getList(ChoiceTypes::CHOICE_TYPE_PROJECT, false);
-
-if(Session::isOrganizationUser()){
-    $orgs = Organization::getListData('id', 'name', false, ['id' => Session::getOrgId()]);
-}
-else {
-    $orgs = Organization::getListData('id', 'name', false, ['country_id' => $country_ids]);
-}
 
 ?>
 <div class="row">
@@ -55,24 +49,10 @@ else {
                     </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>
-                <tr>
-                    <th class="dt-category-name">Organizations</th>
-                    <td colspan="4"></td>
-                </tr>
-
-                <?php foreach ($orgs as $k => $name): ?>
-                    <tr>
-                        <th class="dt-row-name"><?= Html::encode($name) ?></th>
-                        <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['org_id' => $k])) ?></td>
-                        <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => 'LSF', 'org_id' => $k])) ?></td>
-                        <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => 'SSF', 'org_id' => $k])) ?></td>
-                        <td><?= Yii::$app->formatter->asDecimal(Animal::getDashboardStats(Animal::STATS_ALL_TIME, false, [],  'created_at', null, null, ['org_id' => $k])) ?></td>
-                    </tr>
-                <?php endforeach; ?>
 
                 <?php if(Session::isPrivilegedAdmin() || Session::isCountryUser()): ?>
                     <tr>
-                        <th class="dt-category-name">Projects</th>
+                        <th class="dt-category-name">Projects/Orgs</th>
                         <td colspan="4"></td>
                     </tr>
                     <?php foreach ($projects as $k => $name): ?>
