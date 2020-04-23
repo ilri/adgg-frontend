@@ -12,26 +12,31 @@ namespace backend\modules\dashboard\controllers;
 use backend\modules\auth\Session;
 use backend\modules\core\models\Country;
 use common\helpers\Url;
+use yii\web\ForbiddenHttpException;
 
 class DefaultController extends Controller
 {
-    /**
-     * @inheritdoc
-     */
+
     public function init()
     {
         parent::init();
     }
 
+    /**
+     * @return \yii\web\Response
+     * @throws ForbiddenHttpException
+     */
     public function actionIndex()
     {
-        if (Session::isPrivilegedAdmin() || Session::isCountryUser() || Session::isOrganizationUser()){
+        if (Session::isPrivilegedAdmin() || Session::isCountryUser() || Session::isOrganizationUser()) {
             return $this->redirect(Url::to(['/dashboard/data-viz']));
+        } else {
+            throw new ForbiddenHttpException();
         }
-        $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
-        return $this->render('index2', [
-            'countries' => $countries,
-        ]);
+        /* $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
+         return $this->render('index2', [
+             'countries' => $countries,
+         ]);*/
     }
 
     public function actionGraph($graphType = null, $dateRange = null, $animal_type = null, $main_breed = null, $country_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null)

@@ -12,7 +12,7 @@ use yii\bootstrap\Html;
 /* @var $country_id int */
 /* @var $filterOptions array */
 
-$this->title = 'Standard Reports';
+$this->title = 'Standard Extracts';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <?php if (Yii::$app->user->canView(Constants::RES_REPORT_BUILDER)): ?>

@@ -12,6 +12,7 @@ namespace backend\modules\dashboard\controllers;
 use backend\modules\auth\Session;
 use backend\modules\core\models\Country;
 use common\helpers\Url;
+use yii\web\ForbiddenHttpException;
 
 class DataVizController extends Controller
 {
@@ -25,7 +26,7 @@ class DataVizController extends Controller
 
     public function actionIndex()
     {
-        if (Session::isPrivilegedAdmin() || Session::isCountryUser() || Session::isOrganizationUser()){
+        if (Session::isPrivilegedAdmin() || Session::isCountryUser() || Session::isOrganizationUser()) {
             $country_id = \Yii::$app->request->get('country_id');
             $org_id = \Yii::$app->request->get('org_id');
             return $this->render('index', [
@@ -34,8 +35,10 @@ class DataVizController extends Controller
                     'org_id' => $org_id,
                 ]
             ]);
+        } else {
+            throw new ForbiddenHttpException();
         }
-        return $this->redirect(Url::to(['/dashboard/default']));
+        //return $this->redirect(Url::to(['/dashboard/default']));
     }
 
     public function actionLoadChart($name)
