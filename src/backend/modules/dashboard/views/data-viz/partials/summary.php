@@ -9,47 +9,42 @@ use common\helpers\Lang;
 /* @var $filterOptions array */
 ?>
 
-<div class="col-md-3">
+<div class="col-md-4">
     <div class='card my-2 '>
-        <h3 class="card-header bg-white border-4">Total LSF Registered</h3>
         <div class="card-body">
-            <h1 class="text-left kt-label-font-color-4">
-                <?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => 'LSF'])) ?>
-            </h1>
-            <span class="kt-font-success">+<strong><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_THIS_MONTH,  false, [],  'created_at', null, null, ['farm_type' => 'LSF'])) ?></strong> this month</span>
-        </div>
-    </div>
-</div>
-<div class="col-md-3">
-    <div class='card my-2 '>
-        <h3 class="card-header bg-white border-4">Total SSF Registered</h3>
-        <div class="card-body">
-            <h1 class="text-left kt-label-font-color-4">
-                <?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME,  false, [],  'created_at', null, null, ['farm_type' => 'SSF'])) ?>
-            </h1>
-            <span class="kt-font-success">+<strong><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_THIS_MONTH,  false, [],  'created_at', null, null, ['farm_type' => 'SSF'])) ?></strong> this month</span>
-        </div>
-    </div>
-</div>
-<div class="col-md-3">
-    <div class='card my-2 '>
-        <h3 class="card-header bg-white border-4">Total Farms Registered</h3>
-        <div class="card-body">
-            <h1 class="text-left kt-label-font-color-4">
+            <h1 class="text-center kt-label-font-color-4 mb-0">
                 <?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME)) ?>
             </h1>
-            <span class="kt-font-success">+<strong><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_THIS_MONTH)) ?></strong> this month</span>
+            <h5 class="text-center mb-4">Farms Registered</h5>
+            <p class="text-center">
+                <span class="text-center kt-font-success">+<strong><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_THIS_MONTH)) ?></strong> this month</span>
+            </p>
         </div>
     </div>
 </div>
-<div class="col-md-3">
+<div class="col-md-4">
     <div class='card my-2 '>
-        <h3 class="card-header bg-white border-4">Total Cattle Registered</h3>
         <div class="card-body">
-            <h1 class="text-left kt-label-font-color-4">
+            <h1 class="text-center kt-label-font-color-4 mb-0">
                 <?= Yii::$app->formatter->asDecimal(Animal::getDashboardStats(Animal::STATS_ALL_TIME)) ?>
             </h1>
-            <span class="kt-font-success">+<strong><?= Yii::$app->formatter->asDecimal(Animal::getDashboardStats(Animal::STATS_THIS_MONTH)) ?></strong> this month</span>
+            <h5 class="text-center mb-4">Animals Registered</h5>
+            <p class="text-center">
+                <span class="kt-font-success">+<strong><?= Yii::$app->formatter->asDecimal(Animal::getDashboardStats(Animal::STATS_THIS_MONTH)) ?></strong> this month</span>
+            </p>
+        </div>
+    </div>
+</div>
+<div class="col-md-4">
+    <div class='card my-2 '>
+        <div class="card-body">
+            <h1 class="text-center kt-label-font-color-4 mb-0">
+                <?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME)) ?>
+            </h1>
+            <h5 class="text-center mb-4">Animals with Milk Records</h5>
+            <p class="text-center">
+                <span class="kt-font-success">+<strong><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_THIS_MONTH)) ?></strong> this month</span>
+            </p>
         </div>
     </div>
 </div>
