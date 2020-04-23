@@ -14,6 +14,7 @@ use api\controllers\JwtAuthTrait;
 use backend\modules\auth\Session;
 use backend\modules\conf\settings\SystemSettings;
 use backend\modules\core\models\Farm;
+use yii\web\ForbiddenHttpException;
 
 class FarmersController extends ActiveController
 {
@@ -60,6 +61,11 @@ class FarmersController extends ActiveController
         $searchModel->phone = $farmer_phone;
         $searchModel->farm_type = $farm_type;
         $searchModel->project = $project;
-        return $searchModel->search();
+        if (Session::isPrivilegedAdmin() || Session::isCountryUser() || Session::isOrganizationUser()) {
+            return $searchModel->search();
+        } else {
+            throw new ForbiddenHttpException("Not allowed to access this page");
+
+        }
     }
 }

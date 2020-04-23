@@ -5,8 +5,10 @@ namespace api\modules\v1\controllers;
 
 use api\controllers\ActiveController;
 use api\controllers\JwtAuthTrait;
+use backend\modules\auth\Session;
 use backend\modules\conf\settings\SystemSettings;
 use backend\modules\core\models\ChoiceTypes;
+use yii\web\ForbiddenHttpException;
 
 class ListTypesController extends ActiveController
 {
@@ -28,6 +30,11 @@ class ListTypesController extends ActiveController
             'enablePagination' => true,
         ]);
 
-        return $searchModel->search();
+        if (Session::isPrivilegedAdmin() || Session::isCountryUser() || Session::isOrganizationUser()) {
+            return $searchModel->search();
+        } else {
+            throw new ForbiddenHttpException("Not allowed to access this page");
+
+        }
     }
 }

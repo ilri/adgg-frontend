@@ -3,6 +3,7 @@
 namespace backend\modules\reports\controllers;
 
 use backend\modules\auth\Acl;
+use backend\modules\auth\Session;
 use backend\modules\reports\Constants;
 use backend\modules\reports\models\AdhocReport;
 use backend\modules\reports\models\ReportBuilder;
@@ -31,7 +32,7 @@ class BuilderController extends Controller
     public function actionIndex($country_id)
     {
         $models = ReportBuilder::reportableModels();
-
+        $country_id = Session::getCountryId($country_id);
         return $this->render('index', [
             'models' => $models,
             'country_id' => $country_id,

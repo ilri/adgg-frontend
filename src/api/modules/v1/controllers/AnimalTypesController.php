@@ -5,8 +5,10 @@ namespace api\modules\v1\controllers;
 
 use api\controllers\ActiveController;
 use api\controllers\JwtAuthTrait;
+use backend\modules\auth\Session;
 use backend\modules\core\models\Choices;
 use backend\modules\core\models\ChoiceTypes;
+use yii\web\ForbiddenHttpException;
 
 class AnimalTypesController extends ActiveController
 {
@@ -30,6 +32,11 @@ class AnimalTypesController extends ActiveController
                 'label' => $type['label'],
             ];
         }
-        return $data;
+        if (Session::isPrivilegedAdmin() || Session::isCountryUser() || Session::isOrganizationUser()) {
+            return $data;
+        } else {
+            throw new ForbiddenHttpException("Not allowed to access this page");
+
+        }
     }
 }
