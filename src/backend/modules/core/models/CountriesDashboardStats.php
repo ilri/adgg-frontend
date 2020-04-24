@@ -6,6 +6,7 @@ namespace backend\modules\core\models;
 
 use backend\modules\auth\Session;
 use backend\modules\conf\settings\SystemSettings;
+use common\helpers\ArrayHelper;
 use common\helpers\DateUtils;
 use common\helpers\DbUtils;
 use common\helpers\Lang;
@@ -305,7 +306,7 @@ class CountriesDashboardStats extends Model
 
     }
 
-    public static function getDashboardCountryCategories(){
+    public static function getDashboardCountryCategories($filter = []){
         $condition = [];
         $params = [];
         $data = [];
@@ -326,10 +327,17 @@ class CountriesDashboardStats extends Model
             }
         }
 
+        if (isset($filter['country_id'])){
+            $data = ArrayHelper::filter($data, [$filter['country_id']]);
+        }
+        if (isset($filter['org_id'])){
+            $data = ArrayHelper::filter($data, [$filter['org_id']]);
+        }
+
         return $data;
     }
 
-    public static function getDashboardDateCategories($max = 12, $format = 'Y-m-d'){
+    public static function getDashboardDateCategories($type = 'months', $max = 12, $format = 'Y-m-d'){
         $date = new \DateTime('now');
         $to = $date->format('Y-m-d');
         $from = $date->modify('-1 year')->format('Y-m-d');
@@ -341,11 +349,138 @@ class CountriesDashboardStats extends Model
         return  DateUtils::generateDateSpan($from, $to, $x_interval, 'month', $format);
     }
 
-    public static function getMilkProductionForDataViz()
+    public static function rangeYears($from = null, $to = null){
+        $curr_year = date("Y");
+        $prev_year = date("Y", strtotime("-4 years"));
+        $years = range($from ?? $prev_year, $to ?? $curr_year);
+        return $years;
+    }
+
+    public static function getQuarters($from = null, $to = null, $max = 12){
+        $quarters = [];
+        // 2020-04-23 to 2019-01-01
+        $from_date = new \DateTime($from ?? 'now');
+        $from_formatted = $from_date->format('Y-m-d');
+        $to_date = ($to === null) ? $from_date->modify('-4 year') : new \DateTime($to);
+        $to_formatted = $to_date->format('Y-m-d');
+
+        $start_month = date( 'n', strtotime($to_formatted) );
+        $start_year = date( 'Y', strtotime($to_formatted) );
+
+        $end_month = date( 'n', strtotime($from_formatted) );
+        $end_year = date( 'Y', strtotime($from_formatted) );
+
+        $start_quarter = ceil($start_month/3);
+        $end_quarter = ceil($end_month/3);
+
+        $quarter = $start_quarter; // variable to track current quarter
+
+        for( $y = $start_year; $y <= $end_year; $y++ ){
+            if($y == $end_year)
+                $max_qtr = $end_quarter;
+            else
+                $max_qtr = 4;
+
+            for($q = $quarter; $q <= $max_qtr; $q++){
+
+                $current_quarter = new \stdClass();
+
+                $q_num = $q * 3;
+                //$end_month_num = zero_pad($q * 3);
+                $end_month_num = $q_num < 10 ? "0$q_num" : $q_num;
+
+                //$start_month_num = zero_pad(($end_month_num - 2));
+                $sm_num = ($end_month_num - 2);
+                $start_month_num = $sm_num < 10 ? "0$sm_num" : $sm_num;
+
+                // get month name from number
+
+                //$q_start_month = month_name($start_month_num);
+                $q_start_month = date('M', mktime(0, 0, 0, $start_month_num, 10));
+                //$q_end_month = month_name($end_month_num);
+                $q_end_month = date('M', mktime(0, 0, 0, $end_month_num, 10));
+
+                $current_quarter->period = "Q$q ($q_start_month - $q_end_month) $y";
+                $current_quarter->period_start = "$y-$start_month_num-01";      // yyyy-mm-dd
+
+                // get get last date of given month (of year)
+                $month_end_date = date("t", strtotime("$y-$end_month_num-1"));
+                $current_quarter->period_end = "$y-$end_month_num-" . $month_end_date;
+
+                $quarters[] = $current_quarter;
+                unset($current_quarter);
+            }
+
+            $quarter = 1; // reset to 1 for next year
+        }
+        // if count($quarters) is less than or equal to $max, return the whole $quarters
+        // otherwise return $n latest values of $quarters
+        if(count($quarters) <= $max){
+            return $quarters;
+        }
+        return array_slice($quarters, -$max, $max);
+    }
+
+    public static function getAnimalsCumulativeForDataViz($filter = []){
+        // fetch animals with milk for each country per quarter, cumulatively
+        $quarters = static::getQuarters(); // max 12 from today
+        $countries = static::getDashboardCountryCategories($filter);
+        foreach ($countries as $id => $label) {
+            foreach ($quarters as $quarter){
+                $params = [];
+                $condition = [];
+                if (!Session::isPrivilegedAdmin()){
+                    list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
+                }
+                else {
+                    list($condition, $params) = DbUtils::appendCondition('country_id', $id, $condition, $params);
+                }
+                $sum = Animal::find()->select('entry_date')
+                    ->andWhere($condition, $params)
+                    ->andWhere('DATE(entry_date) <= DATE(:end_date)', [':end_date' => $quarter->period_end])
+                    ->count();
+                $data[$label][] = [
+                    'label' => $quarter->period . ' - ' . $quarter->period_end,
+                    'value' => floatval(number_format($sum, 2, '.', '')),
+                ];
+            }
+        };
+        //dd($countries, $filter, $data);
+        return $data;
+    }
+
+    public static function getAnimalsWithMilk($filter){
+        $quarters = static::getQuarters(); // max 12 from today
+        $countries = static::getDashboardCountryCategories($filter);
+        foreach ($countries as $id => $label) {
+            foreach ($quarters as $quarter){
+                $params = [];
+                $condition = [];
+                list($condition, $params) = DbUtils::appendCondition(Animal::tableName(). '.country_id', $id, $condition, $params);
+                $sum = Animal::find()
+                    //->addSelect([Animal::tableName(). '.id', Animal::tableName(). '.entry_date'])
+                    //->addSelect(['Count('.AnimalEvent::tableName() . '.id) as milkrecords'])
+                    ->addSelect(['COUNT(DISTINCT('.Animal::tableName(). '.[[id]]))'])
+                    ->leftJoin(AnimalEvent::tableName(), AnimalEvent::tableName() . '.[[animal_id]] = ' . Animal::tableName() . '.[[id]]')
+                    ->andWhere(AnimalEvent::tableName() . '.[[event_type]] = '. AnimalEvent::EVENT_TYPE_MILKING)
+                    ->andWhere($condition, $params)
+                    ->andWhere('DATE('.Animal::tableName().'.[[entry_date]]) <= DATE(:end_date)', [':end_date' => $quarter->period_end])
+                    ->scalar();
+                //dd($sum->createCommand()->rawSql);
+                $data[$label][] = [
+                    'label' => $quarter->period . ' - ' . $quarter->period_end,
+                    'value' => floatval(number_format($sum, 2, '.', '')),
+                ];
+            }
+        };
+        return $data;
+    }
+
+    public static function getMilkProductionForDataViz($filter = [])
     {
         $data = [];
         // get countries
-        $countries = static::getDashboardCountryCategories();
+        $countries = static::getDashboardCountryCategories($filter);
         $dates = static::getDashboardDateCategories();
         foreach ($countries as $id => $label) {
             foreach ($dates as $date){
@@ -400,6 +535,31 @@ class CountriesDashboardStats extends Model
         return $data;
     }
 
+    public static function getAnimalsByCategoriesForDataViz($filter = []){
+        $data = [];
+        $countries = static::getDashboardCountryCategories();
+        $animal_types = Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, false);
+        $years = static::rangeYears();
+        foreach ($countries as $id => $country) {
+            foreach ($animal_types as $typeid => $type){
+                foreach ($years as $year){
+                    $params = [];
+                    $condition = [];
+                    list($condition, $params) = DbUtils::appendCondition('country_id', $id, $condition, $params);
+                    list($condition, $params) = DbUtils::appendCondition('animal_type', $typeid, $condition, $params);
+                    list($condition, $params) = DbUtils::appendCondition(DbUtils::castYEAR('entry_date', Animal::getDb()), $year, $condition, $params);
+                    $count = Animal::getCount($condition, $params);
+                    $data[$country][$type][$year] = [
+                        'label' => $year,
+                        'value' => floatval(number_format($count, 2, '.', '')),
+                    ];
+                }
+
+            }
+        };
+        return $data;
+    }
+
     public static function getRegisteredAnimalsForDataViz(){
         $data = [];
         $countries = static::getDashboardCountryCategories();
@@ -423,6 +583,16 @@ class CountriesDashboardStats extends Model
                     'value' => floatval(number_format($count, 2, '.', '')),
                 ];
             }
+        };
+        return $data;
+    }
+
+    public static function getAnimalsByBreedsForDataViz(){
+        $data = [];
+        $countries = static::getDashboardCountryCategories();
+        $animal_breeds = Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, false);
+        foreach ($countries as $id => $country) {
+            $data[$country] = static::getAnimalsGroupedByBreeds($id);
         };
         return $data;
     }
