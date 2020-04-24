@@ -15,7 +15,7 @@ use yii\helpers\Json;
 /* @var $country_id int */
 /* @var $models ReportBuilder */
 
-$this->title = 'Report Builder';
+$this->title = 'Extract Builder';
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
@@ -189,7 +189,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
                             </div>
                         </div>
-
                     </div>
                 </form>
             </div>
