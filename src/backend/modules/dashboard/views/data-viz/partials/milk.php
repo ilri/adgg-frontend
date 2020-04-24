@@ -11,8 +11,8 @@ use yii\helpers\Json;
     <div id="chartContainer" title="" style="width:100%;"></div>
 </div>
 <?php
-$chart_data = CountriesDashboardStats::getMilkProductionForDataViz();
-//dd($chart_data);
+$chart_data = CountriesDashboardStats::getMilkProductionForDataViz($filterOptions);
+//dd($filterOptions);
 $data = [];
 if (count($chart_data) > 0) {
     foreach ($chart_data as $country => $country_data) {

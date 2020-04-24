@@ -27,8 +27,13 @@ class DataVizController extends Controller
     public function actionIndex()
     {
         if (Session::isPrivilegedAdmin() || Session::isCountryUser() || Session::isOrganizationUser()) {
+            $country_id = \Yii::$app->request->get('country_id');
+            $org_id = \Yii::$app->request->get('org_id');
             return $this->render('index', [
-                'filterOptions' => []
+                'filterOptions' => [
+                    'country_id' => $country_id,
+                    'org_id' => $org_id,
+                ]
             ]);
         } else {
             throw new ForbiddenHttpException();
@@ -38,8 +43,13 @@ class DataVizController extends Controller
 
     public function actionLoadChart($name)
     {
+        $country_id = \Yii::$app->request->get('country_id');
+        $org_id = \Yii::$app->request->get('org_id');
         return $this->renderAjax('partials/'. $name, [
-            'filterOptions' => [],
+            'filterOptions' => [
+                'country_id' => $country_id,
+                'org_id' => $org_id,
+            ],
         ]);
     }
 
