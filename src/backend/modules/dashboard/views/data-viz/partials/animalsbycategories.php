@@ -8,7 +8,7 @@ use yii\helpers\Json;
 /* @var $filterOptions array */
 ?>
 <div class="row">
-    <div id="chartContainerAC" title="" style="width:100%;"></div>
+    <div id="chartContainerAC" style="width:100%;"></div>
 </div>
 <?php
 $chart_data = CountriesDashboardStats::getAnimalsByCategoriesForDataViz($filterOptions);
@@ -74,7 +74,7 @@ $graphOptions = [
     'chart' => [
         'type' => 'column',
     ],
-    'title' => ['text' => 'Categories of Animals registered by YearS'],
+    'title' => ['text' => 'Categories of Animals registered by Year'],
     'subtitle' => ['text' => ''],
     'xAxis' => [
         [

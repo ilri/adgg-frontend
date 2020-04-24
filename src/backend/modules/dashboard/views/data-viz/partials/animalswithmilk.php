@@ -12,7 +12,7 @@ use yii\helpers\Json;
 </div>
 <?php
 $animals = CountriesDashboardStats::getAnimalsCumulativeForDataViz($filterOptions);
-$animals_with_milk = CountriesDashboardStats::getAnimalsWithMilk($filterOptions);
+$animals_with_milk = CountriesDashboardStats::getAnimalsWithMilkForDataViz($filterOptions);
 //dd($animals, $animals_with_milk);
 
 $data = [];

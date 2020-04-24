@@ -435,9 +435,9 @@ class CountriesDashboardStats extends Model
                 else {
                     list($condition, $params) = DbUtils::appendCondition('country_id', $id, $condition, $params);
                 }
-                $sum = Animal::find()->select('entry_date')
+                $sum = Animal::find()->select('reg_date')
                     ->andWhere($condition, $params)
-                    ->andWhere('DATE(entry_date) <= DATE(:end_date)', [':end_date' => $quarter->period_end])
+                    ->andWhere('DATE(reg_date) <= DATE(:end_date)', [':end_date' => $quarter->period_end])
                     ->count();
                 $data[$label][] = [
                     'label' => $quarter->period . ' - ' . $quarter->period_end,
@@ -449,24 +449,20 @@ class CountriesDashboardStats extends Model
         return $data;
     }
 
-    public static function getAnimalsWithMilk($filter){
+    public static function getAnimalsWithMilkForDataViz($filter){
         $quarters = static::getQuarters(); // max 12 from today
         $countries = static::getDashboardCountryCategories($filter);
         foreach ($countries as $id => $label) {
             foreach ($quarters as $quarter){
                 $params = [];
-                $condition = [];
-                list($condition, $params) = DbUtils::appendCondition(Animal::tableName(). '.country_id', $id, $condition, $params);
-                $sum = Animal::find()
-                    //->addSelect([Animal::tableName(). '.id', Animal::tableName(). '.entry_date'])
-                    //->addSelect(['Count('.AnimalEvent::tableName() . '.id) as milkrecords'])
-                    ->addSelect(['COUNT(DISTINCT('.Animal::tableName(). '.[[id]]))'])
-                    ->leftJoin(AnimalEvent::tableName(), AnimalEvent::tableName() . '.[[animal_id]] = ' . Animal::tableName() . '.[[id]]')
-                    ->andWhere(AnimalEvent::tableName() . '.[[event_type]] = '. AnimalEvent::EVENT_TYPE_MILKING)
-                    ->andWhere($condition, $params)
-                    ->andWhere('DATE('.Animal::tableName().'.[[entry_date]]) <= DATE(:end_date)', [':end_date' => $quarter->period_end])
-                    ->scalar();
-                //dd($sum->createCommand()->rawSql);
+                $condition = '';
+                list($condition, $params) = DbUtils::appendCondition(Animal::tableName(). '.[[country_id]]', $id, $condition, $params);
+                if (!empty($condition))
+                    $condition .= ' AND ';
+                $casted_date = DbUtils::castDATE(Animal::tableName().'.[[reg_date]]', Animal::getDb());
+                $condition .= $casted_date . ' <= DATE(:end_date)';
+                $params[':end_date'] = $quarter->period_end;
+                $sum = static::getAnimalsWithMilk($condition, $params);
                 $data[$label][] = [
                     'label' => $quarter->period . ' - ' . $quarter->period_end,
                     'value' => floatval(number_format($sum, 2, '.', '')),
@@ -474,6 +470,33 @@ class CountriesDashboardStats extends Model
             }
         };
         return $data;
+    }
+
+    public static function getAnimalsWithMilk($condition = '', $params = [], $durationType = null){
+        if (!empty($durationType)){
+
+            $today = DateUtils::formatToLocalDate(date('Y-m-d H:i:s', time()), 'Y-m-d');
+            $timezone = 'UTC';
+            $this_month = DateUtils::formatDate($today, 'm', $timezone);
+            $this_year = DateUtils::formatDate($today, 'Y', $timezone);
+            $dateField = Animal::tableName().'.[[reg_date]]';
+
+            switch ($durationType){
+                case Animal::STATS_THIS_MONTH:
+                    list($condition, $params) = DbUtils::appendCondition(DbUtils::castYEAR($dateField, Animal::getDb()), $this_year, $condition, $params);
+                    list($condition, $params) = DbUtils::appendCondition(DbUtils::castMONTH($dateField, Animal::getDb()), $this_month, $condition, $params);
+                    break;
+            }
+        }
+        $command = Animal::find()
+            //->addSelect([Animal::tableName(). '.id', Animal::tableName(). '.entry_date'])
+            //->addSelect(['Count('.AnimalEvent::tableName() . '.id) as milkrecords'])
+            ->addSelect(['COUNT(DISTINCT('.Animal::tableName(). '.[[id]]))'])
+            ->leftJoin(AnimalEvent::tableName(), AnimalEvent::tableName() . '.[[animal_id]] = ' . Animal::tableName() . '.[[id]]')
+            ->andWhere(AnimalEvent::tableName() . '.[[event_type]] = '. AnimalEvent::EVENT_TYPE_MILKING)
+            ->andWhere($condition, $params);
+
+        return $command->scalar();
     }
 
     public static function getMilkProductionForDataViz($filter = [])
@@ -547,7 +570,7 @@ class CountriesDashboardStats extends Model
                     $condition = [];
                     list($condition, $params) = DbUtils::appendCondition('country_id', $id, $condition, $params);
                     list($condition, $params) = DbUtils::appendCondition('animal_type', $typeid, $condition, $params);
-                    list($condition, $params) = DbUtils::appendCondition(DbUtils::castYEAR('entry_date', Animal::getDb()), $year, $condition, $params);
+                    list($condition, $params) = DbUtils::appendCondition(DbUtils::castYEAR('reg_date', Animal::getDb()), $year, $condition, $params);
                     $count = Animal::getCount($condition, $params);
                     $data[$country][$type][$year] = [
                         'label' => $year,
@@ -627,7 +650,6 @@ class CountriesDashboardStats extends Model
 
     public static function getCalvesByRegions($animal_type, $country_id = null)
     {
-
         $condition = '';
         $params = [];
         list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
