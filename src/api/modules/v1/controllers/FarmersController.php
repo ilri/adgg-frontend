@@ -13,7 +13,11 @@ use api\controllers\ActiveController;
 use api\controllers\JwtAuthTrait;
 use backend\modules\auth\Session;
 use backend\modules\conf\settings\SystemSettings;
+use backend\modules\core\models\Client;
+use backend\modules\core\models\Country;
 use backend\modules\core\models\Farm;
+use backend\modules\core\models\Organization;
+use common\helpers\DateUtils;
 use yii\web\ForbiddenHttpException;
 
 class FarmersController extends ActiveController
@@ -28,7 +32,7 @@ class FarmersController extends ActiveController
     }
 
 
-    public function actionIndex($pageSize = null, $country_id = null, $org_id = null, $client_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $farm_name = null, $farmer_phone = null, $farm_type = null, $project = null)
+    public function actionIndex($pageSize = null, $country_name = null, $org_name = null, $client_name = null, $country_id = null, $org_id = null, $client_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $farm_name = null, $farmer_phone = null, $farm_type = null, $project = null, $from = null, $to = null)
     {
         $country_id = Session::getCountryId($country_id);
         $org_id = Session::getOrgId($org_id);
@@ -40,7 +44,8 @@ class FarmersController extends ActiveController
         if ($pageSize == null) {
             $pageSize = SystemSettings::getPaginationSize();
         }
-        $condition = '';
+        $dateFilter = DateUtils::getDateFilterParams($from, $to, 'reg_date', false, false);
+        $condition = $dateFilter['condition'];
         $params = [];
         $searchModel = Farm::searchModel([
             'defaultOrder' => ['id' => SORT_DESC],
@@ -48,6 +53,17 @@ class FarmersController extends ActiveController
             'pageSize' => $pageSize,
             'condition' => $condition,
             'params' => $params,
+            'joinWith' => [
+                'country' => function (\yii\db\ActiveQuery $query) use ($country_name) {
+                    $query->andFilterWhere(['LIKE', Country::tableName() . '.name', $country_name]);
+                },
+                'org' => function (\yii\db\ActiveQuery $query) use ($org_name) {
+                    $query->andFilterWhere(['LIKE', Organization::tableName() . '.name', $org_name]);
+                },
+                'client' => function (\yii\db\ActiveQuery $query) use ($client_name) {
+                    $query->andFilterWhere(['LIKE', Client::tableName() . '.name', $client_name]);
+                },
+            ],
             'with' => ['country', 'org', 'client', 'region', 'district', 'ward', 'village', 'fieldAgent'],
         ]);
         $searchModel->country_id = $country_id;
