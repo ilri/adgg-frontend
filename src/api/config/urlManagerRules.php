@@ -39,6 +39,7 @@ return [
             'list-types' => 'v1/list-types',
             'event-types' => 'v1/event-types',
             'animal-types' => 'v1/animal-types',
+            'farm-types' => 'v1/farm-types',
             'breeds' => 'v1/breeds',
             'users' => 'v1/user',
             'androidVersion' => 'v1/android-app-version',
