@@ -88,7 +88,7 @@ $_series = [
 ];
 $series = $data;
 $graphOptions = [
-    'title' => ['text' => 'Milk Production'],
+    'title' => ['text' => 'Animals Registered and Monitored for Milk Production'],
     'subtitle' => ['text' => ''],
     'xAxis' => [
         'categories' =>
@@ -96,7 +96,7 @@ $graphOptions = [
     ],
     'yAxis' => [
         'title' => [
-            'text' => 'Number of observations',
+            'text' => 'Number of animals',
         ]
     ],
     'colors' => [

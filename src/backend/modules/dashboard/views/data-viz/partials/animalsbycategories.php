@@ -74,7 +74,7 @@ $graphOptions = [
     'chart' => [
         'type' => 'column',
     ],
-    'title' => ['text' => 'Animal categories by countries'],
+    'title' => ['text' => 'Categories of Animals registered by YearS'],
     'subtitle' => ['text' => ''],
     'xAxis' => [
         [

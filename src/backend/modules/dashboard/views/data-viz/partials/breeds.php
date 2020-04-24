@@ -66,7 +66,7 @@ $graphOptions = [
     'chart' => [
         'type' => 'bar',
     ],
-    'title' => ['text' => 'Total Animals by Breeds'],
+    'title' => ['text' => 'Types of Breeds kept per Country'],
     'subtitle' => ['text' => ''],
     'xAxis' => [
         'title' => [

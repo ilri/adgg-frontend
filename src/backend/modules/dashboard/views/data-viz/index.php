@@ -38,7 +38,7 @@ $this->params['breadcrumbs'] = [
     </div>
 </div>
 <div class="row mb-3">
-    <div class="col-md-6">
+    <div class="col-md-12">
         <div class="card card-body" id="tableChart"></div>
     </div>
 </div>
