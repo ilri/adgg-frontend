@@ -567,10 +567,15 @@ class CountriesDashboardStats extends Model
             foreach ($animal_types as $typeid => $type){
                 foreach ($years as $year){
                     $params = [];
-                    $condition = [];
+                    $condition = '';
                     list($condition, $params) = DbUtils::appendCondition('country_id', $id, $condition, $params);
                     list($condition, $params) = DbUtils::appendCondition('animal_type', $typeid, $condition, $params);
-                    list($condition, $params) = DbUtils::appendCondition(DbUtils::castYEAR('reg_date', Animal::getDb()), $year, $condition, $params);
+                    //list($condition, $params) = DbUtils::appendCondition(DbUtils::castYEAR('reg_date', Animal::getDb()), $year, $condition, $params, 'AND', '<=');
+                    if (!empty($condition))
+                        $condition .= ' AND ';
+                    $casted_date = DbUtils::castYEAR(Animal::tableName().'.[[reg_date]]', Animal::getDb());
+                    $condition .= $casted_date . ' <= :end_date';
+                    $params[':end_date'] = $year;
                     $count = Animal::getCount($condition, $params);
                     $data[$country][$type][$year] = [
                         'label' => $year,
