@@ -327,6 +327,17 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     }
 
     /**
+     * @param $animalId
+     * @param $eventType
+     * @return array|\yii\db\ActiveRecord|null
+     */
+    public static function getLastAnimalEvent($animalId, $eventType)
+    {
+        return static::find()->andWhere(['animal_id' => $animalId, 'event_type' => $eventType])->orderBy(['event_date' => SORT_DESC])->one();
+
+    }
+
+    /**
      * @param int $animalId
      * @param int $eventType
      * @return bool
