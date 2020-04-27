@@ -153,10 +153,12 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
      */
     public function searchParams()
     {
+        $alias = static::tableName();
         return [
             'animal_id',
             'event_type',
-            'country_id',
+            [$alias . '.country_id', 'country_id', '', '='],
+            [$alias . '.org_id', 'org_id', '', '='],
             'region_id',
             'district_id',
             'ward_id',
