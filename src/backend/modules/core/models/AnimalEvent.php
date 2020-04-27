@@ -153,10 +153,12 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
      */
     public function searchParams()
     {
+        $alias = static::tableName();
         return [
             'animal_id',
             'event_type',
-            'country_id',
+            [$alias . '.country_id', 'country_id', '', '='],
+            [$alias . '.org_id', 'org_id', '', '='],
             'region_id',
             'district_id',
             'ward_id',
@@ -324,6 +326,17 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             //self::EVENT_TYPE_SAMPLING => static::decodeEventType(self::EVENT_TYPE_SAMPLING),
             //self::EVENT_TYPE_CERTIFICATION => static::decodeEventType(self::EVENT_TYPE_CERTIFICATION),
         ], $prompt);
+    }
+
+    /**
+     * @param $animalId
+     * @param $eventType
+     * @return array|\yii\db\ActiveRecord|null
+     */
+    public static function getLastAnimalEvent($animalId, $eventType)
+    {
+        return static::find()->andWhere(['animal_id' => $animalId, 'event_type' => $eventType])->orderBy(['event_date' => SORT_DESC])->one();
+
     }
 
     /**

@@ -148,6 +148,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
      */
     public function searchParams()
     {
+        $alias = static::tableName();
         return [
             ['code', 'code'],
             ['name', 'name'],
@@ -155,12 +156,12 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             ['project', 'project'],
             ['farmer_name', 'farmer_name'],
             ['odk_code', 'odk_code'],
-            'country_id',
+            [$alias . '.country_id', 'country_id', '', '='],
+            [$alias . '.org_id', 'org_id', '', '='],
             'region_id',
             'district_id',
             'ward_id',
             'village_id',
-            'org_id',
             'client_id',
             'field_agent_id',
             'farm_type',
