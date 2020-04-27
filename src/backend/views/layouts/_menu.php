@@ -476,7 +476,7 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
                 </li>
                 <li class="kt-menu__item kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'help/help-content' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
                     <a href="<?= Url::to(['/help/help-content/index']) ?>" class="kt-menu__link">
-                        <i class="kt-menu__link-icon far fa-info-circle"></i>
+                        <i class="kt-menu__link-icon fas fa-question-circle"></i>
                         <span class="kt-menu__link-text">HELP CONTENT</span>
                     </a>
                 </li>
@@ -501,6 +501,16 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
         <?php endif; ?>
         <div class="kt-aside__footer-item">
             <a href="#" class="btn btn-icon" title="Reports"><i class="flaticon2-pie-chart"></i></a>
+        </div>
+        <div class="kt-aside__footer-item">
+            <?php if (Session::isDev()): ?>
+                <?php $url = Url::to(['/help/help-content/index']) ?>
+            <?php else: ?>
+                <?php $url = Url::to(['/help/help-content/read']) ?>
+            <?php endif; ?>
+
+            <a class="btn btn-icon" href="<?= $url ?>" title="Help"><i class="fas fa-question-circle"></i>
+            </a>
         </div>
     </div>
 </div>

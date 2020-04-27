@@ -23,20 +23,22 @@ class DefaultController extends Controller
     }
 
     /**
-     * @return \yii\web\Response
      * @throws ForbiddenHttpException
      */
     public function actionIndex()
     {
-        if (Session::isPrivilegedAdmin() || Session::isCountryUser() || Session::isOrganizationUser()) {
+        if (Session::isPrivilegedAdmin()) {
             return $this->redirect(Url::to(['/dashboard/data-viz']));
-        } else {
+        }
+        elseif (Session::isCountryUser() || Session::isOrganizationUser()){
+            $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
+            return $this->render('index2', [
+                'countries' => $countries,
+            ]);
+        }
+        else {
             throw new ForbiddenHttpException();
         }
-        /* $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
-         return $this->render('index2', [
-             'countries' => $countries,
-         ]);*/
     }
 
     public function actionGraph($graphType = null, $dateRange = null, $animal_type = null, $main_breed = null, $country_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null)

@@ -7,8 +7,14 @@ use yii\helpers\Json;
 /* @var $this yii\web\View */
 /* @var $filterOptions array */
 ?>
+<style>
+    .highcharts-stack-labels text {
+        transform: translate(0, 3px);
+        visibility: visible;
+    }
+</style>
 <div class="row">
-    <div id="chartContainerAC" title="" style="width:100%;"></div>
+    <div id="chartContainerAC" style="width:100%;"></div>
 </div>
 <?php
 $chart_data = CountriesDashboardStats::getAnimalsByCategoriesForDataViz($filterOptions);
@@ -73,12 +79,13 @@ $series = $data;
 $graphOptions = [
     'chart' => [
         'type' => 'column',
+        'styledMode' => true,
     ],
-    'title' => ['text' => 'Categories of Animals registered by YearS'],
+    'title' => ['text' => 'Categories of Animals registered by Year'],
     'subtitle' => ['text' => ''],
     'xAxis' => [
         [
-            'categories' => [2016,2017,2018,2019,2020],
+            'categories' => CountriesDashboardStats::rangeYears(),
             'labels' => [
                 'autoRotation' => false,
                 'style' => [
@@ -86,6 +93,7 @@ $graphOptions = [
                     'align' => 'Right',
                     'textOverflow' => 'none',
                 ],
+                'y' => 30
             ],
             'tickWidth' => 0,
         ],
@@ -106,7 +114,11 @@ $graphOptions = [
         'title' => [
             'text' => 'Number of animals',
             'style' => ['fontWeight' => 'normal'],
-        ]
+        ],
+        'stackLabels' => [
+            'enabled' => true,
+            'y' => 10,
+        ],
     ],
     'plotOptions' => [
         /*'series' => [

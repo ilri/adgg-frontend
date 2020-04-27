@@ -26,7 +26,7 @@ class DataVizController extends Controller
 
     public function actionIndex()
     {
-        if (Session::isPrivilegedAdmin() || Session::isCountryUser() || Session::isOrganizationUser()) {
+        if (Session::isPrivilegedAdmin()) {
             $country_id = \Yii::$app->request->get('country_id');
             $org_id = \Yii::$app->request->get('org_id');
             return $this->render('index', [
