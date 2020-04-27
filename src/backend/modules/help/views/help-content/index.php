@@ -1,5 +1,6 @@
 <?php
 
+use backend\modules\auth\Session;
 use backend\modules\help\Constants;
 use common\helpers\Lang;
 use common\helpers\Url;
@@ -17,10 +18,15 @@ $this->params['breadcrumbs'][] = $this->title;
             <h3><?= Lang::t('Help & Documentation') ?></h3>
             <hr>
             <div class="row">
+                <?php if (Session::isDev()): ?>
+                    <?php $url = Url::to(['manual']) ?>
+                <?php else: ?>
+                    <?php $url = Url::to(['read', 'forAndroid' => false]) ?>
+                <?php endif; ?>
                 <div class="col-lg-4 col-xl-4 order-lg-2 order-xl-2">
                     <!--begin::Portlet-->
                     <div class="kt-portlet">
-                        <a href="<?= Url::to(['manual']) ?>" class="kt-iconbox kt-iconbox--active">
+                        <a href="<?= $url ?>" class="kt-iconbox kt-iconbox--active">
                             <div class="kt-iconbox__icon">
                                 <div class="kt-iconbox__icon-bg"></div>
                                 <i class="far fa-chalkboard-teacher"></i>
@@ -31,10 +37,15 @@ $this->params['breadcrumbs'][] = $this->title;
                     <!--end::Portlet-->
                 </div>
                 <?php if (Yii::$app->user->canView(Constants::RES_ANDROID_APP_MANUAL)): ?>
+                    <?php if (Session::isDev()): ?>
+                        <?php $url = Url::to(['manual', 'forAndroid' => true]) ?>
+                    <?php else: ?>
+                        <?php $url = Url::to(['read', 'forAndroid' => true]) ?>
+                    <?php endif; ?>
                     <div class="col-lg-4 col-xl-4 order-lg-2 order-xl-2">
                         <!--begin::Portlet-->
                         <div class="kt-portlet">
-                            <a href="<?= Url::to(['manual', 'forAndroid' => true]) ?>"
+                            <a href="<?= $url ?>"
                                class="kt-iconbox kt-iconbox--active">
                                 <div class="kt-iconbox__icon">
                                     <div class="kt-iconbox__icon-bg"></div>
