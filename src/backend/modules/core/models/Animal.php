@@ -348,6 +348,19 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
                 $this->reg_date = DateUtils::getToday();
             }
 
+            if (!empty($this->sire_tag_id) && empty($this->sire_id)) {
+                $sire = static::getOneRow(['id', 'tag_id'], ['tag_id' => $this->sire_tag_id]);
+                if (!empty($sire)) {
+                    $this->sire_id = $sire['id'];
+                }
+            }
+            if (!empty($this->dam_tag_id) && empty($this->dam_id)) {
+                $dam = static::getOneRow(['id', 'tag_id'], ['tag_id' => $this->dam_tag_id]);
+                if (!empty($dam)) {
+                    $this->dam_id = $dam['id'];
+                }
+            }
+
             $this->setAdditionalAttributesValues();
 
             return true;
