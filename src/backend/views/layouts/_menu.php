@@ -503,13 +503,7 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
             <a href="#" class="btn btn-icon" title="Reports"><i class="flaticon2-pie-chart"></i></a>
         </div>
         <div class="kt-aside__footer-item">
-            <?php if (Session::isDev()): ?>
-                <?php $url = Url::to(['/help/help-content/index']) ?>
-            <?php else: ?>
-                <?php $url = Url::to(['/help/help-content/read']) ?>
-            <?php endif; ?>
-
-            <a class="btn btn-icon" href="<?= $url ?>" title="Help"><i class="fas fa-question-circle"></i>
+            <a class="btn btn-icon" href="<?= Url::to(['/help/help-content/read']) ?>" title="Help"><i class="fas fa-question-circle"></i>
             </a>
         </div>
     </div>
