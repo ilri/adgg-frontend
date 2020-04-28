@@ -86,7 +86,7 @@ class FakerController extends Controller
         //$sql .= "TRUNCATE " . Notif::tableName() . ";";
         //$sql .= "TRUNCATE " . NotifQueue::tableName() . ";";
         //$sql .= "TRUNCATE " . AuditTrail::tableName() . ";";
-        $sql .= "TRUNCATE " . AnimalEvent::tableName() . ";";
+        //$sql .= "TRUNCATE " . AnimalEvent::tableName() . ";";
         //$sql .= "TRUNCATE " . Animal::tableName() . ";";
         //$sql .= "TRUNCATE " . AnimalHerd::tableName() . ";";
         //$sql .= "TRUNCATE " . Farm::tableName() . ";";
