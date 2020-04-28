@@ -348,6 +348,11 @@ class Cows extends MigrationBase implements MigrationInterface
         /* @var $models Animal[] */
         foreach ($query->batch() as $i => $models) {
             foreach ($models as $model) {
+                if($n<38000){
+                    $n++;
+                    Yii::$app->controller->stdout("Animal Record: {$n} already updated. Ignored\n");
+                    continue;
+                }
                 if (empty($model->migration_id)) {
                     Yii::$app->controller->stdout("The animal id: {$model->id} is not from KLBA. Ignored\n");
                     continue;
