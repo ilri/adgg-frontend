@@ -348,7 +348,7 @@ class Cows extends MigrationBase implements MigrationInterface
         /* @var $models Animal[] */
         foreach ($query->batch() as $i => $models) {
             foreach ($models as $model) {
-                if ($n < 46000) {
+                if ($n < 55000) {
                     $n++;
                     Yii::$app->controller->stdout("Animal Record: {$n} already updated. Ignored\n");
                     continue;
@@ -382,8 +382,10 @@ class Cows extends MigrationBase implements MigrationInterface
                         $model->dam_tag_id = $dam['tag_id'];
                     }
                 }
-                $model->save(false);
-                Yii::$app->controller->stdout("Updated {$n} animal records\n");
+                if (!empty($model->sire_tag_id) || !empty($model->dam_tag_id)) {
+                    $model->save(false);
+                    Yii::$app->controller->stdout("Updated {$n} animal records\n");
+                }
                 $n++;
             }
         }
