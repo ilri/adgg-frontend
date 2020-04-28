@@ -325,8 +325,12 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
                 $this->district_id = $this->farm->district_id;
                 $this->ward_id = $this->farm->ward_id;
                 $this->village_id = $this->farm->village_id;
-                $this->org_id = $this->farm->org_id;
-                $this->client_id = $this->farm->client_id;
+                if (!empty($this->farm->org_id)) {
+                    $this->org_id = $this->farm->org_id;
+                }
+                if (!empty($this->farm->client_id)) {
+                    $this->client_id = $this->farm->client_id;
+                }
             }
 
             if (!empty($this->deformities)) {

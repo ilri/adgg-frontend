@@ -348,16 +348,22 @@ class Cows extends MigrationBase implements MigrationInterface
         /* @var $models Animal[] */
         foreach ($query->batch() as $i => $models) {
             foreach ($models as $model) {
-                if($n<38000){
+                if ($n < 46000) {
                     $n++;
                     Yii::$app->controller->stdout("Animal Record: {$n} already updated. Ignored\n");
                     continue;
                 }
                 if (empty($model->migration_id)) {
+                    $n++;
                     Yii::$app->controller->stdout("The animal id: {$model->id} is not from KLBA. Ignored\n");
                     continue;
                 }
                 if (!empty($model->sire_tag_id)) {
+                    if (!empty($model->sire_id)) {
+                        $n++;
+                        Yii::$app->controller->stdout("Animal Record: {$n} already updated. Ignored\n");
+                        continue;
+                    }
                     $sire = Animal::getOneRow(['id', 'tag_id'], ['migration_id' => $model->sire_tag_id]);
                     if (!empty($sire)) {
                         $model->sire_id = $sire['id'];
@@ -365,6 +371,11 @@ class Cows extends MigrationBase implements MigrationInterface
                     }
                 }
                 if (!empty($model->dam_tag_id)) {
+                    if (!empty($model->dam_id)) {
+                        $n++;
+                        Yii::$app->controller->stdout("Animal Record: {$n} already updated. Ignored\n");
+                        continue;
+                    }
                     $dam = Animal::getOneRow(['id', 'tag_id'], ['migration_id' => $model->dam_tag_id]);
                     if (!empty($dam)) {
                         $model->dam_id = $dam['id'];
