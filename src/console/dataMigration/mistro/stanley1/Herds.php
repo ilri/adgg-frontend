@@ -1,10 +1,12 @@
 <?php
 
-namespace console\dataMigration\ke\models;
+namespace console\dataMigration\mistro\stanley1;
 
 use backend\modules\core\models\AnimalHerd;
 use backend\modules\core\models\Farm;
-use Yii;
+use console\dataMigration\mistro\Helper;
+use console\dataMigration\mistro\MigrationBase;
+use console\dataMigration\mistro\MigrationInterface;
 
 /**
  * This is the model class for table "herds".
@@ -60,21 +62,14 @@ use Yii;
  */
 class Herds extends MigrationBase implements MigrationInterface
 {
+    use MigrationTrait;
+
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
         return '{{%herds}}';
-    }
-
-    /**
-     * @return \yii\db\Connection the database connection used by this AR class.
-     * @throws \yii\base\InvalidConfigException
-     */
-    public static function getDb()
-    {
-        return Yii::$app->get('mistroKeDb');
     }
 
     /**
@@ -159,13 +154,13 @@ class Herds extends MigrationBase implements MigrationInterface
         $query = static::find()->andWhere(['Herds_HideFlag' => 0]);
         /* @var $dataModels $this[] */
         $n = 1;
-        $countryId = Helper::getCountryId(Constants::KENYA_COUNTRY_CODE);
-        $orgId = Helper::getOrgId(Constants::ORG_NAME);
+        $countryId = Helper::getCountryId(\console\dataMigration\mistro\Constants::KENYA_COUNTRY_CODE);
+        $orgId = Helper::getOrgId(static::getOrgName());
         $model = new AnimalHerd(['country_id' => $countryId, 'org_id' => $orgId]);
         foreach ($query->batch() as $i => $dataModels) {
             foreach ($dataModels as $dataModel) {
                 $newModel = clone $model;
-                $newModel->migration_id = Helper::getMigrationId($dataModel->Herds_ID);
+                $newModel->migration_id = Helper::getMigrationId($dataModel->Herds_ID, static::getMigrationIdPrefix());
                 $newModel->farm_id = self::getFarmId($dataModel->Herds_Farm);
                 $newModel->regdate = $dataModel->Herds_StartDate;
                 $newModel->exit_date = $dataModel->Herds_StopDate;
@@ -184,7 +179,7 @@ class Herds extends MigrationBase implements MigrationInterface
      */
     public static function getFarmId($oldFarmId)
     {
-        $migrationId = Helper::getMigrationId($oldFarmId);
+        $migrationId = Helper::getMigrationId($oldFarmId, Farms::getMigrationIdPrefix());
 
         $farmId = Farm::getScalar('id', ['migration_id' => $migrationId]);
         if (empty($farmId)) {

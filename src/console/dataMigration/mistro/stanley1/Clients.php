@@ -1,9 +1,11 @@
 <?php
 
-namespace console\dataMigration\ke\models;
+namespace console\dataMigration\mistro\stanley1;
 
 use backend\modules\core\models\Client;
-use Yii;
+use console\dataMigration\mistro\Helper;
+use console\dataMigration\mistro\MigrationBase;
+use console\dataMigration\mistro\MigrationInterface;
 
 /**
  * This is the model class for table "clients".
@@ -41,21 +43,14 @@ use Yii;
  */
 class Clients extends MigrationBase implements MigrationInterface
 {
+    use MigrationTrait;
+
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
         return '{{%clients}}';
-    }
-
-    /**
-     * @return \yii\db\Connection the database connection used by this AR class.
-     * @throws \yii\base\InvalidConfigException
-     */
-    public static function getDb()
-    {
-        return Yii::$app->get('mistroKeDb');
     }
 
     /**
@@ -126,13 +121,13 @@ class Clients extends MigrationBase implements MigrationInterface
         $query = static::find()->andWhere(['Clients_HideFlag' => 0]);
         /* @var $dataModels $this[] */
         $n = 1;
-        $countryId = Helper::getCountryId(Constants::KENYA_COUNTRY_CODE);
-        $orgId = Helper::getOrgId(Constants::ORG_NAME);
+        $countryId = Helper::getCountryId(\console\dataMigration\mistro\Constants::KENYA_COUNTRY_CODE);
+        $orgId = Helper::getOrgId(static::getOrgName());
         $model = new Client(['country_id' => $countryId, 'org_id' => $orgId]);
         foreach ($query->batch() as $i => $dataModels) {
             foreach ($dataModels as $dataModel) {
                 $newModel = clone $model;
-                $newModel->migration_id = Helper::getMigrationId($dataModel->Clients_ID, Constants::DATA_SOURCE_PREFIX);
+                $newModel->migration_id = Helper::getMigrationId($dataModel->Clients_ID, static::getMigrationIdPrefix());
                 $newModel->name = !empty(trim($dataModel->Clients_BusName)) ? $dataModel->Clients_BusName : $dataModel->Clients_PersonName;
                 $newModel->contact_person = $dataModel->Clients_PersonName;
                 $newModel->postal_address = $dataModel->Clients_Address1;

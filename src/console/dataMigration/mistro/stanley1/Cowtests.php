@@ -1,10 +1,13 @@
 <?php
 
-namespace console\dataMigration\ke\models;
+namespace console\dataMigration\mistro\stanley1;
 
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\MilkingEvent;
+use console\dataMigration\mistro\Helper;
+use console\dataMigration\mistro\MigrationBase;
+use console\dataMigration\mistro\MigrationInterface;
 use Yii;
 
 /**
@@ -50,21 +53,14 @@ use Yii;
  */
 class Cowtests extends MigrationBase implements MigrationInterface
 {
+    use MigrationTrait;
+
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
         return '{{%cowtests}}';
-    }
-
-    /**
-     * @return \yii\db\Connection the database connection used by this AR class.
-     * @throws \yii\base\InvalidConfigException
-     */
-    public static function getDb()
-    {
-        return Yii::$app->get('mistroKeDb');
     }
 
     /**
@@ -152,8 +148,8 @@ class Cowtests extends MigrationBase implements MigrationInterface
         $query = static::find()->andWhere(['CowTests_HideFlag' => 0]);
         /* @var $dataModels $this[] */
         $n = 1;
-        $countryId = Helper::getCountryId(Constants::KENYA_COUNTRY_CODE);
-        $orgId = Helper::getOrgId(Constants::ORG_NAME);
+        $countryId = Helper::getCountryId(\console\dataMigration\mistro\Constants::KENYA_COUNTRY_CODE);
+        $orgId = Helper::getOrgId(static::getOrgName());
         $model = new MilkingEvent(['country_id' => $countryId, 'org_id' => $orgId, 'event_type' => AnimalEvent::EVENT_TYPE_MILKING, 'scenario' => MilkingEvent::SCENARIO_MISTRO_DB_UPLOAD]);
         $model->setAdditionalAttributes();
         foreach ($query->batch(1000) as $i => $dataModels) {
@@ -168,12 +164,12 @@ class Cowtests extends MigrationBase implements MigrationInterface
             //Yii::$app->controller->stdout("Setting default configs...\n");
             foreach ($dataModels as $dataModel) {
                 //migration_id must be unique
-                $migrationIds[] = Helper::getMigrationId($dataModel->CowTests_ID, Testdays::MIGRATION_ID_PREFIX);
+                $migrationIds[] = Helper::getMigrationId($dataModel->CowTests_ID, Testdays::getMigrationIdPrefix());
                 //query db
                 $testDayIds[$dataModel->CowTests_TDayID] = $dataModel->CowTests_TDayID;
-                $animalMigId = Helper::getMigrationId($dataModel->CowTests_CowID, Cows::MIGRATION_ID_PREFIX);
+                $animalMigId = Helper::getMigrationId($dataModel->CowTests_CowID, Cows::getMigrationIdPrefix());
                 $oldAnimalIds[$animalMigId] = $animalMigId;
-                $oldLactId = Helper::getMigrationId($dataModel->CowTests_LactID, Lacts::MIGRATION_ID_PREFIX);
+                $oldLactId = Helper::getMigrationId($dataModel->CowTests_LactID, Lacts::getMigrationIdPrefix());
                 $oldLactIds[$oldLactId] = $oldLactId;
             }
             $existingMigrationIds = AnimalEvent::getColumnData(['migration_id'], ['migration_id' => $migrationIds]);
@@ -197,13 +193,13 @@ class Cowtests extends MigrationBase implements MigrationInterface
 
             foreach ($dataModels as $dataModel) {
                 $newModel = clone $model;
-                $newModel->migration_id = Helper::getMigrationId($dataModel->CowTests_ID, Testdays::MIGRATION_ID_PREFIX);
+                $newModel->migration_id = Helper::getMigrationId($dataModel->CowTests_ID, Testdays::getMigrationIdPrefix());
                 if (in_array($newModel->migration_id, $existingMigrationIds)) {
                     Yii::$app->controller->stdout("Milk record {$n} with migration id: {$newModel->migration_id} already saved. Ignored\n");
                     $n++;
                     continue;
                 }
-                $animalMigId = Helper::getMigrationId($dataModel->CowTests_CowID, Cows::MIGRATION_ID_PREFIX);
+                $animalMigId = Helper::getMigrationId($dataModel->CowTests_CowID, Cows::getMigrationIdPrefix());
                 $newModel->animal_id = $animalData[$animalMigId] ?? null;
                 $newModel->event_date = $testDayData[$dataModel->CowTests_TDayID]['TestDays_Date'] ?? null;
                 if ($newModel->event_date == '0000-00-00') {
@@ -231,7 +227,7 @@ class Cowtests extends MigrationBase implements MigrationInterface
                 $newModel->milklact = ((float)$dataModel->CowTests_LactP) / 100;
                 $newModel->milksmc = $dataModel->CowTests_ICCC;
 
-                $oldLactId = Helper::getMigrationId($dataModel->CowTests_LactID, Lacts::MIGRATION_ID_PREFIX);
+                $oldLactId = Helper::getMigrationId($dataModel->CowTests_LactID, Lacts::getMigrationIdPrefix());
                 $newModel->lactation_id = $lactData[$oldLactId] ?? null;
 
                 static::saveModel($newModel, $n, false);

@@ -1,8 +1,9 @@
 <?php
 
-namespace console\dataMigration\ke\models;
+namespace console\dataMigration\mistro\stanley1;
 
-use Yii;
+use console\dataMigration\mistro\MigrationBase;
+use console\dataMigration\mistro\MigrationInterface;
 
 /**
  * This is the model class for table "testdays".
@@ -46,9 +47,9 @@ use Yii;
  *
  * @property Cowtests $milkRecords
  */
-class Testdays extends MigrationBase
+class Testdays extends MigrationBase implements MigrationInterface
 {
-    const MIGRATION_ID_PREFIX = 'STANLEY_MILKING_EVENT_';
+    use MigrationTrait;
 
     /**
      * {@inheritdoc}
@@ -56,15 +57,6 @@ class Testdays extends MigrationBase
     public static function tableName()
     {
         return '{{%testdays}}';
-    }
-
-    /**
-     * @return \yii\db\Connection the database connection used by this AR class.
-     * @throws \yii\base\InvalidConfigException
-     */
-    public static function getDb()
-    {
-        return Yii::$app->get('mistroKeDb');
     }
 
     /**
@@ -138,4 +130,15 @@ class Testdays extends MigrationBase
     {
         return $this->hasMany(Cowtests::class, ['CowTests_TDayID' => 'TestDays_ID']);
     }
+
+    public static function migrateData()
+    {
+    }
+
+    public static function getMigrationIdPrefix()
+    {
+        return Migrate::DATA_SOURCE_PREFIX . 'MILKING_EVENT_';
+    }
+
+
 }

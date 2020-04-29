@@ -1,9 +1,11 @@
 <?php
 
-namespace console\dataMigration\ke\models;
+namespace console\dataMigration\mistro\stanley1;
 
 use backend\modules\core\models\Animal;
-use Yii;
+use console\dataMigration\mistro\Helper;
+use console\dataMigration\mistro\MigrationBase;
+use console\dataMigration\mistro\MigrationInterface;
 
 /**
  * This is the model class for table "bulls".
@@ -49,7 +51,7 @@ use Yii;
  */
 class Bulls extends MigrationBase implements MigrationInterface
 {
-    const MIGRATION_ID_PREFIX = 'STANLEY_BULLS_';
+    use MigrationTrait;
 
     /**
      * {@inheritdoc}
@@ -57,15 +59,6 @@ class Bulls extends MigrationBase implements MigrationInterface
     public static function tableName()
     {
         return '{{%bulls}}';
-    }
-
-    /**
-     * @return \yii\db\Connection the database connection used by this AR class.
-     * @throws \yii\base\InvalidConfigException
-     */
-    public static function getDb()
-    {
-        return Yii::$app->get('mistroKeDb');
     }
 
     /**
@@ -150,8 +143,8 @@ class Bulls extends MigrationBase implements MigrationInterface
         $query = static::find()->andWhere(['Bulls_HideFlag' => 0, 'Bulls_species' => 0]);
         /* @var $dataModels $this[] */
         $n = 1;
-        $countryId = Helper::getCountryId(Constants::KENYA_COUNTRY_CODE);
-        $orgId = Helper::getOrgId(Constants::ORG_NAME);
+        $countryId = Helper::getCountryId(\console\dataMigration\mistro\Constants::KENYA_COUNTRY_CODE);
+        $orgId = Helper::getOrgId(static::getOrgName());
         $model = new Animal(['country_id' => $countryId, 'org_id' => $orgId, 'scenario' => Animal::SCENARIO_MISTRO_DB_BULL_UPLOAD]);
         foreach ($query->batch() as $i => $dataModels) {
             foreach ($dataModels as $dataModel) {
@@ -160,10 +153,8 @@ class Bulls extends MigrationBase implements MigrationInterface
                 if (null !== $herdModel) {
                     $newModel->herd_id = $herdModel->id;
                     $newModel->farm_id = $herdModel->farm_id;
-                } else {
-                    //Yii::$app->controller->stdout("Herd ID {$dataModel->Bulls_Herd} does not exist. Ignored.\n");
                 }
-                $newModel->migration_id = Helper::getMigrationId($dataModel->Bulls_ID, self::MIGRATION_ID_PREFIX);
+                $newModel->migration_id = Helper::getMigrationId($dataModel->Bulls_ID, static::getMigrationIdPrefix());
                 $newModel->tag_id = $dataModel->Bulls_Nasis1;
                 $newModel->name = $dataModel->Bulls_RegName;
                 $newModel->animal_type = 5;
@@ -174,18 +165,29 @@ class Bulls extends MigrationBase implements MigrationInterface
                 if ($newModel->birthdate == '0000-00-00') {
                     $newModel->birthdate = null;
                 }
-                $newModel->sire_tag_id = Helper::getMigrationId($dataModel->Bulls_Sire, self::MIGRATION_ID_PREFIX);
-                $newModel->dam_tag_id = Helper::getMigrationId($dataModel->Bulls_Dam, Cows::MIGRATION_ID_PREFIX);
+                $newModel->sire_tag_id = Helper::getMigrationId($dataModel->Bulls_Sire, static::getMigrationIdPrefix());
+                $newModel->dam_tag_id = Helper::getMigrationId($dataModel->Bulls_Dam, Cows::getMigrationIdPrefix());
                 $newModel->breed_composition_details = $dataModel->Bulls_BreedS;
                 $newModel->country_of_origin = $dataModel->Bulls_HerdBookCty;
                 $newModel->herd_book_no = $dataModel->Bulls_HerdBook;
                 $newModel->animal_grade = $dataModel->Bulls_Grade;
                 $newModel->animal_exit_date = $dataModel->Bulls_TermDate;
                 $newModel->animal_exit_code = $dataModel->Bulls_TermCode;
+                $newModel->reg_date = $dataModel->Bulls_Modified;
+                if ($newModel->reg_date == '0000-00-00') {
+                    $newModel->reg_date = null;
+                }
 
                 static::saveModel($newModel, $n);
                 $n++;
             }
         }
     }
+
+    public static function getMigrationIdPrefix()
+    {
+        return Migrate::DATA_SOURCE_PREFIX . 'BULLS_';
+    }
+
+
 }

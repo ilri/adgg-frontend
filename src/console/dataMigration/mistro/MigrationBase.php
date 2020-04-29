@@ -6,7 +6,7 @@
  * Time: 2:48 AM
  */
 
-namespace console\dataMigration\ke\models;
+namespace console\dataMigration\mistro;
 
 
 use common\models\ActiveRecord;

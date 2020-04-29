@@ -1,10 +1,13 @@
 <?php
 
-namespace console\dataMigration\ke\models;
+namespace console\dataMigration\mistro\stanley1;
 
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\CalvingEvent;
+use console\dataMigration\mistro\Helper;
+use console\dataMigration\mistro\MigrationBase;
+use console\dataMigration\mistro\MigrationInterface;
 use Yii;
 
 /**
@@ -32,7 +35,7 @@ use Yii;
  */
 class Lacts extends MigrationBase implements MigrationInterface
 {
-    const MIGRATION_ID_PREFIX = 'STANLEY_CALVING_EVENT_';
+    use MigrationTrait;
 
     /**
      * {@inheritdoc}
@@ -40,15 +43,6 @@ class Lacts extends MigrationBase implements MigrationInterface
     public static function tableName()
     {
         return '{{%lacts}}';
-    }
-
-    /**
-     * @return \yii\db\Connection the database connection used by this AR class.
-     * @throws \yii\base\InvalidConfigException
-     */
-    public static function getDb()
-    {
-        return Yii::$app->get('mistroKeDb');
     }
 
     /**
@@ -103,8 +97,8 @@ class Lacts extends MigrationBase implements MigrationInterface
         $query = static::find()->andWhere(['Lacts_HideFlag' => 0]);
         /* @var $dataModels $this[] */
         $n = 1;
-        $countryId = Helper::getCountryId(Constants::KENYA_COUNTRY_CODE);
-        $orgId = Helper::getOrgId(Constants::ORG_NAME);
+        $countryId = Helper::getCountryId(\console\dataMigration\mistro\Constants::KENYA_COUNTRY_CODE);
+        $orgId = Helper::getOrgId(static::getOrgName());
         $model = new CalvingEvent(['country_id' => $countryId, 'org_id' => $orgId, 'event_type' => AnimalEvent::EVENT_TYPE_CALVING, 'scenario' => CalvingEvent::SCENARIO_MISTRO_DB_UPLOAD]);
         $model->setAdditionalAttributes();
         foreach ($query->batch(1000) as $i => $dataModels) {
@@ -114,8 +108,8 @@ class Lacts extends MigrationBase implements MigrationInterface
             $animalData = [];
             foreach ($dataModels as $dataModel) {
                 //migration_id must be unique
-                $migrationIds[] = Helper::getMigrationId($dataModel->Lacts_ID, self::MIGRATION_ID_PREFIX);
-                $animalMigId = Helper::getMigrationId($dataModel->Lacts_CowID, Cows::MIGRATION_ID_PREFIX);
+                $migrationIds[] = Helper::getMigrationId($dataModel->Lacts_ID, static::getMigrationIdPrefix());
+                $animalMigId = Helper::getMigrationId($dataModel->Lacts_CowID, Cows::getMigrationIdPrefix());
                 $oldAnimalIds[$animalMigId] = $animalMigId;
             }
             $existingMigrationIds = AnimalEvent::getColumnData(['migration_id'], ['migration_id' => $migrationIds]);
@@ -127,14 +121,14 @@ class Lacts extends MigrationBase implements MigrationInterface
 
             foreach ($dataModels as $dataModel) {
                 $newModel = clone $model;
-                $newModel->migration_id = Helper::getMigrationId($dataModel->Lacts_ID, self::MIGRATION_ID_PREFIX);
+                $newModel->migration_id = Helper::getMigrationId($dataModel->Lacts_ID, static::getMigrationIdPrefix());
                 if (in_array($newModel->migration_id, $existingMigrationIds)) {
                     Yii::$app->controller->stdout("Calving record {$n} with migration id: {$newModel->migration_id} already saved. Ignored\n");
                     $n++;
                     continue;
                 }
 
-                $animalMigId = Helper::getMigrationId($dataModel->Lacts_CowID, Cows::MIGRATION_ID_PREFIX);
+                $animalMigId = Helper::getMigrationId($dataModel->Lacts_CowID, Cows::getMigrationIdPrefix());
                 $newModel->animal_id = $animalData[$animalMigId] ?? null;
 
                 $newModel->event_date = $dataModel->Lacts_InitDate;
@@ -178,11 +172,18 @@ class Lacts extends MigrationBase implements MigrationInterface
      */
     public static function getAnimalId($oldAnimalId)
     {
-        $migrationId = Helper::getMigrationId($oldAnimalId, Cows::MIGRATION_ID_PREFIX);
+        $migrationId = Helper::getMigrationId($oldAnimalId, Cows::getMigrationIdPrefix());
         $animalId = Animal::getScalar('id', ['migration_id' => $migrationId]);
         if (empty($animalId)) {
             return null;
         }
         return $animalId;
     }
+
+    public static function getMigrationIdPrefix()
+    {
+        return Migrate::DATA_SOURCE_PREFIX . 'CALVING_EVENT_';
+    }
+
+
 }

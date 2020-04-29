@@ -1,9 +1,12 @@
 <?php
 
-namespace console\dataMigration\ke\models;
+namespace console\dataMigration\mistro\stanley1;
 
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\AnimalHerd;
+use console\dataMigration\mistro\Helper;
+use console\dataMigration\mistro\MigrationBase;
+use console\dataMigration\mistro\MigrationInterface;
 use Yii;
 
 /**
@@ -95,7 +98,7 @@ use Yii;
  */
 class Cows extends MigrationBase implements MigrationInterface
 {
-    const MIGRATION_ID_PREFIX = 'STANLEY_COWS_';
+    use MigrationTrait;
 
     /**
      * {@inheritdoc}
@@ -103,15 +106,6 @@ class Cows extends MigrationBase implements MigrationInterface
     public static function tableName()
     {
         return '{{%cows}}';
-    }
-
-    /**
-     * @return \yii\db\Connection the database connection used by this AR class.
-     * @throws \yii\base\InvalidConfigException
-     */
-    public static function getDb()
-    {
-        return Yii::$app->get('mistroKeDb');
     }
 
     /**
@@ -243,18 +237,19 @@ class Cows extends MigrationBase implements MigrationInterface
         $query = static::find()->andWhere(['Cows_HideFlag' => 0, 'Cows_Species' => 0]);
         /* @var $dataModels $this[] */
         $n = 1;
-        $countryId = Helper::getCountryId(Constants::KENYA_COUNTRY_CODE);
-        $orgId = Helper::getOrgId(Constants::ORG_NAME);
+        $countryId = Helper::getCountryId(\console\dataMigration\mistro\Constants::KENYA_COUNTRY_CODE);
+        $orgId = Helper::getOrgId(static::getOrgName());
         $model = new Animal(['country_id' => $countryId, 'org_id' => $orgId, 'scenario' => Animal::SCENARIO_MISTRO_DB_COW_UPLOAD]);
         foreach ($query->batch() as $i => $dataModels) {
             foreach ($dataModels as $dataModel) {
                 $herdModel = self::getHerd($dataModel->Cows_Herd);
                 if (null === $herdModel) {
                     Yii::$app->controller->stdout("ERROR: Herd ID {$dataModel->Cows_Herd} does not exist.\n");
+                    $n++;
                     continue;
                 }
                 $newModel = clone $model;
-                $newModel->migration_id = Helper::getMigrationId($dataModel->Cows_ID, self::MIGRATION_ID_PREFIX);
+                $newModel->migration_id = Helper::getMigrationId($dataModel->Cows_ID, static::getMigrationIdPrefix());
                 $newModel->herd_id = $herdModel->id;
                 $newModel->farm_id = $herdModel->farm_id;
                 $newModel->tag_id = $dataModel->Cows_HIONo;
@@ -266,8 +261,8 @@ class Cows extends MigrationBase implements MigrationInterface
                     $newModel->sex = 2;
                 }
                 $newModel->birthdate = $dataModel->Cows_Birth;
-                $newModel->sire_tag_id = Helper::getMigrationId($dataModel->Cows_Sire, Bulls::MIGRATION_ID_PREFIX);
-                $newModel->dam_tag_id = Helper::getMigrationId($dataModel->Cows_Dam, self::MIGRATION_ID_PREFIX);
+                $newModel->sire_tag_id = Helper::getMigrationId($dataModel->Cows_Sire, Bulls::getMigrationIdPrefix());
+                $newModel->dam_tag_id = Helper::getMigrationId($dataModel->Cows_Dam, static::getMigrationIdPrefix());
                 $newModel->breed_composition_details = $dataModel->Cows_BreedS;
                 $newModel->herd_book_no = $dataModel->Cows_HerdBook;
                 $newModel->entry_date = $dataModel->Cows_RegDate;
@@ -283,6 +278,10 @@ class Cows extends MigrationBase implements MigrationInterface
                 }
                 $newModel->animal_exit_date = $dataModel->Cows_TermDate;
                 $newModel->animal_exit_code = $dataModel->Cows_TermCode;
+                $newModel->reg_date = !empty($dataModel->Cows_Date) ? $dataModel->Cows_Date : $dataModel->Cows_Modified;
+                if ($newModel->reg_date == '0000-00-00') {
+                    $newModel->reg_date = null;
+                }
 
                 static::saveModel($newModel, $n);
                 $n++;
@@ -296,7 +295,7 @@ class Cows extends MigrationBase implements MigrationInterface
      */
     public static function getHerd($oldHerdId)
     {
-        $migrationId = Helper::getMigrationId($oldHerdId);
+        $migrationId = Helper::getMigrationId($oldHerdId, Herds::getMigrationIdPrefix());
         return AnimalHerd::find()->andWhere(['migration_id' => $migrationId])->one();
     }
 
@@ -341,21 +340,22 @@ class Cows extends MigrationBase implements MigrationInterface
 
     public static function updateSiresAndDams()
     {
-        $condition = '[[migration_id]] IS NOT NULL AND ([[dam_id]] IS NULL OR [[sire_id]] IS NULL)';
+        $condition = '[[migration_id]] IS NOT NULL';
         $params = [];
         $query = Animal::find()->andWhere($condition, $params);
         $n = 1;
         /* @var $models Animal[] */
         foreach ($query->batch() as $i => $models) {
             foreach ($models as $model) {
-                if ($n < 55000) {
+                if ($n < 0) {
                     $n++;
                     Yii::$app->controller->stdout("Animal Record: {$n} already updated. Ignored\n");
                     continue;
                 }
                 if (empty($model->migration_id)) {
                     $n++;
-                    Yii::$app->controller->stdout("The animal id: {$model->id} is not from KLBA. Ignored\n");
+                    $org = static::getOrgName();
+                    Yii::$app->controller->stdout("The animal id: {$model->id} is not from {$org}. Ignored\n");
                     continue;
                 }
                 if (!empty($model->sire_tag_id)) {
@@ -389,5 +389,10 @@ class Cows extends MigrationBase implements MigrationInterface
                 $n++;
             }
         }
+    }
+
+    public static function getMigrationIdPrefix()
+    {
+        return Migrate::DATA_SOURCE_PREFIX . 'COWS_';
     }
 }

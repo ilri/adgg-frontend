@@ -1,10 +1,12 @@
 <?php
 
-namespace console\dataMigration\ke\models;
+namespace console\dataMigration\mistro\stanley1;
 
 use backend\modules\core\models\Client;
 use backend\modules\core\models\Farm;
-use Yii;
+use console\dataMigration\mistro\Helper;
+use console\dataMigration\mistro\MigrationBase;
+use console\dataMigration\mistro\MigrationInterface;
 
 /**
  * This is the model class for table "farms".
@@ -33,21 +35,14 @@ use Yii;
  */
 class Farms extends MigrationBase implements MigrationInterface
 {
+    use MigrationTrait;
+
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
         return '{{%farms}}';
-    }
-
-    /**
-     * @return \yii\db\Connection the database connection used by this AR class.
-     * @throws \yii\base\InvalidConfigException
-     */
-    public static function getDb()
-    {
-        return Yii::$app->get('mistroKeDb');
     }
 
     /**
@@ -106,13 +101,13 @@ class Farms extends MigrationBase implements MigrationInterface
         $query = static::find()->andWhere(['Farms_HideFlag' => 0, 'Farms_Owner' => '24180001']);
         /* @var $dataModels $this[] */
         $n = 1;
-        $countryId = Helper::getCountryId(Constants::KENYA_COUNTRY_CODE);
-        $orgId = Helper::getOrgId(Constants::ORG_NAME);
+        $countryId = Helper::getCountryId(\console\dataMigration\mistro\Constants::KENYA_COUNTRY_CODE);
+        $orgId = Helper::getOrgId(static::getOrgName());
         $model = new Farm(['country_id' => $countryId, 'org_id' => $orgId]);
         foreach ($query->batch() as $i => $dataModels) {
             foreach ($dataModels as $dataModel) {
                 $newModel = clone $model;
-                $newModel->migration_id = Helper::getMigrationId($dataModel->Farms_ID);
+                $newModel->migration_id = Helper::getMigrationId($dataModel->Farms_ID, static::getMigrationIdPrefix());
                 //$newModel->client_id = self::getClientId($dataModel->Farms_Owner);
                 $newModel->code = $dataModel->Farms_SHNo;
                 $newModel->farm_postal_address = $dataModel->Farms_Address;
@@ -130,6 +125,11 @@ class Farms extends MigrationBase implements MigrationInterface
                 if (empty($newModel->name)) {
                     $newModel->name = $newModel->code;
                 }
+                $newModel->reg_date = $dataModel->Farms_Modified;
+                if ($newModel->reg_date == '0000-00-00') {
+                    $newModel->reg_date = null;
+                }
+
                 static::saveModel($newModel, $n);
                 $n++;
             }
@@ -143,7 +143,7 @@ class Farms extends MigrationBase implements MigrationInterface
      */
     public static function getClientId($oldClientId)
     {
-        $migrationId = Helper::getMigrationId($oldClientId);
+        $migrationId = Helper::getMigrationId($oldClientId, Clients::getMigrationIdPrefix());
 
         $clientId = Client::getScalar('id', ['migration_id' => $migrationId]);
         if (empty($clientId)) {

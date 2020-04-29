@@ -13,6 +13,7 @@ use common\excel\ImportActiveRecordInterface;
 use common\helpers\ArrayHelper;
 use common\helpers\DateUtils;
 use common\helpers\DbUtils;
+use Yii;
 
 /**
  * Class MilkingEvent
@@ -131,15 +132,20 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
         if ($this->event_type != self::EVENT_TYPE_MILKING || null === $this->lactation) {
             return;
         }
-        if ($this->scenario == self::SCENARIO_MISTRO_DB_UPLOAD) {
-            return;
-        }
-
         $data = static::getData(['id'], ['event_type' => self::EVENT_TYPE_MILKING, 'animal_id' => $this->animal_id, 'lactation_id' => $this->lactation_id], [], ['orderBy' => ['event_date' => SORT_ASC]]);
         $n = 1;
+        $sql = "";
+        $params = [];
+        $table = static::tableName();
         foreach ($data as $row) {
-            static::updateAll(['testday_no' => $n], ['id' => $row['id']]);
+            $sql .= "UPDATE {$table} SET [[testday_no]]=:tdno{$n} WHERE [[id]]=:id{$n};";
+            $params[":tdno{$n}"] = $n;
+            $params[":id{$n}"] = $row['id'];
+            //static::updateAll(['testday_no' => $n], ['id' => $row['id']]);
             $n++;
+        }
+        if (!empty($sql)) {
+            Yii::$app->db->createCommand($sql, $params)->execute();
         }
     }
 
