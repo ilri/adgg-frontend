@@ -13,7 +13,6 @@ use common\excel\ImportActiveRecordInterface;
 use common\helpers\ArrayHelper;
 use common\helpers\DateUtils;
 use common\helpers\DbUtils;
-use common\helpers\Utils;
 
 /**
  * Class MilkingEvent
@@ -140,10 +139,6 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
         $n = 1;
         foreach ($data as $row) {
             static::updateAll(['testday_no' => $n], ['id' => $row['id']]);
-            if (!Utils::isWebApp()) {
-                //$id = $row['id'];
-                //\Yii::$app->controller->stdout("Updated milk record {$id}\n");
-            }
             $n++;
         }
     }
