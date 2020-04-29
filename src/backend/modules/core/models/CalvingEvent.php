@@ -28,7 +28,7 @@ use common\helpers\DbUtils;
  * @property string $intuse
  *
  */
-class CalvingEvent extends AnimalEvent implements ImportActiveRecordInterface
+class CalvingEvent extends AnimalEvent implements ImportActiveRecordInterface, AnimalEventInterface
 {
     public function rules()
     {
@@ -43,23 +43,6 @@ class CalvingEvent extends AnimalEvent implements ImportActiveRecordInterface
         return ArrayHelper::merge(parent::attributeLabels(), [
             'event_date' => 'Calving Date',
         ]);
-    }
-
-    public function reportBuilderFields()
-    {
-        $this->ignoreAdditionalAttributes = true;
-        $attributes = $this->attributes();
-        $attrs = [];
-        $fields = TableAttribute::getData(['attribute_key'], ['table_id' => self::getDefinedTableId(), 'event_type' => self::EVENT_TYPE_CALVING]);
-
-        foreach ($fields as $k => $field) {
-            $attrs[] = $field['attribute_key'];
-        }
-        $attrs = array_merge($attributes, $attrs);
-        $unwanted = array_merge($this->reportBuilderUnwantedFields(), []);
-        $attrs = array_diff($attrs, $unwanted);
-        sort($attrs);
-        return $attrs;
     }
 
     /**
@@ -114,5 +97,21 @@ class CalvingEvent extends AnimalEvent implements ImportActiveRecordInterface
     {
         list($condition, $params) = DbUtils::appendCondition('event_type', self::EVENT_TYPE_CALVING, $condition, $params);
         return parent::getDashboardStats($durationType, $sum, $filters, $dateField, $from, $to, $condition, $params);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEventType(): int
+    {
+        return self::EVENT_TYPE_CALVING;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function reportBuilderAdditionalUnwantedFields(): array
+    {
+        return ['animal_id', 'bull_id'];
     }
 }

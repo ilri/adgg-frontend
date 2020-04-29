@@ -13,6 +13,7 @@ use backend\modules\auth\Acl;
 use backend\modules\auth\Session;
 use backend\modules\core\Constants;
 use backend\modules\core\forms\UploadFarms;
+use backend\modules\core\models\Country;
 use backend\modules\core\models\Farm;
 use common\controllers\UploadExcelTrait;
 use common\helpers\Lang;
@@ -31,23 +32,28 @@ class FarmController extends Controller
         $this->resourceLabel = 'Farm';
     }
 
-    public function actionIndex($country_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $name = null, $code = null, $phone = null, $project = null, $farm_type = null, $gender_code = null, $is_active = null, $odk_code = null)
+    public function actionIndex($country_id = null, $org_id = null, $client_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $name = null, $code = null, $phone = null, $project = null, $farm_type = null, $gender_code = null, $is_active = null, $odk_code = null)
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
         $country_id = Session::getCountryId($country_id);
+        $org_id = Session::getOrgId($org_id);
+        $client_id = Session::getClientId($client_id);
         $region_id = Session::getRegionId($region_id);
         $district_id = Session::getDistrictId($district_id);
         $ward_id = Session::getWardId($ward_id);
         $village_id = Session::getVillageId($village_id);
+        $country = Country::findOne(['id' => $country_id]);
         $condition = '';
         $params = [];
         $searchModel = Farm::searchModel([
             'defaultOrder' => ['id' => SORT_DESC],
             'condition' => $condition,
             'params' => $params,
-            'with' => ['country', 'region', 'district', 'ward', 'village', 'fieldAgent'],
+            'with' => ['country', 'org', 'client', 'region', 'district', 'ward', 'village', 'fieldAgent'],
         ]);
         $searchModel->country_id = $country_id;
+        $searchModel->org_id = $org_id;
+        $searchModel->client_id = $client_id;
         $searchModel->region_id = $region_id;
         $searchModel->district_id = $district_id;
         $searchModel->ward_id = $ward_id;
@@ -60,9 +66,12 @@ class FarmController extends Controller
         $searchModel->gender_code = $gender_code;
         $searchModel->is_active = $is_active;
         $searchModel->odk_code = $odk_code;
-
+        if (Session::isVillageUser()) {
+            $searchModel->field_agent_id = Session::getUserId();
+        }
         return $this->render('index', [
             'searchModel' => $searchModel,
+            'country' => $country,
         ]);
     }
 
@@ -125,7 +134,7 @@ class FarmController extends Controller
         $this->hasPrivilege(Acl::ACTION_CREATE);
 
         $form = new UploadFarms(Farm::class);
-        $resp = $this->uploadExcelConsole($form, 'index', []);
+        $resp = $this->uploadExcelConsole($form, 'index', Yii::$app->request->queryParams);
         if ($resp !== false) {
             return $resp;
         }

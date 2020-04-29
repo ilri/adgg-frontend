@@ -33,4 +33,13 @@ class JobManagerController extends BaseController
     {
         \backend\modules\conf\models\Notif::createNotifications();
     }
+
+    public function actionDataMigration()
+    {
+        $this->startJob('dataMigration');
+    }
+
+    protected function dataMigration()
+    {
+    }
 }

@@ -15,6 +15,7 @@ use backend\modules\core\forms\UploadMilkEvent;
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\MilkingEvent;
 use common\controllers\UploadExcelTrait;
+use Yii;
 
 class MilkingEventController extends Controller
 {
@@ -34,12 +35,11 @@ class MilkingEventController extends Controller
         return $this->renderIndexAction(AnimalEvent::EVENT_TYPE_MILKING, $animal_id, $country_id, $region_id, $district_id, $ward_id, $village_id, $from, $to);
     }
 
-    public function actionUpload()
+    public function actionUpload($country_id = null)
     {
         $this->hasPrivilege(Acl::ACTION_CREATE);
-
-        $form = new UploadMilkEvent(MilkingEvent::class);
-        $resp = $this->uploadExcelConsole($form, 'milking-event/index', []);
+        $form = new UploadMilkEvent(MilkingEvent::class, ['country_id' => $country_id]);
+        $resp = $this->uploadExcelConsole($form, 'milking-event/index', Yii::$app->request->queryParams);
         if ($resp !== false) {
             return $resp;
         }

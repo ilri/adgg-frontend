@@ -23,11 +23,6 @@ interface TableAttributeInterface
     public static function getDefinedTableId(): int;
 
     /**
-     * @return int
-     */
-    public static function getDefinedType(): int;
-
-    /**
      * @return array
      */
     public function getAdditionalAttributes(): array;
@@ -47,6 +42,11 @@ interface TableAttributeInterface
      * @return array
      */
     public function getOriginalAttributesListData();
+
+    /**
+     * @return array
+     */
+    public function reportBuilderAdditionalUnwantedFields(): array;
 
 
 }

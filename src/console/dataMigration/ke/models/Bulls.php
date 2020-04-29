@@ -2,7 +2,7 @@
 
 namespace console\dataMigration\ke\models;
 
-use common\models\ActiveRecord;
+use backend\modules\core\models\Animal;
 use Yii;
 
 /**
@@ -47,8 +47,10 @@ use Yii;
  * @property int $Bulls_HideFlag
  * @property int $Bulls_Locked
  */
-class Bulls extends ActiveRecord
+class Bulls extends MigrationBase implements MigrationInterface
 {
+    const MIGRATION_ID_PREFIX = 'STANLEY_BULLS_';
+
     /**
      * {@inheritdoc}
      */
@@ -141,5 +143,49 @@ class Bulls extends ActiveRecord
             'Bulls_HideFlag' => 'Bulls Hide Flag',
             'Bulls_Locked' => 'Bulls Locked',
         ];
+    }
+
+    public static function migrateData()
+    {
+        $query = static::find()->andWhere(['Bulls_HideFlag' => 0, 'Bulls_species' => 0]);
+        /* @var $dataModels $this[] */
+        $n = 1;
+        $countryId = Helper::getCountryId(Constants::KENYA_COUNTRY_CODE);
+        $orgId = Helper::getOrgId(Constants::ORG_NAME);
+        $model = new Animal(['country_id' => $countryId, 'org_id' => $orgId, 'scenario' => Animal::SCENARIO_MISTRO_DB_BULL_UPLOAD]);
+        foreach ($query->batch() as $i => $dataModels) {
+            foreach ($dataModels as $dataModel) {
+                $herdModel = Cows::getHerd($dataModel->Bulls_Herd);
+                $newModel = clone $model;
+                if (null !== $herdModel) {
+                    $newModel->herd_id = $herdModel->id;
+                    $newModel->farm_id = $herdModel->farm_id;
+                } else {
+                    //Yii::$app->controller->stdout("Herd ID {$dataModel->Bulls_Herd} does not exist. Ignored.\n");
+                }
+                $newModel->migration_id = Helper::getMigrationId($dataModel->Bulls_ID, self::MIGRATION_ID_PREFIX);
+                $newModel->tag_id = $dataModel->Bulls_Nasis1;
+                $newModel->name = $dataModel->Bulls_RegName;
+                $newModel->animal_type = 5;
+                $newModel->short_name = $dataModel->Bulls_ShortName;
+                $newModel->animal_eartag_id = $dataModel->Bulls_EarTag;
+                $newModel->sex = 1;
+                $newModel->birthdate = $dataModel->Bulls_Birth;
+                if ($newModel->birthdate == '0000-00-00') {
+                    $newModel->birthdate = null;
+                }
+                $newModel->sire_tag_id = Helper::getMigrationId($dataModel->Bulls_Sire, self::MIGRATION_ID_PREFIX);
+                $newModel->dam_tag_id = Helper::getMigrationId($dataModel->Bulls_Dam, Cows::MIGRATION_ID_PREFIX);
+                $newModel->breed_composition_details = $dataModel->Bulls_BreedS;
+                $newModel->country_of_origin = $dataModel->Bulls_HerdBookCty;
+                $newModel->herd_book_no = $dataModel->Bulls_HerdBook;
+                $newModel->animal_grade = $dataModel->Bulls_Grade;
+                $newModel->animal_exit_date = $dataModel->Bulls_TermDate;
+                $newModel->animal_exit_code = $dataModel->Bulls_TermCode;
+
+                static::saveModel($newModel, $n);
+                $n++;
+            }
+        }
     }
 }

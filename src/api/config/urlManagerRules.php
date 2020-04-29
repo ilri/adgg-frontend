@@ -39,6 +39,7 @@ return [
             'list-types' => 'v1/list-types',
             'event-types' => 'v1/event-types',
             'animal-types' => 'v1/animal-types',
+            'farm-types' => 'v1/farm-types',
             'breeds' => 'v1/breeds',
             'users' => 'v1/user',
             'androidVersion' => 'v1/android-app-version',
@@ -72,6 +73,8 @@ return [
         'extraPatterns' => [
             'GET landing' => 'landing',
             'GET countries/list' => 'countries-list',
+            'GET orgs' => 'organizations',
+            'GET clients' => 'clients',
             'GET country-report' => 'country-report',
             'OPTIONS <action>' => 'options',
         ],
@@ -80,11 +83,21 @@ return [
         'class' => \yii\rest\UrlRule::class,
         'pluralize' => false,
         'controller' => [
-            'odk-web-hook' => 'v1/odk-web-hook',
+            'country-units' => 'v1/country-units',
         ],
         'extraPatterns' => [
-            'GET receive' => 'receive',
-            'POST receive' => 'receive',
+            'GET dependent-lists' => 'dependent-lists',
+            'OPTIONS <action>' => 'options',
+        ],
+    ],
+    [
+        'class' => \yii\rest\UrlRule::class,
+        'pluralize' => false,
+        'controller' => [
+            'odk' => 'v1/odk',
+        ],
+        'extraPatterns' => [
+            'POST,GET receive' => 'receive',
             'OPTIONS <action>' => 'options',
         ],
     ],

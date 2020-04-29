@@ -1,5 +1,6 @@
 <?php
 
+use backend\modules\auth\models\UserLevels;
 use backend\modules\help\models\HelpContent;
 use backend\modules\help\models\HelpSection;
 use common\helpers\Lang;
@@ -16,11 +17,21 @@ use yii\widgets\ActiveForm;
 
 <?php $form = ActiveForm::begin(); ?>
 
-<?= $form->field($model, 'module_id')->dropDownList(\backend\modules\help\models\HelpModules::getListData('id', 'name'),
-    ['class' => 'select2']) ?>
-<?= $form->field($model, 'user_level_id')->widget(\common\widgets\select2\Select2::class, ['name' => 'project',
+<?= $form->field($model, 'module_id')->widget(\common\widgets\select2\Select2::class, [
+    'name' => 'module_id',
+    'value' => $model->module_id,
+    'data' => \backend\modules\help\models\HelpModules::getListData('id', 'name'),
+    'options' => [
+        'placeholder' => "---Select Module---",
+        'class' => 'form-control select2',
+    ],
+    'pluginOptions' => [
+        'allowClear' => true
+    ],]); ?>
+<?= $form->field($model, 'user_level_id')->widget(\common\widgets\select2\Select2::class, [
+    'name' => 'user_level_id',
     'value' => $model->user_level_id,
-    'data' => \backend\modules\auth\models\UserLevels::getListData('id', 'name'),
+    'data' => UserLevels::getListData('id', 'name'),
     'options' => [
         'placeholder' => "---Select User Level---",
         'class' => 'form-control select2',
@@ -30,6 +41,7 @@ use yii\widgets\ActiveForm;
     ],]); ?>
 
 <?= $form->field($model, 'name')->textInput() ?>
+<?= $form->field($model, 'is_for_android')->checkbox() ?>
 
 <?= $form->field($model, 'content')->widget(Widget::class, [
     'settings' => [

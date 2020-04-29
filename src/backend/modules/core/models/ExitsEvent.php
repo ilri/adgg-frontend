@@ -9,9 +9,7 @@
 namespace backend\modules\core\models;
 
 
-use common\excel\ImportActiveRecordInterface;
 use common\helpers\ArrayHelper;
-use common\helpers\DbUtils;
 
 /**
  * Class ExitsEvent
@@ -19,23 +17,59 @@ use common\helpers\DbUtils;
  *
  *
  */
-class ExitsEvent extends AnimalEvent
+class ExitsEvent extends AnimalEvent implements AnimalEventInterface
 {
-    public function reportBuilderFields()
-    {
-        $this->ignoreAdditionalAttributes = true;
-        $attributes = $this->attributes();
-        $attrs = [];
-        $fields = TableAttribute::getData(['attribute_key'], ['table_id' => self::getDefinedTableId(), 'event_type' => self::EVENT_TYPE_EXITS]);
 
-        foreach ($fields as $k => $field) {
-            $attrs[] = $field['attribute_key'];
-        }
-        $attrs = array_merge($attributes, $attrs);
-        $unwanted = array_merge($this->reportBuilderUnwantedFields(), ['lactation_id', 'lactation_number']);
-        $attrs = array_diff($attrs, $unwanted);
-        sort($attrs);
-        return $attrs;
+    public function rules()
+    {
+        return ArrayHelper::merge(parent::rules(), [
+            [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
+        ]);
     }
 
+    public function attributeLabels()
+    {
+        return ArrayHelper::merge(parent::attributeLabels(), [
+            'event_date' => 'Disposal Date',
+        ]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEventType(): int
+    {
+        return self::EVENT_TYPE_EXITS;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function reportBuilderAdditionalUnwantedFields(): array
+    {
+        return ['lactation_id', 'lactation_number'];
+    }
+
+    /**
+     * @return array
+     */
+    public function getExcelColumns()
+    {
+        return [
+            'animalTagId',
+            'event_date',
+            'disposal_reason',
+            'disposal_reason_other',
+            'disposal_amount',
+            'new_country',
+            'new_region',
+            'new_district',
+            'new_ward',
+            'new_village',
+            'new_farmer_phone',
+            'new_farmer_name',
+            'new_breeder_name',
+            'new_breeder_phone',
+        ];
+    }
 }

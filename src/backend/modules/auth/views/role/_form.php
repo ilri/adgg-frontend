@@ -51,7 +51,10 @@ $form = ActiveForm::begin([
                 ],
             ]) ?>
         <?php endif; ?>
-        <?= $form->field($model, 'is_active')->checkbox(); ?>
+        <?= $form->field($model, 'is_field_agent')->checkbox(); ?>
+        <?php if (!$model->isNewRecord): ?>
+            <?= $form->field($model, 'is_active')->checkbox(); ?>
+        <?php endif; ?>
     </div>
     <div class="modal-footer">
         <button type="submit" class="btn btn-primary">

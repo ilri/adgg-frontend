@@ -39,6 +39,8 @@ $form = ActiveForm::begin([
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'resource_name')->dropDownList(Resources::getListData(), ['class' => 'select2']) ?>
+    <?= $form->field($model, 'is_for_android')->checkbox() ?>
+
 
 </div>
 <div class="modal-footer">

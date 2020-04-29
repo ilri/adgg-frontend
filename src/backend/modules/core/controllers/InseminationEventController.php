@@ -9,6 +9,7 @@ use backend\modules\core\forms\UploadAIEvent;
 use backend\modules\core\models\AIEvent;
 use backend\modules\core\models\AnimalEvent;
 use common\controllers\UploadExcelTrait;
+use Yii;
 
 class InseminationEventController extends Controller
 {
@@ -32,8 +33,8 @@ class InseminationEventController extends Controller
     {
         $this->hasPrivilege(Acl::ACTION_CREATE);
 
-        $form = new UploadAIEvent( AIEvent::class);
-        $resp = $this->uploadExcelConsole($form, 'insemination-event/index', []);
+        $form = new UploadAIEvent(AIEvent::class);
+        $resp = $this->uploadExcelConsole($form, 'insemination-event/index', Yii::$app->request->queryParams);
         if ($resp !== false) {
             return $resp;
         }

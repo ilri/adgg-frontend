@@ -39,7 +39,7 @@
                 </strong>
             </p>
 
-            <p>
+            <p class="hidden">
                 5. Click here to <a href="<?= $sampleUrl ?>" target="_top">download a sample excel.</a>
             </p>
         </div>

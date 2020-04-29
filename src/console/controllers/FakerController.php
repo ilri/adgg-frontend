@@ -8,10 +8,9 @@
 namespace console\controllers;
 
 
+use backend\modules\core\models\Animal;
 use backend\modules\core\models\AnimalEvent;
-use backend\modules\core\models\OdkJsonQueue;
-use backend\modules\core\models\Country;
-use common\helpers\FileManager;
+use backend\modules\core\models\MilkingEvent;
 use Yii;
 use yii\console\Controller;
 
@@ -87,14 +86,14 @@ class FakerController extends Controller
         //$sql .= "TRUNCATE " . Notif::tableName() . ";";
         //$sql .= "TRUNCATE " . NotifQueue::tableName() . ";";
         //$sql .= "TRUNCATE " . AuditTrail::tableName() . ";";
-        $sql .= "TRUNCATE " . AnimalEvent::tableName() . ";";
+        //$sql .= "TRUNCATE " . AnimalEvent::tableName() . ";";
         //$sql .= "TRUNCATE " . Animal::tableName() . ";";
         //$sql .= "TRUNCATE " . AnimalHerd::tableName() . ";";
         //$sql .= "TRUNCATE " . Farm::tableName() . ";";
 
         //$sql .= "UPDATE " . NumberingFormat::tableName() . " SET [[next_number]]=1 WHERE [[id]]=:OrganizationRef_account_no;";
         $sql .= "SET FOREIGN_KEY_CHECKS=1;";
-        Yii::$app->db->createCommand($sql, [])->execute();
+        //Yii::$app->db->createCommand($sql, [])->execute();
     }
 
     protected function canExecuteFaker()
@@ -102,56 +101,47 @@ class FakerController extends Controller
         if (YII_ENV === 'prod') {
             $this->stdout("FAKER CANNOT BE EXECUTED\n");
             Yii::$app->end();
-        }
-    }
-
-    public function actionUploadJson()
-    {
-        $it = new \RecursiveDirectoryIterator(FileManager::getUploadsDir() . DIRECTORY_SEPARATOR . 'json');
-
-        // Loop through files
-        $n = 1;
-        $country_id = Country::getScalar('id', ['code' => 3]);
-        $model = new OdkJsonQueue(['country_id' => $country_id]);
-        foreach (new \RecursiveIteratorIterator($it) as $file) {
-            if ($file->getExtension() == 'json') {
-                $newModel = clone $model;
-                $newModel->setJsonAttributes($file);
-                $file_name = $newModel->uuid . '.json';
-                $new_path = $newModel->getDir() . DIRECTORY_SEPARATOR . $file_name;
-                if (copy($file, $new_path)) {
-                    $newModel->file = $file_name;
-                    $newModel->save(false);
-                }
-                $this->stdout("Parsed $n JSON Files: $file\n");
-                $n++;
-            }
+        }else{
+            $this->stdout("FAKER CANNOT BE EXECUTED\n");
+            Yii::$app->end();
         }
     }
 
     public function actionResetMilkingModels()
     {
-        $query = AnimalEvent::find()->andWhere(['event_type' => AnimalEvent::EVENT_TYPE_MILKING]);
-        $n = 1;
-        /* @var $models AnimalEvent[] */
-        foreach ($query->batch() as $i => $models) {
-            foreach ($models as $model) {
-                $model->save(false);
-                $this->stdout("Processed {$n} Milking records\n");
-                $n++;
-            }
-        }
+
     }
 
     public function actionResetCalvingModels()
     {
-        $query = AnimalEvent::find()->andWhere(['event_type' => AnimalEvent::EVENT_TYPE_CALVING]);
+    }
+
+    public function actionRandom()
+    {
+        $condition = [];
+        $query = Animal::find()->andWhere($condition);
+        $totalAnimals=Animal::getCount($condition);
         $n = 1;
-        /* @var $models AnimalEvent[] */
+        /* @var $models Animal[] */
+        $className = Animal::class;
         foreach ($query->batch() as $i => $models) {
             foreach ($models as $model) {
                 $model->save(false);
-                $this->stdout("Processed {$n} Calving records\n");
+                $this->stdout("{$className}: Updated {$n} of {$totalAnimals} records\n");
+                $n++;
+            }
+        }
+
+        $condition = ['event_type'=>AnimalEvent::EVENT_TYPE_MILKING];
+        $query = MilkingEvent::find()->andWhere($condition);
+        $totalMilkRecords=MilkingEvent::getCount($condition);
+        $n = 1;
+        /* @var $models MilkingEvent[] */
+        $className = MilkingEvent::class;
+        foreach ($query->batch() as $i => $models) {
+            foreach ($models as $model) {
+                $model->save(false);
+                $this->stdout("{$className}: Updated {$n} of {$totalMilkRecords} records\n");
                 $n++;
             }
         }

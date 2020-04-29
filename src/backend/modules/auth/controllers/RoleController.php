@@ -78,9 +78,9 @@ class RoleController extends Controller
         Roles::loadModel($id)->delete();
     }
 
-    public function actionGetList($level_id)
+    public function actionGetList($level_id, $placeholder = false)
     {
-        $data = Roles::getListData('id', 'name', false, ['level_id' => $level_id]);
+        $data = Roles::getListData('id', 'name', false, $placeholder, ['level_id' => $level_id]);
         return json_encode($data);
     }
 }

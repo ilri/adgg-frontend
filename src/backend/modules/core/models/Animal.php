@@ -3,6 +3,7 @@
 namespace backend\modules\core\models;
 
 use backend\modules\reports\Constants;
+use common\helpers\DateUtils;
 use common\helpers\DbUtils;
 use common\helpers\FileManager;
 use common\helpers\Lang;
@@ -33,8 +34,10 @@ use yii\helpers\Inflector;
  * @property int $org_id
  * @property int $client_id
  * @property int $animal_type
+ * @property int $sex
  * @property string $color
  * @property string $birthdate
+ * @property string $reg_date
  * @property int $is_derived_birthdate
  * @property array $deformities
  * @property int $sire_type
@@ -62,6 +65,8 @@ use yii\helpers\Inflector;
  * @property int $updated_by
  * @property string|array $additional_attributes
  * @property string $animal_eartag_id
+ * @property string $migration_id
+ * @property string $breed_composition_details
  *
  * @property Farm $farm
  * @property Animal $sire
@@ -88,6 +93,10 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
      */
     public $tmp_animal_photo;
 
+
+    const SCENARIO_MISTRO_DB_BULL_UPLOAD = 'BullUpload';
+    const SCENARIO_MISTRO_DB_COW_UPLOAD = 'CowUpload';
+
     /**
      * {@inheritdoc}
      */
@@ -102,21 +111,23 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     public function rules()
     {
         return [
-            [['farm_id', 'tag_id'], 'required'],
-            [['farm_id', 'herd_id', 'country_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'animal_type', 'is_derived_birthdate', 'sire_type', 'sire_id', 'dam_id', 'main_breed', 'breed_composition', 'secondary_breed', 'entry_type'], 'integer'],
-            [['birthdate', 'deformities', 'entry_date'], 'safe'],
+            [['tag_id'], 'required'],
+            [['farm_id'], 'required', 'except' => self::SCENARIO_MISTRO_DB_BULL_UPLOAD],
+            [['farm_id', 'herd_id', 'country_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'animal_type', 'is_derived_birthdate', 'sire_type', 'sire_id', 'dam_id', 'main_breed', 'breed_composition', 'secondary_breed', 'entry_type', 'sex'], 'integer'],
+            [['birthdate', 'deformities', 'entry_date', 'reg_date'], 'safe'],
             [['purchase_cost'], 'number'],
-            [['birthdate', 'entry_date'], 'validateNoFutureDate'],
+            [['birthdate', 'entry_date'], 'date', 'format' => 'php:Y-m-d'],
+            [['birthdate', 'reg_date', 'entry_date'], 'validateNoFutureDate'],
             [['name', 'tag_id', 'sire_tag_id', 'sire_name', 'dam_tag_id', 'dam_name', 'color'], 'string', 'max' => 128],
             [['animal_photo', 'map_address'], 'string', 'max' => 255],
-            [['farm_id'], 'exist', 'skipOnError' => true, 'targetClass' => Farm::class, 'targetAttribute' => ['farm_id' => 'id']],
             ['tag_id', 'unique', 'targetAttribute' => ['country_id', 'tag_id'], 'message' => '{attribute} already exists.'],
             [['sire_tag_id', 'dam_tag_id'], 'validateSireOrDam'],
-            ['sire_tag_id', 'validateSireBisexual'],
-            ['dam_tag_id', 'validateDamBisexual'],
+            ['sire_tag_id', 'validateSireBisexual', 'except' => [self::SCENARIO_MISTRO_DB_BULL_UPLOAD, self::SCENARIO_MISTRO_DB_COW_UPLOAD]],
+            ['dam_tag_id', 'validateDamBisexual', 'except' => [self::SCENARIO_MISTRO_DB_BULL_UPLOAD, self::SCENARIO_MISTRO_DB_COW_UPLOAD]],
             [['tmp_animal_photo', 'additional_attributes', 'org_id', 'client_id'], 'safe'],
             [$this->getAdditionalAttributes(), 'safe'],
             [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
+            ['migration_id', 'unique'],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
     }
@@ -130,33 +141,36 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'id' => 'ID',
             'name' => 'Animal Name',
             'tag_id' => 'Animal Tag ID',
-            'farm_id' => 'Farm ID',
-            'herd_id' => 'Herd ID',
-            'country_id' => 'Country ID',
-            'region_id' => 'Region ID',
-            'district_id' => 'District ID',
-            'ward_id' => 'Ward ID',
-            'village_id' => 'Village ID',
+            'farm_id' => 'Farm',
+            'herd_id' => 'Herd',
+            'country_id' => 'Country',
+            'region_id' => 'Region',
+            'district_id' => 'District',
+            'ward_id' => 'Ward',
+            'village_id' => 'Village',
             'org_id' => 'External Organization ID',
-            'client_id' => 'Client ID',
+            'client_id' => 'Client',
             'animal_type' => 'Animal Type',
+            'sex' => 'Sex',
             'color' => 'Animal Color',
             'birthdate' => 'Date of Birth',
             'is_derived_birthdate' => 'Is Derived Birthdate',
             'deformities' => 'Deformities',
             'sire_type' => 'Sire Type',
-            'sire_id' => 'Sire ID',
+            'sire_id' => 'Sire',
             'sire_tag_id' => 'Sire Tag ID',
             'sire_name' => 'Sire Name',
             'bull_straw_id' => 'Bull Straw ID',
-            'dam_id' => 'Dam ID',
+            'dam_id' => 'Dam',
             'dam_tag_id' => 'Dam Tag ID',
             'dam_name' => 'Dam Name',
             'main_breed' => 'Main Breed',
             'breed_composition' => 'Breed Composition',
+            'breed_composition_details' => 'Breed Composition details',
             'secondary_breed' => 'Secondary Breed',
             'entry_type' => 'Entry Type',
             'entry_date' => 'Entry Date',
+            'reg_date' => 'Registration Date',
             'purchase_cost' => 'Purchase Cost',
             'animal_photo' => 'Animal Photo',
             'tmp_animal_photo' => 'Animal Photo',
@@ -287,7 +301,8 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
         return $fields;
     }
 
-    public static function decodeDeformities($deformities){
+    public static function decodeDeformities($deformities)
+    {
         $deformities = json_decode($deformities);
         $decoded = [];
         foreach ($deformities as $key => $value) {
@@ -304,13 +319,20 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
                 $this->latlng = new Expression("ST_GeomFromText('POINT({$this->latitude} {$this->longitude})')");
             }
             $this->setImage('animal_photo');
-            $this->country_id = $this->farm->country_id;
-            $this->region_id = $this->farm->region_id;
-            $this->district_id = $this->farm->district_id;
-            $this->ward_id = $this->farm->ward_id;
-            $this->village_id = $this->farm->village_id;
-            $this->org_id = $this->farm->org_id;
-            $this->client_id = $this->farm->client_id;
+            if (null !== $this->farm) {
+                $this->country_id = $this->farm->country_id;
+                $this->region_id = $this->farm->region_id;
+                $this->district_id = $this->farm->district_id;
+                $this->ward_id = $this->farm->ward_id;
+                $this->village_id = $this->farm->village_id;
+                if (!empty($this->farm->org_id)) {
+                    $this->org_id = $this->farm->org_id;
+                }
+                if (!empty($this->farm->client_id)) {
+                    $this->client_id = $this->farm->client_id;
+                }
+            }
+
             if (!empty($this->deformities)) {
                 if (is_string($this->deformities)) {
                     $this->deformities = array_map('trim', explode(' ', $this->deformities));
@@ -321,6 +343,22 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             if (empty($this->birthdate) && !empty($this->derivedBirthdate)) {
                 $this->birthdate = $this->derivedBirthdate;
                 $this->is_derived_birthdate = 1;
+            }
+            if (empty($this->reg_date)) {
+                $this->reg_date = DateUtils::getToday();
+            }
+
+            if (!empty($this->sire_tag_id) && empty($this->sire_id)) {
+                $sire = static::getOneRow(['id', 'tag_id'], ['tag_id' => $this->sire_tag_id]);
+                if (!empty($sire)) {
+                    $this->sire_id = $sire['id'];
+                }
+            }
+            if (!empty($this->dam_tag_id) && empty($this->dam_id)) {
+                $dam = static::getOneRow(['id', 'tag_id'], ['tag_id' => $this->dam_tag_id]);
+                if (!empty($dam)) {
+                    $this->dam_id = $dam['id'];
+                }
             }
 
             $this->setAdditionalAttributesValues();
@@ -347,14 +385,6 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     public static function getDefinedTableId(): int
     {
         return ExtendableTable::TABLE_ANIMAL_ATTRIBUTES;
-    }
-
-    /**
-     * @return int
-     */
-    public static function getDefinedType(): int
-    {
-        return TableAttribute::TYPE_ATTRIBUTE;
     }
 
     /**
@@ -441,6 +471,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'animal_tagsequence',
             'name',
             'color',
+            'reg_date',
             'derivedBirthdate',
             'birthdate',
             'animal_approxage',
@@ -575,5 +606,71 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     {
         $options['orderBy'] = ['id' => SORT_ASC];
         return parent::getListData($valueColumn, $textColumn, $prompt, $condition, $params, $options);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function reportBuilderAdditionalUnwantedFields(): array
+    {
+        return ['sire_id', 'sire_name', 'animal_sireknown', 'farm_id', 'herd_id', 'animal_damknown', 'sire_tag_id', 'sire_type', 'dam_id', 'dam_name', 'dam_tag_id'];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function reportBuilderFieldsMapping(): array
+    {
+        return [
+            'animal_type' => [
+                'tooltip' => function ($field) {
+                    return static::buildChoicesTooltip(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, []);
+                },
+            ],
+            'sire_type' => [
+                'tooltip' => function ($field) {
+                    return static::buildChoicesTooltip(ChoiceTypes::CHOICE_TYPE_SIRE_TYPE, []);
+                },
+            ],
+            'breed_composition' => [
+                'tooltip' => function ($field) {
+                    return static::buildChoicesTooltip(ChoiceTypes::CHOICE_TYPE_BREED_COMPOSITION, []);
+                }
+            ],
+            'main_breed' => [
+                'tooltip' => function ($field) {
+                    return static::buildChoicesTooltip(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, []);
+                }
+            ],
+            'secondary_breed' => [
+                'tooltip' => function ($field) {
+                    return static::buildChoicesTooltip(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, []);
+                }
+            ],
+            'entry_type' => [
+                'tooltip' => function ($field) {
+                    return static::buildChoicesTooltip(ChoiceTypes::CHOICE_TYPE_ANIMAL_ENTRY_TYPE, []);
+                }
+            ],
+            'deformities' => [
+                'tooltip' => function ($field) {
+                    return static::buildChoicesTooltip(ChoiceTypes::CHOICE_TYPE_CALVE_DEFORMITY, []);
+                }
+            ],
+            'is_derived_birthdate' => [
+                'tooltip' => function ($field) {
+                    $choices = Utils::booleanOptions();
+                    return static::buildChoicesTooltip(null, $choices);
+                }
+            ],
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function reportBuilderRelations()
+    {
+        return array_merge(['farm', 'herd', 'sire', 'dam'], $this->reportBuilderCommonRelations(), $this->reportBuilderCoreDataRelations());
     }
 }

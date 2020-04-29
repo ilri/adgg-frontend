@@ -3,10 +3,12 @@
 namespace backend\modules\core\models;
 
 use backend\modules\auth\models\Users;
+use common\helpers\DateUtils;
 use common\helpers\Utils;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
+use common\models\ReportBuilderInterface;
 use yii\db\Expression;
 use yii\helpers\Html;
 
@@ -28,7 +30,6 @@ use yii\helpers\Html;
  * @property string $phone
  * @property string $email
  * @property int $field_agent_id
- * @property string $field_agent_name
  * @property string $project
  * @property string $farm_type
  * @property string $gender_code
@@ -48,6 +49,7 @@ use yii\helpers\Html;
  * @property int $deleted_by
  * @property string $odk_code
  * @property string|array $additional_attributes
+ * @property string $migration_id
  *
  * @property Users $fieldAgent
  * @property Animal $animals
@@ -81,7 +83,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             [['name'], 'required', 'except' => [self::SCENARIO_UPLOAD]],
             [['country_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'field_agent_id', 'is_active', 'farmer_is_hh_head'], 'safe'],
             [['latitude', 'longitude', 'phone'], 'number'],
-            [['code', 'name', 'project', 'field_agent_name', 'farmer_name'], 'string', 'max' => 128],
+            [['code', 'name', 'project','farmer_name'], 'string', 'max' => 128],
             [['phone'], 'string', 'min' => 9, 'max' => 12, 'message' => '{attribute} should contain between 9 and 12 digits', 'except' => self::SCENARIO_UPLOAD],
             [['email', 'map_address'], 'string', 'max' => 255],
             [['farm_type'], 'string', 'max' => 30],
@@ -92,6 +94,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             [['additional_attributes', 'org_id', 'client_id'], 'safe'],
             ['odk_code', 'unique', 'targetAttribute' => ['country_id', 'odk_code'], 'message' => '{attribute} already exists.', 'on' => self::SCENARIO_UPLOAD],
             [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
+            ['migration_id', 'unique'],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
 
         ];
@@ -107,18 +110,17 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             'code' => 'Code',
             'name' => 'Farm Name',
             'country_id' => 'Country',
-            'region_id' => $this->country !== null ? Html::encode($this->country->unit1_name) . ' ID' : 'Region ID',
-            'district_id' => $this->country !== null ? Html::encode($this->country->unit2_name) . ' ID' : 'District ID',
-            'ward_id' => $this->country !== null ? Html::encode($this->country->unit3_name) . ' ID' : 'Ward ID',
-            'village_id' => $this->country !== null ? Html::encode($this->country->unit4_name) . ' ID' : 'Village ID',
-            'org_id' => 'External Organization ID',
-            'client_id' => 'Client ID',
+            'region_id' => $this->country !== null ? Html::encode($this->country->unit1_name) . ' ID' : 'Region',
+            'district_id' => $this->country !== null ? Html::encode($this->country->unit2_name) . ' ID' : 'District',
+            'ward_id' => $this->country !== null ? Html::encode($this->country->unit3_name) . ' ID' : 'Ward',
+            'village_id' => $this->country !== null ? Html::encode($this->country->unit4_name) . ' ID' : 'Village',
+            'org_id' => 'Organization',
+            'client_id' => 'Client',
             'farmer_name' => 'Farmer Name',
             'reg_date' => 'Reg Date',
             'phone' => 'Farmer Phone No.',
             'email' => 'Farmer Email',
-            'field_agent_id' => 'AITech/PRA Id',
-            'field_agent_name' => 'AITech/PRA Name',
+            'field_agent_id' => 'AITech/PRA',
             'field_agent_code' => 'AITech/PRA Code',
             'field_agent_code2' => 'Data Collector Code',
             'project' => 'Project',
@@ -146,6 +148,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
      */
     public function searchParams()
     {
+        $alias = static::tableName();
         return [
             ['code', 'code'],
             ['name', 'name'],
@@ -153,12 +156,12 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             ['project', 'project'],
             ['farmer_name', 'farmer_name'],
             ['odk_code', 'odk_code'],
-            'country_id',
+            [$alias . '.country_id', 'country_id', '', '='],
+            [$alias . '.org_id', 'org_id', '', '='],
             'region_id',
             'district_id',
             'ward_id',
             'village_id',
-            'org_id',
             'client_id',
             'field_agent_id',
             'farm_type',
@@ -204,8 +207,8 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             if (empty($this->name)) {
                 $this->name = $this->farmer_name;
             }
-            if (empty($this->field_agent_name)) {
-                $this->fieldAgent->name;
+            if (empty($this->reg_date)) {
+                $this->reg_date = DateUtils::getToday();
             }
             $this->setAdditionalAttributesValues();
 
@@ -309,14 +312,6 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     }
 
     /**
-     * @return int
-     */
-    public static function getDefinedType(): int
-    {
-        return TableAttribute::TYPE_ATTRIBUTE;
-    }
-
-    /**
      * @param integer $durationType
      * @param bool|string $sum
      * @param array $filters array key=>$value pair where key is the attribute name and value is the attribute value
@@ -340,5 +335,42 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     public function getFieldAgent()
     {
         return $this->hasOne(Users::class, ['id' => 'field_agent_id']);
+    }
+    /**
+     * @inheritDoc
+     */
+    public function reportBuilderAdditionalUnwantedFields(): array
+    {
+        return ['farm_country'];
+    }
+    /**
+     * @inheritDoc
+     */
+    public function reportBuilderFieldsMapping(): array{
+        return [
+            'farm_type' => [
+                'tooltip' => function ($field) {
+                    return static::buildChoicesTooltip(ChoiceTypes::CHOICE_TYPE_FARM_TYPE, []);
+                },
+            ],
+            'gender_code' => [
+                'tooltip' => function ($field) {
+                    $choices = Choices::getGenderListData();
+                    return static::buildChoicesTooltip(null, $choices);
+                },
+            ],
+            'farmer_is_hh_head' => [
+                'tooltip' => function ($field) {
+                    $choices = Utils::booleanOptions();
+                    return static::buildChoicesTooltip(null, $choices);
+                }
+            ],
+        ];
+    }
+    /**
+     * @inheritDoc
+     */
+    public function reportBuilderRelations(){
+        return array_merge(['fieldAgent'], $this->reportBuilderCommonRelations(), $this->reportBuilderCoreDataRelations());
     }
 }

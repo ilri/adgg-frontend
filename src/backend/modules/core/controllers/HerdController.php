@@ -10,6 +10,7 @@ namespace backend\modules\core\controllers;
 
 
 use backend\modules\auth\Acl;
+use backend\modules\auth\Session;
 use backend\modules\core\Constants;
 use backend\modules\core\forms\UploadHerds;
 use backend\modules\core\models\AnimalHerd;
@@ -27,17 +28,31 @@ class HerdController extends Controller
         $this->resourceLabel = 'Herd';
     }
 
-    public function actionIndex($farm_id = null, $country_id = null, $name = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null)
+    public function actionIndex($farm_id = null, $country_id = null, $org_id = null, $client_id = null, $name = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null)
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
+        $country_id = Session::getCountryId($country_id);
+        $org_id = Session::getOrgId($org_id);
+        $client_id = Session::getClientId($client_id);
+        $region_id = Session::getRegionId($region_id);
+        $district_id = Session::getDistrictId($district_id);
+        $ward_id = Session::getWardId($ward_id);
+        $village_id = Session::getVillageId($village_id);
         $condition = '';
         $params = [];
         $searchModel = AnimalHerd::searchModel([
             'defaultOrder' => ['id' => SORT_DESC],
             'condition' => $condition,
             'params' => $params,
-            'with' => ['country', 'region', 'district', 'ward', 'village'],
+            'with' => ['country', 'org', 'client', 'region', 'district', 'ward', 'village'],
         ]);
+        $searchModel->country_id = $country_id;
+        $searchModel->org_id = $org_id;
+        $searchModel->client_id = $client_id;
+        $searchModel->region_id = $region_id;
+        $searchModel->district_id = $district_id;
+        $searchModel->ward_id = $ward_id;
+        $searchModel->village_id = $village_id;
         $searchModel->farm_id = $farm_id;
         $searchModel->name = $name;
 
@@ -67,6 +82,12 @@ class HerdController extends Controller
     {
         $form = new UploadHerds(AnimalHerd::class);
         return $form->previewAction();
+    }
+
+    public function actionGetList($farm_id = null, $placeholder = false)
+    {
+        $data = AnimalHerd::getListData('id', 'name', $placeholder, ['farm_id' => $farm_id]);
+        return json_encode($data);
     }
 
 }

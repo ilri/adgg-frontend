@@ -3,7 +3,9 @@
 use backend\modules\auth\models\UserLevels;
 use backend\modules\auth\models\Users;
 use backend\modules\auth\Session;
+use backend\modules\core\models\Client;
 use backend\modules\core\models\CountryUnits;
+use backend\modules\core\models\Organization;
 use common\forms\ActiveField;
 use common\helpers\Lang;
 use common\helpers\Url;
@@ -59,7 +61,9 @@ use yii\helpers\Json;
                                         'data-child-selectors' => [
                                             '#' . Html::getInputId($model, 'role_id'),
                                         ],
-                                        'data-show-country' => [UserLevels::LEVEL_COUNTRY, UserLevels::LEVEL_REGION, UserLevels::LEVEL_DISTRICT, UserLevels::LEVEL_WARD, UserLevels::LEVEL_VILLAGE],
+                                        'data-show-country' => [UserLevels::LEVEL_COUNTRY, UserLevels::LEVEL_ORGANIZATION, UserLevels::LEVEL_ORGANIZATION_CLIENT, UserLevels::LEVEL_REGION, UserLevels::LEVEL_DISTRICT, UserLevels::LEVEL_WARD, UserLevels::LEVEL_VILLAGE],
+                                        'data-show-organization' => [UserLevels::LEVEL_ORGANIZATION, UserLevels::LEVEL_ORGANIZATION_CLIENT],
+                                        'data-show-client' => [UserLevels::LEVEL_ORGANIZATION_CLIENT],
                                         'data-show-region' => [UserLevels::LEVEL_REGION, UserLevels::LEVEL_DISTRICT, UserLevels::LEVEL_WARD, UserLevels::LEVEL_VILLAGE],
                                         'data-show-district' => [UserLevels::LEVEL_DISTRICT, UserLevels::LEVEL_WARD, UserLevels::LEVEL_VILLAGE],
                                         'data-show-ward' => [UserLevels::LEVEL_WARD, UserLevels::LEVEL_VILLAGE],
@@ -71,7 +75,7 @@ use yii\helpers\Json;
                                 ]) ?>
                             </div>
                             <?php if (!Session::isCountry()): ?>
-                                <div class="col-md-4" id="org-id-wrapper">
+                                <div class="col-md-4" id="country-id-wrapper">
                                     <?= $form->field($model, 'country_id')->widget(Select2::class, [
                                         'data' => \backend\modules\core\models\Country::getListData(),
                                         'theme' => Select2::THEME_BOOTSTRAP,
@@ -79,7 +83,42 @@ use yii\helpers\Json;
                                             'class' => 'form-control parent-depdropdown',
                                             'data-child-selectors' => [
                                                 '#' . Html::getInputId($model, 'region_id'),
+                                                '#' . Html::getInputId($model, 'org_id'),
+
                                             ],
+                                        ],
+                                        'pluginOptions' => [
+                                            'allowClear' => false
+                                        ],
+                                    ]) ?>
+                                </div>
+                                <div class="col-md-4" id="org-id-wrapper">
+                                    <?= $form->field($model, 'org_id')->widget(Select2::class, [
+                                        'data' => Organization::getListData('id', 'name', true, ['country_id' => $model->country_id]),
+                                        'theme' => Select2::THEME_BOOTSTRAP,
+                                        'options' => [
+                                            'class' => 'form-control parent-depdropdown',
+                                            'placeholder' => '[select one]',
+                                            'data-url' => Url::to(['/core/organization/get-list', 'country_id' => 'idV', 'placeholder' => true]),
+                                            'data-selected' => $model->org_id,
+                                            'data-child-selectors' => [
+                                                '#' . Html::getInputId($model, 'client_id'),
+                                            ],
+                                        ],
+                                        'pluginOptions' => [
+                                            'allowClear' => false
+                                        ],
+                                    ]) ?>
+                                </div>
+                                <div class="col-md-4" id="client-id-wrapper">
+                                    <?= $form->field($model, 'client_id')->widget(Select2::class, [
+                                        'data' => Client::getListData('id', 'name', true, ['country_id' => $model->country_id]),
+                                        'theme' => Select2::THEME_BOOTSTRAP,
+                                        'options' => [
+                                            'class' => 'form-control parent-depdropdown',
+                                            'placeholder' => '[select one]',
+                                            'data-url' => Url::to(['/core/client/get-list', 'org_id' => 'idV', 'country_id' => $model->country_id, 'placeholder' => true]),
+                                            'data-selected' => $model->client_id,
                                         ],
                                         'pluginOptions' => [
                                             'allowClear' => false
@@ -92,7 +131,8 @@ use yii\helpers\Json;
                                         'theme' => Select2::THEME_BOOTSTRAP,
                                         'options' => [
                                             'class' => 'form-control parent-depdropdown',
-                                            'data-url' => Url::to(['/core/country-units/get-list', 'country_id' => 'idV', 'level' => CountryUnits::LEVEL_REGION]),
+                                            'placeholder' => '[select one]',
+                                            'data-url' => Url::to(['/core/country-units/get-list', 'country_id' => 'idV', 'level' => CountryUnits::LEVEL_REGION, 'placeholder' => true]),
                                             'data-selected' => $model->region_id,
                                             'data-child-selectors' => [
                                                 '#' . Html::getInputId($model, 'district_id'),
@@ -109,7 +149,8 @@ use yii\helpers\Json;
                                         'theme' => Select2::THEME_BOOTSTRAP,
                                         'options' => [
                                             'class' => 'form-control parent-depdropdown',
-                                            'data-url' => Url::to(['/core/country-units/get-list', 'country_id' => $model->country_id, 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_DISTRICT]),
+                                            'placeholder' => '[select one]',
+                                            'data-url' => Url::to(['/core/country-units/get-list', 'country_id' => $model->country_id, 'placeholder' => true, 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_DISTRICT]),
                                             'data-selected' => $model->district_id,
                                             'data-child-selectors' => [
                                                 '#' . Html::getInputId($model, 'ward_id'),
@@ -126,7 +167,8 @@ use yii\helpers\Json;
                                         'theme' => Select2::THEME_BOOTSTRAP,
                                         'options' => [
                                             'class' => 'form-control parent-depdropdown',
-                                            'data-url' => Url::to(['/core/country-units/get-list', 'country_id' => $model->country_id, 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_WARD]),
+                                            'placeholder' => '[select one]',
+                                            'data-url' => Url::to(['/core/country-units/get-list', 'country_id' => $model->country_id, 'placeholder' => true, 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_WARD]),
                                             'data-selected' => $model->ward_id,
                                             'data-child-selectors' => [
                                                 '#' . Html::getInputId($model, 'village_id'),
@@ -142,7 +184,8 @@ use yii\helpers\Json;
                                         'data' => CountryUnits::getListData('id', 'name', true, ['country_id' => $model->country_id, 'level' => CountryUnits::LEVEL_VILLAGE, 'parent_id' => $model->ward_id]),
                                         'theme' => Select2::THEME_BOOTSTRAP,
                                         'options' => [
-                                            'data-url' => Url::to(['/core/country-units/get-list', 'country_id' => $model->country_id, 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_VILLAGE]),
+                                            'placeholder' => '[select one]',
+                                            'data-url' => Url::to(['/core/country-units/get-list', 'country_id' => $model->country_id, 'placeholder' => true, 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_VILLAGE]),
                                             'data-selected' => $model->village_id,
                                         ],
                                         'pluginOptions' => [
@@ -156,7 +199,7 @@ use yii\helpers\Json;
                                     'data' => \backend\modules\auth\models\Roles::getListData('id', 'name', false, Session::isCountry() ? ['level_id' => UserLevels::LEVEL_COUNTRY] : []),
                                     'theme' => Select2::THEME_BOOTSTRAP,
                                     'options' => [
-                                        'data-url' => Url::to(['role/get-list', 'level_id' => 'idV']),
+                                        'data-url' => Url::to(['role/get-list', 'level_id' => 'idV', 'placeholder' => true]),
                                         'data-selected' => $model->role_id,
                                     ],
                                     'pluginOptions' => [

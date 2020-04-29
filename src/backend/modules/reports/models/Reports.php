@@ -3,10 +3,10 @@
 namespace backend\modules\reports\models;
 
 use backend\modules\core\models\Animal;
-use backend\modules\core\models\Choices;
-use backend\modules\core\models\ChoiceTypes;
+use backend\modules\core\models\Country;
 use backend\modules\core\models\MilkingEvent;
 use common\helpers\ArrayHelper;
+use common\helpers\DateUtils;
 use common\helpers\DbUtils;
 use common\helpers\Lang;
 use common\models\ActiveRecord;
@@ -103,10 +103,8 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
     public static function transformMilkDataRow($row, $options = []){
         $fieldAliasMapping = $options['fieldAliasMapping'] ?? [];
 
-        $row['Total Milk'] = floatval($row[$fieldAliasMapping['milkmor']]) + floatval($row[$fieldAliasMapping['milkmid']] ) + floatval($row[$fieldAliasMapping['milkeve']]);
-
-        $decodedGender = \backend\modules\core\models\Choices::getLabel(\backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_GENDER, $row[$fieldAliasMapping['animal.farm.gender_code']]);
-        $row[$fieldAliasMapping['animal.farm.gender_code']] = $decodedGender;
+        $row['cattletotalowned'] = floatval($row['total_cattle_owned_by_female']) + floatval($row['total_cattle_owned_by_male']) + floatval($row['total_cattle_owned_joint']);
+        unset($row['total_cattle_owned_by_female'], $row['total_cattle_owned_by_male'], $row['total_cattle_owned_joint']);
         return $row;
     }
 
@@ -120,17 +118,25 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'district.name' => null,
             'ward.name' => null,
             'village.name' => null,
-            'animal.herd.id' => null,
+            'animal.farm.id' => null,
             'animal.farm.gender_code' => null,
             'animal.farm.total_cattle_owned' => null,
-            'animal.id' => null,
+            'animal.farm.total_cattle_owned_by_female' => null,
+            'animal.farm.total_cattle_owned_by_male' => null,
+            'animal.farm.total_cattle_owned_joint' => null,
+            'animal.tag_id' => null,
+            'lactation.event_date' => null,
             'event_date' => null,
+            'testday_no' => null,
             'milkmor' => null,
             'milkmid' => null,
             'milkeve' => null,
-            'lactation.calfhgirth' => null,
-            'lactation.calfweight' => null,
-            'lactation.calfbodyscore' => null,
+            'milkday' => null,
+            'dim' => null,
+            'milk_heartgirth' => null,
+            'weight' => null,
+            'milk_estimated_weight' => null,
+            'milk_bodyscore' => null,
             'milkfat' => null,
             'milkprot' => null,
             'lactation.lactation_number' => null,
@@ -148,28 +154,35 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'village_id' => $filter['village_id'],
         ];
         $fieldAliases = [
-            'region.name' => 'Region Name',
-            'district.name' => 'District Name',
-            'ward.name' => 'Ward Name',
-            'village.name' => 'Village Name',
-            'farm.id' => 'Farm ID',
-            'animal.herd.id' => 'Herd ID',
-            'animal.farm.gender_code' => 'Gender',
-            'animal.farm.total_cattle_owned' => 'Total Cattle Owned',
-            'animal.id' => 'Animal ID',
-            'event_date' => 'Milk Date',
-            'milkmor' => 'Milk Morning',
-            'milkmid' => 'Milk Midday',
-            'milkeve' => 'Milk Evening',
-            'lactation.calfhgirth' => 'Heart Girth',
-            'lactation.calfweight' => 'Weight',
-            'lactation.calfbodyscore' => 'Body Score',
-            'milkfat' => 'Milk Fat',
-            'milkprot' => 'Milk Protein',
-            'lactation.lactation_number' => 'Lactation No',
+            'lactation.event_date' => 'CalvDate',
+            'animal.tag_id' => 'animalid',
+            'region.name' => 'Region',
+            'district.name' => 'District',
+            'ward.name' => 'Ward',
+            'village.name' => 'Village',
+            'animal.farm.id' => 'hh_id',
+            'animal.farm.gender_code' => 'farmergender',
+            'animal.farm.total_cattle_owned' => 'cattletotalowned',
+            'animal.farm.total_cattle_owned_by_female' => 'total_cattle_owned_by_female',
+            'animal.farm.total_cattle_owned_by_male' => 'total_cattle_owned_by_male',
+            'animal.farm.total_cattle_owned_joint' => 'total_cattle_owned_joint',
+            'event_date' => 'milkdate',
+            'testday_no' => 'TDNo',
+            'milkmor' => 'milkmor',
+            'milkmid' => 'milkmid',
+            'milkeve' => 'milkeve',
+            'milkday' => 'Total_Milk',
+            'dim' => 'DIM',
+            'milk_heartgirth' => 'heartgirth',
+            'weight' => 'weight',
+            'milk_estimated_weight' => 'estimated weight',
+            'milk_bodyscore' => 'bodyscore',
+            'milkfat' => 'mlkfat',
+            'milkprot' => 'mlkprot',
+            'lactation.lactation_number' => 'LactID',
         ];
         $excludeFromReport = array_keys($filterValues);
-
+        $genders = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_GENDER;
         $decodedFields = [
             'event_date' => [
                 'function' => '\common\helpers\DateUtils::formatDate',
@@ -177,7 +190,21 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
                     'fieldValue',
                     'd/m/Y',
                 ]
-            ]
+            ],
+            'lactation.event_date' => [
+                'function' => '\common\helpers\DateUtils::formatDate',
+                'params' => [
+                    'fieldValue',
+                    'd/m/Y',
+                ]
+            ],
+            'animal.farm.gender_code' => [
+                'function' => '\backend\modules\core\models\Choices::getLabel',
+                'params'=> [
+                    "$genders",
+                    'fieldValue', // the value of this field
+                ]
+            ],
         ];
 
         $from = ArrayHelper::getValue($filter, 'from');
@@ -195,7 +222,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         $builder->orderBy = $orderBy;
         //$builder->limit = 50;
         $builder->country_id = $filter['country_id'] ?? null;
-        $builder->name = 'Milk Data';
+        $builder->name = 'Milk_Data_' . ($filter['country_id'] ? Country::getScalar('name', ['id' => $filter['country_id']]) : '');
 
         if (!empty($from) && !empty($to)) {
             $casted_date = DbUtils::castDATE(MilkingEvent::tableName().'.[[event_date]]');
@@ -222,7 +249,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'ward.name' => null,
             'village.name' => null,
             'farm.id' => null,
-            'id' => null,
+            'tag_id' => null,
             'sire_tag_id' => null,
             'dam_tag_id' => null,
             'animal_type' => null,
@@ -246,18 +273,18 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'village_id' => $filter['village_id'],
         ];
         $fieldAliases = [
-            'region.name' => 'Region Name',
-            'district.name' => 'District Name',
-            'ward.name' => 'Ward Name',
-            'village.name' => 'Village Name',
-            'farm.id' => 'Farm ID',
-            'id' => 'Animal ID',
-            'sire_tag_id' => 'Sire Tag ID',
-            'dam_tag_id' => 'Dam Tag ID',
-            'animal_type' => 'Animal Type',
-            'birthdate' => 'Birth Date',
-            'main_breed' => 'Breed',
-            'animal_approxage' => 'Approximate Age',
+            'region.name' => 'Region',
+            'district.name' => 'District',
+            'ward.name' => 'Ward',
+            'village.name' => 'Village',
+            'farm.id' => 'hh_id',
+            'tag_id' => 'animalid',
+            'sire_tag_id' => 'siretagid',
+            'dam_tag_id' => 'damtagid',
+            'animal_type' => 'sex_des',
+            'birthdate' => 'birthdate',
+            'main_breed' => 'breed',
+            'animal_approxage' => 'approxage',
         ];
         # TODO: define these fields to be decoded elsewhere
         $breeds = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS;
@@ -325,7 +352,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         $builder->orderBy = $orderBy;
         //$builder->limit = 50;
         $builder->country_id = $filter['country_id'] ?? null;
-        $builder->name = 'Pedigree';
+        $builder->name = 'Pedigree_' . ($filter['country_id'] ? Country::getScalar('name', ['id' => $filter['country_id']]) : '');
 
         if (!empty($from) && !empty($to)) {
             $casted_date = DbUtils::castDATE(Animal::tableName().'.[[birthdate]]');

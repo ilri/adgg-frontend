@@ -20,7 +20,14 @@ body {
     -webkit-box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
 }
-
+.kt-header-mobile__logo img{
+    height: -webkit-fill-available;
+}
+@media (max-width: 1024px) {
+    #kt_header_mobile_toggler{
+        visibility: hidden;
+    }
+}
 .kt-subheader {
     padding: 10px 25px;
 }
@@ -292,6 +299,26 @@ a:hover {
 .btn-primary {
     color: #fff;
     background-color: #38997a;
+    border-color: #38997a;
+}
+
+.form-group.required .control-group:after {
+    color: red;
+    content: "*";
+    position: absolute;
+    margin-left: 2px;
+    top: 2px;
+}
+
+.groupeditem {
+    background-color: #f2f3f8;
+    list-style-type: none;
+}
+
+
+.btn-generatequery {
+    color: #38997a;
+    background-color: #fff;
     border-color: #38997a;
 }
 

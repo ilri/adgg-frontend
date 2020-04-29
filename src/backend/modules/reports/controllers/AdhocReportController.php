@@ -37,7 +37,10 @@ class AdhocReportController extends Controller
     public function actionIndex($name = null, $created_by = null, $status = null, $from = null, $to = null)
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
-
+        if (!Session::isPrivilegedAdmin()) {
+            $created_by = Yii::$app->user->identity->id;
+        }
+        //dd($created_by);
         $date_filter = DateUtils::getDateFilterParams($from, $to, 'created_at', false, true);
         $condition = $date_filter['condition'];
         $params = [];
@@ -46,6 +49,7 @@ class AdhocReportController extends Controller
             'defaultOrder' => ['id' => SORT_DESC],
             'condition' => $condition,
             'params' => $params,
+            'with' => ['extractedBy'],
         ]);
         $searchModel->name = $name;
         $searchModel->created_by = $created_by;
@@ -68,6 +72,43 @@ class AdhocReportController extends Controller
         ]);
     }
 
+    /**
+     * @param $id
+     * @return bool
+     * @throws \Throwable
+     * @throws \yii\web\BadRequestHttpException
+     * @throws \yii\web\ForbiddenHttpException
+     * @throws \yii\web\NotFoundHttpException
+     */
+    public function actionDelete($id)
+    {
+        $this->hasPrivilege(Acl::ACTION_DELETE);
+        $model = $this->loadModel($id);
+        return AdhocReport::softDelete($model->id);
+    }
+
+    /**
+     * @param $id
+     * @return AdhocReport
+     * @throws \yii\web\NotFoundHttpException
+     */
+    protected function loadModel($id)
+    {
+        if (is_string($id) && !is_numeric($id)) {
+            $model = AdhocReport::loadModel(['id' => $id]);
+        } else {
+            $model = AdhocReport::loadModel($id);
+        }
+
+        return $model;
+    }
+
+    /**
+     * @param $id
+     * @throws \yii\web\BadRequestHttpException
+     * @throws \yii\web\ForbiddenHttpException
+     * @throws \yii\web\NotFoundHttpException
+     */
     public function actionDownloadFile($id)
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
@@ -76,7 +117,16 @@ class AdhocReportController extends Controller
         FileManager::downloadFile($model->getFilePath(), Str::removeWhitespace($model->report_file));
     }
 
-    public function actionRequeue($id){
+    /**
+     * @param $id
+     * @return bool|string
+     * @throws \yii\base\ExitException
+     * @throws \yii\web\BadRequestHttpException
+     * @throws \yii\web\ForbiddenHttpException
+     * @throws \yii\web\NotFoundHttpException
+     */
+    public function actionRequeue($id)
+    {
         $this->hasPrivilege(Acl::ACTION_CREATE);
 
         $model = AdhocReport::loadModel($id);

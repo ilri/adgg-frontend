@@ -8,7 +8,6 @@ use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\CalvingEvent;
 use backend\modules\core\models\ExitsEvent;
 use backend\modules\core\models\Farm;
-use backend\modules\core\models\FeedingEvent;
 use backend\modules\core\models\HealthEvent;
 use backend\modules\core\models\MilkingEvent;
 use backend\modules\core\models\PDEvent;
@@ -102,83 +101,115 @@ class ReportBuilder extends Model
     /**
      * @return array
      */
-    public static function reportableModels(){
+    public static function reportableModels()
+    {
+        $eventRelations = ['animal', 'country', 'region', 'district', 'ward', 'village', 'org', 'client'];
         return [
             'Farm' => [
                 'class' => Farm::class,
                 'title' => 'Farm',
-                'relations' => ['fieldAgent', 'region', 'district', 'ward', 'village'],
+                'relations' => ['fieldAgent', 'country', 'region', 'district', 'ward', 'village', 'org', 'client'],
             ],
             'Animal' => [
                 'class' => Animal::class,
                 'title' => 'Animal',
-                'relations' => ['farm', 'herd', 'sire', 'dam', 'region', 'district', 'ward', 'village'],
+                'relations' => ['farm', 'herd', 'sire', 'dam', 'country', 'region', 'district', 'ward', 'village', 'org', 'client'],
             ],
             'Calving_Event' => [
                 'class' => CalvingEvent::class,
                 'title' => 'Calving Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_CALVING],
-                'relations' => ['animal', 'region', 'district', 'ward', 'village'],
-                'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
+                'relations' => $eventRelations,
+                'sub_relations' => [
+                    'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.herd' => ['animal.herd_id' => 'herd.id'],
+                    'animal.sire' => ['animal.sire_id' => 'sire.id'],
+                    'animal.dam' => ['animal.dam_id' => 'dam.id'],
+                ],
             ],
             'Milking_Event' => [
                 'class' => MilkingEvent::class,
                 'title' => 'Milking Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_MILKING],
-                'relations' => ['lactation', 'animal', 'region', 'district', 'ward', 'village'],
+                'relations' => array_merge(['lactation'], $eventRelations),
                 'sub_relations' => [
                     'animal.farm' => ['animal.farm_id' => 'farm.id'],
                     'animal.herd' => ['animal.herd_id' => 'herd.id'],
+                    'animal.sire' => ['animal.sire_id' => 'sire.id'],
+                    'animal.dam' => ['animal.dam_id' => 'dam.id'],
                 ],
             ],
             'Insemination_Event' => [
                 'class' => AIEvent::class,
                 'title' => 'Insemination Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_AI],
-                'relations' => ['animal', 'region', 'district', 'ward', 'village'],
-                'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
+                'relations' => $eventRelations,
+                'sub_relations' => [
+                    'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.herd' => ['animal.herd_id' => 'herd.id'],
+                    'animal.sire' => ['animal.sire_id' => 'sire.id'],
+                    'animal.dam' => ['animal.dam_id' => 'dam.id'],
+                ],
             ],
             'Pregnancy_Diagnosis_Event' => [
                 'class' => PDEvent::class,
                 'title' => 'Pregnancy Diagnosis Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_PREGNANCY_DIAGNOSIS],
-                'relations' => ['animal', 'region', 'district', 'ward', 'village'],
-                'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
+                'relations' => $eventRelations,
+                'sub_relations' => [
+                    'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.herd' => ['animal.herd_id' => 'herd.id'],
+                    'animal.sire' => ['animal.sire_id' => 'sire.id'],
+                    'animal.dam' => ['animal.dam_id' => 'dam.id'],
+                ],
             ],
             'Synchronization_Event' => [
                 'class' => SyncEvent::class,
                 'title' => 'Synchronization Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_SYNCHRONIZATION],
-                'relations' => ['animal', 'region', 'district', 'ward', 'village'],
-                'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
+                'relations' => $eventRelations,
+                'sub_relations' => [
+                    'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.herd' => ['animal.herd_id' => 'herd.id'],
+                    'animal.sire' => ['animal.sire_id' => 'sire.id'],
+                    'animal.dam' => ['animal.dam_id' => 'dam.id'],
+                ],
             ],
             'Weights_Event' => [
                 'class' => WeightEvent::class,
                 'title' => 'Weights Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_WEIGHTS],
-                'relations' => ['animal', 'region', 'district', 'ward', 'village'],
-                'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
+                'relations' => $eventRelations,
+                'sub_relations' => [
+                    'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.herd' => ['animal.herd_id' => 'herd.id'],
+                    'animal.sire' => ['animal.sire_id' => 'sire.id'],
+                    'animal.dam' => ['animal.dam_id' => 'dam.id'],
+                ],
             ],
             'Health_Event' => [
                 'class' => HealthEvent::class,
                 'title' => 'Health Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_HEALTH],
-                'relations' => ['animal', 'region', 'district', 'ward', 'village'],
-                'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
-            ],
-            'Feeding_Event' => [
-                'class' => FeedingEvent::class,
-                'title' => 'Feeding Events',
-                'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_FEEDING],
-                'relations' => ['animal', 'region', 'district', 'ward', 'village'],
-                'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
+                'relations' => $eventRelations,
+                'sub_relations' => [
+                    'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.herd' => ['animal.herd_id' => 'herd.id'],
+                    'animal.sire' => ['animal.sire_id' => 'sire.id'],
+                    'animal.dam' => ['animal.dam_id' => 'dam.id'],
+                ],
             ],
             'Exits_Event' => [
                 'class' => ExitsEvent::class,
                 'title' => 'Exits Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_EXITS],
-                'relations' => ['animal', 'region', 'district', 'ward', 'village'],
-                'sub_relations' => ['animal.farm' => ['animal.farm_id' => 'farm.id']],
+                'relations' => $eventRelations,
+                'sub_relations' => [
+                    'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.herd' => ['animal.herd_id' => 'herd.id'],
+                    'animal.sire' => ['animal.sire_id' => 'sire.id'],
+                    'animal.dam' => ['animal.dam_id' => 'dam.id'],
+                ],
             ],
         ];
 
@@ -200,10 +231,126 @@ class ReportBuilder extends Model
     }
 
     /**
+     * @param string $reportModel
      * @return array
      */
-    public static function buildAttributeList(){
-        return [];
+    public static function buildAttributeList(string $reportModel)
+    {
+        /* @var $modelClass ActiveRecord */
+        $modelClass = static::getReportModelClass($reportModel);
+        return static::buildModelTree($modelClass);
+    }
+
+    /**
+     * @param ActiveRecord $model
+     * @param int $currentLevel
+     * @param int $maxLevel
+     * @return array
+     */
+    public static function buildModelTree(ActiveRecord $model, $currentLevel = 0, $maxLevel = 2, $parent = null, $isRelation = false, $relationName = null)
+    {
+        // increment $currentLevel each time this function is called
+        $currentLevel++;
+        /* @var $model ActiveRecord */
+        $attributes = $model->reportBuilderFields();
+        $relations = $model->reportBuilderRelations();
+        $name = $model::shortClassName();
+        $tree = [];
+        $tree['parent'] = $parent;
+        $tree['level'] = $currentLevel;
+        $tree['is_relation'] = $isRelation;
+        $tree['relation_name'] = $relationName;
+        /*
+        foreach ($attributes as $attribute){
+            //$level = $currentLevel;
+            $parentToArray = explode('.', $parent);
+            //$parentToArray = [$parent, $relationName];
+            $tree['parents'] = $parentToArray;
+            if($currentLevel == 2){
+                $tree['selected_parents'] = array_slice($parentToArray, -1, 1);
+            }
+            elseif($currentLevel > 2) {
+                // 3-1 = 2, get the second item in parents
+                $toget = $currentLevel - 1;
+                $filtered = array_merge(array_slice($parentToArray, -$toget, $toget), array_slice($parentToArray, -1, 1));
+                $tree['selected_parents'] = array_unique($filtered);
+            }else {
+
+            }
+
+            $tree['attributes'][] = $parent !== null ? $parent . '.' . $attribute : $attribute;
+        }
+        */
+        $tree['attributes'] = $attributes;
+        //$parent = null;
+        // check if we have reached the maxLevel for nesting the relations, to avoid an infinite loop or deep
+        if ($currentLevel <= $maxLevel) {
+            // build attribute tree for each relation, recursively...
+            foreach ($relations as $relation) {
+                $relationClass = static::getRelationClass($model, $relation);
+                $parent = $parent !== null ? $parent . '.' .$relation : $relation;
+                //$parent = $relationName;
+                //$parent = $relation;
+                $tree['level'] = $currentLevel;
+                $tree['relations'][$relation] = static::buildModelTree($relationClass, $currentLevel, $maxLevel, $parent,true, $relation);
+            }
+        }
+        return $tree;
+    }
+
+    public static function buildAttributesHTML(array $attributes){
+        $html = '';
+    }
+
+    public static function renderReportModelHTML(string $reportModel){
+        $modelOptions = static::reportableModels()[$reportModel];
+        /* @var $class ActiveRecord */
+        $class = new $modelOptions['class']();
+        //$title = $modelOptions['title'] ?? $reportModel;
+        $modelOptions['name'] = $reportModel;
+        $modelOptions['currentLevel'] = 0;
+        $modelOptions['maxLevel'] = 1;
+        $html = '';
+        $html .= self::renderModelHTML($class, $modelOptions);
+        return $html;
+    }
+
+    public static function renderModelHTML(ActiveRecord $model, array $reportModelOptions, $parents = [], $is_relation = false){
+        $name = $reportModelOptions['name'];
+        $title = $reportModelOptions['title'] ?? $reportModelOptions['name'];
+        $tree = static::buildModelTree($model, $reportModelOptions['currentLevel'], $reportModelOptions['maxLevel']);
+        $html = '';
+        //$html .= static::buildAttributesHTML($tree['attributes']);
+        foreach ($tree['attributes'] as $attribute){
+            // check how many parents this model has so that we can appropriately name the attributes
+            $html .= \Yii::$app->controller->renderPartial('partials/_attribute', [
+                'attribute' => $attribute,
+                'attributeTitle' => count($parents) ? (implode('.', $parents) . ' . '. $model->getAttributeLabel($attribute)) : $model->getAttributeLabel($attribute),
+                'attributeName' => count($parents) ? (implode('.', $parents) . ' . '. $attribute) : $attribute,
+                'attributeLabel' => $model->getAttributeLabel($attribute),
+                'class' => $model,
+                'modelName' => $name,
+                'parentModelName' => $name,
+                'parentModelTitle' => $title,
+            ]);
+        }
+        if(array_key_exists('relations', $tree)){
+            foreach ($tree['relations'] as $relation => $attrs){
+                $relationName = $relation;
+                $html .= '<li data-toggle="collapse"';
+                $html .= '   data-target="#collapse'.$relationName .'"';
+                $html .= '  aria-expanded="false"';
+                $html .= '  aria-controls="collapse'.$relationName .'">';
+                $html .= '  > '.$relationName .'</li>';
+
+                $relationClass = static::getRelationClass($model, $relation);
+                // set all the parents of this relation and use it when determining the attribute names to display
+                $rparents[] = $relationName;
+                $html .= static::renderModelHTML($relationClass, $reportModelOptions, $rparents, true);
+            }
+        }
+        return $html;
+
     }
 
     /**
@@ -215,7 +362,7 @@ class ReportBuilder extends Model
     public static function buildCondition($operator, $column, $value)
     {
         $null = new Expression('NULL');
-        switch ($operator){
+        switch ($operator) {
             //case '>':
             //case '<':
             //case '<=':
@@ -236,7 +383,8 @@ class ReportBuilder extends Model
      * @param string $relationName
      * @return \yii\db\ActiveRecord
      */
-    public static function getRelationClass($class, $relationName){
+    public static function getRelationClass($class, $relationName)
+    {
         /* @var $class ActiveRecord */
         $relation = $class->getRelation($relationName);
         /* @var $relationModelClass ActiveRecord */
@@ -248,7 +396,8 @@ class ReportBuilder extends Model
      * @param string $modelName
      * @return \yii\db\ActiveRecord
      */
-    public static function getReportModelClass($modelName){
+    public static function getReportModelClass($modelName)
+    {
         $className = static::reportableModels()[$modelName]['class'];
         return new $className();
     }
@@ -260,10 +409,11 @@ class ReportBuilder extends Model
      * @param bool append_field_alias
      * @return string
      */
-    public static function getFullColumnName($field, $class, $field_alias = null, $append_field_alias = false){
+    public static function getFullColumnName($field, $class, $field_alias = null, $append_field_alias = false)
+    {
         // check if field is a joined relation
-        if(strpos($field, '.')){
-            if(substr_count($field, '.') > 1){
+        if (strpos($field, '.')) {
+            if (substr_count($field, '.') > 1) {
                 // animal.farm.farmer_name
                 $relationName = (explode('.', $field)[0]); // animal
                 $subRelationName = (explode('.', $field)[1]); // farm
@@ -274,8 +424,7 @@ class ReportBuilder extends Model
                 $modelClass = $subRelationClass;
                 $tableAlias = $subRelationName;
                 $fieldLabelAlias = ucfirst($subRelationName);
-            }
-            else{
+            } else {
                 // farm.farmer_name
                 $relationName = (explode('.', $field)[0]); // farm
                 $fieldName = (explode('.', $field)[1]); // farmer_name
@@ -285,8 +434,7 @@ class ReportBuilder extends Model
                 $tableAlias = $relationName;
                 $fieldLabelAlias = ucfirst($relationName);
             }
-        }
-        else {
+        } else {
             $modelClass = $class;
             // append table name to field to remove ambiguity.
             $fieldName = $field;
@@ -297,18 +445,18 @@ class ReportBuilder extends Model
         $tableAlias = \Yii::$app->db->quoteTableName($tableAlias);
 
         # append alias to field to remove ambiguity
-        $aliasedField = $tableAlias.'. [['.$fieldName.']]';
+        $aliasedField = $tableAlias . '. [[' . $fieldName . ']]';
 
         # additional columns
-        if($modelClass->hasMethod('isAdditionalAttribute')){
-            if ($modelClass->isAdditionalAttribute($fieldName)){
+        if ($modelClass->hasMethod('isAdditionalAttribute')) {
+            if ($modelClass->isAdditionalAttribute($fieldName)) {
                 # for additional attributes, find a way to get their values
                 $attributeModel = TableAttribute::find()->andWhere(['attribute_key' => $fieldName, 'table_id' => $modelClass::getDefinedTableId()])->one();
                 $id = $attributeModel->id;
                 $attributesColumn = "{$tableAlias}.[[additional_attributes]]";
                 # get the value of this field from the json payload
                 # e.g JSON_EXTRACT(`core_farm`.`additional_attributes`, '$."34"')
-                $aliasedField = new Expression('JSON_UNQUOTE(JSON_EXTRACT('.$attributesColumn.', '."'".'$."'.$id.'"'."'".'))');
+                $aliasedField = new Expression('JSON_UNQUOTE(JSON_EXTRACT(' . $attributesColumn . ', ' . "'" . '$."' . $id . '"' . "'" . '))');
 
             }
         }
@@ -319,21 +467,19 @@ class ReportBuilder extends Model
 
         # convert label to camelCase if there are spaces in the word
         $attrLabel = Inflector::camelize($attrLabel);
-        if(strpos($modelClass->getAttributeLabel($fieldName), ' ' )){
+        if (strpos($modelClass->getAttributeLabel($fieldName), ' ')) {
             $attrLabel = Inflector::variablize($attrLabel);
         }
 
-        $fieldAlias = $fieldLabelAlias . '_' .$attrLabel;
+        $fieldAlias = $fieldLabelAlias . '_' . $attrLabel;
 
-        if($append_field_alias){
-            if($field_alias === null){
-                return $aliasedField . ' AS [[' . $fieldAlias .']]';
+        if ($append_field_alias) {
+            if ($field_alias === null) {
+                return $aliasedField . ' AS [[' . $fieldAlias . ']]';
+            } else {
+                return $aliasedField . ' AS [[' . $field_alias . ']]';
             }
-            else {
-                return $aliasedField . ' AS [[' . $field_alias .']]';
-            }
-        }
-        else{
+        } else {
             return $aliasedField;
         }
     }
@@ -341,7 +487,8 @@ class ReportBuilder extends Model
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function generateQuery(){
+    public function generateQuery()
+    {
         //$className = static::reportableModels()[$this->model]['class'];
         /* @var $class ActiveRecord */
         //$class = new $className();
@@ -356,18 +503,18 @@ class ReportBuilder extends Model
         // start the query
         $query = $class::find();
         // get the attributes for select
-        foreach ($this->filterConditions as $field => $conditionOperator){
-            $fieldAlias = str_replace('.','_', $field);
+        foreach ($this->filterConditions as $field => $conditionOperator) {
+            $fieldAlias = str_replace('.', '_', $field);
 
-            if(strpos($field, '.')){
-                if(substr_count($field, '.') > 1){
+            if (strpos($field, '.')) {
+                if (substr_count($field, '.') > 1) {
                     // animal.farm.farmer_name
                     $relationName = (explode('.', $field)[0]); // animal
                     $subRelationName = (explode('.', $field)[1]); // farm
                     // add subrelation to other joins
                     $other_joins[$subRelationName] = $relationName;
-                }
-                else {
+                    $joins[] = $relationName;
+                } else {
                     $relationName = (explode('.', $field)[0]);
                     $joins[] = $relationName;
                 }
@@ -381,20 +528,20 @@ class ReportBuilder extends Model
             // add field to select
             //$query->addSelect(new Expression( $aliasedField . ' AS "' . $field . '"'));
 
-            if (!in_array($field, $this->excludeFromReport)){
+            if (!in_array($field, $this->excludeFromReport)) {
                 $query->addSelect(new Expression($selectField));
             }
             // extract alias from selectField
 
             $field_alias_array = explode('AS', $selectField);
-            $generated_alias = str_replace('[[','', $field_alias_array[1]);
-            $generated_alias = str_replace(']]','', $generated_alias);
+            $generated_alias = str_replace('[[', '', $field_alias_array[1]);
+            $generated_alias = str_replace(']]', '', $generated_alias);
             $generated_alias = trim($generated_alias);
 
             $this->fieldAliasMapping[$field] = $generated_alias;
 
             // build the condition
-            if (!empty($conditionOperator)){
+            if (!empty($conditionOperator)) {
                 // get the condition value for this field
                 $filter = $this->filterValues[$field];
                 $sqlCondition = static::buildCondition($conditionOperator, $aliasedField, $filter);
@@ -404,30 +551,30 @@ class ReportBuilder extends Model
         // do the select
         //$query->addSelect($attributes);
         // do the joins
-        if (count($joins)){
-            foreach (array_unique($joins) as $join){
+        if (count($joins)) {
+            foreach (array_unique($joins) as $join) {
                 //$query->joinWith($join . ' as ' . $join);
                 $query->joinWith([
-                    $join => function(\yii\db\ActiveQuery $q) use ($join, $class){
+                    $join => function (\yii\db\ActiveQuery $q) use ($join, $class) {
                         $object = static::getRelationClass($class, $join);
                         $q->from([$join => $object::tableName()]);
                         $q->alias($join);
                         $q->where([]);
                         if ($object->hasAttribute('is_deleted')) {
-                            $q->andWhere(['[['.$join.']]' . '.[[is_deleted]]' => 0]);
+                            $q->andWhere(['[[' . $join . ']]' . '.[[is_deleted]]' => 0]);
                         }
                     }
                 ]);
             }
         }
         //dd($joins, $other_joins);
-        if (count($other_joins)){
-            foreach ($other_joins as $subRelationName => $relationName){
-                $link = $reportableModelOptions['sub_relations'][$relationName. '.' . $subRelationName];
+        if (count($other_joins)) {
+            foreach ($other_joins as $subRelationName => $relationName) {
+                $link = $reportableModelOptions['sub_relations'][$relationName . '.' . $subRelationName];
                 $modelClass = static::getRelationClass($class, $relationName); // Animal::class
                 $subRelationClass = static::getRelationClass($modelClass, $subRelationName); // Farm::class
                 $on = '';
-                foreach ($link as $k => $f){
+                foreach ($link as $k => $f) {
                     // animal.farm_id
                     $on .= static::getFullColumnName($k, $class);
                     $on .= ' = ';
@@ -439,15 +586,15 @@ class ReportBuilder extends Model
         }
 
         // do limit and orderBy
-        if($this->limit){
+        if ($this->limit) {
             $query->limit($this->limit);
         }
-        if ($this->orderBy){
+        if ($this->orderBy) {
             // should be a fully qualified column name
             $query->orderBy(static::getFullColumnName($this->orderBy, $class));
         }
         // if reportable model has extraCondition to be enforced, add it here
-        if(array_key_exists('extraCondition', $reportableModelOptions)){
+        if (array_key_exists('extraCondition', $reportableModelOptions)) {
             $condition = $reportableModelOptions['extraCondition'];
             if (count($condition)) {
                 foreach ($condition as $f => $value) {
@@ -466,14 +613,14 @@ class ReportBuilder extends Model
             $query->andWhere($sqlCondition);
         }
         // append extra filters from elsewhere
-        if(count($this->extraFilterExpressions)){
-            foreach ($this->extraFilterExpressions as $expression){
+        if (count($this->extraFilterExpressions)) {
+            foreach ($this->extraFilterExpressions as $expression) {
                 $query->andWhere($expression);
             }
         }
         // append extra select expressions, from elsewhere not in the UI
-        if(count($this->extraSelectExpressions)){
-            foreach ($this->extraSelectExpressions as $expression){
+        if (count($this->extraSelectExpressions)) {
+            foreach ($this->extraSelectExpressions as $expression) {
                 $query->addSelect($expression);
             }
         }
@@ -484,20 +631,21 @@ class ReportBuilder extends Model
     /**
      * @return string
      */
-    public function rawQuery(){
+    public function rawQuery()
+    {
         return $this->generateQuery()->createCommand()->rawSql;
     }
 
-    public function saveReport(){
+    public function saveReport()
+    {
         // save name, raw_query
         $report = new AdhocReport();
         $report->name = $this->name;
         $report->raw_sql = $this->rawQuery();
         $report->status = AdhocReport::STATUS_QUEUED;
-        if($report->save()){
+        if ($report->save()) {
             return true;
-        }
-        else{
+        } else {
             return $report->getErrors();
         }
     }

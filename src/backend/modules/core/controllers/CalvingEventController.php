@@ -15,6 +15,7 @@ use backend\modules\core\forms\UploadCalvingEvent;
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\CalvingEvent;
 use common\controllers\UploadExcelTrait;
+use Yii;
 
 class CalvingEventController extends Controller
 {
@@ -39,7 +40,7 @@ class CalvingEventController extends Controller
         $this->hasPrivilege(Acl::ACTION_CREATE);
 
         $form = new UploadCalvingEvent(CalvingEvent::class);
-        $resp = $this->uploadExcelConsole($form, 'calving-event/index', []);
+        $resp = $this->uploadExcelConsole($form, 'calving-event/index', Yii::$app->request->queryParams);
         if ($resp !== false) {
             return $resp;
         }

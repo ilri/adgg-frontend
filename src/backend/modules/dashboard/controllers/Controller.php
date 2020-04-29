@@ -48,10 +48,11 @@ class Controller extends BackendController
                             'animal-summary',
                             'stats',
                             'dash',
-                            'dash1',
-                            'dash2',
-                            'dash3',
-                            'dash4',
+                            'lsf',
+                            'test-day',
+                            'genotype',
+                            'insemination-pd-calving',
+                            'load-chart'
 
                         ],
                         'allow' => true,

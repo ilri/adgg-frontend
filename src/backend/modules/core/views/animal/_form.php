@@ -67,7 +67,10 @@ use yii\bootstrap4\ActiveForm;
                         <?= $form->field($model, 'herd_id')->widget(Select2::class, [
                             'data' => AnimalHerd::getListData('id', 'name', false, []),
                             'options' => [
+                                'class' => 'form-control parent-depdropdown',
                                 'placeholder' => '[select one]',
+                                'data-url' => Url::to(['herd/get-list', 'farm_id' => 'idV', 'placeholder' => true]),
+                                'data-selected' => $model->region_id,
                             ],
                             'pluginOptions' => [
                                 'allowClear' => false
@@ -107,7 +110,7 @@ use yii\bootstrap4\ActiveForm;
                                     'data-child-selectors' => [
                                         '#' . Html::getInputId($model, 'district_id'),
                                     ],
-                                    'data-url' => Url::to(['country-units/get-list', 'country_id' => 'idV', 'level' => CountryUnits::LEVEL_REGION]),
+                                    'data-url' => Url::to(['country-units/get-list', 'country_id' => 'idV', 'level' => CountryUnits::LEVEL_REGION, 'placeholder' => true]),
                                     'data-selected' => $model->region_id,
                                 ],
                                 'pluginOptions' => [
@@ -126,7 +129,7 @@ use yii\bootstrap4\ActiveForm;
                                     'data-child-selectors' => [
                                         '#' . Html::getInputId($model, 'ward_id'),
                                     ],
-                                    'data-url' => Url::to(['country-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_DISTRICT]),
+                                    'data-url' => Url::to(['country-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_DISTRICT, 'placeholder' => true]),
                                     'data-selected' => $model->district_id,
                                 ],
                                 'pluginOptions' => [
@@ -145,7 +148,7 @@ use yii\bootstrap4\ActiveForm;
                                     'data-child-selectors' => [
                                         '#' . Html::getInputId($model, 'village_id'),
                                     ],
-                                    'data-url' => Url::to(['country-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_WARD]),
+                                    'data-url' => Url::to(['country-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_WARD, 'placeholder' => true]),
                                     'data-selected' => $model->ward_id,
                                 ],
                                 'pluginOptions' => [
@@ -161,7 +164,7 @@ use yii\bootstrap4\ActiveForm;
                                 'options' => [
                                     'class' => 'form-control parent-depdropdown',
                                     'placeholder' => '[select one]',
-                                    'data-url' => Url::to(['country-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_VILLAGE]),
+                                    'data-url' => Url::to(['country-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_VILLAGE, 'placeholder' => true]),
                                     'data-selected' => $model->village_id,
                                 ],
                                 'pluginOptions' => [

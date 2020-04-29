@@ -37,6 +37,8 @@ use common\models\CustomValidationsTrait;
  * @property int $lactation_id
  * @property string $lactation_number
  * @property string|array $additional_attributes
+ * @property string $migration_id
+ *
  * @property Animal $animal
  * @property Country $country
  * @property Users $fieldAgent
@@ -53,12 +55,13 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     const EVENT_TYPE_SYNCHRONIZATION = 5;
     const EVENT_TYPE_WEIGHTS = 6;
     const EVENT_TYPE_HEALTH = 7;
-    const EVENT_TYPE_FEEDING = 8;
     const EVENT_TYPE_EXITS = 9;
     const EVENT_TYPE_SAMPLING = 10;//no data available yet
     const EVENT_TYPE_CERTIFICATION = 11;//no data available yet
 
     public $animalTagId;
+
+    const SCENARIO_MISTRO_DB_UPLOAD = 'KLBA_UPLOAD';
 
     /**
      * {@inheritdoc}
@@ -80,8 +83,9 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             [['latitude', 'longitude'], 'number'],
             [['map_address', 'uuid'], 'string', 'max' => 255],
             ['event_date', 'validateNoFutureDate'],
-            ['event_date', 'unique', 'targetAttribute' => ['country_id', 'animal_id', 'event_type', 'event_date'], 'message' => '{attribute} should be unique per animal'],
+            ['event_date', 'unique', 'targetAttribute' => ['country_id', 'animal_id', 'event_type', 'event_date'], 'message' => '{attribute} should be unique per animal', 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
             [['org_id', 'client_id'], 'safe'],
+            ['migration_id', 'unique'],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
     }
@@ -149,10 +153,12 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
      */
     public function searchParams()
     {
+        $alias = static::tableName();
         return [
             'animal_id',
             'event_type',
-            'country_id',
+            [$alias . '.country_id', 'country_id', '', '='],
+            [$alias . '.org_id', 'org_id', '', '='],
             'region_id',
             'district_id',
             'ward_id',
@@ -212,8 +218,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
 
     protected function setLactationId()
     {
-        //only done for milking event
-        if ($this->event_type != self::EVENT_TYPE_MILKING) {
+        if (!empty($this->lactation_id) || $this->event_type != self::EVENT_TYPE_MILKING || $this->scenario == MilkingEvent::SCENARIO_MISTRO_DB_UPLOAD) {
             return;
         }
         $this->lactation_id = static::fetchLactationId($this->animal_id, $this->event_date);
@@ -225,17 +230,16 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
         $this->setLactationNumber();
         if ($this->event_type == self::EVENT_TYPE_CALVING) {
             //update milk records
-            $data = static::getData(['id', 'event_date'], ['event_type' => self::EVENT_TYPE_MILKING, 'animal_id' => $this->animal_id]);
+            /*$data = static::getData(['id', 'event_date'], ['event_type' => self::EVENT_TYPE_MILKING, 'animal_id' => $this->animal_id]);
             foreach ($data as $row) {
                 $lactation_id = static::fetchLactationId($this->animal_id, $row['event_date']);
                 static::updateAll(['lactation_id' => $lactation_id], ['id' => $row['id']]);
-            }
+            }*/
         }
     }
 
     protected function setLactationNumber()
     {
-        //only done for calving/lactation event
         if ($this->event_type != self::EVENT_TYPE_CALVING) {
             return;
         }
@@ -262,14 +266,6 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     }
 
     /**
-     * @return int
-     */
-    public static function getDefinedType(): int
-    {
-        return TableAttribute::TYPE_EVENT;
-    }
-
-    /**
      * @param int $int
      * @return string
      */
@@ -290,8 +286,6 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
                 return 'Weights/Growth';
             case self::EVENT_TYPE_HEALTH:
                 return 'Health';
-            case self::EVENT_TYPE_FEEDING:
-                return 'Feeding';
             case self::EVENT_TYPE_EXITS:
                 return 'Exits';
             case self::EVENT_TYPE_SAMPLING:
@@ -317,11 +311,21 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             self::EVENT_TYPE_SYNCHRONIZATION => static::decodeEventType(self::EVENT_TYPE_SYNCHRONIZATION),
             self::EVENT_TYPE_WEIGHTS => static::decodeEventType(self::EVENT_TYPE_WEIGHTS),
             self::EVENT_TYPE_HEALTH => static::decodeEventType(self::EVENT_TYPE_HEALTH),
-            self::EVENT_TYPE_FEEDING => static::decodeEventType(self::EVENT_TYPE_FEEDING),
             self::EVENT_TYPE_EXITS => static::decodeEventType(self::EVENT_TYPE_EXITS),
             //self::EVENT_TYPE_SAMPLING => static::decodeEventType(self::EVENT_TYPE_SAMPLING),
             //self::EVENT_TYPE_CERTIFICATION => static::decodeEventType(self::EVENT_TYPE_CERTIFICATION),
         ], $prompt);
+    }
+
+    /**
+     * @param $animalId
+     * @param $eventType
+     * @return array|\yii\db\ActiveRecord|null
+     */
+    public static function getLastAnimalEvent($animalId, $eventType)
+    {
+        return static::find()->andWhere(['animal_id' => $animalId, 'event_type' => $eventType])->orderBy(['event_date' => SORT_DESC])->one();
+
     }
 
     /**
@@ -379,5 +383,50 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     {
         list($condition, $params) = static::appendOrgSessionIdCondition($condition, $params, false);
         return parent::getDashboardStats($durationType, $sum, $filters, $dateField, $from, $to, $condition, $params);
+    }
+
+    /**
+     * @return array
+     * @throws \Exception
+     */
+    public function reportBuilderFields()
+    {
+        $this->ignoreAdditionalAttributes = true;
+        $attributes = $this->attributes();
+        $attrs = [];
+        $fields = TableAttribute::getData(['attribute_key'], ['table_id' => self::getDefinedTableId(), 'event_type' => $this->getEventType()]);
+
+        foreach ($fields as $k => $field) {
+            $attrs[] = $field['attribute_key'];
+        }
+        $attrs = array_merge($attributes, $attrs);
+        $unwanted = array_merge($this->reportBuilderUnwantedFields(), $this->reportBuilderAdditionalUnwantedFields());
+        $attrs = array_diff($attrs, $unwanted);
+        sort($attrs);
+        return $attrs;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function reportBuilderFieldsMapping(): array
+    {
+        return [
+            'event_type' => [
+                'tooltip' => function ($field) {
+                    $choices = static::eventTypeOptions();
+                    return static::buildChoicesTooltip(null, $choices);
+                },
+            ],
+
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function reportBuilderRelations()
+    {
+        return array_merge(['animal'], $this->reportBuilderCommonRelations(), $this->reportBuilderCoreDataRelations());
     }
 }

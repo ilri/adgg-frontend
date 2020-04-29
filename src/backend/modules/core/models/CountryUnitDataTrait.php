@@ -53,8 +53,10 @@ trait CountryUnitDataTrait
         if (Utils::isWebApp() && Session::isCountry()) {
             if (is_array($condition)) {
                 $condition['country_id'] = Session::getCountryId();
-                if (Session::isExternalOrgUser()) {
+                if (Session::isOrganizationUser()) {
                     $condition['org_id'] = Session::getOrgId();
+                } elseif (Session::isOrganizationClientUser()) {
+                    $condition['client_id'] = Session::getClientId();
                 } elseif (Session::isRegionUser()) {
                     $condition['region_id'] = Session::getRegionId();
                 } elseif (Session::isDistrictUser()) {
@@ -66,8 +68,10 @@ trait CountryUnitDataTrait
                 }
             } else {
                 list($condition, $params) = DbUtils::appendCondition('country_id', Session::getCountryId(), $condition, $params);
-                if (Session::isExternalOrgUser()) {
+                if (Session::isOrganizationUser()) {
                     list($condition, $params) = DbUtils::appendCondition('org_id', Session::getOrgId(), $condition, $params);
+                } elseif (Session::isOrganizationClientUser()) {
+                    list($condition, $params) = DbUtils::appendCondition('client_id', Session::getClientId(), $condition, $params);
                 } elseif (Session::isRegionUser()) {
                     list($condition, $params) = DbUtils::appendCondition('region_id', Session::getRegionId(), $condition, $params);
                 } elseif (Session::isDistrictUser()) {

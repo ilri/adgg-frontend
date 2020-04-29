@@ -1,5 +1,6 @@
 <?php
 
+use backend\modules\auth\Session;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
@@ -21,8 +22,10 @@ $user = Yii::$app->user->identity;
     <!-- begin:: Header Topbar -->
     <div class="kt-header__topbar">
         <div class="kt-header__topbar-item">
-            <a class="kt-header__topbar-wrapper" href="<?= Url::to(['/help/help-content/index']) ?>">
-                    <span class="kt-header__topbar-icon" title="Help"><i class="flaticon2-information"></i></span>
+            <a class="pt-3" href="<?=Url::to(['/help/help-content/read']) ?>">
+                <div class="kt-header__topbar-wrapper">
+                    <span class="kt-header__topbar-icon" title="Help"><i class="fas fa-question-circle"></i></span>
+                </div>
             </a>
         </div>
         <!--begin: Notifications -->

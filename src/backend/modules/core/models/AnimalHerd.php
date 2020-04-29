@@ -32,6 +32,7 @@ use common\models\ActiveSearchTrait;
  * @property string $reg_date
  * @property string $project
  * @property string $additional_attributes
+ * @property string $migration_id
  *
  * @property Farm $farm
  * @property Country $country
@@ -66,9 +67,11 @@ class AnimalHerd extends ActiveRecord implements ActiveSearchInterface, ImportAc
             [['latitude', 'longitude'], 'number'],
             [['farm_id'], 'exist', 'skipOnError' => true, 'targetClass' => Farm::class, 'targetAttribute' => ['farm_id' => 'id']],
             [['reg_date'], 'date', 'format' => 'php:Y-m-d'],
-            [['name'], 'unique', 'targetAttribute' => ['farm_id', 'name'], 'message' => '{attribute} already exists.'],
+            //[['name'], 'unique', 'targetAttribute' => ['farm_id', 'name'], 'message' => '{attribute} already exists.'],
             [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
+            [['additional_attributes', 'org_id', 'client_id'], 'safe'],
             [$this->getAdditionalAttributes(), 'safe'],
+            ['migration_id', 'unique'],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
     }
@@ -81,15 +84,15 @@ class AnimalHerd extends ActiveRecord implements ActiveSearchInterface, ImportAc
         $labels = [
             'id' => 'ID',
             'name' => 'Herd Name',
-            'farm_id' => 'Farm ID',
+            'farm_id' => 'Farm',
             'uuid' => 'Uuid',
-            'country_id' => 'Country ID',
-            'region_id' => 'Region ID',
-            'district_id' => 'District ID',
-            'ward_id' => 'Ward ID',
-            'village_id' => 'Village ID',
-            'org_id' => 'External Organization ID',
-            'client_id' => 'Client ID',
+            'country_id' => 'Country',
+            'region_id' => 'Region',
+            'district_id' => 'District',
+            'ward_id' => 'Ward',
+            'village_id' => 'Village',
+            'org_id' => 'Organization',
+            'client_id' => 'Client ',
             'latitude' => 'Latitude',
             'longitude' => 'Longitude',
             'map_address' => 'Map Address',
@@ -189,8 +192,8 @@ class AnimalHerd extends ActiveRecord implements ActiveSearchInterface, ImportAc
     /**
      * @inheritDoc
      */
-    public static function getDefinedType(): int
+    public function reportBuilderRelations()
     {
-        return TableAttribute::TYPE_ATTRIBUTE;
+        return array_merge(['farm'], $this->reportBuilderCommonRelations(), $this->reportBuilderCoreDataRelations());
     }
 }

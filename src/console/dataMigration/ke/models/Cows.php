@@ -95,7 +95,7 @@ use Yii;
  */
 class Cows extends MigrationBase implements MigrationInterface
 {
-    const MIGRATION_ID_PREFIX = 'KLBA_COWS_';
+    const MIGRATION_ID_PREFIX = 'STANLEY_COWS_';
 
     /**
      * {@inheritdoc}
@@ -244,13 +244,14 @@ class Cows extends MigrationBase implements MigrationInterface
         /* @var $dataModels $this[] */
         $n = 1;
         $countryId = Helper::getCountryId(Constants::KENYA_COUNTRY_CODE);
-        $orgId = Helper::getOrgId(Constants::KLBA_ORG_NAME);
-        $model = new Animal(['country_id' => $countryId, 'org_id' => $orgId]);
+        $orgId = Helper::getOrgId(Constants::ORG_NAME);
+        $model = new Animal(['country_id' => $countryId, 'org_id' => $orgId, 'scenario' => Animal::SCENARIO_MISTRO_DB_COW_UPLOAD]);
         foreach ($query->batch() as $i => $dataModels) {
             foreach ($dataModels as $dataModel) {
                 $herdModel = self::getHerd($dataModel->Cows_Herd);
                 if (null === $herdModel) {
-                    Yii::$app->controller->stdout("ERROR: Herd does not exist{$n}\n");
+                    Yii::$app->controller->stdout("ERROR: Herd ID {$dataModel->Cows_Herd} does not exist.\n");
+                    continue;
                 }
                 $newModel = clone $model;
                 $newModel->migration_id = Helper::getMigrationId($dataModel->Cows_ID, self::MIGRATION_ID_PREFIX);
@@ -259,6 +260,29 @@ class Cows extends MigrationBase implements MigrationInterface
                 $newModel->tag_id = $dataModel->Cows_HIONo;
                 $newModel->name = $dataModel->Cows_RegName;
                 $newModel->animal_eartag_id = $dataModel->Cows_EarTag;
+                if (strtolower($dataModel->Cows_Sex) == 'm') {
+                    $newModel->sex = 1;
+                } elseif (strtolower($dataModel->Cows_Sex) == 'f') {
+                    $newModel->sex = 2;
+                }
+                $newModel->birthdate = $dataModel->Cows_Birth;
+                $newModel->sire_tag_id = Helper::getMigrationId($dataModel->Cows_Sire, Bulls::MIGRATION_ID_PREFIX);
+                $newModel->dam_tag_id = Helper::getMigrationId($dataModel->Cows_Dam, self::MIGRATION_ID_PREFIX);
+                $newModel->breed_composition_details = $dataModel->Cows_BreedS;
+                $newModel->herd_book_no = $dataModel->Cows_HerdBook;
+                $newModel->entry_date = $dataModel->Cows_RegDate;
+                $newModel->animal_grade = $dataModel->Cows_Grade;
+                $newModel->animal_notes = $dataModel->Cows_Remark;
+                $newModel->cow_status = $dataModel->Cows_CowStatus;
+                if ($dataModel->Cows_Origin == 0) {
+                    $newModel->entry_type = 2;
+                } elseif ($dataModel->Cows_Origin == 1) {
+                    $newModel->entry_type = 1;
+                } elseif ($dataModel->Cows_Origin == 2) {
+                    $newModel->entry_type = 3;
+                }
+                $newModel->animal_exit_date = $dataModel->Cows_TermDate;
+                $newModel->animal_exit_code = $dataModel->Cows_TermCode;
 
                 static::saveModel($newModel, $n);
                 $n++;
@@ -274,5 +298,96 @@ class Cows extends MigrationBase implements MigrationInterface
     {
         $migrationId = Helper::getMigrationId($oldHerdId);
         return AnimalHerd::find()->andWhere(['migration_id' => $migrationId])->one();
+    }
+
+    public static function getODKBreedCode($mistroCode)
+    {
+        $map = [
+            'F' => 0,
+            'J' => 0,
+            ''
+        ];
+    }
+
+    public static function getMistroExitCodes($id)
+    {
+        $id = (string)$id;
+        $map = [
+            '1' => 'S1',
+            '2' => 'S2',
+            '3' => 'S3',
+            '4' => 'S4',
+            '5' => 'S5',
+            '6' => 'S6',
+            '7' => 'S7',
+            '8' => 'S8',
+            '9' => 'S9',
+            '10' => 'X3',
+            '11' => 'X2',
+            '12' => 'X1',
+            '13' => 'X5',
+            '14' => 'X4',
+            '15' => 'X6',
+            '16' => 'X7',
+            '17' => 'X9',
+            '18' => 'X8',
+            '-1' => 'XCENTRE',
+            '19' => 'X10',
+            '20' => 'SE',
+        ];
+
+        return $map[$id] ?? $id;
+    }
+
+    public static function updateSiresAndDams()
+    {
+        $condition = '[[migration_id]] IS NOT NULL AND ([[dam_id]] IS NULL OR [[sire_id]] IS NULL)';
+        $params = [];
+        $query = Animal::find()->andWhere($condition, $params);
+        $n = 1;
+        /* @var $models Animal[] */
+        foreach ($query->batch() as $i => $models) {
+            foreach ($models as $model) {
+                if ($n < 55000) {
+                    $n++;
+                    Yii::$app->controller->stdout("Animal Record: {$n} already updated. Ignored\n");
+                    continue;
+                }
+                if (empty($model->migration_id)) {
+                    $n++;
+                    Yii::$app->controller->stdout("The animal id: {$model->id} is not from KLBA. Ignored\n");
+                    continue;
+                }
+                if (!empty($model->sire_tag_id)) {
+                    if (!empty($model->sire_id)) {
+                        $n++;
+                        Yii::$app->controller->stdout("Animal Record: {$n} already updated. Ignored\n");
+                        continue;
+                    }
+                    $sire = Animal::getOneRow(['id', 'tag_id'], ['migration_id' => $model->sire_tag_id]);
+                    if (!empty($sire)) {
+                        $model->sire_id = $sire['id'];
+                        $model->sire_tag_id = $sire['tag_id'];
+                    }
+                }
+                if (!empty($model->dam_tag_id)) {
+                    if (!empty($model->dam_id)) {
+                        $n++;
+                        Yii::$app->controller->stdout("Animal Record: {$n} already updated. Ignored\n");
+                        continue;
+                    }
+                    $dam = Animal::getOneRow(['id', 'tag_id'], ['migration_id' => $model->dam_tag_id]);
+                    if (!empty($dam)) {
+                        $model->dam_id = $dam['id'];
+                        $model->dam_tag_id = $dam['tag_id'];
+                    }
+                }
+                if (!empty($model->sire_tag_id) || !empty($model->dam_tag_id)) {
+                    $model->save(false);
+                    Yii::$app->controller->stdout("Updated {$n} animal records\n");
+                }
+                $n++;
+            }
+        }
     }
 }

@@ -16,6 +16,7 @@ use Yii;
  * @property string $description
  * @property integer $readonly
  * @property integer $level_id
+ * @property int $is_field_agent
  * @property string $created_at
  * @property integer $created_by
  * @property int $is_active
@@ -49,7 +50,8 @@ class Roles extends ActiveRecord implements ActiveSearchInterface
     {
         return [
             [['name'], 'required'],
-            [['readonly', 'level_id', 'is_active'], 'integer'],
+            [['readonly', 'level_id', 'is_field_agent'], 'integer'],
+            [['is_active'], 'safe'],
             [['name'], 'string', 'max' => 128],
             [['description'], 'string', 'max' => 255],
             [['name'], 'unique', 'message' => Lang::t('{attribute} {value} already exists.')],
@@ -67,6 +69,7 @@ class Roles extends ActiveRecord implements ActiveSearchInterface
             'description' => Lang::t('Description'),
             'level_id' => Lang::t('Account Type'),
             'is_active' => Lang::t('Active'),
+            'is_field_agent' => Lang::t('Is Field Agent'),
         ];
     }
 
@@ -79,6 +82,7 @@ class Roles extends ActiveRecord implements ActiveSearchInterface
             ['name', 'name'],
             'level_id',
             'is_active',
+            'is_field_agent'
         ];
     }
 
@@ -113,5 +117,13 @@ class Roles extends ActiveRecord implements ActiveSearchInterface
                     ->execute();
             }
         }
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFieldAgent()
+    {
+        return $this->is_field_agent == true;
     }
 }

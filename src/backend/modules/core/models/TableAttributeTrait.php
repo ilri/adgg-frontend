@@ -98,11 +98,10 @@ trait TableAttributeTrait
         return $this->_additionalAttributesListTypeIds;
     }
 
-    protected function setAdditionalAttributes()
+    public function setAdditionalAttributes()
     {
         $tableId = static::getDefinedTableId();
-        $type = static::getDefinedType();
-        $attributes = TableAttribute::getDefinedAttributes($tableId, $type);
+        $attributes = TableAttribute::getDefinedAttributes($tableId);
         if (!empty($attributes)) {
             $attributeKeys = [];
             $attributeIds = [];

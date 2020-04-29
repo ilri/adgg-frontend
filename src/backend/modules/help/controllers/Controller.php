@@ -52,8 +52,6 @@ class Controller extends BackendController
                             'upload-image',
                             'read',
                             'manual',
-                            'api-doc',
-                            'db-doc',
                         ],
                         'allow' => true,
                         'roles' => ['@'],

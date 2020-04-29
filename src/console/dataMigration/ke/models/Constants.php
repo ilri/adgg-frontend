@@ -11,9 +11,9 @@ namespace console\dataMigration\ke\models;
 
 class Constants
 {
-    const KLBA_DATA_SOURCE_PREFIX = 'KLBA_';
+    const DATA_SOURCE_PREFIX = 'STANLEY_';
     const KENYA_COUNTRY_CODE = 3;
-    const KLBA_ORG_NAME = 'KLBA';
+    const ORG_NAME = 'STANLEY AND SON LIMITED';
 
     //mistro lookup codes
     const SEX_MALE = 'M';

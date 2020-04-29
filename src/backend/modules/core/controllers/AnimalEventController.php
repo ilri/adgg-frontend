@@ -10,6 +10,7 @@ namespace backend\modules\core\controllers;
 
 
 use backend\modules\auth\Acl;
+use backend\modules\auth\Session;
 use backend\modules\core\Constants;
 use backend\modules\core\forms\UploadFarms;
 use backend\modules\core\models\AnimalEvent;
@@ -40,11 +41,11 @@ class AnimalEventController extends Controller
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
         $events = AnimalEvent::eventTypeOptions();
+        $country_id = Session::getCountryId($country_id);
         $country = Country::findOne(['id' => $country_id]);
         return $this->render('/animal-event/event-lists', [
             'country' => $country,
             'events' => $events,
-            'country_id' => $country_id,
         ]);
     }
 
@@ -52,6 +53,8 @@ class AnimalEventController extends Controller
      * @param null $event_type
      * @param null $animal_id
      * @param null $country_id
+     * @param int|null $org_id
+     * @param int|null $client_id
      * @param null $region_id
      * @param null $district_id
      * @param null $ward_id
@@ -63,10 +66,10 @@ class AnimalEventController extends Controller
      * @throws \yii\web\ForbiddenHttpException
      * @throws \yii\web\NotFoundHttpException
      */
-    public function actionIndex($event_type = null, $animal_id = null, $country_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $from = null, $to = null)
+    public function actionIndex($event_type = null, $animal_id = null, $country_id = null, $org_id = null, $client_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $from = null, $to = null)
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
-        return $this->renderIndexAction($event_type, $animal_id, $country_id, $region_id, $district_id, $ward_id, $village_id, $from, $to);
+        return $this->renderIndexAction($event_type, $animal_id, $country_id, $org_id, $client_id, $region_id, $district_id, $ward_id, $village_id, $from, $to);
     }
 
     public function actionView($id)
