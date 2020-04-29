@@ -43,7 +43,7 @@ if (count($chart_data) > 0) {
     }
 }
 //dd(CountriesDashboardStats::rangeYears(), $chart_data, $data);
-$_series = [
+/*$_series = [
     [
         'name' => 'Bull',
         'data' => [1,2,3,4,5],
@@ -75,6 +75,7 @@ $_series = [
         'stack' => 'TZ',
     ],
 ];
+*/
 $series = $data;
 $graphOptions = [
     'chart' => [
@@ -130,9 +131,13 @@ $graphOptions = [
         ]
     ],
     'colors' => [
-        '#771957',
-        '#7986CB',
-        '#7F5298',
+        '#800080', '#902C8E', '#A0479D', '#AF60AC',
+        '#BE78BB', '#CD90C9', '#DCA8D9', '#EBC0E8',
+        '#FAD8F7', '#000000', '#1E1E1E', '#363636',
+        '#4F4F4F', '#6A6A6A', '#878787', '#A4A4A4',
+        '#C3C3C3', '#E2E2E2', '#ECBEB3', '#FFD7CD',
+        '#641E16', '#783429', '#8B4A3E', '#9F6054',
+        '#B2776A', '#C58E82', '#D9A69A', '#C6E6FF',
     ],
 ];
 $containerId = 'chartContainerAC';

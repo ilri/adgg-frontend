@@ -12,6 +12,7 @@ use yii\helpers\Json;
 </div>
 <?php
 $animals = CountriesDashboardStats::getAnimalsCumulativeForDataViz($filterOptions);
+# this is what takes a lot of time ~17s
 $animals_with_milk = CountriesDashboardStats::getAnimalsWithMilkForDataViz($filterOptions);
 //dd($animals, $animals_with_milk);
 
@@ -45,6 +46,7 @@ if (count($animals_with_milk) > 0) {
     }
 }
 //dd($data);
+/*
 $_series = [
     [
         'name' => 'Kenya',
@@ -86,6 +88,7 @@ $_series = [
         'color' => '#489661',
     ],
 ];
+*/
 $series = $data;
 $graphOptions = [
     'title' => ['text' => 'Animals Registered and Monitored for Milk Production'],
@@ -100,9 +103,8 @@ $graphOptions = [
         ]
     ],
     'colors' => [
-        '#771957',
-        '#7986CB',
-        '#7F5298',
+        '#AE2921', '#000000', '#004619',
+        '#7F5298', '#7986CB', '#81D097',
     ],
 ];
 $containerId = 'chartContainerAM';
