@@ -45,7 +45,7 @@ class DataMigrationController extends Controller
         Bulls::migrateData();
         Lacts::migrateData();
         */
-        Cowtests::migrateData();
+        //Cowtests::migrateData();
         Cows::updateSiresAndDams();
         $this->updateCalvingRecords();
         $this->updateMilkingRecords();

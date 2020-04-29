@@ -86,6 +86,16 @@ $graphOptions = [
             'stacking' => 'normal',
         ]
     ],
+    'colors' => [
+        '#1B4F72', '#336083', '#487293', '#5D84A5',
+        '#7197B6', '#86AAC8', '#9BBEDA', '#B0D2EC',
+        '#177380', '#D3E36F', '#DBB450', '#C97434',
+        '#AE2921', '#8C2B16', '#F00C0C', '#350d36',
+        '#EB6060', '#E39494', '#9C0204', '#853536',
+        '#C25D55', '#FF9900', '#875F03', '#F6FF00',
+        '#800080', '#902C8E', '#A0479D', '#AF60AC',
+        '#BE78BB', '#CD90C9', '#DCA8D9', '#EBC0E8',
+    ],
 ];
 $containerId = 'chartContainerBreeds';
 $this->registerJs("MyApp.modules.dashboard.chart('" . $containerId . "', " . Json::encode($series) . "," . Json::encode($graphOptions) . ");");

@@ -77,7 +77,7 @@ $controller = Yii::$app->controller;
                         <span class="kt-nav__link-text"><?= Lang::t('Cron Jobs Manager') ?></span>
                     </a>
                 </li>
-                <li class="kt-nav__item hidden">
+                <li class="kt-nav__item">
                     <a href="<?= Url::to(['/help/help-modules/index']) ?>" class="kt-nav__link">
                         <span class="kt-nav__link-text"><?= Lang::t('Manage System Manual') ?></span>
                     </a>

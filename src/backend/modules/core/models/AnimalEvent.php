@@ -218,14 +218,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
 
     protected function setLactationId()
     {
-        if (!empty($this->lactation_id)) {
-            return;
-        }
-        //only done for milking event
-        if ($this->event_type != self::EVENT_TYPE_MILKING) {
-            return;
-        }
-        if ($this->scenario == MilkingEvent::SCENARIO_MISTRO_DB_UPLOAD) {
+        if (!empty($this->lactation_id) || $this->event_type != self::EVENT_TYPE_MILKING || $this->scenario == MilkingEvent::SCENARIO_MISTRO_DB_UPLOAD) {
             return;
         }
         $this->lactation_id = static::fetchLactationId($this->animal_id, $this->event_date);
@@ -247,11 +240,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
 
     protected function setLactationNumber()
     {
-        //only done for calving/lactation event
         if ($this->event_type != self::EVENT_TYPE_CALVING) {
-            return;
-        }
-        if ($this->scenario == CalvingEvent::SCENARIO_MISTRO_DB_UPLOAD) {
             return;
         }
         $data = static::getData('id', ['event_type' => self::EVENT_TYPE_CALVING, 'animal_id' => $this->animal_id], [], ['orderBy' => ['event_date' => SORT_ASC]]);
