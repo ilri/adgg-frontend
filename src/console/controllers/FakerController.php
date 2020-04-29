@@ -93,12 +93,15 @@ class FakerController extends Controller
 
         //$sql .= "UPDATE " . NumberingFormat::tableName() . " SET [[next_number]]=1 WHERE [[id]]=:OrganizationRef_account_no;";
         $sql .= "SET FOREIGN_KEY_CHECKS=1;";
-        Yii::$app->db->createCommand($sql, [])->execute();
+        //Yii::$app->db->createCommand($sql, [])->execute();
     }
 
     protected function canExecuteFaker()
     {
         if (YII_ENV === 'prod') {
+            $this->stdout("FAKER CANNOT BE EXECUTED\n");
+            Yii::$app->end();
+        }else{
             $this->stdout("FAKER CANNOT BE EXECUTED\n");
             Yii::$app->end();
         }
