@@ -25,5 +25,6 @@ class DataMigrationController extends Controller
     protected function doMigration()
     {
         \console\dataMigration\mistro\stanley1\Migrate::run();
+        \console\dataMigration\mistro\klba\Migrate::run();
     }
 }
