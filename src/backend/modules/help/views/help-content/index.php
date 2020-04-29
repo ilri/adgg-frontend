@@ -1,5 +1,6 @@
 <?php
 
+use backend\modules\auth\Session;
 use backend\modules\help\Constants;
 use common\helpers\Lang;
 use common\helpers\Url;
@@ -20,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="col-lg-4 col-xl-4 order-lg-2 order-xl-2">
                     <!--begin::Portlet-->
                     <div class="kt-portlet">
-                        <a href="<?= Url::to(['manual']) ?>" class="kt-iconbox kt-iconbox--active">
+                        <a href="<?= Url::to(['read', 'forAndroid' => false]) ?>" class="kt-iconbox kt-iconbox--active">
                             <div class="kt-iconbox__icon">
                                 <div class="kt-iconbox__icon-bg"></div>
                                 <i class="far fa-chalkboard-teacher"></i>
@@ -34,7 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <div class="col-lg-4 col-xl-4 order-lg-2 order-xl-2">
                         <!--begin::Portlet-->
                         <div class="kt-portlet">
-                            <a href="<?= Url::to(['manual', 'forAndroid' => true]) ?>"
+                            <a href="<?= Url::to(['read', 'forAndroid' => true])?>"
                                class="kt-iconbox kt-iconbox--active">
                                 <div class="kt-iconbox__icon">
                                     <div class="kt-iconbox__icon-bg"></div>

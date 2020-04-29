@@ -10,12 +10,7 @@ namespace console\controllers;
 
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\AnimalEvent;
-use backend\modules\core\models\CalvingEvent;
 use backend\modules\core\models\MilkingEvent;
-use backend\modules\core\models\OdkJsonQueue;
-use backend\modules\core\models\Country;
-use common\helpers\FileManager;
-use console\dataMigration\ke\models\Cows;
 use Yii;
 use yii\console\Controller;
 
@@ -91,19 +86,22 @@ class FakerController extends Controller
         //$sql .= "TRUNCATE " . Notif::tableName() . ";";
         //$sql .= "TRUNCATE " . NotifQueue::tableName() . ";";
         //$sql .= "TRUNCATE " . AuditTrail::tableName() . ";";
-        $sql .= "TRUNCATE " . AnimalEvent::tableName() . ";";
+        //$sql .= "TRUNCATE " . AnimalEvent::tableName() . ";";
         //$sql .= "TRUNCATE " . Animal::tableName() . ";";
         //$sql .= "TRUNCATE " . AnimalHerd::tableName() . ";";
         //$sql .= "TRUNCATE " . Farm::tableName() . ";";
 
         //$sql .= "UPDATE " . NumberingFormat::tableName() . " SET [[next_number]]=1 WHERE [[id]]=:OrganizationRef_account_no;";
         $sql .= "SET FOREIGN_KEY_CHECKS=1;";
-        Yii::$app->db->createCommand($sql, [])->execute();
+        //Yii::$app->db->createCommand($sql, [])->execute();
     }
 
     protected function canExecuteFaker()
     {
         if (YII_ENV === 'prod') {
+            $this->stdout("FAKER CANNOT BE EXECUTED\n");
+            Yii::$app->end();
+        }else{
             $this->stdout("FAKER CANNOT BE EXECUTED\n");
             Yii::$app->end();
         }
@@ -120,16 +118,30 @@ class FakerController extends Controller
 
     public function actionRandom()
     {
-        $condition = ['country_id' => null];
-        $params = [];
-        $query = OdkJsonQueue::find()->andWhere($condition, $params);
+        $condition = [];
+        $query = Animal::find()->andWhere($condition);
+        $totalAnimals=Animal::getCount($condition);
         $n = 1;
-        /* @var $models OdkJsonQueue[] */
-        $className = OdkJsonQueue::class;
+        /* @var $models Animal[] */
+        $className = Animal::class;
         foreach ($query->batch() as $i => $models) {
             foreach ($models as $model) {
                 $model->save(false);
-                $this->stdout("{$className}: Updated {$n} records\n");
+                $this->stdout("{$className}: Updated {$n} of {$totalAnimals} records\n");
+                $n++;
+            }
+        }
+
+        $condition = ['event_type'=>AnimalEvent::EVENT_TYPE_MILKING];
+        $query = MilkingEvent::find()->andWhere($condition);
+        $totalMilkRecords=MilkingEvent::getCount($condition);
+        $n = 1;
+        /* @var $models MilkingEvent[] */
+        $className = MilkingEvent::class;
+        foreach ($query->batch() as $i => $models) {
+            foreach ($models as $model) {
+                $model->save(false);
+                $this->stdout("{$className}: Updated {$n} of {$totalMilkRecords} records\n");
                 $n++;
             }
         }

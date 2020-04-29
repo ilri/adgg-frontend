@@ -97,7 +97,13 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
                     self::SCENARIO_CREATE,
                     self::SCENARIO_CHANGE_PASSWORD,
                     self::SCENARIO_RESET_PASSWORD
-                ]
+                ],
+                'when' => function(Users $model) {
+                    return $model->auto_generate_password == false;
+                },
+                'whenClient' => "function (attribute, value) {
+                    return ($('#users-auto_generate_password').is(':not(:checked)'));
+                }",
             ],
             [
                 ['confirm'],

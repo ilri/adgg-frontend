@@ -43,7 +43,8 @@ trait AnimalEventValidators
         }
         if (!empty($this->{$attribute})) {
             $eventDate = $this->{$attribute};
-            $interval = 500;
+            //$interval = 500;
+            $interval = 1000;
             $condition = '[[animal_id]]=:animal_id AND [[event_type]]=:event_type AND ([[event_date]] BETWEEN (:event_date - INTERVAL :interval DAY) AND :event_date)';
             $params = [':animal_id' => $this->animal_id, ':event_type' => AnimalEvent::EVENT_TYPE_CALVING, ':event_date' => $eventDate, ':interval' => $interval];
             if (!static::exists($condition, $params)) {

@@ -325,8 +325,12 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
                 $this->district_id = $this->farm->district_id;
                 $this->ward_id = $this->farm->ward_id;
                 $this->village_id = $this->farm->village_id;
-                $this->org_id = $this->farm->org_id;
-                $this->client_id = $this->farm->client_id;
+                if (!empty($this->farm->org_id)) {
+                    $this->org_id = $this->farm->org_id;
+                }
+                if (!empty($this->farm->client_id)) {
+                    $this->client_id = $this->farm->client_id;
+                }
             }
 
             if (!empty($this->deformities)) {
@@ -342,6 +346,19 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             }
             if (empty($this->reg_date)) {
                 $this->reg_date = DateUtils::getToday();
+            }
+
+            if (!empty($this->sire_tag_id) && empty($this->sire_id)) {
+                $sire = static::getOneRow(['id', 'tag_id'], ['tag_id' => $this->sire_tag_id]);
+                if (!empty($sire)) {
+                    $this->sire_id = $sire['id'];
+                }
+            }
+            if (!empty($this->dam_tag_id) && empty($this->dam_id)) {
+                $dam = static::getOneRow(['id', 'tag_id'], ['tag_id' => $this->dam_tag_id]);
+                if (!empty($dam)) {
+                    $this->dam_id = $dam['id'];
+                }
             }
 
             $this->setAdditionalAttributesValues();
