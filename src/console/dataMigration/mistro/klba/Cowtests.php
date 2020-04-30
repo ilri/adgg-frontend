@@ -81,7 +81,9 @@ class Cowtests extends MigrationBase implements MigrationInterface
 
     public static function migrateData()
     {
-        $query = static::find()->andWhere(['CowTests_HideFlag' => 0]);
+        $condition = ['CowTests_HideFlag' => 0];
+        $query = static::find()->andWhere($condition);
+        $totalRecords = static::getCount($condition);
         /* @var $dataModels $this[] */
         $n = 1;
         $countryId = Helper::getCountryId(\console\dataMigration\mistro\Constants::KENYA_COUNTRY_CODE);
@@ -166,7 +168,7 @@ class Cowtests extends MigrationBase implements MigrationInterface
                 $oldLactId = Helper::getMigrationId($dataModel->CowTests_LactID, static::getLactMigrationIdPrefix());
                 $newModel->lactation_id = $lactData[$oldLactId] ?? null;
 
-                static::saveModel($newModel, $n, false);
+                static::saveModel($newModel, $n, $totalRecords, false);
                 $n++;
             }
         }

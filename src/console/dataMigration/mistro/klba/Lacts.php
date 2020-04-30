@@ -47,7 +47,9 @@ class Lacts extends MigrationBase implements MigrationInterface
 
     public static function migrateData()
     {
-        $query = static::find()->andWhere(['Lacts_HideFlag' => 0]);
+        $condition = ['Lacts_HideFlag' => 0];
+        $query = static::find()->andWhere($condition);
+        $totalRecords = static::getCount($condition);
         /* @var $dataModels $this[] */
         $n = 1;
         $countryId = Helper::getCountryId(\console\dataMigration\mistro\Constants::KENYA_COUNTRY_CODE);
@@ -112,7 +114,7 @@ class Lacts extends MigrationBase implements MigrationInterface
                     $newModel->calvtype = 4;
                 }
                 $newModel->calving_dry_date = $dataModel->Lacts_TermDate;
-                static::saveModel($newModel, $n, false);
+                static::saveModel($newModel, $n, $totalRecords, false);
                 $n++;
             }
         }

@@ -47,13 +47,15 @@ class Farms extends MigrationBase implements MigrationInterface
 
     public static function migrateData()
     {
-        $query = static::find()->andWhere(static::getMigrationQueryCondition());
+        $condition = static::getMigrationQueryCondition();
+        $query = static::find()->andWhere($condition);
+        $totalRecords = static::getCount($condition);
         /* @var $dataModels $this[] */
         $n = 1;
         $countryId = Helper::getCountryId(\console\dataMigration\mistro\Constants::KENYA_COUNTRY_CODE);
         $orgId = Helper::getOrgId(static::getOrgName());
         $model = new Farm(['country_id' => $countryId, 'org_id' => $orgId]);
-        foreach ($query->batch() as $i => $dataModels) {
+        foreach ($query->batch(1000) as $i => $dataModels) {
             foreach ($dataModels as $dataModel) {
                 $newModel = clone $model;
                 $newModel->migration_id = Helper::getMigrationId($dataModel->Farms_ID, static::getMigrationIdPrefix());
@@ -79,7 +81,7 @@ class Farms extends MigrationBase implements MigrationInterface
                     $newModel->reg_date = null;
                 }
 
-                static::saveModel($newModel, $n);
+                static::saveModel($newModel, $n, $totalRecords);
                 $n++;
             }
         }

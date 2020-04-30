@@ -74,7 +74,9 @@ class Herds extends MigrationBase implements MigrationInterface
 
     public static function migrateData()
     {
-        $query = static::find()->andWhere(['Herds_HideFlag' => 0]);
+        $condition = ['Herds_HideFlag' => 0];
+        $query = static::find()->andWhere($condition);
+        $totalRecords = static::getCount($condition);
         /* @var $dataModels $this[] */
         $n = 1;
         $countryId = Helper::getCountryId(\console\dataMigration\mistro\Constants::KENYA_COUNTRY_CODE);
@@ -89,7 +91,7 @@ class Herds extends MigrationBase implements MigrationInterface
                 $newModel->exit_date = $dataModel->Herds_StopDate;
                 $newModel->centre_id = $dataModel->Herds_CentreID;
                 $newModel->name = $dataModel->Herds_Name;
-                static::saveModel($newModel, $n);
+                static::saveModel($newModel, $n, $totalRecords);
                 $n++;
             }
         }

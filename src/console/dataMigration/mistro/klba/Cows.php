@@ -110,14 +110,16 @@ class Cows extends MigrationBase implements MigrationInterface
 
     public static function migrateData()
     {
-        $query = static::find()->andWhere(['Cows_HideFlag' => 0, 'Cows_Species' => 0]);
+        $condition = ['Cows_HideFlag' => 0, 'Cows_Species' => 0];
+        $query = static::find()->andWhere($condition);
+        $totalRecords = static::getCount($condition);
         /* @var $dataModels $this[] */
         $n = 1;
         $countryId = Helper::getCountryId(\console\dataMigration\mistro\Constants::KENYA_COUNTRY_CODE);
         $orgId = Helper::getOrgId(static::getOrgName());
         $model = new Animal(['country_id' => $countryId, 'org_id' => $orgId, 'scenario' => Animal::SCENARIO_MISTRO_DB_COW_UPLOAD]);
-        $className=get_class($model);
-        foreach ($query->batch() as $i => $dataModels) {
+        $className = get_class($model);
+        foreach ($query->batch(1000) as $i => $dataModels) {
             foreach ($dataModels as $dataModel) {
                 $herdModel = static::getHerd($dataModel->Cows_Herd);
                 if (null === $herdModel) {
@@ -160,7 +162,7 @@ class Cows extends MigrationBase implements MigrationInterface
                     $newModel->reg_date = null;
                 }
 
-                static::saveModel($newModel, $n);
+                static::saveModel($newModel, $n, $totalRecords);
                 $n++;
             }
         }
