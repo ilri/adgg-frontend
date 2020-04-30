@@ -29,12 +29,12 @@ abstract class MigrationBase extends ActiveRecord
     {
         $saved = $model->save($validate);
         $className = get_class($model);
-        $orgName = static::getOrgName();
+        $prefix = static::getMigrationIdPrefix();
         if ($saved) {
-            Yii::$app->controller->stdout($orgName . ': ' . $className . ": saved record {$n} of {$totalRecords} successfully\n");
+            Yii::$app->controller->stdout($prefix . ': ' . $className . ": saved record {$n} of {$totalRecords} successfully\n");
         } else {
             $error = json_encode($model->getErrors());
-            Yii::$app->controller->stdout($orgName . ": " . $className . ": Validation Error on record {$n} of {$totalRecords}: {$error}\n");
+            Yii::$app->controller->stdout($prefix . ": " . $className . ": Validation Error on record {$n} of {$totalRecords}: {$error}\n");
         }
     }
 }

@@ -262,6 +262,12 @@ class Cows extends MigrationBase implements MigrationInterface
                     }
                 }
                 if (!empty($model->sire_tag_id) || !empty($model->dam_tag_id)) {
+                    if (!empty($model->sire_tag_id) && empty($model->sire_id) && !empty($model->migration_id)) {
+                        $model->sire_tag_id = null;
+                    }
+                    if (!empty($model->dam_tag_id) && empty($model->dam_id) && !empty($model->migration_id)) {
+                        $model->dam_tag_id = null;
+                    }
                     $model->save(false);
                     Yii::$app->controller->stdout("Updated {$n} animal records\n");
                 }
