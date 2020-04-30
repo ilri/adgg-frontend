@@ -92,7 +92,7 @@ class Farms extends MigrationBase implements MigrationInterface
      */
     public static function getClientId($oldClientId)
     {
-        $migrationId = Helper::getMigrationId($oldClientId, Clients::getMigrationIdPrefix());
+        $migrationId = Helper::getMigrationId($oldClientId, static::getClientMigrationIdPrefix());
 
         $clientId = Client::getScalar('id', ['migration_id' => $migrationId]);
         if (empty($clientId)) {
@@ -104,5 +104,10 @@ class Farms extends MigrationBase implements MigrationInterface
     public static function getMigrationQueryCondition()
     {
         return ['Farms_HideFlag' => 0];
+    }
+
+    public static function getClientMigrationIdPrefix()
+    {
+        return Clients::getMigrationIdPrefix();
     }
 }

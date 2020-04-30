@@ -1,6 +1,6 @@
 <?php
 
-namespace console\dataMigration\mistro\stanley1;
+namespace console\dataMigration\mistro\stanley2;
 
 class Farms extends \console\dataMigration\mistro\klba\Farms
 {
@@ -8,7 +8,7 @@ class Farms extends \console\dataMigration\mistro\klba\Farms
 
     public static function getMigrationQueryCondition()
     {
-        return ['Farms_HideFlag' => 0, 'Farms_Owner' => '24180001'];
+        return ['Farms_HideFlag' => 0];
     }
 
     public static function getClientMigrationIdPrefix()

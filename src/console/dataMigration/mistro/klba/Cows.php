@@ -171,7 +171,7 @@ class Cows extends MigrationBase implements MigrationInterface
      */
     public static function getHerd($oldHerdId)
     {
-        $migrationId = Helper::getMigrationId($oldHerdId, Herds::getMigrationIdPrefix());
+        $migrationId = Helper::getMigrationId($oldHerdId, static::getHerdMigrationIdPrefix());
         return AnimalHerd::find()->andWhere(['migration_id' => $migrationId])->one();
     }
 
@@ -275,5 +275,10 @@ class Cows extends MigrationBase implements MigrationInterface
     public static function getBullMigrationIdPrefix()
     {
         return Bulls::getMigrationIdPrefix();
+    }
+
+    public static function getHerdMigrationIdPrefix()
+    {
+        return Herds::getMigrationIdPrefix();
     }
 }
