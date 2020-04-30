@@ -110,17 +110,20 @@ class Cows extends MigrationBase implements MigrationInterface
 
     public static function migrateData()
     {
-        $query = static::find()->andWhere(['Cows_HideFlag' => 0, 'Cows_Species' => 0]);
+        $condition = ['Cows_HideFlag' => 0, 'Cows_Species' => 0];
+        $query = static::find()->andWhere($condition);
+        $totalRecords = static::getCount($condition);
         /* @var $dataModels $this[] */
         $n = 1;
         $countryId = Helper::getCountryId(\console\dataMigration\mistro\Constants::KENYA_COUNTRY_CODE);
         $orgId = Helper::getOrgId(static::getOrgName());
         $model = new Animal(['country_id' => $countryId, 'org_id' => $orgId, 'scenario' => Animal::SCENARIO_MISTRO_DB_COW_UPLOAD]);
-        foreach ($query->batch() as $i => $dataModels) {
+        $className = get_class($model);
+        foreach ($query->batch(1000) as $i => $dataModels) {
             foreach ($dataModels as $dataModel) {
                 $herdModel = static::getHerd($dataModel->Cows_Herd);
                 if (null === $herdModel) {
-                    Yii::$app->controller->stdout("ERROR: Herd ID {$dataModel->Cows_Herd} does not exist.\n");
+                    Yii::$app->controller->stdout("{$className}: ERROR on record {$n} of {$totalRecords}: Herd ID {$dataModel->Cows_Herd} does not exist.\n");
                     $n++;
                     continue;
                 }
@@ -159,7 +162,7 @@ class Cows extends MigrationBase implements MigrationInterface
                     $newModel->reg_date = null;
                 }
 
-                static::saveModel($newModel, $n);
+                static::saveModel($newModel, $n, $totalRecords);
                 $n++;
             }
         }
@@ -219,25 +222,28 @@ class Cows extends MigrationBase implements MigrationInterface
         $condition = '[[migration_id]] IS NOT NULL';
         $params = [];
         $query = Animal::find()->andWhere($condition, $params);
+        $prefix = static::getMigrationIdPrefix();
+        $className = Animal::class;
+        $totalRecords = Animal::getCount($condition);
         $n = 1;
         /* @var $models Animal[] */
         foreach ($query->batch() as $i => $models) {
             foreach ($models as $model) {
                 if ($n < 0) {
                     $n++;
-                    Yii::$app->controller->stdout("Animal Record: {$n} already updated. Ignored\n");
+                    Yii::$app->controller->stdout($prefix . ": " . $className . ": Record: {$n} of {$totalRecords} already updated. Ignored\n");
                     continue;
                 }
                 if (empty($model->migration_id)) {
                     $n++;
                     $org = static::getOrgName();
-                    Yii::$app->controller->stdout("The animal id: {$model->id} is not from {$org}. Ignored\n");
+                    Yii::$app->controller->stdout($prefix . ": " . $className . ": Record: {$n} of {$totalRecords}: Animal id: {$model->id} is not from {$org}. Ignored\n");
                     continue;
                 }
                 if (!empty($model->sire_tag_id)) {
                     if (!empty($model->sire_id)) {
                         $n++;
-                        Yii::$app->controller->stdout("Animal Record: {$n} already updated. Ignored\n");
+                        Yii::$app->controller->stdout($prefix . ": " . $className . ": Record: {$n} of {$totalRecords} already updated. Ignored\n");
                         continue;
                     }
                     $sire = Animal::getOneRow(['id', 'tag_id'], ['migration_id' => $model->sire_tag_id]);
@@ -249,7 +255,7 @@ class Cows extends MigrationBase implements MigrationInterface
                 if (!empty($model->dam_tag_id)) {
                     if (!empty($model->dam_id)) {
                         $n++;
-                        Yii::$app->controller->stdout("Animal Record: {$n} already updated. Ignored\n");
+                        Yii::$app->controller->stdout($prefix . ": " . $className . ": Record: {$n} of {$totalRecords} already updated. Ignored\n");
                         continue;
                     }
                     $dam = Animal::getOneRow(['id', 'tag_id'], ['migration_id' => $model->dam_tag_id]);
@@ -259,8 +265,14 @@ class Cows extends MigrationBase implements MigrationInterface
                     }
                 }
                 if (!empty($model->sire_tag_id) || !empty($model->dam_tag_id)) {
+                    if (!empty($model->sire_tag_id) && empty($model->sire_id) && !empty($model->migration_id)) {
+                        $model->sire_tag_id = null;
+                    }
+                    if (!empty($model->dam_tag_id) && empty($model->dam_id) && !empty($model->migration_id)) {
+                        $model->dam_tag_id = null;
+                    }
                     $model->save(false);
-                    Yii::$app->controller->stdout("Updated {$n} animal records\n");
+                    Yii::$app->controller->stdout($prefix . ": " . $className . ": Updated record {$n} of {$totalRecords}\n");
                 }
                 $n++;
             }

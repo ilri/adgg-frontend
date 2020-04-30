@@ -73,14 +73,6 @@ class AIEvent extends AnimalEvent implements ImportActiveRecordInterface, Animal
         ];
     }
 
-    public function beforeSave($insert)
-    {
-        if (parent::beforeSave($insert)) {
-            return true;
-        }
-        return false;
-    }
-
     /**
      * @param integer $durationType
      * @param bool|string $sum

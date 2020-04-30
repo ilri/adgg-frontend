@@ -81,14 +81,18 @@ class Cowtests extends MigrationBase implements MigrationInterface
 
     public static function migrateData()
     {
-        $query = static::find()->andWhere(['CowTests_HideFlag' => 0]);
+        $condition = ['CowTests_HideFlag' => 0];
+        $query = static::find()->andWhere($condition);
+        $totalRecords = static::getCount($condition);
         /* @var $dataModels $this[] */
         $n = 1;
         $countryId = Helper::getCountryId(\console\dataMigration\mistro\Constants::KENYA_COUNTRY_CODE);
         $orgId = Helper::getOrgId(static::getOrgName());
         $model = new MilkingEvent(['country_id' => $countryId, 'org_id' => $orgId, 'event_type' => AnimalEvent::EVENT_TYPE_MILKING, 'scenario' => MilkingEvent::SCENARIO_MISTRO_DB_UPLOAD]);
         $model->setAdditionalAttributes();
-        foreach ($query->batch(1000) as $i => $dataModels) {
+        $prefix = static::getMigrationIdPrefix();
+        $className = get_class($model);
+        foreach ($query->batch(2000) as $i => $dataModels) {
             Yii::$app->controller->stdout("Batch processing  started...\n");
             $migrationIds = [];
             $testDayIds = [];
@@ -127,11 +131,12 @@ class Cowtests extends MigrationBase implements MigrationInterface
                 $lactData[$lactDatum['migration_id']] = $lactDatum['id'];
             }
 
+            $ids = [];
             foreach ($dataModels as $dataModel) {
                 $newModel = clone $model;
                 $newModel->migration_id = Helper::getMigrationId($dataModel->CowTests_ID, static::getTestDayMigrationIdPrefix());
                 if (in_array($newModel->migration_id, $existingMigrationIds)) {
-                    Yii::$app->controller->stdout("Milk record {$n} with migration id: {$newModel->migration_id} already saved. Ignored\n");
+                    Yii::$app->controller->stdout($prefix . ": " . $className . ": record {$n} of {$totalRecords} with migration id: {$newModel->migration_id} already saved. Ignored\n");
                     $n++;
                     continue;
                 }
@@ -144,12 +149,12 @@ class Cowtests extends MigrationBase implements MigrationInterface
 
                 //'animal_id','event_date' are required
                 if (empty($newModel->animal_id)) {
-                    Yii::$app->controller->stdout("Validation error on milk record {$n}: Animal Id cannot be blank.\n");
+                    Yii::$app->controller->stdout($prefix . ": " . $className . ": Validation error on milk record {$n} of {$totalRecords}: Animal Id cannot be blank.\n");
                     $n++;
                     continue;
                 }
                 if (empty($newModel->event_date)) {
-                    Yii::$app->controller->stdout("Validation error on milk record {$n}: Event date cannot be blank.\n");
+                    Yii::$app->controller->stdout($prefix . ": " . $className . ": Validation error on milk record {$n} of {$totalRecords}: Event date cannot be blank.\n");
                     $n++;
                     continue;
                 }
@@ -166,8 +171,18 @@ class Cowtests extends MigrationBase implements MigrationInterface
                 $oldLactId = Helper::getMigrationId($dataModel->CowTests_LactID, static::getLactMigrationIdPrefix());
                 $newModel->lactation_id = $lactData[$oldLactId] ?? null;
 
-                static::saveModel($newModel, $n, false);
+                $newModel = static::saveModel($newModel, $n, $totalRecords, false);
+                if (!empty($newModel->id) && !empty($newModel->lactation_id)) {
+                    $ids[$newModel->animal_id . $newModel->lactation_id] = ['animal_id' => $newModel->animal_id, 'lactation_id' => $newModel->lactation_id];
+                }
                 $n++;
+            }
+
+            if (!empty($ids)) {
+                Yii::$app->controller->stdout("Updating testday_no ...\n");
+                foreach ($ids as $event) {
+                    MilkingEvent::setTestDayNo($event['animal_id'], $event['lactation_id']);
+                }
             }
         }
     }

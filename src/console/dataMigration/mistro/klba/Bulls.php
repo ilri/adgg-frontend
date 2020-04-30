@@ -63,7 +63,9 @@ class Bulls extends MigrationBase implements MigrationInterface
 
     public static function migrateData()
     {
-        $query = static::find()->andWhere(['Bulls_HideFlag' => 0, 'Bulls_species' => 0]);
+        $condition = ['Bulls_HideFlag' => 0, 'Bulls_species' => 0];
+        $query = static::find()->andWhere($condition);
+        $totalRecords = static::getCount($condition);
         /* @var $dataModels $this[] */
         $n = 1;
         $countryId = Helper::getCountryId(\console\dataMigration\mistro\Constants::KENYA_COUNTRY_CODE);
@@ -101,7 +103,7 @@ class Bulls extends MigrationBase implements MigrationInterface
                     $newModel->reg_date = null;
                 }
 
-                static::saveModel($newModel, $n);
+                static::saveModel($newModel, $n, $totalRecords);
                 $n++;
             }
         }
