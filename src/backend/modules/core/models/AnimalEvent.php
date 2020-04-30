@@ -9,6 +9,7 @@ use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
 use common\models\CustomValidationsTrait;
+use Yii;
 
 /**
  * This is the model class for table "core_animal_event".
@@ -218,7 +219,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
 
     protected function setLactationId()
     {
-        if (!empty($this->lactation_id) || $this->event_type != self::EVENT_TYPE_MILKING || $this->scenario == MilkingEvent::SCENARIO_MISTRO_DB_UPLOAD) {
+        if ($this->event_type != self::EVENT_TYPE_MILKING || !empty($this->lactation_id)) {
             return;
         }
         $this->lactation_id = static::fetchLactationId($this->animal_id, $this->event_date);
@@ -245,9 +246,17 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
         }
         $data = static::getData('id', ['event_type' => self::EVENT_TYPE_CALVING, 'animal_id' => $this->animal_id], [], ['orderBy' => ['event_date' => SORT_ASC]]);
         $n = 1;
+        $params = [];
+        $sql = "";
+        $table = static::tableName();
         foreach ($data as $row) {
-            static::updateAll(['lactation_number' => $n], ['id' => $row['id']]);
+            $sql .= "UPDATE {$table} SET [[lactation_number]]=:lact{$n} WHERE [[id]]=:id{$n};";
+            $params[":lact{$n}"] = $n;
+            $params[":id{$n}"] = $row['id'];
             $n++;
+        }
+        if (!empty($sql)) {
+            Yii::$app->db->createCommand($sql, $params)->execute();
         }
     }
 

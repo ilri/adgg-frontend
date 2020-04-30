@@ -6,10 +6,14 @@
  * Time: 10:55 PM
  */
 
-namespace console\dataMigration\ke\models;
+namespace console\dataMigration\mistro;
 
 
 interface MigrationInterface
 {
     public static function migrateData();
+
+    public static function getMigrationIdPrefix();
+
+    public static function getOrgName();
 }

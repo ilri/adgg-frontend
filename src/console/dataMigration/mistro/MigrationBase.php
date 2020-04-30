@@ -6,12 +6,17 @@
  * Time: 2:48 AM
  */
 
-namespace console\dataMigration\ke\models;
+namespace console\dataMigration\mistro;
 
 
 use common\models\ActiveRecord;
 use Yii;
 
+/**
+ * Class MigrationBase
+ * @package console\dataMigration\mistro
+ * @method static getOrgName()
+ */
 abstract class MigrationBase extends ActiveRecord
 {
     /**
@@ -23,11 +28,12 @@ abstract class MigrationBase extends ActiveRecord
     {
         $saved = $model->save($validate);
         $className = get_class($model);
+        $orgName = static::getOrgName();
         if ($saved) {
-            Yii::$app->controller->stdout($className . ": saved record {$n} successfully\n");
+            Yii::$app->controller->stdout($orgName . ': ' . $className . ": saved record {$n} successfully\n");
         } else {
             $error = json_encode($model->getErrors());
-            Yii::$app->controller->stdout("Validation Error on record {$n}: {$error}\n");
+            Yii::$app->controller->stdout($orgName . ": Validation Error on record {$n}: {$error}\n");
         }
     }
 }

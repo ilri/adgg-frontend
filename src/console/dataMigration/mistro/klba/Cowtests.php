@@ -1,10 +1,13 @@
 <?php
 
-namespace console\dataMigration\ke\models;
+namespace console\dataMigration\mistro\klba;
 
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\MilkingEvent;
+use console\dataMigration\mistro\Helper;
+use console\dataMigration\mistro\MigrationBase;
+use console\dataMigration\mistro\MigrationInterface;
 use Yii;
 
 /**
@@ -50,85 +53,14 @@ use Yii;
  */
 class Cowtests extends MigrationBase implements MigrationInterface
 {
+    use MigrationTrait;
+
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
         return '{{%cowtests}}';
-    }
-
-    /**
-     * @return \yii\db\Connection the database connection used by this AR class.
-     * @throws \yii\base\InvalidConfigException
-     */
-    public static function getDb()
-    {
-        return Yii::$app->get('mistroKeDb');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function rules()
-    {
-        return [
-            [['CowTests_ID', 'CowTests_TDayID', 'CowTests_CowID'], 'required'],
-            [['CowTests_PMYield', 'CowTests_AMYield', 'CowTests_Yield1', 'CowTests_FatP', 'CowTests_ProtP', 'CowTests_ICCC', 'CowTests_LactP', 'CowTests_SampleNo', 'CowTests_Exclude', 'CowTests_RecsInAve', 'CowTests_TestGroup', 'CowTests_UpdateStatus', 'CowTests_RejectY', 'CowTests_RejectF', 'CowTests_RejectP', 'CowTests_RejectL', 'CowTests_Upload', 'CowTests_Download', 'CowTests_HideFlag', 'CowTests_Locked'], 'integer'],
-            [['CowTests_UpdateDate', 'CowTests_Modified'], 'safe'],
-            [['CowTests_YIndex', 'CowTests_FIndex', 'CowTests_PIndex', 'CowTests_LIndex', 'CowTests_LactID'], 'number'],
-            [['CowTests_ID'], 'string', 'max' => 27],
-            [['CowTests_TDayID'], 'string', 'max' => 16],
-            [['CowTests_CowID'], 'string', 'max' => 11],
-            [['CowTests_FirstTest', 'CowTests_LastTest', 'CowTests_NowInfected'], 'string', 'max' => 1],
-            [['CowTests_ModifiedBy'], 'string', 'max' => 10],
-            [['CowTests_CowID', 'CowTests_TDayID', 'CowTests_HideFlag'], 'unique', 'targetAttribute' => ['CowTests_CowID', 'CowTests_TDayID', 'CowTests_HideFlag']],
-            [['CowTests_TDayID', 'CowTests_CowID', 'CowTests_HideFlag'], 'unique', 'targetAttribute' => ['CowTests_TDayID', 'CowTests_CowID', 'CowTests_HideFlag']],
-            [['CowTests_ID'], 'unique'],
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function attributeLabels()
-    {
-        return [
-            'CowTests_ID' => 'Cow Tests ID',
-            'CowTests_TDayID' => 'Cow Tests T Day ID',
-            'CowTests_CowID' => 'Cow Tests Cow ID',
-            'CowTests_PMYield' => 'Cow Tests Pm Yield',
-            'CowTests_AMYield' => 'Cow Tests Am Yield',
-            'CowTests_Yield1' => 'Cow Tests Yield1',
-            'CowTests_FatP' => 'Cow Tests Fat P',
-            'CowTests_ProtP' => 'Cow Tests Prot P',
-            'CowTests_ICCC' => 'Cow Tests Iccc',
-            'CowTests_LactP' => 'Cow Tests Lact P',
-            'CowTests_SampleNo' => 'Cow Tests Sample No',
-            'CowTests_Exclude' => 'Cow Tests Exclude',
-            'CowTests_RecsInAve' => 'Cow Tests Recs In Ave',
-            'CowTests_TestGroup' => 'Cow Tests Test Group',
-            'CowTests_UpdateDate' => 'Cow Tests Update Date',
-            'CowTests_UpdateStatus' => 'Cow Tests Update Status',
-            'CowTests_RejectY' => 'Cow Tests Reject Y',
-            'CowTests_RejectF' => 'Cow Tests Reject F',
-            'CowTests_RejectP' => 'Cow Tests Reject P',
-            'CowTests_RejectL' => 'Cow Tests Reject L',
-            'CowTests_YIndex' => 'Cow Tests Y Index',
-            'CowTests_FIndex' => 'Cow Tests F Index',
-            'CowTests_PIndex' => 'Cow Tests P Index',
-            'CowTests_LIndex' => 'Cow Tests L Index',
-            'CowTests_FirstTest' => 'Cow Tests First Test',
-            'CowTests_LastTest' => 'Cow Tests Last Test',
-            'CowTests_NowInfected' => 'Cow Tests Now Infected',
-            'CowTests_LactID' => 'Cow Tests Lact ID',
-            'CowTests_Upload' => 'Cow Tests Upload',
-            'CowTests_Download' => 'Cow Tests Download',
-            'CowTests_Modified' => 'Cow Tests Modified',
-            'CowTests_ModifiedBy' => 'Cow Tests Modified By',
-            'CowTests_HideFlag' => 'Cow Tests Hide Flag',
-            'CowTests_Locked' => 'Cow Tests Locked',
-        ];
     }
 
     /**
@@ -152,8 +84,8 @@ class Cowtests extends MigrationBase implements MigrationInterface
         $query = static::find()->andWhere(['CowTests_HideFlag' => 0]);
         /* @var $dataModels $this[] */
         $n = 1;
-        $countryId = Helper::getCountryId(Constants::KENYA_COUNTRY_CODE);
-        $orgId = Helper::getOrgId(Constants::ORG_NAME);
+        $countryId = Helper::getCountryId(\console\dataMigration\mistro\Constants::KENYA_COUNTRY_CODE);
+        $orgId = Helper::getOrgId(static::getOrgName());
         $model = new MilkingEvent(['country_id' => $countryId, 'org_id' => $orgId, 'event_type' => AnimalEvent::EVENT_TYPE_MILKING, 'scenario' => MilkingEvent::SCENARIO_MISTRO_DB_UPLOAD]);
         $model->setAdditionalAttributes();
         foreach ($query->batch(1000) as $i => $dataModels) {
@@ -168,18 +100,18 @@ class Cowtests extends MigrationBase implements MigrationInterface
             //Yii::$app->controller->stdout("Setting default configs...\n");
             foreach ($dataModels as $dataModel) {
                 //migration_id must be unique
-                $migrationIds[] = Helper::getMigrationId($dataModel->CowTests_ID, Testdays::MIGRATION_ID_PREFIX);
+                $migrationIds[] = Helper::getMigrationId($dataModel->CowTests_ID, static::getTestDayMigrationIdPrefix());
                 //query db
                 $testDayIds[$dataModel->CowTests_TDayID] = $dataModel->CowTests_TDayID;
-                $animalMigId = Helper::getMigrationId($dataModel->CowTests_CowID, Cows::MIGRATION_ID_PREFIX);
+                $animalMigId = Helper::getMigrationId($dataModel->CowTests_CowID, static::getCowMigrationIdPrefix());
                 $oldAnimalIds[$animalMigId] = $animalMigId;
-                $oldLactId = Helper::getMigrationId($dataModel->CowTests_LactID, Lacts::MIGRATION_ID_PREFIX);
+                $oldLactId = Helper::getMigrationId($dataModel->CowTests_LactID, static::getLactMigrationIdPrefix());
                 $oldLactIds[$oldLactId] = $oldLactId;
             }
             $existingMigrationIds = AnimalEvent::getColumnData(['migration_id'], ['migration_id' => $migrationIds]);
             //testDay Data
             //Yii::$app->controller->stdout("Setting testDay data...\n");
-            foreach (Testdays::getData(['TestDays_ID', 'TestDays_Date', 'TestDays_TestType'], ['TestDays_ID' => $testDayIds]) as $testDayDatum) {
+            foreach (static::getTestDaysData($testDayIds) as $testDayDatum) {
                 $testDayData[$testDayDatum['TestDays_ID']] = $testDayDatum;
             }
 
@@ -197,13 +129,13 @@ class Cowtests extends MigrationBase implements MigrationInterface
 
             foreach ($dataModels as $dataModel) {
                 $newModel = clone $model;
-                $newModel->migration_id = Helper::getMigrationId($dataModel->CowTests_ID, Testdays::MIGRATION_ID_PREFIX);
+                $newModel->migration_id = Helper::getMigrationId($dataModel->CowTests_ID, static::getTestDayMigrationIdPrefix());
                 if (in_array($newModel->migration_id, $existingMigrationIds)) {
                     Yii::$app->controller->stdout("Milk record {$n} with migration id: {$newModel->migration_id} already saved. Ignored\n");
                     $n++;
                     continue;
                 }
-                $animalMigId = Helper::getMigrationId($dataModel->CowTests_CowID, Cows::MIGRATION_ID_PREFIX);
+                $animalMigId = Helper::getMigrationId($dataModel->CowTests_CowID, static::getCowMigrationIdPrefix());
                 $newModel->animal_id = $animalData[$animalMigId] ?? null;
                 $newModel->event_date = $testDayData[$dataModel->CowTests_TDayID]['TestDays_Date'] ?? null;
                 if ($newModel->event_date == '0000-00-00') {
@@ -231,12 +163,32 @@ class Cowtests extends MigrationBase implements MigrationInterface
                 $newModel->milklact = ((float)$dataModel->CowTests_LactP) / 100;
                 $newModel->milksmc = $dataModel->CowTests_ICCC;
 
-                $oldLactId = Helper::getMigrationId($dataModel->CowTests_LactID, Lacts::MIGRATION_ID_PREFIX);
+                $oldLactId = Helper::getMigrationId($dataModel->CowTests_LactID, static::getLactMigrationIdPrefix());
                 $newModel->lactation_id = $lactData[$oldLactId] ?? null;
 
                 static::saveModel($newModel, $n, false);
                 $n++;
             }
         }
+    }
+
+    public static function getCowMigrationIdPrefix()
+    {
+        return Cows::getMigrationIdPrefix();
+    }
+
+    public static function getTestDayMigrationIdPrefix()
+    {
+        return Testdays::getMigrationIdPrefix();
+    }
+
+    public static function getLactMigrationIdPrefix()
+    {
+        return Lacts::getMigrationIdPrefix();
+    }
+
+    public static function getTestDaysData($testDayIds)
+    {
+        return Testdays::getData(['TestDays_ID', 'TestDays_Date', 'TestDays_TestType'], ['TestDays_ID' => $testDayIds]);
     }
 }

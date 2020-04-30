@@ -1,9 +1,12 @@
 <?php
 
-namespace console\dataMigration\ke\models;
+namespace console\dataMigration\mistro\klba;
 
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\AnimalHerd;
+use console\dataMigration\mistro\Helper;
+use console\dataMigration\mistro\MigrationBase;
+use console\dataMigration\mistro\MigrationInterface;
 use Yii;
 
 /**
@@ -95,7 +98,7 @@ use Yii;
  */
 class Cows extends MigrationBase implements MigrationInterface
 {
-    const MIGRATION_ID_PREFIX = 'STANLEY_COWS_';
+    use MigrationTrait;
 
     /**
      * {@inheritdoc}
@@ -105,156 +108,24 @@ class Cows extends MigrationBase implements MigrationInterface
         return '{{%cows}}';
     }
 
-    /**
-     * @return \yii\db\Connection the database connection used by this AR class.
-     * @throws \yii\base\InvalidConfigException
-     */
-    public static function getDb()
-    {
-        return Yii::$app->get('mistroKeDb');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function rules()
-    {
-        return [
-            [['Cows_ID', 'Cows_Herd', 'Cows_HIONo', 'Cows_HRID'], 'required'],
-            [['Cows_Species', 'Cows_ABVStatus', 'Cows_ABVASI', 'Cows_Grade', 'Cows_PrevClinical', 'Cows_CurClinical', 'Cows_CowStatus', 'Cows_Origin', 'Cows_HerdGroup', 'Cows_CurAgeGroup', 'Cows_DPCentre', 'Cows_LastCalvCode', 'Cows_LastDryOffCode', 'Cows_TermCode', 'Cows_UnrecLacs', 'Cows_Matings', 'Cows_UpdStatus', 'Cows_Gestn', 'Cows_Pregnant', 'Cows_Yield1', 'Cows_Fat', 'Cows_Prot', 'Cows_Lact', 'Cows_ICCC', 'Cows_Exclude', 'Cows_Upload', 'Cows_Download', 'Cows_Flag', 'Cows_HideFlag', 'Cows_Locked'], 'integer'],
-            [['Cows_Herd', 'Cows_BirthWt', 'Cows_Problem', 'Cows_Dollar', 'Cows_YTDDollar'], 'number'],
-            [['Cows_Birth', 'Cows_RegDate', 'Cows_DateIn', 'Cows_LastCalvDate', 'Cows_LastDryOff', 'Cows_LastTest', 'Cows_TermDate', 'Cows_UpdDate', 'Cows_LastHeat', 'Cows_LastServ', 'Cows_PrevServ', 'Cows_LastPD', 'Cows_DueDate', 'Cows_DryOff1', 'Cows_DryOffDate', 'Cows_ProblemDate', 'Cows_Date', 'Cows_Modified'], 'safe'],
-            [['Cows_ID', 'Cows_Sire', 'Cows_Dam', 'Cows_DamNatID', 'Cows_SireNatID', 'Cows_MGSire', 'Cows_PrefSire1', 'Cows_PrefSire2', 'Cows_LastSire', 'Cows_PrevSire', 'Cows_SireDue'], 'string', 'max' => 11],
-            [['Cows_HIONo', 'Cows_HRID', 'Cows_NLISID'], 'string', 'max' => 16],
-            [['Cows_HIONoSorted', 'Cows_HRIDSorted'], 'string', 'max' => 30],
-            [['Cows_RegName'], 'string', 'max' => 35],
-            [['Cows_EarTag'], 'string', 'max' => 12],
-            [['Cows_Sex', 'Cows_SireF', 'Cows_Registered'], 'string', 'max' => 1],
-            [['Cows_BreedS'], 'string', 'max' => 4],
-            [['Cows_ElecID'], 'string', 'max' => 23],
-            [['Cows_HerdBook'], 'string', 'max' => 20],
-            [['Cows_Remark'], 'string', 'max' => 50],
-            [['Cows_CCString'], 'string', 'max' => 13],
-            [['Cows_ProblemRemark'], 'string', 'max' => 25],
-            [['Cows_CLStatID', 'Cows_PLStatID'], 'string', 'max' => 14],
-            [['Cows_ModifiedBy'], 'string', 'max' => 10],
-            [['Cows_Herd', 'Cows_HIONo', 'Cows_HideFlag'], 'unique', 'targetAttribute' => ['Cows_Herd', 'Cows_HIONo', 'Cows_HideFlag']],
-            [['Cows_Herd', 'Cows_HRID', 'Cows_HIONo', 'Cows_HideFlag'], 'unique', 'targetAttribute' => ['Cows_Herd', 'Cows_HRID', 'Cows_HIONo', 'Cows_HideFlag']],
-            [['Cows_Herd', 'Cows_ID', 'Cows_HideFlag'], 'unique', 'targetAttribute' => ['Cows_Herd', 'Cows_ID', 'Cows_HideFlag']],
-            [['Cows_Herd', 'Cows_HIONoSorted', 'Cows_HideFlag'], 'unique', 'targetAttribute' => ['Cows_Herd', 'Cows_HIONoSorted', 'Cows_HideFlag']],
-            [['Cows_ID'], 'unique'],
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function attributeLabels()
-    {
-        return [
-            'Cows_ID' => 'Cows ID',
-            'Cows_Species' => 'Cows Species',
-            'Cows_Herd' => 'Cows Herd',
-            'Cows_HIONo' => 'Cows Hio No',
-            'Cows_HIONoSorted' => 'Cows Hio No Sorted',
-            'Cows_HRID' => 'Cows Hrid',
-            'Cows_HRIDSorted' => 'Cows Hrid Sorted',
-            'Cows_RegName' => 'Cows Reg Name',
-            'Cows_EarTag' => 'Cows Ear Tag',
-            'Cows_Sex' => 'Cows Sex',
-            'Cows_Birth' => 'Cows Birth',
-            'Cows_Sire' => 'Cows Sire',
-            'Cows_SireF' => 'Cows Sire F',
-            'Cows_Dam' => 'Cows Dam',
-            'Cows_BreedS' => 'Cows Breed S',
-            'Cows_ABVStatus' => 'Cows Abv Status',
-            'Cows_ABVASI' => 'Cows Abvasi',
-            'Cows_NLISID' => 'Cows Nlisid',
-            'Cows_ElecID' => 'Cows Elec ID',
-            'Cows_Registered' => 'Cows Registered',
-            'Cows_HerdBook' => 'Cows Herd Book',
-            'Cows_RegDate' => 'Cows Reg Date',
-            'Cows_Grade' => 'Cows Grade',
-            'Cows_Remark' => 'Cows Remark',
-            'Cows_PrevClinical' => 'Cows Prev Clinical',
-            'Cows_CurClinical' => 'Cows Cur Clinical',
-            'Cows_CowStatus' => 'Cows Cow Status',
-            'Cows_DamNatID' => 'Cows Dam Nat ID',
-            'Cows_SireNatID' => 'Cows Sire Nat ID',
-            'Cows_CCString' => 'Cows Cc String',
-            'Cows_BirthWt' => 'Cows Birth Wt',
-            'Cows_DateIn' => 'Cows Date In',
-            'Cows_Origin' => 'Cows Origin',
-            'Cows_HerdGroup' => 'Cows Herd Group',
-            'Cows_CurAgeGroup' => 'Cows Cur Age Group',
-            'Cows_DPCentre' => 'Cows Dp Centre',
-            'Cows_LastCalvDate' => 'Cows Last Calv Date',
-            'Cows_LastCalvCode' => 'Cows Last Calv Code',
-            'Cows_LastDryOff' => 'Cows Last Dry Off',
-            'Cows_LastDryOffCode' => 'Cows Last Dry Off Code',
-            'Cows_LastTest' => 'Cows Last Test',
-            'Cows_TermDate' => 'Cows Term Date',
-            'Cows_TermCode' => 'Cows Term Code',
-            'Cows_UnrecLacs' => 'Cows Unrec Lacs',
-            'Cows_Matings' => 'Cows Matings',
-            'Cows_MGSire' => 'Cows Mg Sire',
-            'Cows_UpdDate' => 'Cows Upd Date',
-            'Cows_UpdStatus' => 'Cows Upd Status',
-            'Cows_LastHeat' => 'Cows Last Heat',
-            'Cows_PrefSire1' => 'Cows Pref Sire1',
-            'Cows_PrefSire2' => 'Cows Pref Sire2',
-            'Cows_LastServ' => 'Cows Last Serv',
-            'Cows_Gestn' => 'Cows Gestn',
-            'Cows_LastSire' => 'Cows Last Sire',
-            'Cows_PrevServ' => 'Cows Prev Serv',
-            'Cows_PrevSire' => 'Cows Prev Sire',
-            'Cows_LastPD' => 'Cows Last Pd',
-            'Cows_Pregnant' => 'Cows Pregnant',
-            'Cows_DueDate' => 'Cows Due Date',
-            'Cows_SireDue' => 'Cows Sire Due',
-            'Cows_DryOff1' => 'Cows Dry Off1',
-            'Cows_DryOffDate' => 'Cows Dry Off Date',
-            'Cows_ProblemRemark' => 'Cows Problem Remark',
-            'Cows_ProblemDate' => 'Cows Problem Date',
-            'Cows_Problem' => 'Cows Problem',
-            'Cows_Date' => 'Cows Date',
-            'Cows_Yield1' => 'Cows Yield1',
-            'Cows_Fat' => 'Cows Fat',
-            'Cows_Prot' => 'Cows Prot',
-            'Cows_Lact' => 'Cows Lact',
-            'Cows_ICCC' => 'Cows Iccc',
-            'Cows_Dollar' => 'Cows Dollar',
-            'Cows_YTDDollar' => 'Cows Ytd Dollar',
-            'Cows_Exclude' => 'Cows Exclude',
-            'Cows_CLStatID' => 'Cows Cl Stat ID',
-            'Cows_PLStatID' => 'Cows Pl Stat ID',
-            'Cows_Upload' => 'Cows Upload',
-            'Cows_Download' => 'Cows Download',
-            'Cows_Flag' => 'Cows Flag',
-            'Cows_Modified' => 'Cows Modified',
-            'Cows_ModifiedBy' => 'Cows Modified By',
-            'Cows_HideFlag' => 'Cows Hide Flag',
-            'Cows_Locked' => 'Cows Locked',
-        ];
-    }
-
     public static function migrateData()
     {
         $query = static::find()->andWhere(['Cows_HideFlag' => 0, 'Cows_Species' => 0]);
         /* @var $dataModels $this[] */
         $n = 1;
-        $countryId = Helper::getCountryId(Constants::KENYA_COUNTRY_CODE);
-        $orgId = Helper::getOrgId(Constants::ORG_NAME);
+        $countryId = Helper::getCountryId(\console\dataMigration\mistro\Constants::KENYA_COUNTRY_CODE);
+        $orgId = Helper::getOrgId(static::getOrgName());
         $model = new Animal(['country_id' => $countryId, 'org_id' => $orgId, 'scenario' => Animal::SCENARIO_MISTRO_DB_COW_UPLOAD]);
         foreach ($query->batch() as $i => $dataModels) {
             foreach ($dataModels as $dataModel) {
-                $herdModel = self::getHerd($dataModel->Cows_Herd);
+                $herdModel = static::getHerd($dataModel->Cows_Herd);
                 if (null === $herdModel) {
                     Yii::$app->controller->stdout("ERROR: Herd ID {$dataModel->Cows_Herd} does not exist.\n");
+                    $n++;
                     continue;
                 }
                 $newModel = clone $model;
-                $newModel->migration_id = Helper::getMigrationId($dataModel->Cows_ID, self::MIGRATION_ID_PREFIX);
+                $newModel->migration_id = Helper::getMigrationId($dataModel->Cows_ID, static::getMigrationIdPrefix());
                 $newModel->herd_id = $herdModel->id;
                 $newModel->farm_id = $herdModel->farm_id;
                 $newModel->tag_id = $dataModel->Cows_HIONo;
@@ -266,8 +137,8 @@ class Cows extends MigrationBase implements MigrationInterface
                     $newModel->sex = 2;
                 }
                 $newModel->birthdate = $dataModel->Cows_Birth;
-                $newModel->sire_tag_id = Helper::getMigrationId($dataModel->Cows_Sire, Bulls::MIGRATION_ID_PREFIX);
-                $newModel->dam_tag_id = Helper::getMigrationId($dataModel->Cows_Dam, self::MIGRATION_ID_PREFIX);
+                $newModel->sire_tag_id = Helper::getMigrationId($dataModel->Cows_Sire, static::getBullMigrationIdPrefix());
+                $newModel->dam_tag_id = Helper::getMigrationId($dataModel->Cows_Dam, static::getMigrationIdPrefix());
                 $newModel->breed_composition_details = $dataModel->Cows_BreedS;
                 $newModel->herd_book_no = $dataModel->Cows_HerdBook;
                 $newModel->entry_date = $dataModel->Cows_RegDate;
@@ -283,6 +154,10 @@ class Cows extends MigrationBase implements MigrationInterface
                 }
                 $newModel->animal_exit_date = $dataModel->Cows_TermDate;
                 $newModel->animal_exit_code = $dataModel->Cows_TermCode;
+                $newModel->reg_date = !empty($dataModel->Cows_Date) ? $dataModel->Cows_Date : $dataModel->Cows_Modified;
+                if ($newModel->reg_date == '0000-00-00') {
+                    $newModel->reg_date = null;
+                }
 
                 static::saveModel($newModel, $n);
                 $n++;
@@ -296,7 +171,7 @@ class Cows extends MigrationBase implements MigrationInterface
      */
     public static function getHerd($oldHerdId)
     {
-        $migrationId = Helper::getMigrationId($oldHerdId);
+        $migrationId = Helper::getMigrationId($oldHerdId, static::getHerdMigrationIdPrefix());
         return AnimalHerd::find()->andWhere(['migration_id' => $migrationId])->one();
     }
 
@@ -341,21 +216,22 @@ class Cows extends MigrationBase implements MigrationInterface
 
     public static function updateSiresAndDams()
     {
-        $condition = '[[migration_id]] IS NOT NULL AND ([[dam_id]] IS NULL OR [[sire_id]] IS NULL)';
+        $condition = '[[migration_id]] IS NOT NULL';
         $params = [];
         $query = Animal::find()->andWhere($condition, $params);
         $n = 1;
         /* @var $models Animal[] */
         foreach ($query->batch() as $i => $models) {
             foreach ($models as $model) {
-                if ($n < 55000) {
+                if ($n < 0) {
                     $n++;
                     Yii::$app->controller->stdout("Animal Record: {$n} already updated. Ignored\n");
                     continue;
                 }
                 if (empty($model->migration_id)) {
                     $n++;
-                    Yii::$app->controller->stdout("The animal id: {$model->id} is not from KLBA. Ignored\n");
+                    $org = static::getOrgName();
+                    Yii::$app->controller->stdout("The animal id: {$model->id} is not from {$org}. Ignored\n");
                     continue;
                 }
                 if (!empty($model->sire_tag_id)) {
@@ -389,5 +265,20 @@ class Cows extends MigrationBase implements MigrationInterface
                 $n++;
             }
         }
+    }
+
+    public static function getMigrationIdPrefix()
+    {
+        return Migrate::DATA_SOURCE_PREFIX . 'COWS_';
+    }
+
+    public static function getBullMigrationIdPrefix()
+    {
+        return Bulls::getMigrationIdPrefix();
+    }
+
+    public static function getHerdMigrationIdPrefix()
+    {
+        return Herds::getMigrationIdPrefix();
     }
 }
