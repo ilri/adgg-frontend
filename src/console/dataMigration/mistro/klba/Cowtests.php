@@ -92,7 +92,7 @@ class Cowtests extends MigrationBase implements MigrationInterface
         $model->setAdditionalAttributes();
         $prefix = static::getMigrationIdPrefix();
         $className = get_class($model);
-        foreach ($query->batch(1000) as $i => $dataModels) {
+        foreach ($query->batch(2000) as $i => $dataModels) {
             Yii::$app->controller->stdout("Batch processing  started...\n");
             $migrationIds = [];
             $testDayIds = [];
@@ -131,6 +131,7 @@ class Cowtests extends MigrationBase implements MigrationInterface
                 $lactData[$lactDatum['migration_id']] = $lactDatum['id'];
             }
 
+            $ids = [];
             foreach ($dataModels as $dataModel) {
                 $newModel = clone $model;
                 $newModel->migration_id = Helper::getMigrationId($dataModel->CowTests_ID, static::getTestDayMigrationIdPrefix());
@@ -170,8 +171,18 @@ class Cowtests extends MigrationBase implements MigrationInterface
                 $oldLactId = Helper::getMigrationId($dataModel->CowTests_LactID, static::getLactMigrationIdPrefix());
                 $newModel->lactation_id = $lactData[$oldLactId] ?? null;
 
-                static::saveModel($newModel, $n, $totalRecords, false);
+                $newModel = static::saveModel($newModel, $n, $totalRecords, false);
+                if (!empty($newModel->id) && !empty($newModel->lactation_id)) {
+                    $ids[$newModel->animal_id . $newModel->lactation_id] = ['animal_id' => $newModel->animal_id, 'lactation_id' => $newModel->lactation_id];
+                }
                 $n++;
+            }
+
+            if (!empty($ids)) {
+                Yii::$app->controller->stdout("Updating testday_no ...\n");
+                foreach ($ids as $event) {
+                    MilkingEvent::setTestDayNo($event['animal_id'], $event['lactation_id']);
+                }
             }
         }
     }

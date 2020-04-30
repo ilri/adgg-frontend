@@ -105,12 +105,14 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
         $this->dim = $diff->days;
     }
 
-    protected function setTestDayNumber()
+    /**
+     * @param int $animalId
+     * @param int $lactationId
+     * @throws \yii\db\Exception
+     */
+    public static function setTestDayNo($animalId,$lactationId)
     {
-        if ($this->event_type != self::EVENT_TYPE_MILKING || !empty($this->lactation_id)) {
-            return;
-        }
-        $data = static::getData(['id'], ['event_type' => self::EVENT_TYPE_MILKING, 'animal_id' => $this->animal_id, 'lactation_id' => $this->lactation_id], [], ['orderBy' => ['event_date' => SORT_ASC]]);
+        $data = static::getData(['id'], ['event_type' => self::EVENT_TYPE_MILKING, 'animal_id' => $animalId, 'lactation_id' => $lactationId], [], ['orderBy' => ['event_date' => SORT_ASC]]);
         $n = 1;
         $sql = "";
         $params = [];
@@ -119,7 +121,6 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
             $sql .= "UPDATE {$table} SET [[testday_no]]=:tdno{$n} WHERE [[id]]=:id{$n};";
             $params[":tdno{$n}"] = $n;
             $params[":id{$n}"] = $row['id'];
-            //static::updateAll(['testday_no' => $n], ['id' => $row['id']]);
             $n++;
         }
         if (!empty($sql)) {

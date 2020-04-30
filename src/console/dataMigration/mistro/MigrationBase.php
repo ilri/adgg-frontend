@@ -24,6 +24,7 @@ abstract class MigrationBase extends ActiveRecord
      * @param null $n
      * @param int|null $totalRecords
      * @param bool $validate
+     * @return ActiveRecord
      */
     protected static function saveModel(ActiveRecord $model, $n = null, $totalRecords = null, $validate = true)
     {
@@ -36,5 +37,6 @@ abstract class MigrationBase extends ActiveRecord
             $error = json_encode($model->getErrors());
             Yii::$app->controller->stdout($prefix . ": " . $className . ": Validation Error on record {$n} of {$totalRecords}: {$error}\n");
         }
+        return $model;
     }
 }

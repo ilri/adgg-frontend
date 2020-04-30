@@ -182,7 +182,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
-            $this->ignoreAdditionalAttributes = true;
+            $this->ignoreAdditionalAttributes = false;
             $this->setLocationData();
             $this->country_id = $this->animal->country_id;
             $this->region_id = $this->animal->region_id;
@@ -244,13 +244,15 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             }*/
         }
         if ($this->event_type == self::EVENT_TYPE_MILKING) {
-            $this->setTestDayNumber();
+            if (!empty($this->lactation_id) && $this->scenario != self::SCENARIO_MISTRO_DB_UPLOAD) {
+                static::setTestDayNo($this->animal_id,$this->lactation_id);
+            }
         }
     }
 
     protected function setLactationNumber()
     {
-        if ($this->event_type != self::EVENT_TYPE_CALVING) {
+        if ($this->event_type != self::EVENT_TYPE_CALVING || $this->scenario == self::SCENARIO_MISTRO_DB_UPLOAD) {
             return;
         }
         $data = static::getData('id', ['event_type' => self::EVENT_TYPE_CALVING, 'animal_id' => $this->animal_id], [], ['orderBy' => ['event_date' => SORT_ASC]]);
