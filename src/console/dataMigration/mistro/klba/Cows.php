@@ -123,7 +123,7 @@ class Cows extends MigrationBase implements MigrationInterface
             foreach ($dataModels as $dataModel) {
                 $herdModel = static::getHerd($dataModel->Cows_Herd);
                 if (null === $herdModel) {
-                    Yii::$app->controller->stdout("{$className}: ERROR: Herd ID {$dataModel->Cows_Herd} does not exist.\n");
+                    Yii::$app->controller->stdout("{$className}: ERROR on record {$n} of {$totalRecords}: Herd ID {$dataModel->Cows_Herd} does not exist.\n");
                     $n++;
                     continue;
                 }
