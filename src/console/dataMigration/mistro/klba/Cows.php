@@ -116,11 +116,12 @@ class Cows extends MigrationBase implements MigrationInterface
         $countryId = Helper::getCountryId(\console\dataMigration\mistro\Constants::KENYA_COUNTRY_CODE);
         $orgId = Helper::getOrgId(static::getOrgName());
         $model = new Animal(['country_id' => $countryId, 'org_id' => $orgId, 'scenario' => Animal::SCENARIO_MISTRO_DB_COW_UPLOAD]);
+        $className=get_class($model);
         foreach ($query->batch() as $i => $dataModels) {
             foreach ($dataModels as $dataModel) {
                 $herdModel = static::getHerd($dataModel->Cows_Herd);
                 if (null === $herdModel) {
-                    Yii::$app->controller->stdout("ERROR: Herd ID {$dataModel->Cows_Herd} does not exist.\n");
+                    Yii::$app->controller->stdout("{$className}: ERROR: Herd ID {$dataModel->Cows_Herd} does not exist.\n");
                     $n++;
                     continue;
                 }

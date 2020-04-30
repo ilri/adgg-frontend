@@ -33,7 +33,7 @@ abstract class MigrationBase extends ActiveRecord
             Yii::$app->controller->stdout($orgName . ': ' . $className . ": saved record {$n} successfully\n");
         } else {
             $error = json_encode($model->getErrors());
-            Yii::$app->controller->stdout($orgName . ": Validation Error on record {$n}: {$error}\n");
+            Yii::$app->controller->stdout($orgName . ": " . $className . ": Validation Error on record {$n}: {$error}\n");
         }
     }
 }
