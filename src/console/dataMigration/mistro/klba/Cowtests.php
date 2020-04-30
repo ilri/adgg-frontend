@@ -90,6 +90,8 @@ class Cowtests extends MigrationBase implements MigrationInterface
         $orgId = Helper::getOrgId(static::getOrgName());
         $model = new MilkingEvent(['country_id' => $countryId, 'org_id' => $orgId, 'event_type' => AnimalEvent::EVENT_TYPE_MILKING, 'scenario' => MilkingEvent::SCENARIO_MISTRO_DB_UPLOAD]);
         $model->setAdditionalAttributes();
+        $prefix = static::getMigrationIdPrefix();
+        $className = get_class($model);
         foreach ($query->batch(1000) as $i => $dataModels) {
             Yii::$app->controller->stdout("Batch processing  started...\n");
             $migrationIds = [];
@@ -133,7 +135,7 @@ class Cowtests extends MigrationBase implements MigrationInterface
                 $newModel = clone $model;
                 $newModel->migration_id = Helper::getMigrationId($dataModel->CowTests_ID, static::getTestDayMigrationIdPrefix());
                 if (in_array($newModel->migration_id, $existingMigrationIds)) {
-                    Yii::$app->controller->stdout("Milk record {$n} with migration id: {$newModel->migration_id} already saved. Ignored\n");
+                    Yii::$app->controller->stdout($prefix . ": " . $className . ": record {$n} of {$totalRecords} with migration id: {$newModel->migration_id} already saved. Ignored\n");
                     $n++;
                     continue;
                 }
@@ -146,12 +148,12 @@ class Cowtests extends MigrationBase implements MigrationInterface
 
                 //'animal_id','event_date' are required
                 if (empty($newModel->animal_id)) {
-                    Yii::$app->controller->stdout("Validation error on milk record {$n}: Animal Id cannot be blank.\n");
+                    Yii::$app->controller->stdout($prefix . ": " . $className . ": Validation error on milk record {$n} of {$totalRecords}: Animal Id cannot be blank.\n");
                     $n++;
                     continue;
                 }
                 if (empty($newModel->event_date)) {
-                    Yii::$app->controller->stdout("Validation error on milk record {$n}: Event date cannot be blank.\n");
+                    Yii::$app->controller->stdout($prefix . ": " . $className . ": Validation error on milk record {$n} of {$totalRecords}: Event date cannot be blank.\n");
                     $n++;
                     continue;
                 }
