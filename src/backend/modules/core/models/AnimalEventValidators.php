@@ -16,7 +16,7 @@ trait AnimalEventValidators
 {
     public function validateCalvingDate($attribute, $params)
     {
-        if ($this->event_type !== AnimalEvent::EVENT_TYPE_CALVING || $this->hasErrors()) {
+        if ($this->event_type != AnimalEvent::EVENT_TYPE_CALVING || $this->hasErrors()) {
             return false;
         }
         if (!empty($this->{$attribute})) {
@@ -28,9 +28,15 @@ trait AnimalEventValidators
             }
             $dateDiff = DateUtils::getDateDiff($eventDate, $lastCalving->event_date);
             $minDays = 220;
+            $maxDays = 1500;
             if ($dateDiff->days < $minDays) {
                 $this->addError($attribute, Lang::t("Calving date interval should not be less than {minDays} days.", [
                     'minDays' => $minDays,
+                ]));
+            }
+            if ($dateDiff->days > $maxDays) {
+                $this->addError($attribute, Lang::t("Calving date interval should not be more than {maxDays} days.", [
+                    'maxDays' => $maxDays,
                 ]));
             }
         }
