@@ -96,21 +96,6 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
         ];
     }
 
-    public function beforeSave($insert)
-    {
-        if (parent::beforeSave($insert)) {
-            $this->ignoreAdditionalAttributes = false;
-            if (empty($this->milkday)) {
-                $this->milkday = ((float)$this->milkmor + (float)$this->milkeve + (float)$this->milkmid);
-            }
-            $this->setDIM();
-            $this->ignoreAdditionalAttributes = true;
-
-            return true;
-        }
-        return false;
-    }
-
     protected function setDIM()
     {
         if ($this->event_type != self::EVENT_TYPE_MILKING || null === $this->lactation || empty($this->lactation->event_date) || empty($this->event_date)) {
@@ -120,16 +105,9 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
         $this->dim = $diff->days;
     }
 
-    public function afterSave($insert, $changedAttributes)
-    {
-        parent::afterSave($insert, $changedAttributes);
-        $this->setTestDayNumber();
-    }
-
-
     protected function setTestDayNumber()
     {
-        if ($this->event_type != self::EVENT_TYPE_MILKING || null === $this->lactation) {
+        if ($this->event_type != self::EVENT_TYPE_MILKING || !empty($this->lactation_id)) {
             return;
         }
         $data = static::getData(['id'], ['event_type' => self::EVENT_TYPE_MILKING, 'animal_id' => $this->animal_id, 'lactation_id' => $this->lactation_id], [], ['orderBy' => ['event_date' => SORT_ASC]]);

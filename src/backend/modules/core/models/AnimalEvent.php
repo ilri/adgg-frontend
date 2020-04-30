@@ -191,6 +191,12 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             $this->village_id = $this->animal->village_id;
             $this->org_id = $this->animal->org_id;
             $this->client_id = $this->animal->client_id;
+            if ($this->event_type == self::EVENT_TYPE_MILKING) {
+                if (empty($this->milkday)) {
+                    $this->milkday = ((float)$this->milkmor + (float)$this->milkeve + (float)$this->milkmid);
+                }
+                $this->setDIM();
+            }
             $this->setAdditionalAttributesValues();
             $this->setLactationId();
             return true;
@@ -228,14 +234,17 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
-        $this->setLactationNumber();
         if ($this->event_type == self::EVENT_TYPE_CALVING) {
+            $this->setLactationNumber();
             //update milk records
             /*$data = static::getData(['id', 'event_date'], ['event_type' => self::EVENT_TYPE_MILKING, 'animal_id' => $this->animal_id]);
             foreach ($data as $row) {
                 $lactation_id = static::fetchLactationId($this->animal_id, $row['event_date']);
                 static::updateAll(['lactation_id' => $lactation_id], ['id' => $row['id']]);
             }*/
+        }
+        if ($this->event_type == self::EVENT_TYPE_MILKING) {
+            $this->setTestDayNumber();
         }
     }
 
