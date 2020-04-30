@@ -16,7 +16,7 @@ trait AnimalEventValidators
 {
     public function validateCalvingDate($attribute, $params)
     {
-        if ($this->event_type !== AnimalEvent::EVENT_TYPE_CALVING || $this->hasErrors()) {
+        if ($this->event_type != AnimalEvent::EVENT_TYPE_CALVING || $this->hasErrors()) {
             return false;
         }
         if (!empty($this->{$attribute})) {
