@@ -76,6 +76,7 @@ class Lacts extends MigrationBase implements MigrationInterface
                 $animalData[$animalDatum['migration_id']] = $animalDatum['id'];
             }
 
+            $ids = [];
             foreach ($dataModels as $dataModel) {
                 $newModel = clone $model;
                 $newModel->migration_id = Helper::getMigrationId($dataModel->Lacts_ID, static::getMigrationIdPrefix());
@@ -116,8 +117,18 @@ class Lacts extends MigrationBase implements MigrationInterface
                     $newModel->calvtype = 4;
                 }
                 $newModel->calving_dry_date = $dataModel->Lacts_TermDate;
-                static::saveModel($newModel, $n, $totalRecords, false);
+                $newModel = static::saveModel($newModel, $n, $totalRecords, false);
+                if (!empty($newModel->id)) {
+                    $ids[$newModel->animal_id] = ['animal_id' => $newModel->animal_id];
+                }
                 $n++;
+            }
+
+            if (!empty($ids)) {
+                Yii::$app->controller->stdout("Updating lactation_number ...\n");
+                foreach ($ids as $event) {
+                    AnimalEvent::setLactationNumber($event['animal_id']);
+                }
             }
         }
     }

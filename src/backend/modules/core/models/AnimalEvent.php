@@ -235,27 +235,26 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     {
         parent::afterSave($insert, $changedAttributes);
         if ($this->event_type == self::EVENT_TYPE_CALVING) {
-            $this->setLactationNumber();
-            //update milk records
-            /*$data = static::getData(['id', 'event_date'], ['event_type' => self::EVENT_TYPE_MILKING, 'animal_id' => $this->animal_id]);
-            foreach ($data as $row) {
-                $lactation_id = static::fetchLactationId($this->animal_id, $row['event_date']);
-                static::updateAll(['lactation_id' => $lactation_id], ['id' => $row['id']]);
-            }*/
+            if ($this->scenario != self::SCENARIO_MISTRO_DB_UPLOAD) {
+                static::setLactationNumber($this->animal_id);
+                //update milk records
+                /*$data = static::getData(['id', 'event_date'], ['event_type' => self::EVENT_TYPE_MILKING, 'animal_id' => $this->animal_id]);
+                foreach ($data as $row) {
+                    $lactation_id = static::fetchLactationId($this->animal_id, $row['event_date']);
+                    static::updateAll(['lactation_id' => $lactation_id], ['id' => $row['id']]);
+                }*/
+            }
         }
         if ($this->event_type == self::EVENT_TYPE_MILKING) {
             if (!empty($this->lactation_id) && $this->scenario != self::SCENARIO_MISTRO_DB_UPLOAD) {
-                static::setTestDayNo($this->animal_id,$this->lactation_id);
+                static::setTestDayNo($this->animal_id, $this->lactation_id);
             }
         }
     }
 
-    protected function setLactationNumber()
+    public static function setLactationNumber($animalId)
     {
-        if ($this->event_type != self::EVENT_TYPE_CALVING || $this->scenario == self::SCENARIO_MISTRO_DB_UPLOAD) {
-            return;
-        }
-        $data = static::getData('id', ['event_type' => self::EVENT_TYPE_CALVING, 'animal_id' => $this->animal_id], [], ['orderBy' => ['event_date' => SORT_ASC]]);
+        $data = static::getData('id', ['event_type' => self::EVENT_TYPE_CALVING, 'animal_id' => $animalId], [], ['orderBy' => ['event_date' => SORT_ASC]]);
         $n = 1;
         $params = [];
         $sql = "";
