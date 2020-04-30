@@ -3,6 +3,7 @@
 namespace console\dataMigration\mistro\klba;
 
 use backend\modules\core\models\Animal;
+use backend\modules\core\models\AnimalHerd;
 use console\dataMigration\mistro\Helper;
 use console\dataMigration\mistro\MigrationBase;
 use console\dataMigration\mistro\MigrationInterface;
@@ -73,7 +74,7 @@ class Bulls extends MigrationBase implements MigrationInterface
         $model = new Animal(['country_id' => $countryId, 'org_id' => $orgId, 'scenario' => Animal::SCENARIO_MISTRO_DB_BULL_UPLOAD]);
         foreach ($query->batch(1000) as $i => $dataModels) {
             foreach ($dataModels as $dataModel) {
-                $herdModel = Cows::getHerd($dataModel->Bulls_Herd);
+                $herdModel = static::getHerd($dataModel->Bulls_Herd);
                 $newModel = clone $model;
                 if (null !== $herdModel) {
                     $newModel->herd_id = $herdModel->id;
@@ -117,6 +118,15 @@ class Bulls extends MigrationBase implements MigrationInterface
     public static function getCowMigrationIdPrefix()
     {
         return Cows::getMigrationIdPrefix();
+    }
+
+    /**
+     * @param int $oldHerdId
+     * @return array|AnimalHerd|\yii\db\ActiveRecord|null
+     */
+    public static function getHerd($oldHerdId)
+    {
+        return Cows::getHerd($oldHerdId);
     }
 
 }
