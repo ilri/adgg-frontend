@@ -110,7 +110,22 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
      * @param int $lactationId
      * @throws \yii\db\Exception
      */
-    public static function setTestDayNo($animalId,$lactationId)
+    public static function setTestDayNo($animalId, $lactationId)
+    {
+        list($sql, $params) = static::getTestDayNoUpdateSql($animalId, $lactationId,1);
+        if (!empty($sql)) {
+            Yii::$app->db->createCommand($sql, $params)->execute();
+        }
+    }
+
+    /**
+     * @param int $animalId
+     * @param int $lactationId
+     * @param int $i
+     * @return array
+     * @throws \Exception
+     */
+    public static function getTestDayNoUpdateSql($animalId, $lactationId, $i = 1)
     {
         $data = static::getData(['id'], ['event_type' => self::EVENT_TYPE_MILKING, 'animal_id' => $animalId, 'lactation_id' => $lactationId], [], ['orderBy' => ['event_date' => SORT_ASC]]);
         $n = 1;
@@ -118,14 +133,12 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
         $params = [];
         $table = static::tableName();
         foreach ($data as $row) {
-            $sql .= "UPDATE {$table} SET [[testday_no]]=:tdno{$n} WHERE [[id]]=:id{$n};";
-            $params[":tdno{$n}"] = $n;
-            $params[":id{$n}"] = $row['id'];
+            $sql .= "UPDATE {$table} SET [[testday_no]]=:tdno{$n}{$i} WHERE [[id]]=:id{$n}{$i};";
+            $params[":tdno{$n}{$i}"] = $n;
+            $params[":id{$n}{$i}"] = $row['id'];
             $n++;
         }
-        if (!empty($sql)) {
-            Yii::$app->db->createCommand($sql, $params)->execute();
-        }
+        return [$sql, $params];
     }
 
     /**

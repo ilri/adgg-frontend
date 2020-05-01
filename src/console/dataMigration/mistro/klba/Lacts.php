@@ -129,8 +129,21 @@ class Lacts extends MigrationBase implements MigrationInterface
 
             if (!empty($ids)) {
                 Yii::$app->controller->stdout("Updating lactation_number ...\n");
+                $updateSQL = "";
+                $updateParams = [];
+                $i = 1;
                 foreach ($ids as $event) {
-                    AnimalEvent::setLactationNumber($event['animal_id']);
+                    list($sql, $params) = AnimalEvent::getLactationNumberUpdateSql($event['animal_id'], $i);
+                    if (!empty($sql)) {
+                        $updateSQL .= $sql;
+                    }
+                    if (!empty($params)) {
+                        $updateParams = array_merge($updateParams, $params);
+                    }
+                    $i++;
+                }
+                if (!empty($updateSQL)) {
+                    Yii::$app->db->createCommand($updateSQL, $updateParams)->execute();
                 }
             }
         }

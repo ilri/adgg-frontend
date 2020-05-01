@@ -254,20 +254,32 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
 
     public static function setLactationNumber($animalId)
     {
+        list($sql, $params) = static::getLactationNumberUpdateSql($animalId, 1);
+        if (!empty($sql)) {
+            Yii::$app->db->createCommand($sql, $params)->execute();
+        }
+    }
+
+    /**
+     * @param int $animalId
+     * @param int $i
+     * @return array
+     * @throws \Exception
+     */
+    public static function getLactationNumberUpdateSql($animalId, $i = 1)
+    {
         $data = static::getData('id', ['event_type' => self::EVENT_TYPE_CALVING, 'animal_id' => $animalId], [], ['orderBy' => ['event_date' => SORT_ASC]]);
         $n = 1;
         $params = [];
         $sql = "";
         $table = static::tableName();
         foreach ($data as $row) {
-            $sql .= "UPDATE {$table} SET [[lactation_number]]=:lact{$n} WHERE [[id]]=:id{$n};";
-            $params[":lact{$n}"] = $n;
-            $params[":id{$n}"] = $row['id'];
+            $sql .= "UPDATE {$table} SET [[lactation_number]]=:lact{$n}{$i} WHERE [[id]]=:id{$n}{$i};";
+            $params[":lact{$n}{$i}"] = $n;
+            $params[":id{$n}{$i}"] = $row['id'];
             $n++;
         }
-        if (!empty($sql)) {
-            Yii::$app->db->createCommand($sql, $params)->execute();
-        }
+        return [$sql, $params];
     }
 
     public function afterFind()

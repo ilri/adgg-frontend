@@ -191,8 +191,21 @@ class Cowtests extends MigrationBase implements MigrationInterface
 
             if (!empty($ids)) {
                 Yii::$app->controller->stdout("Updating testday_no ...\n");
+                $updateSQL = "";
+                $updateParams = [];
+                $i = 1;
                 foreach ($ids as $event) {
-                    MilkingEvent::setTestDayNo($event['animal_id'], $event['lactation_id']);
+                    list($sql, $params) = MilkingEvent::getTestDayNoUpdateSql($event['animal_id'], $event['lactation_id'], $i);
+                    if (!empty($sql)) {
+                        $updateSQL .= $sql;
+                    }
+                    if (!empty($params)) {
+                        $updateParams = array_merge($updateParams, $params);
+                    }
+                    $i++;
+                }
+                if (!empty($updateSQL)) {
+                    Yii::$app->db->createCommand($updateSQL, $updateParams)->execute();
                 }
             }
         }
