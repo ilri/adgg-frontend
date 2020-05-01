@@ -42,4 +42,8 @@ class Cowtests extends \console\dataMigration\mistro\klba\Cowtests
     {
         return Testdays::getData(['TestDays_ID', 'TestDays_Date', 'TestDays_TestType'], ['TestDays_ID' => $testDayIds]);
     }
+    public static function getCowsData($cowIds)
+    {
+        return Lacts::getCowsData($cowIds);
+    }
 }

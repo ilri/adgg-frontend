@@ -16,4 +16,9 @@ class Lacts extends \console\dataMigration\mistro\klba\Lacts
         return Cows::getMigrationIdPrefix();
     }
 
+    public static function getCowsData($cowIds)
+    {
+        return Cows::getData(['Cows_HIONo', 'Cows_ID'], ['Cows_ID' => $cowIds]);
+    }
+
 }
