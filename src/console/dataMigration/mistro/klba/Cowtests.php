@@ -92,26 +92,37 @@ class Cowtests extends MigrationBase implements MigrationInterface
         $model->setAdditionalAttributes();
         $prefix = static::getMigrationIdPrefix();
         $className = get_class($model);
-        foreach ($query->batch(2000) as $i => $dataModels) {
+        foreach ($query->batch(3000) as $i => $dataModels) {
+            if ($n < 0) {
+                $n += 3000;
+                Yii::$app->controller->stdout($prefix . ": " . $className . ": Record {$n} of {$totalRecords} has been processed. Ignored...\n");
+                continue;
+            }
             Yii::$app->controller->stdout("Batch processing  started...\n");
             $migrationIds = [];
             $testDayIds = [];
-            $oldAnimalIds = [];
             $testDayData = [];
             $animalData = [];
             $oldLactIds = [];
             $lactData = [];
+            $cowIds = [];
             //Yii::$app->controller->stdout("Setting default configs...\n");
             foreach ($dataModels as $dataModel) {
                 //migration_id must be unique
                 $migrationIds[] = Helper::getMigrationId($dataModel->CowTests_ID, static::getTestDayMigrationIdPrefix());
                 //query db
                 $testDayIds[$dataModel->CowTests_TDayID] = $dataModel->CowTests_TDayID;
-                $animalMigId = Helper::getMigrationId($dataModel->CowTests_CowID, static::getCowMigrationIdPrefix());
-                $oldAnimalIds[$animalMigId] = $animalMigId;
                 $oldLactId = Helper::getMigrationId($dataModel->CowTests_LactID, static::getLactMigrationIdPrefix());
                 $oldLactIds[$oldLactId] = $oldLactId;
+                $cowIds[] = $dataModel->CowTests_CowID;
             }
+
+            $cows = static::getCowsData($cowIds);
+            $animalTagIds = [];
+            foreach ($cows as $cow) {
+                $animalTagIds[$cow['Cows_ID']] = $cow['Cows_HIONo'];
+            }
+
             $existingMigrationIds = AnimalEvent::getColumnData(['migration_id'], ['migration_id' => $migrationIds]);
             //testDay Data
             //Yii::$app->controller->stdout("Setting testDay data...\n");
@@ -121,8 +132,8 @@ class Cowtests extends MigrationBase implements MigrationInterface
 
             //animal Data
             //Yii::$app->controller->stdout("Setting animal data...\n");
-            foreach (Animal::getData(['id', 'migration_id'], ['migration_id' => $oldAnimalIds]) as $animalDatum) {
-                $animalData[$animalDatum['migration_id']] = $animalDatum['id'];
+            foreach (Animal::getData(['id', 'tag_id'], ['tag_id' => $animalTagIds]) as $animalDatum) {
+                $animalData[$animalDatum['tag_id']] = $animalDatum['id'];
             }
 
             //lactation Data
@@ -140,8 +151,7 @@ class Cowtests extends MigrationBase implements MigrationInterface
                     $n++;
                     continue;
                 }
-                $animalMigId = Helper::getMigrationId($dataModel->CowTests_CowID, static::getCowMigrationIdPrefix());
-                $newModel->animal_id = $animalData[$animalMigId] ?? null;
+                $newModel->animal_id=$animalData[$dataModel->CowTests_CowID] ?? null;
                 $newModel->event_date = $testDayData[$dataModel->CowTests_TDayID]['TestDays_Date'] ?? null;
                 if ($newModel->event_date == '0000-00-00') {
                     $newModel->event_date = null;
@@ -205,5 +215,10 @@ class Cowtests extends MigrationBase implements MigrationInterface
     public static function getTestDaysData($testDayIds)
     {
         return Testdays::getData(['TestDays_ID', 'TestDays_Date', 'TestDays_TestType'], ['TestDays_ID' => $testDayIds]);
+    }
+
+    public static function getCowsData($cowIds)
+    {
+        return Lacts::getCowsData($cowIds);
     }
 }

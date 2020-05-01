@@ -2,6 +2,8 @@
 
 namespace console\dataMigration\mistro\stanley2;
 
+use backend\modules\core\models\AnimalHerd;
+
 class Bulls extends \console\dataMigration\mistro\klba\Bulls
 {
     use MigrationTrait;
@@ -14,6 +16,15 @@ class Bulls extends \console\dataMigration\mistro\klba\Bulls
     public static function getCowMigrationIdPrefix()
     {
         return Cows::getMigrationIdPrefix();
+    }
+
+    /**
+     * @param int $oldHerdId
+     * @return array|AnimalHerd|\yii\db\ActiveRecord|null
+     */
+    public static function getHerd($oldHerdId)
+    {
+        return Cows::getHerd($oldHerdId);
     }
 
 }
