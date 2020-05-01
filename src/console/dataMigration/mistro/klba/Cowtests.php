@@ -120,7 +120,7 @@ class Cowtests extends MigrationBase implements MigrationInterface
             $cows = static::getCowsData($cowIds);
             $animalTagIds = [];
             foreach ($cows as $cow) {
-                $animalTagIds[$cow['Cows_ID']] = $cows['Cows_HIONo'];
+                $animalTagIds[$cow['Cows_ID']] = $cow['Cows_HIONo'];
             }
 
             $existingMigrationIds = AnimalEvent::getColumnData(['migration_id'], ['migration_id' => $migrationIds]);

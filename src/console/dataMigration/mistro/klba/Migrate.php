@@ -18,9 +18,9 @@ class Migrate implements MigrateInterface
 
     public static function run()
     {
-        Clients::migrateData();
+        /*Clients::migrateData();
         Farms::migrateData();
-        Herds::migrateData();
+        Herds::migrateData();*/
         Cows::migrateData();
         Bulls::migrateData();
         Lacts::migrateData();
