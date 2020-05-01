@@ -229,7 +229,7 @@ class Cows extends MigrationBase implements MigrationInterface
         /* @var $models Animal[] */
         foreach ($query->batch() as $i => $models) {
             foreach ($models as $model) {
-                if ($n < 82000) {
+                if ($n < 0) {
                     $n++;
                     Yii::$app->controller->stdout($prefix . ": " . $className . ": Record: {$n} of {$totalRecords} already updated. Ignored\n");
                     continue;
