@@ -5,6 +5,7 @@ namespace console\dataMigration\mistro\klba;
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\MilkingEvent;
+use common\helpers\DbUtils;
 use console\dataMigration\mistro\Helper;
 use console\dataMigration\mistro\MigrationBase;
 use console\dataMigration\mistro\MigrationInterface;
@@ -92,9 +93,9 @@ class Cowtests extends MigrationBase implements MigrationInterface
         $model->setAdditionalAttributes();
         $prefix = static::getMigrationIdPrefix();
         $className = get_class($model);
-        foreach ($query->batch(3000) as $i => $dataModels) {
-            if ($n < 0) {
-                $n += 3000;
+        foreach ($query->batch(1000) as $i => $dataModels) {
+            if ($n < 178000) {
+                $n += 1000;
                 Yii::$app->controller->stdout($prefix . ": " . $className . ": Record {$n} of {$totalRecords} has been processed. Ignored...\n");
                 continue;
             }
@@ -142,7 +143,7 @@ class Cowtests extends MigrationBase implements MigrationInterface
                 $lactData[$lactDatum['migration_id']] = $lactDatum['id'];
             }
 
-            $ids = [];
+            $milkEventsArray = [];
             foreach ($dataModels as $dataModel) {
                 $newModel = clone $model;
                 $newModel->migration_id = Helper::getMigrationId($dataModel->CowTests_ID, static::getTestDayMigrationIdPrefix());
@@ -184,31 +185,85 @@ class Cowtests extends MigrationBase implements MigrationInterface
 
                 $newModel = static::saveModel($newModel, $n, $totalRecords, false);
                 if (!empty($newModel->id) && !empty($newModel->lactation_id)) {
-                    $ids[$newModel->animal_id . $newModel->lactation_id] = ['animal_id' => $newModel->animal_id, 'lactation_id' => $newModel->lactation_id];
+                    $milkEventsArray[$newModel->animal_id . $newModel->lactation_id] = ['animal_id' => $newModel->animal_id, 'lactation_id' => $newModel->lactation_id];
                 }
                 $n++;
             }
-
-            if (!empty($ids)) {
-                Yii::$app->controller->stdout("Updating testday_no ...\n");
-                $updateSQL = "";
-                $updateParams = [];
-                $i = 1;
-                foreach ($ids as $event) {
-                    list($sql, $params) = MilkingEvent::getTestDayNoUpdateSql($event['animal_id'], $event['lactation_id'], $i);
-                    if (!empty($sql)) {
-                        $updateSQL .= $sql;
-                    }
-                    if (!empty($params)) {
-                        $updateParams = array_merge($updateParams, $params);
-                    }
-                    $i++;
-                }
-                if (!empty($updateSQL)) {
-                    Yii::$app->db->createCommand($updateSQL, $updateParams)->execute();
-                }
-            }
+            static::batchUpdateTestDayNo($milkEventsArray);
         }
+    }
+
+    /**
+     * @param array $milkEventsArray
+     * @throws \yii\db\Exception
+     */
+    public static function batchUpdateTestDayNo($milkEventsArray)
+    {
+        if (empty($milkEventsArray)) {
+            return;
+        }
+
+        Yii::$app->controller->stdout("Updating testday_no ...\n");
+        $i = 1;
+        $updateEventIds = [];
+        $whenSqlComponent = "";
+        $updateParams = [];
+        foreach ($milkEventsArray as $event) {
+            list($whenSql, $params, $eventIds) = static::prepareBatchTestDayNoUpdateSql($event['animal_id'], $event['lactation_id'], $i);
+            if (!empty($whenSql)) {
+                if (!empty($whenSqlComponent)) {
+                    $whenSqlComponent .= " ";
+                }
+                $whenSqlComponent .= $whenSql;
+            }
+            if (!empty($eventIds)) {
+                $updateEventIds = array_merge($updateEventIds, $eventIds);
+            }
+
+            if (!empty($params)) {
+                $updateParams = array_merge($updateParams, $params);
+            }
+            $i++;
+        }
+        if (!empty($whenSqlComponent)) {
+            //EXAMPLE: "UPDATE {table} SET [[testday_no]] = (CASE [[id]] {WHEN 1 THEN 'val1' WHEN 2 THEN 'val2' WHEN 3 THEN 'val3'} END) WHERE [[id]] IN(1, 2 ,3);"
+            $updateSql = "UPDATE {table} SET [[testday_no]] = (CASE [[id]] {whenComponent} END) WHERE {condition};";
+            list($condition, $params2) = DbUtils::appendInCondition('id', $updateEventIds);
+            $updateParams = array_merge($updateParams, $params2);
+            $updateSql = strtr($updateSql, [
+                '{table}' => AnimalEvent::tableName(),
+                '{whenComponent}' => $whenSqlComponent,
+                '{condition}' => $condition,
+            ]);
+            Yii::$app->db->createCommand($updateSql, $updateParams)->execute();
+        }
+    }
+
+    /**
+     * @param int $animalId
+     * @param int $lactationId
+     * @param int $i
+     * @return array
+     * @throws \Exception
+     */
+    public static function prepareBatchTestDayNoUpdateSql($animalId, $lactationId, $i = 1)
+    {
+        $data = AnimalEvent::getData(['id'], ['event_type' => AnimalEvent::EVENT_TYPE_MILKING, 'animal_id' => $animalId, 'lactation_id' => $lactationId], [], ['orderBy' => ['event_date' => SORT_ASC]]);
+        $n = 1;
+        $params = [];
+        $whenSql = "";
+        $ids = [];
+        foreach ($data as $row) {
+            if (!empty($whenSql)) {
+                $whenSql .= " ";
+            }
+            $whenSql .= "WHEN :id{$n}{$i} THEN :tdno{$n}{$i}";
+            $params[":id{$n}{$i}"] = $row['id'];
+            $params[":tdno{$n}{$i}"] = $n;
+            $ids[] = $row['id'];
+            $n++;
+        }
+        return [$whenSql, $params, $ids];
     }
 
     public static function getCowMigrationIdPrefix()

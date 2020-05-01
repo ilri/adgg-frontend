@@ -112,7 +112,7 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
      */
     public static function setTestDayNo($animalId, $lactationId)
     {
-        list($sql, $params) = static::getTestDayNoUpdateSql($animalId, $lactationId,1);
+        list($sql, $params) = static::getTestDayNoUpdateSql($animalId, $lactationId, 1);
         if (!empty($sql)) {
             Yii::$app->db->createCommand($sql, $params)->execute();
         }

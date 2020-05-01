@@ -5,6 +5,7 @@ namespace console\dataMigration\mistro\klba;
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\CalvingEvent;
+use common\helpers\DbUtils;
 use console\dataMigration\mistro\Helper;
 use console\dataMigration\mistro\MigrationBase;
 use console\dataMigration\mistro\MigrationInterface;
@@ -58,7 +59,7 @@ class Lacts extends MigrationBase implements MigrationInterface
         $model->setAdditionalAttributes();
         $className = get_class($model);
         $prefix = static::getMigrationIdPrefix();
-        foreach ($query->batch(3000) as $i => $dataModels) {
+        foreach ($query->batch(1000) as $i => $dataModels) {
             Yii::$app->controller->stdout("Batch processing  started...\n");
             $migrationIds = [];
             $animalData = [];
@@ -80,7 +81,7 @@ class Lacts extends MigrationBase implements MigrationInterface
                 $animalData[$animalDatum['tag_id']] = $animalDatum['id'];
             }
 
-            $ids = [];
+            $calvingEventsArray = [];
             foreach ($dataModels as $dataModel) {
                 $newModel = clone $model;
                 $newModel->migration_id = Helper::getMigrationId($dataModel->Lacts_ID, static::getMigrationIdPrefix());
@@ -122,31 +123,83 @@ class Lacts extends MigrationBase implements MigrationInterface
                 $newModel->calving_dry_date = $dataModel->Lacts_TermDate;
                 $newModel = static::saveModel($newModel, $n, $totalRecords, false);
                 if (!empty($newModel->id)) {
-                    $ids[$newModel->animal_id] = ['animal_id' => $newModel->animal_id];
+                    $calvingEventsArray[$newModel->animal_id] = ['animal_id' => $newModel->animal_id];
                 }
                 $n++;
             }
-
-            if (!empty($ids)) {
-                Yii::$app->controller->stdout("Updating lactation_number ...\n");
-                $updateSQL = "";
-                $updateParams = [];
-                $i = 1;
-                foreach ($ids as $event) {
-                    list($sql, $params) = AnimalEvent::getLactationNumberUpdateSql($event['animal_id'], $i);
-                    if (!empty($sql)) {
-                        $updateSQL .= $sql;
-                    }
-                    if (!empty($params)) {
-                        $updateParams = array_merge($updateParams, $params);
-                    }
-                    $i++;
-                }
-                if (!empty($updateSQL)) {
-                    Yii::$app->db->createCommand($updateSQL, $updateParams)->execute();
-                }
-            }
+            static::batchUpdateLactationNo($calvingEventsArray);
         }
+    }
+
+    /**
+     * @param array $calvingEventsArray
+     * @throws \yii\db\Exception
+     */
+    public static function batchUpdateLactationNo($calvingEventsArray)
+    {
+        if (empty($calvingEventsArray)) {
+            return;
+        }
+
+        Yii::$app->controller->stdout("Updating lactation_number ...\n");
+        $i = 1;
+        $updateEventIds = [];
+        $whenSqlComponent = "";
+        $updateParams = [];
+        foreach ($calvingEventsArray as $event) {
+            list($whenSql, $params, $eventIds) = static::prepareBatchLactationNoUpdateSql($event['animal_id'], $i);
+            if (!empty($whenSql)) {
+                if (!empty($whenSqlComponent)) {
+                    $whenSqlComponent .= " ";
+                }
+                $whenSqlComponent .= $whenSql;
+            }
+            if (!empty($eventIds)) {
+                $updateEventIds = array_merge($updateEventIds, $eventIds);
+            }
+            if (!empty($params)) {
+                $updateParams = array_merge($updateParams, $params);
+            }
+            $i++;
+        }
+        if (!empty($whenSqlComponent)) {
+            //EXAMPLE: "UPDATE {table} SET [[lactation_number]] = (CASE [[id]] {WHEN 1 THEN 'val1' WHEN 2 THEN 'val2' WHEN 3 THEN 'val3'} END) WHERE [[id]] IN(1, 2 ,3);"
+            $updateSql = "UPDATE {table} SET [[lactation_number]] = (CASE [[id]] {whenComponent} END) WHERE {condition};";
+            list($condition, $params2) = DbUtils::appendInCondition('id', $updateEventIds);
+            $updateParams = array_merge($updateParams, $params2);
+            $updateSql = strtr($updateSql, [
+                '{table}' => AnimalEvent::tableName(),
+                '{whenComponent}' => $whenSqlComponent,
+                '{condition}' => $condition,
+            ]);
+            Yii::$app->db->createCommand($updateSql, $updateParams)->execute();
+        }
+    }
+
+    /**
+     * @param int $animalId
+     * @param int $i
+     * @return array
+     * @throws \Exception
+     */
+    public static function prepareBatchLactationNoUpdateSql($animalId, $i = 1)
+    {
+        $data = AnimalEvent::getData(['id'], ['event_type' => AnimalEvent::EVENT_TYPE_CALVING, 'animal_id' => $animalId], [], ['orderBy' => ['event_date' => SORT_ASC]]);
+        $n = 1;
+        $params = [];
+        $whenSql = "";
+        $ids = [];
+        foreach ($data as $row) {
+            if (!empty($whenSql)) {
+                $whenSql .= " ";
+            }
+            $whenSql .= "WHEN :id{$n}{$i} THEN :lactno{$n}{$i}";
+            $params[":id{$n}{$i}"] = $row['id'];
+            $params[":lactno{$n}{$i}"] = $n;
+            $ids[] = $row['id'];
+            $n++;
+        }
+        return [$whenSql, $params, $ids];
     }
 
     /**
