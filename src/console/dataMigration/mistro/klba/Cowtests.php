@@ -94,7 +94,7 @@ class Cowtests extends MigrationBase implements MigrationInterface
         $prefix = static::getMigrationIdPrefix();
         $className = get_class($model);
         foreach ($query->batch(1000) as $i => $dataModels) {
-            if ($n < 178000) {
+            if ($n < 0) {
                 $n += 1000;
                 Yii::$app->controller->stdout($prefix . ": " . $className . ": Record {$n} of {$totalRecords} has been processed. Ignored...\n");
                 continue;
