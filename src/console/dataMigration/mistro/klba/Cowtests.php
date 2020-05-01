@@ -151,7 +151,8 @@ class Cowtests extends MigrationBase implements MigrationInterface
                     $n++;
                     continue;
                 }
-                $newModel->animal_id=$animalData[$dataModel->CowTests_CowID] ?? null;
+                $animalTagId = $animalTagIds[$dataModel->CowTests_CowID] ?? null;
+                $newModel->animal_id = $animalData[$animalTagId] ?? null;
                 $newModel->event_date = $testDayData[$dataModel->CowTests_TDayID]['TestDays_Date'] ?? null;
                 if ($newModel->event_date == '0000-00-00') {
                     $newModel->event_date = null;

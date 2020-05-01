@@ -90,7 +90,8 @@ class Lacts extends MigrationBase implements MigrationInterface
                     continue;
                 }
 
-                $newModel->animal_id = $animalData[$dataModel->Lacts_CowID] ?? null;
+                $animalTagId = $animalTagIds[$dataModel->Lacts_CowID] ?? null;
+                $newModel->animal_id = $animalData[$animalTagId] ?? null;
                 $newModel->event_date = $dataModel->Lacts_InitDate;
                 if ($newModel->event_date == '0000-00-00') {
                     $newModel->event_date = null;
