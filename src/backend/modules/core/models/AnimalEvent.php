@@ -84,9 +84,9 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             [['latitude', 'longitude'], 'number'],
             [['map_address', 'uuid'], 'string', 'max' => 255],
             ['event_date', 'validateNoFutureDate'],
-            ['event_date', 'unique', 'targetAttribute' => ['country_id', 'animal_id', 'event_type', 'event_date'], 'message' => '{attribute} should be unique per animal', 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
+            ['event_date', 'unique', 'targetAttribute' => ['animal_id', 'event_type', 'event_date'], 'message' => '{attribute} should be unique per animal', 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
             [['org_id', 'client_id'], 'safe'],
-            ['migration_id', 'unique'],
+            ['migration_id', 'unique','except'=>self::SCENARIO_MISTRO_DB_UPLOAD],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
     }

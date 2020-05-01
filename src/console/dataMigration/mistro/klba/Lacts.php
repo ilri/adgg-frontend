@@ -77,8 +77,16 @@ class Lacts extends MigrationBase implements MigrationInterface
             $existingMigrationIds = AnimalEvent::getColumnData(['migration_id'], ['migration_id' => $migrationIds]);
             //animal Data
             //Yii::$app->controller->stdout("Setting animal data...\n");
+            $animalIds = [];
             foreach (Animal::getData(['id', 'tag_id'], ['tag_id' => $animalTagIds]) as $animalDatum) {
                 $animalData[$animalDatum['tag_id']] = $animalDatum['id'];
+                $animalIds[] = $animalDatum['id'];
+            }
+            $existingCalvingEvents = AnimalEvent::getData(['animal_id', 'event_type', 'event_date', 'id'], ['animal_id' => $animalIds, 'event_type' => AnimalEvent::EVENT_TYPE_CALVING]);
+            $existingCalvingEventsArr = [];
+            foreach ($existingCalvingEvents as $existingCalvingEvent) {
+                $key = (string)$existingCalvingEvent['animal_id'] . AnimalEvent::EVENT_TYPE_CALVING . $existingCalvingEvent['event_date'];
+                $existingCalvingEventsArr[$key] = $existingCalvingEvent;
             }
 
             $calvingEventsArray = [];
@@ -98,6 +106,13 @@ class Lacts extends MigrationBase implements MigrationInterface
                     $newModel->event_date = null;
                 }
 
+                //same animal cannot have multiple events with same event_type and event_date
+                $key = (string)$newModel->animal_id . AnimalEvent::EVENT_TYPE_CALVING . $newModel->event_date;
+                if (array_key_exists($key, $existingCalvingEventsArr)) {
+                    Yii::$app->controller->stdout($prefix . ": " . $className . ": Validation error on calving record {$n} of {$totalRecords}: a similar record already exists.\n");
+                    $n++;
+                    continue;
+                }
 
                 //'animal_id','event_date' are required
                 if (empty($newModel->animal_id)) {
