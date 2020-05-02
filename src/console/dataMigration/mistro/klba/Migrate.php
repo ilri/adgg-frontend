@@ -22,8 +22,8 @@ class Migrate implements MigrateInterface
         //Farms::migrateData();
         //Herds::migrateData();
         //Cows::migrateData();
-        Bulls::migrateData();
-        Lacts::migrateData();
+        //Bulls::migrateData();
+        //Lacts::migrateData();
         Cowtests::migrateData();
         Cows::updateSiresAndDams();
     }
