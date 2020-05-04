@@ -2,12 +2,13 @@
 /**
  * Created by PhpStorm.
  * @author: Fred <mconyango@gmail.com>
- * Date: 2020-02-18
- * Time: 11:40 AM
+ * Date: 2020-04-29
+ * Time: 9:30 PM
  */
+
 return [
     'class' => \yii\db\Connection::class,
-    'dsn' => 'mysql:host=localhost;port=3306;dbname=ilridb_cows',
+    'dsn' => 'mysql:host=localhost;port=3306;dbname=kalro_naivasha',
     'username' => 'root',
     'password' => 'root',
     'charset' => 'utf8mb4',

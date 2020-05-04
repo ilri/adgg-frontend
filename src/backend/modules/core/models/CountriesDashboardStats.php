@@ -449,7 +449,7 @@ class CountriesDashboardStats extends Model
         return $data;
     }
 
-    public static function getAnimalsWithMilkForDataViz($filter){
+    public static function getAnimalsWithMilkForDataViz($filter = []){
         $quarters = static::getQuarters(); // max 12 from today
         $countries = static::getDashboardCountryCategories($filter);
         foreach ($countries as $id => $label) {

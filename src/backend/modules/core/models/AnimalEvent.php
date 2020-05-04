@@ -9,6 +9,7 @@ use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
 use common\models\CustomValidationsTrait;
+use Yii;
 
 /**
  * This is the model class for table "core_animal_event".
@@ -83,9 +84,9 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             [['latitude', 'longitude'], 'number'],
             [['map_address', 'uuid'], 'string', 'max' => 255],
             ['event_date', 'validateNoFutureDate'],
-            ['event_date', 'unique', 'targetAttribute' => ['country_id', 'animal_id', 'event_type', 'event_date'], 'message' => '{attribute} should be unique per animal', 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
+            ['event_date', 'unique', 'targetAttribute' => ['animal_id', 'event_type', 'event_date'], 'message' => '{attribute} should be unique per animal', 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
             [['org_id', 'client_id'], 'safe'],
-            ['migration_id', 'unique'],
+            ['migration_id', 'unique','except'=>self::SCENARIO_MISTRO_DB_UPLOAD],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
     }
@@ -181,7 +182,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
-            $this->ignoreAdditionalAttributes = true;
+            $this->ignoreAdditionalAttributes = false;
             $this->setLocationData();
             $this->country_id = $this->animal->country_id;
             $this->region_id = $this->animal->region_id;
@@ -190,6 +191,12 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             $this->village_id = $this->animal->village_id;
             $this->org_id = $this->animal->org_id;
             $this->client_id = $this->animal->client_id;
+            if ($this->event_type == self::EVENT_TYPE_MILKING) {
+                if (empty($this->milkday)) {
+                    $this->milkday = ((float)$this->milkmor + (float)$this->milkeve + (float)$this->milkmid);
+                }
+                $this->setDIM();
+            }
             $this->setAdditionalAttributesValues();
             $this->setLactationId();
             return true;
@@ -218,7 +225,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
 
     protected function setLactationId()
     {
-        if (!empty($this->lactation_id) || $this->event_type != self::EVENT_TYPE_MILKING || $this->scenario == MilkingEvent::SCENARIO_MISTRO_DB_UPLOAD) {
+        if ($this->event_type != self::EVENT_TYPE_MILKING || !empty($this->lactation_id)) {
             return;
         }
         $this->lactation_id = static::fetchLactationId($this->animal_id, $this->event_date);
@@ -227,28 +234,52 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
-        $this->setLactationNumber();
         if ($this->event_type == self::EVENT_TYPE_CALVING) {
-            //update milk records
-            /*$data = static::getData(['id', 'event_date'], ['event_type' => self::EVENT_TYPE_MILKING, 'animal_id' => $this->animal_id]);
-            foreach ($data as $row) {
-                $lactation_id = static::fetchLactationId($this->animal_id, $row['event_date']);
-                static::updateAll(['lactation_id' => $lactation_id], ['id' => $row['id']]);
-            }*/
+            if ($this->scenario != self::SCENARIO_MISTRO_DB_UPLOAD) {
+                static::setLactationNumber($this->animal_id);
+                //update milk records
+                /*$data = static::getData(['id', 'event_date'], ['event_type' => self::EVENT_TYPE_MILKING, 'animal_id' => $this->animal_id]);
+                foreach ($data as $row) {
+                    $lactation_id = static::fetchLactationId($this->animal_id, $row['event_date']);
+                    static::updateAll(['lactation_id' => $lactation_id], ['id' => $row['id']]);
+                }*/
+            }
+        }
+        if ($this->event_type == self::EVENT_TYPE_MILKING) {
+            if (!empty($this->lactation_id) && $this->scenario != self::SCENARIO_MISTRO_DB_UPLOAD) {
+                static::setTestDayNo($this->animal_id, $this->lactation_id);
+            }
         }
     }
 
-    protected function setLactationNumber()
+    public static function setLactationNumber($animalId)
     {
-        if ($this->event_type != self::EVENT_TYPE_CALVING) {
-            return;
+        list($sql, $params) = static::getLactationNumberUpdateSql($animalId, 1);
+        if (!empty($sql)) {
+            Yii::$app->db->createCommand($sql, $params)->execute();
         }
-        $data = static::getData('id', ['event_type' => self::EVENT_TYPE_CALVING, 'animal_id' => $this->animal_id], [], ['orderBy' => ['event_date' => SORT_ASC]]);
+    }
+
+    /**
+     * @param int $animalId
+     * @param int $i
+     * @return array
+     * @throws \Exception
+     */
+    public static function getLactationNumberUpdateSql($animalId, $i = 1)
+    {
+        $data = static::getData('id', ['event_type' => self::EVENT_TYPE_CALVING, 'animal_id' => $animalId], [], ['orderBy' => ['event_date' => SORT_ASC]]);
         $n = 1;
+        $params = [];
+        $sql = "";
+        $table = static::tableName();
         foreach ($data as $row) {
-            static::updateAll(['lactation_number' => $n], ['id' => $row['id']]);
+            $sql .= "UPDATE {$table} SET [[lactation_number]]=:lact{$n}{$i} WHERE [[id]]=:id{$n}{$i};";
+            $params[":lact{$n}{$i}"] = $n;
+            $params[":id{$n}{$i}"] = $row['id'];
             $n++;
         }
+        return [$sql, $params];
     }
 
     public function afterFind()

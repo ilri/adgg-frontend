@@ -9,28 +9,34 @@
 namespace backend\modules\core\models;
 
 
-use common\helpers\DateUtils;
 use common\helpers\Lang;
 
 trait AnimalEventValidators
 {
     public function validateCalvingDate($attribute, $params)
     {
-        if ($this->event_type !== AnimalEvent::EVENT_TYPE_CALVING || $this->hasErrors()) {
+        if ($this->event_type != AnimalEvent::EVENT_TYPE_CALVING || $this->hasErrors()) {
             return false;
         }
         if (!empty($this->{$attribute})) {
-
-            $eventDate = $this->{$attribute};
-            $lastCalving = static::getLastAnimalEvent($this->animal_id, self::EVENT_TYPE_CALVING);
-            if (null === $lastCalving) {
-                return true;
-            }
-            $dateDiff = DateUtils::getDateDiff($eventDate, $lastCalving->event_date);
             $minDays = 220;
-            if ($dateDiff->days < $minDays) {
-                $this->addError($attribute, Lang::t("Calving date interval should not be less than {minDays} days.", [
+            $maxDays = 1500;
+            //last calving days should not be less than 220 days
+            //EXAMPLE SELECT * FROM  core_animal_event where animal_id="2483" AND event_type=1 AND DATEDIFF('2018-11-30',event_date)<220;
+            $condition = "[[animal_id]]=:animal_id AND [[event_type]]=:event_type AND DATEDIFF(:event_date,[[event_date]])>0 AND DATEDIFF(:event_date,[[event_date]])<:min_days";
+            $params = [':animal_id' => $this->animal_id, ':event_type' => $this->event_type, ':event_date' => $this->event_date, ':min_days' => $minDays];
+            if (static::exists($condition, $params)) {
+                $this->addError($attribute, Lang::t("Last calving date interval should not be less than {minDays} days.", [
                     'minDays' => $minDays,
+                ]));
+            }
+            //next calving days should not be more than 1500 days
+            //EXAMPLE: SELECT * FROM core_animal_event where animal_id="2483" AND event_type=1 AND DATEDIFF(event_date,'2017-06-06')>0 AND DATEDIFF(event_date,'2017-06-06')>1500;
+            $condition = "[[animal_id]]=:animal_id AND [[event_type]]=:event_type AND DATEDIFF([[event_date]],:event_date)>:max_days";
+            $params = [':animal_id' => $this->animal_id, ':event_type' => $this->event_type, ':event_date' => $this->event_date, ':max_days' => $maxDays];
+            if (static::exists($condition, $params)) {
+                $this->addError($attribute, Lang::t("Next calving date interval should not be more than {maxDays} days.", [
+                    'maxDays' => $maxDays,
                 ]));
             }
         }
@@ -38,7 +44,7 @@ trait AnimalEventValidators
 
     public function validateMilkingDate($attribute, $params)
     {
-        if ($this->event_type !== AnimalEvent::EVENT_TYPE_MILKING || $this->hasErrors()) {
+        if ($this->event_type != AnimalEvent::EVENT_TYPE_MILKING || $this->hasErrors()) {
             return;
         }
         if (!empty($this->{$attribute})) {
