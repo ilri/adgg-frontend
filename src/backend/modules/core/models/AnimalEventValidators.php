@@ -9,7 +9,6 @@
 namespace backend\modules\core\models;
 
 
-use common\helpers\DateUtils;
 use common\helpers\Lang;
 
 trait AnimalEventValidators
@@ -20,17 +19,10 @@ trait AnimalEventValidators
             return false;
         }
         if (!empty($this->{$attribute})) {
-
-            $eventDate = $this->{$attribute};
-            $lastCalving = static::getLastAnimalEvent($this->animal_id, self::EVENT_TYPE_CALVING);
-            if (null === $lastCalving) {
-                return true;
-            }
-            $dateDiff = DateUtils::getDateDiff($eventDate, $lastCalving->event_date);
             $minDays = 220;
             $maxDays = 1500;
             //last calving days should not be less than 220 days
-            //EXAMPLE SELECT * FROM  core_animal_event where animal_id="2483" AND event_type=1 AND DATEDIFF('2018-11-30',event_date)<220 AND id<>1428112;
+            //EXAMPLE SELECT * FROM  core_animal_event where animal_id="2483" AND event_type=1 AND DATEDIFF('2018-11-30',event_date)<220;
             $condition = "[[animal_id]]=:animal_id AND [[event_type]]=:event_type AND DATEDIFF(:event_date,[[event_date]])>0 AND DATEDIFF(:event_date,[[event_date]])<:min_days";
             $params = [':animal_id' => $this->animal_id, ':event_type' => $this->event_type, ':event_date' => $this->event_date, ':min_days' => $minDays];
             if (static::exists($condition, $params)) {
