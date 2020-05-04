@@ -6,7 +6,7 @@
  * Time: 11:06 PM
  */
 
-namespace console\dataMigration\ke\models;
+namespace console\dataMigration\mistro;
 
 
 use backend\modules\core\models\Country;
@@ -19,7 +19,7 @@ class Helper
      * @param string $prefix
      * @return string
      */
-    public static function getMigrationId($id, $prefix = Constants::DATA_SOURCE_PREFIX)
+    public static function getMigrationId($id, $prefix)
     {
         return $prefix . $id;
     }

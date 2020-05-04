@@ -109,7 +109,6 @@ class FakerController extends Controller
 
     public function actionResetMilkingModels()
     {
-
     }
 
     public function actionResetCalvingModels()
