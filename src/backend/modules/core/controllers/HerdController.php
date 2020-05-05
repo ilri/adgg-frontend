@@ -15,6 +15,10 @@ use backend\modules\core\Constants;
 use backend\modules\core\forms\UploadHerds;
 use backend\modules\core\models\AnimalHerd;
 use common\controllers\UploadExcelTrait;
+use common\helpers\Lang;
+use common\helpers\Url;
+use Yii;
+use yii\db\Exception;
 
 class HerdController extends Controller
 {
@@ -62,7 +66,43 @@ class HerdController extends Controller
             'searchModel' => $searchModel,
         ]);
     }
+    public function actionView($id)
+    {
+        $this->hasPrivilege(Acl::ACTION_VIEW);
+        $model = AnimalHerd::loadModel($id);
 
+        return $this->render('view', [
+            'model' => $model,
+        ]);
+    }
+    public function actionUpdate($id)
+    {
+        $this->hasPrivilege(Acl::ACTION_UPDATE);
+        $model = $this->loadModel($id);
+        if ($this->handlePostedData($model)) {
+            Yii::$app->session->setFlash('success', Lang::t('SUCCESS_MESSAGE'));
+            return $this->redirect(Url::getReturnUrl(['view', 'id' => $model->id]));
+        }
+
+        return $this->render('update', [
+            'model' => $model,
+        ]);
+    }
+    protected function handlePostedData(AnimalHerd &$model)
+    {
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $transaction = Yii::$app->db->beginTransaction();
+            try {
+                $model->save(false);
+                $transaction->commit();
+                return true;
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                throw new Exception($e->getMessage());
+            }
+        }
+        return false;
+    }
     public function actionUpload()
     {
         $this->hasPrivilege(Acl::ACTION_CREATE);
@@ -88,6 +128,22 @@ class HerdController extends Controller
     {
         $data = AnimalHerd::getListData('id', 'name', $placeholder, ['farm_id' => $farm_id]);
         return json_encode($data);
+    }
+    /**
+     * @param $id
+     * @return AnimalHerd
+     * @throws \yii\web\NotFoundHttpException
+     * @throws \yii\web\ForbiddenHttpException
+     */
+    protected function loadModel($id)
+    {
+        if (is_string($id) && !is_numeric($id)) {
+            $model = AnimalHerd::loadModel(['uuid' => $id]);
+        } else {
+            $model = AnimalHerd::loadModel($id);
+        }
+
+        return $model;
     }
 
 }

@@ -25,7 +25,9 @@
     box-shadow: none;
     border-left: solid 1px #ccc;
 }
-
+.help-content-view img{
+    width: 100% !important;
+}
 #custom-search-input .glyphicon-search{
     font-size: 18px;
 }
