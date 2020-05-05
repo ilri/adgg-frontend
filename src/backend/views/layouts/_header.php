@@ -22,10 +22,8 @@ $user = Yii::$app->user->identity;
     <!-- begin:: Header Topbar -->
     <div class="kt-header__topbar">
         <div class="kt-header__topbar-item">
-            <a class="pt-3" href="<?=Url::to(['/help/help-content/read']) ?>">
-                <div class="kt-header__topbar-wrapper">
-                    <span class="kt-header__topbar-icon" title="Help"><i class="fas fa-question-circle"></i></span>
-                </div>
+            <a class="kt-header__topbar-wrapper" href="<?=Url::to(['/help/help-content/read']) ?>">
+                <span class="kt-header__topbar-icon" title="Help"><i class="fas fa-question-circle"></i></span>
             </a>
         </div>
         <!--begin: Notifications -->
