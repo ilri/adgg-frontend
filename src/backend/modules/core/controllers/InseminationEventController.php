@@ -23,10 +23,10 @@ class InseminationEventController extends Controller
         $this->resourceLabel = 'Insemination';
     }
 
-    public function actionIndex($animal_id = null, $country_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $from = null, $to = null)
+    public function actionIndex($animal_id = null, $country_id = null, $org_id = null, $client_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $from = null, $to = null)
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
-        return $this->renderIndexAction(AnimalEvent::EVENT_TYPE_AI, $animal_id, $country_id, $region_id, $district_id, $ward_id, $village_id, $from, $to);
+        return $this->renderIndexAction(AnimalEvent::EVENT_TYPE_AI, $animal_id, $country_id, $org_id, $client_id, $region_id, $district_id, $ward_id, $village_id, $from, $to);
     }
 
     public function actionUpload()

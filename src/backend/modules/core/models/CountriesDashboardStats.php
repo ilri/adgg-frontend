@@ -452,24 +452,58 @@ class CountriesDashboardStats extends Model
     public static function getAnimalsWithMilkForDataViz($filter = []){
         $quarters = static::getQuarters(); // max 12 from today
         $countries = static::getDashboardCountryCategories($filter);
-        foreach ($countries as $id => $label) {
-            foreach ($quarters as $quarter){
-                $params = [];
-                $condition = '';
-                list($condition, $params) = DbUtils::appendCondition(Animal::tableName(). '.[[country_id]]', $id, $condition, $params);
-                if (!empty($condition))
-                    $condition .= ' AND ';
-                $casted_date = DbUtils::castDATE(Animal::tableName().'.[[reg_date]]', Animal::getDb());
-                $condition .= $casted_date . ' <= DATE(:end_date)';
-                $params[':end_date'] = $quarter->period_end;
-                $sum = static::getAnimalsWithMilk($condition, $params);
-                $data[$label][] = [
-                    'label' => $quarter->period . ' - ' . $quarter->period_end,
-                    'value' => floatval(number_format($sum, 2, '.', '')),
+        $all_results = [];
+        $data = [];
+        foreach ($quarters as $quarter){
+            $params = [];
+            $condition = '';
+            list($condition, $params) = DbUtils::appendInCondition(Animal::tableName(). '.[[country_id]]', array_keys($countries), $condition, $params);
+            #
+            # how do we put this date condition as a subselect in the query and avoid the 12x loop?
+            #
+            if (!empty($condition))
+                $condition .= ' AND ';
+            $casted_date = DbUtils::castDATE(Animal::tableName().'.[[reg_date]]', Animal::getDb());
+            $condition .= $casted_date . ' <= DATE(:end_date)';
+            $params[':end_date'] = $quarter->period_end;
+
+            $query = static::getAnimalsWithMilkQuery($condition, $params);
+            $query->addSelect(Animal::tableName(). '.[[country_id]]');
+            $query->groupBy([Animal::tableName(). '.[[country_id]]']);
+            $results = $query->asArray()->all();
+            $res = [];
+            foreach ($results as $result){
+                $res[$result['country_id']] = $result['count'];
+            }
+            $all_results[$quarter->period . ' - ' . $quarter->period_end] = $res;
+        }
+        foreach ($countries as $country_id => $country) {
+            foreach ($all_results as $quarter_period => $result){
+                $data[$country][] = [
+                    'label' => $quarter_period,
+                    'value' => floatval(number_format($result[$country_id] ?? 0, 2, '.', '')),
                 ];
             }
         };
         return $data;
+    }
+
+    /**
+     * @param string $condition
+     * @param array $params
+     * @return \yii\db\ActiveQuery
+     *
+     */
+    public static function getAnimalsWithMilkQuery($condition = '', $params = []){
+        $command = Animal::find()
+            //->addSelect([Animal::tableName(). '.id', Animal::tableName(). '.entry_date'])
+            //->addSelect(['Count('.AnimalEvent::tableName() . '.id) as milkrecords'])
+            ->addSelect(['COUNT(DISTINCT('.Animal::tableName(). '.[[id]])) as count'])
+            ->leftJoin(AnimalEvent::tableName(), AnimalEvent::tableName() . '.[[animal_id]] = ' . Animal::tableName() . '.[[id]]')
+            ->andWhere(AnimalEvent::tableName() . '.[[event_type]] = '. AnimalEvent::EVENT_TYPE_MILKING)
+            ->andWhere($condition, $params);
+
+        return $command;
     }
 
     public static function getAnimalsWithMilk($condition = '', $params = [], $durationType = null){
@@ -488,14 +522,7 @@ class CountriesDashboardStats extends Model
                     break;
             }
         }
-        $command = Animal::find()
-            //->addSelect([Animal::tableName(). '.id', Animal::tableName(). '.entry_date'])
-            //->addSelect(['Count('.AnimalEvent::tableName() . '.id) as milkrecords'])
-            ->addSelect(['COUNT(DISTINCT('.Animal::tableName(). '.[[id]]))'])
-            ->leftJoin(AnimalEvent::tableName(), AnimalEvent::tableName() . '.[[animal_id]] = ' . Animal::tableName() . '.[[id]]')
-            ->andWhere(AnimalEvent::tableName() . '.[[event_type]] = '. AnimalEvent::EVENT_TYPE_MILKING)
-            ->andWhere($condition, $params);
-
+        $command = static::getAnimalsWithMilkQuery($condition, $params);
         return $command->scalar();
     }
 
