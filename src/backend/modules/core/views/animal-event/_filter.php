@@ -26,21 +26,6 @@ use yii\bootstrap4\Html;
                 <?= Html::beginForm(['index'], 'get', ['class' => '', 'id' => 'grid-filter-form', 'data-grid' => $model->getPjaxWidgetId()]) ?>
                 <div class="form-row align-items-center">
                     <div class="col-lg-2">
-                        <?= Html::label($model->getAttributeLabel('animal_id')) ?>
-                        <?= Select2::widget([
-                            'name' => 'farm_id',
-                            'value' => $model->animal_id,
-                            'data' => Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, false),
-                            'options' => [
-                                'placeholder' => "--All Animals--",
-                                'class' => 'form-control select2',
-                            ],
-                            'pluginOptions' => [
-                                'allowClear' => true
-                            ],
-                        ]); ?>
-                    </div>
-                    <div class="col-lg-2">
                         <?= Html::label($model->getAttributeLabel('event_type')) ?>
                         <?= Select2::widget([
                             'name' => 'event_type',
@@ -164,10 +149,6 @@ use yii\bootstrap4\Html;
                             ]); ?>
                         </div>
                     <?php endif; ?>
-                    <div class="col-lg-2">
-                        <?= Html::label('Animal Tag ID') ?>
-                        <?= Html::textInput('animal_tag_id', Yii::$app->request->get('animal_tag_id'), ['class' => 'form-control']) ?>
-                    </div>
                     <div class="col-lg-1">
                         <?= Html::label($model->getAttributeLabel('From')) ?>
                         <?= Html::textInput('from', $model->_dateFilterFrom, ['class' => 'form-control show-datepicker', 'placeholder' => 'From']) ?>

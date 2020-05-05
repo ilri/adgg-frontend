@@ -31,19 +31,19 @@ class AnimalEventController extends Controller
     }
 
     /**
-     * @param null $country_id
+     * @param $country_id
      * @return string
      * @throws \yii\web\BadRequestHttpException
      * @throws \yii\web\ForbiddenHttpException
      * @throws \yii\web\NotFoundHttpException
      */
-    public function actionEventList($country_id = null)
+    public function actionEventList($country_id)
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
         $events = AnimalEvent::eventTypeOptions();
         $country_id = Session::getCountryId($country_id);
         $country = Country::findOne(['id' => $country_id]);
-        return $this->render('/animal-event/event-lists', [
+        return $this->render('event-lists', [
             'country' => $country,
             'events' => $events,
         ]);

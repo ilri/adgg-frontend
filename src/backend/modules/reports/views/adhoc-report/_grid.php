@@ -49,11 +49,11 @@ use yii\helpers\Url;
             'filter' => false,
         ],
         [
-           'attribute' => 'created_by',
-           'label' => 'Extracted By',
+            'attribute' => 'created_by',
+            'label' => 'Extracted By',
             'value' => function (AdhocReport $model) {
-            return $model->getRelationAttributeValue('extractedBy', 'name');
-        }
+                return $model->getRelationAttributeValue('extractedBy', 'name');
+            }
         ],
         [
             'label' => 'Date',
@@ -70,6 +70,7 @@ use yii\helpers\Url;
             'value' => function (AdhocReport $model) {
                 return Html::a(Lang::t('Download Report') . ' <i class="fas fa-download"></i>', ['download-file', 'id' => $model->id], ['data-pjax' => 0]);
             },
+            'visible' => ($model->status == AdhocReport::STATUS_COMPLETED || $model->status == AdhocReport::STATUS_ERROR),
         ],
         [
             'class' => common\widgets\grid\ActionColumn::class,
