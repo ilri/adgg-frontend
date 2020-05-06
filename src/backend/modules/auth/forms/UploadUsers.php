@@ -94,7 +94,7 @@ class UploadUsers extends ExcelUploadForm implements ImportInterface
             $insert_data[$k] = $row;
         }
         $model = new Users(['country_id' => $this->country_id, 'level_id' => $this->level_id, 'role_id' => $this->role_id]);
-        $this->save($insert_data, $model, true, ['username' => '{username}', 'country_id' => $this->country_id]);
+        $this->save($insert_data, $model, false, ['username' => '{username}', 'country_id' => $this->country_id]);
     }
 
     protected function cleanPhoneNumber($number)
