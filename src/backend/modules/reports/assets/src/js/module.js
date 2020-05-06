@@ -275,13 +275,19 @@ MyApp.modules.reports = {};
             let attributeListItem = $('.builder-attributes label[data-name="' + fieldName + '"]');
             let attributeSelectOptions = attributeListItem.data('selectoptions'); // null or a json object of options
             let filterInput;
-            let defaultFilterInput = '<div class="col-md-12 p-0"><input name="filterValue[' + fieldName + ']" class="form-control form-control-sm" type="text" /></div>';
+            let defaultFilterInput = $('<div class="col-md-12 p-0"><input name="filterValue[' + fieldName + ']" class="form-control form-control-sm" type="text" /></div>');
             if (attributeSelectOptions !== null) {
                 let isMultipleSelect = false;
                 if(filterOperator === 'IN' ||  filterOperator === 'NOT IN'){
                     isMultipleSelect = true;
                 }
                 defaultFilterInput = '<div class="col-md-12 p-0">' + _buildFieldChoicesDropdown(fieldName, attributeSelectOptions, isMultipleSelect) + '</div>';
+            }
+            else {
+                if(filterOperator === 'IN' ||  filterOperator === 'NOT IN'){
+                    let innerhtml = $(defaultFilterInput).html() + '<span class="hint">enter a comma separated list in the input field</span>';
+                    $(defaultFilterInput).html($(innerhtml));
+                }
             }
 
             let fieldContainer = $('#selectedFields').find('li[data-name="' + fieldName + '"]');
