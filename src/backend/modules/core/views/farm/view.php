@@ -139,9 +139,11 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ],
                                 [
                                     'attribute' => 'farmer_relationship_to_hhh',
+                                    'value' => Choices::getLabel(ChoiceTypes::CHOICE_TYPE_PERSON_RELATIONSHIP, $model->farmer_relationship_to_hhh),
                                 ],
                                 [
                                     'attribute' => 'farmer_relationship_to_hhh_other',
+                                    'value' => Choices::getLabel(ChoiceTypes::CHOICE_TYPE_PERSON_RELATIONSHIP, $model->farmer_relationship_to_hhh_other),
                                 ],
                             ],
                         ]) ?>
@@ -213,6 +215,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ],
                                 [
                                     'attribute' => 'hhh_gender',
+                                    'value' => Choices::getLabel(ChoiceTypes::CHOICE_TYPE_GENDER, $model->hhh_gender),
+
                                 ],
                                 [
                                     'attribute' => 'hhh_mobile',

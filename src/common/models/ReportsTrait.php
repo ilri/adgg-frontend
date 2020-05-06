@@ -85,14 +85,70 @@ trait ReportsTrait
      * @param string $field
      * @return string
      */
+    public function getFieldType(string $field){
+        if(array_key_exists($field, $this->reportBuilderFieldsMapping())){
+            $field_map = $this->reportBuilderFieldsMapping()[$field];
+            if (array_key_exists('type', $field_map)){
+                $type = $field_map['type'];
+                if (is_callable($type)) {
+                    return call_user_func($type, $field);
+                }
+                return $type;
+            }
+        }
+        if($this->hasMethod('isAdditionalAttribute')){
+            if($this->isAdditionalAttribute($field)){
+                $inputTypes = $this->getAdditionalAttributesInputTypes();
+                return $inputTypes[$field];
+            }
+            return null;
+        }
+
+        return null;
+    }
+
+    public function getFieldDropdownOptions(string $field){
+        if(array_key_exists($field, $this->reportBuilderFieldsMapping())){
+            $field_map = $this->reportBuilderFieldsMapping()[$field];
+            if (array_key_exists('choices', $field_map)){
+                $choices = $field_map['choices'];
+                if (is_callable($choices)) {
+                    return call_user_func($choices, $field);
+                }
+                return $choices;
+            }
+        }
+        if($this->hasMethod('isAdditionalAttribute')){
+            if($this->isAdditionalAttribute($field)){
+                if ($this->isSingleSelectAttribute($field) || $this->isMultiSelectAttribute($field)) {
+                    $listTypeIds = $this->getAdditionalAttributesListTypeIds();
+                    $listTypeId = $listTypeIds[$field] ?? null;
+                    if (null === $listTypeId) {
+                        return null;
+                    }
+                    return Choices::getList($listTypeId, false, null, [], []);
+                }
+            }
+            return null;
+        }
+
+        return null;
+    }
+
+    /**
+     * @param string $field
+     * @return string
+     */
     public function getFieldTooltipContent(string $field){
         if(array_key_exists($field, $this->reportBuilderFieldsMapping())){
             $field_map = $this->reportBuilderFieldsMapping()[$field];
-            $tooltip = $field_map['tooltip'];
-            if (is_callable($tooltip)) {
-                return call_user_func($tooltip, $field);
+            if (array_key_exists('tooltip', $field_map)){
+                $tooltip = $field_map['tooltip'];
+                if (is_callable($tooltip)) {
+                    return call_user_func($tooltip, $field);
+                }
+                return $tooltip;
             }
-            return $tooltip;
         }
         if($this->hasMethod('isAdditionalAttribute')){
             if($this->isAdditionalAttribute($field)){

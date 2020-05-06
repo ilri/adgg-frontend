@@ -5,6 +5,7 @@ use backend\modules\core\models\Client;
 use backend\modules\core\models\Country;
 use backend\modules\core\models\CountryUnits;
 use backend\modules\core\models\Organization;
+use backend\modules\core\models\TableAttribute;
 use backend\modules\reports\models\ReportBuilder;
 use common\helpers\Lang;
 use common\helpers\Url;
@@ -197,6 +198,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php
 $options = [
     'inputSelectOptions' => ReportBuilder::fieldConditionOptions(),
+    'inputTypeOptions' => array_flip(TableAttribute::inputTypeOptions()),
     'generateQueryURL' => Url::to(['/reports/builder/generate-query']),
     'saveReportURL' => Url::to(['/reports/builder/save-report']),
 ];

@@ -49,38 +49,6 @@ use yii\bootstrap4\ActiveForm;
             <div class="kt-section__body">
                 <div class="row">
                     <div class="col-md-4">
-                        <?= $form->field($model, 'farm_id')->widget(Select2::class, [
-                            'data' => Farm::getListData(),
-                            'options' => [
-                                'class' => 'form-control parent-depdropdown',
-                                'placeholder' => '[select one]',
-                                'data-child-selectors' => [
-                                    '#' . Html::getInputId($model, 'herd_id'),
-                                ],
-                            ],
-                            'pluginOptions' => [
-                                'allowClear' => false
-                            ],
-                        ]) ?>
-                    </div>
-                    <div class="col-md-4">
-                        <?= $form->field($model, 'herd_id')->widget(Select2::class, [
-                            'data' => AnimalHerd::getListData('id', 'name', false, []),
-                            'options' => [
-                                'class' => 'form-control parent-depdropdown',
-                                'placeholder' => '[select one]',
-                                'data-url' => Url::to(['herd/get-list', 'farm_id' => 'idV', 'placeholder' => true]),
-                                'data-selected' => $model->region_id,
-                            ],
-                            'pluginOptions' => [
-                                'allowClear' => false
-                            ],
-                        ]) ?>
-                    </div>
-                    <div class="col-md-4">
-                        <?= $form->field($model, 'tag_id') ?>
-                    </div>
-                    <div class="col-md-4">
                         <?= $form->field($model, 'name') ?>
                     </div>
                     <?php if ($model->showCountryField()): ?>
