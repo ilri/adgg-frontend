@@ -13,7 +13,7 @@ use yii\helpers\Url;
 ?>
 <?= GridView::widget([
     'searchModel' => $model,
-    'createButton' => ['visible' => Yii::$app->user->canCreate(), 'modal' => false],
+    'createButton' => ['visible' => false, 'modal' => false],
     'rowOptions' => function (Animal $model) {
         return ["class" => "linkable", "data-href" => Url::to(['view', "id" => $model->uuid, 'animal_type' => $model->animal_type])];
     },
