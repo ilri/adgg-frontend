@@ -48,11 +48,14 @@ use yii\helpers\Url;
             'class' => common\widgets\grid\ActionColumn::class,
             'template' => '{update}{view}',
             'visibleButtons' => [
+                'view' => function (AnimalHerd $model) {
+                    return Yii::$app->user->canView();
+                },
                 'update' => function (AnimalHerd $model) {
                     return Yii::$app->user->canUpdate();
                 }
             ],
-            'updateOptions' => ['data-pjax' => 0, 'title' => 'Update', 'modal' => false, 'data-use-uuid' => true],
+            'updateOptions' => ['data-pjax' => 0, 'title' => 'Update', 'modal' => false, 'data-use-uuid' => false],
         ],
     ],
 ]);

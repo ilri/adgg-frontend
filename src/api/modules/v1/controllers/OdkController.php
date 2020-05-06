@@ -29,7 +29,7 @@ class OdkController extends Controller
             $payload = Yii::$app->request->getBodyParams();
             if (!empty($payload)) {
                 $model = new OdkJsonQueue();
-                $model->file_contents = $payload;
+                $model->form_data = $payload;
                 if ($model->save()) {
                     Yii::info("ODK JSON Form {$model->uuid} successfully saved");
                 } else {
@@ -41,10 +41,10 @@ class OdkController extends Controller
             Yii::info('GET REQUEST DATA:' . json_encode($_GET));
         }
 
-        Yii::info('Request Host: ' . json_encode(Yii::$app->request->userHost));
-        Yii::info('Request User Agent: ' . json_encode(Yii::$app->request->userAgent));
-        Yii::info('Request User IP: ' . json_encode(Yii::$app->request->userIP));
-        Yii::info('ADGG Server Host Info: ' . json_encode(Yii::$app->request->hostInfo));
+        //Yii::info('Request Host: ' . json_encode(Yii::$app->request->userHost));
+        //Yii::info('Request User Agent: ' . json_encode(Yii::$app->request->userAgent));
+        //Yii::info('Request User IP: ' . json_encode(Yii::$app->request->userIP));
+        //Yii::info('ADGG Server Host Info: ' . json_encode(Yii::$app->request->hostInfo));
 
         return [
             'success' => true,

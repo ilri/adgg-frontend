@@ -5,7 +5,7 @@ use common\helpers\Lang;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model backend\modules\core\models\Organization */
+/* @var $model backend\modules\core\models\AnimalHerd */
 
 $this->title = Lang::t('Herd Details');
 $this->params['breadcrumbs'][] = ['label' => 'Herds', 'url' => ['index']];
@@ -60,11 +60,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'client_id',
                     'value' => $model->getRelationAttributeValue('client', 'name'),
-                ],
-
-                [
-                    'attribute' => 'is_active',
-                    'format' => 'boolean',
                 ],
                 [
                     'attribute' => 'created_at',
