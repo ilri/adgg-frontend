@@ -327,14 +327,6 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
                     $this->client_id = $this->farm->client_id;
                 }
             }
-
-            if (!empty($this->deformities)) {
-                if (is_string($this->deformities)) {
-                    $this->deformities = array_map('trim', explode(' ', $this->deformities));
-                }
-            } else {
-                $this->deformities = [];
-            }
             if (empty($this->birthdate) && !empty($this->derivedBirthdate)) {
                 $this->birthdate = $this->derivedBirthdate;
                 $this->is_derived_birthdate = 1;
