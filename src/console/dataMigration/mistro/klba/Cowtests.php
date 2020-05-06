@@ -232,7 +232,7 @@ class Cowtests extends MigrationBase implements MigrationInterface
                 $whenSqlComponent .= $whenSql;
             }
             if (!empty($eventIds)) {
-                $updateEventIds = array_merge($updateEventIds, $eventIds);
+                $updateEventIds = array_merge($updateEventIds,$eventIds);
             }
 
             if (!empty($params)) {

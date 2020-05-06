@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="col-lg-4 col-xl-4 order-lg-2 order-xl-2">
                     <!--begin::Portlet-->
                     <div class="kt-portlet">
-                        <a href="<?= Url::to(['read', 'forAndroid' => false]) ?>" class="kt-iconbox kt-iconbox--active">
+                        <a href="<?= Url::to(['read']) ?>" class="kt-iconbox kt-iconbox--active">
                             <div class="kt-iconbox__icon">
                                 <div class="kt-iconbox__icon-bg"></div>
                                 <i class="far fa-chalkboard-teacher"></i>

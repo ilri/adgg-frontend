@@ -47,9 +47,12 @@ class HelpContentController extends Controller
         $searchModel = HelpContent::searchModel(['defaultOrder' => ['id' => SORT_ASC]]);
         if ($forAndroid == true) {
             $this->resource = Constants::RES_ANDROID_APP_MANUAL;
+            $this->hasPrivilege(Acl::ACTION_VIEW);
             $searchModel->is_for_android = 1;
         } else {
             $searchModel->is_for_android = 0;
+            $this->resource = Constants::RES_HELP;
+            $this->hasPrivilege(Acl::ACTION_VIEW);
         }
         return $this->render('grid', [
             'searchModel' => $searchModel,
@@ -71,8 +74,12 @@ class HelpContentController extends Controller
         $models->andFilterWhere(['module_id' => $module]);
         if ($forAndroid == true) {
             $models->andFilterWhere(['is_for_android' => 1]);
+            $this->resource = Constants::RES_ANDROID_APP_MANUAL;
+            $this->hasPrivilege(Acl::ACTION_VIEW);
         } else {
             $models->andFilterWhere(['is_for_android' => 0]);
+            $this->resource = Constants::RES_HELP;
+            $this->hasPrivilege(Acl::ACTION_VIEW);
         }
         if ($format !== null) {
             $content = $this->renderPartial('read', [
