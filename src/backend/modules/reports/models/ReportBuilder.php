@@ -21,6 +21,7 @@ use common\helpers\Utils;
 use common\models\ActiveRecord;
 use yii\base\Model;
 use yii\db\Expression;
+use yii\db\Schema;
 use yii\helpers\Inflector;
 
 class ReportBuilder extends Model
@@ -463,7 +464,7 @@ class ReportBuilder extends Model
         $tableAlias = \Yii::$app->db->quoteTableName($tableAlias);
 
         # append alias to field to remove ambiguity
-        $aliasedField = $tableAlias . '. [[' . $fieldName . ']]';
+        $aliasedField = $tableAlias . '.[[' . $fieldName . ']]';
 
         # additional columns
         if ($modelClass->hasMethod('isAdditionalAttribute')) {
@@ -523,6 +524,8 @@ class ReportBuilder extends Model
         // get the attributes for select
         foreach ($this->filterConditions as $field => $conditionOperator) {
             $fieldAlias = str_replace('.', '_', $field);
+            $fieldModelClass = $class;
+            $fieldName = $field;
 
             if (strpos($field, '.')) {
                 if (substr_count($field, '.') > 1) {
@@ -532,9 +535,13 @@ class ReportBuilder extends Model
                     // add subrelation to other joins
                     $other_joins[$subRelationName] = $relationName;
                     $joins[] = $relationName;
+                    $fieldModelClass = new $subRelationName();
+                    $fieldName = (explode('.', $field)[2]);
                 } else {
                     $relationName = (explode('.', $field)[0]);
                     $joins[] = $relationName;
+                    $fieldModelClass = new $relationName();
+                    $fieldName = (explode('.', $field)[1]);
                 }
             }
             # field with table alias
@@ -562,8 +569,34 @@ class ReportBuilder extends Model
             if (!empty($conditionOperator)) {
                 // get the condition value for this field
                 $filter = $this->filterValues[$field] ?? '';
-                $sqlCondition = static::buildCondition($conditionOperator, $aliasedField, $filter);
-                $query->andFilterWhere($sqlCondition);
+                #
+                # handle other json columns that are not additional attributes in a special way
+                #
+                $columnDbType = $class->getAttributeSchemaType($fieldName);
+                if ($columnDbType == Schema::TYPE_JSON){
+                    //$params = [':field' => $aliasedField, ':value' => $filter];
+                    //$sqlCondition = new Expression('JSON_SEARCH(:field,"one",:value)', $params);
+                    if (is_array($filter) && !empty($filter)){
+                        foreach ($filter as $value){
+                            if ($conditionOperator == 'IN'){
+                                $sqlCondition = new Expression('"'.$value.'" MEMBER OF('.$aliasedField.')');
+                                $query->orWhere($sqlCondition);
+                            }
+                            elseif ($conditionOperator == 'NOT IN'){
+                                $sqlCondition = new Expression('"'.$value.'" MEMBER OF('.$aliasedField.') = 0');
+                                $query->andWhere($sqlCondition);
+                            }
+                        }
+                    }
+                    else if (!empty($filter)){
+                        $sqlCondition = new Expression('"'.$filter.'" MEMBER OF('.$aliasedField.')');
+                        $query->andWhere($sqlCondition);
+                    }
+                }
+                else {
+                    $sqlCondition = static::buildCondition($conditionOperator, $aliasedField, $filter);
+                    $query->andFilterWhere($sqlCondition);
+                }
             }
         }
         // do the select
