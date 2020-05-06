@@ -9,6 +9,7 @@ namespace backend\modules\reports\assets;
 
 
 use backend\assets\AppAsset;
+use kartik\select2\Select2Asset;
 use yii\web\AssetBundle;
 
 class Asset extends AssetBundle
@@ -29,6 +30,7 @@ class Asset extends AssetBundle
     ];
 
     public $depends = [
+        Select2Asset::class,
         AppAsset::class,
     ];
 }

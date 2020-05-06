@@ -226,6 +226,9 @@ class ReportBuilder extends Model
             'LIKE' => 'LIKE',
             'IS NULL' => 'NULL',
             'NOT NULL' => 'NOT NULL',
+            'BETWEEN' => 'BETWEEN',
+            'IN' => 'IN',
+            'NOT IN' => 'NOT IN',
         ];
         return Utils::appendDropDownListPrompt($values, $prompt);
     }
@@ -372,6 +375,21 @@ class ReportBuilder extends Model
                 return ['IS', $column, $null];
             case 'NOT NULL':
                 return ['IS NOT', $column, $null];
+            case 'BETWEEN':
+                return ['BETWEEN', $column, $value[0] ?? '', $value[1] ?? ''];
+            case 'IN':
+            case 'NOT IN':
+                $values = [];
+                if(is_array($value)){
+                    $values = $value;
+                }
+                if(is_string($value)) {
+                    $values = array_map('trim', explode(',', $value));
+                }
+                if(empty($values)){
+                    return [];
+                }
+                return [$operator, $column, $values];
             default:
                 return [$operator, $column, $value];
         }
@@ -543,7 +561,7 @@ class ReportBuilder extends Model
             // build the condition
             if (!empty($conditionOperator)) {
                 // get the condition value for this field
-                $filter = $this->filterValues[$field];
+                $filter = $this->filterValues[$field] ?? '';
                 $sqlCondition = static::buildCondition($conditionOperator, $aliasedField, $filter);
                 $query->andFilterWhere($sqlCondition);
             }

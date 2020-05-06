@@ -449,6 +449,9 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
                     return static::buildChoicesTooltip(null, $choices);
                 },
             ],
+            'event_date' => [
+                'type' => TableAttribute::INPUT_TYPE_DATE,
+            ]
 
         ];
     }

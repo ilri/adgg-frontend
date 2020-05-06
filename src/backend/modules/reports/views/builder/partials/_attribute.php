@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Json;
 
 /* @var $this yii\web\View */
 /* @var $class common\models\ActiveRecord */
@@ -26,6 +27,8 @@ $attrTitle = $class->getAttributeLabel($attribute);
            data-toggle="popover"
            data-trigger="hover"
            data-content="<?= Html::encode($class->getFieldTooltipContent($attribute)) ?>"
+           data-type="<?= Html::encode($class->getFieldType($attribute)) ?>"
+           data-selectoptions="<?= Html::encode(Json::encode($class->getFieldDropdownOptions($attribute))) ?>"
            data-html="true"
            data-placement="left">
         <input type="checkbox" data-name="<?= $attributeName ?>" value="<?= $attributeName ?>">
