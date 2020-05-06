@@ -121,7 +121,8 @@ $this->params['breadcrumbs'][] = $this->title;
                             'attribute' => 'sire_tag_id',
                         ],
                         [
-                            'attribute' => 'sire_name',
+                            'label' => 'Sire Name',
+                            'value' => $model->getRelationAttributeValue('sire', 'name'),
                         ],
                     ],
                 ]) ?>
@@ -152,7 +153,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                     'attribute' => 'dam_tag_id',
                                 ],
                                 [
-                                    'attribute' => 'dam_name',
+                                    'label' => 'Dam Name',
+                                    'value' => $model->getRelationAttributeValue('dam', 'name'),
                                 ],
                             ],
                         ]) ?>
