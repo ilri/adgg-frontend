@@ -825,4 +825,17 @@ abstract class ActiveRecord extends AR
         return $this->hasOne(Users::class, ['id' => 'updated_by']);
     }
 
+    /**
+     * @param string $attribute
+     * @return string
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function getAttributeSchemaType($attribute){
+        $column = static::getTableSchema()->getColumn($attribute);
+        if ($column !== null){
+            return $column->dbType;
+        }
+        return null;
+    }
+
 }
