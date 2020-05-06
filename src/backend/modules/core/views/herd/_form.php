@@ -2,7 +2,10 @@
 
 use backend\modules\auth\models\Users;
 use backend\modules\core\models\Country;
+use backend\modules\core\models\Farm;
 use backend\modules\core\models\CountryUnits;
+use backend\modules\core\models\Organization;
+use backend\modules\core\models\Client;
 use common\forms\ActiveField;
 use common\helpers\DateUtils;
 use common\widgets\select2\Select2;
@@ -140,13 +143,10 @@ use yii\bootstrap4\ActiveForm;
                     </div>
                     <div class="col-md-4">
                         <?= $form->field($model, 'farm_id')->widget(Select2::class, [
-                            'data' => \backend\modules\core\models\AnimalHerd::getListData(),
+                            'data' => Farm::getListData(),
                             'options' => [
                                 'class' => 'form-control parent-depdropdown',
                                 'placeholder' => '[select one]',
-                                'data-child-selectors' => [
-                                    '#' . Html::getInputId($model, 'herd_id'),
-                                ],
                             ],
                             'pluginOptions' => [
                                 'allowClear' => false
@@ -154,10 +154,34 @@ use yii\bootstrap4\ActiveForm;
                         ]) ?>
                     </div>
                     <div class="col-md-4">
-                        <?= $form->field($model, 'org_id') ?>
+                        <?= $form->field($model, 'org_id')->widget(Select2::class, [
+                            'data' => Organization::getListData('id', 'name', true, ['country_id' => $model->country_id]),
+                            'theme' => Select2::THEME_BOOTSTRAP,
+                            'options' => [
+                                'class' => 'form-control parent-depdropdown',
+                                'placeholder' => '[select one]',
+                                'data-url' => Url::to(['/core/organization/get-list', 'country_id' => 'idV', 'placeholder' => true]),
+                                'data-selected' => $model->org_id,
+                            ],
+                            'pluginOptions' => [
+                                'allowClear' => false
+                            ],
+                        ]) ?>
                     </div>
                     <div class="col-md-4">
-                        <?= $form->field($model, 'client_id') ?>
+                        <?= $form->field($model, 'client_id')->widget(Select2::class, [
+                            'data' => Client::getListData('id', 'name', true, ['country_id' => $model->country_id]),
+                            'theme' => Select2::THEME_BOOTSTRAP,
+                            'options' => [
+                                'class' => 'form-control parent-depdropdown',
+                                'placeholder' => '[select one]',
+                                'data-url' => Url::to(['/core/client/get-list', 'org_id' => 'idV', 'country_id' => $model->country_id, 'placeholder' => true]),
+                                'data-selected' => $model->client_id,
+                            ],
+                            'pluginOptions' => [
+                                'allowClear' => false
+                            ],
+                        ]) ?>
                     </div>
                     <?php foreach ($model->getAdditionalAttributes() as $attribute): ?>
                         <div class="col-md-4">
