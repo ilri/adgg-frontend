@@ -157,6 +157,16 @@ trait TableAttributeTrait
     }
 
     /**
+     * @param string $attribute
+     * @return bool
+     */
+    public function isDateAttribute(string $attribute): bool
+    {
+        $inputTypes = $this->getAdditionalAttributesInputTypes();
+        return $inputTypes[$attribute] == TableAttribute::INPUT_TYPE_DATE;
+    }
+
+    /**
      * @return array|false
      */
     public function apiResourceFields()

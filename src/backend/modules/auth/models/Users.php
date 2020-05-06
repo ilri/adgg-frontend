@@ -36,6 +36,7 @@ use yii\web\NotFoundHttpException;
  * @property int $org_id
  * @property int $client_id
  * @property string $odk_code
+ * @property string $odk_password
  * @property string|array $additional_attributes
  *
  * @property Country $country
@@ -488,6 +489,8 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
             'phone',
             'region_code',
             'district_code',
+            'odk_code',
+            'odk_password',
         ];
 
         return array_merge($columns, $this->getAdditionalAttributes());

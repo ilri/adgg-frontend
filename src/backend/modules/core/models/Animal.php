@@ -623,45 +623,89 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     {
         return [
             'animal_type' => [
+                'type' => TableAttribute::INPUT_TYPE_SELECT,
+                'choices' => function ($field) {
+                    return Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, false, null, [], []);
+                },
                 'tooltip' => function ($field) {
                     return static::buildChoicesTooltip(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, []);
                 },
             ],
             'sire_type' => [
+                'type' => TableAttribute::INPUT_TYPE_SELECT,
+                'choices' => function ($field) {
+                    return Choices::getList(ChoiceTypes::CHOICE_TYPE_SIRE_TYPE, false, null, [], []);
+                },
                 'tooltip' => function ($field) {
                     return static::buildChoicesTooltip(ChoiceTypes::CHOICE_TYPE_SIRE_TYPE, []);
                 },
             ],
             'breed_composition' => [
+                'type' => TableAttribute::INPUT_TYPE_SELECT,
+                'choices' => function ($field) {
+                    return Choices::getList(ChoiceTypes::CHOICE_TYPE_BREED_COMPOSITION, false, null, [], []);
+                },
                 'tooltip' => function ($field) {
                     return static::buildChoicesTooltip(ChoiceTypes::CHOICE_TYPE_BREED_COMPOSITION, []);
                 }
             ],
             'main_breed' => [
+                'type' => TableAttribute::INPUT_TYPE_SELECT,
+                'choices' => function ($field) {
+                    return Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, false, null, [], ['orderBy' => ['label' => SORT_ASC]]);
+                },
                 'tooltip' => function ($field) {
                     return static::buildChoicesTooltip(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, []);
                 }
             ],
             'secondary_breed' => [
+                'type' => TableAttribute::INPUT_TYPE_SELECT,
+                'choices' => function ($field) {
+                    return Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, false, null, [], ['orderBy' => ['label' => SORT_ASC]]);
+                },
                 'tooltip' => function ($field) {
                     return static::buildChoicesTooltip(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, []);
                 }
             ],
             'entry_type' => [
+                'type' => TableAttribute::INPUT_TYPE_SELECT,
+                'choices' => function ($field) {
+                    return Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_ENTRY_TYPE, false, null, [], []);
+                },
                 'tooltip' => function ($field) {
                     return static::buildChoicesTooltip(ChoiceTypes::CHOICE_TYPE_ANIMAL_ENTRY_TYPE, []);
                 }
             ],
+            /* TODO: this field is stored as json array [] in db,
+                * read the schema type before creating the filter condition,
+                * current implementation won't work
+                *
+             */
             'deformities' => [
+                'type' => TableAttribute::INPUT_TYPE_SELECT,
+                'choices' => function ($field) {
+                    return Choices::getList(ChoiceTypes::CHOICE_TYPE_CALVE_DEFORMITY, false, null, [], []);
+                },
                 'tooltip' => function ($field) {
                     return static::buildChoicesTooltip(ChoiceTypes::CHOICE_TYPE_CALVE_DEFORMITY, []);
                 }
             ],
             'is_derived_birthdate' => [
+                'type' => TableAttribute::INPUT_TYPE_SELECT,
+                'choices' => Utils::booleanOptions(),
                 'tooltip' => function ($field) {
                     $choices = Utils::booleanOptions();
                     return static::buildChoicesTooltip(null, $choices);
                 }
+            ],
+            'entry_date' => [
+                'type' => TableAttribute::INPUT_TYPE_DATE,
+            ],
+            'reg_date' => [
+                'type' => TableAttribute::INPUT_TYPE_DATE,
+            ],
+            'birthdate' => [
+                'type' => TableAttribute::INPUT_TYPE_DATE,
             ],
         ];
     }
