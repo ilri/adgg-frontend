@@ -118,7 +118,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             [['purchase_cost'], 'number'],
             [['birthdate', 'entry_date'], 'date', 'format' => 'php:Y-m-d'],
             [['birthdate', 'reg_date', 'entry_date'], 'validateNoFutureDate'],
-            [['name', 'tag_id', 'sire_tag_id', 'sire_name', 'dam_tag_id', 'dam_name', 'color'], 'string', 'max' => 128],
+            [['name', 'tag_id', 'sire_tag_id', 'dam_tag_id', 'color'], 'string', 'max' => 128],
             [['animal_photo', 'map_address'], 'string', 'max' => 255],
             ['tag_id', 'unique', 'targetAttribute' => ['country_id', 'tag_id'], 'message' => '{attribute} already exists.'],
             [['sire_tag_id', 'dam_tag_id'], 'validateSireOrDam'],
@@ -159,11 +159,8 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'sire_type' => 'Sire Type',
             'sire_id' => 'Sire',
             'sire_tag_id' => 'Sire Tag ID',
-            'sire_name' => 'Sire Name',
-            'bull_straw_id' => 'Bull Straw ID',
             'dam_id' => 'Dam',
             'dam_tag_id' => 'Dam Tag ID',
-            'dam_name' => 'Dam Name',
             'main_breed' => 'Main Breed',
             'breed_composition' => 'Breed Composition',
             'breed_composition_details' => 'Breed Composition details',
@@ -239,10 +236,8 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             [$alias . '.tag_id', 'tag_id'],
             [$alias . '.name', 'name'],
             [$alias . '.color', 'color'],
-            [$alias . '.sire_name', 'sire_name'],
             [$alias . '.sire_tag_id', 'sire_tag_id'],
             [$alias . '.dam_tag_id', 'dam_tag_id'],
-            [$alias . '.dam_name', 'dam_name'],
             [$alias . '.farm_id', 'farm_id', '', '='],
             [$alias . '.country_id', 'country_id', '', '='],
             [$alias . '.region_id', 'region_id', '', '='],
@@ -331,14 +326,6 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
                 if (!empty($this->farm->client_id)) {
                     $this->client_id = $this->farm->client_id;
                 }
-            }
-
-            if (!empty($this->deformities)) {
-                if (is_string($this->deformities)) {
-                    $this->deformities = array_map('trim', explode(' ', $this->deformities));
-                }
-            } else {
-                $this->deformities = [];
             }
             if (empty($this->birthdate) && !empty($this->derivedBirthdate)) {
                 $this->birthdate = $this->derivedBirthdate;
@@ -479,10 +466,8 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'sire_type',
             'animal_sireknown',
             'sire_tag_id',
-            'sire_name',
             'animal_damknown',
             'dam_tag_id',
-            'dam_name',
             'main_breed',
             'breed_composition',
             'secondary_breed',
@@ -613,7 +598,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
      */
     public function reportBuilderAdditionalUnwantedFields(): array
     {
-        return ['sire_id', 'sire_name', 'animal_sireknown', 'farm_id', 'herd_id', 'animal_damknown', 'sire_tag_id', 'sire_type', 'dam_id', 'dam_name', 'dam_tag_id'];
+        return ['sire_id', 'animal_sireknown', 'farm_id', 'herd_id', 'animal_damknown', 'sire_tag_id', 'sire_type', 'dam_id', 'dam_tag_id'];
     }
 
     /**
