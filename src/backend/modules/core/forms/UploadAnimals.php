@@ -70,6 +70,7 @@ class UploadAnimals extends ExcelUploadForm implements ImportInterface
             $row['derivedBirthdate'] = static::getDateColumnData($row['derivedBirthdate'] ?? null);
             $row['birthdate'] = static::getDateColumnData($row['birthdate'] ?? null);
             $row['entry_date'] = static::getDateColumnData($row['entry_date'] ?? null);
+            $row['reg_date'] = static::getDateColumnData($row['entry_date'] ?? null);
             $row['animal_sireknown'] = static::encodeBoolean($row['animal_sireknown']);
             $row['animal_damknown'] = static::encodeBoolean($row['animal_damknown']);
             $insert_data[$k] = $row;
