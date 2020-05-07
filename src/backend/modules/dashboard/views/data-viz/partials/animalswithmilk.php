@@ -106,6 +106,19 @@ $graphOptions = [
         '#AE2921', '#000000', '#004619',
         '#7F5298', '#7986CB', '#81D097',
     ],
+    'legend' => [
+        'labelFormatter' => new \yii\web\JsExpression("
+            function () {
+                var type = this.userOptions.type;
+                if(type === 'line'){
+                    return this.name + ' (Animals monitored for milk production)';
+                }
+                else {
+                    return this.name + ' (Animals registered)';
+                }
+            }
+        ")
+    ]
 ];
 $containerId = 'chartContainerAM';
 $this->registerJs("MyApp.modules.dashboard.chart('" . $containerId . "', " . Json::encode($series) . "," . Json::encode($graphOptions) . ");");
