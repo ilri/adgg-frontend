@@ -535,12 +535,13 @@ class ReportBuilder extends Model
                     // add subrelation to other joins
                     $other_joins[$subRelationName] = $relationName;
                     $joins[] = $relationName;
-                    $fieldModelClass = new $subRelationName();
+                    $relationClass = static::getRelationClass($class, $relationName); // Animal::class
+                    $fieldModelClass = static::getRelationClass($relationClass, $subRelationName); // Farm::class
                     $fieldName = (explode('.', $field)[2]);
                 } else {
                     $relationName = (explode('.', $field)[0]);
                     $joins[] = $relationName;
-                    $fieldModelClass = new $relationName();
+                    $fieldModelClass = static::getRelationClass($class, $relationName);
                     $fieldName = (explode('.', $field)[1]);
                 }
             }
@@ -572,7 +573,7 @@ class ReportBuilder extends Model
                 #
                 # handle other json columns that are not additional attributes in a special way
                 #
-                $columnDbType = $class->getAttributeSchemaType($fieldName);
+                $columnDbType = $fieldModelClass->getAttributeSchemaType($fieldName);
                 if ($columnDbType == Schema::TYPE_JSON){
                     //$params = [':field' => $aliasedField, ':value' => $filter];
                     //$sqlCondition = new Expression('JSON_SEARCH(:field,"one",:value)', $params);
