@@ -238,7 +238,6 @@ class UserController extends Controller
     }
 
     /**
-     * @param $level_id
      * @param null $country_id
      * @return bool|false|string
      * @throws BadRequestHttpException
@@ -246,15 +245,15 @@ class UserController extends Controller
      * @throws \yii\web\ForbiddenHttpException
      * @throws \yii\web\NotFoundHttpException
      */
-    public function actionUpload($level_id, $country_id = null)
+    public function actionUpload($country_id = null)
     {
         if (Session::isCountry()) {
             $country_id = Session::getCountryId();
         }
         $this->hasPrivilege(Acl::ACTION_CREATE);
 
-        $form = new UploadUsers(Users::class, ['country_id' => $country_id, 'level_id' => $level_id]);
-        $resp = $this->uploadExcelConsole($form, 'index', ['country_id' => $country_id, 'level_id' => $level_id]);
+        $form = new UploadUsers(Users::class, ['country_id' => $country_id]);
+        $resp = $this->uploadExcelConsole($form, 'index', ['country_id' => $country_id]);
         if ($resp !== false) {
             return $resp;
         }
@@ -265,16 +264,15 @@ class UserController extends Controller
     }
 
     /**
-     * @param $level_id
      * @param null $country_id
      * @return bool|string
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      * @throws \PhpOffice\PhpSpreadsheet\Reader\Exception
      * @throws \yii\base\InvalidConfigException
      */
-    public function actionUploadPreview($level_id, $country_id = null)
+    public function actionUploadPreview( $country_id = null)
     {
-        $form = new UploadUsers(Users::class, ['level_id' => $level_id, 'country_id' => $country_id]);
+        $form = new UploadUsers(Users::class, ['country_id' => $country_id]);
         return $form->previewAction();
     }
 }

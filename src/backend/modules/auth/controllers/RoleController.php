@@ -80,7 +80,7 @@ class RoleController extends Controller
 
     public function actionGetList($level_id, $placeholder = false)
     {
-        $data = Roles::getListData('id', 'name', false, $placeholder, ['level_id' => $level_id]);
+        $data = Roles::getListData('id', 'name', $placeholder, ['level_id' => $level_id]);
         return json_encode($data);
     }
 }
