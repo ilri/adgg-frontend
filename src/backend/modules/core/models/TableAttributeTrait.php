@@ -167,6 +167,16 @@ trait TableAttributeTrait
     }
 
     /**
+     * @param string $attribute
+     * @return bool
+     */
+    public function isCheckboxAttribute(string $attribute): bool
+    {
+        $inputTypes = $this->getAdditionalAttributesInputTypes();
+        return $inputTypes[$attribute] == TableAttribute::INPUT_TYPE_CHECKBOX;
+    }
+
+    /**
      * @return array|false
      */
     public function apiResourceFields()
