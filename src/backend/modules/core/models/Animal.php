@@ -661,20 +661,6 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
                     return static::buildChoicesTooltip(ChoiceTypes::CHOICE_TYPE_ANIMAL_ENTRY_TYPE, []);
                 }
             ],
-            /* TODO: this field is stored as json array [] in db,
-                * read the schema type before creating the filter condition,
-                * current implementation won't work
-                *
-             */
-            'deformities' => [
-                'type' => TableAttribute::INPUT_TYPE_SELECT,
-                'choices' => function ($field) {
-                    return Choices::getList(ChoiceTypes::CHOICE_TYPE_CALVE_DEFORMITY, false, null, [], []);
-                },
-                'tooltip' => function ($field) {
-                    return static::buildChoicesTooltip(ChoiceTypes::CHOICE_TYPE_CALVE_DEFORMITY, []);
-                }
-            ],
             'is_derived_birthdate' => [
                 'type' => TableAttribute::INPUT_TYPE_SELECT,
                 'choices' => Utils::booleanOptions(),
