@@ -482,7 +482,7 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
      */
     public function getExcelColumns()
     {
-        $columns = [
+       return $columns = [
             'name',
             'username',
             'email',
@@ -493,6 +493,6 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
             'odk_password',
         ];
 
-        return array_merge($columns, $this->getAdditionalAttributes());
+       // return array_merge($columns, $this->getAdditionalAttributes());
     }
 }

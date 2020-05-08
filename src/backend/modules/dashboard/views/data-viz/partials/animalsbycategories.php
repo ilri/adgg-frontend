@@ -29,7 +29,9 @@ $colors = [
 ];
 $data = [];
 $breed_colors = [];
+$first_stack = null;
 if (count($chart_data) > 0) {
+    $first_stack = array_key_first($chart_data);
     foreach ($chart_data as $country => $country_data) {
         foreach ($country_data as $breed => $breed_data){
             $values = [];
@@ -44,21 +46,19 @@ if (count($chart_data) > 0) {
                     }
                 }
             }
-
-            $data[] = [
+            $item = [
+                'id' => $breed,
                 'name' => $breed,
                 'data' => $values,
                 'stack' => $country,
                 'color' => $breed_colors[$breed],
             ];
+            if ($country != $first_stack){
+                $item['linkedTo'] = $breed;
+            }
+            $data[] = $item;
+
         }
-        /*$data[] = [
-            'name' => $country,
-            'data' => array_sum($values) < 1 ? $values : array_map(function ($value){
-                return $value > 0 ? $value : null;
-            }, $values),
-        ];
-        */
     }
 }
 //dd($chart_data, $breed_colors, $data);
@@ -141,9 +141,6 @@ $graphOptions = [
         ],
     ],
     'plotOptions' => [
-        /*'series' => [
-            'stacking' => 'normal',
-        ],*/
         'column' => [
             'stacking' => 'normal',
             'groupPadding'  => 0.10,
