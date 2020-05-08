@@ -652,26 +652,6 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
                     return static::buildChoicesTooltip(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, []);
                 }
             ],
-            'entry_type' => [
-                'type' => TableAttribute::INPUT_TYPE_SELECT,
-                'choices' => function ($field) {
-                    return Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_ENTRY_TYPE, false, null, [], []);
-                },
-                'tooltip' => function ($field) {
-                    return static::buildChoicesTooltip(ChoiceTypes::CHOICE_TYPE_ANIMAL_ENTRY_TYPE, []);
-                }
-            ],
-            'is_derived_birthdate' => [
-                'type' => TableAttribute::INPUT_TYPE_SELECT,
-                'choices' => Utils::booleanOptions(),
-                'tooltip' => function ($field) {
-                    $choices = Utils::booleanOptions();
-                    return static::buildChoicesTooltip(null, $choices);
-                }
-            ],
-            'entry_date' => [
-                'type' => TableAttribute::INPUT_TYPE_DATE,
-            ],
             'reg_date' => [
                 'type' => TableAttribute::INPUT_TYPE_DATE,
             ],
