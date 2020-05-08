@@ -120,7 +120,7 @@ trait ReportsTrait
         }
         if($this->hasMethod('isAdditionalAttribute')){
             if($this->isAdditionalAttribute($field)){
-                if ($this->isSingleSelectAttribute($field) || $this->isMultiSelectAttribute($field)) {
+                if ($this->isSingleSelectAttribute($field) || $this->isMultiSelectAttribute($field) || $this->isCheckboxAttribute($field)) {
                     $listTypeIds = $this->getAdditionalAttributesListTypeIds();
                     $listTypeId = $listTypeIds[$field] ?? null;
                     if (null === $listTypeId) {
@@ -152,7 +152,7 @@ trait ReportsTrait
         }
         if($this->hasMethod('isAdditionalAttribute')){
             if($this->isAdditionalAttribute($field)){
-                if ($this->isSingleSelectAttribute($field) || $this->isMultiSelectAttribute($field)) {
+                if ($this->isSingleSelectAttribute($field) || $this->isMultiSelectAttribute($field) || $this->isCheckboxAttribute($field)) {
                     $listTypeIds = $this->getAdditionalAttributesListTypeIds();
                     $listTypeId = $listTypeIds[$field] ?? null;
                     if (null === $listTypeId) {
