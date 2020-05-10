@@ -3,6 +3,7 @@
 namespace backend\modules\reports\controllers;
 
 use backend\modules\auth\Acl;
+use backend\modules\auth\Session;
 use backend\modules\reports\models\AdhocReport;
 use backend\modules\reports\models\Reports;
 use common\helpers\DateUtils;
@@ -29,12 +30,14 @@ class DefaultController extends Controller
 
     public function actionIndex($country_id)
     {
+        $country_id = Session::getCountryId($country_id);
         return $this->render('index',[
             'country_id' => $country_id,
         ]);
     }
 
     public function actionView($type, $country_id){
+        $country_id = Session::getCountryId($country_id);
         $from = null; $to = null;
         $date_filter = DateUtils::getDateFilterParams($from, $to, 'created_at', false, true);
 

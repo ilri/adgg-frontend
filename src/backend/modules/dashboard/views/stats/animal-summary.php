@@ -4,10 +4,12 @@ use backend\controllers\BackendController;
 use backend\modules\auth\Session;
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\Choices;
+use backend\modules\core\models\Client;
 use backend\modules\core\models\CountriesDashboardStats;
 use backend\modules\core\models\Country;
 use backend\modules\core\models\CountryUnits;
 use backend\modules\core\models\Farm;
+use backend\modules\core\models\Organization;
 use common\helpers\DbUtils;
 use common\helpers\Lang;
 use common\widgets\highchart\HighChart;
@@ -32,6 +34,10 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
         <?= Lang::t('Animals Registered in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
     <?php elseif (Session::isRegionUser()): ?>
         <?= Lang::t('Animals Registered in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+    <?php elseif (Session::isOrganizationUser()): ?>
+        <?= Lang::t('Animals Registered in') . ' ' . Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+    <?php elseif (Session::isOrganizationClientUser()): ?>
+        <?= Lang::t('Animals Registered in') . ' ' . Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
     <?php else: ?>
         <?= Lang::t('Animals Registered in {country}', ['country' => $country->name]); ?>
     <?php endif; ?>
@@ -44,25 +50,21 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
             <div class="col-md-12 kt-iconbox kt-iconbox--active">
                 <div class="kt-iconbox__title">
                     <?php if (Session::isWardUser()): ?>
-                        <?= Lang::t('Registered Animals Grouped by Villages in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getWardId(), 'level' => CountryUnits::LEVEL_WARD]) . ' ' . 'Ward' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                        <?= Lang::t('Registered Animals Grouped by Regions in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getWardId(), 'level' => CountryUnits::LEVEL_WARD]) . ' ' . 'Ward' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                     <?php elseif (Session::isDistrictUser()): ?>
-                        <?= Lang::t('Registered Animals Grouped by Wards in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                        <?= Lang::t('Registered Animals Grouped by Regions in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                     <?php elseif (Session::isRegionUser()): ?>
-                        <?= Lang::t('Registered Animals Grouped by Districts in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                        <?= Lang::t('Registered Animals Grouped by Regions in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                    <?php elseif (Session::isOrganizationUser()): ?>
+                        <?= Lang::t('Registered Animals Grouped by Regions  in') . ' ' . Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                    <?php elseif (Session::isOrganizationClientUser()): ?>
+                        <?= Lang::t('Registered Animals Grouped by Regions in') . ' ' . Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                     <?php else: ?>
                         <?= Lang::t('Registered Animals Grouped by Regions in {country}', ['country' => $country->name]); ?>
                     <?php endif; ?>
                 </div>
                 <div id="chartContainer"></div>
-                <?php if (Session::isWardUser()): ?>
-                    <?php $chart_data = CountriesDashboardStats::getAnimalsGroupedByVillages($country->id, Session::getWardId()); ?>
-                <?php elseif (Session::isDistrictUser()): ?>
-                    <?php $chart_data = CountriesDashboardStats::getAnimalsGroupedByWards($country->id, Session::getDistrictId()); ?>
-                <?php elseif (Session::isRegionUser()): ?>
-                    <?php $chart_data = CountriesDashboardStats::getAnimalsGroupedByDistricts($country->id, Session::getRegionId()); ?>
-                <?php else: ?>
-                    <?php $chart_data = CountriesDashboardStats::getAnimalsGroupedByRegions($country->id); ?>
-                <?php endif; ?>
+                <?php $chart_data = CountriesDashboardStats::getAnimalsGroupedByRegions($country->id); ?>
                 <?php
                 $data = [];
                 if (count($chart_data) > 0) {
@@ -95,22 +97,16 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                         <?= Lang::t('Registered Animals Grouped by Breeds in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                     <?php elseif (Session::isRegionUser()): ?>
                         <?= Lang::t('Registered Animals Grouped by Breeds in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                    <?php elseif (Session::isOrganizationUser()): ?>
+                        <?= Lang::t('Registered Animals Grouped by Breeds  in') . ' ' . Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                    <?php elseif (Session::isOrganizationClientUser()): ?>
+                        <?= Lang::t('Registered Animals Grouped by Breeds in') . ' ' . Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                     <?php else: ?>
                         <?= Lang::t('Registered Animals Grouped by Breeds in {country}', ['country' => $country->name]); ?>
                     <?php endif; ?>
                 </div>
                 <div id="chartContainer2"></div>
-                <?php if (Session::isVillageUser()): ?>
-                    <?php $chart_data = CountriesDashboardStats::getAnimalsGroupedByBreeds($country->id, ['village_id' => Session::getVillageId()]); ?>
-                <?php elseif (Session::isWardUser()): ?>
-                    <?php $chart_data = CountriesDashboardStats::getAnimalsGroupedByBreeds($country->id, ['ward_id' => Session::getWardId()]); ?>
-                <?php elseif (Session::isDistrictUser()): ?>
-                    <?php $chart_data = CountriesDashboardStats::getAnimalsGroupedByBreeds($country->id, ['district_id' => Session::getDistrictId()]); ?>
-                <?php elseif (Session::isRegionUser()): ?>
-                    <?php $chart_data = CountriesDashboardStats::getAnimalsGroupedByBreeds($country->id, ['region_id' => Session::getRegionId()]); ?>
-                <?php else: ?>
-                    <?php $chart_data = CountriesDashboardStats::getAnimalsGroupedByBreeds($country->id); ?>
-                <?php endif; ?>
+                <?php $chart_data = CountriesDashboardStats::getAnimalsGroupedByBreeds($country->id); ?>
                 <?php
                 $data = [];
                 if (count($chart_data) > 0) {

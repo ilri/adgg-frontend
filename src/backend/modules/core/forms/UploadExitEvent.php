@@ -20,7 +20,7 @@ class UploadExitEvent extends UploadAnimalEvent implements ImportInterface
     public function init()
     {
         parent::init();
-        $this->event_type = AnimalEvent::EVENT_TYPE_CALVING;
+        $this->event_type = AnimalEvent::EVENT_TYPE_EXITS;
         $this->sampleExcelFileName = 'exit-event.xlsx';
     }
 

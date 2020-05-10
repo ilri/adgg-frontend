@@ -6,6 +6,8 @@ namespace backend\modules\core\models;
 
 use backend\modules\auth\Session;
 use backend\modules\conf\settings\SystemSettings;
+use common\helpers\ArrayHelper;
+use common\helpers\DateUtils;
 use common\helpers\DbUtils;
 use common\helpers\Lang;
 use Yii;
@@ -15,26 +17,13 @@ use yii\db\Expression;
 
 class CountriesDashboardStats extends Model
 {
-    //model to get counts for
-    CONST FARM = 1;
-    CONST ANIMAL = 2;
-
-    //Report IDs
+    //Quick Reports ID
     CONST FARMS_REGISTERED_REPORT = 1;
     CONST ANIMALS_REGISTERED_REPORT = 2;
     CONST LSF_FARM_STATS_REPORT = 3;
     CONST TEST_DAY_REPORT = 4;
     CONST INSEMINATION_PD_CALVING_REPORT = 5;
     CONST GENOTYPE_ANIMALS_REPORT = 6;
-
-    public static function getLandingPageStats($country_id = null, $case = null)
-    {
-        if ($case == static::FARM) {
-            return Farm::getCount(['country_id' => $country_id]);
-        } else {
-            return Animal::getCount(['country_id' => $country_id]);
-        }
-    }
 
     /**
      * @param $report_id
@@ -47,64 +36,41 @@ class CountriesDashboardStats extends Model
         $country = Country::getScalar('name', ['id' => $country_id]);
         $data = [];
         if ($report_id == static::FARMS_REGISTERED_REPORT) {
-            //1. charts
-            $farmsGroupedByRegions = self::getFarmsGroupedByRegions($country_id);
-            $farmsGroupedByFarmType = self::getFarmsGroupedByFarmType($country_id);
-
-            //2.Farm boxes
-            $farmBox1 = Farm::getCount(['country_id' => $country_id]);
-            $farmBox2 = Farm::find()->andFilterWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => 1])->andFilterWhere(['country_id' => $country_id])->count();
-            $farmBox3 = Farm::find()->andFilterWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => 2])->andFilterWhere(['country_id' => $country_id])->count();
-            $farmBox4 = Farm::find()->andFilterWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => [1, 2]])->andFilterWhere(['country_id' => $country_id])->count();
             $data[] = [
                 'Charts' => [
-                    'Farms Grouped By Regions' => $farmsGroupedByRegions,
-                    'Farms Grouped By Farm Types' => $farmsGroupedByFarmType
+                    'Farms Grouped By Regions' => self::getFarmsGroupedByRegions($country_id),
+                    'Farms Grouped By Farm Types' => self::getFarmsGroupedByFarmType($country_id),
                 ],
                 'Boxes' => [
-                    'No of farms' => $farmBox1,
-                    'Male House Hold Head' => $farmBox2,
-                    'Female House Hold Head' => $farmBox3,
-                    'House Holds Headed By both male and female' => $farmBox4,
+                    'No of farms' => self::getFarmCounts($country_id),
+                    'Male House Hold Head' => self::getFarmCounts($country_id, true, 1),
+                    'Female House Hold Head' => self::getFarmCounts($country_id, true, 2),
+                    'House Holds Headed By both male and female' => self::getFarmCounts($country_id, true, [1, 2]),
                 ],
             ];
         } elseif ($report_id == static::ANIMALS_REGISTERED_REPORT) {
-            //1.charts
-            $animalsGroupedByRegions = self::getAnimalsGroupedByRegions($country_id);
-            $animalsGroupedByBreeds = self::getAnimalsGroupedByBreeds($country_id);
-
-            //2.Animal boxes
-            $animalBox1 = Animal::getCount(['country_id' => $country_id, 'animal_type' => Animal::ANIMAL_TYPE_COW]);
-            $animalBox2 = Animal::getCount(['country_id' => $country_id, 'animal_type' => Animal::ANIMAL_TYPE_HEIFER]);
-            $animalBox3 = Animal::getCount(['country_id' => $country_id, 'animal_type' => Animal::ANIMAL_TYPE_BULL]);
-            $animalBox4 = Animal::getCount(['country_id' => $country_id, 'animal_type' => Animal::ANIMAL_TYPE_MALE_CALF]);
-            $animalBox5 = Animal::getCount(['country_id' => $country_id, 'animal_type' => Animal::ANIMAL_TYPE_FEMALE_CALF]);
             $data[] = [
                 'Charts' => [
-                    'Animals Grouped By Regions' => $animalsGroupedByRegions,
-                    'Animals Grouped By Breeds' => $animalsGroupedByBreeds,
+                    'Animals Grouped By Regions' => self::getAnimalsGroupedByRegions($country_id),
+                    'Animals Grouped By Breeds' => self::getAnimalsGroupedByBreeds($country_id),
                 ],
                 'Boxes' => [
-                    'Cows' => $animalBox1,
-                    'Heifers' => $animalBox2,
-                    'Bulls' => $animalBox3,
-                    'MaleCalves' => $animalBox4,
-                    'FemaleCalves' => $animalBox5,
+                    'Cows' => self::getAnimalCounts($country_id, Animal::ANIMAL_TYPE_COW),
+                    'Heifers' => self::getAnimalCounts($country_id, Animal::ANIMAL_TYPE_HEIFER),
+                    'Bulls' => self::getAnimalCounts($country_id, Animal::ANIMAL_TYPE_BULL),
+                    'MaleCalves' => self::getAnimalCounts($country_id, Animal::ANIMAL_TYPE_MALE_CALF),
+                    'FemaleCalves' => self::getAnimalCounts($country_id, Animal::ANIMAL_TYPE_FEMALE_CALF),
                 ],
             ];
         } elseif ($report_id == static::LSF_FARM_STATS_REPORT) {
-            //charts
-            $LSFGroupedByRegions = self::getLSFGroupedByRegions($country_id);
-            $LSFAnimalsGroupedByBreeds = self::getLSFAnimalsGroupedByBreeds($country_id);
-
             //table
             $LSFMilkRecordsProvider = MilkingReport::getLargeScaleFarmMilkDetails($country_id);
             $LSFMilkRecordsProvider->setPagination(false);
             $LSFMilkRecords = $LSFMilkRecordsProvider->getModels();
             $data[] = [
                 'Charts' => [
-                    'Large Scale Farms Grouped By Regions' => $LSFGroupedByRegions,
-                    'LSF Animals By Breeds' => $LSFAnimalsGroupedByBreeds,
+                    'Large Scale Farms Grouped By Regions' => self::getLSFGroupedByRegions($country_id),
+                    'LSF Animals By Breeds' => self::getLSFAnimalsGroupedByBreeds($country_id),
                 ],
                 'Table' => [
                     'title' => Lang::t('Test Day Milk in {country}', ['country' => $country]),
@@ -112,52 +78,27 @@ class CountriesDashboardStats extends Model
                 ]
             ];
         } elseif ($report_id == static::TEST_DAY_REPORT) {
-            //charts
-            $testDayMilkGroupedByRegions = self::getTestDayMilkGroupedByRegions($country_id);
-            //table
-            // $cowsMilkingRecordsProvider = self::getGetAnimalsMilkingRecords($country_id);
-            //$cowsMilkingRecordsProvider->setPagination(false);
-            //$cowsMilkingRecords = $cowsMilkingRecordsProvider->getModels();
-
-            //3.Test Day boxes
-            $testDayBox1 = MilkingReport::getFarmersWithAnimalsWithMilkingRecord($country_id);
-            $testDayBox2 = MilkingReport::getAnimalsWithMilkingRecord($country_id);
             $data[] = [
                 'Charts' => [
-                    'Test Day Grouped By regions' => $testDayMilkGroupedByRegions,
+                    'Test Day Grouped By regions' => self::getTestDayMilkGroupedByRegions($country_id),
                 ],
                 'Boxes' => [
-                    'Farmers With Animals With Test Day' => $testDayBox1,
-                    'Animals With Test Day' => $testDayBox2,
+                    'Farmers With Animals With Test Day' => MilkingReport::getTestDayRecord($country_id, false),
+                    'Animals With Test Day' => MilkingReport::getTestDayRecord($country_id, true),
                 ],
-                //'Table' => [
-                // 'title' =>  Lang::t('Cows Milking Records in {country}', ['country' => $country]),
-                // 'data' => $cowsMilkingRecords,
-                //]
             ];
         } elseif ($report_id == static::INSEMINATION_PD_CALVING_REPORT) {
-            //charts
-            $maleCalvesByRegions = self::getMaleCalvesByRegions($country_id);
-            $femaleCalvesByRegions = self::getFemaleCalvesByRegions($country_id);
-
-            //Insemination,PD and Calving boxes
-            $insBox1 = AnimalEvent::getCount(['country_id' => $country_id, 'event_type' => AnimalEvent::EVENT_TYPE_CALVING]);
-            $insBox2 = AnimalEvent::getCount(['country_id' => $country_id, 'event_type' => AnimalEvent::EVENT_TYPE_AI]);
-            $insBox3 = AnimalEvent::getCount(['country_id' => $country_id, 'event_type' => AnimalEvent::EVENT_TYPE_PREGNANCY_DIAGNOSIS]);
-            $insBox4 = Animal::getCount(['country_id' => $country_id, 'animal_type' => Animal::ANIMAL_TYPE_MALE_CALF]);
-            $insBox5 = Animal::getCount(['country_id' => $country_id, 'animal_type' => Animal::ANIMAL_TYPE_FEMALE_CALF]);
-
             $data[] = [
                 'Charts' => [
-                    'Male Calves Grouped By Regions' => $maleCalvesByRegions,
-                    'Female Calves Grouped By Regions' => $femaleCalvesByRegions,
+                    'Male Calves Grouped By Regions' => self::getCalvesByRegions(Animal::ANIMAL_TYPE_MALE_CALF, $country_id),
+                    'Female Calves Grouped By Regions' => self::getCalvesByRegions(Animal::ANIMAL_TYPE_FEMALE_CALF, $country_id),
                 ],
                 'Boxes' => [
-                    'Calving' => $insBox1,
-                    'Insemination' => $insBox2,
-                    'PD' => $insBox3,
-                    'Male Calves' => $insBox4,
-                    'Female Calves' => $insBox5,
+                    'Calving' => self::getEventCounts($country_id, AnimalEvent::EVENT_TYPE_CALVING),
+                    'Insemination' => self::getEventCounts($country_id, AnimalEvent::EVENT_TYPE_AI),
+                    'PD' => self::getEventCounts($country_id, AnimalEvent::EVENT_TYPE_PREGNANCY_DIAGNOSIS),
+                    'Male Calves' => self::getEventCounts($country_id, Animal::ANIMAL_TYPE_MALE_CALF),
+                    'Female Calves' => self::getEventCounts($country_id, Animal::ANIMAL_TYPE_FEMALE_CALF),
                 ]
             ];
         } elseif ($report_id == static::GENOTYPE_ANIMALS_REPORT) {
@@ -181,9 +122,8 @@ class CountriesDashboardStats extends Model
         // get regions
         $regions = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_REGION]);
         foreach ($regions as $id => $label) {
-            list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
-
-            $count = Farm::find()->andWhere($newcondition, $newparams)
+            list($newCondition, $newParams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
+            $count = Farm::find()->andWhere($newCondition, $newParams)
                 ->andFilterWhere(['country_id' => $country_id])
                 ->count();
             if ($count > 0) {
@@ -196,96 +136,19 @@ class CountriesDashboardStats extends Model
         return $data;
     }
 
-    public static function getFarmsGroupedByDistricts($country_id = null, $region_id = null)
-    {
-        $condition = '';
-        $params = [];
-        list($condition, $params) = Farm::appendOrgSessionIdCondition($condition, $params);
-        $data = [];
-        // get districts
-        $districts = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_DISTRICT]);
-        foreach ($districts as $id => $label) {
-            list($newcondition, $newparams) = DbUtils::appendCondition('district_id', $id, $condition, $params);
-
-            $count = Farm::find()->andWhere($newcondition, $newparams)
-                ->andFilterWhere(['country_id' => $country_id])
-                ->andFilterWhere(['region_id' => $region_id])
-                ->count();
-            if ($count > 0) {
-                $data[] = [
-                    'label' => $label,
-                    'value' => floatval(number_format($count, 2, '.', '')),
-                ];
-            }
-        };
-        return $data;
-    }
-
-    public static function getFarmsGroupedByWards($country_id = null, $district_id = null)
-    {
-        $condition = '';
-        $params = [];
-        list($condition, $params) = Farm::appendOrgSessionIdCondition($condition, $params);
-        $data = [];
-        // get wards
-        $wards = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_WARD]);
-        foreach ($wards as $id => $label) {
-            list($newcondition, $newparams) = DbUtils::appendCondition('ward_id', $id, $condition, $params);
-
-            $count = Farm::find()->andWhere($newcondition, $newparams)
-                ->andFilterWhere(['country_id' => $country_id])
-                ->andFilterWhere(['district_id' => $district_id])
-                ->count();
-            if ($count > 0) {
-                $data[] = [
-                    'label' => $label,
-                    'value' => floatval(number_format($count, 2, '.', '')),
-                ];
-            }
-        };
-        return $data;
-    }
-
-    public static function getFarmsGroupedByVillages($country_id = null, $ward_id = null)
-    {
-        $condition = '';
-        $params = [];
-        list($condition, $params) = Farm::appendOrgSessionIdCondition($condition, $params);
-        $data = [];
-        // get villages
-        $villages = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_VILLAGE]);
-        foreach ($villages as $id => $label) {
-            list($newcondition, $newparams) = DbUtils::appendCondition('village_id', $id, $condition, $params);
-
-            $count = Farm::find()->andWhere($newcondition, $newparams)
-                ->andFilterWhere(['country_id' => $country_id])
-                ->andFilterWhere(['ward_id' => $ward_id])
-                ->count();
-            if ($count > 0) {
-                $data[] = [
-                    'label' => $label,
-                    'value' => floatval(number_format($count, 2, '.', '')),
-                ];
-            }
-        };
-        return $data;
-    }
-
-
-    public static function getFarmsGroupedByFarmType($country_id = null, $param = [])
+    public static function getFarmsGroupedByFarmType($country_id = null)
     {
         $condition = '';
         $params = [];
         list($condition, $params) = Farm::appendOrgSessionIdCondition($condition, $params);
         $data = [];
         // get farm types
-        $farmTypes = Choices::getList(\backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_FARM_TYPE);
+        $farmTypes = Choices::getList(ChoiceTypes::CHOICE_TYPE_FARM_TYPE);
         //print_r($farmTypes);
         foreach ($farmTypes as $type => $label) {
-            list($newcondition, $newparams) = DbUtils::appendCondition('farm_type', $type, $condition, $params);
-            $count = Farm::find()->andWhere($newcondition, $newparams)
+            list($newCondition, $newParams) = DbUtils::appendCondition('farm_type', $type, $condition, $params);
+            $count = Farm::find()->andWhere($newCondition, $newParams)
                 ->andFilterWhere(['country_id' => $country_id])
-                ->andFilterWhere($param)
                 ->count();
             if ($count > 0) {
                 $data[] = [
@@ -311,86 +174,9 @@ class CountriesDashboardStats extends Model
         // get regions
         $regions = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_REGION]);
         foreach ($regions as $id => $label) {
-            list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
-
-
-            $count = Animal::find()->andWhere($newcondition, $newparams)
+            list($newCondition, $newParams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
+            $count = Animal::find()->andWhere($newCondition, $newParams)
                 ->andFilterWhere(['country_id' => $country_id])
-                ->count();
-            if ($count > 0) {
-                $data[] = [
-                    'label' => $label,
-                    'value' => floatval(number_format($count, 2, '.', '')),
-                ];
-            }
-        };
-        return $data;
-    }
-
-    public static function getAnimalsGroupedByDistricts($country_id = null, $region_id = null)
-    {
-        $condition = '';
-        $params = [];
-        list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
-        $data = [];
-        // get districts
-        $districts = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_DISTRICT]);
-        foreach ($districts as $id => $label) {
-            list($newcondition, $newparams) = DbUtils::appendCondition('district_id', $id, $condition, $params);
-
-            $count = Animal::find()->andWhere($newcondition, $newparams)
-                ->andFilterWhere(['country_id' => $country_id])
-                ->andFilterWhere(['region_id' => $region_id])
-                ->count();
-            if ($count > 0) {
-                $data[] = [
-                    'label' => $label,
-                    'value' => floatval(number_format($count, 2, '.', '')),
-                ];
-            }
-        };
-        return $data;
-    }
-
-    public static function getAnimalsGroupedByWards($country_id = null, $district_id = null)
-    {
-        $condition = '';
-        $params = [];
-        list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
-        $data = [];
-        // get wards
-        $wards = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_WARD]);
-        foreach ($wards as $id => $label) {
-            list($newcondition, $newparams) = DbUtils::appendCondition('ward_id', $id, $condition, $params);
-
-            $count = Animal::find()->andWhere($newcondition, $newparams)
-                ->andFilterWhere(['country_id' => $country_id])
-                ->andFilterWhere(['district_id' => $district_id])
-                ->count();
-            if ($count > 0) {
-                $data[] = [
-                    'label' => $label,
-                    'value' => floatval(number_format($count, 2, '.', '')),
-                ];
-            }
-        };
-        return $data;
-    }
-
-    public static function getAnimalsGroupedByVillages($country_id = null, $ward_id = null)
-    {
-        $condition = '';
-        $params = [];
-        list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
-        $data = [];
-        // get villages
-        $villages = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_VILLAGE]);
-        foreach ($villages as $id => $label) {
-            list($newcondition, $newparams) = DbUtils::appendCondition('village_id', $id, $condition, $params);
-
-            $count = Animal::find()->andWhere($newcondition, $newparams)
-                ->andFilterWhere(['country_id' => $country_id])
-                ->andFilterWhere(['ward_id' => $ward_id])
                 ->count();
             if ($count > 0) {
                 $data[] = [
@@ -408,21 +194,18 @@ class CountriesDashboardStats extends Model
      * @return array
      * @throws \Exception
      */
-    public static function getAnimalsGroupedByBreeds($country_id = null, $param = [])
+    public static function getAnimalsGroupedByBreeds($country_id = null)
     {
         $condition = '';
         $params = [];
         //list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
         $data = [];
         // get breeds
-        $breeds = Choices::getList(\backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS);
+        $breeds = Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS);
         foreach ($breeds as $id => $label) {
-            list($newcondition, $newparams) = DbUtils::appendCondition('main_breed', $id, $condition, $params);
-
-            $count = Animal::find()->andWhere($newcondition, $newparams)
+            list($newCondition, $newParams) = DbUtils::appendCondition('main_breed', $id, $condition, $params);
+            $count = Animal::find()->andWhere($newCondition, $newParams)
                 ->andFilterWhere(['country_id' => $country_id])
-                ->andFilterWhere($param)
-                //  ->andFilterWhere([Farm::tableName() . '.field_agent_id' => $field_agent_id])
                 ->count();
             if ($count > 0) {
                 $data[] = [
@@ -449,9 +232,9 @@ class CountriesDashboardStats extends Model
         $regions = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_REGION]);
         //print_r($regions);
         foreach ($regions as $id => $label) {
-            list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
+            list($newCondition, $newParams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
 
-            $count = Farm::find()->where($newcondition, $newparams)
+            $count = Farm::find()->where($newCondition, $newParams)
                 ->andFilterWhere(['farm_type' => 'LSF', 'country_id' => $country_id])
                 ->count();
             if ($count > 0) {
@@ -465,82 +248,6 @@ class CountriesDashboardStats extends Model
         return $data;
 
     }
-
-    public static function getLSFGroupedByDistricts($country_id = null, $region_id = null)
-    {
-        $condition = '';
-        $params = [];
-        list($condition, $params) = Farm::appendOrgSessionIdCondition($condition, $params);
-        $data = [];
-        // get districts
-        $districts = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_DISTRICT]);
-        foreach ($districts as $id => $label) {
-            list($newcondition, $newparams) = DbUtils::appendCondition('district_id', $id, $condition, $params);
-
-            $count = Farm::find()->andWhere($newcondition, $newparams)
-                ->andFilterWhere(['farm_type' => 'LSF', 'country_id' => $country_id])
-                ->andFilterWhere(['region_id' => $region_id])
-                ->count();
-            if ($count > 0) {
-                $data[] = [
-                    'label' => $label,
-                    'value' => floatval(number_format($count, 2, '.', '')),
-                ];
-            }
-        };
-        return $data;
-    }
-
-    public static function getLSFGroupedByWards($country_id = null, $district_id = null)
-    {
-        $condition = '';
-        $params = [];
-        list($condition, $params) = Farm::appendOrgSessionIdCondition($condition, $params);
-        $data = [];
-        // get wards
-        $wards = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_WARD]);
-        foreach ($wards as $id => $label) {
-            list($newcondition, $newparams) = DbUtils::appendCondition('ward_id', $id, $condition, $params);
-
-            $count = Animal::find()->andWhere($newcondition, $newparams)
-                ->andFilterWhere(['farm_type' => 'LSF', 'country_id' => $country_id])
-                ->andFilterWhere(['district_id' => $district_id])
-                ->count();
-            if ($count > 0) {
-                $data[] = [
-                    'label' => $label,
-                    'value' => floatval(number_format($count, 2, '.', '')),
-                ];
-            }
-        };
-        return $data;
-    }
-
-    public static function getLSFGroupedByVillages($country_id = null, $ward_id = null)
-    {
-        $condition = '';
-        $params = [];
-        list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
-        $data = [];
-        // get villages
-        $villages = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_VILLAGE]);
-        foreach ($villages as $id => $label) {
-            list($newcondition, $newparams) = DbUtils::appendCondition('village_id', $id, $condition, $params);
-
-            $count = Farm::find()->andWhere($newcondition, $newparams)
-                ->andFilterWhere(['farm_type' => 'LSF', 'country_id' => $country_id])
-                ->andFilterWhere(['ward_id' => $ward_id])
-                ->count();
-            if ($count > 0) {
-                $data[] = [
-                    'label' => $label,
-                    'value' => floatval(number_format($count, 2, '.', '')),
-                ];
-            }
-        };
-        return $data;
-    }
-
 
     public static function getLSFAnimalsGroupedByBreeds($country_id = null, $param = [])
     {
@@ -549,7 +256,7 @@ class CountriesDashboardStats extends Model
         //  list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
         $data = [];
         // get breeds
-        $breeds = Choices::getList(\backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS);
+        $breeds = Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS);
         foreach ($breeds as $id => $label) {
             list($newCondition, $newParams) = DbUtils::appendCondition('main_breed', $id, $condition, $params);
             $count = Animal::find()->joinWith('farm')
@@ -578,14 +285,13 @@ class CountriesDashboardStats extends Model
     {
         $condition = '';
         $params = [];
-        //list($condition, $params) = AnimalEvent::appendOrgSessionIdCondition($condition, $params);
+        list($condition, $params) = AnimalEvent::appendOrgSessionIdCondition($condition, $params);
         $data = [];
         // get regions
         $regions = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_REGION]);
         foreach ($regions as $id => $label) {
-            list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
-
-            $count = AnimalEvent::find()->andWhere($newcondition, $newparams)
+            list($newCondition, $newParams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
+            $count = AnimalEvent::find()->andWhere($newCondition, $newParams)
                 ->andFilterWhere(['event_type' => AnimalEvent::EVENT_TYPE_MILKING, 'country_id' => $country_id])
                 ->count();
             if ($count > 0) {
@@ -600,75 +306,182 @@ class CountriesDashboardStats extends Model
 
     }
 
-    public static function getTestDayMilkGroupedByDistricts($country_id = null, $region_id = null)
-    {
-        $condition = '';
+    public static function getDashboardCountryCategories($filter = []){
+        $condition = [];
         $params = [];
-        //list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
         $data = [];
-        // get districts
-        $districts = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_DISTRICT]);
-        foreach ($districts as $id => $label) {
-            list($newcondition, $newparams) = DbUtils::appendCondition('district_id', $id, $condition, $params);
-
-            $count = AnimalEvent::find()->andWhere($newcondition, $newparams)
-                ->andFilterWhere(['event_type' => AnimalEvent::EVENT_TYPE_MILKING, 'country_id' => $country_id])
-                ->andFilterWhere(['region_id' => $region_id])
-                ->count();
-            if ($count > 0) {
-                $data[] = [
-                    'label' => $label,
-                    'value' => floatval(number_format($count, 2, '.', '')),
-                ];
+        if (Session::isPrivilegedAdmin() || Session::isCountryUser()) {
+            if(Session::isCountryUser()){
+                $condition['id'] = Session::getCountryId();
             }
-        };
+            $countries = Country::getListData('id', 'name', false, $condition, $params);
+            foreach ($countries as $id => $label) {
+                $data[$id] = $label;
+            }
+        }
+        elseif (Session::isOrganizationUser()){
+            $condition['id'] = Session::getOrgId();
+            $orgs = Organization::getListData('id', 'name', false, $condition, $params);
+            foreach ($orgs as $id => $label) {
+                $data[$id] = $label;
+            }
+        }
+
+        if (isset($filter['country_id'])){
+            $data = ArrayHelper::filter($data, [$filter['country_id']]);
+        }
+        if (isset($filter['org_id'])){
+            $data = ArrayHelper::filter($data, [$filter['org_id']]);
+        }
+
         return $data;
     }
 
-    public static function getTestDayMilkGroupedByWards($country_id = null, $district_id = null)
-    {
-        $condition = '';
-        $params = [];
-        //list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
-        $data = [];
-        // get wards
-        $wards = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_WARD]);
-        foreach ($wards as $id => $label) {
-            list($newcondition, $newparams) = DbUtils::appendCondition('ward_id', $id, $condition, $params);
+    public static function getDashboardDateCategories($type = 'months', $max = 12, $format = 'Y-m-d'){
+        $date = new \DateTime('now');
+        $to = $date->format('Y-m-d');
+        $from = $date->modify('-1 year')->format('Y-m-d');
+        $max_label = $max;
+        $date_interval = DateUtils::getDateDiff($from, $to);
+        $days_interval = $date_interval->days;
+        $x_interval = (int)round(($days_interval / 30) / $max_label);
 
-            $count = AnimalEvent::find()->andWhere($newcondition, $newparams)
-                ->andFilterWhere(['event_type' => AnimalEvent::EVENT_TYPE_MILKING, 'country_id' => $country_id])
-                ->andFilterWhere(['district_id' => $district_id])
-                ->count();
-            if ($count > 0) {
-                $data[] = [
-                    'label' => $label,
-                    'value' => floatval(number_format($count, 2, '.', '')),
+        return  DateUtils::generateDateSpan($from, $to, $x_interval, 'month', $format);
+    }
+
+    public static function rangeYears($from = null, $to = null){
+        $curr_year = date("Y");
+        $prev_year = date("Y", strtotime("-4 years"));
+        $years = range($from ?? $prev_year, $to ?? $curr_year);
+        return $years;
+    }
+
+    public static function getQuarters($from = null, $to = null, $max = 12){
+        $quarters = [];
+        // 2020-04-23 to 2019-01-01
+        $from_date = new \DateTime($from ?? 'now');
+        $from_formatted = $from_date->format('Y-m-d');
+        $to_date = ($to === null) ? $from_date->modify('-4 year') : new \DateTime($to);
+        $to_formatted = $to_date->format('Y-m-d');
+
+        $start_month = date( 'n', strtotime($to_formatted) );
+        $start_year = date( 'Y', strtotime($to_formatted) );
+
+        $end_month = date( 'n', strtotime($from_formatted) );
+        $end_year = date( 'Y', strtotime($from_formatted) );
+
+        $start_quarter = ceil($start_month/3);
+        $end_quarter = ceil($end_month/3);
+
+        $quarter = $start_quarter; // variable to track current quarter
+
+        for( $y = $start_year; $y <= $end_year; $y++ ){
+            if($y == $end_year)
+                $max_qtr = $end_quarter;
+            else
+                $max_qtr = 4;
+
+            for($q = $quarter; $q <= $max_qtr; $q++){
+
+                $current_quarter = new \stdClass();
+
+                $q_num = $q * 3;
+                //$end_month_num = zero_pad($q * 3);
+                $end_month_num = $q_num < 10 ? "0$q_num" : $q_num;
+
+                //$start_month_num = zero_pad(($end_month_num - 2));
+                $sm_num = ($end_month_num - 2);
+                $start_month_num = $sm_num < 10 ? "0$sm_num" : $sm_num;
+
+                // get month name from number
+
+                //$q_start_month = month_name($start_month_num);
+                $q_start_month = date('M', mktime(0, 0, 0, $start_month_num, 10));
+                //$q_end_month = month_name($end_month_num);
+                $q_end_month = date('M', mktime(0, 0, 0, $end_month_num, 10));
+
+                $current_quarter->period = "Q$q ($q_start_month - $q_end_month) $y";
+                $current_quarter->period_start = "$y-$start_month_num-01";      // yyyy-mm-dd
+
+                // get get last date of given month (of year)
+                $month_end_date = date("t", strtotime("$y-$end_month_num-1"));
+                $current_quarter->period_end = "$y-$end_month_num-" . $month_end_date;
+
+                $quarters[] = $current_quarter;
+                unset($current_quarter);
+            }
+
+            $quarter = 1; // reset to 1 for next year
+        }
+        // if count($quarters) is less than or equal to $max, return the whole $quarters
+        // otherwise return $n latest values of $quarters
+        if(count($quarters) <= $max){
+            return $quarters;
+        }
+        return array_slice($quarters, -$max, $max);
+    }
+
+    public static function getAnimalsCumulativeForDataViz($filter = []){
+        // fetch animals with milk for each country per quarter, cumulatively
+        $quarters = static::getQuarters(); // max 12 from today
+        $countries = static::getDashboardCountryCategories($filter);
+        foreach ($countries as $id => $label) {
+            foreach ($quarters as $quarter){
+                $params = [];
+                $condition = [];
+                if (!Session::isPrivilegedAdmin()){
+                    list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
+                }
+                else {
+                    list($condition, $params) = DbUtils::appendCondition('country_id', $id, $condition, $params);
+                }
+                $sum = Animal::find()->select('reg_date')
+                    ->andWhere($condition, $params)
+                    ->andWhere('DATE(reg_date) <= DATE(:end_date)', [':end_date' => $quarter->period_end])
+                    ->count();
+                $data[$label][] = [
+                    'label' => $quarter->period . ' - ' . $quarter->period_end,
+                    'value' => floatval(number_format($sum, 2, '.', '')),
                 ];
             }
         };
+        //dd($countries, $filter, $data);
         return $data;
     }
 
-    public static function getTestDayMilkGroupedByVillages($country_id = null, $ward_id = null)
-    {
-        $condition = '';
-        $params = [];
-        //list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
+    public static function getAnimalsWithMilkForDataViz($filter = []){
+        $quarters = static::getQuarters(); // max 12 from today
+        $countries = static::getDashboardCountryCategories($filter);
+        $all_results = [];
         $data = [];
-        // get villages
-        $villages = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_VILLAGE]);
-        foreach ($villages as $id => $label) {
-            list($newcondition, $newparams) = DbUtils::appendCondition('village_id', $id, $condition, $params);
+        foreach ($quarters as $quarter){
+            $params = [];
+            $condition = '';
+            list($condition, $params) = DbUtils::appendInCondition(Animal::tableName(). '.[[country_id]]', array_keys($countries), $condition, $params);
+            #
+            # how do we put this date condition as a subselect in the query and avoid the 12x loop?
+            #
+            if (!empty($condition))
+                $condition .= ' AND ';
+            $casted_date = DbUtils::castDATE(Animal::tableName().'.[[reg_date]]', Animal::getDb());
+            $condition .= $casted_date . ' <= DATE(:end_date)';
+            $params[':end_date'] = $quarter->period_end;
 
-            $count = AnimalEvent::find()->andWhere($newcondition, $newparams)
-                ->andFilterWhere(['event_type' => AnimalEvent::EVENT_TYPE_MILKING, 'country_id' => $country_id])
-                ->andFilterWhere(['ward_id' => $ward_id])
-                ->count();
-            if ($count > 0) {
-                $data[] = [
-                    'label' => $label,
-                    'value' => floatval(number_format($count, 2, '.', '')),
+            $query = static::getAnimalsWithMilkQuery($condition, $params);
+            $query->addSelect(Animal::tableName(). '.[[country_id]]');
+            $query->groupBy([Animal::tableName(). '.[[country_id]]']);
+            $results = $query->asArray()->all();
+            $res = [];
+            foreach ($results as $result){
+                $res[$result['country_id']] = $result['count'];
+            }
+            $all_results[$quarter->period . ' - ' . $quarter->period_end] = $res;
+        }
+        foreach ($countries as $country_id => $country) {
+            foreach ($all_results as $quarter_period => $result){
+                $data[$country][] = [
+                    'label' => $quarter_period,
+                    'value' => floatval(number_format($result[$country_id] ?? 0, 2, '.', '')),
                 ];
             }
         };
@@ -676,11 +489,198 @@ class CountriesDashboardStats extends Model
     }
 
     /**
-     * @param null $country_id
-     * @return array
-     * @throws \Exception
+     * @param string $condition
+     * @param array $params
+     * @return \yii\db\ActiveQuery
+     *
      */
-    public static function getMaleCalvesByRegions($country_id = null)
+    public static function getAnimalsWithMilkQuery($condition = '', $params = []){
+        $command = Animal::find()
+            //->addSelect([Animal::tableName(). '.id', Animal::tableName(). '.entry_date'])
+            //->addSelect(['Count('.AnimalEvent::tableName() . '.id) as milkrecords'])
+            ->addSelect(['COUNT(DISTINCT('.Animal::tableName(). '.[[id]])) as count'])
+            ->leftJoin(AnimalEvent::tableName(), AnimalEvent::tableName() . '.[[animal_id]] = ' . Animal::tableName() . '.[[id]]')
+            ->andWhere(AnimalEvent::tableName() . '.[[event_type]] = '. AnimalEvent::EVENT_TYPE_MILKING)
+            ->andWhere($condition, $params);
+
+        return $command;
+    }
+
+    public static function getAnimalsWithMilk($condition = '', $params = [], $durationType = null){
+        if (!empty($durationType)){
+
+            $today = DateUtils::formatToLocalDate(date('Y-m-d H:i:s', time()), 'Y-m-d');
+            $timezone = 'UTC';
+            $this_month = DateUtils::formatDate($today, 'm', $timezone);
+            $this_year = DateUtils::formatDate($today, 'Y', $timezone);
+            $dateField = Animal::tableName().'.[[reg_date]]';
+
+            switch ($durationType){
+                case Animal::STATS_THIS_MONTH:
+                    list($condition, $params) = DbUtils::appendCondition(DbUtils::castYEAR($dateField, Animal::getDb()), $this_year, $condition, $params);
+                    list($condition, $params) = DbUtils::appendCondition(DbUtils::castMONTH($dateField, Animal::getDb()), $this_month, $condition, $params);
+                    break;
+            }
+        }
+        $command = static::getAnimalsWithMilkQuery($condition, $params);
+        return $command->scalar();
+    }
+
+    public static function getMilkProductionForDataViz($filter = [])
+    {
+        $data = [];
+        // get countries
+        $countries = static::getDashboardCountryCategories($filter);
+        $dates = static::getDashboardDateCategories();
+        foreach ($countries as $id => $label) {
+            foreach ($dates as $date){
+                $params = [];
+                $condition = [
+                    'event_type' => AnimalEvent::EVENT_TYPE_MILKING,
+                    //'country_id' => $id,
+                ];
+                if (!Session::isPrivilegedAdmin()){
+                    list($condition, $params) = MilkingEvent::appendOrgSessionIdCondition($condition, $params);
+                }
+                else {
+                    list($condition, $params) = DbUtils::appendCondition('country_id', $id, $condition, $params);
+                }
+                $totalMilkField = new Expression("JSON_UNQUOTE(JSON_EXTRACT(`core_animal_event`.`additional_attributes`, '$.\"62\"'))");
+                $sum = MilkingEvent::find()->select($totalMilkField)->andWhere($condition, $params)->andWhere('YEAR(event_date) = YEAR(:date) AND MONTH(event_date) = MONTH(:date)', [':date' => $date])->sum($totalMilkField);
+                $data[$label][] = [
+                    'label' => $date,
+                    'value' => floatval(number_format($sum, 2, '.', '')),
+                ];
+            }
+        };
+        return $data;
+    }
+
+    public static function getCalfWeightGrowthForDataViz(){
+        $data = [];
+        // get countries
+        $countries = static::getDashboardCountryCategories();
+        $dates = static::getDashboardDateCategories();
+        foreach ($countries as $id => $label) {
+            foreach ($dates as $date){
+                $params = [];
+                $condition = [
+                    'event_type' => AnimalEvent::EVENT_TYPE_WEIGHTS,
+                    //'country_id' => $id,
+                ];
+                if (!Session::isPrivilegedAdmin()){
+                    list($condition, $params) = WeightEvent::appendOrgSessionIdCondition($condition, $params);
+                }
+                else {
+                    list($condition, $params) = DbUtils::appendCondition('country_id', $id, $condition, $params);
+                }
+                $weightField = new Expression("JSON_UNQUOTE(JSON_EXTRACT(`core_animal_event`.`additional_attributes`, '$.\"136\"'))");
+                $sum = WeightEvent::find()->select($weightField)->andWhere($condition, $params)->andWhere('YEAR(event_date) = YEAR(:date) AND MONTH(event_date) = MONTH(:date)', [':date' => $date])->average($weightField);
+                $data[$label][] = [
+                    'label' => $date,
+                    'value' => floatval(number_format($sum, 2, '.', '')),
+                ];
+            }
+        };
+        return $data;
+    }
+
+    public static function getAnimalsByCategoriesForDataViz($filter = []){
+        $data = [];
+        $countries = static::getDashboardCountryCategories();
+        $animal_types = Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, false);
+        $years = static::rangeYears();
+        foreach ($countries as $id => $country) {
+            foreach ($animal_types as $typeid => $type){
+                foreach ($years as $year){
+                    $params = [];
+                    $condition = '';
+                    list($condition, $params) = DbUtils::appendCondition('country_id', $id, $condition, $params);
+                    list($condition, $params) = DbUtils::appendCondition('animal_type', $typeid, $condition, $params);
+                    //list($condition, $params) = DbUtils::appendCondition(DbUtils::castYEAR('reg_date', Animal::getDb()), $year, $condition, $params, 'AND', '<=');
+                    if (!empty($condition))
+                        $condition .= ' AND ';
+                    $casted_date = DbUtils::castYEAR(Animal::tableName().'.[[reg_date]]', Animal::getDb());
+                    $condition .= $casted_date . ' <= :end_date';
+                    $params[':end_date'] = $year;
+                    $count = Animal::getCount($condition, $params);
+                    $data[$country][$type][$year] = [
+                        'label' => $year,
+                        'value' => floatval(number_format($count, 2, '.', '')),
+                    ];
+                }
+
+            }
+        };
+        return $data;
+    }
+
+    public static function getRegisteredAnimalsForDataViz(){
+        $data = [];
+        $countries = static::getDashboardCountryCategories();
+        $animal_types = Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, false);
+        foreach ($countries as $id => $country) {
+            foreach ($animal_types as $typeid => $type){
+                $params = [];
+                $condition = [
+                    'animal_type' => $typeid,
+                    //'country_id' => $id,
+                ];
+                if (!Session::isPrivilegedAdmin()){
+                    list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
+                }
+                else {
+                    list($condition, $params) = DbUtils::appendCondition('country_id', $id, $condition, $params);
+                }
+                $count = Animal::getCount($condition, $params);
+                $data[$country][] = [
+                    'label' => $type,
+                    'value' => floatval(number_format($count, 2, '.', '')),
+                ];
+            }
+        };
+        return $data;
+    }
+
+    public static function getAnimalsByBreedsForDataViz(){
+        $data = [];
+        $countries = static::getDashboardCountryCategories();
+        $animal_breeds = Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, false);
+        foreach ($countries as $id => $country) {
+            $data[$country] = static::getAnimalsGroupedByBreeds($id);
+        };
+        return $data;
+    }
+
+    public static function getAIForDataViz(){
+        $data = [];
+        $countries = static::getDashboardCountryCategories();
+        $animal_breeds = Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, false);
+        foreach ($countries as $id => $country) {
+            foreach ($animal_breeds as $breedid => $type){
+                $params = [];
+                $condition = [
+                    'event_type' => AnimalEvent::EVENT_TYPE_AI,
+                    //'country_id' => $id,
+                ];
+                if (!Session::isPrivilegedAdmin()){
+                    list($condition, $params) = AnimalEvent::appendOrgSessionIdCondition($condition, $params);
+                }
+                else {
+                    list($condition, $params) = DbUtils::appendCondition('country_id', $id, $condition, $params);
+                }
+                $breedField = new Expression("JSON_UNQUOTE(JSON_EXTRACT(`core_animal_event`.`additional_attributes`, '$.\"111\"'))");
+                $count = AnimalEvent::find()->select('id')->andWhere($condition, $params)->andWhere($breedField . ' = :breedId', ['breedId' => $breedid])->count();
+                $data[$country][] = [
+                    'label' => $type,
+                    'value' => floatval(number_format($count, 2, '.', '')),
+                ];
+            }
+        };
+        return $data;
+    }
+
+    public static function getCalvesByRegions($animal_type, $country_id = null)
     {
         $condition = '';
         $params = [];
@@ -689,198 +689,11 @@ class CountriesDashboardStats extends Model
         // get regions
         $regions = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_REGION]);
         foreach ($regions as $id => $label) {
-            list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
+            list($newCondition, $newParams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
 
-            $count = Animal::find()->andWhere($newcondition, $newparams)
-                ->andFilterWhere(['animal_type' => Animal::ANIMAL_TYPE_MALE_CALF])
+            $count = Animal::find()->andWhere($newCondition, $newParams)
+                ->andFilterWhere(['animal_type' => $animal_type])
                 ->andFilterWhere(['country_id' => $country_id])
-                ->count();
-            if ($count > 0) {
-                $data[] = [
-                    'label' => $label,
-                    'value' => floatval(number_format($count, 2, '.', '')),
-                ];
-            }
-        };
-        return $data;
-    }
-
-    public static function getMaleCalvesGroupedByDistricts($country_id = null, $region_id = null)
-    {
-        $condition = '';
-        $params = [];
-        list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
-        $data = [];
-        // get districts
-        $districts = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_DISTRICT]);
-        foreach ($districts as $id => $label) {
-            list($newcondition, $newparams) = DbUtils::appendCondition('district_id', $id, $condition, $params);
-
-            $count = Animal::find()->andWhere($newcondition, $newparams)
-                ->andFilterWhere(['animal_type' => Animal::ANIMAL_TYPE_MALE_CALF])
-                ->andFilterWhere(['country_id' => $country_id])
-                ->andFilterWhere(['region_id' => $region_id])
-                ->count();
-            if ($count > 0) {
-                $data[] = [
-                    'label' => $label,
-                    'value' => floatval(number_format($count, 2, '.', '')),
-                ];
-            }
-        };
-        return $data;
-    }
-
-    public static function getMaleCalvesGroupedByWards($country_id = null, $district_id = null)
-    {
-        $condition = '';
-        $params = [];
-        list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
-        $data = [];
-        // get wards
-        $wards = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_WARD]);
-        foreach ($wards as $id => $label) {
-            list($newcondition, $newparams) = DbUtils::appendCondition('ward_id', $id, $condition, $params);
-
-            $count = Animal::find()->andWhere($newcondition, $newparams)
-                ->andFilterWhere(['animal_type' => Animal::ANIMAL_TYPE_MALE_CALF])
-                ->andFilterWhere(['country_id' => $country_id])
-                ->andFilterWhere(['district_id' => $district_id])
-                ->count();
-            if ($count > 0) {
-                $data[] = [
-                    'label' => $label,
-                    'value' => floatval(number_format($count, 2, '.', '')),
-                ];
-            }
-        };
-        return $data;
-    }
-
-    public static function getMaleCalvesGroupedByVillages($country_id = null, $ward_id = null)
-    {
-        $condition = '';
-        $params = [];
-        list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
-        $data = [];
-        // get villages
-        $villages = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_VILLAGE]);
-        foreach ($villages as $id => $label) {
-            list($newcondition, $newparams) = DbUtils::appendCondition('village_id', $id, $condition, $params);
-
-            $count = Animal::find()->andWhere($newcondition, $newparams)
-                ->andFilterWhere(['animal_type' => Animal::ANIMAL_TYPE_MALE_CALF])
-                ->andFilterWhere(['country_id' => $country_id])
-                ->andFilterWhere(['ward_id' => $ward_id])
-                ->count();
-            if ($count > 0) {
-                $data[] = [
-                    'label' => $label,
-                    'value' => floatval(number_format($count, 2, '.', '')),
-                ];
-            }
-        };
-        return $data;
-    }
-
-    /**
-     * @param null $country_id
-     * @return array
-     * @throws \Exception
-     */
-    public static function getFemaleCalvesByRegions($country_id = null)
-    {
-
-        $condition = '';
-        $params = [];
-        list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
-        $data = [];
-        // get regions
-        $regions = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_REGION]);
-        foreach ($regions as $id => $label) {
-            list($newcondition, $newparams) = DbUtils::appendCondition('region_id', $id, $condition, $params);
-
-            $count = Animal::find()->andWhere($newcondition, $newparams)
-                ->andFilterWhere(['animal_type' => Animal::ANIMAL_TYPE_FEMALE_CALF])
-                ->andFilterWhere(['country_id' => $country_id])
-                ->count();
-            if ($count > 0) {
-                $data[] = [
-                    'label' => $label,
-                    'value' => floatval(number_format($count, 2, '.', '')),
-                ];
-            }
-        };
-        return $data;
-    }
-
-    public static function getFemaleCalvesGroupedByDistricts($country_id = null, $region_id = null)
-    {
-        $condition = '';
-        $params = [];
-        list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
-        $data = [];
-        // get districts
-        $districts = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_DISTRICT]);
-        foreach ($districts as $id => $label) {
-            list($newcondition, $newparams) = DbUtils::appendCondition('district_id', $id, $condition, $params);
-
-            $count = Animal::find()->andWhere($newcondition, $newparams)
-                ->andFilterWhere(['animal_type' => Animal::ANIMAL_TYPE_FEMALE_CALF])
-                ->andFilterWhere(['country_id' => $country_id])
-                ->andFilterWhere(['region_id' => $region_id])
-                ->count();
-            if ($count > 0) {
-                $data[] = [
-                    'label' => $label,
-                    'value' => floatval(number_format($count, 2, '.', '')),
-                ];
-            }
-        };
-        return $data;
-    }
-
-    public static function getFemaleCalvesGroupedByWards($country_id = null, $district_id = null)
-    {
-        $condition = '';
-        $params = [];
-        list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
-        $data = [];
-        // get wards
-        $wards = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_WARD]);
-        foreach ($wards as $id => $label) {
-            list($newcondition, $newparams) = DbUtils::appendCondition('ward_id', $id, $condition, $params);
-
-            $count = Animal::find()->andWhere($newcondition, $newparams)
-                ->andFilterWhere(['animal_type' => Animal::ANIMAL_TYPE_FEMALE_CALF])
-                ->andFilterWhere(['country_id' => $country_id])
-                ->andFilterWhere(['district_id' => $district_id])
-                ->count();
-            if ($count > 0) {
-                $data[] = [
-                    'label' => $label,
-                    'value' => floatval(number_format($count, 2, '.', '')),
-                ];
-            }
-        };
-        return $data;
-    }
-
-    public static function getFemaleCalvesGroupedByVillages($country_id = null, $ward_id = null)
-    {
-        $condition = '';
-        $params = [];
-        list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
-        $data = [];
-        // get villages
-        $villages = CountryUnits::getListData('id', 'name', '', ['level' => CountryUnits::LEVEL_VILLAGE]);
-        foreach ($villages as $id => $label) {
-            list($newcondition, $newparams) = DbUtils::appendCondition('village_id', $id, $condition, $params);
-
-            $count = Animal::find()->andWhere($newcondition, $newparams)
-                ->andFilterWhere(['animal_type' => Animal::ANIMAL_TYPE_FEMALE_CALF])
-                ->andFilterWhere(['country_id' => $country_id])
-                ->andFilterWhere(['ward_id' => $ward_id])
                 ->count();
             if ($count > 0) {
                 $data[] = [
@@ -917,95 +730,170 @@ class CountriesDashboardStats extends Model
 
     public static function getFarmCounts($country_id, $household = false, $params = null, $farm_type = null)
     {
-        if (Session::isVillageUser() && !Session::isFieldAgent()) {
-            if ($household == false && $farm_type == null) {
-                return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'village_id' => Session::getVillageId()]));
-            } elseif ($household == false && $farm_type !== null) {
-                return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'village_id' => Session::getVillageId(), 'farm_type' => $farm_type]));
+        if (Session::isVillageUser()) {
+            if (Session::isFieldAgent()) {
+                if ($household == false && $farm_type == null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'village_id' => Session::getVillageId(), 'field_agent_id' => Session::getUserId()]));
+                } elseif ($household == false && $farm_type !== null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'village_id' => Session::getVillageId(), 'field_agent_id' => Session::getUserId(), 'farm_type' => $farm_type]));
+                } else {
+                    return Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => $params])->andWhere(['country_id' => $country_id, 'village_id' => Session::getVillageId(), 'field_agent_id' => Session::getUserId()])->count());
+                }
+            } else {
+                if ($household == false && $farm_type == null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'village_id' => Session::getVillageId()]));
+                } elseif ($household == false && $farm_type !== null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'village_id' => Session::getVillageId(), 'farm_type' => $farm_type]));
+                } else {
+                    return Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => $params])->andWhere(['country_id' => $country_id, 'village_id' => Session::getVillageId()])->count());
+                }
             }
-            return Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => $params])->andWhere(['country_id' => $country_id, 'village_id' => Session::getVillageId()])->count());
+        } elseif (Session::isWardUser()) {
+            if (Session::isFieldAgent()) {
+                if ($household == false && $farm_type == null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'ward_id' => Session::getWardId(), 'field_agent_id' => Session::getUserId()]));
+                } elseif ($household == false && $farm_type !== null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'ward_id' => Session::getWardId(), 'field_agent_id' => Session::getUserId(), 'farm_type' => $farm_type]));
 
-        } elseif (Session::isVillageUser() && Session::isFieldAgent()) {
-            if ($household == false && $farm_type == null) {
-                return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'village_id' => Session::getVillageId(), 'field_agent_id' => Session::getUserId()]));
-            } elseif ($household == false && $farm_type !== null) {
-                return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'village_id' => Session::getVillageId(), 'field_agent_id' => Session::getUserId(), 'farm_type' => $farm_type]));
+                } else {
+                    return Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => $params])->andWhere(['country_id' => $country_id, 'ward_id' => Session::getWardId(), 'field_agent_id' => Session::getUserId()])->count());
+                }
+            } else {
+                if ($household == false && $farm_type == null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'ward_id' => Session::getWardId()]));
+                } elseif ($household == false && $farm_type !== null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'ward_id' => Session::getWardId(), 'farm_type' => $farm_type]));
+
+                } else {
+                    return Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => $params])->andWhere(['country_id' => $country_id, 'ward_id' => Session::getWardId()])->count());
+                }
             }
-            return Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => $params])->andWhere(['country_id' => $country_id, 'village_id' => Session::getVillageId(), 'field_agent_id' => Session::getUserId()])->count());
-        } elseif (Session::isWardUser() && !Session::isFieldAgent()) {
-            if ($household == false && $farm_type == null) {
-                return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'ward_id' => Session::getWardId()]));
-            } elseif ($household == false && $farm_type !== null) {
-                return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'ward_id' => Session::getWardId(), 'farm_type' => $farm_type]));
 
+        } elseif (Session::isDistrictUser()) {
+            if (Session::isFieldAgent()) {
+                if ($household == false && $farm_type == null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'district_id' => Session::getDistrictId(), 'field_agent_id' => Session::getUserId()]));
+                } elseif ($household == false && $farm_type !== null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'district_id' => Session::getDistrictId(), 'field_agent_id' => Session::getUserId(), 'farm_type' => $farm_type]));
+
+                } else {
+                    return Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => $params])->andWhere(['country_id' => $country_id, 'district_id' => Session::getDistrictId(), 'field_agent_id' => Session::getUserId()])->count());
+                }
+            } else {
+                if ($household == false && $farm_type == null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'district_id' => Session::getDistrictId()]));
+                } elseif ($household == false && $farm_type !== null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'district_id' => Session::getDistrictId(), 'farm_type' => $farm_type]));
+
+                } else {
+                    return Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => $params])->andWhere(['country_id' => $country_id, 'district_id' => Session::getDistrictId()])->count());
+                }
             }
-            return Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => $params])->andWhere(['country_id' => $country_id, 'ward_id' => Session::getWardId()])->count());
-        } elseif (Session::isWardUser() && Session::isFieldAgent()) {
-            if ($household == false && $farm_type == null) {
-                return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'ward_id' => Session::getWardId(), 'field_agent_id' => Session::getUserId()]));
-            } elseif ($household == false && $farm_type !== null) {
-                return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'ward_id' => Session::getWardId(), 'field_agent_id' => Session::getUserId(), 'farm_type' => $farm_type]));
 
+        } elseif (Session::isRegionUser()) {
+            if (Session::isFieldAgent()) {
+                if ($household == false && $farm_type == null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'region_id' => Session::getRegionId(), 'field_agent_id' => Session::getUserId()]));
+                } elseif ($household == false && $farm_type !== null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'region_id' => Session::getRegionId(), 'field_agent_id' => Session::getUserId(), 'farm_type' => $farm_type]));
+
+                } else {
+                    return Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => $params])->andWhere(['country_id' => $country_id, 'region_id' => Session::getRegionId(), 'field_agent_id' => Session::getUserId()])->count());
+                }
+            } else {
+                if ($household == false && $farm_type == null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'region_id' => Session::getRegionId()]));
+                } elseif ($household == false && $farm_type !== null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'region_id' => Session::getRegionId(), 'farm_type' => $farm_type]));
+
+                } else {
+                    return Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => $params])->andWhere(['country_id' => $country_id, 'region_id' => Session::getRegionId()])->count());
+                }
             }
-            return Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => $params])->andWhere(['country_id' => $country_id, 'ward_id' => Session::getWardId(), 'field_agent_id' => Session::getUserId()])->count());
-        } elseif (Session::isDistrictUser() && !Session::isFieldAgent()) {
-            if ($household == false && $farm_type == null) {
-                return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'district_id' => Session::getDistrictId()]));
-            } elseif ($household == false && $farm_type !== null) {
-                return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'district_id' => Session::getDistrictId(), 'farm_type' => $farm_type]));
 
+
+        } elseif (Session::isCountryUser()) {
+            if (Session::isFieldAgent()) {
+                if ($household == false && $farm_type == null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'field_agent_id' => Session::getUserId()]));
+                } elseif ($household == false && $farm_type !== null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'field_agent_id' => Session::getUserId(), 'farm_type' => $farm_type]));
+
+                } else {
+                    return Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => $params])->andWhere(['country_id' => $country_id, 'field_agent_id' => Session::getUserId()])->count());
+                }
+            } else {
+                if ($household == false && $farm_type == null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id]));
+                } elseif ($household == false && $farm_type !== null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'farm_type' => $farm_type]));
+
+                } else {
+                    return Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => $params])->andWhere(['country_id' => $country_id])->count());
+                }
             }
-            return Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => $params])->andWhere(['country_id' => $country_id, 'district_id' => Session::getDistrictId()])->count());
-        } elseif (Session::isDistrictUser() && Session::isFieldAgent()) {
-            if ($household == false && $farm_type == null) {
-                return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'district_id' => Session::getDistrictId(), 'field_agent_id' => Session::getUserId()]));
-            } elseif ($household == false && $farm_type !== null) {
-                return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'district_id' => Session::getDistrictId(), 'field_agent_id' => Session::getUserId(), 'farm_type' => $farm_type]));
 
+        } elseif (Session::isOrganizationUser()) {
+            if (Session::isFieldAgent()) {
+                if ($household == false && $farm_type == null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'org_id' => Session::getOrgId(), 'field_agent_id' => Session::getUserId()]));
+                } elseif ($household == false && $farm_type !== null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'org_id' => Session::getOrgId(), 'field_agent_id' => Session::getUserId(), 'farm_type' => $farm_type]));
+
+                } else {
+                    return Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => $params])->andWhere(['country_id' => $country_id, 'org_id' => Session::getOrgId(), 'field_agent_id' => Session::getUserId()])->count());
+                }
+            } else {
+                if ($household == false && $farm_type == null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'org_id' => Session::getOrgId()]));
+                } elseif ($household == false && $farm_type !== null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'org_id' => Session::getOrgId(), 'farm_type' => $farm_type]));
+
+                } else {
+                    return Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => $params])->andWhere(['country_id' => $country_id, 'org_id' => Session::getOrgId()])->count());
+                }
             }
-            return Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => $params])->andWhere(['country_id' => $country_id, 'district_id' => Session::getDistrictId(), 'field_agent_id' => Session::getUserId()])->count());
-        } elseif (Session::isRegionUser() && !Session::isFieldAgent()) {
-            if ($household == false && $farm_type == null) {
-                return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'region_id' => Session::getRegionId()]));
-            } elseif ($household == false && $farm_type !== null) {
-                return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'region_id' => Session::getRegionId(), 'farm_type' => $farm_type]));
 
+        } elseif (Session::isOrganizationClientUser()) {
+            if (Session::isFieldAgent()) {
+                if ($household == false && $farm_type == null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'client_id' => Session::getClientId(), 'field_agent_id' => Session::getUserId()]));
+                } elseif ($household == false && $farm_type !== null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'client_id' => Session::getClientId(), 'field_agent_id' => Session::getUserId(), 'farm_type' => $farm_type]));
+
+                } else {
+                    return Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => $params])->andWhere(['country_id' => $country_id, 'client_id' => Session::getClientId(), 'field_agent_id' => Session::getUserId()])->count());
+                }
+            } else {
+                if ($household == false && $farm_type == null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'client_id' => Session::getClientId()]));
+                } elseif ($household == false && $farm_type !== null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'client_id' => Session::getClientId(), 'farm_type' => $farm_type]));
+
+                } else {
+                    return Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => $params])->andWhere(['country_id' => $country_id, 'client_id' => Session::getClientId()])->count());
+                }
             }
-            return Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => $params])->andWhere(['country_id' => $country_id, 'region_id' => Session::getRegionId()])->count());
-
-        } elseif (Session::isRegionUser() && Session::isFieldAgent()) {
-            if ($household == false && $farm_type == null) {
-                return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'region_id' => Session::getRegionId(), 'field_agent_id' => Session::getUserId()]));
-            } elseif ($household == false && $farm_type !== null) {
-                return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'region_id' => Session::getRegionId(), 'field_agent_id' => Session::getUserId(), 'farm_type' => $farm_type]));
-
-            }
-            return Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => $params])->andWhere(['country_id' => $country_id, 'region_id' => Session::getRegionId(), 'field_agent_id' => Session::getUserId()])->count());
-
-        } elseif (Session::isCountryUser() && !Session::isFieldAgent()) {
-            if ($household == false && $farm_type == null) {
-                return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id]));
-            } elseif ($household == false && $farm_type !== null) {
-                return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'farm_type' => $farm_type]));
-
-            }
-            return Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => $params])->andWhere(['country_id' => $country_id])->count());
-        } elseif (Session::isCountry() && Session::isFieldAgent()) {
-            if ($household == false && $farm_type == null) {
-                return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'field_agent_id' => Session::getUserId()]));
-            } elseif ($household == false && $farm_type !== null) {
-                return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'field_agent_id' => Session::getUserId(), 'farm_type' => $farm_type]));
-
-            }
-            return Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => $params])->andWhere(['country_id' => $country_id, 'field_agent_id' => Session::getUserId()])->count());
 
         } else {
-            if ($household == false && $farm_type == null) {
-                return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id]));
-            } elseif ($household == false && $farm_type !== null) {
-                return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'farm_type' => $farm_type]));
+            if (Session::isFieldAgent()) {
+                if ($household == false && $farm_type == null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'field_agent_id' => Session::getUserId()]));
+                } elseif ($household == false && $farm_type !== null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'farm_type' => $farm_type, 'field_agent_id' => Session::getUserId()]));
+                } else {
+                    return Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => $params])->andWhere(['country_id' => $country_id, 'field_agent_id' => Session::getUserId()])->count());
+                }
+            } else {
+                if ($household == false && $farm_type == null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id]));
+                } elseif ($household == false && $farm_type !== null) {
+                    return Yii::$app->formatter->asDecimal(Farm::getCount(['country_id' => $country_id, 'farm_type' => $farm_type]));
+                } else {
+                    return Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => $params])->andWhere(['country_id' => $country_id])->count());
+                }
             }
-            return Yii::$app->formatter->asDecimal(Farm::find()->andWhere(['JSON_UNQUOTE(JSON_EXTRACT(`core_farm`.`additional_attributes`, \'$."36"\'))' => $params])->andWhere(['country_id' => $country_id])->count());
+
         }
     }
 
@@ -1054,6 +942,30 @@ class CountriesDashboardStats extends Model
                 return Yii::$app->formatter->asDecimal(Animal::find()->joinWith('farm')->andFilterWhere(['core_animal.country_id' => $country_id, 'core_animal.region_id' => Session::getRegionId(), 'core_animal.animal_type' => $animal_type])->andFilterWhere([Farm::tableName() . '.field_agent_id' => Session::getUserId()])->count());
             }
             return Yii::$app->formatter->asDecimal(Animal::find()->joinWith('farm')->andFilterWhere(['core_animal.country_id' => $country_id, 'core_animal.region_id' => Session::getRegionId()])->andFilterWhere([Farm::tableName() . '.field_agent_id' => Session::getUserId()])->count());
+        } elseif (Session::isOrganizationUser() && !Session::isFieldAgent()) {
+            if ($animal_type !== null) {
+                return Yii::$app->formatter->asDecimal(Animal::getCount(['country_id' => $country_id, 'org_id' => Session::getOrgId(), 'animal_type' => $animal_type]));
+            } else {
+                return Yii::$app->formatter->asDecimal(Animal::getCount(['country_id' => $country_id, 'org_id' => Session::getOrgId()]));
+            }
+        } elseif (Session::isOrganizationUser() && Session::isFieldAgent()) {
+            if ($animal_type !== null) {
+                return Yii::$app->formatter->asDecimal(Animal::find()->joinWith('farm')->andFilterWhere(['core_animal.country_id' => $country_id, 'core_animal.org_id' => Session::getOrgId(), 'core_animal.animal_type' => $animal_type])->andFilterWhere([Farm::tableName() . '.field_agent_id' => Session::getUserId()])->count());
+            } else {
+                return Yii::$app->formatter->asDecimal(Animal::find()->joinWith('farm')->andFilterWhere(['core_animal.country_id' => $country_id, 'core_animal.org_id' => Session::getOrgId()])->andFilterWhere([Farm::tableName() . '.field_agent_id' => Session::getUserId()])->count());
+            }
+        } elseif (Session::isOrganizationClientUser() && !Session::isFieldAgent()) {
+            if ($animal_type !== null) {
+                return Yii::$app->formatter->asDecimal(Animal::getCount(['country_id' => $country_id, 'client_id' => Session::getClientId(), 'animal_type' => $animal_type]));
+            } else {
+                return Yii::$app->formatter->asDecimal(Animal::getCount(['country_id' => $country_id, 'client_id' => Session::getClientId()]));
+            }
+        } elseif (Session::isOrganizationClientUser() && Session::isFieldAgent()) {
+            if ($animal_type !== null) {
+                return Yii::$app->formatter->asDecimal(Animal::find()->joinWith('farm')->andFilterWhere(['core_animal.country_id' => $country_id, 'core_animal.client_id' => Session::getClientId(), 'core_animal.animal_type' => $animal_type])->andFilterWhere([Farm::tableName() . '.field_agent_id' => Session::getUserId()])->count());
+            } else {
+                return Yii::$app->formatter->asDecimal(Animal::find()->joinWith('farm')->andFilterWhere(['core_animal.country_id' => $country_id, 'core_animal.client_id' => Session::getClientId()])->andFilterWhere([Farm::tableName() . '.field_agent_id' => Session::getUserId()])->count());
+            }
         } elseif (Session::isCountryUser() && !Session::isFieldAgent()) {
             if ($animal_type !== null) {
                 return Yii::$app->formatter->asDecimal(Animal::getCount(['country_id' => $country_id, 'animal_type' => $animal_type]));
@@ -1098,6 +1010,18 @@ class CountriesDashboardStats extends Model
         } elseif (Session::isRegionUser() && Session::isFieldAgent()) {
 
             return Yii::$app->formatter->asDecimal(AnimalEvent::find()->andFilterWhere(['country_id' => $country_id, 'region_id' => Session::getRegionId(), 'event_type' => $event_type])->andFilterWhere(['field_agent_id' => Session::getUserId()])->count());
+        } elseif (Session::isOrganizationUser() && !Session::isFieldAgent()) {
+
+            return Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => $country_id, 'org_id' => Session::getOrgId(), 'event_type' => $event_type]));
+        } elseif (Session::isOrganizationUser() && Session::isFieldAgent()) {
+
+            return Yii::$app->formatter->asDecimal(AnimalEvent::find()->andFilterWhere(['country_id' => $country_id, 'org_id' => Session::getOrgId(), 'event_type' => $event_type])->andFilterWhere(['field_agent_id' => Session::getUserId()])->count());
+        } elseif (Session::isOrganizationClientUser() && !Session::isFieldAgent()) {
+
+            return Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => $country_id, 'client_id' => Session::getClientId(), 'event_type' => $event_type]));
+        } elseif (Session::isOrganizationClientUser() && Session::isFieldAgent()) {
+
+            return Yii::$app->formatter->asDecimal(AnimalEvent::find()->andFilterWhere(['country_id' => $country_id, 'client_id' => Session::getClientId(), 'event_type' => $event_type])->andFilterWhere(['field_agent_id' => Session::getUserId()])->count());
         } elseif (Session::isCountryUser() && !Session::isFieldAgent()) {
 
             return Yii::$app->formatter->asDecimal(AnimalEvent::getCount(['country_id' => $country_id, 'event_type' => $event_type]));

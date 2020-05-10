@@ -22,7 +22,7 @@ $url = ['index'];
                 <div class="form-row align-items-center">
                     <?php if (!\backend\modules\auth\Session::isCountry()): ?>
                         <div class="col-lg-2">
-                            <?= Html::label($model->getAttributeLabel('country_id')) ?>
+                            <?= Html::label('Country') ?>
                             <?= Select2::widget([
                                 'name' => 'country_id',
                                 'value' => $model->country_id,

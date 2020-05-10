@@ -164,4 +164,10 @@ class CountryUnits extends ActiveRecord implements ActiveSearchInterface, Upload
 
         return $columns;
     }
+    /**
+     * @inheritDoc
+     */
+    public function reportBuilderRelations(){
+        return array_merge(['country'], $this->reportBuilderCommonRelations());
+    }
 }

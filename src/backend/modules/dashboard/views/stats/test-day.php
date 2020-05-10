@@ -2,11 +2,13 @@
 
 use backend\controllers\BackendController;
 use backend\modules\auth\Session;
+use backend\modules\core\models\Client;
 use backend\modules\core\models\CountriesDashboardStats;
 use backend\modules\core\models\CountryUnits;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\MilkingReport;
 use backend\modules\core\models\Country;
+use backend\modules\core\models\Organization;
 use common\helpers\Lang;
 use common\widgets\highchart\HighChart;
 use yii\helpers\Html;
@@ -33,6 +35,10 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                 <?= Lang::t('Test Day Milk Report in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
             <?php elseif (Session::isRegionUser()): ?>
                 <?= Lang::t('Test Day Milk Report in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+            <?php elseif (Session::isOrganizationUser()): ?>
+                <?= Lang::t('Test Day Milk Report  in') . ' ' . Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+            <?php elseif (Session::isOrganizationClientUser()): ?>
+                <?= Lang::t('Test Day Milk Report in') . ' ' . Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
             <?php else: ?>
                 <?= Lang::t('Test Day Milk Report in {country}', ['country' => $country->name]) ?>
             <?php endif; ?>
@@ -44,25 +50,21 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                     <div class="col-md-12 kt-iconbox kt-iconbox--active">
                         <div class="kt-iconbox__title">
                             <?php if (Session::isWardUser()): ?>
-                                <?= Lang::t('Test Day Milk Records Grouped By Villages in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getWardId(), 'level' => CountryUnits::LEVEL_WARD]) . ' ' . 'Ward' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                <?= Lang::t('Test Day Milk Records Grouped By Regions in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getWardId(), 'level' => CountryUnits::LEVEL_WARD]) . ' ' . 'Ward' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                             <?php elseif (Session::isDistrictUser()): ?>
-                                <?= Lang::t('Test Day Milk Records Grouped By Wards in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                <?= Lang::t('Test Day Milk Records Grouped By Regions in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                             <?php elseif (Session::isRegionUser()): ?>
-                                <?= Lang::t('Test Day Milk Records Grouped By Districts in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                <?= Lang::t('Test Day Milk Records Grouped By Regions in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                            <?php elseif (Session::isOrganizationUser()): ?>
+                                <?= Lang::t('Test Day Milk Records Grouped By Regions  in') . ' ' . Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                            <?php elseif (Session::isOrganizationClientUser()): ?>
+                                <?= Lang::t('Test Day Milk Records Grouped By Regions in') . ' ' . Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                             <?php else: ?>
                                 <?= Lang::t('Test Day Milk Records Grouped By Region in {country}', ['country' => $country->name]) ?>
                             <?php endif; ?>
                         </div>
                         <div id="chartContainer" title=""></div>
-                        <?php if (Session::isWardUser()): ?>
-                            <?php $chart_data = CountriesDashboardStats::getTestDayMilkGroupedByVillages($country->id, Session::getWardId()); ?>
-                        <?php elseif (Session::isDistrictUser()): ?>
-                            <?php $chart_data = CountriesDashboardStats::getTestDayMilkGroupedByWards($country->id, Session::getDistrictId()); ?>
-                        <?php elseif (Session::isRegionUser()): ?>
-                            <?php $chart_data = CountriesDashboardStats::getTestDayMilkGroupedByDistricts($country->id, Session::getRegionId()); ?>
-                        <?php else: ?>
-                            <?php $chart_data = CountriesDashboardStats::getTestDayMilkGroupedByRegions($country->id); ?>
-                        <?php endif; ?>
+                        <?php $chart_data = CountriesDashboardStats::getTestDayMilkGroupedByRegions($country->id); ?>
                         <?php
                         $data = [];
                         if (count($chart_data) > 0) {
@@ -91,17 +93,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                         <div class="kt-iconbox__icon mb-0">
                             <div class="kt-iconbox__icon-bg"></div>
                             <span>
-                                <?php if (Session::isVillageUser()): ?>
-                                    <?= MilkingReport::getFarmersWithAnimalsWithMilkingRecord($country->id, ['core_animal.village_id' => Session::getVillageId(), Farm::tableName() . '.field_agent_id' => Session::getUserId()]) ?>
-                                <?php elseif (Session::isWardUser()): ?>
-                                    <?= MilkingReport::getFarmersWithAnimalsWithMilkingRecord($country->id, ['core_animal.ward_id' => Session::getWardId()]) ?>
-                                <?php elseif (Session::isDistrictUser()): ?>
-                                    <?= MilkingReport::getFarmersWithAnimalsWithMilkingRecord($country->id, ['core_animal.district_id' => Session::getDistrictId()]) ?>
-                                <?php elseif (Session::isRegionUser()): ?>
-                                    <?= MilkingReport::getFarmersWithAnimalsWithMilkingRecord($country->id, ['core_animal.region_id' => Session::getRegionId()]) ?>
-                                <?php else: ?>
-                                    <?= MilkingReport::getFarmersWithAnimalsWithMilkingRecord($country->id) ?>
-                                <?php endif; ?>
+                                    <?= MilkingReport::getTestDayRecord($country->id, false) ?>
                             </span>
                         </div>
                         <div class="kt-iconbox__title">
@@ -113,6 +105,10 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                                 <?= Lang::t('Number Of Farmers  With Cows With Test Day Milk Record in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                             <?php elseif (Session::isRegionUser()): ?>
                                 <?= Lang::t('Number Of Farmers  With Cows With Test Day Milk Record in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                            <?php elseif (Session::isOrganizationUser()): ?>
+                                <?= Lang::t('Number Of Farmers  With Cows With Test Day Milk Record  in') . ' ' . Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                            <?php elseif (Session::isOrganizationClientUser()): ?>
+                                <?= Lang::t('Number Of Farmers  With Cows With Test Day Milk Record in') . ' ' . Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                             <?php else: ?>
                                 <?= Lang::t('Number Of Farmers  With Cows With Test Day Milk Record in {country}', ['country' => $country->name]) ?>
                             <?php endif; ?>
@@ -124,17 +120,7 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                         <div class="kt-iconbox__icon mb-0">
                             <div class="kt-iconbox__icon-bg"></div>
                             <span>
-                                <?php if (Session::isVillageUser()): ?>
-                                    <?= MilkingReport::getAnimalsWithMilkingRecord($country->id, ['core_animal_event.village_id' => Session::getVillageId(), 'core_animal_event.field_agent_id' => Session::getUserId()]) ?>
-                                <?php elseif (Session::isWardUser()): ?>
-                                    <?= MilkingReport::getAnimalsWithMilkingRecord($country->id, ['core_animal_event.ward_id' => Session::getWardId()]) ?>
-                                <?php elseif (Session::isDistrictUser()): ?>
-                                    <?= MilkingReport::getAnimalsWithMilkingRecord($country->id, ['core_animal_event.district_id' => Session::getDistrictId()]) ?>
-                                <?php elseif (Session::isRegionUser()): ?>
-                                    <?= MilkingReport::getAnimalsWithMilkingRecord($country->id, ['core_animal_event.region_id' => Session::getRegionId()]) ?>
-                                <?php else: ?>
-                                    <?= MilkingReport::getAnimalsWithMilkingRecord($country->id) ?>
-                                <?php endif; ?>
+                                <?= MilkingReport::getTestDayRecord($country->id, true) ?>
                             </span>
                         </div>
                         <div class="kt-iconbox__title">
@@ -146,6 +132,10 @@ $graphType = $graphType ?? HighChart::GRAPH_PIE;
                                 <?= Lang::t('Number of Cows  With  Test Day Milk Record in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                             <?php elseif (Session::isRegionUser()): ?>
                                 <?= Lang::t('Number of Cows  With  Test Day Milk Record in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                            <?php elseif (Session::isOrganizationUser()): ?>
+                                <?= Lang::t('Number of Cows  With  Test Day Milk Record  in') . ' ' . Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                            <?php elseif (Session::isOrganizationClientUser()): ?>
+                                <?= Lang::t('Number of Cows  With  Test Day Milk Record in') . ' ' . Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                             <?php else: ?>
                                 <?= Lang::t('Number of Cows  With  Test Day Milk Record in {country}', ['country' => $country->name]); ?>
                             <?php endif; ?>

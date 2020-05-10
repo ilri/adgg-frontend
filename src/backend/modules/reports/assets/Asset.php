@@ -9,6 +9,7 @@ namespace backend\modules\reports\assets;
 
 
 use backend\assets\AppAsset;
+use kartik\select2\Select2Asset;
 use yii\web\AssetBundle;
 
 class Asset extends AssetBundle
@@ -25,9 +26,11 @@ class Asset extends AssetBundle
 
     public $css = [
         'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.51.0/codemirror.min.css',
+        'css/report-builder.css'
     ];
 
     public $depends = [
+        Select2Asset::class,
         AppAsset::class,
     ];
 }

@@ -13,15 +13,21 @@ body {
 
 .kt-header {
     background-color: #5b206e;
-    border-bottom: 1px solid #eff0f6;
 }
 
 .kt-header-mobile {
-    background-color: #5b206e;
-    -webkit-box-shadow: 0 1px 9px -3px rgba(0, 0, 0, 0.1);
-    box-shadow: 0 1px 9px -3px rgba(0, 0, 0, 0.1);
+    background-color: rgb(242, 243, 248);
+    -webkit-box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
 }
-
+.kt-header-mobile__logo img{
+    height: -webkit-fill-available;
+}
+@media (max-width: 1024px) {
+    #kt_header_mobile_toggler{
+        visibility: hidden;
+    }
+}
 .kt-subheader {
     padding: 10px 25px;
 }
@@ -304,17 +310,9 @@ a:hover {
     top: 2px;
 }
 
-.centerdiv {
-    text-align: center;
-}
-
-.centerddiv {
-    display: inline-block;
-}
-
 .groupeditem {
-    background-color: #dcdcdc;
-    margin-bottom: 8px;
+    background-color: #f2f3f8;
+    list-style-type: none;
 }
 
 
@@ -339,4 +337,31 @@ a:hover {
 
 .nav-tabs.nav-tabs-line.nav.nav-tabs .nav-link:hover, .nav-tabs.nav-tabs-line.nav.nav-tabs .nav-link.active, .nav-tabs.nav-tabs-line a.nav-link:hover, .nav-tabs.nav-tabs-line a.nav-link.active {
     border-bottom: 1px solid #38997a;
+}
+
+@media (max-width: 1024px) {
+    .kt-header-mobile .kt-header-mobile__toolbar .kt-header-mobile__toolbar-topbar-toggler i {
+        color: #5b206e;
+    }
+
+    .kt-header-mobile .kt-header-mobile__toolbar .kt-header-mobile__toolbar-toggler span, .kt-header-mobile .kt-header-mobile__toolbar .kt-header-mobile__toolbar-toggler span::before, .kt-header-mobile .kt-header-mobile__toolbar .kt-header-mobile__toolbar-toggler span::after{
+        background: #5b206e;
+    }
+
+    .kt-header-mobile .kt-header-mobile__toolbar .kt-header-mobile__toolbar-toggler span:hover, .kt-header-mobile .kt-header-mobile__toolbar .kt-header-mobile__toolbar-toggler span:hover::before, .kt-header-mobile .kt-header-mobile__toolbar .kt-header-mobile__toolbar-toggler span:hover::after {
+        background: #38997a;
+    }
+
+    .kt-header-mobile .kt-header-mobile__toolbar .kt-header-mobile__toolbar-topbar-toggler.kt-header-mobile__toolbar-topbar-toggler--active i, .kt-header-mobile .kt-header-mobile__toolbar .kt-header-mobile__toolbar-topbar-toggler:hover i {
+        color: #38997a;
+    }
+
+    .kt-header .kt-header__topbar .kt-header__topbar-item .kt-header__topbar-icon i {
+        color: #5b206e;
+        font-size: 2.2rem;
+    }
+}
+
+#kt_login_v2 .kt-grid__item .kt-login-v2__body .kt-login-v2__wrapper .kt-login-v2__container {
+    background-color: #f2f3f8;
 }

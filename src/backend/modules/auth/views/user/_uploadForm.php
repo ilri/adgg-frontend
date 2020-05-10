@@ -55,11 +55,29 @@ use yii\bootstrap4\ActiveForm;
                                 ],
                             ]) ?>
                         <?php endif; ?>
-                        <?= $form->field($model, 'role_id')->widget(Select2::class, [
-                            'data' => \backend\modules\auth\models\Roles::getListData('id', 'name', false, ['level_id' => $model->level_id]),
-                            'options' => ['placeholder' => '[select one]'],
+                        <?= $form->field($model, 'level_id')->widget(Select2::class, [
+                            'data' => \backend\modules\auth\models\UserLevels::getListData(),
+                            'modal' => false,
+                            'options' => [
+                                'placeholder' => '[select one]',
+                                'class' => 'form-control parent-depdropdown',
+                                'data-child-selectors' => [
+                                    '#' . Html::getInputId($model, 'role_id'),
+                                ],
+                            ],
                             'pluginOptions' => [
-                                'allowClear' => false
+                                'allowClear' => true
+                            ],
+                        ]) ?>
+                        <?= $form->field($model, 'role_id')->widget(Select2::class, [
+                            'data' => \backend\modules\auth\models\Roles::getListData('id', 'name'),
+                            'options' => [
+                                'placeholder' => '[select one]',
+                                'data-url' => Url::to(['role/get-list', 'level_id' => 'idV', 'placeholder' => true]),
+                                'data-selected' => $model->role_id,
+                            ],
+                            'pluginOptions' => [
+                                'allowClear' => true
                             ],
                         ]) ?>
                         <?= $this->render('@common/excel/views/uploadExcel', ['model' => $model, 'form_id' => $formId, 'previewUrl' => Url::to(['upload-preview', 'country_id' => $model->country_id, 'level_id' => $model->level_id])]); ?>

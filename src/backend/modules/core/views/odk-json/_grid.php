@@ -12,10 +12,10 @@ use yii\helpers\Url;
 <?= GridView::widget([
     'searchModel' => $model,
     'filterModel' => $model,
-    'createButton' => ['visible' => Yii::$app->user->canCreate(), 'modal' => false],
+    'createButton' => ['visible' => false, 'modal' => false],
     'columns' => [
         [
-            'attribute' => 'uuid',
+            'attribute' => 'form_uuid',
         ],
         [
             'attribute' => 'is_processed',

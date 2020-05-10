@@ -13,7 +13,7 @@ use common\excel\ImportActiveRecordInterface;
 use common\helpers\ArrayHelper;
 use common\helpers\DateUtils;
 use common\helpers\DbUtils;
-use common\helpers\Utils;
+use Yii;
 
 /**
  * Class MilkingEvent
@@ -43,14 +43,14 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
     public function rules()
     {
         return ArrayHelper::merge(parent::rules(), [
-            [['milkmor', 'milkmid', 'milkmid'], 'number', 'min' => 0, 'max' => 30, 'except' => [self::SCENARIO_KLBA_UPLOAD]],
-            [['milkday'], 'number', 'min' => 0, 'max' => 60, 'except' => [self::SCENARIO_KLBA_UPLOAD]],
-            [['milkfat'], 'number', 'min' => 1.5, 'max' => 9, 'except' => [self::SCENARIO_KLBA_UPLOAD]],
-            [['milkprot'], 'number', 'min' => 1.5, 'max' => 5, 'except' => [self::SCENARIO_KLBA_UPLOAD]],
-            [['milksmc'], 'number', 'min' => 30000, 'max' => 99999999999, 'except' => [self::SCENARIO_KLBA_UPLOAD]],
-            ['milkurea', 'number', 'min' => 8, 'max' => 25, 'except' => [self::SCENARIO_KLBA_UPLOAD]],
-            ['milklact', 'number', 'min' => 3, 'max' => 7, 'except' => [self::SCENARIO_KLBA_UPLOAD]],
-            ['event_date', 'validateMilkingDate', 'except' => [self::SCENARIO_KLBA_UPLOAD]],
+            [['milkmor', 'milkmid', 'milkmid'], 'number', 'min' => 0, 'max' => 30, 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
+            [['milkday'], 'number', 'min' => 0, 'max' => 60, 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
+            [['milkfat'], 'number', 'min' => 1.5, 'max' => 9, 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
+            [['milkprot'], 'number', 'min' => 1.5, 'max' => 5, 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
+            [['milksmc'], 'number', 'min' => 30000, 'max' => 99999999999, 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
+            ['milkurea', 'number', 'min' => 8, 'max' => 25, 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
+            ['milklact', 'number', 'min' => 3, 'max' => 7, 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
+            ['event_date', 'validateMilkingDate', 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
             [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
         ]);
     }
@@ -96,21 +96,6 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
         ];
     }
 
-    public function beforeSave($insert)
-    {
-        if (parent::beforeSave($insert)) {
-            $this->ignoreAdditionalAttributes = false;
-            if (empty($this->milkday)) {
-                $this->milkday = ((float)$this->milkmor + (float)$this->milkeve + (float)$this->milkmid);
-            }
-            $this->setDIM();
-            $this->ignoreAdditionalAttributes = true;
-
-            return true;
-        }
-        return false;
-    }
-
     protected function setDIM()
     {
         if ($this->event_type != self::EVENT_TYPE_MILKING || null === $this->lactation || empty($this->lactation->event_date) || empty($this->event_date)) {
@@ -120,32 +105,40 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
         $this->dim = $diff->days;
     }
 
-    public function afterSave($insert, $changedAttributes)
+    /**
+     * @param int $animalId
+     * @param int $lactationId
+     * @throws \yii\db\Exception
+     */
+    public static function setTestDayNo($animalId, $lactationId)
     {
-        parent::afterSave($insert, $changedAttributes);
-        $this->setTestDayNumber();
+        list($sql, $params) = static::getTestDayNoUpdateSql($animalId, $lactationId, 1);
+        if (!empty($sql)) {
+            Yii::$app->db->createCommand($sql, $params)->execute();
+        }
     }
 
-
-    protected function setTestDayNumber()
+    /**
+     * @param int $animalId
+     * @param int $lactationId
+     * @param int $i
+     * @return array
+     * @throws \Exception
+     */
+    public static function getTestDayNoUpdateSql($animalId, $lactationId, $i = 1)
     {
-        if ($this->event_type != self::EVENT_TYPE_MILKING || null === $this->lactation) {
-            return;
-        }
-        if ($this->scenario == self::SCENARIO_KLBA_UPLOAD) {
-            return;
-        }
-
-        $data = static::getData(['id'], ['event_type' => self::EVENT_TYPE_MILKING, 'animal_id' => $this->animal_id, 'lactation_id' => $this->lactation_id], [], ['orderBy' => ['event_date' => SORT_ASC]]);
+        $data = static::getData(['id'], ['event_type' => self::EVENT_TYPE_MILKING, 'animal_id' => $animalId, 'lactation_id' => $lactationId], [], ['orderBy' => ['event_date' => SORT_ASC]]);
         $n = 1;
+        $sql = "";
+        $params = [];
+        $table = static::tableName();
         foreach ($data as $row) {
-            static::updateAll(['testday_no' => $n], ['id' => $row['id']]);
-            if (!Utils::isWebApp()) {
-                //$id = $row['id'];
-                //\Yii::$app->controller->stdout("Updated milk record {$id}\n");
-            }
+            $sql .= "UPDATE {$table} SET [[testday_no]]=:tdno{$n}{$i} WHERE [[id]]=:id{$n}{$i};";
+            $params[":tdno{$n}{$i}"] = $n;
+            $params[":id{$n}{$i}"] = $row['id'];
             $n++;
         }
+        return [$sql, $params];
     }
 
     /**
@@ -180,5 +173,13 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
     public function reportBuilderAdditionalUnwantedFields(): array
     {
         return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function reportBuilderRelations()
+    {
+        return array_merge(['lactation'], parent::reportBuilderRelations());
     }
 }

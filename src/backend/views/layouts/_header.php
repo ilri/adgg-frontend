@@ -22,16 +22,8 @@ $user = Yii::$app->user->identity;
     <!-- begin:: Header Topbar -->
     <div class="kt-header__topbar">
         <div class="kt-header__topbar-item">
-            <?php if (Session::isPrivilegedAdmin()): ?>
-                <?php $url = Url::to(['/help/help-content/index']) ?>
-            <?php else: ?>
-                <?php $url = Url::to(['/help/help-content/read']) ?>
-            <?php endif; ?>
-
-            <a class="pt-3" href="<?= $url ?>">
-                <div class="kt-header__topbar-wrapper">
-                    <span class="kt-header__topbar-icon" title="Help"><i class="flaticon2-information"></i></span>
-                </div>
+            <a class="kt-header__topbar-wrapper" href="<?=Url::to(['/help/help-content/read']) ?>">
+                <span class="kt-header__topbar-icon" title="Help"><i class="fas fa-question-circle"></i></span>
             </a>
         </div>
         <!--begin: Notifications -->

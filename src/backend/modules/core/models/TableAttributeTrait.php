@@ -101,8 +101,7 @@ trait TableAttributeTrait
     public function setAdditionalAttributes()
     {
         $tableId = static::getDefinedTableId();
-        $type = static::getDefinedType();
-        $attributes = TableAttribute::getDefinedAttributes($tableId, $type);
+        $attributes = TableAttribute::getDefinedAttributes($tableId);
         if (!empty($attributes)) {
             $attributeKeys = [];
             $attributeIds = [];
@@ -155,6 +154,26 @@ trait TableAttributeTrait
     {
         $inputTypes = $this->getAdditionalAttributesInputTypes();
         return $inputTypes[$attribute] == TableAttribute::INPUT_TYPE_SELECT;
+    }
+
+    /**
+     * @param string $attribute
+     * @return bool
+     */
+    public function isDateAttribute(string $attribute): bool
+    {
+        $inputTypes = $this->getAdditionalAttributesInputTypes();
+        return $inputTypes[$attribute] == TableAttribute::INPUT_TYPE_DATE;
+    }
+
+    /**
+     * @param string $attribute
+     * @return bool
+     */
+    public function isCheckboxAttribute(string $attribute): bool
+    {
+        $inputTypes = $this->getAdditionalAttributesInputTypes();
+        return $inputTypes[$attribute] == TableAttribute::INPUT_TYPE_CHECKBOX;
     }
 
     /**

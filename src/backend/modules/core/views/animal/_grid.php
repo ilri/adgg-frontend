@@ -13,7 +13,7 @@ use yii\helpers\Url;
 ?>
 <?= GridView::widget([
     'searchModel' => $model,
-    'createButton' => ['visible' => Yii::$app->user->canCreate(), 'modal' => false],
+    'createButton' => ['visible' => false, 'modal' => false],
     'rowOptions' => function (Animal $model) {
         return ["class" => "linkable", "data-href" => Url::to(['view', "id" => $model->uuid, 'animal_type' => $model->animal_type])];
     },
@@ -53,9 +53,9 @@ use yii\helpers\Url;
             'attribute' => 'sire_tag_id',
         ],
         [
-            'attribute' => 'sire_name',
+            'label' => 'Sire Name',
             'value' => function (Animal $model) {
-                return $model->getRelationAttributeValue('sire', 'name', $model->sire_name);
+                return $model->getRelationAttributeValue('sire', 'name');
             },
             'filter' => false,
         ],
@@ -63,9 +63,9 @@ use yii\helpers\Url;
             'attribute' => 'dam_tag_id',
         ],
         [
-            'attribute' => 'dam_name',
+            'label' => 'Dam Name',
             'value' => function (Animal $model) {
-                return $model->getRelationAttributeValue('dam', 'name', $model->dam_name);
+                return $model->getRelationAttributeValue('dam', 'name');
             },
             'filter' => false,
         ],

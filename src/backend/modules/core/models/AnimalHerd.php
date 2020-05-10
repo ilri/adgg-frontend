@@ -67,8 +67,9 @@ class AnimalHerd extends ActiveRecord implements ActiveSearchInterface, ImportAc
             [['latitude', 'longitude'], 'number'],
             [['farm_id'], 'exist', 'skipOnError' => true, 'targetClass' => Farm::class, 'targetAttribute' => ['farm_id' => 'id']],
             [['reg_date'], 'date', 'format' => 'php:Y-m-d'],
-            //[['name'], 'unique', 'targetAttribute' => ['farm_id', 'name'], 'message' => '{attribute} already exists.'],
+            [['name'], 'unique', 'targetAttribute' => ['farm_id', 'name'], 'message' => '{attribute} already exists.'],
             [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
+            [['additional_attributes', 'org_id', 'client_id'], 'safe'],
             [$this->getAdditionalAttributes(), 'safe'],
             ['migration_id', 'unique'],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
@@ -90,7 +91,7 @@ class AnimalHerd extends ActiveRecord implements ActiveSearchInterface, ImportAc
             'district_id' => 'District',
             'ward_id' => 'Ward',
             'village_id' => 'Village',
-            'org_id' => 'External Organization',
+            'org_id' => 'Organization',
             'client_id' => 'Client ',
             'latitude' => 'Latitude',
             'longitude' => 'Longitude',
@@ -191,8 +192,8 @@ class AnimalHerd extends ActiveRecord implements ActiveSearchInterface, ImportAc
     /**
      * @inheritDoc
      */
-    public static function getDefinedType(): int
+    public function reportBuilderRelations()
     {
-        return TableAttribute::TYPE_ATTRIBUTE;
+        return array_merge(['farm'], $this->reportBuilderCommonRelations(), $this->reportBuilderCoreDataRelations());
     }
 }

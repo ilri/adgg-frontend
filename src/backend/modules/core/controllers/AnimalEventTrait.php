@@ -20,7 +20,7 @@ trait AnimalEventTrait
 {
     use SessionTrait;
 
-    protected function renderIndexAction($event_type = null, $animal_id = null, $country_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $from = null, $to = null)
+    protected function renderIndexAction($event_type = null, $animal_id = null, $country_id = null, $org_id = null, $client_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $from = null, $to = null)
     {
         $dateFilter = DateUtils::getDateFilterParams($from, $to, 'event_date', false, false);
         $condition = $dateFilter['condition'];
@@ -43,7 +43,7 @@ trait AnimalEventTrait
         $searchModel->event_type = $event_type;
         $searchModel->_dateFilterFrom = $dateFilter['from'];
         $searchModel->_dateFilterTo = $dateFilter['to'];
-        $searchModel = $this->setSessionData($searchModel, $country_id, $region_id, $district_id, $ward_id, $village_id);
+        $searchModel = $this->setSessionData($searchModel, $country_id, $org_id, $client_id, $region_id, $district_id, $ward_id, $village_id);
 
         $grid = null;
         switch ($event_type) {
@@ -67,9 +67,6 @@ trait AnimalEventTrait
                 break;
             case AnimalEvent::EVENT_TYPE_HEALTH:
                 $grid = 'health';
-                break;
-            case AnimalEvent::EVENT_TYPE_FEEDING:
-                $grid = 'feeding';
                 break;
             case AnimalEvent::EVENT_TYPE_EXITS:
                 $grid = 'exits';

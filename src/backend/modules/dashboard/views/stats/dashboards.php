@@ -1,7 +1,9 @@
 <?php
 
 use backend\modules\auth\Session;
+use backend\modules\core\models\Client;
 use backend\modules\core\models\CountryUnits;
+use backend\modules\core\models\Organization;
 use common\helpers\Lang;
 use common\helpers\Url;
 use yii\helpers\Html;
@@ -22,6 +24,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?= $unitName = Lang::t('Quick Reports Dashboards for') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                 <?php elseif (Session::isRegionUser()): ?>
                     <?= $unitName = Lang::t('Quick Reports Dashboards for') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                <?php elseif (Session::isOrganizationUser()): ?>
+                    <?= $unitName = Lang::t('Quick Reports Dashboards for') . ' ' . Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                <?php elseif (Session::isOrganizationClientUser()): ?>
+                    <?= $unitName = Lang::t('Quick Reports Dashboards for') . ' ' . Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                 <?php else: ?>
                     <?= Lang::t('Quick Reports Dashboards for {country}', ['country' => $country->name]) ?>
                 <?php endif; ?>
@@ -58,7 +64,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="col-lg-4 col-xl-4 order-lg-2 order-xl-2">
                     <!--begin::Portlet-->
                     <div class="kt-portlet" title="Click to view details">
-                        <a href="<?= Url::to(['/dashboard/stats/dash1', 'country_id' => $country->id]) ?>"
+                        <a href="<?= Url::to(['/dashboard/stats/lsf', 'country_id' => $country->id]) ?>"
                            class="kt-iconbox kt-iconbox--active">
                             <div class="kt-iconbox__title">
                                 <?= Lang::t('LSF Farm Stats'); ?>                            </div>
@@ -69,7 +75,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="col-lg-4 col-xl-4 order-lg-2 order-xl-2">
                     <!--begin::Portlet-->
                     <div class="kt-portlet">
-                        <a href="<?= Url::to(['/dashboard/stats/dash2', 'country_id' => $country->id]) ?>"
+                        <a href="<?= Url::to(['/dashboard/stats/test-day', 'country_id' => $country->id]) ?>"
                            class="kt-iconbox kt-iconbox--active">
                             <div class="kt-iconbox__title">
                                 <?= Lang::t('Milk Report(Test Day) '); ?>                            </div>
@@ -80,7 +86,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="col-lg-4 col-xl-4 order-lg-2 order-xl-2">
                     <!--begin::Portlet-->
                     <div class="kt-portlet">
-                        <a href="<?= Url::to(['/dashboard/stats/dash3', 'country_id' => $country->id]) ?>"
+                        <a href="<?= Url::to(['/dashboard/stats/genotype', 'country_id' => $country->id]) ?>"
                            class="kt-iconbox kt-iconbox--active">
                             <div class="kt-iconbox__title">
                                 <?= Lang::t('Genotyped Animals'); ?>                            </div>
@@ -91,7 +97,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="col-lg-4 col-xl-4 order-lg-2 order-xl-2">
                     <!--begin::Portlet-->
                     <div class="kt-portlet">
-                        <a href="<?= Url::to(['/dashboard/stats/dash4', 'country_id' => $country->id]) ?>"
+                        <a href="<?= Url::to(['/dashboard/stats/insemination-pd-calving', 'country_id' => $country->id]) ?>"
                            class="kt-iconbox kt-iconbox--active">
                             <div class="kt-iconbox__title">
                                 <?= Lang::t('Insemination,PD And Calving'); ?>

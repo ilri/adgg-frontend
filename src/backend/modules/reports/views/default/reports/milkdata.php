@@ -27,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= Html::hiddenInput('country_id', $country_id) ?>
                 <div class="form-row align-items-center">
                     <div class="col-lg-2">
-                        <?= Html::label('Region ID') ?>
+                        <?= Html::label('Region') ?>
                         <?= Select2::widget([
                             'name' => 'region_id',
                             'value' => $filterOptions['region_id'],
@@ -48,7 +48,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ]); ?>
                     </div>
                     <div class="col-lg-2">
-                        <?= Html::label('District ID') ?>
+                        <?= Html::label('District') ?>
                         <?= Select2::widget([
                             'name' => 'district_id',
                             'value' => $filterOptions['district_id'],
@@ -69,7 +69,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ]); ?>
                     </div>
                     <div class="col-lg-2">
-                        <?= Html::label('Ward ID') ?>
+                        <?= Html::label('Ward') ?>
                         <?= Select2::widget([
                             'name' => 'ward_id',
                             'value' => $filterOptions['ward_id'],
@@ -90,7 +90,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ]); ?>
                     </div>
                     <div class="col-lg-2">
-                        <?= Html::label('Village ID') ?>
+                        <?= Html::label('Village') ?>
                         <?= Select2::widget([
                             'name' => 'village_id',
                             'value' => $filterOptions['village_id'],

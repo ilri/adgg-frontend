@@ -23,6 +23,7 @@ class ExtendableTable
     const TABLE_FARM_REPEATS = 6;
     const TABLE_HERDS = 7;
     const TABLE_USERS = 8;
+    const TABLE_FARM_METADATA = 9;
 
     /**
      * @param int $intVal
@@ -35,6 +36,8 @@ class ExtendableTable
                 return 'Client';
             case self::TABLE_FARM:
                 return 'Farm';
+            case self::TABLE_FARM_METADATA:
+                return 'Farm Metadata';
             case self::TABLE_ANIMAL_ATTRIBUTES:
                 return 'Animal';
             case self::TABLE_ANIMAL_EVENTS:
@@ -60,10 +63,9 @@ class ExtendableTable
     {
         return Utils::appendDropDownListPrompt([
             self::TABLE_FARM => static::decodeTableId(self::TABLE_FARM),
-            //self::TABLE_FARM_REPEATS => static::decodeTableId(self::TABLE_FARM_REPEATS),
+            self::TABLE_FARM_METADATA => static::decodeTableId(self::TABLE_FARM_METADATA),
             self::TABLE_HERDS => static::decodeTableId(self::TABLE_HERDS),
             self::TABLE_ANIMAL_ATTRIBUTES => static::decodeTableId(self::TABLE_ANIMAL_ATTRIBUTES),
-            //self::TABLE_ANIMAL_REPEATS => static::decodeTableId(self::TABLE_ANIMAL_REPEATS),
             self::TABLE_ANIMAL_EVENTS => static::decodeTableId(self::TABLE_ANIMAL_EVENTS),
             self::TABLE_USERS => static::decodeTableId(self::TABLE_USERS),
             self::TABLE_CLIENTS => static::decodeTableId(self::TABLE_CLIENTS),

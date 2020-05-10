@@ -25,8 +25,8 @@ class ThemeAsset extends AssetBundle
         $this->css = [
             'css/pages/custom/general/user/login-v2.css',
             'css/pages/custom/general/user/profile-v1.css',
-            'vendors/custom/flaticon/flaticon.css',
-            'vendors/custom/flaticon/flaticon2.css',
+            //'vendors/custom/flaticon/flaticon.css',
+            //'vendors/custom/flaticon/flaticon.css',
             'vendors/custom/line-awesome/css/line-awesome.css',
             'vendors/custom/flaticon/flaticon.css',
             'vendors/custom/flaticon2/flaticon.css',
@@ -38,7 +38,7 @@ class ThemeAsset extends AssetBundle
         ];
         $this->js = [
             'js/scripts.bundle.js',
-            'js/pages/components/extended/sticky-panel.js',
+            'js/pages/components/extended/sticky-panels.js',
         ];
     }
 

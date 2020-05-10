@@ -2,6 +2,7 @@
 
 namespace backend\modules\help\controllers;
 
+use backend\modules\auth\Acl;
 use backend\modules\help\Constants;
 use backend\modules\help\Help;
 use backend\modules\help\models\HelpModules;
@@ -21,17 +22,23 @@ class HelpModulesController extends Controller
         parent::init();
     }
 
-    /**
-     * Lists all HelpModules models.
-     * @return mixed
-     */
-    public function actionIndex()
+
+    public function actionIndex($forAndroid = false)
     {
         $searchModel = HelpModules::searchModel([
             'defaultOrder' => ['id' => SORT_ASC],
             // skip the default one from the results
             'condition' => ['<>', 'slug', Help::DEFAULT_SLUG]
         ]);
+        if ($forAndroid == true) {
+            $this->resource = Constants::RES_ANDROID_APP_MANUAL;
+            $this->hasPrivilege(Acl::ACTION_VIEW);
+            $searchModel->is_for_android = 1;
+        } else {
+            $searchModel->is_for_android = 0;
+            $this->resource = Constants::RES_HELP;
+            $this->hasPrivilege(Acl::ACTION_VIEW);
+        }
         return $this->render('index', [
             'searchModel' => $searchModel,
         ]);

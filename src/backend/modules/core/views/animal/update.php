@@ -9,7 +9,7 @@ $controller = Yii::$app->controller;
 
 $this->title = $controller->getPageTitle();
 $this->params['breadcrumbs'] = [
-    ['label' => Inflector::pluralize($controller->resourceLabel), 'url' => ['index']],
+    ['label' => Inflector::pluralize($controller->resourceLabel), 'url' => ['index', 'country_id' => $model->country_id]],
     $this->title
 ];
 

@@ -9,7 +9,6 @@ use backend\modules\core\models\ExtendableTable;
 use backend\modules\core\models\Country;
 use backend\modules\core\models\CountryUnitDataTrait;
 use backend\modules\core\models\CountryUnits;
-use backend\modules\core\models\TableAttribute;
 use backend\modules\core\models\TableAttributeInterface;
 use backend\modules\core\models\TableAttributeTrait;
 use backend\modules\core\models\UploadExcelInterface;
@@ -37,6 +36,7 @@ use yii\web\NotFoundHttpException;
  * @property int $org_id
  * @property int $client_id
  * @property string $odk_code
+ * @property string $odk_password
  * @property string|array $additional_attributes
  *
  * @property Country $country
@@ -98,7 +98,13 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
                     self::SCENARIO_CREATE,
                     self::SCENARIO_CHANGE_PASSWORD,
                     self::SCENARIO_RESET_PASSWORD
-                ]
+                ],
+                'when' => function(Users $model) {
+                    return $model->auto_generate_password == false;
+                },
+                'whenClient' => "function (attribute, value) {
+                    return ($('#users-auto_generate_password').is(':not(:checked)'));
+                }",
             ],
             [
                 ['confirm'],
@@ -157,6 +163,8 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
             'currentPassword' => Lang::t('Current Password'),
             'level_id' => Lang::t('Account Type'),
             'role_id' => Lang::t('Role'),
+            'org_id' => Lang::t('Organization'),
+            'client_id' => Lang::t('Client'),
             'profile_image' => Lang::t('Profile Image'),
             'tmp_profile_image' => Lang::t('Profile Image'),
             'created_at' => Lang::t('Created At'),
@@ -164,15 +172,15 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
             'updated_at' => Lang::t('Updated At'),
             'last_login' => Lang::t('Last Login'),
             'send_email' => Lang::t('Email the login details to the user.'),
-            'country_id' => Lang::t('Country ID'),
+            'country_id' => Lang::t('Country'),
             'auto_generate_password' => Lang::t('Auto Generate Password'),
             'branch_id' => Lang::t('Branch'),
             'require_password_change' => Lang::t('Force password change on login'),
             'odk_code' => 'ODK Code',
-            'region_id' => $this->country !== null ? Html::encode($this->country->unit1_name) : 'Region ID',
-            'district_id' => $this->country !== null ? Html::encode($this->country->unit2_name) : 'District ID',
-            'ward_id' => $this->country !== null ? Html::encode($this->country->unit3_name) : 'Ward ID',
-            'village_id' => $this->country !== null ? Html::encode($this->country->unit4_name) : 'Village ID',
+            'region_id' => $this->country !== null ? Html::encode($this->country->unit1_name) : 'Region',
+            'district_id' => $this->country !== null ? Html::encode($this->country->unit2_name) : 'District',
+            'ward_id' => $this->country !== null ? Html::encode($this->country->unit3_name) : 'Ward',
+            'village_id' => $this->country !== null ? Html::encode($this->country->unit4_name) : 'Village',
         ];
     }
 
@@ -470,27 +478,21 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
     }
 
     /**
-     * @return int
-     */
-    public static function getDefinedType(): int
-    {
-        return TableAttribute::TYPE_ATTRIBUTE;
-    }
-
-    /**
      * @return array
      */
     public function getExcelColumns()
     {
-        $columns = [
+       return $columns = [
             'name',
             'username',
             'email',
             'phone',
             'region_code',
             'district_code',
+            'odk_code',
+            'odk_password',
         ];
 
-        return array_merge($columns, $this->getAdditionalAttributes());
+       // return array_merge($columns, $this->getAdditionalAttributes());
     }
 }

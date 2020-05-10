@@ -1,6 +1,8 @@
 <?php
 
 use backend\modules\core\models\Animal;
+use backend\modules\core\models\Choices;
+use backend\modules\core\models\ChoiceTypes;
 use backend\modules\core\models\Farm;
 use common\widgets\gmap\SingleViewWidget;
 use yii\bootstrap\Html;
@@ -133,12 +135,15 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ],
                                 [
                                     'attribute' => 'farmer_age_range',
+                                    'value' => Choices::getLabel(ChoiceTypes::CHOICE_TYPE_PERSON_AGE_GROUP, $model->farmer_age_range),
                                 ],
                                 [
                                     'attribute' => 'farmer_relationship_to_hhh',
+                                    'value' => Choices::getLabel(ChoiceTypes::CHOICE_TYPE_PERSON_RELATIONSHIP, $model->farmer_relationship_to_hhh),
                                 ],
                                 [
                                     'attribute' => 'farmer_relationship_to_hhh_other',
+                                    'value' => Choices::getLabel(ChoiceTypes::CHOICE_TYPE_PERSON_RELATIONSHIP, $model->farmer_relationship_to_hhh_other),
                                 ],
                             ],
                         ]) ?>
@@ -205,9 +210,13 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ],
                                 [
                                     'attribute' => 'hhh_age_range',
+                                    'value' => Choices::getLabel(ChoiceTypes::CHOICE_TYPE_PERSON_AGE_GROUP, $model->hhh_age_range),
+
                                 ],
                                 [
                                     'attribute' => 'hhh_gender',
+                                    'value' => Choices::getLabel(ChoiceTypes::CHOICE_TYPE_GENDER, $model->hhh_gender),
+
                                 ],
                                 [
                                     'attribute' => 'hhh_mobile',

@@ -77,12 +77,17 @@ $controller = Yii::$app->controller;
                         <span class="kt-nav__link-text"><?= Lang::t('Cron Jobs Manager') ?></span>
                     </a>
                 </li>
-                <li class="kt-nav__item hidden">
+                <li class="kt-nav__item">
                     <a href="<?= Url::to(['/help/help-modules/index']) ?>" class="kt-nav__link">
-                        <span class="kt-nav__link-text"><?= Lang::t('Manage System Manual') ?></span>
+                        <span class="kt-nav__link-text"><?= Lang::t('Manage Web Manual') ?></span>
                     </a>
                 </li>
-                 <li class="kt-nav__item">
+                <li class="kt-nav__item">
+                    <a href="<?= Url::to(['/help/help-modules/index', 'forAndroid' => true]) ?>" class="kt-nav__link">
+                        <span class="kt-nav__link-text"><?= Lang::t('Manage Android Manual') ?></span>
+                    </a>
+                </li>
+                <li class="kt-nav__item">
                     <a href="<?= Url::to(['/conf/android-app/index']) ?>" class="kt-nav__link">
                         <span class="kt-nav__link-text"><?= Lang::t('Manage Apps') ?></span>
                     </a>
