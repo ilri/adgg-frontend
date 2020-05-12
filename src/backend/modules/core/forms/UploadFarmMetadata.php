@@ -14,7 +14,6 @@ use backend\modules\core\models\Farm;
 use backend\modules\core\models\FarmMetadata;
 use common\excel\ExcelUploadForm;
 use common\excel\ImportInterface;
-use yii\base\InvalidConfigException;
 
 class UploadFarmMetadata extends ExcelUploadForm implements ImportInterface
 {
@@ -22,23 +21,11 @@ class UploadFarmMetadata extends ExcelUploadForm implements ImportInterface
     /**
      * @var int
      */
-    public $countryId;
-
-    /**
-     * @var string
-     */
-    public $metadataTypeModelClass;
+    public $country_id;
 
     public function init()
     {
         parent::init();
-
-        if (empty($this->countryId)) {
-            throw new InvalidConfigException('countryId cannot be blank. Pass countryId when initializing the object.');
-        }
-        if (empty($this->metadataTypeModelClass)) {
-            throw new InvalidConfigException('metadataTypeModelClass cannot be blank. Pass metadataTypeModelClass when initializing the object.');
-        }
     }
 
     /**
@@ -47,7 +34,7 @@ class UploadFarmMetadata extends ExcelUploadForm implements ImportInterface
     public function rules()
     {
         return array_merge($this->excelValidationRules(), [
-            [['countryId', 'metadataTypeModelClass'], 'required'],
+            [['country_id'], 'required'],
         ]);
     }
 
@@ -57,6 +44,7 @@ class UploadFarmMetadata extends ExcelUploadForm implements ImportInterface
     public function attributeLabels()
     {
         return array_merge($this->excelAttributeLabels(), [
+            'country_id' => 'Country',
         ]);
     }
 
@@ -66,7 +54,7 @@ class UploadFarmMetadata extends ExcelUploadForm implements ImportInterface
         $insert_data = [];
 
         /* @var $model FarmMetadata */
-        $model = new $this->metadataTypeModelClass();
+        $model = new $this->activeRecordModelClass();
         $model->type = $model::getDefineMetadataType();
         foreach ($batch as $k => $excel_row) {
             $row = $this->getExcelRowColumns($excel_row, $columns);
@@ -82,7 +70,7 @@ class UploadFarmMetadata extends ExcelUploadForm implements ImportInterface
     protected function getFarmId($farmCode)
     {
         $farmCode = trim($farmCode);
-        $farmId = Farm::getScalar('id', ['country_id' => $this->countryId, 'code' => $farmCode]);
+        $farmId = Farm::getScalar('id', ['country_id' => $this->country_id, 'code' => $farmCode]);
         if (empty($farmId)) {
             return null;
         }

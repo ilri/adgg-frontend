@@ -99,7 +99,7 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
     {
         switch ($intVal) {
             case self::TYPE_FEEDING_SYSTEMS_METADATA:
-                return 'Feeding Systems';
+                return 'Farm Feeding Systems';
             case self::TYPE_HEALTH_METADATA:
                 return 'Health Metadata';
             case self::TYPE_SOCIAL_ECONOMIC_METADATA:
@@ -126,5 +126,19 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
     {
         $additionalAttributes = TableAttribute::getColumnData('attribute_key', ['table_id' => static::getDefinedTableId(), 'farm_metadata_type' => static::getDefineMetadataType()], [], ['orderBy' => ['group_id' => SORT_ASC, 'id' => SORT_ASC]]);
         return ArrayHelper::merge(['farmCode',], $additionalAttributes);
+    }
+
+    /**
+     * @param int $type
+     * @return string
+     */
+    public static function getMetadataModelClassNameByType($type)
+    {
+        switch ($type) {
+            case self::TYPE_FEEDING_SYSTEMS_METADATA:
+                return FarmMetadataFeeding::class;
+            default:
+                throw new InvalidArgumentException();
+        }
     }
 }
