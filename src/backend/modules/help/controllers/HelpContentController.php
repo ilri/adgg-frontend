@@ -5,7 +5,6 @@ namespace backend\modules\help\controllers;
 use backend\modules\auth\Acl;
 use backend\modules\help\Constants;
 use backend\modules\help\models\HelpContent;
-use Yii;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -115,7 +114,7 @@ class HelpContentController extends Controller
         $this->hasPrivilege(Acl::ACTION_CREATE);
         $model = new HelpContent();
 
-        return $model->simpleSave('create', 'index');
+        return $model->simpleSave('create', 'manual');
     }
 
     /**
@@ -131,7 +130,7 @@ class HelpContentController extends Controller
         $this->hasPrivilege(Acl::ACTION_UPDATE);
         $model = HelpContent::loadModel($id);
 
-        return $model->simpleSave('update', 'index');
+        return $model->simpleSave('update', 'manual');
     }
 
     /**

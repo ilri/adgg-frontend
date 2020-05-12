@@ -6,7 +6,6 @@ use backend\modules\help\models\HelpSection;
 use common\helpers\Lang;
 use common\helpers\Url;
 use vova07\imperavi\Widget;
-use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
@@ -65,7 +64,7 @@ use yii\widgets\ActiveForm;
             <div class="col-md-8 offset-md-2">
                 <button type="submit"
                         class="btn btn-success"><?= Lang::t($model->isNewRecord ? 'Create' : 'Save changes') ?></button>
-                <a class="btn btn-secondary" href="<?= Url::getReturnUrl(Url::to(['index'])) ?>">
+                <a class="btn btn-secondary" href="<?= Url::getReturnUrl(Url::to(['manual'])) ?>">
                     <?= Lang::t('Cancel') ?>
                 </a>
             </div>
