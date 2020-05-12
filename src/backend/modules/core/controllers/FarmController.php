@@ -15,6 +15,7 @@ use backend\modules\core\Constants;
 use backend\modules\core\forms\UploadFarms;
 use backend\modules\core\models\Country;
 use backend\modules\core\models\Farm;
+use backend\modules\core\models\FarmMetadataFeeding;
 use common\controllers\UploadExcelTrait;
 use common\helpers\Lang;
 use common\helpers\Url;
@@ -129,11 +130,11 @@ class FarmController extends Controller
         return false;
     }
 
-    public function actionUpload()
+    public function actionUpload($country_id=null)
     {
         $this->hasPrivilege(Acl::ACTION_CREATE);
 
-        $form = new UploadFarms(Farm::class);
+        $form = new UploadFarms(Farm::class,['country_id'=>$country_id]);
         $resp = $this->uploadExcelConsole($form, 'index', Yii::$app->request->queryParams);
         if ($resp !== false) {
             return $resp;
