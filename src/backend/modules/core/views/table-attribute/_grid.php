@@ -89,7 +89,7 @@ use yii\helpers\Url;
         ],
         [
             'class' => common\widgets\grid\ActionColumn::class,
-            'template' => '{update}{delete}',
+            'template' => '{update}',
             'controller' => 'table-attribute',
         ],
     ],

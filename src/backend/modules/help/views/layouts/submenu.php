@@ -14,7 +14,7 @@ if ($case == true) {
 }
 ?>
 <div class="list-group my-list-group">
-    <a href="<?= Url::to(['/help/help-content/index']) ?>" class="list-group-item">
+    <a href="<?= Url::to(['/conf/settings/index']) ?>" class="list-group-item">
         <i class="fa fa-backward"></i>&nbsp;<?= Lang::t('Back') ?>
     </a>
 </div>

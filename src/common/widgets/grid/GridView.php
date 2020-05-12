@@ -42,6 +42,7 @@ class GridView extends \kartik\grid\GridView
     public $condensed = false;
     public $hover = true;
     public $floatHeader = false;
+    public $resizableColumns = false;
     public $bootstrap = true;
     public $bordered = true;
     public $striped = true;
