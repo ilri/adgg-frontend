@@ -139,7 +139,7 @@ MyApp.modules.reports = {};
             // if parentModel changes, prompt to clear selectedFields
             if (selectedParentModel !== parentModel) {
                 selectedFields.length = 0;
-                selectedFieldLabels = {}; selectedFieldTypes = {};
+                selectedFieldLabels = {}; selectedFieldTypes = {}; selectedFilterOperators = {}; selectedFilterValues = {};
                 // uncheck all previously checked checkboxes,
                 // where data-name is not this field
                 $('label.attribute input[type=checkbox]').not("[data-name='" + name + "']").prop('checked', false);
@@ -159,13 +159,8 @@ MyApp.modules.reports = {};
             if (selectedFieldTypes[name] === undefined) {
                 selectedFieldTypes[name] = type;
             }
-            //selectedFields.push(name);
             selectedParentModel = parentModel;
             selectedParentModelTitle = parentModelTitle;
-            //console.log(selectedParentModel);
-            //console.log(name);
-            //console.log(selectedFields);
-            //console.log(selectedFieldLabels);
             // write to html
             _showSelected(e);
         }
@@ -176,12 +171,8 @@ MyApp.modules.reports = {};
             });
             delete selectedFieldLabels[name];
             delete selectedFieldTypes[name];
-            //console.log(name);
-            //console.log(selectedFields);
-            //console.log(selectedFieldLabels);
             // write to html
             _showSelected(e);
-            //_toggleQueryOptions();
         }
 
         let _showSelected = function (e) {
@@ -208,19 +199,30 @@ MyApp.modules.reports = {};
             let arr = selectedFields;
             $($this.options.selectedFieldsHolder).html('');
             arr.forEach(function (fieldName, index) {
+                let storedOperator;
+                if(selectedFilterOperators[fieldName] !== undefined){
+                    storedOperator = selectedFilterOperators[fieldName];
+                };
                 // filter parts
                 // when this dropdown changes, rebuild the filterInput
                 var dropdown = _buildOperatorsDropdown(fieldName);
                 var filterInput = '<div class="col-md-12 p-0"><input name="filterValue[' + fieldName + ']" class="form-control form-control-sm" type="text" /></div>';
                 // assemble filter parts
-                var operandSelector = '<div class="d-flex"><div class="filter-operators-holder col-md-5">' + dropdown + '</div><div class="filter-input-holder col-md-7">' + filterInput + '</div></div>';
+                var operatorSelector = '<div class="d-flex"><div class="filter-operators-holder col-md-5">' + dropdown + '</div><div class="filter-input-holder col-md-7">' + filterInput + '</div></div>';
                 // title parts
                 var removeBtn = '<div class="ml-auto"><span class="flaticon2-delete removeField" data-name="' + fieldName + '"></span></div>';
                 var nameElem = '<div class=""><span class="text-wrap word-wrap">' + fieldName + '</span></div>';
                 // assemble title parts
                 var title = '<div class="d-flex mb-3">' + nameElem + removeBtn + '</div>';
-                var item = '<li class="groupeditem p-3 mb-1" data-index="' + index + '" data-name="' + fieldName + '" data-type="' + selectedFieldTypes[fieldName] + '">' + title + operandSelector + '</li>';
+                var item = '<li class="groupeditem p-3 mb-1" data-index="' + index + '" data-name="' + fieldName + '" data-type="' + selectedFieldTypes[fieldName] + '">' + title + operatorSelector + '</li>';
                 $($this.options.selectedFieldsHolder).append(item);
+
+                if (storedOperator !== undefined){
+                    // this is either not a new field added or there was something filtered before
+                    // this will rebuild the filter based on the field type and operator
+                    _buildAttributeFilter(fieldName, storedOperator);
+                }
+
             });
             // display the query options
             _toggleQueryOptions();
@@ -243,9 +245,17 @@ MyApp.modules.reports = {};
             var input = '<div class="col-md-12 p-0 mr-2"><select name="filterCondition[' + fieldName + ']" class="form-control form-control-sm attributeFilterOperator" data-field="' + fieldName + '">';
             input += '<option value=""> - Select Operator - </option>';
             var options = $this.options.inputSelectOptions;
+            let storedOperator;
+            if(selectedFilterOperators[fieldName] !== undefined){
+                storedOperator = selectedFilterOperators[fieldName];
+            };
             for (var prop in options) {
                 if (Object.prototype.hasOwnProperty.call(options, prop)) {
-                    var option = '<option value="' + prop + '">' + options[prop] + '</option>';
+                    let isSelected = false;
+                    if(storedOperator === prop){
+                        isSelected = true;
+                    };
+                    var option = '<option value="' + prop + '" '+ (isSelected ? 'selected="selected"' : '' )+'>' + options[prop] + '</option>';
                     input += option;
                 }
             }
@@ -254,7 +264,7 @@ MyApp.modules.reports = {};
         }
 
         let _buildFieldChoicesDropdown = function (fieldName, options, multipleSelection = false) {
-            var input = '<div class="col-md-12 p-0 mr-2"><select name="filterValue[' + fieldName + ']'+ (multipleSelection ? "[]" : "") +'" class="form-control form-control-sm select2" '+ (multipleSelection ? "multiple" : "") +'>';
+            let input = '<div class="col-md-12 p-0 mr-2"><select name="filterValue[' + fieldName + ']'+ (multipleSelection ? "[]" : "") +'" class="form-control form-control-sm attributeFilterValue select2" '+ (multipleSelection ? "multiple" : "") +' data-field="' + fieldName + '">';
             input += _buildSelectOptions(options, ' - Select Value -');
             input += '</select></div>';
             return input;
@@ -272,22 +282,38 @@ MyApp.modules.reports = {};
         }
 
         let _buildAttributeFilter = function (fieldName, filterOperator){
+            let storedValue = '';
+            if(selectedFilterValues[fieldName] !== undefined){
+                storedValue = selectedFilterValues[fieldName];
+            };
             let attributeListItem = $('.builder-attributes label[data-name="' + fieldName + '"]');
             let attributeSelectOptions = attributeListItem.data('selectoptions'); // null or a json object of options
             let filterInput;
-            let defaultFilterInput = $('<div class="col-md-12 p-0"><input name="filterValue[' + fieldName + ']" class="form-control form-control-sm" type="text" /></div>');
+            let defaultFilterInput = $('<div class="col-md-12 p-0"><input name="filterValue[' + fieldName + ']" class="form-control form-control-sm attributeFilterValue" type="text" data-field="' + fieldName + '" value="'+storedValue+'"/></div>');
             if (attributeSelectOptions !== null) {
                 let isMultipleSelect = false;
                 if(filterOperator === 'IN' ||  filterOperator === 'NOT IN'){
                     isMultipleSelect = true;
                 }
-                defaultFilterInput = '<div class="col-md-12 p-0">' + _buildFieldChoicesDropdown(fieldName, attributeSelectOptions, isMultipleSelect) + '</div>';
+                defaultFilterInput = $('<div class="col-md-12 p-0">' + _buildFieldChoicesDropdown(fieldName, attributeSelectOptions, isMultipleSelect) + '</div>');
             }
             else {
                 if(filterOperator === 'IN' ||  filterOperator === 'NOT IN'){
                     let innerhtml = $(defaultFilterInput).html() + '<span class="hint">enter a comma separated list in the input field</span>';
                     $(defaultFilterInput).html($(innerhtml));
                 }
+            }
+            if (storedValue !== ''){
+                $(defaultFilterInput).find('input, select').val(storedValue);
+            }
+            let value1 = '';
+            let value2 = '';
+            if (storedValue instanceof Array){
+                value1 = storedValue[0];
+                value2 = storedValue[1];
+            }
+            else{
+                value1 = value2 = storedValue;
             }
 
             let fieldContainer = $('#selectedFields').find('li[data-name="' + fieldName + '"]');
@@ -303,16 +329,16 @@ MyApp.modules.reports = {};
                     if(filterOperator === 'BETWEEN'){
                         filterInput = '<div class="row p-0">' +
                             '<div class="col-md-5">' +
-                            '<input name="filterValue[' + fieldName + '][]" class="form-control form-control-sm show-datepicker" type="text" />' +
+                            '<input name="filterValue[' + fieldName + '][]" class="form-control form-control-sm attributeFilterValue show-datepicker" type="text" data-field="' + fieldName + '" value="'+value1+'"/>' +
                             '</div>' +
                             '<div class="col-md-2">AND</div>' +
                             '<div class="col-md-5">' +
-                            '<input name="filterValue[' + fieldName + '][]" class="form-control form-control-sm show-datepicker" type="text" />' +
+                            '<input name="filterValue[' + fieldName + '][]" class="form-control form-control-sm attributeFilterValue show-datepicker" type="text" data-field="' + fieldName + '" value="'+value2+'"/>' +
                             '</div>' +
                             '</div>';
                     }
                     else {
-                        filterInput = '<div class="col-md-12 p-0"><input name="filterValue[' + fieldName + ']" class="form-control form-control-sm show-datepicker" type="text" /></div>';
+                        filterInput = '<div class="col-md-12 p-0"><input name="filterValue[' + fieldName + ']" class="form-control form-control-sm attributeFilterValue show-datepicker" type="text" data-field="' + fieldName + '" value="'+value1+'" /></div>';
                     }
                 break;
                 case inputTypeOptions['SELECT']:
@@ -328,11 +354,11 @@ MyApp.modules.reports = {};
                     if(filterOperator === 'BETWEEN'){
                         filterInput = '<div class="row p-0">' +
                             '<div class="col-md-5">' +
-                            '<input name="filterValue[' + fieldName + '][]" class="form-control form-control-sm" type="text" />' +
+                            '<input name="filterValue[' + fieldName + '][]" class="form-control form-control-sm attributeFilterValue" type="text" data-field="' + fieldName + '" value="'+value1+'" />' +
                             '</div>' +
                             '<div class="col-md-2">AND</div>' +
                             '<div class="col-md-5">' +
-                            '<input name="filterValue[' + fieldName + '][]" class="form-control form-control-sm" type="text" />' +
+                            '<input name="filterValue[' + fieldName + '][]" class="form-control form-control-sm attributeFilterValue" type="text" data-field="' + fieldName + '" value="'+value2+'" />' +
                             '</div>' +
                             '</div>';
                     }
@@ -341,7 +367,7 @@ MyApp.modules.reports = {};
                     }
             }
 
-            if(filterOperator === 'IS NULL' || filterOperator === 'NOT NULL'){
+            if(filterOperator === 'IS NULL' || filterOperator === 'NOT NULL' || filterOperator === ''){
                 filterInput = '';
             }
 
@@ -421,8 +447,32 @@ MyApp.modules.reports = {};
             event.preventDefault();
             let operator = this.value;
             let fieldName = $(this).data('field');
+            // set the operator to state
+            selectedFilterOperators[fieldName] = operator;
             _buildAttributeFilter(fieldName, operator);
 
+        });
+
+        // listen for changes in attribute filter values, either selects or text fields
+        $('body').on('keyup change', '.attributeFilterValue', function (event) {
+            event.preventDefault();
+            let filterValue = this.value;
+            let fieldName = $(this).data('field');
+            let filterOperator = selectedFilterOperators[fieldName];
+
+            if (event.type === 'change'){
+                // now this is a select field
+                filterValue = $(this).val() || [];
+            }
+            if (filterOperator === 'BETWEEN') {
+                // now this has multiple values
+                filterValue = [];
+                $('input[data-field="' + fieldName + '"]').each(function() {
+                    filterValue.push($(this).val());
+                });
+            }
+            // set the filter value(s) to state
+            selectedFilterValues[fieldName] = filterValue;
         });
         // enable sorting of the selected items
         $($this.options.selectedFieldsHolder).sortable({
