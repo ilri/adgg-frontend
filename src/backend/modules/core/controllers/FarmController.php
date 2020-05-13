@@ -12,9 +12,12 @@ namespace backend\modules\core\controllers;
 use backend\modules\auth\Acl;
 use backend\modules\auth\Session;
 use backend\modules\core\Constants;
+use backend\modules\core\forms\UploadFarmMetadata;
 use backend\modules\core\forms\UploadFarms;
 use backend\modules\core\models\Country;
 use backend\modules\core\models\Farm;
+use backend\modules\core\models\FarmMetadata;
+use backend\modules\core\models\FarmMetadataFeeding;
 use common\controllers\UploadExcelTrait;
 use common\helpers\Lang;
 use common\helpers\Url;
@@ -129,11 +132,11 @@ class FarmController extends Controller
         return false;
     }
 
-    public function actionUpload()
+    public function actionUpload($country_id = null)
     {
         $this->hasPrivilege(Acl::ACTION_CREATE);
 
-        $form = new UploadFarms(Farm::class);
+        $form = new UploadFarms(Farm::class, ['country_id' => $country_id]);
         $resp = $this->uploadExcelConsole($form, 'index', Yii::$app->request->queryParams);
         if ($resp !== false) {
             return $resp;
@@ -149,6 +152,30 @@ class FarmController extends Controller
         $form = new UploadFarms(Farm::class);
         return $form->previewAction();
     }
+
+    public function actionUploadMetadata($country_id, $type)
+    {
+        $this->hasPrivilege(Acl::ACTION_CREATE);
+
+        $className = FarmMetadata::getMetadataModelClassNameByType($type);
+        $form = new UploadFarmMetadata($className, ['country_id' => $country_id]);
+        $resp = $this->uploadExcelConsole($form, 'upload-metadata', ['country_id' => $country_id, 'type' => $type]);
+        if ($resp !== false) {
+            return $resp;
+        }
+
+        return $this->render('upload-metadata', [
+            'model' => $form,
+        ]);
+    }
+
+    public function actionUploadMetadataPreview($type)
+    {
+        $className = FarmMetadata::getMetadataModelClassNameByType($type);
+        $form = new UploadFarmMetadata($className, []);
+        return $form->previewAction();
+    }
+
 
     public function actionGetList($village_id = null)
     {

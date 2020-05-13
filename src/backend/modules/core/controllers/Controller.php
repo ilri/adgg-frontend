@@ -59,6 +59,8 @@ class Controller extends BackendController
                             'download-file',
                             'download-error',
                             'event-list',
+                            'upload-metadata',
+                            'upload-metadata-preview',
                         ],
                         'allow' => true,
                         'roles' => ['@'],

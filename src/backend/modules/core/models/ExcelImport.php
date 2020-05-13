@@ -34,6 +34,7 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
     use ActiveSearchTrait;
 
     const TYPE_FARM_DATA = 1;
+    const TYPE_FARM_METADATA = 2;
     const TYPE_ANIMAL_DATA = 10;
     const TYPE_HERD_DATA = 20;
     const TYPE_ANIMAL_EVENT_CALVING = 30;
@@ -157,6 +158,8 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
         switch ($intVal) {
             case self::TYPE_FARM_DATA:
                 return 'Farm Data';
+            case self::TYPE_FARM_METADATA:
+                return 'Farm Metadata';
             case self::TYPE_ANIMAL_DATA:
                 return 'Animal Data';
             case self::TYPE_HERD_DATA:
@@ -195,6 +198,7 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
     {
         return Utils::appendDropDownListPrompt([
             self::TYPE_FARM_DATA => static::decodeType(self::TYPE_FARM_DATA),
+            self::TYPE_FARM_METADATA => static::decodeType(self::TYPE_FARM_METADATA),
             self::TYPE_ANIMAL_DATA => static::decodeType(self::TYPE_ANIMAL_DATA),
             self::TYPE_HERD_DATA => static::decodeType(self::TYPE_HERD_DATA),
             self::TYPE_ANIMAL_EVENT_CALVING => static::decodeType(self::TYPE_ANIMAL_EVENT_CALVING),

@@ -1,8 +1,6 @@
 <?php
 
 use backend\modules\auth\Session;
-use backend\modules\core\models\ChoiceTypes;
-use backend\modules\core\models\Choices;
 use backend\modules\core\models\Country;
 use common\forms\ActiveField;
 use common\widgets\select2\Select2;
@@ -12,7 +10,7 @@ use common\helpers\Lang;
 use yii\bootstrap4\ActiveForm;
 
 /* @var $this \yii\web\View */
-/* @var $model \backend\modules\core\forms\UploadFarms */
+/* @var $model \backend\modules\core\forms\UploadFarmMetadata */
 /* @var $form ActiveForm */
 ?>
 <div class="kt-portlet">
@@ -22,7 +20,7 @@ use yii\bootstrap4\ActiveForm;
         </div>
     </div>
     <?php
-    $formId = 'upload-clients-form';
+    $formId = 'upload-farm-metadata-form';
     $form = ActiveForm::begin([
         'id' => $formId,
         'layout' => 'horizontal',
@@ -55,21 +53,7 @@ use yii\bootstrap4\ActiveForm;
                                 ],
                             ]) ?>
                         <?php endif; ?>
-                        <?= $form->field($model, 'farm_type')->widget(Select2::class, [
-                            'data' => Choices::getList(ChoiceTypes::CHOICE_TYPE_FARM_TYPE, false),
-                            'options' => ['placeholder' => '[select one]'],
-                            'pluginOptions' => [
-                                'allowClear' => false
-                            ],
-                        ]) ?>
-                        <?= $form->field($model, 'project')->widget(Select2::class, [
-                            'data' => Choices::getList(ChoiceTypes::CHOICE_TYPE_PROJECT, false),
-                            'options' => ['placeholder' => '[select one]'],
-                            'pluginOptions' => [
-                                'allowClear' => false
-                            ],
-                        ]) ?>
-                        <?= $this->render('@common/excel/views/uploadExcel', ['model' => $model, 'form_id' => $formId, 'previewUrl' => Url::to(['upload-preview'])]); ?>
+                        <?= $this->render('@common/excel/views/uploadExcel', ['model' => $model, 'form_id' => $formId, 'previewUrl' => Url::to(['upload-metadata-preview', 'type' => Yii::$app->request->get('type')])]); ?>
                     </div>
                     <div class="col-md-4">
                         <?= $this->render('@common/excel/views/guide', ['model' => $model, 'sampleUrl' => Url::to(['/helper/download-excel-sample', 'route' => 'farm.xlsx']),]); ?>
