@@ -42,7 +42,7 @@ trait TableAttributeTrait
     private $_additionalAttributesListTypeIds;
 
     /**
-     * @var array
+     * @var bool
      */
     public $ignoreAdditionalAttributes = false;
 

@@ -97,15 +97,15 @@ $form = ActiveForm::begin([
         ],
     ]) ?>
     <?= $form->field($model, 'default_value', []) ?>
-    <?= $form->field($model, 'is_alias', [])->checkbox() ?>
-    <?= $form->field($model, 'alias_to')->widget(Select2::class, [
+    <?php /* echo $form->field($model, 'is_alias', [])->checkbox()*/ ?>
+    <?php /*echo $form->field($model, 'alias_to')->widget(Select2::class, [
         'data' => $model->getAliasToList(),
         'modal' => true,
         'options' => ['placeholder' => '[select one]'],
         'pluginOptions' => [
             'allowClear' => false
         ],
-    ]) ?>
+    ])*/ ?>
     <?php if (!$model->isNewRecord): ?>
         <?= $form->field($model, 'is_active', [])->checkbox() ?>
     <?php endif; ?>

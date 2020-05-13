@@ -17,7 +17,6 @@ use backend\modules\core\forms\UploadFarms;
 use backend\modules\core\models\Country;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\FarmMetadata;
-use backend\modules\core\models\FarmMetadataFeeding;
 use common\controllers\UploadExcelTrait;
 use common\helpers\Lang;
 use common\helpers\Url;
