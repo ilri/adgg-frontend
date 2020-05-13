@@ -141,4 +141,20 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
                 throw new InvalidArgumentException();
         }
     }
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            $this->setAdditionalAttributesValues();
+
+            return true;
+        }
+        return false;
+    }
+
+    public function afterFind()
+    {
+        parent::afterFind();
+        $this->loadAdditionalAttributeValues();
+    }
 }
