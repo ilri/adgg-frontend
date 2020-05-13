@@ -27,7 +27,7 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
 
     //types
     const TYPE_FEEDING_SYSTEMS_METADATA = 1;//feeding surveys
-    const TYPE_HEALTH_METADATA = 2;//health surveys
+    const TYPE_HEALTH_SERVICES_METADATA = 2;//health surveys
     const TYPE_SOCIAL_ECONOMIC_METADATA = 3;//social economic surveys
 
 
@@ -99,9 +99,9 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
     {
         switch ($intVal) {
             case self::TYPE_FEEDING_SYSTEMS_METADATA:
-                return 'Farm Feeding Systems';
-            case self::TYPE_HEALTH_METADATA:
-                return 'Health Metadata';
+                return 'Cattle Feeding Systems';
+            case self::TYPE_HEALTH_SERVICES_METADATA:
+                return 'Cattle Health Services';
             case self::TYPE_SOCIAL_ECONOMIC_METADATA:
                 return 'Social Economic Metadata';
             default:
@@ -117,7 +117,7 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
     {
         return Utils::appendDropDownListPrompt([
             self::TYPE_FEEDING_SYSTEMS_METADATA => static::decodeType(self::TYPE_FEEDING_SYSTEMS_METADATA),
-            self::TYPE_HEALTH_METADATA => static::decodeType(self::TYPE_HEALTH_METADATA),
+            self::TYPE_HEALTH_SERVICES_METADATA => static::decodeType(self::TYPE_HEALTH_SERVICES_METADATA),
             self::TYPE_SOCIAL_ECONOMIC_METADATA => static::decodeType(self::TYPE_SOCIAL_ECONOMIC_METADATA),
         ], $prompt);
     }
@@ -137,6 +137,8 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
         switch ($type) {
             case self::TYPE_FEEDING_SYSTEMS_METADATA:
                 return FarmMetadataFeeding::class;
+            case self::TYPE_HEALTH_SERVICES_METADATA:
+                return FarmMetadataHealth::class;
             default:
                 throw new InvalidArgumentException();
         }
