@@ -70,7 +70,7 @@ class UploadFarmMetadata extends ExcelUploadForm implements ImportInterface
     protected function getFarmId($farmCode)
     {
         $farmCode = trim($farmCode);
-        $farmId = Farm::getScalar('id', ['country_id' => $this->country_id, 'code' => $farmCode]);
+        $farmId = Farm::getScalar('id', ['country_id' => $this->country_id, 'odk_code' => $farmCode]);
         if (empty($farmId)) {
             return null;
         }
