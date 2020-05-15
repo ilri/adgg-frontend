@@ -97,7 +97,30 @@ class FarmController extends Controller
         $model = Farm::loadModel($id);
 
         return $this->render('view', [
-            'model' => $model,
+            'farmModel' => $model,
+        ]);
+    }
+
+    /**
+     * @param $farm_id
+     * @param $type
+     * @return string
+     * @throws \yii\web\BadRequestHttpException
+     * @throws \yii\web\ForbiddenHttpException
+     * @throws \yii\web\NotFoundHttpException
+     */
+    public function actionViewMetadata($farm_id,$type)
+    {
+        $this->hasPrivilege(Acl::ACTION_VIEW);
+        /* @var $model FarmMetadata */
+        $className = FarmMetadata::getMetadataModelClassNameByType($type);
+        $model= $className;
+        $metadataModel= $model::findOne(['type'=>$type,'farm_id'=>$farm_id]);
+        $farmModel= Farm::findOne(['id'=>$farm_id]);
+
+        return $this->render('view-metadata', [
+            'metadataModel' => $metadataModel,
+            'farmModel'=>$farmModel,
         ]);
     }
 
