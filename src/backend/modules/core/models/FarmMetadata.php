@@ -159,4 +159,49 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
         parent::afterFind();
         $this->loadAdditionalAttributeValues();
     }
+
+    /**
+     * @param $metadataType
+     * @param $groupId
+     * @return array
+     * @throws \Exception
+     */
+    public function getDetailViewAttributes($metadataType, $groupId)
+    {
+        $viewAttributes = [];
+        $groupAttributes = TableAttribute::getData(['attribute_key'], ['farm_metadata_type' => $metadataType, 'group_id' => $groupId]);
+        foreach ($groupAttributes as $groupAttribute) {
+            $attribute = $groupAttribute['attribute_key'];
+            $viewAttribute = [
+                'attribute' => $attribute,
+            ];
+            if ($this->isSingleSelectAttribute($attribute) || $this->isMultiSelectAttribute($attribute)) {
+                $choiceTypeIds = $this->getAdditionalAttributesListTypeIds();
+                $choiceTypeId = $choiceTypeIds[$attribute] ?? null;
+                if ($this->isSingleSelectAttribute($attribute)) {
+                    $value = Choices::getLabel($choiceTypeId, $this->{$attribute});
+                } else {
+                    $value = Choices::getMultiSelectLabel($this->{$attribute}, $choiceTypeId);
+                }
+                $viewAttribute = [
+                    'attribute' => $attribute,
+                    'value' => $value,
+                ];
+            }
+            if ($this->isDateAttribute($attribute)) {
+                $viewAttribute = [
+                    'attribute' => $attribute,
+                    'format' => ['date', 'php:m/d/Y']
+                ];
+            }
+            if ($this->isCheckboxAttribute($attribute)) {
+                $viewAttribute = [
+                    'attribute' => $attribute,
+                    'format' => 'boolean',
+                ];
+            }
+            $viewAttributes[] = $viewAttribute;
+        }
+        return $viewAttributes;
+    }
 }
