@@ -10,7 +10,7 @@ use yii\bootstrap\Html;
 use yii\helpers\Inflector;
 
 /* @var $this \yii\web\View */
-/* @var $metadataModel  FarmMetadata*/
+/* @var $metadataModel  FarmMetadata */
 /* @var $farmModel Animal */
 /* @var $controller \backend\controllers\BackendController */
 
@@ -25,7 +25,7 @@ $this->params['breadcrumbs'][] = ['label' => Inflector::pluralize($controller->r
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
-<?= $this->render('_profileHeader', ['farmModel' => $farmModel,'type'=>$type]) ?>
+<?= $this->render('_profileHeader', ['farmModel' => $farmModel, 'type' => $type]) ?>
 <?php if ($metadataModel !== null): ?>
     <?php
     $attributeModels = TableAttribute::find()->andWhere(['farm_metadata_type' => $type, 'is_active' => 1])->all();
@@ -35,29 +35,34 @@ $this->params['breadcrumbs'][] = $this->title;
         $attributeGroupIds[] = $attrModel->group_id;
     }
     $attributeGroups = array_unique($attributeGroupIds);
-    $values= [];
+    $values = [];
     foreach ($attributeGroups as $key => $id) {
+        $attributes = $metadataModel->getDetailViewAttributes($type, $id);
+        if (empty($attributes)) {
+            //we do not want to show groups with no attributes.
+            continue;
+        }
         $groupName = TableAttributesGroup::getScalar('name', ['id' => $id]);
         //$attr=$metadataModel->getDetailViewAttributes($type,2);
         //dd($attr);
         ?>
-        <div class="accordion accordion-outline" id="accordion<?=$id ?>">
+        <div class="accordion accordion-outline" id="accordion<?= $id ?>">
             <div class="card">
-                <div class="card-header" id="heading<?=$id ?>">
-                    <div class="card-title collapsed" data-toggle="collapse" data-target="#collapse<?=$id ?>"
+                <div class="card-header" id="heading<?= $id ?>">
+                    <div class="card-title collapsed" data-toggle="collapse" data-target="#collapse<?= $id ?>"
                          aria-expanded="false"
-                         aria-controls="collapse<?=$id ?>">
+                         aria-controls="collapse<?= $id ?>">
                         <?= Lang::t('{group} ', ['group' => $groupName]) ?>
                     </div>
                 </div>
-                <div id="collapse<?=$id ?>" class="card-body-wrapper collapse" aria-labelledby="heading<?=$id ?>"
-                     data-parent="#accordion<?=$id ?>" style="">
+                <div id="collapse<?= $id ?>" class="card-body-wrapper collapse" aria-labelledby="heading<?= $id ?>"
+                     data-parent="#accordion<?= $id ?>" style="">
                     <div class="card-body">
                         <br/>
                         <?= DetailView::widget([
                             'model' => $metadataModel,
                             'options' => ['class' => 'table detail-view table-striped'],
-                            'attributes' => $metadataModel->getDetailViewAttributes($type,$id),
+                            'attributes' => $attributes,
                         ])
                         ?>
                     </div>
@@ -70,6 +75,6 @@ $this->params['breadcrumbs'][] = $this->title;
     }
     ?>
 <?php else: ?>
-    <?= '<h4>'.Lang::t('No {metadataType} Data for this farm', ['metadataType' => Html::encode(FarmMetadata::decodeType($type))]).'</h4>' ?>
+    <?= '<h4>' . Lang::t('No {metadataType} Data for this farm', ['metadataType' => Html::encode(FarmMetadata::decodeType($type))]) . '</h4>' ?>
 <?php endif; ?>
 
