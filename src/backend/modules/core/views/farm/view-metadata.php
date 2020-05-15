@@ -38,7 +38,7 @@ $this->params['breadcrumbs'][] = $this->title;
     $values= [];
     foreach ($attributeGroups as $key => $id) {
         $groupName = TableAttributesGroup::getScalar('name', ['id' => $id]);
-        $attr=$metadataModel->getDetailViewAttributes($type,2);
+        //$attr=$metadataModel->getDetailViewAttributes($type,2);
         //dd($attr);
         ?>
         <div class="accordion accordion-outline" id="accordion<?=$id ?>">
