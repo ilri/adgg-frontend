@@ -10,17 +10,17 @@ use yii\helpers\Inflector;
 use yii\widgets\DetailView;
 
 /* @var $this \yii\web\View */
-/* @var $model Farm */
+/* @var $farmModel Farm */
 /* @var $animal Animal */
 
 
 /* @var $controller \backend\controllers\BackendController */
 $controller = Yii::$app->controller;
-$this->title = Html::encode($model->name);
-$this->params['breadcrumbs'][] = ['label' => Inflector::pluralize($controller->resourceLabel), 'url' => ['index', 'country_id' => $model->country_id]];
+$this->title = Html::encode($farmModel->name);
+$this->params['breadcrumbs'][] = ['label' => Inflector::pluralize($controller->resourceLabel), 'url' => ['index', 'country_id' => $farmModel->country_id]];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<?= $this->render('_profileHeader', ['model' => $model]) ?>
+<?= $this->render('_profileHeader', ['farmModel' => $farmModel]) ?>
 <div class="accordion accordion-outline" id="accordion1">
     <div class="card">
         <div class="card-header" id="headingOne">
@@ -29,12 +29,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 Farm Details
             </div>
         </div>
-        <div id="collapseOne" class="card-body-wrapper collapse show" aria-labelledby="headingOne"
+        <div id="collapseOne" class="card-body-wrapper collapse" aria-labelledby="headingOne"
              data-parent="#accordion1" style="">
             <div class="card-body">
                 <br/>
                 <?= DetailView::widget([
-                    'model' => $model,
+                    'model' => $farmModel,
                     'options' => ['class' => 'table detail-view table-striped'],
                     'attributes' => [
                         [
@@ -45,33 +45,33 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         [
                             'attribute' => 'country_id',
-                            'value' => $model->country->name,
+                            'value' => $farmModel->country->name,
                         ],
                         [
                             'attribute' => 'region_id',
-                            'value' => function (Farm $model) {
-                                return $model->getRelationAttributeValue('region', 'name');
+                            'value' => function (Farm $farmModel) {
+                                return $farmModel->getRelationAttributeValue('region', 'name');
                             },
                             'hidden' => false,
                         ],
                         [
                             'attribute' => 'district_id',
-                            'value' => function (Farm $model) {
-                                return $model->getRelationAttributeValue('district', 'name');
+                            'value' => function (Farm $farmModel) {
+                                return $farmModel->getRelationAttributeValue('district', 'name');
                             },
                             'hidden' => false,
                         ],
                         [
                             'attribute' => 'ward_id',
-                            'value' => function (Farm $model) {
-                                return $model->getRelationAttributeValue('ward', 'name');
+                            'value' => function (Farm $farmModel) {
+                                return $farmModel->getRelationAttributeValue('ward', 'name');
                             },
                             'hidden' => false,
                         ],
                         [
                             'attribute' => 'village_id',
-                            'value' => function (Farm $model) {
-                                return $model->getRelationAttributeValue('village', 'name');
+                            'value' => function (Farm $farmModel) {
+                                return $farmModel->getRelationAttributeValue('village', 'name');
                             },
                             'hidden' => false,
                         ],
@@ -111,7 +111,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="row">
                     <div class="col-lg-12">
                         <?= DetailView::widget([
-                            'model' => $model,
+                            'model' => $farmModel,
                             'options' => ['class' => 'table detail-view table-striped'],
                             'attributes' => [
                                 [
@@ -135,15 +135,15 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ],
                                 [
                                     'attribute' => 'farmer_age_range',
-                                    'value' => Choices::getLabel(ChoiceTypes::CHOICE_TYPE_PERSON_AGE_GROUP, $model->farmer_age_range),
+                                    'value' => Choices::getLabel(ChoiceTypes::CHOICE_TYPE_PERSON_AGE_GROUP, $farmModel->farmer_age_range),
                                 ],
                                 [
                                     'attribute' => 'farmer_relationship_to_hhh',
-                                    'value' => Choices::getLabel(ChoiceTypes::CHOICE_TYPE_PERSON_RELATIONSHIP, $model->farmer_relationship_to_hhh),
+                                    'value' => Choices::getLabel(ChoiceTypes::CHOICE_TYPE_PERSON_RELATIONSHIP, $farmModel->farmer_relationship_to_hhh),
                                 ],
                                 [
                                     'attribute' => 'farmer_relationship_to_hhh_other',
-                                    'value' => Choices::getLabel(ChoiceTypes::CHOICE_TYPE_PERSON_RELATIONSHIP, $model->farmer_relationship_to_hhh_other),
+                                    'value' => Choices::getLabel(ChoiceTypes::CHOICE_TYPE_PERSON_RELATIONSHIP, $farmModel->farmer_relationship_to_hhh_other),
                                 ],
                             ],
                         ]) ?>
@@ -169,13 +169,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="row">
                     <div class="col-lg-12">
                         <?= DetailView::widget([
-                            'model' => $model,
+                            'model' => $farmModel,
                             'options' => ['class' => 'table detail-view table-striped'],
                             'attributes' => [
                                 [
                                     'attribute' => 'field_agent_name',
-                                    'value' => function (Farm $model) {
-                                        return $model->getRelationAttributeValue('fieldAgent', 'name');
+                                    'value' => function (Farm $farmModel) {
+                                        return $farmModel->getRelationAttributeValue('fieldAgent', 'name');
                                     }
                                 ],
                             ],
@@ -202,7 +202,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="row">
                     <div class="col-lg-12">
                         <?= DetailView::widget([
-                            'model' => $model,
+                            'model' => $farmModel,
                             'options' => ['class' => 'table detail-view table-striped'],
                             'attributes' => [
                                 [
@@ -210,12 +210,12 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ],
                                 [
                                     'attribute' => 'hhh_age_range',
-                                    'value' => Choices::getLabel(ChoiceTypes::CHOICE_TYPE_PERSON_AGE_GROUP, $model->hhh_age_range),
+                                    'value' => Choices::getLabel(ChoiceTypes::CHOICE_TYPE_PERSON_AGE_GROUP, $farmModel->hhh_age_range),
 
                                 ],
                                 [
                                     'attribute' => 'hhh_gender',
-                                    'value' => Choices::getLabel(ChoiceTypes::CHOICE_TYPE_GENDER, $model->hhh_gender),
+                                    'value' => Choices::getLabel(ChoiceTypes::CHOICE_TYPE_GENDER, $farmModel->hhh_gender),
 
                                 ],
                                 [
@@ -252,7 +252,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="row">
                     <div class="col-lg-12">
                         <?= DetailView::widget([
-                            'model' => $model,
+                            'model' => $farmModel,
                             'options' => ['class' => 'table detail-view table-striped'],
                             'attributes' => [
                                 [
@@ -291,7 +291,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="row">
                     <div class="col-lg-12">
                         <?= DetailView::widget([
-                            'model' => $model,
+                            'model' => $farmModel,
                             'options' => ['class' => 'table detail-view table-striped'],
                             'attributes' => [
                                 [
@@ -341,8 +341,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="row">
                     <div class="col-lg-12">
                         <?= SingleViewWidget::widget([
-                            'latitude' => $model->latitude,
-                            'longitude' => $model->longitude,
+                            'latitude' => $farmModel->latitude,
+                            'longitude' => $farmModel->longitude,
                             'showDefaultMap' => false,
                             'mapWrapperHtmlOptions' => ['style' => 'height:400px;'],
                         ])
