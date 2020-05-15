@@ -60,6 +60,7 @@ class Controller extends BackendController
                             'download-error',
                             'event-list',
                             'upload-metadata',
+                            'view-metadata',
                             'upload-metadata-preview',
                         ],
                         'allow' => true,
