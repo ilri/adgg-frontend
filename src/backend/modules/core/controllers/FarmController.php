@@ -112,11 +112,10 @@ class FarmController extends Controller
     public function actionViewMetadata($farm_id, $type)
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
-        $metadataModel = FarmMetadata::find()->andWhere(['farm_id' => $farm_id, 'type' => $type])->one();
-        $metadataModel->type = $type;
-        $metadataModel->farm_id = $farm_id;
-        $farmModel = Farm::loadModel($farm_id);
-
+        /* @var $metadataModel FarmMetadata */
+        $className = FarmMetadata::getMetadataModelClassNameByType($type);
+        $metadataModel= $className::findOne(['type'=>$type,'farm_id'=>$farm_id]);
+        $farmModel= Farm::loadModel($farm_id);
         return $this->render('view-metadata', [
             'metadataModel' => $metadataModel,
             'farmModel' => $farmModel,
