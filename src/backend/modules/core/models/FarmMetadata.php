@@ -187,14 +187,12 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
                     'attribute' => $attribute,
                     'value' => $value,
                 ];
-            }
-            if ($this->isDateAttribute($attribute)) {
+            } elseif ($this->isDateAttribute($attribute)) {
                 $viewAttribute = [
                     'attribute' => $attribute,
                     'format' => ['date', 'php:m/d/Y']
                 ];
-            }
-            if ($this->isCheckboxAttribute($attribute)) {
+            } elseif ($this->isCheckboxAttribute($attribute)) {
                 $viewAttribute = [
                     'attribute' => $attribute,
                     'format' => 'boolean',
