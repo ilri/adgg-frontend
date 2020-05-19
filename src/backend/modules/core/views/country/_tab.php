@@ -10,12 +10,10 @@ use yii\helpers\Url;
 $tab = Yii::$app->request->get('level', 0);
 $orgTab = Yii::$app->request->get('orgTab');
 $clientTab = Yii::$app->request->get('clientTab');
-$metadataTab = Yii::$app->request->get('metadataTab');
-
 ?>
 <ul class="nav nav-tabs" role="tablist">
     <li class="nav-item">
-        <a class="nav-link<?= ($tab==0 && $metadataTab==null && $orgTab==null && $clientTab==null) ? ' active' : '' ?>"
+        <a class="nav-link<?= ($tab==0 && $orgTab==null && $clientTab==null) ? ' active' : '' ?>"
            href="<?= Url::to(['country/view', 'id' => $model->uuid]) ?>">
             <?= Lang::t('Country details') ?>
         </a>
@@ -56,12 +54,4 @@ $metadataTab = Yii::$app->request->get('metadataTab');
             <?= Lang::t('Clients') ?>
         </a>
     </li>
-    <?php if(Session::isDev()): ?>
-    <li class="nav-item">
-        <a class="nav-link<?= ($tab==0 && $metadataTab==true) ? ' active' : '' ?>"
-           href="<?= Url::to(['/core/farm-metadata-type/index','country_id'=>$model->id,'metadataTab'=>true]) ?>">
-            <?= Lang::t('Farm Metadata Types') ?>
-        </a>
-    </li>
-    <?php endif; ?>
 </ul>

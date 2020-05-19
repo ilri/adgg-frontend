@@ -20,17 +20,15 @@ class FarmMetadataTypeController extends Controller
         $this->resource = Constants::RES_FARM;
     }
 
-    public function actionIndex($country_id = null)
+    public function actionIndex()
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
-        $countryModel= Country::findOne(['id'=>$country_id]);
         $searchModel = FarmMetadataType::searchModel([
             'defaultOrder' => ['id' => SORT_ASC],
         ]);
         $searchModel->is_active = 1;
         return $this->render('index', [
             'searchModel' => $searchModel,
-            'countryModel'=> $countryModel,
         ]);
     }
 
