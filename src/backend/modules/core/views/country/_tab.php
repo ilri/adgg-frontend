@@ -1,5 +1,6 @@
 <?php
 
+use backend\modules\auth\Session;
 use backend\modules\core\models\CountryUnits;
 use common\helpers\Lang;
 use yii\helpers\Html;
@@ -7,10 +8,14 @@ use yii\helpers\Url;
 
 /* @var $model \backend\modules\core\models\Country */
 $tab = Yii::$app->request->get('level', 0);
+$orgTab = Yii::$app->request->get('orgTab');
+$clientTab = Yii::$app->request->get('clientTab');
+$metadataTab = Yii::$app->request->get('metadataTab');
+
 ?>
 <ul class="nav nav-tabs" role="tablist">
     <li class="nav-item">
-        <a class="nav-link<?= $tab == 0 ? ' active' : '' ?>"
+        <a class="nav-link<?= ($tab==0 && $metadataTab==null && $orgTab==null && $clientTab==null) ? ' active' : '' ?>"
            href="<?= Url::to(['country/view', 'id' => $model->uuid]) ?>">
             <?= Lang::t('Country details') ?>
         </a>
@@ -40,15 +45,23 @@ $tab = Yii::$app->request->get('level', 0);
         </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link "
-           href="<?= Url::to(['/core/organization/index', 'country_id' => $model->id]) ?>">
+        <a class="nav-link <?= ($tab==0 && $orgTab==true) ? ' active' : '' ?>"
+           href="<?= Url::to(['/core/organization/index', 'country_id' => $model->id,'orgTab'=>true]) ?>">
             <?= Lang::t('Organization') ?>
         </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link "
-           href="<?= Url::to(['/core/client/index', 'country_id' => $model->id]) ?>">
+        <a class="nav-link <?= ($tab==0 && $clientTab==true) ? ' active' : '' ?>"
+           href="<?= Url::to(['/core/client/index', 'country_id' => $model->id,'clientTab'=>true]) ?>">
             <?= Lang::t('Clients') ?>
         </a>
     </li>
+    <?php if(Session::isDev()): ?>
+    <li class="nav-item">
+        <a class="nav-link<?= ($tab==0 && $metadataTab==true) ? ' active' : '' ?>"
+           href="<?= Url::to(['/core/farm-metadata-type/index','country_id'=>$model->id,'metadataTab'=>true]) ?>">
+            <?= Lang::t('Farm Metadata Types') ?>
+        </a>
+    </li>
+    <?php endif; ?>
 </ul>
