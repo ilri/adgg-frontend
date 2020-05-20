@@ -3,6 +3,7 @@
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\FarmMetadata;
+use backend\modules\core\models\FarmMetadataType;
 use common\helpers\Lang;
 use yii\bootstrap4\Html;
 use yii\helpers\Url;
@@ -69,11 +70,16 @@ $type = Yii::$app->request->get('type', null);
                     <?= Lang::t('Farms Details') ?>
                 </a>
             </li>
-            <?php foreach (FarmMetadata::typeOptions(false) as $value => $label): ?>
+            <?php $parentTypes= FarmMetadataType::find()->andWhere(['parent_id'=>null, 'is_active'=>1])->all();
+            ?>
+            <?php foreach ($parentTypes as $parentType): ?>
+             <?php $parentTypeId = $parentType->id;
+                   $parentTypeName = $parentType->name;
+             ?>
                 <li class="nav-item">
-                    <a class="nav-link<?= ($type == $value) ? ' active' : '' ?>"
-                       href="<?= Url::to(['view-metadata', 'farm_id'=>$farmModel->id,'type' => $value]) ?>">
-                        <?= Lang::t(' {metadataType}', ['metadataType' => $label]) ?>
+                    <a class="nav-link <?= $type ==$parentTypeId ? ' active' : '' ?>"
+                       href="<?= Url::to(['view-metadata', 'farm_id'=>$farmModel->id,'type' =>$parentTypeId]) ?>">
+                        <?= Lang::t(' {parentMetadataType}', ['parentMetadataType' => $parentTypeName]) ?>
                     </a>
                 </li>
             <?php endforeach; ?>
@@ -82,7 +88,7 @@ $type = Yii::$app->request->get('type', null);
                 <?php endforeach; ?>
                 <a class="nav-link"
                    href="<?= Url::to(['animal/index', 'farm_id' => $farmModel->id, 'country_id' => $farmModel->country_id]) ?>"
-                   role="tab"
+                   role="tab" target="_blank"
                    title="Click To view">
                     <?= Lang::t('Animals') ?>
                     <span class="badge badge-secondary badge-pill">

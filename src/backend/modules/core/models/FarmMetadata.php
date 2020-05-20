@@ -165,10 +165,11 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
     /**
      * @param $metadataType
      * @param $groupId
+     * @param bool $gridView
      * @return array
      * @throws \Exception
      */
-    public function getDetailViewAttributes($metadataType, $groupId)
+    public function getViewAttributes($metadataType, $groupId,$gridView=false)
     {
         $viewAttributes = [];
         $groupAttributes = TableAttribute::getData(['attribute_key'], ['farm_metadata_type' => $metadataType, 'group_id' => $groupId]);
@@ -185,10 +186,20 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
                 } else {
                     $value = Choices::getMultiSelectLabel($this->{$attribute}, $choiceTypeId);
                 }
-                $viewAttribute = [
-                    'attribute' => $attribute,
-                    'value' => $value,
-                ];
+                if($gridView == true){
+                    $viewAttribute = [
+                        'attribute' => $attribute,
+                        'value' => function() use ($value) {
+                            return $value;
+                        },
+                    ];
+                }else{
+                    $viewAttribute = [
+                        'attribute' => $attribute,
+                        'value' => $value,
+                    ];
+                }
+
             } elseif ($this->isDateAttribute($attribute)) {
                 $viewAttribute = [
                     'attribute' => $attribute,
