@@ -16,7 +16,7 @@ $this->params['breadcrumbs'] = [
 ?>
 <div class="row">
     <div class="col-lg-12">
-        <?= $this->render('@coreModule/views/farm/_tab', ['model' => $searchModel, 'country' => $country]) ?>
+        <?= $this->render('@coreModule/views/farm/_tab', ['model' => $searchModel, 'country' => !empty($country) ? $country : null]) ?>
         <div class="tab-content">
             <?= $this->render('_filter', ['model' => $searchModel,]) ?>
             <?= $this->render('_grid', ['model' => $searchModel]) ?>
