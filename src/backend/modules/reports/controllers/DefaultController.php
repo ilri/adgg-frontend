@@ -4,6 +4,7 @@ namespace backend\modules\reports\controllers;
 
 use backend\modules\auth\Acl;
 use backend\modules\auth\Session;
+use backend\modules\reports\Constants;
 use backend\modules\reports\models\AdhocReport;
 use backend\modules\reports\models\Reports;
 use common\helpers\DateUtils;
@@ -41,9 +42,27 @@ class DefaultController extends Controller
         $from = null; $to = null;
         $date_filter = DateUtils::getDateFilterParams($from, $to, 'created_at', false, true);
 
+        $tpl_type = null;
+        switch ($type){
+            case Constants::REPORT_TYPE_PEDIGREE:
+                $tpl_type = 'pedigree';
+                break;
+            case Constants::REPORT_TYPE_MILKDATA:
+                $tpl_type = 'milkdata';
+                break;
+        }
+        $searchModel = AdhocReport::searchModel([
+            'defaultOrder' => ['id' => SORT_DESC],
+        ]);
+        $searchModel->is_standard = 1;
+        $searchModel->type = $type;
+        $searchModel->country_id = $country_id;
+
         return $this->render('view',[
             'type' => $type,
+            'tpl' => $tpl_type,
             'country_id' => $country_id,
+            'searchModel' => $searchModel,
             'filterOptions' => [
                 'region_id' => null,
                 'district_id' => null,
@@ -55,22 +74,29 @@ class DefaultController extends Controller
         ]);
     }
 
-    public function actionGenerate($type){
+    public function actionGenerate(int $type){
         $name = '';
-        switch ($type){
-            case 'milkdata':
-                $builder = Reports::milkDataReport(\Yii::$app->request->post());
-                $name = $builder->name;
-                $query = null;
-                break;
-            case 'pedigree':
-                $builder = Reports::pedigreeDataReport(\Yii::$app->request->post());
-                $name = $builder->name;
-                $query = null;
-                break;
-            default:
-                $builder = null;
-                $query = null;
+        $builder = null;
+        $returnUrl = '/reports/adhoc-report/index';
+        $country_id = null;
+        if ($type){
+            $country_id = \Yii::$app->request->post('country_id');
+            $returnUrl = Url::to(['/reports/default/view', 'type' => $type, 'country_id' => $country_id]);
+            switch ($type){
+                case Constants::REPORT_TYPE_MILKDATA:
+                    $builder = Reports::milkDataReport(\Yii::$app->request->post());
+                    $name = $builder->name;
+                    $query = null;
+                    break;
+                case Constants::REPORT_TYPE_PEDIGREE:
+                    $builder = Reports::pedigreeDataReport(\Yii::$app->request->post());
+                    $name = $builder->name;
+                    $query = null;
+                    break;
+                default:
+                    $builder = null;
+                    $query = null;
+            }
         }
 
         if($builder){
@@ -79,6 +105,9 @@ class DefaultController extends Controller
             try {
                 $report = new AdhocReport();
                 $report->name = $name;
+                $report->type = $type;
+                $report->is_standard = 1;
+                $report->country_id = $country_id;
                 $report->raw_sql = $builder->rawQuery();
                 $report->status = AdhocReport::STATUS_QUEUED;
                 $report->options = json_encode([
@@ -99,7 +128,7 @@ class DefaultController extends Controller
                 if($report->save()){
                     $transaction->commit();
                     ReportGenerator::push(['queueId' => $report->id]);
-                    $redirect = Url::to(['/reports/adhoc-report/index']);
+                    $redirect = $returnUrl;
                     return Json::encode(['success' => true, 'message' => $success_msg, 'redirectUrl' => $redirect, 'forceRedirect' => false]);
                 }
                 else{

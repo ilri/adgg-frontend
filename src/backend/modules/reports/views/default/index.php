@@ -3,6 +3,7 @@
 /* @var $this yii\web\View */
 
 use backend\modules\core\Constants;
+use backend\modules\reports\Constants as ReportConstants;
 use common\helpers\Lang;
 use common\helpers\Url;
 use yii\bootstrap\Html;
@@ -22,7 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="col-lg-4 col-xl-4 order-lg-2 order-xl-2">
                     <!--begin::Portlet-->
                     <div class="kt-portlet">
-                        <a href="<?= Url::to(['view', 'type' => 'milkdata', 'country_id' => $country_id]) ?>" class="kt-iconbox kt-iconbox--active">
+                        <a href="<?= Url::to(['view', 'type' => ReportConstants::REPORT_TYPE_MILKDATA, 'country_id' => $country_id]) ?>" class="kt-iconbox kt-iconbox--active">
                             <div class="kt-iconbox__title"><?= Lang::t('Milk Data'); ?></div>
                         </a>
                     </div>
@@ -31,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="col-lg-4 col-xl-4 order-lg-2 order-xl-2">
                     <!--begin::Portlet-->
                     <div class="kt-portlet">
-                        <a href="<?= Url::to(['view', 'type' => 'pedigree', 'country_id' => $country_id]) ?>" class="kt-iconbox kt-iconbox--active">
+                        <a href="<?= Url::to(['view', 'type' => ReportConstants::REPORT_TYPE_PEDIGREE, 'country_id' => $country_id]) ?>" class="kt-iconbox kt-iconbox--active">
                             <div class="kt-iconbox__title"><?= Lang::t('Pedigree'); ?></div>
                         </a>
                     </div>

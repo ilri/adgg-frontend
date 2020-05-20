@@ -16,7 +16,7 @@ use yii\helpers\Url;
         //Yii::$app->user->canCreate() ? '<a class="btn btn-brand btn-bold btn-upper btn-font-sm btn-space" href="' . Url::to(['upload', 'country_id' => $model->country_id, 'level_id' => UserLevels::LEVEL_DISTRICT]) . '" data-pjax="0"><i class="fa fa-file-excel-o"></i> ' . Lang::t('Upload Enumerators/AITech') . '</a> ' : '',
     ],
     'rowOptions' => function (AdhocReport $model) {
-        return ["class" => "linkable", "data-href" => Url::to(['view', "id" => $model->id])];
+        return ["class" => "_linkable", "data-href" => Url::to(['view', "id" => $model->id])];
     },
     'columns' => [
         [
@@ -33,7 +33,7 @@ use yii\helpers\Url;
             'attribute' => 'report_file',
             'filter' => false,
             'value' => function (AdhocReport $model) {
-                return Html::a($model->report_file, ['download-file', 'id' => $model->id], ['data-pjax' => 0]);
+                return Html::a($model->report_file, ['/reports/adhoc-report/download-file', 'id' => $model->id], ['data-pjax' => 0]);
             },
             'format' => 'raw',
         ],
@@ -68,7 +68,7 @@ use yii\helpers\Url;
             'filter' => false,
             'format' => 'raw',
             'value' => function (AdhocReport $model) {
-                return Html::a(Lang::t('Download Report') . ' <i class="fas fa-download"></i>', ['download-file', 'id' => $model->id], ['data-pjax' => 0]);
+                return Html::a(Lang::t('Download Report') . ' <i class="fas fa-download"></i>', ['/reports/adhoc-report/download-file', 'id' => $model->id], ['data-pjax' => 0]);
             },
             'visible' => ($model->status == AdhocReport::STATUS_COMPLETED || $model->status == AdhocReport::STATUS_ERROR),
         ],
@@ -85,10 +85,25 @@ use yii\helpers\Url;
                 },
             ],
             'buttons' => [
+                'view' => function ($url, AdhocReport $model) {
+                    $url = Url::to(['/reports/adhoc-report/view', 'id' => $model->id]);
+                    return Html::a('<i class="fas fa-eye"></i>', $url, ['title' => 'View Report', 'data-pjax' => 0, 'class' => '_grid-update', 'data-grid' => $model->getPjaxWidgetId(), 'data-href' => $url]);
+                },
                 'reload' => function ($url, AdhocReport $model) {
-                    $url = Url::to(['requeue', 'id' => $model->id]);
+                    $url = Url::to(['/reports/adhoc-report/requeue', 'id' => $model->id]);
                     return Html::a('<i class="fas fa-redo"></i>', '#', ['title' => 'Re-generate Report', 'data-pjax' => 0, 'data-toggle' => 'modal', 'class' => '_grid-update', 'data-grid' => $model->getPjaxWidgetId(), 'data-href' => $url]);
-                }
+                },
+                'delete' => function($url, AdhocReport $model) {
+                    $url = Url::to(['/reports/adhoc-report/delete', 'id' => $model->id]);
+                    return Html::a('<i class="text-muted fas fa-trash"></i>', 'javascript:void(0);', [
+                        'title' => 'Delete',
+                        'data-confirm-message' => 'You are about to permanently delete the item/s. Are you sure?',
+                        'data-pjax' => 0,
+                        'class' => 'grid-update',
+                        'data-grid' => $model->getPjaxWidgetId(),
+                        'data-href' => $url
+                    ]);
+                },
             ],
             'updateOptions' => ['data-pjax' => 0, 'title' => 'Update', 'modal' => false],
         ],
