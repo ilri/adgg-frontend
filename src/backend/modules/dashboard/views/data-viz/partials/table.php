@@ -4,12 +4,8 @@ use backend\modules\auth\Session;
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\Choices;
 use backend\modules\core\models\ChoiceTypes;
-use backend\modules\core\models\Client;
 use backend\modules\core\models\CountriesDashboardStats;
-use backend\modules\core\models\Country;
 use backend\modules\core\models\Farm;
-use backend\modules\core\models\Organization;
-use common\helpers\Lang;
 use common\helpers\Url;
 use yii\helpers\Html;
 
@@ -36,7 +32,7 @@ $projects = Choices::getList(ChoiceTypes::CHOICE_TYPE_PROJECT, false);
             <tbody>
                 <?php if(Session::isPrivilegedAdmin() || Session::isCountryUser()): ?>
                     <tr>
-                        <th class="dt-category-name">Countries</th>
+                        <th class="dt-category-name">Country List</th>
                         <td colspan="4"></td>
                     </tr>
                     <?php foreach ($countries as $k => $name): ?>
@@ -52,7 +48,7 @@ $projects = Choices::getList(ChoiceTypes::CHOICE_TYPE_PROJECT, false);
 
                 <?php if(Session::isPrivilegedAdmin() || Session::isCountryUser()): ?>
                     <tr>
-                        <th class="dt-category-name">Projects/Orgs</th>
+                        <th class="dt-category-name">Projects</th>
                         <td colspan="4"></td>
                     </tr>
                     <?php foreach ($projects as $k => $name): ?>

@@ -28,7 +28,7 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
     //types
     const TYPE_FEEDING_SYSTEMS_METADATA = 1;//feeding surveys
     const TYPE_HEALTH_SERVICES_METADATA = 2;//health surveys
-    const TYPE_SOCIAL_ECONOMIC_METADATA = 3;//social economic surveys
+    const TYPE_BREEDING_TECHNOLOGIES_METADATA = 3;//breeding technologies
 
 
     /**
@@ -102,8 +102,8 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
                 return 'Cattle Feeding Systems';
             case self::TYPE_HEALTH_SERVICES_METADATA:
                 return 'Cattle Health Services';
-            case self::TYPE_SOCIAL_ECONOMIC_METADATA:
-                return 'Social Economic Metadata';
+            case self::TYPE_BREEDING_TECHNOLOGIES_METADATA:
+                return 'Cattle Breeding Technologies';
             default:
                 throw new InvalidArgumentException();
         }
@@ -118,7 +118,7 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
         return Utils::appendDropDownListPrompt([
             self::TYPE_FEEDING_SYSTEMS_METADATA => static::decodeType(self::TYPE_FEEDING_SYSTEMS_METADATA),
             self::TYPE_HEALTH_SERVICES_METADATA => static::decodeType(self::TYPE_HEALTH_SERVICES_METADATA),
-            self::TYPE_SOCIAL_ECONOMIC_METADATA => static::decodeType(self::TYPE_SOCIAL_ECONOMIC_METADATA),
+            self::TYPE_BREEDING_TECHNOLOGIES_METADATA => static::decodeType(self::TYPE_BREEDING_TECHNOLOGIES_METADATA),
         ], $prompt);
     }
 
@@ -139,6 +139,8 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
                 return FarmMetadataFeeding::class;
             case self::TYPE_HEALTH_SERVICES_METADATA:
                 return FarmMetadataHealth::class;
+            case self::TYPE_BREEDING_TECHNOLOGIES_METADATA:
+                return FarmMetadataBreeding::class;
             default:
                 throw new InvalidArgumentException();
         }

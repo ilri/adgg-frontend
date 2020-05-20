@@ -125,7 +125,7 @@ class FarmController extends Controller
     public function actionUpdate($id)
     {
         $this->hasPrivilege(Acl::ACTION_UPDATE);
-        $model = $this->loadModel($id);
+        $model = Farm::loadModel($id);
         if ($this->handlePostedData($model)) {
             Yii::$app->session->setFlash('success', Lang::t('SUCCESS_MESSAGE'));
             return $this->redirect(Url::getReturnUrl(['view', 'id' => $model->id]));
@@ -201,23 +201,6 @@ class FarmController extends Controller
     {
         $data = Farm::getListData('id', 'name', true, ['village_id' => $village_id]);
         return json_encode($data);
-    }
-
-    /**
-     * @param $id
-     * @return Farm
-     * @throws \yii\web\NotFoundHttpException
-     * @throws \yii\web\ForbiddenHttpException
-     */
-    protected function loadModel($id)
-    {
-        if (is_string($id) && !is_numeric($id)) {
-            $model = Farm::loadModel(['uuid' => $id]);
-        } else {
-            $model = Farm::loadModel($id);
-        }
-
-        return $model;
     }
 
 }
