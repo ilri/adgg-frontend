@@ -25,7 +25,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?= Lang::t('List of Animal Events in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
                 <?php elseif (Session::isRegionUser()): ?>
                     <?= Lang::t('List of Animal Events in') . ' ' . CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
-                <?php else: ?>
+                <?php elseif(empty($country)): ?>
+                    <?= Lang::t('List of Animal Events for all Countries')?>
+                    <?php else: ?>
                     <?= Lang::t('List of Animal Events in {country}', ['country' => $country->name]) ?>
                 <?php endif; ?>
             </h3>
@@ -55,7 +57,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <div class="col-lg-4 col-xl-4 order-lg-2 order-xl-2">
                         <!--begin::Portlet-->
                         <div class="kt-portlet">
-                            <a href="<?= Url::to([$url, 'country_id' => $country->id, 'event_type' => $key]) ?>"
+                            <a href="<?= Url::to([$url, 'country_id' => !empty($country) ? $country->id : null, 'event_type' => $key]) ?>"
                                class="kt-iconbox kt-iconbox--active">
                                 <div class="kt-iconbox__title">
                                     <?= Lang::t('{name}', ['name' => $name]); ?>
