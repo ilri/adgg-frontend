@@ -32,14 +32,10 @@ $controller = Yii::$app->controller;
                 <!--begin::Heade-->
                 <div class="kt-login-v2__head">
                     <div class="kt-login-v2__logo">
-                        <a href="<?= Yii::$app->homeUrl ?>">
+                        <a href="https://africadgg.wordpress.com/category/adgg/" target="_blank" data-toggle="tooltip" data-placement="right" title="Click to go to ADGG website" data-original-title="Click to go to ADGG website">
                             <img src="<?= Yii::$app->view->theme->baseUrl ?>/assets/img/login/adggLogo1.png"
-                                 style="max-width: 250px; max-height: 200px;" alt=""/>
+                                 style="max-width: 250px; max-height: 200px;" alt="ADGG Logo"/>
                         </a>
-                    </div>
-                    <div class="kt-login-v2__signup">
-                        <a href="https://africadgg.wordpress.com/category/adgg/" target="_blank"
-                           class="kt-link kt-font-brand" style="color: #004730;">Move to ADGG Website</a>
                     </div>
                 </div>
                 <!--begin::Head-->
