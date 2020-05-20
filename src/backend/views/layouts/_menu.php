@@ -38,6 +38,18 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
                         <div class="kt-menu__submenu">
                             <span class="kt-menu__arrow"></span>
                             <ul class="kt-menu__subnav">
+                                <?php if (Session::isPrivilegedAdmin()): ?>
+                                    <li class="kt-menu__item">
+                                        <a href="<?= Url::to(['/core/farm/index']) ?>"
+                                           class="kt-menu__link ">
+                                            <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                            <span class="kt-menu__link-text">
+                                            <?= Lang::t('All Farms') ?></span>
+                                        </a>
+                                    </li>
+                                <?php endif; ?>
+                            </ul>
+                            <ul class="kt-menu__subnav">
                                 <?php foreach ($countries as $country): ?>
                                     <?php if (Session::getCountryId() == $country->id || Session::isPrivilegedAdmin()): ?>
                                         <li class="kt-menu__item">
@@ -81,6 +93,18 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
                         <div class="kt-menu__submenu">
                             <span class="kt-menu__arrow"></span>
                             <ul class="kt-menu__subnav">
+                                <?php if (Session::isPrivilegedAdmin()): ?>
+                                    <li class="kt-menu__item">
+                                        <a href="<?= Url::to(['/core/herd/index']) ?>"
+                                           class="kt-menu__link ">
+                                            <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                            <span class="kt-menu__link-text">
+                                            <?= Lang::t('All Herds') ?></span>
+                                        </a>
+                                    </li>
+                                <?php endif; ?>
+                            </ul>
+                            <ul class="kt-menu__subnav">
                                 <?php foreach ($countries as $country): ?>
                                     <?php if (Session::getCountryId() == $country->id || Session::isPrivilegedAdmin()): ?>
                                         <li class="kt-menu__item">
@@ -123,6 +147,18 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
                     </a>
                     <div class="kt-menu__submenu">
                         <span class="kt-menu__arrow"></span>
+                        <ul class="kt-menu__subnav">
+                            <?php if (Session::isPrivilegedAdmin()): ?>
+                                <li class="kt-menu__item">
+                                    <a href="<?= Url::to(['/core/animal/index']) ?>"
+                                       class="kt-menu__link ">
+                                        <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                        <span class="kt-menu__link-text">
+                                            <?= Lang::t('All Animals') ?></span>
+                                    </a>
+                                </li>
+                            <?php endif; ?>
+                        </ul>
                         <ul class="kt-menu__subnav">
                             <?php foreach ($countries as $country): ?>
                                 <?php if (Session::getCountryId() == $country->id || Session::isPrivilegedAdmin()): ?>
@@ -172,6 +208,18 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
                     </a>
                     <div class="kt-menu__submenu">
                         <span class="kt-menu__arrow"></span>
+                        <ul class="kt-menu__subnav">
+                            <?php if (Session::isPrivilegedAdmin()): ?>
+                                <li class="kt-menu__item">
+                                    <a href="<?= Url::to(['/core/animal-event/event-list', 'country_id' => '']) ?>"
+                                       class="kt-menu__link ">
+                                        <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                        <span class="kt-menu__link-text">
+                                            <?= Lang::t('All Animal Events') ?></span>
+                                    </a>
+                                </li>
+                            <?php endif; ?>
+                        </ul>
                         <ul class="kt-menu__subnav">
                             <?php foreach ($countries as $country): ?>
                                 <?php if (Session::getCountryId() == $country->id || Session::isPrivilegedAdmin()): ?>
@@ -316,7 +364,7 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
                 <li class="kt-menu__item kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'core/country' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
                     <a href="<?= Url::to(['/core/country/index']) ?>" class="kt-menu__link">
                         <i class="kt-menu__link-icon far fa-globe-africa"></i>
-                        <span class="kt-menu__link-text">COUNTRIES</span>
+                        <span class="kt-menu__link-text">COUNTRY LIST</span>
                     </a>
                 </li>
             <?php endif; ?>
