@@ -1,6 +1,6 @@
 <?php
 
-use backend\modules\core\models\FarmMetadata;
+use backend\modules\core\models\FarmMetadataType;
 use common\helpers\Lang;
 use yii\helpers\Url;
 
@@ -16,7 +16,7 @@ $country_id = Yii::$app->request->get('country_id', null);
             <?= Lang::t('Upload Farms') ?>
         </a>
     </li>
-    <?php foreach (FarmMetadata::typeOptions(false) as $value => $label): ?>
+    <?php foreach (FarmMetadataType::getListData('code', 'name', false, ['parent_id' => null]) as $value => $label): ?>
         <li class="nav-item">
             <a class="nav-link<?= ($type == $value) ? ' active' : '' ?>"
                href="<?= Url::to(['upload-metadata', 'type' => $value, 'country_id' => $country_id]) ?>">

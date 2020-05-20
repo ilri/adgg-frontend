@@ -13,11 +13,11 @@ use yii\helpers\Inflector;
 /* @var $metadataModel  FarmMetadata */
 /* @var $farmModel Animal */
 /* @var $controller \backend\controllers\BackendController */
+/* @var $metadataTypeModel \backend\modules\core\models\FarmMetadataType */
 
-$type = Yii::$app->request->get('type');
 $controller = Yii::$app->controller;
 if ($metadataModel !== null) {
-    $this->title = Html::encode(FarmMetadata::decodeType($metadataModel->type));
+    $this->title = Html::encode($metadataTypeModel->name);
 } else {
     $this->title = Html::encode($farmModel->name);
 }
@@ -25,10 +25,10 @@ $this->params['breadcrumbs'][] = ['label' => Inflector::pluralize($controller->r
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
-<?= $this->render('_profileHeader', ['farmModel' => $farmModel, 'type' => $type]) ?>
+<?= $this->render('_profileHeader', ['farmModel' => $farmModel, 'type' => $metadataTypeModel->code]) ?>
 <?php if ($metadataModel !== null): ?>
     <?php
-    $attributeModels = TableAttribute::find()->andWhere(['farm_metadata_type' => $type, 'is_active' => 1])->all();
+    $attributeModels = TableAttribute::find()->andWhere(['farm_metadata_type' => $metadataTypeModel->code, 'is_active' => 1])->all();
     $attributeGroupIds = [];
     $attributeGroups = null;
     foreach ($attributeModels as $attrModel) {
@@ -37,7 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
     $attributeGroups = array_unique($attributeGroupIds);
     $values = [];
     foreach ($attributeGroups as $key => $id) {
-        $attributes = $metadataModel->getDetailViewAttributes($type, $id);
+        $attributes = $metadataModel->getDetailViewAttributes($metadataTypeModel->code, $id);
         if (empty($attributes)) {
             //we do not want to show groups with no attributes.
             continue;
@@ -75,6 +75,6 @@ $this->params['breadcrumbs'][] = $this->title;
     }
     ?>
 <?php else: ?>
-    <?= '<h4>' . Lang::t('No {metadataType} Data for this farm', ['metadataType' => Html::encode(FarmMetadata::decodeType($type))]) . '</h4>' ?>
+    <?= '<h4>' . Lang::t('No {metadataType} Data for this farm', ['metadataType' => Html::encode($metadataTypeModel->name)]) . '</h4>' ?>
 <?php endif; ?>
 

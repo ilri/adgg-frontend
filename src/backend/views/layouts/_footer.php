@@ -3,8 +3,9 @@
         <span>
            <?= \backend\modules\conf\settings\SystemSettings::getCompanyName() ?>
         | <?= date('Y'); ?>&nbsp;&copy&nbsp;
-        - Developed By <a href="https://competamillman.co.ke/"
-                          target="_blank"><?= \common\helpers\Lang::t('Competa Millman') ?></a>
+            <!--        - Developed By <a href="https://competamillman.co.ke/"-->
+            <!--                          target="_blank">-->
+            <? //= \common\helpers\Lang::t('Competa Millman') ?><!--</a>-->
         </span>
     </div>
     <div class="kt-footer__menu">

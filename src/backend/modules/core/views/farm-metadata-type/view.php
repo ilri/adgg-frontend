@@ -5,10 +5,10 @@ use common\helpers\Lang;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model backend\modules\core\models\Organization */
+/* @var $model backend\modules\core\models\FarmMetadataType */
 
-$this->title = Lang::t('Organization Details');
-$this->params['breadcrumbs'][] = ['label' => 'Organizations', 'url' => ['index']];
+$this->title = Lang::t('Farm Metadata Type Details');
+$this->params['breadcrumbs'][] = ['label' => 'Farm Metadata Types', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
@@ -27,17 +27,23 @@ $this->params['breadcrumbs'][] = $this->title;
             'options' => ['class' => 'table detail-view table-striped'],
             'attributes' => [
                 [
-                    'attribute' => 'id',
-                ],
-                [
                     'attribute' => 'name',
                 ],
                 [
-                    'attribute' => 'country_id',
-                    'value' => $model->getRelationAttributeValue('country', 'name'),
+                    'attribute' => 'code',
+                ],
+                [
+                    'attribute' => 'model_class_name',
+                ],
+                [
+                    'attribute' => 'parent_id',
                 ],
                 [
                     'attribute' => 'is_active',
+                    'format' => 'boolean',
+                ],
+                [
+                    'attribute' => 'farmer_has_multiple',
                     'format' => 'boolean',
                 ],
                 [

@@ -2,7 +2,7 @@
 
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\Farm;
-use backend\modules\core\models\FarmMetadata;
+use backend\modules\core\models\FarmMetadataType;
 use common\helpers\Lang;
 use yii\bootstrap4\Html;
 use yii\helpers\Url;
@@ -10,7 +10,6 @@ use yii\helpers\Url;
 /* @var $this \yii\web\View */
 /* @var $farmModel Farm */
 $type = Yii::$app->request->get('type', null);
-//dd($type);
 ?>
 
 <div class="kt-portlet kt-profile">
@@ -69,10 +68,10 @@ $type = Yii::$app->request->get('type', null);
                     <?= Lang::t('Farms Details') ?>
                 </a>
             </li>
-            <?php foreach (FarmMetadata::typeOptions(false) as $value => $label): ?>
+            <?php foreach (FarmMetadataType::getListData('code', 'name', false, ['parent_id' => null]) as $value => $label): ?>
                 <li class="nav-item">
                     <a class="nav-link<?= ($type == $value) ? ' active' : '' ?>"
-                       href="<?= Url::to(['view-metadata', 'farm_id'=>$farmModel->id,'type' => $value]) ?>">
+                       href="<?= Url::to(['view-metadata', 'farm_id' => $farmModel->id, 'type' => $value]) ?>">
                         <?= Lang::t(' {metadataType}', ['metadataType' => $label]) ?>
                     </a>
                 </li>
