@@ -39,7 +39,7 @@ class ExtendableTableController extends MasterDataController
         $this->setResourceLabel($table_id);
         $searchModel = TableAttribute::searchModel([
             'defaultOrder' => ['group_id' => SORT_ASC, 'id' => SORT_ASC],
-            'with' => ['group', 'listType'],
+            'with' => ['group', 'listType','farmMetadataType'],
         ]);
         $searchModel->is_active = 1;
         $searchModel->table_id = $table_id;
