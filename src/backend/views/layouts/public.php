@@ -69,8 +69,9 @@ $controller = Yii::$app->controller;
                         <span style="color: white; font-size: medium;">
                            <?= SystemSettings::getCompanyName() ?>
                           | <?= date('Y'); ?>&nbsp;&copy&nbsp;
-                          - Developed By <a href="https://competamillman.co.ke/"
-                                            target="_blank" style="color: #004730; font-weight: bold;"><?= \common\helpers\Lang::t('Competa Millman') ?></a>
+                            <!--                          - Developed By <a href="https://competamillman.co.ke/"-->
+                            <!--                                            target="_blank" style="color: #004730; font-weight: bold;">-->
+                            <? //= \common\helpers\Lang::t('Competa Millman') ?><!--</a>-->
                        </span>
                     </div>
                 </div>
