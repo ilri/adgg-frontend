@@ -92,7 +92,7 @@ $this->params['breadcrumbs'][] = $this->title;
         foreach ($childTypeAttributeGroups as $childTypeKey => $childTypeGroupId)
         {
             $gridColumns = $childTypeMetadataModel->getViewAttributes($childTypeId, $childTypeGroupId, true);
-            if (empty($childTypeColumns)) {
+            if (empty($gridColumns)) {
                 //we do not want to show groups with no attributes.
                 continue;
             }
@@ -103,7 +103,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <div class="tab-content">
                         <?= GridView::widget([
                             'searchModel' => $childTypeMetadataModel,
-                            'title' => $childTypeGroupName. ' '.'['.'The Child Type Is=>'.$childTypeName.']',
+                            'title' => $childTypeGroupName,
                             'id'=>$childTypeGroupId,
                             'createButton' => ['visible' => false, 'modal' => false],
                             'toolbarButtons' => [
