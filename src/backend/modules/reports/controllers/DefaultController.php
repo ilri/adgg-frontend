@@ -77,7 +77,7 @@ class DefaultController extends Controller
     public function actionGenerate(int $type){
         $name = '';
         $builder = null;
-        $returnUrl = '/reports/adhoc-report/index';
+        $returnUrl = Url::to(['/reports/adhoc-report/index']);
         $country_id = null;
         if ($type){
             $country_id = \Yii::$app->request->post('country_id');
