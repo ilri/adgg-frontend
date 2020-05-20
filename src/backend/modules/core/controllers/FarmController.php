@@ -17,6 +17,7 @@ use backend\modules\core\forms\UploadFarms;
 use backend\modules\core\models\Country;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\FarmMetadata;
+use backend\modules\core\models\FarmMetadataType;
 use common\controllers\UploadExcelTrait;
 use common\helpers\Lang;
 use common\helpers\Url;
@@ -112,13 +113,15 @@ class FarmController extends Controller
     public function actionViewMetadata($farm_id, $type)
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
+        $metadataTypeModel = FarmMetadataType::loadModel(['code' => $type]);
         /* @var $metadataModel FarmMetadata */
         $className = FarmMetadata::getMetadataModelClassNameByType($type);
-        $metadataModel= $className::findOne(['type'=>$type,'farm_id'=>$farm_id]);
-        $farmModel= Farm::loadModel($farm_id);
+        $metadataModel = $className::findOne(['type' => $type, 'farm_id' => $farm_id]);
+        $farmModel = Farm::loadModel($farm_id);
         return $this->render('view-metadata', [
             'metadataModel' => $metadataModel,
             'farmModel' => $farmModel,
+            'metadataTypeModel' => $metadataTypeModel,
         ]);
     }
 
@@ -177,6 +180,7 @@ class FarmController extends Controller
     {
         $this->hasPrivilege(Acl::ACTION_CREATE);
 
+        $metadataTypeModel = FarmMetadataType::loadModel(['code' => $type]);
         $className = FarmMetadata::getMetadataModelClassNameByType($type);
         $form = new UploadFarmMetadata($className, ['country_id' => $country_id]);
         $resp = $this->uploadExcelConsole($form, 'upload-metadata', ['country_id' => $country_id, 'type' => $type]);
@@ -186,6 +190,7 @@ class FarmController extends Controller
 
         return $this->render('upload-metadata', [
             'model' => $form,
+            'metadataTypeModel' => $metadataTypeModel,
         ]);
     }
 

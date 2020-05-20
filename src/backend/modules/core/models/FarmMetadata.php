@@ -3,7 +3,6 @@
 namespace backend\modules\core\models;
 
 use common\helpers\ArrayHelper;
-use common\helpers\Utils;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
@@ -20,15 +19,17 @@ use yii\base\InvalidArgumentException;
  * @property int|null $created_by
  *
  * @property Farm $farm
+ * @property FarmMetadataType $metadataType
  */
 abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterface, TableAttributeInterface, FarmMetadataInterface, UploadExcelInterface
 {
     use ActiveSearchTrait, TableAttributeTrait;
 
     //types
-    const TYPE_FEEDING_SYSTEMS_METADATA = 1;//feeding surveys
-    const TYPE_HEALTH_SERVICES_METADATA = 2;//health surveys
-    const TYPE_BREEDING_TECHNOLOGIES_METADATA = 3;//breeding technologies
+    const TYPE_FEEDING_SYSTEMS_METADATA = 1;
+    const TYPE_HEALTH_SERVICES_METADATA = 2;
+    const TYPE_BREEDING_TECHNOLOGIES_METADATA = 3;
+    const TYPE_BREEDING_BULLS = 4;
 
 
     /**
@@ -91,37 +92,6 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
         return ExtendableTable::TABLE_FARM_METADATA;
     }
 
-    /**
-     * @param int $intVal
-     * @return string
-     */
-    public static function decodeType($intVal): string
-    {
-        switch ($intVal) {
-            case self::TYPE_FEEDING_SYSTEMS_METADATA:
-                return 'Cattle Feeding Systems';
-            case self::TYPE_HEALTH_SERVICES_METADATA:
-                return 'Cattle Health Services';
-            case self::TYPE_BREEDING_TECHNOLOGIES_METADATA:
-                return 'Cattle Breeding Technologies';
-            default:
-                throw new InvalidArgumentException();
-        }
-    }
-
-    /**
-     * @param bool $prompt
-     * @return array
-     */
-    public static function typeOptions($prompt = false)
-    {
-        return Utils::appendDropDownListPrompt([
-            self::TYPE_FEEDING_SYSTEMS_METADATA => static::decodeType(self::TYPE_FEEDING_SYSTEMS_METADATA),
-            self::TYPE_HEALTH_SERVICES_METADATA => static::decodeType(self::TYPE_HEALTH_SERVICES_METADATA),
-            self::TYPE_BREEDING_TECHNOLOGIES_METADATA => static::decodeType(self::TYPE_BREEDING_TECHNOLOGIES_METADATA),
-        ], $prompt);
-    }
-
     public function getExcelColumns()
     {
         $additionalAttributes = TableAttribute::getColumnData('attribute_key', ['table_id' => static::getDefinedTableId(), 'farm_metadata_type' => static::getDefineMetadataType()], [], ['orderBy' => ['group_id' => SORT_ASC, 'id' => SORT_ASC]]);
@@ -131,19 +101,12 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
     /**
      * @param int $type
      * @return string
+     * @throws \yii\web\NotFoundHttpException
      */
     public static function getMetadataModelClassNameByType($type)
     {
-        switch ($type) {
-            case self::TYPE_FEEDING_SYSTEMS_METADATA:
-                return FarmMetadataFeeding::class;
-            case self::TYPE_HEALTH_SERVICES_METADATA:
-                return FarmMetadataHealth::class;
-            case self::TYPE_BREEDING_TECHNOLOGIES_METADATA:
-                return FarmMetadataBreeding::class;
-            default:
-                throw new InvalidArgumentException();
-        }
+        $model = FarmMetadataType::loadModel(['code' => $type]);
+        return $model->model_class_name;
     }
 
     public function beforeSave($insert)
@@ -203,5 +166,13 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
             $viewAttributes[] = $viewAttribute;
         }
         return $viewAttributes;
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getMetadataType()
+    {
+        return $this->hasOne(FarmMetadataType::class, ['code' => 'type']);
     }
 }

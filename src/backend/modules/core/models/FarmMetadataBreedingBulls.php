@@ -14,6 +14,6 @@ class FarmMetadataBreedingBulls extends FarmMetadata
 
     public static function getDefineMetadataType(): int
     {
-        return 4;//this method will be removed
+        return self::TYPE_BREEDING_BULLS;
     }
 }

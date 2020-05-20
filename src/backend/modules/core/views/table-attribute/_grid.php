@@ -3,6 +3,7 @@
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\ExtendableTable;
 use backend\modules\core\models\FarmMetadata;
+use backend\modules\core\models\FarmMetadataType;
 use backend\modules\core\models\TableAttribute;
 use backend\modules\core\models\TableAttributesGroup;
 use common\helpers\Lang;
@@ -46,10 +47,10 @@ use yii\helpers\Url;
         [
             'attribute' => 'farm_metadata_type',
             'value' => function (TableAttribute $model) {
-                return FarmMetadata::decodeType($model->farm_metadata_type);
+                return $model->getRelationAttributeValue('farmMetadataType', 'name');
             },
             'visible' => $model->table_id == ExtendableTable::TABLE_FARM_METADATA,
-            'filter' => FarmMetadata::typeOptions(),
+            'filter' => FarmMetadataType::getListData('code', 'name', false),
         ],
         [
             'attribute' => 'group_id',
