@@ -89,9 +89,9 @@ $this->params['breadcrumbs'][] = $this->title;
             $childTypeAttributeGroupIds[] = $childTypeAttributeModel->group_id;
         }
         $childTypeAttributeGroups = array_unique($childTypeAttributeGroupIds);
-        foreach ($childTypeAttributeGroups as $childTypeKey => $childTypeGroupId);
+        foreach ($childTypeAttributeGroups as $childTypeKey => $childTypeGroupId)
         {
-            $childTypeColumns = $childTypeMetadataModel->getViewAttributes($childTypeId, $childTypeGroupId, true);
+            $gridColumns = $childTypeMetadataModel->getViewAttributes($childTypeId, $childTypeGroupId, true);
             if (empty($childTypeColumns)) {
                 //we do not want to show groups with no attributes.
                 continue;
@@ -108,7 +108,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'createButton' => ['visible' => false, 'modal' => false],
                             'toolbarButtons' => [
                             ],
-                            'columns' => $childTypeColumns,
+                            'columns' => $gridColumns,
                         ]); ?>
                     </div>
                 </div>
