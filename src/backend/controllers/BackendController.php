@@ -73,6 +73,10 @@ class BackendController extends Controller
      */
     public function hasPrivilege($action = NULL)
     {
+        if (Yii::$app->user->isGuest){
+            Yii::$app->session->setFlash(self::FLASH_ERROR, 'You session has expired. Login to continue');
+            return $this->redirect(['/auth/user/login']);
+        }
         if (NULL === $action)
             $action = Acl::ACTION_VIEW;
 
