@@ -4,9 +4,10 @@ namespace backend\modules\core\controllers;
 
 
 use backend\modules\auth\Acl;
+use backend\modules\auth\Session;
 use backend\modules\core\Constants;
-use backend\modules\core\models\Country;
 use backend\modules\core\models\FarmMetadataType;
+use yii\web\ForbiddenHttpException;
 
 class FarmMetadataTypeController extends Controller
 {
@@ -19,6 +20,19 @@ class FarmMetadataTypeController extends Controller
         $this->resourceLabel = 'Farm Metadata Type';
         $this->resource = Constants::RES_FARM;
     }
+
+    public function beforeAction($action)
+    {
+        $this->enableDefaultAcl = false;
+        if (parent::beforeAction($action)) {
+            if (!Session::isDev()) {
+                throw new ForbiddenHttpException();
+            }
+            return true;
+        }
+        return false;
+    }
+
 
     public function actionIndex()
     {

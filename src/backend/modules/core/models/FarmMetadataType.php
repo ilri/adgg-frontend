@@ -22,6 +22,7 @@ use common\models\ActiveSearchTrait;
 class FarmMetadataType extends ActiveRecord implements ActiveSearchInterface
 {
     use ActiveSearchTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -38,8 +39,7 @@ class FarmMetadataType extends ActiveRecord implements ActiveSearchInterface
         return [
             [['code', 'name', 'model_class_name'], 'required'],
             ['code', 'unique', 'targetAttribute' => ['code'], 'message' => '{attribute} {value} already exists.'],
-            [['code', 'is_active', 'farmer_has_multiple', 'parent_id', 'created_by'], 'integer'],
-            [['created_at'], 'safe'],
+            [['code', 'is_active', 'farmer_has_multiple', 'parent_id'], 'integer'],
             [['name'], 'string', 'max' => 128],
             [['model_class_name'], 'string', 'max' => 255],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
@@ -68,6 +68,7 @@ class FarmMetadataType extends ActiveRecord implements ActiveSearchInterface
     {
         return [
             ['name', 'name'],
+            'code',
             'is_active',
             'model_class_name',
         ];

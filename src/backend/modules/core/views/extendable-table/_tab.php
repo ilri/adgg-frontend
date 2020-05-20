@@ -18,7 +18,7 @@ $table_id = Yii::$app->request->get('table_id', null);
     <?php endforeach; ?>
     <?php if(Session::isDev()): ?>
         <li class="nav-item">
-            <a class="nav-link<?= $table_id == null ? ' active' : '' ?>"
+            <a class="nav-link<?= Yii::$app->controller->id === 'farm-metadata-type' ? ' active' : '' ?>"
                href="<?= Url::to(['/core/farm-metadata-type/index']) ?>">
                 <?= Lang::t('Farm Metadata Types') ?>
             </a>
