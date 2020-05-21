@@ -15,7 +15,7 @@ use yii\helpers\Inflector;
 /* @var $metadataModel  FarmMetadata */
 /* @var $farmModel Animal */
 /* @var $controller \backend\controllers\BackendController */
-/* @var $metadataTypeModel \backend\modules\core\models\FarmMetadataType */
+/* @var $metadataTypeModel FarmMetadataType */
 
 $controller = Yii::$app->controller;
 if ($metadataModel !== null) {
