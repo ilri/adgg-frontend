@@ -81,7 +81,7 @@ $type = Yii::$app->request->get('type', null);
                 <?php endforeach; ?>
                 <a class="nav-link"
                    href="<?= Url::to(['animal/index', 'farm_id' => $farmModel->id, 'country_id' => $farmModel->country_id]) ?>"
-                   role="tab"
+                   role="tab" target="_blank"
                    title="Click To view">
                     <?= Lang::t('Animals') ?>
                     <span class="badge badge-secondary badge-pill">

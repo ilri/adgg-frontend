@@ -110,5 +110,4 @@ use yii\helpers\Url;
             'updateOptions' => ['data-pjax' => 0, 'title' => 'Update', 'modal' => false, 'data-use-uuid' => true],
         ],
     ],
-]);
-?>
+]); ?>
