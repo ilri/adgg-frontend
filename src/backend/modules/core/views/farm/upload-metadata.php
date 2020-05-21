@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="col-lg-12">
         <?= $this->render('@coreModule/views/farm/_uploadTab', []) ?>
         <div class="tab-content">
-            <?= $this->render('_uploadMetadataForm', ['model' => $model]) ?>
+            <?= $this->render('_uploadMetadataForm', ['model' => $model,'parentMetadataModel'=>$metadataTypeModel]) ?>
         </div>
     </div>
 </div>
