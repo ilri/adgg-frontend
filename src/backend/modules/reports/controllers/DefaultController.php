@@ -29,7 +29,7 @@ class DefaultController extends Controller
         $this->hasPrivilege(Acl::ACTION_CREATE);
     }
 
-    public function actionIndex($country_id)
+    public function actionIndex($country_id = null)
     {
         $country_id = Session::getCountryId($country_id);
         return $this->render('index',[
@@ -37,7 +37,7 @@ class DefaultController extends Controller
         ]);
     }
 
-    public function actionView($type, $country_id){
+    public function actionView($type, $country_id = null){
         $country_id = Session::getCountryId($country_id);
         $from = null; $to = null;
         $date_filter = DateUtils::getDateFilterParams($from, $to, 'created_at', false, true);
@@ -64,6 +64,7 @@ class DefaultController extends Controller
             'country_id' => $country_id,
             'searchModel' => $searchModel,
             'filterOptions' => [
+                'country_id' => null,
                 'region_id' => null,
                 'district_id' => null,
                 'ward_id' => null,
