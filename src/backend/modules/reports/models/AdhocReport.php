@@ -14,6 +14,9 @@ use common\models\ActiveSearchTrait;
  * This is the model class for table "reports".
  *
  * @property int $id
+ * @property int $type
+ * @property int $is_standard
+ * @property int $country_id
  * @property string $name
  * @property string $raw_sql
  * @property string $report_file
@@ -50,7 +53,7 @@ class AdhocReport extends ActiveRecord implements ActiveSearchInterface
     {
         return [
             [['name', 'raw_sql', 'status'], 'required'],
-            [['status'], 'integer'],
+            [['status', 'type', 'is_standard'], 'integer'],
             [['name', 'report_file'], 'string', 'max' => 255],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
@@ -80,6 +83,7 @@ class AdhocReport extends ActiveRecord implements ActiveSearchInterface
             ['name', 'name'],
             'status',
             'created_by',
+            'type', 'is_standard', 'country_id',
         ];
     }
     /**
