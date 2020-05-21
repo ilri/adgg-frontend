@@ -45,53 +45,54 @@ trait CountryUnitDataTrait
      * @param string $condition
      * @param array $params
      * @param bool $strict
+     * @param string|null $tableName
      * @return array
      * @throws \Exception
      */
-    public static function appendOrgSessionIdCondition($condition = '', $params = [], $strict = false)
+    public static function appendOrgSessionIdCondition($condition = '', $params = [], $strict = false, $tableName = null)
     {
         if (Utils::isWebApp() && Session::isCountry()) {
             if (is_array($condition)) {
-                $condition['country_id'] = Session::getCountryId();
+                $condition[($tableName) ? $tableName.'.country_id' : 'country_id'] = Session::getCountryId();
                 if (Session::isOrganizationUser()) {
-                    $condition['org_id'] = Session::getOrgId();
+                    $condition[($tableName) ? $tableName.'.org_id' : 'org_id'] = Session::getOrgId();
                 } elseif (Session::isOrganizationClientUser()) {
-                    $condition['client_id'] = Session::getClientId();
+                    $condition[($tableName) ? $tableName.'.client_id' : 'client_id'] = Session::getClientId();
                 } elseif (Session::isRegionUser()) {
-                    $condition['region_id'] = Session::getRegionId();
+                    $condition[($tableName) ? $tableName.'.region_id' : 'region_id'] = Session::getRegionId();
                 } elseif (Session::isDistrictUser()) {
-                    $condition['district_id'] = Session::getDistrictId();
+                    $condition[($tableName) ? $tableName.'.district_id' : 'district_id'] = Session::getDistrictId();
                 } elseif (Session::isWardUser()) {
-                    $condition['ward_id'] = Session::getWardId();
+                    $condition[($tableName) ? $tableName.'.ward_id' : 'ward_id'] = Session::getWardId();
                 } elseif (Session::isVillageUser()) {
-                    $condition['village_id'] = Session::getVillageId();
+                    $condition[($tableName) ? $tableName.'.village_id' : 'village_id'] = Session::getVillageId();
                 }
             } else {
-                list($condition, $params) = DbUtils::appendCondition('country_id', Session::getCountryId(), $condition, $params);
+                list($condition, $params) = DbUtils::appendCondition(($tableName) ? $tableName.'.[[country_id]]' : 'country_id', Session::getCountryId(), $condition, $params);
                 if (Session::isOrganizationUser()) {
-                    list($condition, $params) = DbUtils::appendCondition('org_id', Session::getOrgId(), $condition, $params);
+                    list($condition, $params) = DbUtils::appendCondition(($tableName) ? $tableName.'.[[org_id]]' :'org_id', Session::getOrgId(), $condition, $params);
                 } elseif (Session::isOrganizationClientUser()) {
-                    list($condition, $params) = DbUtils::appendCondition('client_id', Session::getClientId(), $condition, $params);
+                    list($condition, $params) = DbUtils::appendCondition(($tableName) ? $tableName.'.[[client_id]]' :'client_id', Session::getClientId(), $condition, $params);
                 } elseif (Session::isRegionUser()) {
-                    list($condition, $params) = DbUtils::appendCondition('region_id', Session::getRegionId(), $condition, $params);
+                    list($condition, $params) = DbUtils::appendCondition(($tableName) ? $tableName.'.[[region_id]]' :'region_id', Session::getRegionId(), $condition, $params);
                 } elseif (Session::isDistrictUser()) {
-                    list($condition, $params) = DbUtils::appendCondition('district_id', Session::getDistrictId(), $condition, $params);
+                    list($condition, $params) = DbUtils::appendCondition(($tableName) ? $tableName.'.[[district_id]]' :'district_id', Session::getDistrictId(), $condition, $params);
                 } elseif (Session::isWardUser()) {
-                    list($condition, $params) = DbUtils::appendCondition('ward_id', Session::getWardId(), $condition, $params);
+                    list($condition, $params) = DbUtils::appendCondition(($tableName) ? $tableName.'.[[ward_id]]' :'ward_id', Session::getWardId(), $condition, $params);
                 } elseif (Session::isVillageUser()) {
-                    list($condition, $params) = DbUtils::appendCondition('village_id', Session::getVillageId(), $condition, $params);
+                    list($condition, $params) = DbUtils::appendCondition(($tableName) ? $tableName.'.[[village_id]]' :'village_id', Session::getVillageId(), $condition, $params);
                 }
             }
         } elseif ($strict && Utils::isWebApp() && !Session::isCountry()) {
             if (is_array($condition)) {
                 if (!isset($condition['country_id'])) {
-                    $condition['country_id'] = null;
+                    $condition[($tableName) ? $tableName.'.country_id' : 'country_id'] = null;
                 }
             } else {
                 if (!empty($condition)) {
                     $condition .= ' AND ';
                 }
-                $condition .= '[[country_id]] IS NULL';
+                $condition .= ($tableName) ? $tableName.'.[[country_id]] IS NULL' : '[[country_id]] IS NULL';
             }
         }
         return [$condition, $params];
