@@ -17,7 +17,8 @@ use yii\bootstrap4\ActiveForm;
 $code = Yii::$app->request->get('type');
 ?>
 <?php
-$childrenTypes = FarmMetadataType::getData(['code', 'name'], ['parent_id' => $parentMetadataModel->code]);
+$childrenTypes = FarmMetadataType::getData(['code', 'name','parent_id'], ['parent_id' => $parentMetadataModel->code]);
+$country_id = Yii::$app->request->get('country_id', null);
 ?>
 <div class="row">
     <div class="col-lg-2">
@@ -27,7 +28,7 @@ $childrenTypes = FarmMetadataType::getData(['code', 'name'], ['parent_id' => $pa
                     role="tablist">
                     <li class="kt-nav__item">
                         <a class="kt-nav__link<?= ($code == $parentMetadataModel->code) ? ' active' : '' ?>"
-                           href="<?= Url::to(['upload-metadata', 'country_id' => $model->country_id, 'type' => $parentMetadataModel->code]) ?>">
+                           href="<?= Url::to(['upload-metadata', 'country_id' => $country_id, 'type' => $parentMetadataModel->code]) ?>">
                             <span class="kt-nav__link-text"><?= Lang::t('Upload {parent}', ['parent' => $parentMetadataModel->name]) ?></span>
                         </a>
                     </li>
@@ -38,7 +39,7 @@ $childrenTypes = FarmMetadataType::getData(['code', 'name'], ['parent_id' => $pa
                         ?>
                         <li class="kt-nav__item">
                             <a class="kt-nav__link<?= ($code == $type) ? ' active' : '' ?>"
-                               href="<?= Url::to(['upload-metadata', 'country_id' => $model->country_id, 'type' => $type]) ?>">
+                               href="<?= Url::to(['upload-metadata', 'country_id' => $country_id, 'type' => $type]) ?>">
                                 <span class="kt-nav__link-text"><?= Lang::t('Upload {child}', ['child' => $name]) ?></span>
                             </a>
                         </li>
