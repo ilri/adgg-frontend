@@ -71,7 +71,7 @@ use yii\bootstrap4\ActiveForm;
                         <?= Lang::t('Upload') ?>
                     </button>
                     <a class="btn btn-secondary"
-                       href="<?= Url::getReturnUrl(Url::to(['index', 'country_id' => $model->country_id])) ?>">
+                       href="<?= Url::getReturnUrl(Url::to(['index', 'country_id' => Yii::$app->request->get('country_id')])) ?>">
                         <?= Lang::t('Cancel') ?>
                     </a>
                 </div>

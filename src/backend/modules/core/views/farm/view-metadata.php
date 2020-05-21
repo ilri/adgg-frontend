@@ -39,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
     $attributeGroups = array_unique($attributeGroupIds);
     $values = [];
     foreach ($attributeGroups as $key => $id) {
-        $attributes = $metadataModel->getViewAttributes($metadataTypeModel->code, $id,false);
+        $attributes = $metadataModel->getViewAttributes($metadataTypeModel->code, $id, false);
         if (empty($attributes)) {
             //we do not want to show groups with no attributes.
             continue;
@@ -76,7 +76,7 @@ $this->params['breadcrumbs'][] = $this->title;
     }
     ?>
     <?php
-    $childrenOfParentType= FarmMetadataType::find()->andWhere(['parent_id'=>$metadataTypeModel->code, 'is_active'=>1,'farmer_has_multiple'=>1])->all();
+    $childrenOfParentType = FarmMetadataType::find()->andWhere(['parent_id' => $metadataTypeModel->code, 'is_active' => 1, 'farmer_has_multiple' => 1])->all();
     foreach ($childrenOfParentType as $childType) {
         $childTypeId = $childType->id;
         $childTypeCode = $childType->code;
@@ -90,8 +90,7 @@ $this->params['breadcrumbs'][] = $this->title;
             $childTypeAttributeGroupIds[] = $childTypeAttributeModel->group_id;
         }
         $childTypeAttributeGroups = array_unique($childTypeAttributeGroupIds);
-        foreach ($childTypeAttributeGroups as $childTypeKey => $childTypeGroupId)
-        {
+        foreach ($childTypeAttributeGroups as $childTypeKey => $childTypeGroupId) {
             $gridColumns = $childTypeMetadataModel->getViewAttributes($childTypeCode, $childTypeGroupId, true);
             if (empty($gridColumns)) {
                 //we do not want to show groups with no attributes.
@@ -105,7 +104,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <?= GridView::widget([
                             'searchModel' => $childTypeMetadataModel,
                             'title' => $childTypeGroupName,
-                            'id'=>$childTypeGroupId,
+                            'id' => $childTypeGroupId,
                             'createButton' => ['visible' => false, 'modal' => false],
                             'toolbarButtons' => [
                             ],

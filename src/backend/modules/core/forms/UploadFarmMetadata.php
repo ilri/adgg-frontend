@@ -18,11 +18,6 @@ use common\excel\ImportInterface;
 class UploadFarmMetadata extends ExcelUploadForm implements ImportInterface
 {
 
-    /**
-     * @var int
-     */
-    public $country_id;
-
     public function init()
     {
         parent::init();
@@ -34,7 +29,6 @@ class UploadFarmMetadata extends ExcelUploadForm implements ImportInterface
     public function rules()
     {
         return array_merge($this->excelValidationRules(), [
-            [['country_id'], 'required'],
         ]);
     }
 
@@ -44,7 +38,6 @@ class UploadFarmMetadata extends ExcelUploadForm implements ImportInterface
     public function attributeLabels()
     {
         return array_merge($this->excelAttributeLabels(), [
-            'country_id' => 'Country',
         ]);
     }
 
@@ -70,7 +63,7 @@ class UploadFarmMetadata extends ExcelUploadForm implements ImportInterface
     protected function getFarmId($farmCode)
     {
         $farmCode = trim($farmCode);
-        $farmId = Farm::getScalar('id', ['country_id' => $this->country_id, 'odk_code' => $farmCode]);
+        $farmId = Farm::getScalar('id', ['odk_code' => $farmCode]);
         if (empty($farmId)) {
             return null;
         }

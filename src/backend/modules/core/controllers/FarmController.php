@@ -176,13 +176,13 @@ class FarmController extends Controller
         return $form->previewAction();
     }
 
-    public function actionUploadMetadata($country_id, $type)
+    public function actionUploadMetadata($type, $country_id = null)
     {
         $this->hasPrivilege(Acl::ACTION_CREATE);
 
         $metadataTypeModel = FarmMetadataType::loadModel(['code' => $type]);
         $className = FarmMetadata::getMetadataModelClassNameByType($type);
-        $form = new UploadFarmMetadata($className, ['country_id' => $country_id]);
+        $form = new UploadFarmMetadata($className, []);
         $resp = $this->uploadExcelConsole($form, 'upload-metadata', ['country_id' => $country_id, 'type' => $type]);
         if ($resp !== false) {
             return $resp;
