@@ -25,6 +25,7 @@ if ($metadataModel !== null) {
 }
 $this->params['breadcrumbs'][] = ['label' => Inflector::pluralize($controller->resourceLabel), 'url' => ['index', 'country_id' => $farmModel->country_id]];
 $this->params['breadcrumbs'][] = $this->title;
+$code = Yii::$app->request->get('type');
 
 ?>
 <?= $this->render('_profileHeader', ['farmModel' => $farmModel, 'type' => $metadataTypeModel->code]) ?>
@@ -39,7 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
     $attributeGroups = array_unique($attributeGroupIds);
     $values = [];
     foreach ($attributeGroups as $key => $id) {
-        $attributes = $metadataModel->getViewAttributes($metadataTypeModel->code, $id,false);
+        $attributes = $metadataModel->getViewAttributes($metadataTypeModel->code, $id, false);
         if (empty($attributes)) {
             //we do not want to show groups with no attributes.
             continue;
@@ -75,23 +76,25 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php
     }
     ?>
-    <?php
-    $childrenOfParentType= FarmMetadataType::find()->andWhere(['parent_id'=>$metadataTypeModel->code, 'is_active'=>1,'farmer_has_multiple'=>1])->all();
-    foreach ($childrenOfParentType as $childType) {
-        $childTypeId = $childType->id;
-        $childTypeCode = $childType->code;
-        $childTypeName = $childType->name;
-        $childTypeAttributeModels = TableAttribute::find()->andWhere(['farm_metadata_type' => $childTypeCode, 'is_active' => 1])->all();
-        $childTypeAttributeGroupIds = [];
-        $childTypeAttributeGroups = null;
-        $childTypeClassName = FarmMetadata::getMetadataModelClassNameByType($childTypeCode);
-        $childTypeMetadataModel = $childTypeClassName::findOne(['type' => $childTypeCode, 'farm_id' => $farmModel->id]);
+<?php endif; ?>
+
+<?php
+$childrenOfParentType = FarmMetadataType::find()->andWhere(['parent_id' => $code, 'is_active' => 1])->all();
+foreach ($childrenOfParentType as $childType) {
+    $childTypeId = $childType->id;
+    $childTypeCode = $childType->code;
+    $childTypeName = $childType->name;
+    $childTypeAttributeModels = TableAttribute::find()->andWhere(['farm_metadata_type' => $childTypeCode, 'is_active' => 1])->all();
+    $childTypeAttributeGroupIds = [];
+    $childTypeAttributeGroups = null;
+    $childTypeClassName = FarmMetadata::getMetadataModelClassNameByType($childTypeCode);
+    $childTypeMetadataModel = $childTypeClassName::findOne(['type' => $childTypeCode, 'farm_id' => $farmModel->id]);
+    if($childTypeMetadataModel !==null){
         foreach ($childTypeAttributeModels as $childTypeAttributeModel) {
             $childTypeAttributeGroupIds[] = $childTypeAttributeModel->group_id;
         }
         $childTypeAttributeGroups = array_unique($childTypeAttributeGroupIds);
-        foreach ($childTypeAttributeGroups as $childTypeKey => $childTypeGroupId)
-        {
+        foreach ($childTypeAttributeGroups as $childTypeKey => $childTypeGroupId) {
             $gridColumns = $childTypeMetadataModel->getViewAttributes($childTypeCode, $childTypeGroupId, true);
             if (empty($gridColumns)) {
                 //we do not want to show groups with no attributes.
@@ -105,7 +108,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <?= GridView::widget([
                             'searchModel' => $childTypeMetadataModel,
                             'title' => $childTypeGroupName,
-                            'id'=>$childTypeGroupId,
+                            'id' => $childTypeGroupId,
                             'createButton' => ['visible' => false, 'modal' => false],
                             'toolbarButtons' => [
                             ],
@@ -118,8 +121,5 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php
         }
     }
-    ?>
-<?php else: ?>
-    <?= '<h4>' . Lang::t('No {metadataType} Data for this farm', ['metadataType' => Html::encode($metadataTypeModel->name)]) . '</h4>' ?>
-<?php endif; ?>
-
+}
+?>

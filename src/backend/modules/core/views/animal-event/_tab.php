@@ -40,10 +40,10 @@ $events = AnimalEvent::eventTypeOptions();
         ?>
         <li class="nav-item">
             <a class="nav-link"
-               href="<?= Url::to([$url, 'country_id' => [!empty($country) ? $country->id : null], 'event_type' => $key]) ?>">
+               href="<?= Url::to([$url, 'country_id' => (!empty($country) ? $country->id : null), 'event_type' => $key]) ?>">
                 <?= Lang::t('{name}', ['name' => $name]); ?>
                 <span class="badge badge-secondary badge-pill">
-                    <?= CountriesDashboardStats::getEventCounts([!empty($country) ? $country->id : null], $key) ?>
+                    <?= CountriesDashboardStats::getEventCounts((!empty($country) ? $country->id : null), $key) ?>
         </span>
             </a>
         </li>

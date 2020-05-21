@@ -51,6 +51,11 @@ class ExcelUploadForm extends Model implements JobInterface
     public $targetModel;
 
     /**
+     * @var string
+     */
+    public $country_id;
+
+    /**
      * UploadProductExcel constructor.
      * @param string $activeRecordModelClass
      * @param array $config
