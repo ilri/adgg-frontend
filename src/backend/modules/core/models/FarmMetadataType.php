@@ -73,4 +73,12 @@ class FarmMetadataType extends ActiveRecord implements ActiveSearchInterface
             'model_class_name',
         ];
     }
+
+    public static function getListData($valueColumn = 'code', $textColumn = 'name', $prompt = false, $condition = '', $params = [], $options = [])
+    {
+        $options['orderBy'] = ['code' => SORT_ASC];
+        return parent::getListData($valueColumn, $textColumn, $prompt, $condition, $params, $options);
+    }
+
+
 }

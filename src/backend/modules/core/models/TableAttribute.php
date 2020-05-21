@@ -31,6 +31,7 @@ use yii\base\InvalidArgumentException;
  *
  * @property TableAttributesGroup $group
  * @property ChoiceTypes $listType
+ * @property FarmMetadataType $farmMetadataType
  */
 class TableAttribute extends ActiveRecord implements ActiveSearchInterface
 {
@@ -144,6 +145,14 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
     public function getListType()
     {
         return $this->hasOne(ChoiceTypes::class, ['id' => 'list_type_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFarmMetadataType()
+    {
+        return $this->hasOne(FarmMetadataType::class, ['code' => 'farm_metadata_type']);
     }
 
     /**

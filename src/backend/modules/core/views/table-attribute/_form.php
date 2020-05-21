@@ -55,7 +55,7 @@ $form = ActiveForm::begin([
     <?php endif ?>
     <?php if ($model->table_id == ExtendableTable::TABLE_FARM_METADATA): ?>
         <?= $form->field($model, 'farm_metadata_type')->widget(Select2::class, [
-            'data' => \backend\modules\core\models\FarmMetadata::typeOptions(false),
+            'data' => \backend\modules\core\models\FarmMetadataType::getListData('code', 'name', false),
             'modal' => true,
             'options' => ['placeholder' => '[select one]'],
             'pluginOptions' => [

@@ -19,10 +19,10 @@ $farmType = Yii::$app->request->get('farm_type', null);
 <ul class="nav nav-tabs" role="tablist">
     <li class="nav-item">
         <a class="nav-link<?= empty($farmType) ? ' active' : '' ?>"
-           href="<?= Url::to(['index', 'farm_type' => null, 'country_id' => $country->id]) ?>">
+           href="<?= Url::to(['index', 'farm_type' => null, 'country_id' => !empty($country) ? $country->id : null]) ?>">
             <?= Lang::t('All Farms') ?>
             <span class="badge badge-secondary badge-pill">
-                <?= CountriesDashboardStats::getFarmCounts($country->id, false, null, null) ?>
+                <?= CountriesDashboardStats::getFarmCounts([!empty($country) ? $country->id : null], false, null, null) ?>
 
             </span>
         </a>
@@ -30,10 +30,10 @@ $farmType = Yii::$app->request->get('farm_type', null);
     <?php foreach (Choices::getList(ChoiceTypes::CHOICE_TYPE_FARM_TYPE, false) as $value => $label): ?>
         <li class="nav-item">
             <a class="nav-link<?= ($farmType == $value) ? ' active' : '' ?>"
-               href="<?= Url::to(['index', 'farm_type' => $value, 'country_id' => $country->id]) ?>">
+               href="<?= Url::to(['index', 'farm_type' => $value, 'country_id' => !empty($country) ? $country->id : null]) ?>">
                 <?= strtoupper(Html::encode($label)) ?>
                 <span class="badge badge-secondary badge-pill">
-                    <?= CountriesDashboardStats::getFarmCounts($country->id, false, null, $value) ?>
+                    <?= CountriesDashboardStats::getFarmCounts([!empty($country) ? $country->id : null], false, null, $value) ?>
                 </span>
             </a>
         </li>
