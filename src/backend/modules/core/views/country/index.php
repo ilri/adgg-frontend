@@ -5,7 +5,8 @@
 /* @var $controller \backend\controllers\BackendController */
 $controller = Yii::$app->controller;
 
-$this->title = $controller->getPageTitle();
+//$this->title = $controller->getPageTitle();
+$this->title = 'Manage Country List';
 $this->params['breadcrumbs'] = [
     $this->title
 ];
