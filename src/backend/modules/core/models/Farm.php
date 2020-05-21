@@ -83,7 +83,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             [['name'], 'required', 'except' => [self::SCENARIO_UPLOAD]],
             [['country_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'field_agent_id', 'is_active', 'farmer_is_hh_head'], 'safe'],
             [['latitude', 'longitude', 'phone'], 'number'],
-            [['code', 'name', 'project','farmer_name'], 'string', 'max' => 128],
+            [['code', 'name', 'project', 'farmer_name'], 'string', 'max' => 128],
             [['phone'], 'string', 'min' => 9, 'max' => 12, 'message' => '{attribute} should contain between 9 and 12 digits', 'except' => self::SCENARIO_UPLOAD],
             [['email', 'map_address'], 'string', 'max' => 255],
             [['farm_type'], 'string', 'max' => 30],
@@ -92,7 +92,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             [['code'], 'unique', 'targetAttribute' => ['country_id', 'org_id', 'code'], 'message' => '{attribute} already exists', 'except' => self::SCENARIO_UPLOAD],
             [$this->getAdditionalAttributes(), 'safe'],
             [['additional_attributes', 'org_id', 'client_id'], 'safe'],
-            ['odk_code', 'unique', 'targetAttribute' => ['country_id', 'odk_code'], 'message' => '{attribute} already exists.', 'on' => self::SCENARIO_UPLOAD],
+            ['odk_code', 'unique', 'targetAttribute' => ['odk_code'], 'message' => '{attribute} already exists.', 'on' => self::SCENARIO_UPLOAD],
             [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
             ['migration_id', 'unique'],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
@@ -336,6 +336,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     {
         return $this->hasOne(Users::class, ['id' => 'field_agent_id']);
     }
+
     /**
      * @inheritDoc
      */
@@ -343,10 +344,12 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
     {
         return ['farm_country'];
     }
+
     /**
      * @inheritDoc
      */
-    public function reportBuilderFieldsMapping(): array{
+    public function reportBuilderFieldsMapping(): array
+    {
         return [
             'farm_type' => [
                 'type' => TableAttribute::INPUT_TYPE_SELECT,
@@ -378,10 +381,12 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
             ],
         ];
     }
+
     /**
      * @inheritDoc
      */
-    public function reportBuilderRelations(){
+    public function reportBuilderRelations()
+    {
         return array_merge(['fieldAgent'], $this->reportBuilderCommonRelations(), $this->reportBuilderCoreDataRelations());
     }
 }

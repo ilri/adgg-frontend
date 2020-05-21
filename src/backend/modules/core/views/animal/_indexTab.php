@@ -23,7 +23,7 @@ $animalType = Yii::$app->request->get('animal_type', null);
            href="<?= Url::to(['index', 'animal_type' => null, 'country_id' => [!empty($country) ? $country->id : null]]) ?>">
             <?= Lang::t('All Animals') ?>
             <span class="badge badge-secondary badge-pill">
-                <?= CountriesDashboardStats::getAnimalCounts([!empty($country) ? $country->id : null]) ?>
+                <?= CountriesDashboardStats::getAnimalCounts((!empty($country) ? $country->id : null)) ?>
             </span>
         </a>
     </li>
@@ -33,7 +33,7 @@ $animalType = Yii::$app->request->get('animal_type', null);
                href="<?= Url::to(['index', 'animal_type' => $value, 'country_id' => !empty($country) ? $country->id : null]) ?>">
                 <?= strtoupper(Html::encode(Inflector::pluralize($label))) ?>
                 <span class="badge badge-secondary badge-pill">
-                    <?= CountriesDashboardStats::getAnimalCounts([!empty($country) ? $country->id : null], $value) ?>
+                    <?= CountriesDashboardStats::getAnimalCounts((!empty($country) ? $country->id : null), $value) ?>
                 </span>
             </a>
         </li>
