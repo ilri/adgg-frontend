@@ -10,8 +10,12 @@ $type = Yii::$app->request->get('type', null);
 $country_id = Yii::$app->request->get('country_id', null);
 ?>
 <?php
-$childType= FarmMetadataType::findOne(['code'=>$type]);
-$parent_id= $childType->parent_id;
+if($type !== null){
+    $childType= FarmMetadataType::findOne(['code'=>$type]);
+    $parent_id= $childType->parent_id;
+}else{
+    $parent_id = null;
+}
 ?>
 <ul class="nav nav-tabs" role="tablist">
     <li class="nav-item">
