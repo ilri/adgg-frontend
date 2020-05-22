@@ -27,7 +27,7 @@ if($type !== null){
     <?php foreach (FarmMetadataType::getListData('code', 'name', false, ['parent_id' => null]) as $value => $label): ?>
         <li class="nav-item">
             <a class="nav-link<?= (($type == $value) || $value == $parent_id) ? ' active' : '' ?>"
-               href="<?= Url::to(['upload-metadata', 'type' => $value, 'country_id' => $country_id]) ?>">
+               href="<?= Url::to(['upload-metadata','country_id' => $country_id, 'type' => $value]) ?>">
                 <?= Lang::t('Upload {metadataType}', ['metadataType' => $label]) ?>
             </a>
         </li>

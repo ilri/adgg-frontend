@@ -3,6 +3,7 @@
 namespace backend\modules\core\models;
 
 use common\helpers\ArrayHelper;
+use common\helpers\Lang;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
@@ -49,7 +50,7 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
             [['farm_id', 'type'], 'required'],
             [['farm_id', 'type'], 'integer'],
             [['additional_attributes'], 'safe'],
-            ['type', 'unique', 'targetAttribute' => ['farm_id', 'type'], 'message' => '{attribute} {value} already exists.'],
+            ['type', 'uniqueTypeValidator'],
             [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
@@ -85,6 +86,21 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
             'farm_id',
             'type',
         ];
+    }
+
+    public function uniqueTypeValidator()
+    {
+        if($this->hasErrors()){
+            return false;
+        }
+        $counts= static::getCount(['farm_id'=>$this->farm_id,'type'=>$this->type]);
+        $metadataTypeModel= FarmMetadataType::findOne(['code'=>$this->type]);
+        if($counts > 0 && $metadataTypeModel->farmer_has_multiple == 0){
+            $this->addError('type',Lang::t('Type {type} already exist for farm_id = {farm_id}', [
+                'type'=>$this->type,
+                'farm_id'=>$this->farm_id
+            ]));
+        }
     }
 
     public static function getDefinedTableId(): int
@@ -132,7 +148,7 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
      * @return array
      * @throws \Exception
      */
-    public function getViewAttributes($metadataType, $groupId,$gridView=false)
+    public function getViewAttributes($metadataType, $groupId, $gridView = false)
     {
         $viewAttributes = [];
         $groupAttributes = TableAttribute::getData(['attribute_key'], ['farm_metadata_type' => $metadataType, 'group_id' => $groupId]);
@@ -149,14 +165,14 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
                 } else {
                     $value = Choices::getMultiSelectLabel($this->{$attribute}, $choiceTypeId);
                 }
-                if($gridView == true){
+                if ($gridView == true) {
                     $viewAttribute = [
                         'attribute' => $attribute,
-                        'value' => function() use ($value) {
+                        'value' => function () use ($value) {
                             return $value;
                         },
                     ];
-                }else{
+                } else {
                     $viewAttribute = [
                         'attribute' => $attribute,
                         'value' => $value,
