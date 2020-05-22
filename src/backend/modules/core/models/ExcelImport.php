@@ -102,6 +102,7 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
             ['file_name', 'file_name'],
             ['uuid', 'uuid'],
             'type',
+            'country_id',
             'is_processed',
             'has_errors',
         ];
