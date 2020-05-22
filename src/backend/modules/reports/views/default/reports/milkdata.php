@@ -3,6 +3,7 @@
 /* @var $this yii\web\View */
 
 use backend\modules\core\Constants;
+use backend\modules\core\models\Country;
 use backend\modules\core\models\CountryUnits;
 use common\helpers\Lang;
 use common\helpers\Url;
@@ -27,6 +28,28 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= Html::beginForm(Url::to(['generate', 'type' => $type]), 'post', ['class' => '', 'id' => 'std-report-form']) ?>
                 <?= Html::hiddenInput('country_id', $country_id) ?>
                 <div class="form-row align-items-center">
+
+                    <div class="col-lg-2">
+                        <?= Html::label('Country') ?>
+                        <?= Select2::widget([
+                            'name' => 'country_id',
+                            'value' => $country_id,
+                            'data' => Country::getListData(),
+                            'options' => [
+                                'id' => 'country_id',
+                                'placeholder' => '[select one]',
+                                'class' => 'form-control select2 parent-depdropdown',
+                                //'data-url' => Url::to(['/core/country-units/get-list', 'country_id' => 'idV', 'level' => CountryUnits::LEVEL_REGION, 'placeholder' => true]),
+                                'data-selected' => $filterOptions['country_id'],
+                                'data-child-selectors' => [
+                                    '#' . 'region_id',
+                                ],
+                            ],
+                            'pluginOptions' => [
+                                'allowClear' => true
+                            ],
+                        ]); ?>
+                    </div>
                     <div class="col-lg-2">
                         <?= Html::label('Region') ?>
                         <?= Select2::widget([
@@ -35,7 +58,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'data' => CountryUnits::getListData('id', 'name', false, ['country_id' => $country_id, 'level' => CountryUnits::LEVEL_REGION]),
                             'options' => [
                                 'id' => 'region_id',
-                                'placeholder' => "",
+                                'placeholder' => '[Select One]',
                                 'class' => 'form-control select2 parent-depdropdown',
                                 'data-url' => Url::to(['/core/country-units/get-list', 'country_id' => 'idV', 'level' => CountryUnits::LEVEL_REGION, 'placeholder' => true]),
                                 'data-selected' => $filterOptions['region_id'],

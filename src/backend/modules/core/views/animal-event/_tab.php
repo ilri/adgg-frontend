@@ -43,7 +43,7 @@ $events = AnimalEvent::eventTypeOptions();
                href="<?= Url::to([$url, 'country_id' => (!empty($country) ? $country->id : null), 'event_type' => $key]) ?>">
                 <?= Lang::t('{name}', ['name' => $name]); ?>
                 <span class="badge badge-secondary badge-pill">
-                    <?= CountriesDashboardStats::getEventCounts((!empty($country) ? $country->id : null), $key) ?>
+                    <?= Yii::$app ->formatter->asDecimal(CountriesDashboardStats::getEventCounts((!empty($country) ? $country->id : null), $key)) ?>
         </span>
             </a>
         </li>

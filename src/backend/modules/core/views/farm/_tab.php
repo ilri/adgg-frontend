@@ -22,7 +22,7 @@ $farmType = Yii::$app->request->get('farm_type', null);
            href="<?= Url::to(['index', 'farm_type' => null, 'country_id' => !empty($country) ? $country->id : null]) ?>">
             <?= Lang::t('All Farms') ?>
             <span class="badge badge-secondary badge-pill">
-                <?= CountriesDashboardStats::getFarmCounts((!empty($country) ? $country->id : null), false, null, null) ?>
+                <?= Yii::$app ->formatter->asDecimal(CountriesDashboardStats::getFarmCounts((!empty($country) ? $country->id : null), false, null, null)) ?>
 
             </span>
         </a>
@@ -33,7 +33,7 @@ $farmType = Yii::$app->request->get('farm_type', null);
                href="<?= Url::to(['index', 'farm_type' => $value, 'country_id' => !empty($country) ? $country->id : null]) ?>">
                 <?= strtoupper(Html::encode($label)) ?>
                 <span class="badge badge-secondary badge-pill">
-                    <?= CountriesDashboardStats::getFarmCounts((!empty($country) ? $country->id : null), false, null, $value) ?>
+                    <?= Yii::$app ->formatter->asDecimal(CountriesDashboardStats::getFarmCounts((!empty($country) ? $country->id : null), false, null, $value)) ?>
                 </span>
             </a>
         </li>

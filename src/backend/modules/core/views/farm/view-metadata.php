@@ -89,7 +89,7 @@ foreach ($childrenOfParentType as $childType) {
     $childTypeAttributeGroups = null;
     $childTypeClassName = FarmMetadata::getMetadataModelClassNameByType($childTypeCode);
     $childTypeMetadataModel = $childTypeClassName::findOne(['type' => $childTypeCode, 'farm_id' => $farmModel->id]);
-    if($childTypeMetadataModel !==null){
+    if ($childTypeMetadataModel !== null) {
         foreach ($childTypeAttributeModels as $childTypeAttributeModel) {
             $childTypeAttributeGroupIds[] = $childTypeAttributeModel->group_id;
         }
@@ -102,22 +102,31 @@ foreach ($childrenOfParentType as $childType) {
             }
             $childTypeGroupName = TableAttributesGroup::getScalar('name', ['id' => $childTypeGroupId]);
             ?>
-            <div class="row" id="<?= $childTypeGroupId ?>">
-                <div class="col-lg-12">
-                    <div class="tab-content">
-                        <?= GridView::widget([
-                            'searchModel' => $childTypeMetadataModel,
-                            'title' => $childTypeGroupName,
-                            'id' => $childTypeGroupId,
-                            'createButton' => ['visible' => false, 'modal' => false],
-                            'toolbarButtons' => [
-                            ],
-                            'columns' => $gridColumns,
-                        ]); ?>
+            <br>
+            <div class="accordion accordion-outline" id="accordion<?= $childTypeGroupId ?>">
+                <div class="card">
+                    <div class="card-header" id="heading<?= $childTypeGroupId ?>">
+                        <div class="card-title collapsed" data-toggle="collapse" data-target="#collapse<?= $childTypeGroupId ?>"
+                             aria-expanded="false" aria-controls="collapse<?= $childTypeGroupId ?>">
+                            <?= $childTypeGroupName ?>
+                        </div>
+                    </div>
+                    <div id="collapse<?= $childTypeGroupId ?>" class="card-body-wrapper collapse" aria-labelledby="<?= $childTypeGroupId ?>"
+                         data-parent="#accordion<?= $childTypeGroupId ?>" style="">
+                        <div class="card-body">
+                            <?= GridView::widget([
+                                'searchModel' => $childTypeMetadataModel,
+                                'title' => $childTypeGroupName,
+                                'id' => $childTypeGroupId,
+                                'createButton' => ['visible' => false, 'modal' => false],
+                                'toolbarButtons' => [
+                                ],
+                                'columns' => $gridColumns,
+                            ]); ?>
+                        </div>
                     </div>
                 </div>
             </div>
-            <br>
             <?php
         }
     }
