@@ -1,10 +1,7 @@
 <?php
 
-use backend\modules\auth\Session;
-use backend\modules\core\models\Country;
 use backend\modules\core\models\FarmMetadataType;
 use common\forms\ActiveField;
-use common\widgets\select2\Select2;
 use yii\bootstrap\Html;
 use common\helpers\Url;
 use common\helpers\Lang;
@@ -17,42 +14,42 @@ use yii\bootstrap4\ActiveForm;
 $code = Yii::$app->request->get('type');
 ?>
 <?php
-$childrenTypes = FarmMetadataType::getData(['code', 'name','parent_id'], ['parent_id' => $parentMetadataModel->code]);
+$childrenTypes = FarmMetadataType::getData(['code', 'name', 'parent_id'], ['parent_id' => $parentMetadataModel->code]);
 $country_id = Yii::$app->request->get('country_id', null);
 $parent_id = $parentMetadataModel->parent_id;
-$parentName= FarmMetadataType::getScalar('name',['code'=>$parent_id]);
+$parentName = FarmMetadataType::getScalar('name', ['code' => $parent_id]);
 ?>
 <div class="row">
-    <?php if(count($childrenTypes)> 0): ?>
-    <div class="col-lg-2">
-        <div class="kt-portlet">
-            <div class="kt-portlet__body kt-portlet__body--fit">
-                <ul class="kt-nav kt-nav--bold kt-nav--md-space kt-nav--v3 kt-margin-t-20 kt-margin-b-20 nav nav-tabs "
-                    role="tablist">
-                    <li class="kt-nav__item">
-                        <a class="kt-nav__link<?= ($code == $parentMetadataModel->code) ? ' active' : '' ?>"
-                           href="<?= Url::to(['upload-metadata', 'country_id' => $country_id, 'type' => $parentMetadataModel->code]) ?>">
-                            <span class="kt-nav__link-text"><?= Lang::t('Upload {parent}', ['parent' => $parentMetadataModel->name]) ?></span>
-                        </a>
-                    </li>
-                    <?php
-                    foreach ($childrenTypes as $childType) {
-                        $type = $childType['code'];
-                        $name = $childType['name'];
-                        ?>
+    <?php if (count($childrenTypes) > 0): ?>
+        <div class="col-lg-2">
+            <div class="kt-portlet">
+                <div class="kt-portlet__body kt-portlet__body--fit">
+                    <ul class="kt-nav kt-nav--bold kt-nav--md-space kt-nav--v3 kt-margin-t-20 kt-margin-b-20 nav nav-tabs "
+                        role="tablist">
                         <li class="kt-nav__item">
-                            <a class="kt-nav__link<?= ($code == $type) ? ' active' : '' ?>"
-                               href="<?= Url::to(['upload-metadata', 'country_id' => $country_id, 'type' => $type]) ?>">
-                                <span class="kt-nav__link-text"><?= Lang::t('Upload {child}', ['child' => $name]) ?></span>
+                            <a class="kt-nav__link<?= ($code == $parentMetadataModel->code) ? ' active' : '' ?>"
+                               href="<?= Url::to(['upload-metadata', 'country_id' => $country_id, 'type' => $parentMetadataModel->code]) ?>">
+                                <span class="kt-nav__link-text"><?= Lang::t('Upload {parent}', ['parent' => $parentMetadataModel->name]) ?></span>
                             </a>
                         </li>
                         <?php
-                    }
-                    ?>
-                </ul>
+                        foreach ($childrenTypes as $childType) {
+                            $type = $childType['code'];
+                            $name = $childType['name'];
+                            ?>
+                            <li class="kt-nav__item">
+                                <a class="kt-nav__link<?= ($code == $type) ? ' active' : '' ?>"
+                                   href="<?= Url::to(['upload-metadata', 'country_id' => $country_id, 'type' => $type]) ?>">
+                                    <span class="kt-nav__link-text"><?= Lang::t('Upload {child}', ['child' => $name]) ?></span>
+                                </a>
+                            </li>
+                            <?php
+                        }
+                        ?>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
     <?php else: ?>
         <div class="col-lg-2">
             <div class="kt-portlet">
@@ -108,15 +105,6 @@ $parentName= FarmMetadataType::getScalar('name',['code'=>$parent_id]);
                     <div class="kt-section__body">
                         <div class="row">
                             <div class="col-md-8">
-                                <?php if (!Session::isCountry()): ?>
-                                    <?= $form->field($model, 'country_id')->widget(Select2::class, [
-                                        'data' => Country::getListData(),
-                                        'options' => ['placeholder' => '[select one]'],
-                                        'pluginOptions' => [
-                                            'allowClear' => false
-                                        ],
-                                    ]) ?>
-                                <?php endif; ?>
                                 <?= $this->render('@common/excel/views/uploadExcel', ['model' => $model, 'form_id' => $formId, 'previewUrl' => Url::to(['upload-metadata-preview', 'type' => Yii::$app->request->get('type')])]); ?>
                             </div>
                             <div class="col-md-4">
