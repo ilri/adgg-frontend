@@ -19,8 +19,11 @@ $code = Yii::$app->request->get('type');
 <?php
 $childrenTypes = FarmMetadataType::getData(['code', 'name','parent_id'], ['parent_id' => $parentMetadataModel->code]);
 $country_id = Yii::$app->request->get('country_id', null);
+$parent_id = $parentMetadataModel->parent_id;
+$parentName= FarmMetadataType::getScalar('name',['code'=>$parent_id]);
 ?>
 <div class="row">
+    <?php if(count($childrenTypes)> 0): ?>
     <div class="col-lg-2">
         <div class="kt-portlet">
             <div class="kt-portlet__body kt-portlet__body--fit">
@@ -50,6 +53,29 @@ $country_id = Yii::$app->request->get('country_id', null);
             </div>
         </div>
     </div>
+    <?php else: ?>
+        <div class="col-lg-2">
+            <div class="kt-portlet">
+                <div class="kt-portlet__body kt-portlet__body--fit">
+                    <ul class="kt-nav kt-nav--bold kt-nav--md-space kt-nav--v3 kt-margin-t-20 kt-margin-b-20 nav nav-tabs "
+                        role="tablist">
+                        <li class="kt-nav__item">
+                            <a class="kt-nav__link<?= ($code == $parent_id) ? ' active' : '' ?>"
+                               href="<?= Url::to(['upload-metadata', 'country_id' => $country_id, 'type' => $parent_id]) ?>">
+                                <span class="kt-nav__link-text"><?= Lang::t('Upload {parent}', ['parent' => $parentName]) ?></span>
+                            </a>
+                        </li>
+                        <li class="kt-nav__item">
+                            <a class="kt-nav__link<?= ($code == $parentMetadataModel->code) ? ' active' : '' ?>"
+                               href="<?= Url::to(['upload-metadata', 'country_id' => $country_id, 'type' => $parentMetadataModel->code]) ?>">
+                                <span class="kt-nav__link-text"><?= Lang::t('Upload {child}', ['child' => $parentMetadataModel->name]) ?></span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
     <div class="col-lg-10">
         <div class="kt-portlet">
             <div class="kt-portlet__head">
