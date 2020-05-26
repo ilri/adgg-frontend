@@ -3,11 +3,11 @@
 namespace backend\modules\core\models;
 
 use common\helpers\ArrayHelper;
+use common\helpers\DbUtils;
 use common\helpers\Lang;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
-use yii\base\InvalidArgumentException;
 
 /**
  * This is the model class for table "core_farm_metadata".
@@ -90,15 +90,22 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
 
     public function uniqueTypeValidator()
     {
-        if($this->hasErrors()){
+        if ($this->hasErrors()) {
             return false;
         }
-        $counts= static::getCount(['farm_id'=>$this->farm_id,'type'=>$this->type]);
-        $metadataTypeModel= FarmMetadataType::findOne(['code'=>$this->type]);
-        if($counts > 0 && $metadataTypeModel->farmer_has_multiple == 0){
-            $this->addError('type',Lang::t('Type {type} already exist for farm_id = {farm_id}', [
-                'type'=>$this->type,
-                'farm_id'=>$this->farm_id
+        if ($this->metadataType->farmer_has_multiple) {
+            return false;
+        }
+        $condition = '[[farm_id]]=:farm_id AND [[type]]=:type';
+        $params = [':farm_id' => $this->farm_id, ':type' => $this->type];
+        if (!empty($this->id)) {
+            //allow updating the same record
+            list($condition, $params) = DbUtils::appendCondition('id', $this->id, $condition, $params, 'AND', '<>');
+        }
+        if (static::exists($condition, $params)) {
+            $this->addError('type', Lang::t('Type {type} already exist for farm_id = {farm_id}', [
+                'type' => $this->type,
+                'farm_id' => $this->farm_id
             ]));
         }
     }
