@@ -1,0 +1,23 @@
+.kt-login-v2__container {
+    padding: 1.2rem;
+    background-color:#f2f3f8;
+}
+
+.kt-login-v2__container > .kt-login-v2__title > #site-title {
+    color: rgba(0,71,48,0.8);
+    font-size: 1.7rem;
+    font-weight: 600;
+}
+
+.kt-login-v2__container > .kt-login-v2__title > #login-cta {
+    color: #004730;
+    font-size: 1.6rem;
+    font-weight: 600;
+    padding-left: 4rem;
+}
+
+@media (max-width: 1024px) {
+    .kt-login-v2__container > .kt-login-v2__title > #login-cta {
+        padding-left: 2rem;
+    }
+}
