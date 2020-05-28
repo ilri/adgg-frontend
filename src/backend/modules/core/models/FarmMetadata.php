@@ -31,6 +31,8 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
     const TYPE_HEALTH_SERVICES_METADATA = 2;
     const TYPE_BREEDING_TECHNOLOGIES_METADATA = 3;
     const TYPE_BREEDING_BULLS = 4;
+    const TYPE_BREEDING_OTHER_BULLS = 5;
+    const TYPE_BREEDING_SCHEME_BULLS = 6;
 
 
     /**
