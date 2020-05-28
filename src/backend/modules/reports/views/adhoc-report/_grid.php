@@ -70,7 +70,21 @@ use yii\helpers\Url;
             'value' => function (AdhocReport $model) {
                 return Html::a(Lang::t('Download Report') . ' <i class="fas fa-download"></i>', ['/reports/adhoc-report/download-file', 'id' => $model->id], ['data-pjax' => 0]);
             },
-            'visible' => ($model->status == AdhocReport::STATUS_COMPLETED || $model->status == AdhocReport::STATUS_ERROR),
+            'visible' => false,
+        ],
+        [
+            'label' => 'Rebuild',
+            'filter' => false,
+            'format' => 'raw',
+            'value' => function (AdhocReport $model) {
+                if($model->is_standard || \common\helpers\Str::contains($model->name, ['Milk_Data_', 'Pedigree_'])) {
+                    return '';
+                }
+                else {
+                    return Html::a(Lang::t('Rebuild Report') . ' <i class="fas fa-paint-roller"></i>', ['/reports/builder/index', 'country_id' => $model->country_id ?? '', 'rebuild_id' => $model->id], ['data-pjax' => 0, 'target' => '_blank']);
+                }
+            },
+            'visible' => true,
         ],
         [
             'class' => common\widgets\grid\ActionColumn::class,
