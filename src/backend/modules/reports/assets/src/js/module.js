@@ -454,7 +454,7 @@ MyApp.modules.reports = {};
         // populate builder with fields, mostly when rebuilding
         let initOptions = $this.options.initBuilderOptions;
 
-        if(!$.isEmptyObject(initOptions)){
+        if(initOptions.length > 0){
             _populateDefaults(initOptions);
         }
 
