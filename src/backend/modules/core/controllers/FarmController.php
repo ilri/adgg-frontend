@@ -188,9 +188,12 @@ class FarmController extends Controller
             return $resp;
         }
 
+        $metadataTypeParentModel = $metadataTypeModel->parent !== null ? $metadataTypeModel->parent : $metadataTypeModel;
+
         return $this->render('upload-metadata', [
             'model' => $form,
             'metadataTypeModel' => $metadataTypeModel,
+            'metadataTypeParentModel' => $metadataTypeParentModel,
         ]);
     }
 
