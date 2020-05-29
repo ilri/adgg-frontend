@@ -3,6 +3,7 @@
 namespace backend\modules\reports\models;
 
 use backend\modules\core\models\Animal;
+use backend\modules\core\models\CalvingEvent;
 use backend\modules\core\models\Country;
 use backend\modules\core\models\MilkingEvent;
 use common\helpers\ArrayHelper;
@@ -104,6 +105,13 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         $fieldAliasMapping = $options['fieldAliasMapping'] ?? [];
 
         $row['cattletotalowned'] = floatval($row['total_cattle_owned_by_female']) + floatval($row['total_cattle_owned_by_male']) + floatval($row['total_cattle_owned_joint']);
+        unset($row['total_cattle_owned_by_female'], $row['total_cattle_owned_by_male'], $row['total_cattle_owned_joint']);
+        return $row;
+    }
+    public static function transformTestDayMilkDataRow($row, $options = []){
+        $fieldAliasMapping = $options['fieldAliasMapping'] ?? [];
+
+        $row['Cattleowned'] = floatval($row['total_cattle_owned_by_female']) + floatval($row['total_cattle_owned_by_male']) + floatval($row['total_cattle_owned_joint']);
         unset($row['total_cattle_owned_by_female'], $row['total_cattle_owned_by_male'], $row['total_cattle_owned_joint']);
         return $row;
     }
@@ -236,6 +244,273 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         $builder->rowTransformer = '\backend\modules\reports\models\Reports::transformMilkDataRow';
 
         return $builder;
+    }
+
+    public static function testDayMilkDataReport($filter){
+        $fields = [
+            'region_id' => null,
+            'district_id' => null,
+            'ward_id' => null,
+            'village_id' => null,
+            'region.name' => null,
+            'district.name' => null,
+            'ward.code' => null,
+            'village.code' => null,
+            'animal.farm.id' => null,
+            'animal.farm.gender_code' => null,
+            'animal.farm.total_cattle_owned' => null,
+            'animal.farm.total_cattle_owned_by_female' => null,
+            'animal.farm.total_cattle_owned_by_male' => null,
+            'animal.farm.total_cattle_owned_joint' => null,
+            'animal.tag_id' => null,
+            'lactation.event_date' => null,
+            'event_date' => null,
+            'milkmor' => null,
+            'milkeve' => null,
+            'milkday' => null,
+            'dim' => null,
+            'milkfat' => null,
+            'milkprot' => null,
+            'milk_heartgirth' => null,
+            'weight' => null,
+            'milk_estimated_weight' => null,
+            'milk_bodyscore' => null,
+            'lactation.lactation_number' => null,
+            'testday_no' => null,
+            'animal.farm.longitude' => null,
+            'animal.farm.latitude' => null,
+        ];
+        $filterConditions = array_merge($fields, [
+            'region_id' => '=',
+            'district_id' => '=',
+            'ward_id' => '=',
+            'village_id' => '=',
+        ]);
+        $filterValues = [
+            'region_id' => $filter['region_id'],
+            'district_id' => $filter['district_id'],
+            'ward_id' => $filter['ward_id'],
+            'village_id' => $filter['village_id'],
+        ];
+        $fieldAliases = [
+            'lactation.event_date' => 'CalvDate',
+            'animal.tag_id' => 'AnimalID',
+            'region.name' => 'Region',
+            'district.name' => 'District',
+            'ward.code' => 'Wareda',
+            'village.code' => 'Kebele',
+            'animal.farm.id' => 'HH_ID',
+            'animal.farm.gender_code' => 'FarmerGender',
+            'animal.farm.total_cattle_owned' => 'Cattleowned',
+            'animal.farm.total_cattle_owned_by_female' => 'total_cattle_owned_by_female',
+            'animal.farm.total_cattle_owned_by_male' => 'total_cattle_owned_by_male',
+            'animal.farm.total_cattle_owned_joint' => 'total_cattle_owned_joint',
+            'event_date' => 'milkdate',
+            'milkmor' => 'milkAM',
+            'milkeve' => 'milkPM',
+            'milkday' => 'TotalMilk',
+            'dim' => 'DIM',
+            'milkfat' => 'MilkFat',
+            'milkprot' => 'MilkProt',
+            'milk_heartgirth' => 'HeartGirth',
+            'weight' => 'Weight',
+            'milk_estimated_weight' => 'estimated weight',
+            'milk_bodyscore' => 'Bodyscore',
+            'lactation.lactation_number' => 'LactNo',
+            'testday_no' => 'TDNo',
+            'animal.farm.longitude' => 'Longitude',
+            'animal.farm.latitude' => 'Latitude',
+        ];
+        $excludeFromReport = array_keys($filterValues);
+        $genders = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_GENDER;
+        $decodedFields = [
+            'event_date' => [
+                'function' => '\common\helpers\DateUtils::formatDate',
+                'params' => [
+                    'fieldValue',
+                    'd/m/Y',
+                ]
+            ],
+            'lactation.event_date' => [
+                'function' => '\common\helpers\DateUtils::formatDate',
+                'params' => [
+                    'fieldValue',
+                    'd/m/Y',
+                ]
+            ],
+            'animal.farm.gender_code' => [
+                'function' => '\backend\modules\core\models\Choices::getLabel',
+                'params'=> [
+                    "$genders",
+                    'fieldValue', // the value of this field
+                ]
+            ],
+        ];
+
+        $from = ArrayHelper::getValue($filter, 'from');
+        $to = ArrayHelper::getValue($filter, 'to');
+
+        $orderBy = '';
+
+        $builder = new ReportBuilder();
+        $builder->model = 'Milking_Event';
+        $builder->filterConditions = $filterConditions;
+        $builder->filterValues = $filterValues;
+        $builder->fieldAliases = $fieldAliases;
+        $builder->excludeFromReport = $excludeFromReport;
+        $builder->decodeFields = $decodedFields;
+        $builder->orderBy = $orderBy;
+        //$builder->limit = 50;
+        $builder->country_id = $filter['country_id'] ?? null;
+        $builder->name = 'TestDayMilk_Data_' . ($filter['country_id'] ? Country::getScalar('name', ['id' => $filter['country_id']]) : '');
+
+        if (!empty($from) && !empty($to)) {
+            $casted_date = DbUtils::castDATE(MilkingEvent::tableName().'.[[event_date]]');
+            $condition = '(' . $casted_date . '>=:from AND ' . $casted_date . '<=:to)';
+            $params[':from'] = $from;
+            $params[':to'] = $to;
+            $expression = new Expression($condition, $params);
+            $builder->extraFilterExpressions[] = $expression;
+        }
+        // add the rowTransformer
+        $builder->rowTransformer = '\backend\modules\reports\models\Reports::transformTestDayMilkDataRow';
+
+        return $builder;
+    }
+
+    public static function calfDataReport($filter){
+        $fields = [
+            'region_id' => null,
+            'district_id' => null,
+            'ward_id' => null,
+            'village_id' => null,
+            'region.name' => null,
+            'district.name' => null,
+            'ward.code' => null,
+            'village.code' => null,
+            'animal.farm.id' => null,
+            'animal.farm.gender_code' => null,
+            'animal.farm.total_cattle_owned' => null,
+            'animal.farm.total_cattle_owned_by_female' => null,
+            'animal.farm.total_cattle_owned_by_male' => null,
+            'animal.farm.total_cattle_owned_joint' => null,
+            'animal.tag_id' => null,
+            'animal.birthdate' => null,
+            'calfhgirth' => null,
+            'calfweight' => null,
+            'calf_estimated_weight' => null,
+            'calfbodyscore' => null,
+            'animal.sire_tag_id' => null,
+            'animal.dam_tag_id' => null,
+            'calfsex' => null,
+            'animal.main_breed' => null,
+            'animal.farm.longitude' => null,
+            'animal.farm.latitude' => null,
+        ];
+        $filterConditions = array_merge($fields, [
+            'region_id' => '=',
+            'district_id' => '=',
+            'ward_id' => '=',
+            'village_id' => '=',
+        ]);
+        $filterValues = [
+            'region_id' => $filter['region_id'],
+            'district_id' => $filter['district_id'],
+            'ward_id' => $filter['ward_id'],
+            'village_id' => $filter['village_id'],
+        ];
+        $fieldAliases = [
+            'region.name' => 'Region',
+            'district.name' => 'District',
+            'ward.code' => 'Wareda',
+            'village.code' => 'Kebele',
+            'animal.farm.id' => 'HH_ID',
+            'animal.farm.gender_code' => 'FarmerGender',
+            'animal.farm.total_cattle_owned' => 'Cattleowned',
+            'animal.farm.total_cattle_owned_by_female' => 'total_cattle_owned_by_female',
+            'animal.farm.total_cattle_owned_by_male' => 'total_cattle_owned_by_male',
+            'animal.farm.total_cattle_owned_joint' => 'total_cattle_owned_joint',
+            'animal.tag_id' => 'AnimalID',
+            'animal.birthdate' => 'Birthdate',
+            'calfhgirth' => 'HeartGirth',
+            'calfweight' => 'Weight',
+            'calf_estimated_weight' => 'estimated weight',
+            'calfbodyscore' => 'Bodyscore',
+            'animal.sire_tag_id' => 'Sire ID',
+            'animal.dam_tag_id' => 'Dam ID',
+            'calfsex' => 'Sex',
+            'animal.main_breed' => 'Breed',
+            'animal.farm.longitude' => 'Longitude',
+            'animal.farm.latitude' => 'Latitude',
+        ];
+        # TODO: define these fields to be decoded elsewhere
+        $breeds = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS;
+        $animal_type = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES;
+        $genders = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_GENDER;
+        $decodedFields = [
+            'animal.main_breed' => [
+                'function' => '\backend\modules\core\models\Choices::getLabel',
+                'params'=> [
+                    //'\backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS',
+                    "$breeds",
+                    'fieldValue', // the value of this field
+                ]
+            ],
+            'animal.birthdate' => [
+                'function' => '\common\helpers\DateUtils::formatDate',
+                'params' => [
+                    'fieldValue',
+                    'd/m/Y',
+                ]
+            ],
+            'animal.farm.gender_code' => [
+                'function' => '\backend\modules\core\models\Choices::getLabel',
+                'params'=> [
+                    "$genders",
+                    'fieldValue', // the value of this field
+                ]
+            ],
+            'calfsex' => [
+                'function' => '\backend\modules\core\models\Choices::getLabel',
+                'params'=> [
+                    "$genders",
+                    'fieldValue', // the value of this field
+                ]
+            ],
+        ];
+
+        $excludeFromReport = array_keys($filterValues);
+
+        $from = ArrayHelper::getValue($filter, 'from');
+        $to = ArrayHelper::getValue($filter, 'to');
+
+        $orderBy = '';
+
+        $builder = new ReportBuilder();
+        $builder->model = 'Calving_Event';
+        $builder->filterConditions = $filterConditions;
+        $builder->filterValues = $filterValues;
+        $builder->fieldAliases = $fieldAliases;
+        $builder->excludeFromReport = $excludeFromReport;
+        $builder->decodeFields = $decodedFields;
+        $builder->orderBy = $orderBy;
+        //$builder->limit = 50;
+        $builder->country_id = $filter['country_id'] ?? null;
+        $builder->name = 'Calf_Data_' . ($filter['country_id'] ? Country::getScalar('name', ['id' => $filter['country_id']]) : '');
+
+        if (!empty($from) && !empty($to)) {
+            $casted_date = DbUtils::castDATE(CalvingEvent::tableName().'.[[event_date]]');
+            $condition = '(' . $casted_date . '>=:from AND ' . $casted_date . '<=:to)';
+            $params[':from'] = $from;
+            $params[':to'] = $to;
+            $expression = new Expression($condition, $params);
+            $builder->extraFilterExpressions[] = $expression;
+        }
+
+        //dd($builder->rawQuery());
+        $builder->rowTransformer = '\backend\modules\reports\models\Reports::transformTestDayMilkDataRow';
+        return $builder;
+
     }
 
     public static function pedigreeDataReport($filter){
