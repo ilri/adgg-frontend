@@ -15,6 +15,7 @@ use yii\helpers\Json;
 /* @var $this yii\web\View */
 /* @var $country_id int */
 /* @var $models ReportBuilder */
+/* @var $rebuild_options array  */
 
 $this->title = 'Extract Builder';
 $this->params['breadcrumbs'][] = $this->title;
@@ -201,6 +202,7 @@ $options = [
     'inputTypeOptions' => array_flip(TableAttribute::inputTypeOptions()),
     'generateQueryURL' => Url::to(['/reports/builder/generate-query']),
     'saveReportURL' => Url::to(['/reports/builder/save-report']),
+    'initBuilderOptions' => $rebuild_options,
 ];
 $this->registerJs("MyApp.modules.reports.reportbuilder(" . Json::encode($options) . ");");
 ?>

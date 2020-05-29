@@ -53,7 +53,7 @@ class AdhocReport extends ActiveRecord implements ActiveSearchInterface
     {
         return [
             [['name', 'raw_sql', 'status'], 'required'],
-            [['status', 'type', 'is_standard'], 'integer'],
+            [['status', 'type', 'country_id', 'is_standard'], 'integer'],
             [['name', 'report_file'], 'string', 'max' => 255],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];

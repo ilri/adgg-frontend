@@ -17,6 +17,7 @@ MyApp.modules.reports = {};
             generateQueryURL: '',
             saveReportURL: '',
             searchAttributesSelector: '.search-attributes',
+            initBuilderOptions : {},
         };
         this.options = $.extend({}, defaultOptions, options || {});
     }
@@ -35,6 +36,38 @@ MyApp.modules.reports = {};
         let selectedFieldTypes = {};
         let selectedParentModel = null;
         let selectedParentModelTitle = null;
+
+        let _populateDefaults = function (initOptions){
+            // open the collapsed attributes panel
+            let modelTarget = '#collapse' + initOptions.reportModel;
+            let button = $('div[data-target="' + modelTarget + '"]');
+            let modelContainer = $('#collapse' + initOptions.reportModel);
+            button.trigger('click');
+            // populate the pre-selected fields
+            let fields = Object.keys(initOptions.filterConditions);
+
+            let unavailableFields = [];
+            fields.forEach(function (field, index) {
+                let attr = $(modelContainer).find('label.attribute.kt-checkbox[data-name="' + field + '"]');
+                if(attr.length > 0){
+                    attr.trigger('click');
+                    // open collapsible relation panels
+                    if(field.indexOf('.') !== -1)
+                    {
+                        $(attr).parents("div.collapse").addClass("show");
+                    }
+                    let attrDefaults = {
+                        'filterOperator' : initOptions.filterConditions[field],
+                        'filterValue' : initOptions.filterValues[field],
+                    };
+                    _populateSelected(attr, attrDefaults);
+                }
+                else{
+                    // TODO: alert user that these fields are no longer available in report builder
+                    unavailableFields.push(field);
+                }
+            });
+        }
 
         let _generateQuery = function (e) {
             let form = $($this.options.builderFormSelector),
@@ -129,7 +162,7 @@ MyApp.modules.reports = {};
             })
         }
 
-        let _populateSelected = function (e) {
+        let _populateSelected = function (e, attrDefaults = {}) {
             var name = $(e).data('name');
             var label = $(e).data('original-title');
             var type = $(e).data('type');
@@ -161,6 +194,12 @@ MyApp.modules.reports = {};
             }
             selectedParentModel = parentModel;
             selectedParentModelTitle = parentModelTitle;
+
+            // populate default filter value and operator
+            if(!$.isEmptyObject(attrDefaults)){
+                selectedFilterOperators[name] = attrDefaults['filterOperator'];
+                selectedFilterValues[name] = attrDefaults['filterValue'];
+            }
             // write to html
             _showSelected(e);
         }
@@ -410,6 +449,13 @@ MyApp.modules.reports = {};
                     attributes[i].parentElement.style.display = "none";
                 }
             }
+        }
+
+        // populate builder with fields, mostly when rebuilding
+        let initOptions = $this.options.initBuilderOptions;
+
+        if(!$.isEmptyObject(initOptions)){
+            _populateDefaults(initOptions);
         }
 
         //on click
