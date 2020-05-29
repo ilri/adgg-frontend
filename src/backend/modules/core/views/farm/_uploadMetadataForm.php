@@ -9,71 +9,40 @@ use yii\bootstrap4\ActiveForm;
 
 /* @var $this \yii\web\View */
 /* @var $model \backend\modules\core\forms\UploadFarmMetadata */
-/* @var $parentMetadataModel FarmMetadataType */
+/* @var $metadataTypeParentModel FarmMetadataType */
 /* @var $form ActiveForm */
 $code = Yii::$app->request->get('type');
-?>
-<?php
-$childrenTypes = FarmMetadataType::getData(['code', 'name', 'parent_id'], ['parent_id' => $parentMetadataModel->code]);
 $country_id = Yii::$app->request->get('country_id', null);
-$parent_id = $parentMetadataModel->parent_id;
-$parentName = FarmMetadataType::getScalar('name', ['code' => $parent_id]);
+$hasChildren = !empty($metadataTypeParentModel->children);
 ?>
 <div class="row">
-    <?php if (count($childrenTypes) > 0): ?>
+    <?php if ($hasChildren): ?>
         <div class="col-lg-2">
             <div class="kt-portlet">
                 <div class="kt-portlet__body kt-portlet__body--fit">
-                    <ul class="kt-nav kt-nav--bold kt-nav--md-space kt-nav--v3 kt-margin-t-20 kt-margin-b-20 nav nav-tabs "
+                    <ul class="kt-nav kt-nav--bold kt-nav--md-space kt-nav--v3 kt-margin-t-20 kt-margin-b-20 nav nav-tabs"
                         role="tablist">
                         <li class="kt-nav__item">
-                            <a class="kt-nav__link<?= ($code == $parentMetadataModel->code) ? ' active' : '' ?>"
-                               href="<?= Url::to(['upload-metadata', 'country_id' => $country_id, 'type' => $parentMetadataModel->code]) ?>">
-                                <span class="kt-nav__link-text"><?= Lang::t('Upload {parent}', ['parent' => $parentMetadataModel->name]) ?></span>
+                            <a class="kt-nav__link<?= ($code == $metadataTypeParentModel->code) ? ' active' : '' ?>"
+                               href="<?= Url::to(['upload-metadata', 'country_id' => $country_id, 'type' => $metadataTypeParentModel->code]) ?>">
+                                <span class="kt-nav__link-text"><?= Lang::t('Upload {parent}', ['parent' => $metadataTypeParentModel->name]) ?></span>
                             </a>
                         </li>
                         <?php
-                        foreach ($childrenTypes as $childType) {
-                            $type = $childType['code'];
-                            $name = $childType['name'];
-                            ?>
+                        foreach ($metadataTypeParentModel->children as $child):?>
                             <li class="kt-nav__item">
-                                <a class="kt-nav__link<?= ($code == $type) ? ' active' : '' ?>"
-                                   href="<?= Url::to(['upload-metadata', 'country_id' => $country_id, 'type' => $type]) ?>">
-                                    <span class="kt-nav__link-text"><?= Lang::t('Upload {child}', ['child' => $name]) ?></span>
+                                <a class="kt-nav__link<?= ($code == $child->code) ? ' active' : '' ?>"
+                                   href="<?= Url::to(['upload-metadata', 'country_id' => $country_id, 'type' => $child->code]) ?>">
+                                    <span class="kt-nav__link-text"><?= Lang::t('Upload {child}', ['child' => $child->name]) ?></span>
                                 </a>
                             </li>
-                            <?php
-                        }
-                        ?>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    <?php else: ?>
-        <div class="col-lg-2">
-            <div class="kt-portlet">
-                <div class="kt-portlet__body kt-portlet__body--fit">
-                    <ul class="kt-nav kt-nav--bold kt-nav--md-space kt-nav--v3 kt-margin-t-20 kt-margin-b-20 nav nav-tabs "
-                        role="tablist">
-                        <li class="kt-nav__item">
-                            <a class="kt-nav__link<?= ($code == $parent_id) ? ' active' : '' ?>"
-                               href="<?= Url::to(['upload-metadata', 'country_id' => $country_id, 'type' => $parent_id]) ?>">
-                                <span class="kt-nav__link-text"><?= Lang::t('Upload {parent}', ['parent' => $parentName]) ?></span>
-                            </a>
-                        </li>
-                        <li class="kt-nav__item">
-                            <a class="kt-nav__link<?= ($code == $parentMetadataModel->code) ? ' active' : '' ?>"
-                               href="<?= Url::to(['upload-metadata', 'country_id' => $country_id, 'type' => $parentMetadataModel->code]) ?>">
-                                <span class="kt-nav__link-text"><?= Lang::t('Upload {child}', ['child' => $parentMetadataModel->name]) ?></span>
-                            </a>
-                        </li>
+                        <?php endforeach; ?>
                     </ul>
                 </div>
             </div>
         </div>
     <?php endif; ?>
-    <div class="col-lg-10">
+    <div class="<?= $hasChildren ? 'col-lg-10' : 'col-lg-12'; ?>">
         <div class="kt-portlet">
             <div class="kt-portlet__head">
                 <div class="kt-portlet__head-label">
