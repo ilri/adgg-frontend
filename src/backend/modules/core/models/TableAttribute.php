@@ -26,6 +26,7 @@ use yii\base\InvalidArgumentException;
  * @property int $is_alias
  * @property string $alias_to
  * @property int $farm_metadata_type
+ * @property string $odk_attribute_name
  * @property string $created_at
  * @property int $created_by
  *
@@ -71,7 +72,7 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
             [['attribute_key', 'attribute_label', 'table_id', 'input_type'], 'required'],
             [['table_id', 'group_id', 'input_type', 'list_type_id', 'is_active', 'event_type', 'is_alias', 'farm_metadata_type'], 'integer'],
             [['default_value'], 'string'],
-            [['attribute_key', 'alias_to'], 'string', 'max' => 128],
+            [['attribute_key', 'alias_to','odk_attribute_name'], 'string', 'max' => 128],
             [['attribute_label'], 'string', 'max' => 255],
             [['group_id'], 'exist', 'skipOnError' => true, 'targetClass' => TableAttributesGroup::class, 'targetAttribute' => ['group_id' => 'id']],
             ['attribute_key', 'unique', 'targetAttribute' => ['table_id', 'attribute_key'], 'message' => Lang::t('{attribute} already exists.')],
@@ -115,6 +116,7 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
         return [
             'id' => 'ID',
             'attribute_key' => 'Attribute Key',
+            'odk_attribute_name' => 'ODK Attribute Name',
             'attribute_label' => 'Attribute Label',
             'table_id' => 'Table ID',
             'group_id' => 'Group ID',
@@ -162,6 +164,7 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
     {
         return [
             ['attribute_key', 'attribute_key'],
+            ['odk_attribute_name', 'odk_attribute_name'],
             ['attribute_label', 'attribute_label'],
             'table_id',
             'list_type_id',
