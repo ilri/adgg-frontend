@@ -12,6 +12,7 @@ use common\helpers\Url;
 use common\models\ActiveRecord;
 use console\jobs\ReportGenerator;
 use Yii;
+use yii\base\Exception;
 use yii\helpers\Json;
 
 /**
@@ -29,13 +30,30 @@ class BuilderController extends Controller
         $this->hasPrivilege(Acl::ACTION_CREATE);
     }
 
-    public function actionIndex($country_id)
+    public function actionIndex($country_id, $rebuild_id = null)
     {
         $models = ReportBuilder::reportableModels();
         $country_id = Session::getCountryId($country_id);
+        $rebuild_options = [];
+        if ($rebuild_id){
+            $report = AdhocReport::find()->andWhere(['id' => $rebuild_id])->one();
+            if ($report === null){
+                throw new Exception('Cannot rebuild report.');
+            }
+            /* @var $report AdhocReport */
+            $options = json_decode($report->options, true);
+            // these are required to rebuild the fields in the UI, others are only useful behind the scenes, for now
+            $only = ['filterConditions', 'filterValues', 'limit', 'orderby', 'country_id', 'reportModel'];
+            if (is_array($options)){
+                $rebuild_options = array_intersect_key($options, array_flip($only));
+                $country_id = $options['country_id'];
+            }
+        }
         return $this->render('index', [
             'models' => $models,
             'country_id' => $country_id,
+            'rebuild_id' => $rebuild_id,
+            'rebuild_options' => $rebuild_options,
         ]);
     }
 

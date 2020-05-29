@@ -7,7 +7,8 @@ use yii\helpers\Html;
 /* @var $this \yii\web\View */
 /* @var $model \backend\modules\core\forms\UploadFarmMetadata */
 /* @var $controller \backend\controllers\BackendController */
-/* @var $metadataTypeModel \backend\modules\core\models\FarmMetadataType*/
+/* @var $metadataTypeModel \backend\modules\core\models\FarmMetadataType */
+/* @var $metadataTypeParentModel \backend\modules\core\models\FarmMetadataType */
 
 $controller = Yii::$app->controller;
 $this->title = Lang::t('Upload {resource}', ['resource' => Html::encode($metadataTypeModel->name)]);
@@ -19,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="col-lg-12">
         <?= $this->render('@coreModule/views/farm/_uploadTab', []) ?>
         <div class="tab-content">
-            <?= $this->render('_uploadMetadataForm', ['model' => $model,'parentMetadataModel'=>$metadataTypeModel]) ?>
+            <?= $this->render('_uploadMetadataForm', ['model' => $model, 'metadataTypeModel' => $metadataTypeModel, 'metadataTypeParentModel' => $metadataTypeParentModel]) ?>
         </div>
     </div>
 </div>

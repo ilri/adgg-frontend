@@ -19,6 +19,10 @@ class Asset extends AssetBundle
         'js/auth-module.js',
     ];
 
+    public $css = [
+        'css/auth.css',
+    ];
+
     public $depends = [
         AppAsset::class,
     ];
