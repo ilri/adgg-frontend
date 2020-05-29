@@ -454,8 +454,15 @@ MyApp.modules.reports = {};
         // populate builder with fields, mostly when rebuilding
         let initOptions = $this.options.initBuilderOptions;
 
-        if(initOptions.length > 0){
-            _populateDefaults(initOptions);
+        if (Array.isArray(initOptions)){
+            if(initOptions.length > 0){
+                _populateDefaults(initOptions);
+            }
+        }
+        if(initOptions instanceof Object && initOptions.constructor === Object){
+            if(!$.isEmptyObject(initOptions)){
+                _populateDefaults(initOptions);
+            }
         }
 
         //on click
