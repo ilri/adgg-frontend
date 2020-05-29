@@ -368,4 +368,131 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         return $builder;
 
     }
+
+    public static function pedigreeFileDataReport($filter)
+    {
+        $fields = [
+            'region_id' => null,
+            'district_id' => null,
+            'ward_id' => null,
+            'village_id' => null,
+            'region.name' => null,
+            'district.name' => null,
+            'ward.code' => null,
+            'village.code' => null,
+            'farm.id' => null,
+            'id' => null,
+            'tag_id' => null,
+            'sire_tag_id' => null,
+            'dam_tag_id' => null,
+            'sex' => null,
+            'birthdate' => null,
+            'main_breed' => null,
+        ];
+
+        $filterConditions = array_merge($fields, [
+            'region_id' => '=',
+            'district_id' => '=',
+            'ward_id' => '=',
+            'village_id' => '=',
+        ]);
+        $filterValues = [
+            'region_id' => $filter['region_id'],
+            'district_id' => $filter['district_id'],
+            'ward_id' => $filter['ward_id'],
+            'village_id' => $filter['village_id'],
+        ];
+        $fieldAliases = [
+            'region.name' => 'Region',
+            'district.name' => 'District',
+            'ward.code' => 'Wareda',
+            'village.code' => 'Kebele',
+            'farm.id' => 'HH_ID',
+            'id' => 'AnimalID',
+            'tag_id' => 'AnimalRegID',
+            'sire_tag_id' => 'SireID',
+            'dam_tag_id' => 'DamID',
+            'sex' => 'Sex',
+            'birthdate' => 'Birthdt',
+            'main_breed' => 'Breed',
+        ];
+        # TODO: define these fields to be decoded elsewhere
+        $breeds = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS;
+        $animal_type = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES;
+        $genders = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_GENDER;
+        $decodedFields = [
+            'main_breed' => [
+                'function' => '\backend\modules\core\models\Choices::getLabel',
+                'params'=> [
+                    //'\backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS',
+                    "$breeds",
+                    'fieldValue', // the value of this field
+                ]
+            ],
+            'animal_type' => [
+                'function' => '\backend\modules\core\models\Choices::getLabel',
+                'params'=> [
+                    //'\backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS',
+                    "$animal_type",
+                    'fieldValue', // the value of this field
+                ]
+            ],
+            'deformities' => [
+                'function' => '\backend\modules\core\models\Animal::decodeDeformities',
+                'params'=> [
+                    'fieldValue', // the value of this field
+                ]
+            ],
+            'farm.gender_code' => [
+                'function' => '\backend\modules\core\models\Choices::getLabel',
+                'params'=> [
+                    "$genders",
+                    'fieldValue', // the value of this field
+                ]
+            ],
+            'farm.farmer_is_hh_head' => [
+                'function' => '\common\helpers\Utils::decodeBoolean',
+                'params'=> [
+                    'fieldValue', // the value of this field
+                ]
+            ],
+            'birthdate' => [
+                'function' => '\common\helpers\DateUtils::formatDate',
+                'params' => [
+                    'fieldValue',
+                    'd/m/Y',
+                ]
+            ]
+        ];
+
+        $excludeFromReport = array_keys($filterValues);
+
+        $from = ArrayHelper::getValue($filter, 'from');
+        $to = ArrayHelper::getValue($filter, 'to');
+
+        $orderBy = '';
+
+        $builder = new ReportBuilder();
+        $builder->model = 'Animal';
+        $builder->filterConditions = $filterConditions;
+        $builder->filterValues = $filterValues;
+        $builder->fieldAliases = $fieldAliases;
+        $builder->excludeFromReport = $excludeFromReport;
+        $builder->decodeFields = $decodedFields;
+        $builder->orderBy = $orderBy;
+        //$builder->limit = 50;
+        $builder->country_id = $filter['country_id'] ?? null;
+        $builder->name = 'Pedigree_File_' . ($filter['country_id'] ? Country::getScalar('name', ['id' => $filter['country_id']]) : '');
+
+        if (!empty($from) && !empty($to)) {
+            $casted_date = DbUtils::castDATE(Animal::tableName().'.[[birthdate]]');
+            $condition = '(' . $casted_date . '>=:from AND ' . $casted_date . '<=:to)';
+            $params[':from'] = $from;
+            $params[':to'] = $to;
+            $expression = new Expression($condition, $params);
+            $builder->extraFilterExpressions[] = $expression;
+        }
+
+        return $builder;
+    }
 }
