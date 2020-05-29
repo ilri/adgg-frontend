@@ -18,6 +18,7 @@ use yii\bootstrap4\ActiveForm;
  * @package backend\modules\core\models
  *
  * @property string|array $additional_attributes
+ * @property string $odk_form_uuid
  */
 trait TableAttributeTrait
 {
