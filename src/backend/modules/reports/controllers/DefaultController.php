@@ -50,6 +50,16 @@ class DefaultController extends Controller
             case Constants::REPORT_TYPE_MILKDATA:
                 $tpl_type = 'milkdata';
                 break;
+            case Constants::REPORT_TYPE_PEDIGREE_FILE:
+                $tpl_type = 'pedigreefile';
+                break;
+            case Constants::REPORT_TYPE_TESTDAY_MILKDATA:
+                $tpl_type = 'testdaymilkdata';
+                break;
+
+            case Constants::REPORT_TYPE_CALFDATA:
+                $tpl_type = 'calfdata';
+                break;
         }
         $searchModel = AdhocReport::searchModel([
             'defaultOrder' => ['id' => SORT_DESC],
@@ -91,6 +101,22 @@ class DefaultController extends Controller
                     break;
                 case Constants::REPORT_TYPE_PEDIGREE:
                     $builder = Reports::pedigreeDataReport(\Yii::$app->request->post());
+                    $name = $builder->name;
+                    $query = null;
+                    break;
+                case Constants::REPORT_TYPE_PEDIGREE_FILE:
+                    $builder = Reports::pedigreeFileDataReport(\Yii::$app->request->post());
+                    $name = $builder->name;
+                    $query = null;
+                    break;
+                case Constants::REPORT_TYPE_TESTDAY_MILKDATA:
+                    $builder = Reports::testDayMilkDataReport(\Yii::$app->request->post());
+                    $name = $builder->name;
+                    $query = null;
+                    break;
+
+                case Constants::REPORT_TYPE_CALFDATA:
+                    $builder = Reports::calfDataReport(\Yii::$app->request->post());
                     $name = $builder->name;
                     $query = null;
                     break;
