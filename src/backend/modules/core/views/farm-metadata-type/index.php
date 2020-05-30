@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <h2>
             <?= $this->title ?>
         </h2>
-        <?= $this->render('@coreModule/views/extendable-table/_tab'); ?>
+        <?= $this->render('@coreModule/views/table-attribute/_tab'); ?>
         <div class="tab-content">
             <?= $this->render('_grid', ['model' => $searchModel]) ?>
         </div>

@@ -10,7 +10,7 @@ $table_id = Yii::$app->request->get('table_id', null);
     <?php foreach (\backend\modules\core\models\TableAttribute::tableOptions(false) as $id => $label): ?>
         <li class="nav-item">
             <a class="nav-link<?= $table_id == $id ? ' active' : '' ?>"
-               href="<?= Url::to(['extendable-table/index', 'table_id' => $id]) ?>">
+               href="<?= Url::to(['table-attribute/index', 'table_id' => $id]) ?>">
                 <?= Lang::t($label) ?>
             </a>
         </li>
