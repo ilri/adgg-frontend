@@ -14,7 +14,7 @@ use backend\modules\core\Constants;
 use backend\modules\core\models\OdkForm;
 use common\helpers\Lang;
 use common\helpers\Url;
-use console\jobs\ProcessODKJson;
+use console\jobs\ODKFormProcessor;
 use Yii;
 use yii\base\Exception;
 use yii\web\ForbiddenHttpException;
@@ -121,6 +121,6 @@ class OdkFormController extends Controller
         }
 
         $model = OdkForm::loadModel($id);
-        ProcessODKJson::push(['queueId' => $model->id]);
+        ODKFormProcessor::push(['queueId' => $model->id]);
     }
 }

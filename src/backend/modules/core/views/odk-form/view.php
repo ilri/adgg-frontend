@@ -135,7 +135,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <div class="row">
                         <div class="col-lg-12">
                             <pre class="show-pretty-json"
-                                 data-json='<?= json_encode($model->error_json, JSON_FORCE_OBJECT) ?>'></pre>
+                                 data-json='<?= json_encode([], JSON_FORCE_OBJECT) ?>'></pre>
                         </div>
                     </div>
                 </div>

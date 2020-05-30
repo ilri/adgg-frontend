@@ -5,6 +5,7 @@ namespace backend\modules\core\models;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
+use console\jobs\ODKFormProcessor;
 
 /**
  * This is the model class for table "core_odk_json_queue".
@@ -111,7 +112,7 @@ class OdkForm extends ActiveRecord implements ActiveSearchInterface
         parent::afterSave($insert, $changedAttributes);
 
         if ($insert) {
-            //ProcessODKJson::push(['queueId' => $this->id]);
+            ODKFormProcessor::push(['itemId' => $this->id]);
         }
     }
 
