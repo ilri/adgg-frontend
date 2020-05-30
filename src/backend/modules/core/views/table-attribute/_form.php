@@ -1,6 +1,5 @@
 <?php
 
-use backend\modules\core\models\ExtendableTable;
 use backend\modules\core\models\TableAttribute;
 use backend\modules\core\models\TableAttributesGroup;
 use common\helpers\Lang;
@@ -15,7 +14,7 @@ use yii\helpers\Url;
 /* @var $controller \backend\controllers\BackendController */
 /* @var $model TableAttribute */
 $controller = Yii::$app->controller;
-$this->title = Lang::t('Create {table} {resource}', ['table' => ExtendableTable::decodeTableId($model->table_id), 'resource' => $controller->resourceLabel]);
+$this->title = Lang::t('Create {table} {resource}', ['table' => TableAttribute::decodeTableId($model->table_id), 'resource' => $controller->resourceLabel]);
 
 $form = ActiveForm::begin([
     'id' => 'my-modal-form',
@@ -43,7 +42,7 @@ $form = ActiveForm::begin([
 
 <div class="modal-body">
     <div class="hidden" id="my-modal-notif"></div>
-    <?php if ($model->table_id == ExtendableTable::TABLE_ANIMAL_EVENTS): ?>
+    <?php if ($model->table_id == TableAttribute::TABLE_ANIMAL_EVENT): ?>
         <?= $form->field($model, 'event_type')->widget(Select2::class, [
             'data' => \backend\modules\core\models\AnimalEvent::eventTypeOptions(false),
             'modal' => true,
@@ -53,7 +52,7 @@ $form = ActiveForm::begin([
             ],
         ]) ?>
     <?php endif ?>
-    <?php if ($model->table_id == ExtendableTable::TABLE_FARM_METADATA): ?>
+    <?php if ($model->table_id == TableAttribute::TABLE_FARM_METADATA): ?>
         <?= $form->field($model, 'farm_metadata_type')->widget(Select2::class, [
             'data' => \backend\modules\core\models\FarmMetadataType::getListData('code', 'name', false),
             'modal' => true,

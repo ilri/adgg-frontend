@@ -55,7 +55,7 @@ $controller = Yii::$app->controller;
                     </a>
                 </li>
                 <li class="kt-nav__item">
-                    <a href="<?= Url::to(['/core/extendable-table/index']) ?>" class="kt-nav__link">
+                    <a href="<?= Url::to(['/core/table-attribute/index']) ?>" class="kt-nav__link">
                         <span class="kt-nav__link-text"><?= Lang::t('Extendable tables') ?></span>
                     </a>
                 </li>

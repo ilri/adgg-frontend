@@ -5,10 +5,10 @@ namespace backend\modules\auth\models;
 
 use backend\modules\auth\Session;
 use backend\modules\conf\settings\SystemSettings;
-use backend\modules\core\models\ExtendableTable;
 use backend\modules\core\models\Country;
 use backend\modules\core\models\CountryUnitDataTrait;
 use backend\modules\core\models\CountryUnits;
+use backend\modules\core\models\TableAttribute;
 use backend\modules\core\models\TableAttributeInterface;
 use backend\modules\core\models\TableAttributeTrait;
 use backend\modules\core\models\UploadExcelInterface;
@@ -474,7 +474,7 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
      */
     public static function getDefinedTableId(): int
     {
-        return ExtendableTable::TABLE_USERS;
+        return TableAttribute::TABLE_USERS;
     }
 
     /**
