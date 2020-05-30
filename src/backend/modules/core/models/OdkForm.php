@@ -21,7 +21,7 @@ use common\models\ActiveSearchTrait;
  * @property string $created_at
  * @property int $created_by
  */
-class OdkJsonQueue extends ActiveRecord implements ActiveSearchInterface
+class OdkForm extends ActiveRecord implements ActiveSearchInterface
 {
     use ActiveSearchTrait, CountryDataTrait;
 
@@ -33,7 +33,7 @@ class OdkJsonQueue extends ActiveRecord implements ActiveSearchInterface
      */
     public static function tableName()
     {
-        return '{{%core_odk_json_queue}}';
+        return '{{%core_odk_form}}';
     }
 
     /**

@@ -4,7 +4,7 @@ use common\widgets\fineuploader\Fineuploader;
 use yii\bootstrap\Html;
 use yii\helpers\Url;
 
-/* @var $model \backend\modules\core\models\OdkJsonQueue */
+/* @var $model \backend\modules\core\models\OdkForm */
 /* @var $this \yii\web\View */
 
 $fileAttribute = 'file';

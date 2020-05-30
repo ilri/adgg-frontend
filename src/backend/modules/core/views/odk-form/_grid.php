@@ -1,13 +1,13 @@
 <?php
 
-use backend\modules\core\models\OdkJsonQueue;
+use backend\modules\core\models\OdkForm;
 use common\helpers\Utils;
 use common\widgets\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
 /* @var $this \yii\web\View */
-/* @var $model OdkJsonQueue */
+/* @var $model OdkForm */
 ?>
 <?= GridView::widget([
     'searchModel' => $model,
@@ -19,7 +19,7 @@ use yii\helpers\Url;
         ],
         [
             'attribute' => 'is_processed',
-            'value' => function (OdkJsonQueue $model) {
+            'value' => function (OdkForm $model) {
                 return Html::tag('span', Utils::decodeBoolean($model->is_processed), ['class' => $model->is_processed ? 'kt-badge  kt-badge--success kt-badge--inline kt-badge--pill' : 'kt-badge  kt-badge--metal kt-badge--inline kt-badge--pill']);
             },
             'format' => 'raw',
@@ -27,7 +27,7 @@ use yii\helpers\Url;
         ],
         [
             'attribute' => 'has_errors',
-            'value' => function (OdkJsonQueue $model) {
+            'value' => function (OdkForm $model) {
                 return Html::tag('span', Utils::decodeBoolean($model->has_errors), ['class' => $model->has_errors ? 'kt-badge  kt-badge--danger kt-badge--inline kt-badge--pill' : 'kt-badge  kt-badge--metal kt-badge--inline kt-badge--pill']);
             },
             'format' => 'raw',
@@ -39,7 +39,7 @@ use yii\helpers\Url;
         ],
         [
             'attribute' => 'created_at',
-            'value' => function (OdkJsonQueue $model) {
+            'value' => function (OdkForm $model) {
                 return \common\helpers\DateUtils::formatToLocalDate($model->created_at);
             },
         ],
@@ -49,8 +49,8 @@ use yii\helpers\Url;
             'viewOptions' => ['data-pjax' => 0, 'title' => 'View details', 'data-use-uuid' => true],
             'width' => '200px;',
             'buttons' => [
-                'process' => function ($url, OdkJsonQueue $model) {
-                    return Html::a('Process JSON', '#', ['data-pjax' => 0, 'class' => 'grid-update', 'data-grid' => $model->getPjaxWidgetId(), 'data-href' => Url::to(['odk-json/process', 'id' => $model->id])]);
+                'process' => function ($url, OdkForm $model) {
+                    return Html::a('Process JSON', '#', ['data-pjax' => 0, 'class' => 'grid-update', 'data-grid' => $model->getPjaxWidgetId(), 'data-href' => Url::to(['odk-form/process', 'id' => $model->id])]);
                 }
             ]
         ],

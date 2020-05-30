@@ -10,7 +10,7 @@ namespace console\jobs;
 
 
 use backend\modules\conf\models\Notif;
-use backend\modules\core\models\OdkJsonQueue;
+use backend\modules\core\models\OdkForm;
 use backend\modules\core\models\CountryNotifSettings;
 use Yii;
 use yii\queue\Queue;
@@ -28,7 +28,7 @@ class ODKJsonNotification extends BaseNotification implements JobInterface, Noti
      */
     public function execute($queue)
     {
-        $model = OdkJsonQueue::loadModel($this->item_id, false);
+        $model = OdkForm::loadModel($this->item_id, false);
         if ($model !== null) {
             $settings = CountryNotifSettings::getSettings(10, $this->notif_type_id);
             Notif::pushNotif($this->notif_type_id, $this->item_id, $settings->users, $this->created_by, $settings->enable_internal_notification, $settings->enable_email_notification, $settings->enable_sms_notification);
@@ -51,7 +51,7 @@ class ODKJsonNotification extends BaseNotification implements JobInterface, Noti
     public static function processTemplate($itemId, $messageTemplate, $subjectTemplate = null)
     {
         //placeholders:{status},{url}
-        $model = OdkJsonQueue::loadModel($itemId, false);
+        $model = OdkForm::loadModel($itemId, false);
         if ($model === null)
             return false;
 

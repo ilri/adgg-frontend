@@ -10,7 +10,7 @@ namespace console\jobs;
 
 
 use backend\modules\core\models\Farm;
-use backend\modules\core\models\OdkJsonQueue;
+use backend\modules\core\models\OdkForm;
 use common\helpers\DateUtils;
 use common\helpers\Lang;
 use Yii;
@@ -31,7 +31,7 @@ class ProcessODKJson extends BaseObject implements JobInterface
     private $_jsonArr;
 
     /**
-     * @var OdkJsonQueue
+     * @var OdkForm
      */
     private $_model;
 
@@ -41,7 +41,7 @@ class ProcessODKJson extends BaseObject implements JobInterface
      */
     public function execute($queue)
     {
-        $this->_model = OdkJsonQueue::find()->andWhere(['id' => $this->queueId])->one();
+        $this->_model = OdkForm::find()->andWhere(['id' => $this->queueId])->one();
         if ($this->_model === null) {
             return false;
         }

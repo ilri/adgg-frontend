@@ -4,7 +4,7 @@
 use common\helpers\Lang;
 use yii\helpers\Url;
 
-/* @var $model \backend\modules\core\models\OdkJsonQueue */
+/* @var $model \backend\modules\core\models\OdkForm */
 $tab = Yii::$app->request->get('tab', 1);
 $countryId = Yii::$app->request->get('country_id', null);
 ?>

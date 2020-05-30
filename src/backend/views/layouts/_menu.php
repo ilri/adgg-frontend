@@ -456,7 +456,7 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
                 </li>
             <?php endif; ?>
             <?php if (Yii::$app->user->canView(Constants::RES_ODK_JSON)): ?>
-                <li class="kt-menu__item  kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'core/odk-json' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
+                <li class="kt-menu__item  kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'core/odk-form' ? 'kt-menu__item--open kt-menu__item--here' : '' ?>">
                     <a href="#" class="kt-menu__link kt-menu__toggle">
                         <i class="kt-menu__link-icon far fa-file-alt"></i>
                         <span class="kt-menu__link-text">ODK JSON FILES</span>
@@ -467,7 +467,7 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
                         <ul class="kt-menu__subnav">
                             <?php if (Session::isPrivilegedAdmin()): ?>
                                 <li class="kt-menu__item">
-                                    <a href="<?= Url::to(['/core/odk-json/index', 'country_id' => '']) ?>"
+                                    <a href="<?= Url::to(['/core/odk-form/index', 'country_id' => '']) ?>"
                                        class="kt-menu__link ">
                                         <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
                                         <span class="kt-menu__link-text">
@@ -480,7 +480,7 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
                             <?php foreach ($countries as $country): ?>
                                 <?php if (Session::getCountryId() == $country->id || Session::isPrivilegedAdmin()): ?>
                                     <li class="kt-menu__item">
-                                        <a href="<?= Url::to(['/core/odk-json/index', 'country_id' => $country->id]) ?>"
+                                        <a href="<?= Url::to(['/core/odk-form/index', 'country_id' => $country->id]) ?>"
                                            class="kt-menu__link ">
                                             <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
                                             <span
