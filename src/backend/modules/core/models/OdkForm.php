@@ -26,6 +26,8 @@ use console\jobs\ODKFormProcessor;
  * @property string|null $form_version
  * @property string $created_at
  * @property int|null $created_by
+ *
+ * @property Country $country
  */
 class OdkForm extends ActiveRecord implements ActiveSearchInterface
 {
@@ -33,6 +35,11 @@ class OdkForm extends ActiveRecord implements ActiveSearchInterface
 
     const SCENARIO_UPLOAD = 'upload';
     const SCENARIO_API_PUSH = 'api_push';
+
+    //ODK FORM VERSIONS
+    const ODK_FORM_VERSION_1_POINT_4 = 'Ver 1.4';
+    const ODK_FORM_VERSION_1_POINT_5 = 'Ver 1.5';
+    const ODK_FORM_VERSION_1_POINT_6 = 'Ver 1.6';
 
     /**
      * {@inheritdoc}
@@ -111,8 +118,14 @@ class OdkForm extends ActiveRecord implements ActiveSearchInterface
 
     protected function setCountryId()
     {
-        if (!empty($this->form_data['activities_country'])) {
-            $countryId = Country::getScalar('id', ['code' => $this->form_data['activities_country']]);
+        if ($this->form_version === self::ODK_FORM_VERSION_1_POINT_4) {
+            $jsonKey = 'activities_country';
+        } else {
+            $jsonKey = 'activities_location/activities_country';
+        }
+        $code = $this->form_data[$jsonKey] ?? null;
+        if (!empty($code)) {
+            $countryId = Country::getScalar('id', ['code' => $code]);
             if (!empty($countryId)) {
                 $this->country_id = $countryId;
             }
@@ -135,5 +148,14 @@ class OdkForm extends ActiveRecord implements ActiveSearchInterface
             return true;
         }
         return false;
+    }
+
+    /**
+     * @param string $versionString
+     * @return float
+     */
+    public static function getVersionNumber($versionString)
+    {
+        return (float)filter_var($versionString, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
     }
 }

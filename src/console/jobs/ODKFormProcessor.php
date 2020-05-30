@@ -39,11 +39,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     /**
      * @var int
      */
-    private $_countryId;
-
-    /**
-     * @var int
-     */
     private $_regionId;
 
     /**
@@ -61,6 +56,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      */
     private $_villageId;
 
+    const MIN_SUPPORTED_ODK_FORM_VERSION = OdkForm::ODK_FORM_VERSION_1_POINT_4;
+
     /**
      * @param Queue $queue which pushed and is handling the job
      * @return void|mixed result of the job execution
@@ -75,13 +72,19 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             if (is_string($this->_model->form_data)) {
                 $this->_model->form_data = json_decode($this->_model->form_data, true);
             }
-            $this->setCountryId();
+            //check the version
+            if ($this->isSupportedVersion()) {
+                //todo logic here
+                $this->_model->is_processed = 1;
+                $this->_model->processed_at = DateUtils::mysqlTimestamp();
+            } else {
+                $message = Lang::t('This Version ({old_version}) of ODK Form is currently not supported. Version ({version}) and above are supported.', ['old_version' => $this->_model->form_version, 'version' => self::MIN_SUPPORTED_ODK_FORM_VERSION]);
+                $this->_model->error_message = $message;
+                Yii::$app->controller->stdout("{$message}\n");
+                Yii::$app->end();
+            }
 
-
-            $this->_model->is_processed = 1;
-            $this->_model->processed_at = DateUtils::mysqlTimestamp();
             $this->_model->save(false);
-
             //ODKJsonNotification::createManualNotifications(ODKJsonNotification::NOTIF_ODK_JSON, $this->_model->id);
         } catch (\Exception $e) {
             Yii::error($e->getMessage());
@@ -199,29 +202,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         }
     }
 
-
-    /**
-     * @return int
-     */
-    protected function getCountryId()
-    {
-        if (empty($this->_countryId)) {
-            $this->setCountryId();
-        }
-        return $this->_countryId;
-    }
-
-
-    protected function setCountryId()
-    {
-        $countryCode = $this->_model->form_data['activities_country'] ?? null;
-        $countryId = Country::getScalar('id', ['code' => $countryCode]);
-        if (empty($countryId)) {
-            $countryId = null;
-        }
-        $this->_countryId = $countryId;
-    }
-
     /**
      * @return int
      */
@@ -236,12 +216,21 @@ class ODKFormProcessor extends BaseObject implements JobInterface
 
     protected function setRegionId()
     {
-        $countryId=$this->getCountryId();
         $regionCode = $this->_model->form_data['activities_country'] ?? null;
         $countryId = Country::getScalar('id', ['code' => $regionCode]);
         if (empty($countryId)) {
             $countryId = null;
         }
         $this->_countryId = $countryId;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isSupportedVersion()
+    {
+        $formVersionNumber = OdkForm::getVersionNumber($this->_model->form_version);
+        $minSupportedVersionNumber = OdkForm::getVersionNumber(self::MIN_SUPPORTED_ODK_FORM_VERSION);
+        return ($formVersionNumber >= $minSupportedVersionNumber);
     }
 }
