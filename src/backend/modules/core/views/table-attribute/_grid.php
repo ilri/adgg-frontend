@@ -1,8 +1,6 @@
 <?php
 
 use backend\modules\core\models\AnimalEvent;
-use backend\modules\core\models\ExtendableTable;
-use backend\modules\core\models\FarmMetadata;
 use backend\modules\core\models\FarmMetadataType;
 use backend\modules\core\models\TableAttribute;
 use backend\modules\core\models\TableAttributesGroup;
@@ -41,7 +39,7 @@ use yii\helpers\Url;
             'value' => function (TableAttribute $model) {
                 return AnimalEvent::decodeEventType($model->event_type);
             },
-            'visible' => $model->table_id == ExtendableTable::TABLE_ANIMAL_EVENTS,
+            'visible' => $model->table_id == TableAttribute::TABLE_ANIMAL_EVENTS,
             'filter' => AnimalEvent::eventTypeOptions(),
         ],
         [
@@ -49,7 +47,7 @@ use yii\helpers\Url;
             'value' => function (TableAttribute $model) {
                 return $model->getRelationAttributeValue('farmMetadataType', 'name');
             },
-            'visible' => $model->table_id == ExtendableTable::TABLE_FARM_METADATA,
+            'visible' => $model->table_id == TableAttribute::TABLE_FARM_METADATA,
             'filter' => FarmMetadataType::getListData('code', 'name', false),
         ],
         [

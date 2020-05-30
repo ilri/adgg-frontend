@@ -47,6 +47,16 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
     const INPUT_TYPE_TEXTAREA = 7;
     const INPUT_TYPE_DATE = 8;
 
+    //table ids
+    const TABLE_CLIENTS = 1;
+    const TABLE_FARM = 2;
+    const TABLE_ANIMAL_ATTRIBUTES = 3;
+    const TABLE_ANIMAL_EVENTS = 4;
+    const TABLE_ANIMAL_REPEATS = 5;
+    const TABLE_FARM_REPEATS = 6;
+    const TABLE_HERDS = 7;
+    const TABLE_USERS = 8;
+    const TABLE_FARM_METADATA = 9;
 
     public function init()
     {
@@ -284,23 +294,70 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
     {
         $model = null;
         switch ($tableId) {
-            case ExtendableTable::TABLE_FARM:
+            case self::TABLE_FARM:
                 $model = new Farm();
                 break;
-            case ExtendableTable::TABLE_ANIMAL_ATTRIBUTES:
+            case self::TABLE_ANIMAL_ATTRIBUTES:
                 $model = new Animal();
                 break;
-            case ExtendableTable::TABLE_ANIMAL_EVENTS:
+            case self::TABLE_ANIMAL_EVENTS:
                 $model = new AnimalEvent();
                 break;
-            case ExtendableTable::TABLE_USERS:
+            case self::TABLE_USERS:
                 $model = new Users();
                 break;
-            case ExtendableTable::TABLE_CLIENTS:
+            case self::TABLE_CLIENTS:
                 $model = new Client();
                 break;
         }
         return $model;
+    }
+
+    /**
+     * @param int $intVal
+     * @return string
+     */
+    public static function decodeTableId($intVal)
+    {
+        switch ($intVal) {
+            case self::TABLE_CLIENTS:
+                return 'Client';
+            case self::TABLE_FARM:
+                return 'Farm';
+            case self::TABLE_FARM_METADATA:
+                return 'Farm Metadata';
+            case self::TABLE_ANIMAL_ATTRIBUTES:
+                return 'Animal';
+            case self::TABLE_ANIMAL_EVENTS:
+                return 'Animal Events';
+            case self::TABLE_ANIMAL_REPEATS:
+                return 'Animal Repeats';
+            case self::TABLE_FARM_REPEATS:
+                return 'Farm Repeats';
+            case self::TABLE_HERDS:
+                return 'Herds';
+            case self::TABLE_USERS:
+                return 'Users';
+            default:
+                throw new InvalidArgumentException();
+        }
+    }
+
+    /**
+     * @param mixed $prompt
+     * @return array
+     */
+    public static function tableOptions($prompt = false)
+    {
+        return Utils::appendDropDownListPrompt([
+            self::TABLE_FARM => static::decodeTableId(self::TABLE_FARM),
+            self::TABLE_FARM_METADATA => static::decodeTableId(self::TABLE_FARM_METADATA),
+            self::TABLE_HERDS => static::decodeTableId(self::TABLE_HERDS),
+            self::TABLE_ANIMAL_ATTRIBUTES => static::decodeTableId(self::TABLE_ANIMAL_ATTRIBUTES),
+            self::TABLE_ANIMAL_EVENTS => static::decodeTableId(self::TABLE_ANIMAL_EVENTS),
+            self::TABLE_USERS => static::decodeTableId(self::TABLE_USERS),
+            self::TABLE_CLIENTS => static::decodeTableId(self::TABLE_CLIENTS),
+        ], $prompt);
     }
 
 

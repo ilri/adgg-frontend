@@ -186,7 +186,7 @@ class AnimalHerd extends ActiveRecord implements ActiveSearchInterface, ImportAc
      */
     public static function getDefinedTableId(): int
     {
-        return ExtendableTable::TABLE_HERDS;
+        return TableAttribute::TABLE_HERDS;
     }
 
     /**

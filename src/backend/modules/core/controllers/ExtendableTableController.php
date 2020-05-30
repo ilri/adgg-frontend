@@ -10,7 +10,6 @@ namespace backend\modules\core\controllers;
 
 
 use backend\modules\auth\Acl;
-use backend\modules\core\models\ExtendableTable;
 use backend\modules\core\models\TableAttribute;
 use backend\modules\core\models\TableAttributesGroup;
 
@@ -28,12 +27,12 @@ class ExtendableTableController extends MasterDataController
 
     protected function setResourceLabel($table_id)
     {
-        $this->resourceLabel = ExtendableTable::decodeTableId($table_id);
+        $this->resourceLabel = TableAttribute::decodeTableId($table_id);
         $this->pageTitle = null;
         $this->setDefaultPageTitles($this->action);
     }
 
-    public function actionIndex($table_id = ExtendableTable::TABLE_FARM)
+    public function actionIndex($table_id = TableAttribute::TABLE_FARM)
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
         $this->setResourceLabel($table_id);

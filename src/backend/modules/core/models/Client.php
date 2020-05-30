@@ -89,7 +89,7 @@ class Client extends ActiveRecord implements ActiveSearchInterface, TableAttribu
      */
     public static function getDefinedTableId(): int
     {
-        return ExtendableTable::TABLE_CLIENTS;
+        return TableAttribute::TABLE_CLIENTS;
     }
 
     public function getOrg()

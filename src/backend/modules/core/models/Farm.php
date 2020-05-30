@@ -308,7 +308,7 @@ class Farm extends ActiveRecord implements ActiveSearchInterface, UploadExcelInt
      */
     public static function getDefinedTableId(): int
     {
-        return ExtendableTable::TABLE_FARM;
+        return TableAttribute::TABLE_FARM;
     }
 
     /**
