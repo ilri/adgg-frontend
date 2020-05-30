@@ -17,13 +17,13 @@ use Yii;
 use yii\base\BaseObject;
 use yii\queue\Queue;
 
-class ProcessODKJson extends BaseObject implements JobInterface
+class ODKFormProcessor extends BaseObject implements JobInterface
 {
 
     /**
      * @var int
      */
-    public $queueId;
+    public $itemId;
 
     /**
      * @var array
@@ -41,7 +41,7 @@ class ProcessODKJson extends BaseObject implements JobInterface
      */
     public function execute($queue)
     {
-        $this->_model = OdkForm::find()->andWhere(['id' => $this->queueId])->one();
+        $this->_model = OdkForm::find()->andWhere(['id' => $this->itemId])->one();
         if ($this->_model === null) {
             return false;
         }
@@ -58,29 +58,6 @@ class ProcessODKJson extends BaseObject implements JobInterface
             $this->_model->save(false);
 
             ODKJsonNotification::createManualNotifications(ODKJsonNotification::NOTIF_ODK_JSON, $this->_model->id);
-        } catch (\Exception $e) {
-            Yii::error($e->getMessage());
-        }
-    }
-
-    /**
-     * @param mixed $params
-     * @return mixed
-     */
-    public static function push($params)
-    {
-        try {
-            /* @var $queue \yii\queue\cli\Queue */
-            $queue = Yii::$app->queue;
-            if ($params instanceof self) {
-                $obj = $params;
-            } else {
-                $obj = new self($params);
-            }
-
-            $id = $queue->push($obj);
-
-            return $id;
         } catch (\Exception $e) {
             Yii::error($e->getMessage());
         }
@@ -172,5 +149,28 @@ class ProcessODKJson extends BaseObject implements JobInterface
         }
 
         return $attributes;
+    }
+
+    /**
+     * @param mixed $params
+     * @return mixed
+     */
+    public static function push($params)
+    {
+        try {
+            /* @var $queue \yii\queue\cli\Queue */
+            $queue = Yii::$app->queue;
+            if ($params instanceof self) {
+                $obj = $params;
+            } else {
+                $obj = new self($params);
+            }
+
+            $id = $queue->push($obj);
+
+            return $id;
+        } catch (\Exception $e) {
+            Yii::error($e->getMessage());
+        }
     }
 }
