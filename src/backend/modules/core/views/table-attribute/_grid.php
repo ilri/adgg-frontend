@@ -39,7 +39,7 @@ use yii\helpers\Url;
             'value' => function (TableAttribute $model) {
                 return AnimalEvent::decodeEventType($model->event_type);
             },
-            'visible' => $model->table_id == TableAttribute::TABLE_ANIMAL_EVENTS,
+            'visible' => $model->table_id == TableAttribute::TABLE_ANIMAL_EVENT,
             'filter' => AnimalEvent::eventTypeOptions(),
         ],
         [

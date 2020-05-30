@@ -42,7 +42,7 @@ $form = ActiveForm::begin([
 
 <div class="modal-body">
     <div class="hidden" id="my-modal-notif"></div>
-    <?php if ($model->table_id == TableAttribute::TABLE_ANIMAL_EVENTS): ?>
+    <?php if ($model->table_id == TableAttribute::TABLE_ANIMAL_EVENT): ?>
         <?= $form->field($model, 'event_type')->widget(Select2::class, [
             'data' => \backend\modules\core\models\AnimalEvent::eventTypeOptions(false),
             'modal' => true,

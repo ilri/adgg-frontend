@@ -293,7 +293,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
      */
     public static function getDefinedTableId(): int
     {
-        return TableAttribute::TABLE_ANIMAL_EVENTS;
+        return TableAttribute::TABLE_ANIMAL_EVENT;
     }
 
     /**
