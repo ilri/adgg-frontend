@@ -9,6 +9,7 @@
 namespace console\jobs;
 
 
+use backend\modules\core\models\Country;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\OdkForm;
 use common\helpers\DateUtils;
@@ -39,6 +40,26 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      * @var int
      */
     private $_countryId;
+
+    /**
+     * @var int
+     */
+    private $_regionId;
+
+    /**
+     * @var int
+     */
+    private $_districtId;
+
+    /**
+     * @var int
+     */
+    private $_wardId;
+
+    /**
+     * @var int
+     */
+    private $_villageId;
 
     /**
      * @param Queue $queue which pushed and is handling the job
@@ -193,9 +214,34 @@ class ODKFormProcessor extends BaseObject implements JobInterface
 
     protected function setCountryId()
     {
-        $formData = serialize($this->_model->form_data);
-        Yii::$app->controller->stdout("Serialized form data: {$formData}\n");
-        Yii::$app->end();
-        $countryCode = $this->_model->form_data['staff_country'];
+        $countryCode = $this->_model->form_data['activities_country'] ?? null;
+        $countryId = Country::getScalar('id', ['code' => $countryCode]);
+        if (empty($countryId)) {
+            $countryId = null;
+        }
+        $this->_countryId = $countryId;
+    }
+
+    /**
+     * @return int
+     */
+    protected function getRegionId()
+    {
+        if (empty($this->_regionId)) {
+            $this->setRegionId();
+        }
+        return $this->_regionId;
+    }
+
+
+    protected function setRegionId()
+    {
+        $countryId=$this->getCountryId();
+        $regionCode = $this->_model->form_data['activities_country'] ?? null;
+        $countryId = Country::getScalar('id', ['code' => $regionCode]);
+        if (empty($countryId)) {
+            $countryId = null;
+        }
+        $this->_countryId = $countryId;
     }
 }

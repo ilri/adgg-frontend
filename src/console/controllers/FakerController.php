@@ -8,32 +8,35 @@
 namespace console\controllers;
 
 
-use backend\modules\core\models\AnimalEvent;
-use backend\modules\core\models\MilkingEvent;
-use console\jobs\ODKFormProcessor;
+use common\models\ActiveRecord;
 use yii\console\Controller;
 
 class FakerController extends Controller
 {
-    public function actionResetMilkingModels()
+    public function actionTest()
     {
-        $condition = ['event_type' => AnimalEvent::EVENT_TYPE_MILKING];
-        $query = MilkingEvent::find()->andWhere($condition);
-        $totalMilkRecords = MilkingEvent::getCount($condition);
+        $this->resetModels(\backend\modules\core\models\OdkForm::class);
+        //ODKFormProcessor::push(['itemId' => 7794]);
+    }
+
+    /**
+     * @param string $modelClassName
+     * @param string|array $condition
+     * @param array $params
+     * @throws \Exception
+     */
+    protected function resetModels($modelClassName, $condition = '', $params = [])
+    {
+        $query = $modelClassName::find()->andWhere($condition, $params);
+        $totalRecords = $modelClassName::getCount($condition, $params);
         $n = 1;
-        /* @var $models MilkingEvent[] */
-        $className = MilkingEvent::class;
+        /* @var $models ActiveRecord[] */
         foreach ($query->batch() as $i => $models) {
             foreach ($models as $model) {
                 $model->save(false);
-                $this->stdout("{$className}: Updated {$n} of {$totalMilkRecords} records\n");
+                $this->stdout("{$modelClassName}: Updated {$n} of {$totalRecords} records\n");
                 $n++;
             }
         }
-    }
-
-    public function actionRandom()
-    {
-        ODKFormProcessor::push(['itemId' => 7794]);
     }
 }

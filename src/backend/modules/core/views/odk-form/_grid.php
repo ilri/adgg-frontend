@@ -18,6 +18,9 @@ use yii\helpers\Url;
             'attribute' => 'form_uuid',
         ],
         [
+            'attribute' => 'form_version',
+        ],
+        [
             'attribute' => 'is_processed',
             'value' => function (OdkForm $model) {
                 return Html::tag('span', Utils::decodeBoolean($model->is_processed), ['class' => $model->is_processed ? 'kt-badge  kt-badge--success kt-badge--inline kt-badge--pill' : 'kt-badge  kt-badge--metal kt-badge--inline kt-badge--pill']);
