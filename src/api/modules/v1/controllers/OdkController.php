@@ -11,7 +11,7 @@ namespace api\modules\v1\controllers;
 
 use api\controllers\Controller;
 use api\controllers\JwtAuthTrait;
-use backend\modules\core\models\OdkJsonQueue;
+use backend\modules\core\models\OdkForm;
 use Yii;
 
 class OdkController extends Controller
@@ -28,7 +28,7 @@ class OdkController extends Controller
         if (Yii::$app->request->isPost) {
             $payload = Yii::$app->request->getBodyParams();
             if (!empty($payload)) {
-                $model = new OdkJsonQueue();
+                $model = new OdkForm();
                 $model->form_data = $payload;
                 if ($model->save()) {
                     Yii::info("ODK JSON Form {$model->uuid} successfully saved");
