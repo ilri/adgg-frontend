@@ -9,7 +9,9 @@
 namespace console\jobs;
 
 
+use backend\modules\auth\models\Users;
 use backend\modules\core\models\Country;
+use backend\modules\core\models\CountryUnits;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\OdkForm;
 use common\helpers\DateUtils;
@@ -56,6 +58,11 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      */
     private $_villageId;
 
+    /**
+     * @var int
+     */
+    private $_userId;
+
     const MIN_SUPPORTED_ODK_FORM_VERSION = OdkForm::ODK_FORM_VERSION_1_POINT_4;
 
     /**
@@ -74,7 +81,12 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             }
             //check the version
             if ($this->isSupportedVersion()) {
-                //todo logic here
+                $this->setRegionId();
+                $this->setDistrictId();
+                $this->setWardId();
+                $this->setVillageId();
+                $this->setUserId();
+
                 $this->_model->is_processed = 1;
                 $this->_model->processed_at = DateUtils::mysqlTimestamp();
             } else {
@@ -216,12 +228,105 @@ class ODKFormProcessor extends BaseObject implements JobInterface
 
     protected function setRegionId()
     {
-        $regionCode = $this->_model->form_data['activities_country'] ?? null;
-        $countryId = Country::getScalar('id', ['code' => $regionCode]);
-        if (empty($countryId)) {
-            $countryId = null;
+        $jsonKey = 'activities_location/activities_region';;
+        $code = $this->_model->form_data[$jsonKey] ?? null;
+        $id = CountryUnits::getScalar('id', ['code' => $code, 'country_id' => $this->_model->country_id, 'level' => CountryUnits::LEVEL_REGION]);
+        if (empty($id)) {
+            $id = null;
         }
-        $this->_countryId = $countryId;
+        $this->_regionId = $id;
+    }
+
+    /**
+     * @return int
+     */
+    protected function getDistrictId()
+    {
+        if (empty($this->_districtId)) {
+            $this->setDistrictId();
+        }
+        return $this->_districtId;
+    }
+
+
+    protected function setDistrictId()
+    {
+        $jsonKey = 'activities_location/activities_zone';
+        $code = $this->_model->form_data[$jsonKey] ?? null;
+        $id = CountryUnits::getScalar('id', ['code' => $code, 'country_id' => $this->_model->country_id, 'level' => CountryUnits::LEVEL_DISTRICT]);
+        if (empty($id)) {
+            $id = null;
+        }
+        $this->_districtId = $id;
+    }
+
+    /**
+     * @return int
+     */
+    protected function getWardId()
+    {
+        if (empty($this->_wardId)) {
+            $this->setWardId();
+        }
+        return $this->_wardId;
+    }
+
+
+    protected function setWardId()
+    {
+        $jsonKey = 'activities_location/activities_ward';
+        $code = $this->_model->form_data[$jsonKey] ?? null;
+        $id = CountryUnits::getScalar('id', ['code' => $code, 'country_id' => $this->_model->country_id, 'level' => CountryUnits::LEVEL_WARD]);
+        if (empty($id)) {
+            $id = null;
+        }
+        $this->_wardId = $id;
+    }
+
+    /**
+     * @return int
+     */
+    protected function getVillageId()
+    {
+        if (empty($this->_villageId)) {
+            $this->setVillageId();
+        }
+        return $this->_villageId;
+    }
+
+
+    protected function setVillageId()
+    {
+        $jsonKey = 'activities_village';
+        $code = $this->_model->form_data[$jsonKey] ?? null;
+        $id = CountryUnits::getScalar('id', ['code' => $code, 'country_id' => $this->_model->country_id, 'level' => CountryUnits::LEVEL_VILLAGE]);
+        if (empty($id)) {
+            $id = null;
+        }
+        $this->_villageId = $id;
+    }
+
+    /**
+     * @return int
+     */
+    protected function getUserId()
+    {
+        if (empty($this->_userId)) {
+            $this->setUserId();
+        }
+        return $this->_userId;
+    }
+
+
+    protected function setUserId()
+    {
+        $jsonKey = 'staff_code';
+        $code = $this->_model->form_data[$jsonKey] ?? null;
+        $id = Users::getScalar('id', ['odk_code' => $code, 'country_id' => $this->_model->country_id]);
+        if (empty($id)) {
+            $id = null;
+        }
+        $this->_userId = $id;
     }
 
     /**
