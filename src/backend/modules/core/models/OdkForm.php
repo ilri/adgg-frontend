@@ -112,7 +112,7 @@ class OdkForm extends ActiveRecord implements ActiveSearchInterface
         parent::afterSave($insert, $changedAttributes);
 
         if ($insert) {
-            ODKFormProcessor::push(['itemId' => $this->id]);
+            //ODKFormProcessor::push(['itemId' => $this->id]);
         }
     }
 
