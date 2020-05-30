@@ -36,6 +36,11 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     private $_model;
 
     /**
+     * @var int
+     */
+    private $_countryId;
+
+    /**
      * @param Queue $queue which pushed and is handling the job
      * @return void|mixed result of the job execution
      */
@@ -45,19 +50,18 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         if ($this->_model === null) {
             return false;
         }
-
         try {
-            $this->_model->is_locked = 1;
-            $this->_model->save(false);
-            $json = json_decode($this->_model->file_contents, true);
-            $this->_jsonArr = $json;
-            $this->processFarmerIndividual();
-            $this->_model->is_locked = 0;
+            if (is_string($this->_model->form_data)) {
+                $this->_model->form_data = json_decode($this->_model->form_data, true);
+            }
+            $this->setCountryId();
+
+
             $this->_model->is_processed = 1;
             $this->_model->processed_at = DateUtils::mysqlTimestamp();
             $this->_model->save(false);
 
-            ODKJsonNotification::createManualNotifications(ODKJsonNotification::NOTIF_ODK_JSON, $this->_model->id);
+            //ODKJsonNotification::createManualNotifications(ODKJsonNotification::NOTIF_ODK_JSON, $this->_model->id);
         } catch (\Exception $e) {
             Yii::error($e->getMessage());
         }
@@ -172,5 +176,26 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         } catch (\Exception $e) {
             Yii::error($e->getMessage());
         }
+    }
+
+
+    /**
+     * @return int
+     */
+    protected function getCountryId()
+    {
+        if (empty($this->_countryId)) {
+            $this->setCountryId();
+        }
+        return $this->_countryId;
+    }
+
+
+    protected function setCountryId()
+    {
+        $formData = serialize($this->_model->form_data);
+        Yii::$app->controller->stdout("Serialized form data: {$formData}\n");
+        Yii::$app->end();
+        $countryCode = $this->_model->form_data['staff_country'];
     }
 }
