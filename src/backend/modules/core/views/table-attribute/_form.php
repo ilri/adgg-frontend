@@ -95,6 +95,7 @@ $form = ActiveForm::begin([
             'allowClear' => false
         ],
     ]) ?>
+    <?= $form->field($model, 'odk_attribute_name', []) ?>
     <?= $form->field($model, 'default_value', []) ?>
     <?php /* echo $form->field($model, 'is_alias', [])->checkbox()*/ ?>
     <?php /*echo $form->field($model, 'alias_to')->widget(Select2::class, [
