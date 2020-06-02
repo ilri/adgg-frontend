@@ -115,7 +115,7 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
 
     public static function getDefinedTableId(): int
     {
-        return ExtendableTable::TABLE_FARM_METADATA;
+        return TableAttribute::TABLE_FARM_METADATA;
     }
 
     public function getExcelColumns()

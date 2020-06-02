@@ -9,26 +9,54 @@
 namespace console\jobs;
 
 
+use backend\modules\core\models\Country;
 use backend\modules\core\models\Farm;
-use backend\modules\core\models\OdkJsonQueue;
+use backend\modules\core\models\OdkForm;
 use common\helpers\DateUtils;
 use common\helpers\Lang;
 use Yii;
 use yii\base\BaseObject;
 use yii\queue\Queue;
 
-class ProcessODKJson extends BaseObject implements JobInterface
+class ODKFormProcessor extends BaseObject implements JobInterface
 {
 
     /**
      * @var int
      */
-    public $queueId;
+    public $itemId;
 
     /**
-     * @var OdkJsonQueue
+     * @var array
+     */
+    private $_jsonArr;
+
+    /**
+     * @var OdkForm
      */
     private $_model;
+
+    /**
+     * @var int
+     */
+    private $_regionId;
+
+    /**
+     * @var int
+     */
+    private $_districtId;
+
+    /**
+     * @var int
+     */
+    private $_wardId;
+
+    /**
+     * @var int
+     */
+    private $_villageId;
+
+    const MIN_SUPPORTED_ODK_FORM_VERSION = OdkForm::ODK_FORM_VERSION_1_POINT_4;
 
     /**
      * @param Queue $queue which pushed and is handling the job
@@ -36,47 +64,28 @@ class ProcessODKJson extends BaseObject implements JobInterface
      */
     public function execute($queue)
     {
-        $this->_model = OdkJsonQueue::find()->andWhere(['id' => $this->queueId])->one();
+        $this->_model = OdkForm::find()->andWhere(['id' => $this->itemId])->one();
         if ($this->_model === null) {
             return false;
         }
-
         try {
-            $this->_model->save(false);
             if (is_string($this->_model->form_data)) {
                 $this->_model->form_data = json_decode($this->_model->form_data, true);
             }
-            $this->processFarmerIndividual();
-            $this->_model->is_processed = 1;
-            $this->_model->processed_at = DateUtils::mysqlTimestamp();
-            $this->_model->save(false);
-
-            //ODKJsonNotification::createManualNotifications(ODKJsonNotification::NOTIF_ODK_JSON, $this->_model->id);
-        } catch (\Exception $e) {
-            Yii::error($e->getMessage());
-            Yii::$app->controller->stdout("{$e->getMessage()}\n");
-            Yii::$app->controller->stdout("{$e->getTraceAsString()}\n");
-        }
-    }
-
-    /**
-     * @param mixed $params
-     * @return mixed
-     */
-    public static function push($params)
-    {
-        try {
-            /* @var $queue \yii\queue\cli\Queue */
-            $queue = Yii::$app->queue;
-            if ($params instanceof self) {
-                $obj = $params;
+            //check the version
+            if ($this->isSupportedVersion()) {
+                //todo logic here
+                $this->_model->is_processed = 1;
+                $this->_model->processed_at = DateUtils::mysqlTimestamp();
             } else {
-                $obj = new self($params);
+                $message = Lang::t('This Version ({old_version}) of ODK Form is currently not supported. Version ({version}) and above are supported.', ['old_version' => $this->_model->form_version, 'version' => self::MIN_SUPPORTED_ODK_FORM_VERSION]);
+                $this->_model->error_message = $message;
+                Yii::$app->controller->stdout("{$message}\n");
+                Yii::$app->end();
             }
 
-            $id = $queue->push($obj);
-
-            return $id;
+            $this->_model->save(false);
+            //ODKJsonNotification::createManualNotifications(ODKJsonNotification::NOTIF_ODK_JSON, $this->_model->id);
         } catch (\Exception $e) {
             Yii::error($e->getMessage());
         }
@@ -84,7 +93,7 @@ class ProcessODKJson extends BaseObject implements JobInterface
 
     protected function processFarmerIndividual()
     {
-        $farmerCode = $this->_model->form_data['farmer_individual/activities_farmer'] ?? null;
+        $farmerCode = $this->_jsonArr['farmer_individual/activities_farmer'] ?? null;
         if ($farmerCode === null) {
             Yii::info('Farmer Individual Check Failed');
         }
@@ -100,7 +109,7 @@ class ProcessODKJson extends BaseObject implements JobInterface
         }
 
         $attributes = [];
-        foreach ($this->_model->form_data as $k => $value) {
+        foreach ($this->_jsonArr as $k => $value) {
             $attribute = $this->extractAttributesFromJson($k, $value);
             if (!empty($attribute)) {
                 $attributes[] = $attribute;
@@ -136,7 +145,7 @@ class ProcessODKJson extends BaseObject implements JobInterface
             $this->_model->has_errors = 0;
         } else {
             $this->_model->has_errors = 1;
-            $this->_model->error_json = $farmModel->getErrors();
+            $this->_model->error_message = json_encode($farmModel->getErrors());
         }
     }
 
@@ -168,5 +177,60 @@ class ProcessODKJson extends BaseObject implements JobInterface
         }
 
         return $attributes;
+    }
+
+    /**
+     * @param mixed $params
+     * @return mixed
+     */
+    public static function push($params)
+    {
+        try {
+            /* @var $queue \yii\queue\cli\Queue */
+            $queue = Yii::$app->queue;
+            if ($params instanceof self) {
+                $obj = $params;
+            } else {
+                $obj = new self($params);
+            }
+
+            $id = $queue->push($obj);
+
+            return $id;
+        } catch (\Exception $e) {
+            Yii::error($e->getMessage());
+        }
+    }
+
+    /**
+     * @return int
+     */
+    protected function getRegionId()
+    {
+        if (empty($this->_regionId)) {
+            $this->setRegionId();
+        }
+        return $this->_regionId;
+    }
+
+
+    protected function setRegionId()
+    {
+        $regionCode = $this->_model->form_data['activities_country'] ?? null;
+        $countryId = Country::getScalar('id', ['code' => $regionCode]);
+        if (empty($countryId)) {
+            $countryId = null;
+        }
+        $this->_countryId = $countryId;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isSupportedVersion()
+    {
+        $formVersionNumber = OdkForm::getVersionNumber($this->_model->form_version);
+        $minSupportedVersionNumber = OdkForm::getVersionNumber(self::MIN_SUPPORTED_ODK_FORM_VERSION);
+        return ($formVersionNumber >= $minSupportedVersionNumber);
     }
 }

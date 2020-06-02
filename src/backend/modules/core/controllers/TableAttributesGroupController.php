@@ -28,7 +28,7 @@ class TableAttributesGroupController extends MasterDataController
     public function actionCreate($table_id)
     {
         $model = new TableAttributesGroup(['is_active' => 1, 'table_id' => $table_id]);
-        return $model->simpleAjaxSave('_form', 'extendable-table/index', ['table_id' => $model->table_id]);
+        return $model->simpleAjaxSave('_form', 'table-attribute/index', ['table_id' => $model->table_id]);
     }
 
     public function actionQuickCreate($table_id)
@@ -51,7 +51,7 @@ class TableAttributesGroupController extends MasterDataController
     public function actionUpdate($id)
     {
         $model = TableAttributesGroup::loadModel($id);
-        return $model->simpleAjaxSave('_form', 'extendable-table/index', ['table_id' => $model->table_id]);
+        return $model->simpleAjaxSave('_form', 'table-attribute/index', ['table_id' => $model->table_id]);
     }
 
     public function actionDelete($id)

@@ -1,7 +1,7 @@
 <?php
 
 /* @var $this \yii\web\View */
-/* @var $searchModel \backend\modules\core\models\OdkJsonQueue */
+/* @var $searchModel \backend\modules\core\models\OdkForm */
 /* @var $controller \backend\controllers\BackendController */
 $controller = Yii::$app->controller;
 

@@ -8,70 +8,35 @@
 namespace console\controllers;
 
 
-use backend\modules\core\models\Animal;
-use console\jobs\ProcessODKJson;
-use Yii;
+use common\models\ActiveRecord;
 use yii\console\Controller;
 
 class FakerController extends Controller
 {
-    public function actionRun()
+    public function actionTest()
     {
-        $time_start = microtime(true);
-        $this->loadFakeData();
-        $time_end = microtime(true);
-        $executionTime = round($time_end - $time_start, 2);
-        $this->stdout("FAKER EXECUTED IN {$executionTime} SECONDS\n");
+        //\console\jobs\ODKFormProcessor::push(['itemId' => 7794]);
+        $this->resetModels(\backend\modules\core\models\OdkForm::class);
     }
 
-    public function actionClear()
+    /**
+     * @param string $modelClassName
+     * @param string|array $condition
+     * @param array $params
+     * @throws \Exception
+     */
+    protected function resetModels($modelClassName, $condition = '', $params = [])
     {
-        $this->canExecuteFaker();
-    }
-
-    public function actionReset()
-    {
-        $time_start = microtime(true);
-        $time_end = microtime(true);
-        $executionTime = round($time_end - $time_start, 2);
-        $this->stdout("FAKER EXECUTED IN {$executionTime} SECONDS\n");
-    }
-
-    protected function loadFakeData()
-    {
-        $this->canExecuteFaker();
-    }
-
-    protected function canExecuteFaker()
-    {
-        if (YII_ENV === 'prod') {
-            $this->stdout("FAKER CANNOT BE EXECUTED\n");
-            Yii::$app->end();
-        } else {
-            $this->stdout("FAKER CANNOT BE EXECUTED\n");
-            Yii::$app->end();
-        }
-    }
-
-    public function actionResetCalvingModels()
-    {
-        $condition = [];
-        $query = Animal::find()->andWhere($condition);
-        $totalAnimals = Animal::getCount($condition);
+        $query = $modelClassName::find()->andWhere($condition, $params);
+        $totalRecords = $modelClassName::getCount($condition, $params);
         $n = 1;
-        /* @var $models Animal[] */
-        $className = Animal::class;
+        /* @var $models ActiveRecord[] */
         foreach ($query->batch() as $i => $models) {
             foreach ($models as $model) {
                 $model->save(false);
-                $this->stdout("{$className}: Updated {$n} of {$totalAnimals} records\n");
+                $this->stdout("{$modelClassName}: Updated {$n} of {$totalRecords} records\n");
                 $n++;
             }
         }
-    }
-
-    public function actionRandom()
-    {
-        ProcessODKJson::push(['queueId' => 7794]);
     }
 }

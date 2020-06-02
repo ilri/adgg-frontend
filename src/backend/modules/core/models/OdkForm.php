@@ -5,36 +5,48 @@ namespace backend\modules\core\models;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
-use console\jobs\ProcessODKJson;
+use console\jobs\ODKFormProcessor;
 
 /**
- * This is the model class for table "core_odk_json_queue".
+ * This is the model class for table "core_odk_form".
  *
  * @property int $id
  * @property string $form_uuid
  * @property string|array $form_data
  * @property int $is_processed
- * @property string $processed_at
- * @property int $country_id
+ * @property string|null $processed_at
+ * @property int|null $country_id
  * @property int $has_errors
- * @property string $error_message
- * @property string|array $error_json
+ * @property string|null $error_message
+ * @property string|array|null $farm_data
+ * @property string|array|null $farm_metadata
+ * @property string|array|null $animals_data
+ * @property string|array|null $animal_events_data
+ * @property string|array|null $user_data
+ * @property string|null $form_version
  * @property string $created_at
- * @property int $created_by
+ * @property int|null $created_by
+ *
+ * @property Country $country
  */
-class OdkJsonQueue extends ActiveRecord implements ActiveSearchInterface
+class OdkForm extends ActiveRecord implements ActiveSearchInterface
 {
     use ActiveSearchTrait, CountryDataTrait;
 
     const SCENARIO_UPLOAD = 'upload';
     const SCENARIO_API_PUSH = 'api_push';
 
+    //ODK FORM VERSIONS
+    const ODK_FORM_VERSION_1_POINT_4 = 'Ver 1.4';
+    const ODK_FORM_VERSION_1_POINT_5 = 'Ver 1.5';
+    const ODK_FORM_VERSION_1_POINT_6 = 'Ver 1.6';
+
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return '{{%core_odk_json_queue}}';
+        return '{{%core_odk_form}}';
     }
 
     /**
@@ -46,7 +58,7 @@ class OdkJsonQueue extends ActiveRecord implements ActiveSearchInterface
             [['form_data'], 'required'],
             [['is_processed', 'country_id', 'has_errors'], 'integer'],
             [['form_uuid'], 'string', 'max' => 128],
-            [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
+            [[self::SEARCH_FIELD, 'form_version'], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
     }
 
@@ -64,9 +76,14 @@ class OdkJsonQueue extends ActiveRecord implements ActiveSearchInterface
             'country_id' => 'Country',
             'has_errors' => 'Has Errors',
             'error_message' => 'Error Message',
-            'error_json' => 'Error JSON',
             'created_at' => 'Created At',
             'created_by' => 'Created By',
+            'farm_data' => 'Farm Data',
+            'farm_metadata' => 'Farm Metadata',
+            'animals_data' => 'Animals Data',
+            'animal_events_data' => 'Animal Events Data',
+            'user_data' => 'User Data',
+            'form_version' => 'Form Version',
         ];
     }
 
@@ -77,6 +94,7 @@ class OdkJsonQueue extends ActiveRecord implements ActiveSearchInterface
     {
         return [
             ['form_uuid', 'form_uuid'],
+            ['form_version', 'form_version'],
             'is_processed',
             'country_id',
             'has_errors',
@@ -90,6 +108,7 @@ class OdkJsonQueue extends ActiveRecord implements ActiveSearchInterface
                 $this->form_data = json_decode($this->form_data, true);
             }
             $this->form_uuid = $this->form_data['_uuid'] ?? null;
+            $this->form_version = $this->form_data['_version'] ?? null;
             $this->setCountryId();
 
             return true;
@@ -99,8 +118,14 @@ class OdkJsonQueue extends ActiveRecord implements ActiveSearchInterface
 
     protected function setCountryId()
     {
-        if (!empty($this->form_data['activities_country'])) {
-            $countryId = Country::getScalar('id', ['code' => $this->form_data['activities_country']]);
+        if ($this->form_version === self::ODK_FORM_VERSION_1_POINT_4) {
+            $jsonKey = 'activities_country';
+        } else {
+            $jsonKey = 'activities_location/activities_country';
+        }
+        $code = $this->form_data[$jsonKey] ?? null;
+        if (!empty($code)) {
+            $countryId = Country::getScalar('id', ['code' => $code]);
             if (!empty($countryId)) {
                 $this->country_id = $countryId;
             }
@@ -112,7 +137,7 @@ class OdkJsonQueue extends ActiveRecord implements ActiveSearchInterface
         parent::afterSave($insert, $changedAttributes);
 
         if ($insert) {
-            //ProcessODKJson::push(['queueId' => $this->id]);
+            //ODKFormProcessor::push(['itemId' => $this->id]);
         }
     }
 
@@ -123,5 +148,14 @@ class OdkJsonQueue extends ActiveRecord implements ActiveSearchInterface
             return true;
         }
         return false;
+    }
+
+    /**
+     * @param string $versionString
+     * @return float
+     */
+    public static function getVersionNumber($versionString)
+    {
+        return (float)filter_var($versionString, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
     }
 }

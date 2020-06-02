@@ -6,10 +6,10 @@ use yii\helpers\Json;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model backend\modules\core\models\OdkJsonQueue */
+/* @var $model backend\modules\core\models\OdkForm */
 
 $this->title = Lang::t('JSON File Details');
-$this->params['breadcrumbs'][] = ['label' => 'ODK-JSON-Files', 'url' => ['index', 'country_id' => $model->country_id]];
+$this->params['breadcrumbs'][] = ['label' => 'ODK-Form-Files', 'url' => ['index', 'country_id' => $model->country_id]];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
     <style type="text/css">
@@ -63,6 +63,9 @@ $this->params['breadcrumbs'][] = $this->title;
                             ],
                             [
                                 'attribute' => 'form_uuid',
+                            ],
+                            [
+                                'attribute' => 'form_version',
                             ],
                             [
                                 'attribute' => 'is_processed',
@@ -135,7 +138,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <div class="row">
                         <div class="col-lg-12">
                             <pre class="show-pretty-json"
-                                 data-json='<?= json_encode($model->error_json, JSON_FORCE_OBJECT) ?>'></pre>
+                                 data-json='<?= json_encode([], JSON_FORCE_OBJECT) ?>'></pre>
                         </div>
                     </div>
                 </div>

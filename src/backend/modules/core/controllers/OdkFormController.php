@@ -11,15 +11,15 @@ namespace backend\modules\core\controllers;
 
 use backend\modules\auth\Acl;
 use backend\modules\core\Constants;
-use backend\modules\core\models\OdkJsonQueue;
+use backend\modules\core\models\OdkForm;
 use common\helpers\Lang;
 use common\helpers\Url;
-use console\jobs\ProcessODKJson;
+use console\jobs\ODKFormProcessor;
 use Yii;
 use yii\base\Exception;
 use yii\web\ForbiddenHttpException;
 
-class OdkJsonController extends Controller
+class OdkFormController extends Controller
 {
     public function init()
     {
@@ -32,7 +32,7 @@ class OdkJsonController extends Controller
     public function actionIndex($tab = 1, $country_id = null)
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
-        $searchModel = OdkJsonQueue::searchModel([
+        $searchModel = OdkForm::searchModel([
             'defaultOrder' => ['id' => SORT_DESC],
         ]);
         switch ($tab) {
@@ -67,8 +67,8 @@ class OdkJsonController extends Controller
     public function actionCreate()
     {
         $this->hasPrivilege(Acl::ACTION_CREATE);
-        $model = new OdkJsonQueue([]);
-        $model->setScenario(OdkJsonQueue::SCENARIO_UPLOAD);
+        $model = new OdkForm([]);
+        $model->setScenario(OdkForm::SCENARIO_UPLOAD);
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $transaction = Yii::$app->db->beginTransaction();
@@ -94,21 +94,21 @@ class OdkJsonController extends Controller
     {
         $this->hasPrivilege(Acl::ACTION_DELETE);
         $model = $this->loadModel($id);
-        return OdkJsonQueue::softDelete($model->id);
+        return OdkForm::softDelete($model->id);
     }
 
     /**
      * @param $id
-     * @return OdkJsonQueue
+     * @return OdkForm
      * @throws \yii\web\NotFoundHttpException
      * @throws \yii\web\ForbiddenHttpException
      */
     protected function loadModel($id)
     {
         if (is_string($id) && !is_numeric($id)) {
-            $model = OdkJsonQueue::loadModel(['uuid' => $id]);
+            $model = OdkForm::loadModel(['uuid' => $id]);
         } else {
-            $model = OdkJsonQueue::loadModel($id);
+            $model = OdkForm::loadModel($id);
         }
 
         return $model;
@@ -120,7 +120,7 @@ class OdkJsonController extends Controller
             throw new ForbiddenHttpException();
         }
 
-        $model = OdkJsonQueue::loadModel($id);
-        ProcessODKJson::push(['queueId' => $model->id]);
+        $model = OdkForm::loadModel($id);
+        ODKFormProcessor::push(['queueId' => $model->id]);
     }
 }

@@ -21,7 +21,7 @@ use yii\bootstrap4\ActiveForm;
     </div>
     <?php
     $form = ActiveForm::begin([
-        'id' => 'odk-json-form',
+        'id' => 'odk-form',
         'layout' => 'horizontal',
         'options' => ['class' => 'kt-form kt-form--label-right'],
         'fieldClass' => ActiveField::class,
