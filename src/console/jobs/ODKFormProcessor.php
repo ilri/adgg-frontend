@@ -9,6 +9,9 @@
 namespace console\jobs;
 
 
+use backend\modules\auth\models\Users;
+use backend\modules\core\models\Country;
+use backend\modules\core\models\CountryUnits;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\OdkForm;
 use common\helpers\DateUtils;
@@ -38,7 +41,29 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     /**
      * @var int
      */
-    private $_countryId;
+    private $_regionId;
+
+    /**
+     * @var int
+     */
+    private $_districtId;
+
+    /**
+     * @var int
+     */
+    private $_wardId;
+
+    /**
+     * @var int
+     */
+    private $_villageId;
+
+    /**
+     * @var int
+     */
+    private $_userId;
+
+    const MIN_SUPPORTED_ODK_FORM_VERSION = OdkForm::ODK_FORM_VERSION_1_POINT_4;
 
     /**
      * @param Queue $queue which pushed and is handling the job
@@ -54,13 +79,24 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             if (is_string($this->_model->form_data)) {
                 $this->_model->form_data = json_decode($this->_model->form_data, true);
             }
-            $this->setCountryId();
+            //check the version
+            if ($this->isSupportedVersion()) {
+                $this->setRegionId();
+                $this->setDistrictId();
+                $this->setWardId();
+                $this->setVillageId();
+                $this->setUserId();
 
+                $this->_model->is_processed = 1;
+                $this->_model->processed_at = DateUtils::mysqlTimestamp();
+            } else {
+                $message = Lang::t('This Version ({old_version}) of ODK Form is currently not supported. Version ({version}) and above are supported.', ['old_version' => $this->_model->form_version, 'version' => self::MIN_SUPPORTED_ODK_FORM_VERSION]);
+                $this->_model->error_message = $message;
+                Yii::$app->controller->stdout("{$message}\n");
+                Yii::$app->end();
+            }
 
-            $this->_model->is_processed = 1;
-            $this->_model->processed_at = DateUtils::mysqlTimestamp();
             $this->_model->save(false);
-
             //ODKJsonNotification::createManualNotifications(ODKJsonNotification::NOTIF_ODK_JSON, $this->_model->id);
         } catch (\Exception $e) {
             Yii::error($e->getMessage());
@@ -178,24 +214,186 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         }
     }
 
+    /**
+     * @return int
+     */
+    protected function getRegionId()
+    {
+        if (empty($this->_regionId)) {
+            $this->setRegionId();
+        }
+        return $this->_regionId;
+    }
+
+
+    protected function setRegionId()
+    {
+        $jsonKey = 'activities_location/activities_region';;
+        $code = $this->_model->form_data[$jsonKey] ?? null;
+        $id = CountryUnits::getScalar('id', ['code' => $code, 'country_id' => $this->_model->country_id, 'level' => CountryUnits::LEVEL_REGION]);
+        if (empty($id)) {
+            $id = null;
+        }
+        $this->_regionId = $id;
+    }
 
     /**
      * @return int
      */
-    protected function getCountryId()
+    protected function getDistrictId()
     {
-        if (empty($this->_countryId)) {
-            $this->setCountryId();
+        if (empty($this->_districtId)) {
+            $this->setDistrictId();
         }
-        return $this->_countryId;
+        return $this->_districtId;
     }
 
 
-    protected function setCountryId()
+    protected function setDistrictId()
     {
-        $formData = serialize($this->_model->form_data);
-        Yii::$app->controller->stdout("Serialized form data: {$formData}\n");
-        Yii::$app->end();
-        $countryCode = $this->_model->form_data['staff_country'];
+        $jsonKey = 'activities_location/activities_zone';
+        $code = $this->_model->form_data[$jsonKey] ?? null;
+        $id = CountryUnits::getScalar('id', ['code' => $code, 'country_id' => $this->_model->country_id, 'level' => CountryUnits::LEVEL_DISTRICT]);
+        if (empty($id)) {
+            $id = null;
+        }
+        $this->_districtId = $id;
     }
+
+    /**
+     * @return int
+     */
+    protected function getWardId()
+    {
+        if (empty($this->_wardId)) {
+            $this->setWardId();
+        }
+        return $this->_wardId;
+    }
+
+
+    protected function setWardId()
+    {
+        $jsonKey = 'activities_location/activities_ward';
+        $code = $this->_model->form_data[$jsonKey] ?? null;
+        $id = CountryUnits::getScalar('id', ['code' => $code, 'country_id' => $this->_model->country_id, 'level' => CountryUnits::LEVEL_WARD]);
+        if (empty($id)) {
+            $id = null;
+        }
+        $this->_wardId = $id;
+    }
+
+    /**
+     * @return int
+     */
+    protected function getVillageId()
+    {
+        if (empty($this->_villageId)) {
+            $this->setVillageId();
+        }
+        return $this->_villageId;
+    }
+
+
+    protected function setVillageId()
+    {
+        $jsonKey = 'activities_village';
+        $code = $this->_model->form_data[$jsonKey] ?? null;
+        $id = CountryUnits::getScalar('id', ['code' => $code, 'country_id' => $this->_model->country_id, 'level' => CountryUnits::LEVEL_VILLAGE]);
+        if (empty($id)) {
+            $id = null;
+        }
+        $this->_villageId = $id;
+    }
+
+    /**
+     * @return int
+     */
+    protected function getUserId()
+    {
+        if (empty($this->_userId)) {
+            $this->setUserId();
+        }
+        return $this->_userId;
+    }
+
+
+    protected function setUserId()
+    {
+        $jsonKey = 'staff_code';
+        $code = $this->_model->form_data[$jsonKey] ?? null;
+        $id = Users::getScalar('id', ['odk_code' => $code, 'country_id' => $this->_model->country_id]);
+        if (empty($id)) {
+            $id = null;
+        }
+        $this->_userId = $id;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isSupportedVersion()
+    {
+        $formVersionNumber = OdkForm::getVersionNumber($this->_model->form_version);
+        $minSupportedVersionNumber = OdkForm::getVersionNumber(self::MIN_SUPPORTED_ODK_FORM_VERSION);
+        return ($formVersionNumber >= $minSupportedVersionNumber);
+    }
+
+    //##### activities #######
+
+    protected function activityCreateAdminAreas()
+    {
+        //@todo:
+    }
+
+    protected function activityRegisterUsers()
+    {
+        //@todo
+    }
+
+    protected function activityCreateVouchers()
+    {
+        //@todo
+    }
+
+    protected function activityRegisterFarmer()
+    {
+        //@todo
+    }
+
+    protected function activityRegisterFarmerHouseholdMembers()
+    {
+        //@todo
+    }
+
+    protected function activityRegisterAnimals()
+    {
+        //@todo
+    }
+
+    protected function activityRegisterFarmerTechnologyMobilization()
+    {
+        //@todo
+    }
+
+    protected function activityRecordAnimalSynchronizationEvent()
+    {
+        //@todo
+    }
+
+    protected function activityRecordAnimalInseminationEvent()
+    {
+        //@todo
+    }
+
+    protected function activityRecordAnimalPregnancyDiagnosisEvent()
+    {
+        //@todo
+    }
+
+    protected function activityRecordAnimalMilkProductionEvent()
+    {
+        //@todo
+    }
+
 }

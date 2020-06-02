@@ -65,6 +65,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'attribute' => 'form_uuid',
                             ],
                             [
+                                'attribute' => 'form_version',
+                            ],
+                            [
                                 'attribute' => 'is_processed',
                                 'format' => 'boolean',
                             ],

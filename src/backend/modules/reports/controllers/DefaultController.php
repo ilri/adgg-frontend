@@ -56,7 +56,6 @@ class DefaultController extends Controller
             case Constants::REPORT_TYPE_TESTDAY_MILKDATA:
                 $tpl_type = 'testdaymilkdata';
                 break;
-
             case Constants::REPORT_TYPE_CALFDATA:
                 $tpl_type = 'calfdata';
                 break;
@@ -114,7 +113,6 @@ class DefaultController extends Controller
                     $name = $builder->name;
                     $query = null;
                     break;
-
                 case Constants::REPORT_TYPE_CALFDATA:
                     $builder = Reports::calfDataReport(\Yii::$app->request->post());
                     $name = $builder->name;
