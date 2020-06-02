@@ -338,4 +338,62 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $minSupportedVersionNumber = OdkForm::getVersionNumber(self::MIN_SUPPORTED_ODK_FORM_VERSION);
         return ($formVersionNumber >= $minSupportedVersionNumber);
     }
+
+    //##### activities #######
+
+    protected function activityCreateAdminAreas()
+    {
+        //@todo:
+    }
+
+    protected function activityRegisterUsers()
+    {
+        //@todo
+    }
+
+    protected function activityCreateVouchers()
+    {
+        //@todo
+    }
+
+    protected function activityRegisterFarmer()
+    {
+        //@todo
+    }
+
+    protected function activityRegisterFarmerHouseholdMembers()
+    {
+        //@todo
+    }
+
+    protected function activityRegisterAnimals()
+    {
+        //@todo
+    }
+
+    protected function activityRegisterFarmerTechnologyMobilization()
+    {
+        //@todo
+    }
+
+    protected function activityRecordAnimalSynchronizationEvent()
+    {
+        //@todo
+    }
+
+    protected function activityRecordAnimalInseminationEvent()
+    {
+        //@todo
+    }
+
+    protected function activityRecordAnimalPregnancyDiagnosisEvent()
+    {
+        //@todo
+    }
+
+    protected function activityRecordAnimalMilkProductionEvent()
+    {
+        //@todo
+    }
+
 }
