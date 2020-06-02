@@ -26,11 +26,6 @@ class ProcessODKJson extends BaseObject implements JobInterface
     public $queueId;
 
     /**
-     * @var array
-     */
-    private $_jsonArr;
-
-    /**
      * @var OdkJsonQueue
      */
     private $_model;
@@ -47,19 +42,20 @@ class ProcessODKJson extends BaseObject implements JobInterface
         }
 
         try {
-            $this->_model->is_locked = 1;
             $this->_model->save(false);
-            $json = json_decode($this->_model->file_contents, true);
-            $this->_jsonArr = $json;
+            if (is_string($this->_model->form_data)) {
+                $this->_model->form_data = json_decode($this->_model->form_data, true);
+            }
             $this->processFarmerIndividual();
-            $this->_model->is_locked = 0;
             $this->_model->is_processed = 1;
             $this->_model->processed_at = DateUtils::mysqlTimestamp();
             $this->_model->save(false);
 
-            ODKJsonNotification::createManualNotifications(ODKJsonNotification::NOTIF_ODK_JSON, $this->_model->id);
+            //ODKJsonNotification::createManualNotifications(ODKJsonNotification::NOTIF_ODK_JSON, $this->_model->id);
         } catch (\Exception $e) {
             Yii::error($e->getMessage());
+            Yii::$app->controller->stdout("{$e->getMessage()}\n");
+            Yii::$app->controller->stdout("{$e->getTraceAsString()}\n");
         }
     }
 
@@ -88,7 +84,7 @@ class ProcessODKJson extends BaseObject implements JobInterface
 
     protected function processFarmerIndividual()
     {
-        $farmerCode = $this->_jsonArr['farmer_individual/activities_farmer'] ?? null;
+        $farmerCode = $this->_model->form_data['farmer_individual/activities_farmer'] ?? null;
         if ($farmerCode === null) {
             Yii::info('Farmer Individual Check Failed');
         }
@@ -104,7 +100,7 @@ class ProcessODKJson extends BaseObject implements JobInterface
         }
 
         $attributes = [];
-        foreach ($this->_jsonArr as $k => $value) {
+        foreach ($this->_model->form_data as $k => $value) {
             $attribute = $this->extractAttributesFromJson($k, $value);
             if (!empty($attribute)) {
                 $attributes[] = $attribute;
@@ -140,7 +136,7 @@ class ProcessODKJson extends BaseObject implements JobInterface
             $this->_model->has_errors = 0;
         } else {
             $this->_model->has_errors = 1;
-            $this->_model->error_message = json_encode($farmModel->getErrors());
+            $this->_model->error_json = $farmModel->getErrors();
         }
     }
 

@@ -75,6 +75,10 @@ use yii\helpers\Url;
             'filter' => false,
         ],
         [
+            'attribute' => 'odk_attribute_name',
+            'filter' => false,
+        ],
+        [
             'attribute' => 'default_value',
             'value' => function (TableAttribute $model) {
                 return $model->default_value;

@@ -5,6 +5,7 @@ namespace backend\modules\core\models;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
+use console\jobs\ProcessODKJson;
 
 /**
  * This is the model class for table "core_odk_json_queue".
