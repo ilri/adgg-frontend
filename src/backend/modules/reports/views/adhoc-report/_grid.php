@@ -44,7 +44,7 @@ use yii\helpers\Url;
             'value' => function (AdhocReport $model) {
                 //return AdhocReport::decodeStatus($model->status);
                 if($model->status == AdhocReport::STATUS_PROCESSING) {
-                    return Html::label(Lang::t('Processing ') . '  <i class="fas fa-spinner" style="color:#38997a;"></i>');
+                    return Html::label(Lang::t('Processing ') . '  <i class="fas fa-spinner fa-spin fa-2x" style="color:#38997a;"></i>');
                 }
                 else {
                     return AdhocReport::decodeStatus($model->status);
