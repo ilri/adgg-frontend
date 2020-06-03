@@ -9,7 +9,6 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="row">
     <div class="col-lg-12">
-        <?= $this->render('_tab') ?>
         <div class="tab-content">
             <?= $this->render('_filter', ['model' => $searchModel]) ?>
             <?= $this->render('_grid', ['model' => $searchModel]) ?>
