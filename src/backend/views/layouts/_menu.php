@@ -374,11 +374,58 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
 
             <?php if (Yii::$app->user->canView(Constants::RES_AD_HOC_REPORTS)): ?>
                 <li class="kt-menu__item kt-menu__item--submenu <?= Yii::$app->controller->uniqueId == 'reports/adhoc-report' ? 'kt-menu__item--here' : '' ?>">
-                    <a href="<?= Url::to(['/reports/adhoc-report/index']) ?>" class="kt-menu__link">
-                        <i class="kt-menu__link-icon flaticon2-browser-2"></i>
+                    <a href="#" class="kt-menu__link kt-menu__toggle">
+                        <i class="kt-menu__link-icon far fa-cow"></i>
                         <span class="kt-menu__link-text">DATA EXTRACTS</span>
+                        <i class="kt-menu__ver-arrow la la-angle-right"></i>
                     </a>
+                    <div class="kt-menu__submenu">
+                        <span class="kt-menu__arrow"></span>
+                        <ul class="kt-menu__subnav">
+                            <?php if (Session::isPrivilegedAdmin()): ?>
+                                <li class="kt-menu__item">
+                                    <a href="<?= Url::to(['/reports/adhoc-report/index']) ?>"
+                                       class="kt-menu__link ">
+                                        <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                        <span class="kt-menu__link-text">
+                                            <?= Lang::t('All Data Extracts') ?></span>
+                                    </a>
+                                </li>
+                            <?php endif; ?>
+                        </ul>
+                        <ul class="kt-menu__subnav">
+                            <?php foreach ($countries as $country): ?>
+                                <?php if (Session::getCountryId() == $country->id || Session::isPrivilegedAdmin()): ?>
+                                    <li class="kt-menu__item">
+                                        <a href="<?= Url::to(['/reports/adhoc-report/index', 'country_id' => $country->id]) ?>"
+                                           class="kt-menu__link ">
+                                            <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                            <span
+                                                    class="kt-menu__link-text">
+                                                <?php if (Session::isVillageUser()): ?>
+                                                    <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getVillageId(), 'level' => CountryUnits::LEVEL_VILLAGE]) . ' ' . 'Village' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                <?php elseif (Session::isWardUser()): ?>
+                                                    <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getWardId(), 'level' => CountryUnits::LEVEL_WARD]) . ' ' . 'Ward' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                <?php elseif (Session::isDistrictUser()): ?>
+                                                    <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                <?php elseif (Session::isRegionUser()): ?>
+                                                    <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                <?php elseif (Session::isOrganizationUser()): ?>
+                                                    <?= $unitName = Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                <?php elseif (Session::isOrganizationClientUser()): ?>
+                                                    <?= $unitName = Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                <?php else: ?>
+                                                    <?= Html::encode($country->name) ?>
+                                                <?php endif; ?>
+                                            </span>
+                                        </a>
+                                    </li>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
                 </li>
+
             <?php endif; ?>
             <li class="kt-menu__section ">
                 <h4 class="kt-menu__section-text">ADMINISTRATION</h4>
