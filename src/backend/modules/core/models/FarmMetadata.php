@@ -18,13 +18,14 @@ use common\models\ActiveSearchTrait;
  * @property string|array|null $additional_attributes
  * @property string $created_at
  * @property int|null $created_by
+ * @property int $country_id
  *
  * @property Farm $farm
  * @property FarmMetadataType $metadataType
  */
 abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterface, TableAttributeInterface, FarmMetadataInterface, UploadExcelInterface
 {
-    use ActiveSearchTrait, TableAttributeTrait;
+    use ActiveSearchTrait, TableAttributeTrait, CountryDataTrait;
 
     //types
     const TYPE_FEEDING_SYSTEMS_METADATA = 1;
@@ -51,7 +52,7 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
     {
         return [
             [['farm_id', 'type'], 'required'],
-            [['farm_id', 'type'], 'integer'],
+            [['farm_id', 'type', 'country_id'], 'integer'],
             [['additional_attributes'], 'safe'],
             ['type', 'uniqueTypeValidator'],
             [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
@@ -70,6 +71,7 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
             'type' => 'Type',
             'created_at' => 'Created At',
             'created_by' => 'Created By',
+            'country_id' => 'Country Id',
         ];
 
         return array_merge($labels, $this->getOtherAttributeLabels());
@@ -88,6 +90,7 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
         return [
             'farm_id',
             'type',
+            'country_id',
         ];
     }
 
@@ -138,6 +141,7 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
+            $this->country_id = $this->farm->country_id ?? null;
             $this->setAdditionalAttributesValues();
 
             return true;
