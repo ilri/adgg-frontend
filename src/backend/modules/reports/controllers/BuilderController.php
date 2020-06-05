@@ -101,6 +101,7 @@ class BuilderController extends Controller
             // save name, raw_query
             $report = new AdhocReport();
             $report->name = $builder->name;
+            $report->country_id = $builder->country_id;
             $report->raw_sql = $builder->rawQuery();
             $report->status = AdhocReport::STATUS_QUEUED;
             // serialize query object and save to options
