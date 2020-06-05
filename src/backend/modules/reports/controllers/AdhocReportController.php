@@ -34,8 +34,9 @@ class AdhocReportController extends Controller
         $this->activeMenu = Constants::MENU_REPORTS;
     }
 
-    public function actionIndex($name = null, $created_by = null, $status = null, $from = null, $to = null)
+    public function actionIndex($country_id = null, $name = null, $created_by = null, $status = null, $from = null, $to = null)
     {
+        $country_id = Session::getCountryId($country_id);
         $this->hasPrivilege(Acl::ACTION_VIEW);
         if (!Session::isPrivilegedAdmin()) {
             $created_by = Yii::$app->user->identity->id;
@@ -51,6 +52,7 @@ class AdhocReportController extends Controller
             'params' => $params,
             'with' => ['extractedBy'],
         ]);
+        $searchModel->country_id = $country_id;
         $searchModel->name = $name;
         $searchModel->created_by = $created_by;
         $searchModel->status = $status ?? AdhocReport::STATUS_COMPLETED;
@@ -159,6 +161,16 @@ class AdhocReportController extends Controller
         }
 
         return $report->simpleAjaxSave('_requeue', 'index', [], $success_msg, false, 'id');
+    }
+
+    public function actionErrors($id){
+        $this->hasPrivilege(Acl::ACTION_VIEW);
+
+        $model = AdhocReport::loadModel($id);
+
+        return $this->renderAjax('_errors', [
+            'model' => $model
+        ]);
     }
 
 }

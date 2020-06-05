@@ -45,6 +45,7 @@ class Controller extends BackendController
                             'requeue',
                             'generate',
                             'process',
+                            'errors',
 
                         ],
                         'allow' => true,
