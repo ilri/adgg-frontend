@@ -8,6 +8,14 @@ use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\CalvingEvent;
 use backend\modules\core\models\ExitsEvent;
 use backend\modules\core\models\Farm;
+use backend\modules\core\models\FarmMetadata;
+use backend\modules\core\models\FarmMetadataBreeding;
+use backend\modules\core\models\FarmMetadataBreedingAIProviders;
+use backend\modules\core\models\FarmMetadataBreedingBulls;
+use backend\modules\core\models\FarmMetadataBreedingOtherBulls;
+use backend\modules\core\models\FarmMetadataBreedingSchemeBulls;
+use backend\modules\core\models\FarmMetadataFeeding;
+use backend\modules\core\models\FarmMetadataHealth;
 use backend\modules\core\models\HealthEvent;
 use backend\modules\core\models\MilkingEvent;
 use backend\modules\core\models\PDEvent;
@@ -110,6 +118,36 @@ class ReportBuilder extends Model
                 'class' => Farm::class,
                 'title' => 'Farm',
                 'relations' => ['fieldAgent', 'country', 'region', 'district', 'ward', 'village', 'org', 'client'],
+            ],
+            'FarmMetadataBreedingAIProviders' =>[
+                'class' => FarmMetadataBreedingAIProviders::class,
+                'title' =>'Farm Breeding AIProviders Metadata',
+                'relations' => ['farm'],
+            ],
+            'FarmMetadataBreedingBulls' =>[
+                'class' => FarmMetadataBreedingBulls::class,
+                'title' =>'Farm Breeding Bulls Metadata',
+                'relations' => ['farm'],
+            ],
+            'FarmMetadataBreedingOtherBulls' =>[
+                'class' => FarmMetadataBreedingOtherBulls::class,
+                'title' =>'Farm Breeding Other Bulls Metadata',
+                'relations' => ['farm'],
+            ],
+            'FarmMetadataBreedingSchemeBulls' =>[
+                'class' => FarmMetadataBreedingSchemeBulls::class,
+                'title' =>'Farm Breeding Scheme Bulls Metadata',
+                'relations' => ['farm'],
+            ],
+            'FarmMetadataFeeding' =>[
+                'class' => FarmMetadataFeeding::class,
+                'title' =>'Farm Feeding Metadata',
+                'relations' => ['farm'],
+            ],
+            'FarmMetadataHealth' =>[
+                'class' => FarmMetadataHealth::class,
+                'title' =>'Farm Health Metadata',
+                'relations' => ['farm'],
             ],
             'Animal' => [
                 'class' => Animal::class,

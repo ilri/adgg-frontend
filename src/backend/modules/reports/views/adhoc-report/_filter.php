@@ -1,5 +1,6 @@
 <?php
 
+use backend\modules\core\models\Country;
 use backend\modules\reports\models\AdhocReport;
 use common\helpers\Lang;
 use common\widgets\select2\Select2;
@@ -16,10 +17,25 @@ $url = ['index'];
                 <i class="fas fa-chevron-right"></i> <?= Lang::t('Filters') ?>:
             </div>
         </div>
-        <div id="collapseOne" class="collapse" data-parent="#accordion">
+        <div id="collapseOne" class="collapse show" data-parent="#accordion">
             <div class="card-body">
                 <?= Html::beginForm($url, 'get', ['class' => '', 'id' => 'grid-filter-form', 'data-grid' => $model->getPjaxWidgetId()]) ?>
                 <div class="form-row align-items-center">
+                        <div class="col-lg-2">
+                            <?= Html::label($model->getAttributeLabel('country_id')) ?>
+                            <?= Select2::widget([
+                                'name' => 'country_id',
+                                'value' => $model->country_id,
+                                'data' => Country::getListData(),
+                                'options' => [
+                                    'placeholder' => "[select one]",
+                                    'class' => 'form-control select2 parent-depdropdown',
+                                ],
+                                'pluginOptions' => [
+                                    'allowClear' => true
+                                ],
+                            ]); ?>
+                        </div>
                     <div class="col-lg-2">
                         <?= Html::label($model->getAttributeLabel('status')) ?>
                         <?= Select2::widget([
