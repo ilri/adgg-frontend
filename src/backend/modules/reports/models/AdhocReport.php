@@ -23,6 +23,8 @@ use common\models\ActiveSearchTrait;
  * @property string $options
  * @property int $status
  * @property string $status_remarks
+ * @property string $error_message
+ * @property string $error_trace
  * @property string $created_at
  * @property int $created_by
  *
@@ -55,6 +57,7 @@ class AdhocReport extends ActiveRecord implements ActiveSearchInterface
             [['name', 'raw_sql', 'status'], 'required'],
             [['status', 'type', 'country_id', 'is_standard'], 'integer'],
             [['name', 'report_file'], 'string', 'max' => 255],
+            [['status_remarks', 'error_message', 'error_trace'], 'string'],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
     }

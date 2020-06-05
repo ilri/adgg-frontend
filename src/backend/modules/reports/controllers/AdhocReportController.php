@@ -163,4 +163,14 @@ class AdhocReportController extends Controller
         return $report->simpleAjaxSave('_requeue', 'index', [], $success_msg, false, 'id');
     }
 
+    public function actionErrors($id){
+        $this->hasPrivilege(Acl::ACTION_VIEW);
+
+        $model = AdhocReport::loadModel($id);
+
+        return $this->renderAjax('_errors', [
+            'model' => $model
+        ]);
+    }
+
 }
