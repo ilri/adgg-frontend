@@ -42,7 +42,6 @@ use yii\helpers\Url;
             'filter' => AdhocReport::statusOptions(),
             'format' => 'html',
             'value' => function (AdhocReport $model) {
-                //return AdhocReport::decodeStatus($model->status);
                 if($model->status == AdhocReport::STATUS_PROCESSING) {
                     return Html::label(Lang::t('Processing ') . '  <i class="fas fa-spinner fa-spin fa-2x" style="color:#38997a;"></i>');
                 }
@@ -54,6 +53,21 @@ use yii\helpers\Url;
         [
             'attribute' => 'status_remarks',
             'filter' => false,
+        ],
+        [
+            'attribute' => 'error_message',
+            'label' => 'Errors',
+            'filter' => false,
+            'format' => 'raw',
+            'value' => function(AdhocReport $model){
+                if($model->status == AdhocReport::STATUS_ERROR){
+                    $url = Url::to(['/reports/adhoc-report/errors', 'id' => $model->id]);
+                    return Html::a('View Errors', '#', ['title' => 'View Errors', 'data-toggle' => 'modal', 'data-href' => $url]);
+                }
+                return '';
+
+            },
+            'visible' => \backend\modules\auth\Session::isDev(),
         ],
         [
             'attribute' => 'created_by',
