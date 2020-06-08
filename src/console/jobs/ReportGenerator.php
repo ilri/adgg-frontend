@@ -81,6 +81,11 @@ class ReportGenerator extends BaseObject implements JobInterface
 
             ReportNotification::createManualNotifications(ReportNotification::NOTIF_REPORT_COMPLETION, $this->_model->id);
         } catch (\Exception $e) {
+            $this->_model->status = AdhocReport::STATUS_ERROR;
+            $this->_model->status_remarks = 'An error occurred';
+            $this->_model->error_message = $e->getMessage();
+            $this->_model->error_trace = $e->getTraceAsString();
+            $this->_model->save(false);
             Yii::error($e->getMessage());
         }
     }
@@ -188,7 +193,9 @@ class ReportGenerator extends BaseObject implements JobInterface
 
         }catch (\Exception $e) {
             $this->_model->status = AdhocReport::STATUS_ERROR;
-            $this->_model->status_remarks = $e->getMessage();
+            $this->_model->status_remarks = 'An error occurred';
+            $this->_model->error_message = $e->getMessage();
+            $this->_model->error_trace = $e->getTraceAsString();
             $this->_model->save(false);
             Yii::$app->controller->stdout("{$e->getMessage()} \n");
         }
