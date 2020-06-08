@@ -9,7 +9,7 @@
 namespace backend\modules\core\models;
 
 
-class FarmMetadataBreedingOtherBulls extends FarmMetadataModel
+class FarmMetadataBreedingOtherBulls extends FarmMetadata
 {
 
     public static function getDefineMetadataType(): int

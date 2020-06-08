@@ -216,4 +216,25 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
     {
         return $this->hasOne(FarmMetadataType::class, ['code' => 'type']);
     }
+
+    /**
+     * @return array
+     * @throws \Exception
+     */
+    public function reportBuilderFields()
+    {
+        $this->ignoreAdditionalAttributes = true;
+        $attributes = $this->attributes();
+        $attrs = [];
+        $fields = TableAttribute::getData(['attribute_key'], ['table_id' => self::getDefinedTableId(), 'farm_metadata_type' => static::getDefineMetadataType()]);
+
+        foreach ($fields as $k => $field) {
+            $attrs[] = $field['attribute_key'];
+        }
+        $attrs = array_merge($attributes, $attrs);
+        $unwanted = array_merge($this->reportBuilderUnwantedFields(), $this->reportBuilderAdditionalUnwantedFields());
+        $attrs = array_diff($attrs, $unwanted);
+        sort($attrs);
+        return $attrs;
+    }
 }
