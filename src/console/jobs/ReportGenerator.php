@@ -227,6 +227,9 @@ class ReportGenerator extends BaseObject implements JobInterface
 
             $this->_model->report_file = $this->filename. '.csv';
             $this->_model->status = AdhocReport::STATUS_COMPLETED;
+            $this->_model->status_remarks = '';
+            $this->_model->error_message = '';
+            $this->_model->error_trace = '';
             $this->_model->save(false);
         } catch (\Exception $e) {
             Yii::$app->controller->stdout("{$e->getMessage()} \n");
