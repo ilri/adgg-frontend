@@ -86,7 +86,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             ['event_date', 'validateNoFutureDate'],
             ['event_date', 'unique', 'targetAttribute' => ['animal_id', 'event_type', 'event_date'], 'message' => '{attribute} should be unique per animal', 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
             [['org_id', 'client_id'], 'safe'],
-            ['migration_id', 'unique','except'=>self::SCENARIO_MISTRO_DB_UPLOAD],
+            ['migration_id', 'unique', 'except' => self::SCENARIO_MISTRO_DB_UPLOAD],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
     }
@@ -199,6 +199,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             }
             $this->setAdditionalAttributesValues();
             $this->setLactationId();
+
             return true;
         }
         return false;
@@ -236,7 +237,9 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
         parent::afterSave($insert, $changedAttributes);
         if ($this->event_type == self::EVENT_TYPE_CALVING) {
             if ($this->scenario != self::SCENARIO_MISTRO_DB_UPLOAD) {
-                static::setLactationNumber($this->animal_id);
+                if ($insert) {
+                    static::setLactationNumber($this->animal_id);
+                }
                 //update milk records
                 /*$data = static::getData(['id', 'event_date'], ['event_type' => self::EVENT_TYPE_MILKING, 'animal_id' => $this->animal_id]);
                 foreach ($data as $row) {
@@ -247,7 +250,9 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
         }
         if ($this->event_type == self::EVENT_TYPE_MILKING) {
             if (!empty($this->lactation_id) && $this->scenario != self::SCENARIO_MISTRO_DB_UPLOAD) {
-                static::setTestDayNo($this->animal_id, $this->lactation_id);
+                if ($insert) {
+                    static::setTestDayNo($this->animal_id, $this->lactation_id);
+                }
             }
         }
     }
