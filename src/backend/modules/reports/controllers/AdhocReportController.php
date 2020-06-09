@@ -138,6 +138,9 @@ class AdhocReportController extends Controller
         $report->report_file = null;
         $report->created_by = Yii::$app->user->id;
         $report->status = AdhocReport::STATUS_QUEUED;
+        $report->status_remarks = null;
+        $report->error_message = null;
+        $report->error_trace = null;
         $success_msg = Lang::t('Report Queued Successfully. You will be notified once your report is ready for download');
 
         if(Yii::$app->request->isPost && $report->load(Yii::$app->request->post()) && $report->validate() ){

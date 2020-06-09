@@ -101,6 +101,9 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
         if ($this->event_type != self::EVENT_TYPE_MILKING || null === $this->lactation || empty($this->lactation->event_date) || empty($this->event_date)) {
             return;
         }
+        if (!empty($this->dim)) {
+            return;
+        }
         $diff = DateUtils::getDateDiff($this->lactation->event_date, $this->event_date);
         $this->dim = $diff->days;
     }

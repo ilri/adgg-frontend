@@ -9,8 +9,6 @@
 namespace console\jobs;
 
 
-use backend\modules\auth\models\Users;
-use backend\modules\core\models\Country;
 use backend\modules\core\models\CountryUnits;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\OdkForm;
@@ -58,11 +56,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      */
     private $_villageId;
 
-    /**
-     * @var int
-     */
-    private $_userId;
-
     const MIN_SUPPORTED_ODK_FORM_VERSION = OdkForm::ODK_FORM_VERSION_1_POINT_4;
 
     /**
@@ -85,7 +78,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->setDistrictId();
                 $this->setWardId();
                 $this->setVillageId();
-                $this->setUserId();
 
                 $this->_model->is_processed = 1;
                 $this->_model->processed_at = DateUtils::mysqlTimestamp();
@@ -304,29 +296,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $id = null;
         }
         $this->_villageId = $id;
-    }
-
-    /**
-     * @return int
-     */
-    protected function getUserId()
-    {
-        if (empty($this->_userId)) {
-            $this->setUserId();
-        }
-        return $this->_userId;
-    }
-
-
-    protected function setUserId()
-    {
-        $jsonKey = 'staff_code';
-        $code = $this->_model->form_data[$jsonKey] ?? null;
-        $id = Users::getScalar('id', ['odk_code' => $code, 'country_id' => $this->_model->country_id]);
-        if (empty($id)) {
-            $id = null;
-        }
-        $this->_userId = $id;
     }
 
     /**

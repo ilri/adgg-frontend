@@ -16,7 +16,7 @@ class FakerController extends Controller
     public function actionTest()
     {
         //\console\jobs\ODKFormProcessor::push(['itemId' => 7794]);
-        $this->resetModels(\backend\modules\core\models\FarmMetadataBreeding::class);
+        $this->resetModels(\backend\modules\core\models\MilkingEvent::class,'[[lactation_id]] IS NOT NULL AND [[event_type]]=2');
     }
 
     /**

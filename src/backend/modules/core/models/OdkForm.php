@@ -2,6 +2,7 @@
 
 namespace backend\modules\core\models;
 
+use backend\modules\auth\models\Users;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
@@ -24,10 +25,12 @@ use console\jobs\ODKFormProcessor;
  * @property string|array|null $animal_events_data
  * @property string|array|null $user_data
  * @property string|null $form_version
+ * @property int|null $user_id
  * @property string $created_at
  * @property int|null $created_by
  *
  * @property Country $country
+ * @property Users $user
  */
 class OdkForm extends ActiveRecord implements ActiveSearchInterface
 {
@@ -56,7 +59,7 @@ class OdkForm extends ActiveRecord implements ActiveSearchInterface
     {
         return [
             [['form_data'], 'required'],
-            [['is_processed', 'country_id', 'has_errors'], 'integer'],
+            [['is_processed', 'country_id', 'has_errors', 'user_id'], 'integer'],
             [['form_uuid'], 'string', 'max' => 128],
             [[self::SEARCH_FIELD, 'form_version'], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
@@ -84,6 +87,7 @@ class OdkForm extends ActiveRecord implements ActiveSearchInterface
             'animal_events_data' => 'Animal Events Data',
             'user_data' => 'User Data',
             'form_version' => 'Form Version',
+            'user_id' => 'User Id',
         ];
     }
 
@@ -110,6 +114,7 @@ class OdkForm extends ActiveRecord implements ActiveSearchInterface
             $this->form_uuid = $this->form_data['_uuid'] ?? null;
             $this->form_version = $this->form_data['_version'] ?? null;
             $this->setCountryId();
+            $this->setUserId();
 
             return true;
         }
@@ -118,6 +123,9 @@ class OdkForm extends ActiveRecord implements ActiveSearchInterface
 
     protected function setCountryId()
     {
+        if (!empty($this->country_id)) {
+            return;
+        }
         if ($this->form_version === self::ODK_FORM_VERSION_1_POINT_4) {
             $jsonKey = 'activities_country';
         } else {
@@ -157,5 +165,27 @@ class OdkForm extends ActiveRecord implements ActiveSearchInterface
     public static function getVersionNumber($versionString)
     {
         return (float)filter_var($versionString, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUser()
+    {
+        return $this->hasOne(Users::class, ['id' => 'user_id']);
+    }
+
+    protected function setUserId()
+    {
+        if (!empty($this->user_id)) {
+            return;
+        }
+        $jsonKey = 'staff_code';
+        $code = $this->form_data[$jsonKey] ?? null;
+        $id = Users::getScalar('id', ['odk_code' => $code, 'country_id' => $this->country_id]);
+        if (empty($id)) {
+            $id = null;
+        }
+        $this->user_id = $id;
     }
 }
