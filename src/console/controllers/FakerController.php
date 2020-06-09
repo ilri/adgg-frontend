@@ -16,7 +16,7 @@ class FakerController extends Controller
     public function actionTest()
     {
         //\console\jobs\ODKFormProcessor::push(['itemId' => 7794]);
-        $this->resetModels(\backend\modules\core\models\MilkingEvent::class,'[[lactation_id]] IS NOT NULL AND [[event_type]]=2');
+        $this->resetModels(\backend\modules\core\models\MilkingEvent::class, '[[lactation_id]] IS NOT NULL AND [[event_type]]=2');
     }
 
     /**
@@ -33,6 +33,11 @@ class FakerController extends Controller
         /* @var $models ActiveRecord[] */
         foreach ($query->batch() as $i => $models) {
             foreach ($models as $model) {
+                if (!empty($model->dim)) {
+                    $this->stdout("{$modelClassName}: Record {$n} of {$totalRecords} records has DIM. Ignored\n");
+                    $n++;
+                    continue;
+                }
                 $model->save(false);
                 $this->stdout("{$modelClassName}: Updated {$n} of {$totalRecords} records\n");
                 $n++;
