@@ -16,7 +16,7 @@ use yii\helpers\Url;
         //Yii::$app->user->canCreate() ? '<a class="btn btn-brand btn-bold btn-upper btn-font-sm btn-space" href="' . Url::to(['upload', 'country_id' => $model->country_id, 'level_id' => UserLevels::LEVEL_DISTRICT]) . '" data-pjax="0"><i class="fa fa-file-excel-o"></i> ' . Lang::t('Upload Enumerators/AITech') . '</a> ' : '',
     ],
     'rowOptions' => function (AdhocReport $model) {
-        return ["class" => "_linkable", "data-href" => Url::to(['view', "id" => $model->id])];
+        return ["class" => "_linkable " . AdhocReport::decodeStatus($model->status), "data-href" => Url::to(['view', "id" => $model->id])];
     },
     'columns' => [
         [
@@ -116,7 +116,7 @@ use yii\helpers\Url;
                     return ($model->status == AdhocReport::STATUS_COMPLETED || $model->status == AdhocReport::STATUS_ERROR);
                 },
                 'delete' => function (AdhocReport $model) {
-                    return ($model->status == AdhocReport::STATUS_COMPLETED || $model->status == AdhocReport::STATUS_ERROR);
+                    return ($model->status != AdhocReport::STATUS_QUEUED);
                 },
             ],
             'buttons' => [

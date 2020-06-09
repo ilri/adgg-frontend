@@ -660,7 +660,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'tag_id' => null,
             'sire_id' => null,
             'dam_id' => null,
-            'sex' => null,
+            'animal_type' => null,
             'birthdate' => null,
             'main_breed' => null,
         ];
@@ -687,7 +687,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'tag_id' => 'AnimalRegID',
             'sire_id' => 'SireID',
             'dam_id' => 'DamID',
-            'sex' => 'Sex',
+            'animal_type' => 'Sex',
             'birthdate' => 'Birthdt',
             'main_breed' => 'Breed',
         ];

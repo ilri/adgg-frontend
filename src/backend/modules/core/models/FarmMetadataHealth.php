@@ -9,7 +9,7 @@
 namespace backend\modules\core\models;
 
 
-class FarmMetadataHealth extends FarmMetadataModel
+class FarmMetadataHealth extends FarmMetadata
 {
     public static function getDefineMetadataType(): int
     {

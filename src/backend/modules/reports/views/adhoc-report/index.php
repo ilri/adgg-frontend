@@ -1,5 +1,8 @@
 <?php
 
+use yii\helpers\Json;
+
+
 /* @var $this yii\web\View */
 /* @var $searchModel backend\modules\reports\models\AdhocReport */
 /* @var $countryModel \backend\modules\core\models\Country */
@@ -15,3 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 </div>
+<?php
+$options = [];
+$this->registerJs("MyApp.modules.reports.stdreport(" . Json::encode($options) . ");");
+?>

@@ -655,6 +655,17 @@ MyApp.modules.reports = {};
             _load(this);
         });
 
+        // refresh grid if we have queued or reports in process
+        setInterval(function() {
+            let gridClass = 'AdhocReport-grid-pjax';
+            let gridContainer = $('#'+gridClass);
+            let table = gridContainer.find('.kv-grid-table:first');
+            let rows = table.find('tbody tr.Queued, tbody tr.Processing');
+            if (rows.length > 0){
+                MyApp.grid.updateGrid(gridClass, {});
+            }
+        }, 10 * 1000);
+
     }
 
     MyApp.modules.reports.stdreport = function (options) {

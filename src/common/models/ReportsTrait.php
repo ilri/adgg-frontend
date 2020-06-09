@@ -10,9 +10,7 @@ namespace common\models;
 
 
 use backend\modules\core\models\Choices;
-use backend\modules\core\models\ChoiceTypes;
 use common\helpers\DbUtils;
-use Yii;
 
 trait ReportsTrait
 {
