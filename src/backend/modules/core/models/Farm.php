@@ -48,6 +48,7 @@ use yii\helpers\Html;
  * @property string $deleted_at
  * @property int $deleted_by
  * @property string $odk_code
+ * @property string $odk_farm_code
  * @property string|array $additional_attributes
  * @property string $migration_id
  *

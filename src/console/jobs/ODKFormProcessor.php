@@ -27,11 +27,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     public $itemId;
 
     /**
-     * @var array
-     */
-    private $_jsonArr;
-
-    /**
      * @var OdkForm
      */
     private $_model;
@@ -56,6 +51,11 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      */
     private $_villageId;
 
+    /**
+     * @var int
+     */
+    private $_farmId;
+
     const MIN_SUPPORTED_ODK_FORM_VERSION = OdkForm::ODK_FORM_VERSION_1_POINT_4;
 
     /**
@@ -78,109 +78,22 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->setDistrictId();
                 $this->setWardId();
                 $this->setVillageId();
-
-                $this->_model->is_processed = 1;
-                $this->_model->processed_at = DateUtils::mysqlTimestamp();
+                $this->setFarmId();
             } else {
                 $message = Lang::t('This Version ({old_version}) of ODK Form is currently not supported. Version ({version}) and above are supported.', ['old_version' => $this->_model->form_version, 'version' => self::MIN_SUPPORTED_ODK_FORM_VERSION]);
                 $this->_model->error_message = $message;
+                $this->_model->has_errors = 1;
                 Yii::$app->controller->stdout("{$message}\n");
                 Yii::$app->end();
             }
 
+            $this->_model->is_processed = 1;
+            $this->_model->processed_at = DateUtils::mysqlTimestamp();
             $this->_model->save(false);
             //ODKJsonNotification::createManualNotifications(ODKJsonNotification::NOTIF_ODK_JSON, $this->_model->id);
         } catch (\Exception $e) {
             Yii::error($e->getMessage());
         }
-    }
-
-    protected function processFarmerIndividual()
-    {
-        $farmerCode = $this->_jsonArr['farmer_individual/activities_farmer'] ?? null;
-        if ($farmerCode === null) {
-            Yii::info('Farmer Individual Check Failed');
-        }
-
-        $farmModel = Farm::find()->andWhere(['code' => $farmerCode])->one();
-        if ($farmModel === null) {
-            $this->_model->has_errors = 1;
-            $this->_model->error_message = Lang::t('Could not find the farm/farmer with {code_label} {code}', [
-                'code_label' => (new Farm())->getAttributeLabel('code'),
-                'code' => $farmerCode,
-            ]);
-            return false;
-        }
-
-        $attributes = [];
-        foreach ($this->_jsonArr as $k => $value) {
-            $attribute = $this->extractAttributesFromJson($k, $value);
-            if (!empty($attribute)) {
-                $attributes[] = $attribute;
-            }
-
-        }
-
-        foreach ($attributes as $attribute => $value) {
-            if (is_array($value)) {
-                foreach ($value as $attr1 => $val1) {
-                    if (is_array($val1)) {
-                        foreach ($val1 as $attr2 => $val2) {
-                            foreach ($val2 as $attr3 => $val3) {
-                                if ($farmModel->hasAttribute($attr3)) {
-                                    $farmModel->{$attr3} = $val3;
-                                }
-                            }
-                        }
-                    } else {
-                        if ($farmModel->hasAttribute($attr1)) {
-                            $farmModel->{$attr1} = $val1;
-                        }
-                    }
-                }
-            } else {
-                if ($farmModel->hasAttribute($attribute)) {
-                    $farmModel->{$attribute} = $value;
-                }
-            }
-        }
-
-        if ($farmModel->save()) {
-            $this->_model->has_errors = 0;
-        } else {
-            $this->_model->has_errors = 1;
-            $this->_model->error_message = json_encode($farmModel->getErrors());
-        }
-    }
-
-    protected function extractAttributesFromJson($key, $value)
-    {
-        $attributes = [];
-        if (!is_array($value)) {
-            $k_arr = explode('/', $key);
-            if ($k_arr[0] === 'farmer_individual') {
-                $attribute = null;
-                if (count($k_arr) > 1) {
-                    $attribute = end($k_arr);
-                } else {
-                    $attribute = $k_arr[0];
-                }
-                $attribute = trim($attribute);
-                if ($attribute !== null) {
-                    $attributes[$attribute] = $value;
-                }
-            }
-            return $attributes;
-        } else {
-            foreach ($value as $k => $v) {
-                $attribute = $this->extractAttributesFromJson($k, $v);
-                if (!empty($attribute)) {
-                    $attributes[] = $attribute;
-                }
-            }
-        }
-
-        return $attributes;
     }
 
     /**
@@ -221,7 +134,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     protected function setRegionId()
     {
         $jsonKey = 'activities_location/activities_region';;
-        $code = $this->_model->form_data[$jsonKey] ?? null;
+        $code = $this->getFormDataValueByKey($jsonKey);
         $id = CountryUnits::getScalar('id', ['code' => $code, 'country_id' => $this->_model->country_id, 'level' => CountryUnits::LEVEL_REGION]);
         if (empty($id)) {
             $id = null;
@@ -244,7 +157,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     protected function setDistrictId()
     {
         $jsonKey = 'activities_location/activities_zone';
-        $code = $this->_model->form_data[$jsonKey] ?? null;
+        $code = $this->getFormDataValueByKey($jsonKey);
         $id = CountryUnits::getScalar('id', ['code' => $code, 'country_id' => $this->_model->country_id, 'level' => CountryUnits::LEVEL_DISTRICT]);
         if (empty($id)) {
             $id = null;
@@ -267,7 +180,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     protected function setWardId()
     {
         $jsonKey = 'activities_location/activities_ward';
-        $code = $this->_model->form_data[$jsonKey] ?? null;
+        $code = $this->getFormDataValueByKey($jsonKey);
         $id = CountryUnits::getScalar('id', ['code' => $code, 'country_id' => $this->_model->country_id, 'level' => CountryUnits::LEVEL_WARD]);
         if (empty($id)) {
             $id = null;
@@ -290,12 +203,42 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     protected function setVillageId()
     {
         $jsonKey = 'activities_village';
-        $code = $this->_model->form_data[$jsonKey] ?? null;
+        $code = $this->getFormDataValueByKey($jsonKey);
         $id = CountryUnits::getScalar('id', ['code' => $code, 'country_id' => $this->_model->country_id, 'level' => CountryUnits::LEVEL_VILLAGE]);
         if (empty($id)) {
             $id = null;
         }
         $this->_villageId = $id;
+    }
+
+    /**
+     * @return int
+     */
+    protected function getFarmId()
+    {
+        if (empty($this->_farmId)) {
+            $this->setFarmId();
+        }
+        return $this->_farmId;
+    }
+
+    protected function setFarmId()
+    {
+        $jsonKey = 'activities_farmer';
+        $code = $this->getFormDataValueByKey($jsonKey);
+        $version1Point5 = OdkForm::getVersionNumber(OdkForm::ODK_FORM_VERSION_1_POINT_5);
+        $formVersionNumber = OdkForm::getVersionNumber($this->_model->form_version);
+        if (!empty($code) && $formVersionNumber <= $version1Point5) {
+            //ver 1.5 and below:code=odk_farm_code
+            $id = Farm::getScalar('id', ['odk_farm_code' => $code, 'country_id' => $this->_model->country_id]);
+        } else {
+            //ver 1.6 and above: code=id
+            $id = $code;
+        }
+        if (empty($id)) {
+            $id = null;
+        }
+        $this->_farmId = $id;
     }
 
     /**
@@ -363,6 +306,19 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     protected function activityRecordAnimalMilkProductionEvent()
     {
         //@todo
+    }
+
+    /**
+     * @param string $key
+     * @return mixed|string|null
+     */
+    protected function getFormDataValueByKey($key)
+    {
+        $value = $this->_model->form_data[$key] ?? null;
+        if (is_string($value)) {
+            $value = trim($value);
+        }
+        return $value;
     }
 
 }
