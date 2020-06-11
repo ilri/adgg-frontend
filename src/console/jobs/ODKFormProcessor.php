@@ -382,8 +382,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     protected function saveFarmModel($model, $index, $validate = true)
     {
         $model->ignoreAdditionalAttributes = false;
-        //$isSaved = $model->save($validate);//@todo uncomment after test
-        $isSaved = $model->validate();//@todo remove after test
+        $isSaved = $model->save($validate);
         $this->_farmData[$index] = [
             'attributes' => $model->attributes,
             'errors' => $isSaved ? null : $model->getErrors(),
