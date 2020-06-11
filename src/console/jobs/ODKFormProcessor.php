@@ -377,17 +377,25 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      * @param ActiveRecord|TableAttributeInterface $model
      * @param string|int $index
      * @param bool $validate
-     * @return ActiveRecord|TableAttributeInterface
      */
     protected function saveFarmModel($model, $index, $validate = true)
     {
+        $this->_farmData[$index] = $this->saveModel($model, $validate);
+    }
+
+    /**
+     * @param ActiveRecord|TableAttributeInterface $model
+     * @param bool $validate
+     * @return array
+     */
+    protected function saveModel($model, $validate = true)
+    {
         $model->ignoreAdditionalAttributes = false;
         $isSaved = $model->save($validate);
-        $this->_farmData[$index] = [
+        return [
             'attributes' => $model->attributes,
             'errors' => $isSaved ? null : $model->getErrors(),
         ];
-        return $model;
     }
 
     /**
