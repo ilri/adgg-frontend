@@ -12,8 +12,10 @@ namespace console\jobs;
 use backend\modules\core\models\CountryUnits;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\OdkForm;
+use backend\modules\core\models\TableAttributeInterface;
 use common\helpers\DateUtils;
 use common\helpers\Lang;
+use common\models\ActiveRecord;
 use Yii;
 use yii\base\BaseObject;
 use yii\queue\Queue;
@@ -289,6 +291,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $farmersRepeatKey = 'farmer_general';
         $farmerVillageGroupKey = 'farmer_notevillage';
         $farmerGeneralDetailsGroupKey = 'farmer_generaldetails';
+        $farmerHouseholdHeadGroupKey = 'farmer_hhheaddetails';
 
         //attributes keys
         $villageCodeKey = self::getAttributeJsonKey('farmer_village', $farmerVillageGroupKey, $farmersRepeatKey);
@@ -313,7 +316,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             'field_agent_id' => $this->_model->user_id,
             'reg_date' => $this->getDate(),
         ]);
-        foreach ($farmersData as $farmerData) {
+        foreach ($farmersData as $k => $farmerData) {
             $newFarmerModel = clone $farmerModel;
             //get village group fields
             $villageCode = $this->getFormDataValueByKey($farmerData, $villageCodeKey);
@@ -340,7 +343,27 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $newFarmerModel->latitude = $geoLocation['latitude'];
             $newFarmerModel->longitude = $geoLocation['longitude'];
             $newFarmerModel->setDynamicAttributesValuesFromOdkForm($farmersData, $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
+            $newFarmerModel->setDynamicAttributesValuesFromOdkForm($farmersData, $farmerHouseholdHeadGroupKey, $farmersRepeatKey);
+            $this->saveDataModel($newFarmerModel, $k, true);
         }
+    }
+
+    /**
+     * @param ActiveRecord|TableAttributeInterface $model
+     * @param string|int $index
+     * @param bool $validate
+     * @return ActiveRecord|TableAttributeInterface
+     */
+    protected function saveDataModel($model, $index, $validate = true)
+    {
+        $model->ignoreAdditionalAttributes = false;
+        $isSaved = $model->save($validate);
+        $this->_model->farm_data[$index] = [
+            'attributes' => $model->attributes,
+            'errors' => $isSaved ? null : $model->getErrors(),
+        ];
+
+        return $model;
     }
 
     /**
