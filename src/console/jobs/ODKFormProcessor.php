@@ -63,6 +63,23 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      */
     private $_date;
 
+    /**
+     * @var array
+     */
+    private $_farmData;
+    /**
+     * @var array
+     */
+    private $_farmMetadata;
+    /**
+     * @var array
+     */
+    private $_animalsData;
+    /**
+     * @var array
+     */
+    private $_animalEventsData;
+
     const MIN_SUPPORTED_ODK_FORM_VERSION = OdkForm::ODK_FORM_VERSION_1_POINT_4;
 
     /**
@@ -94,6 +111,9 @@ class ODKFormProcessor extends BaseObject implements JobInterface
 
             $this->_model->is_processed = 1;
             $this->_model->processed_at = DateUtils::mysqlTimestamp();
+            if (!empty($this->_farmData)) {
+                $this->_model->farm_data = $this->_farmData;
+            }
             $this->_model->save(false);
             //ODKJsonNotification::createManualNotifications(ODKJsonNotification::NOTIF_ODK_JSON, $this->_model->id);
         } catch (\Exception $e) {
@@ -349,7 +369,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $newFarmerModel->longitude = $geoLocation['longitude'];
             $newFarmerModel->setDynamicAttributesValuesFromOdkForm($farmersData, $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
             $newFarmerModel->setDynamicAttributesValuesFromOdkForm($farmersData, $farmerHouseholdHeadGroupKey, $farmersRepeatKey);
-            $this->saveDataModel($newFarmerModel, $k, true);
+            $this->saveFarmModel($newFarmerModel, $k, true);
         }
     }
 
@@ -359,16 +379,15 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      * @param bool $validate
      * @return ActiveRecord|TableAttributeInterface
      */
-    protected function saveDataModel($model, $index, $validate = true)
+    protected function saveFarmModel($model, $index, $validate = true)
     {
         $model->ignoreAdditionalAttributes = false;
         //$isSaved = $model->save($validate);//@todo uncomment after test
         $isSaved = $model->validate();//@todo remove after test
-        $this->_model->farm_data[$index] = [
+        $this->_farmData[$index] = [
             'attributes' => $model->attributes,
             'errors' => $isSaved ? null : $model->getErrors(),
         ];
-
         return $model;
     }
 
