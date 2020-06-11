@@ -73,6 +73,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     {
         $this->_model = OdkForm::find()->andWhere(['id' => $this->itemId])->one();
         if ($this->_model === null) {
+            Yii::$app->controller->stdout("No ODK form found with id: {$this->itemId}\n");
             return false;
         }
         try {
