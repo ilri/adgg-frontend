@@ -8,7 +8,6 @@ use common\helpers\Utils;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
-use common\models\ReportBuilderInterface;
 use yii\db\Expression;
 use yii\helpers\Html;
 

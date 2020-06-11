@@ -52,7 +52,7 @@ class Choices extends ActiveRecord implements ActiveSearchInterface
             [['description'], 'string', 'max' => 255],
             [['list_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => ChoiceTypes::class, 'targetAttribute' => ['list_type_id' => 'id']],
             ['value', 'unique', 'targetAttribute' => ['list_type_id', 'value'], 'message' => Lang::t('{attribute} already exists.')],
-            ['label', 'unique', 'targetAttribute' => ['list_type_id', 'label'], 'message' => Lang::t('{attribute} already exists.')],
+            //['label', 'unique', 'targetAttribute' => ['list_type_id', 'label'], 'message' => Lang::t('{attribute} already exists.')],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
     }

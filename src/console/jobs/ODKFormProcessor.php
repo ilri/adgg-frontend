@@ -251,63 +251,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         return ($formVersionNumber >= $minSupportedVersionNumber);
     }
 
-    //##### activities #######
-
-    protected function activityCreateAdminAreas()
-    {
-        //@todo:
-    }
-
-    protected function activityRegisterUsers()
-    {
-        //@todo
-    }
-
-    protected function activityCreateVouchers()
-    {
-        //@todo
-    }
-
-    protected function activityRegisterFarmer()
-    {
-        //@todo
-    }
-
-    protected function activityRegisterFarmerHouseholdMembers()
-    {
-        //@todo
-    }
-
-    protected function activityRegisterAnimals()
-    {
-        //@todo
-    }
-
-    protected function activityRegisterFarmerTechnologyMobilization()
-    {
-        //@todo
-    }
-
-    protected function activityRecordAnimalSynchronizationEvent()
-    {
-        //@todo
-    }
-
-    protected function activityRecordAnimalInseminationEvent()
-    {
-        //@todo
-    }
-
-    protected function activityRecordAnimalPregnancyDiagnosisEvent()
-    {
-        //@todo
-    }
-
-    protected function activityRecordAnimalMilkProductionEvent()
-    {
-        //@todo
-    }
-
     /**
      * @param string $key
      * @return mixed|string|null
@@ -319,6 +262,79 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $value = trim($value);
         }
         return $value;
+    }
+
+    protected function registerNewFarmer()
+    {
+        //farmer registration details as defined in ODK forms
+        $farmersRepeatKey = 'farmer_general';
+        $farmerVillageGroupKey = 'farmer_notevillage';
+        $farmerGeneralDetailsGroupKey = 'farmer_generaldetails';
+
+        //attributes keys
+        $villageCodeKey = self::getAttributeJsonKey('farmer_village', $farmerVillageGroupKey, $farmersRepeatKey);
+        $farmTypeKey = self::getAttributeJsonKey('farmer_farmtype', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
+        $farmerFirstNameKey = self::getAttributeJsonKey('farmer_firstname', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
+        $farmerOtherNamesKey = self::getAttributeJsonKey('farmer_othnames', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
+        $farmerCodeKey = self::getAttributeJsonKey('farmer_uniqueid', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
+        $farmerPhoneKey = self::getAttributeJsonKey('farmer_mobile', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
+        $farmerGenderKey = self::getAttributeJsonKey('farmer_gender', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
+        $farmerAgeRangeKey = self::getAttributeJsonKey('farmer_age', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
+
+        $farmersData = $this->_model->form_data[$farmersRepeatKey] ?? null;
+        if (null === $farmersData) {
+            return;
+        }
+        $farmerModel = new Farm(['country_id' => $this->_model->country_id, 'odk_form_uuid' => $this->_model->form_uuid, 'field_agent_id' => $this->_model->user_id]);
+        foreach ($farmersData as $farmerData) {
+            $newFarmerModel = clone $farmerModel;
+            //get village group fields
+            $villageCode = $this->getFormDataValueByKey($villageCodeKey);
+            if (!empty($villageCode)) {
+                $villageModel = CountryUnits::find()->andWhere(['code' => $villageCode, 'level' => CountryUnits::LEVEL_VILLAGE, 'country_id' => $this->_model->country_id])->one();
+                if (null !== $villageModel) {
+                    $newFarmerModel->village_id = $villageModel->id;
+                    $newFarmerModel->ward_id = $villageModel->parent_id;
+                    $newFarmerModel->district_id = $newFarmerModel->ward->parent_id ?? null;
+                    $newFarmerModel->region_id = $newFarmerModel->district->parent_id ?? null;
+                }
+            }
+            $newFarmerModel->farm_type = $this->getFormDataValueByKey($farmTypeKey);
+            $firstName = $this->getFormDataValueByKey($farmerFirstNameKey);
+            $otherNames = $this->getFormDataValueByKey($farmerOtherNamesKey);
+            $name = trim($firstName . ' ' . $otherNames);
+            $newFarmerModel->name = $name;
+            $newFarmerModel->farmer_name = $name;
+            $newFarmerModel->code = $this->getFormDataValueByKey($farmerCodeKey);
+            $newFarmerModel->phone = $this->getFormDataValueByKey($farmerPhoneKey);
+            $newFarmerModel->gender_code = $this->getFormDataValueByKey($farmerGenderKey);
+            $newFarmerModel->farmer_age_range = $this->getFormDataValueByKey($farmerAgeRangeKey);
+        }
+    }
+
+    /**
+     * @param string $attributeKey
+     * @param string|null $groupKey
+     * @param string|null $repeatKey
+     * @return string
+     */
+    private static function getAttributeJsonKey($attributeKey, $groupKey = null, $repeatKey = null)
+    {
+        $key = '';
+        if (!empty($repeatKey)) {
+            $key = $repeatKey . '/';
+        }
+        if (!empty($groupKey)) {
+            $key .= $groupKey . '/';
+        }
+        $key .= $attributeKey;
+
+        return $key;
+    }
+
+    protected function getDynamicAttributesValuesInGroup($groupData, $groupKey, $tableId, $repeatKey = null)
+    {
+
     }
 
 }
