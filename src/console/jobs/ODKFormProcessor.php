@@ -56,6 +56,11 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      */
     private $_farmId;
 
+    /**
+     * @var string
+     */
+    private $_date;
+
     const MIN_SUPPORTED_ODK_FORM_VERSION = OdkForm::ODK_FORM_VERSION_1_POINT_4;
 
     /**
@@ -74,11 +79,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             }
             //check the version
             if ($this->isSupportedVersion()) {
-                $this->setRegionId();
-                $this->setDistrictId();
-                $this->setWardId();
-                $this->setVillageId();
-                $this->setFarmId();
+                //farmer registration
+                $this->registerNewFarmer();
             } else {
                 $message = Lang::t('This Version ({old_version}) of ODK Form is currently not supported. Version ({version}) and above are supported.', ['old_version' => $this->_model->form_version, 'version' => self::MIN_SUPPORTED_ODK_FORM_VERSION]);
                 $this->_model->error_message = $message;
@@ -111,9 +113,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $obj = new self($params);
             }
 
-            $id = $queue->push($obj);
-
-            return $id;
+            return $queue->push($obj);
         } catch (\Exception $e) {
             Yii::error($e->getMessage());
         }
@@ -134,7 +134,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     protected function setRegionId()
     {
         $jsonKey = 'activities_location/activities_region';;
-        $code = $this->getFormDataValueByKey($jsonKey);
+        $code = $this->getFormDataValueByKey($this->_model->form_data, $jsonKey);
         $id = CountryUnits::getScalar('id', ['code' => $code, 'country_id' => $this->_model->country_id, 'level' => CountryUnits::LEVEL_REGION]);
         if (empty($id)) {
             $id = null;
@@ -157,7 +157,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     protected function setDistrictId()
     {
         $jsonKey = 'activities_location/activities_zone';
-        $code = $this->getFormDataValueByKey($jsonKey);
+        $code = $this->getFormDataValueByKey($this->_model->form_data, $jsonKey);
         $id = CountryUnits::getScalar('id', ['code' => $code, 'country_id' => $this->_model->country_id, 'level' => CountryUnits::LEVEL_DISTRICT]);
         if (empty($id)) {
             $id = null;
@@ -180,7 +180,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     protected function setWardId()
     {
         $jsonKey = 'activities_location/activities_ward';
-        $code = $this->getFormDataValueByKey($jsonKey);
+        $code = $this->getFormDataValueByKey($this->_model->form_data, $jsonKey);
         $id = CountryUnits::getScalar('id', ['code' => $code, 'country_id' => $this->_model->country_id, 'level' => CountryUnits::LEVEL_WARD]);
         if (empty($id)) {
             $id = null;
@@ -203,7 +203,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     protected function setVillageId()
     {
         $jsonKey = 'activities_village';
-        $code = $this->getFormDataValueByKey($jsonKey);
+        $code = $this->getFormDataValueByKey($this->_model->form_data, $jsonKey);
         $id = CountryUnits::getScalar('id', ['code' => $code, 'country_id' => $this->_model->country_id, 'level' => CountryUnits::LEVEL_VILLAGE]);
         if (empty($id)) {
             $id = null;
@@ -225,7 +225,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     protected function setFarmId()
     {
         $jsonKey = 'activities_farmer';
-        $code = $this->getFormDataValueByKey($jsonKey);
+        $code = $this->getFormDataValueByKey($this->_model->form_data, $jsonKey);
         $version1Point5 = OdkForm::getVersionNumber(OdkForm::ODK_FORM_VERSION_1_POINT_5);
         $formVersionNumber = OdkForm::getVersionNumber($this->_model->form_version);
         if (!empty($code) && $formVersionNumber <= $version1Point5) {
@@ -241,6 +241,24 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $this->_farmId = $id;
     }
 
+    protected function getDate()
+    {
+        if (is_null($this->_date)) {
+            $this->setDate();
+        }
+        return $this->_date;
+    }
+
+    protected function setDate()
+    {
+        if ($this->_model->form_version === OdkForm::ODK_FORM_VERSION_1_POINT_4) {
+            $jsonKey = 'form_activity/form_datecollection';
+        } else {
+            $jsonKey = 'activities_location/form_datecollection';
+        }
+        $this->_date = $this->getFormDataValueByKey($this->_model->form_data, $jsonKey);
+    }
+
     /**
      * @return bool
      */
@@ -252,12 +270,13 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     }
 
     /**
+     * @param array $data
      * @param string $key
      * @return mixed|string|null
      */
-    protected function getFormDataValueByKey($key)
+    protected function getFormDataValueByKey(array $data, string $key)
     {
-        $value = $this->_model->form_data[$key] ?? null;
+        $value = $data[$key] ?? null;
         if (is_string($value)) {
             $value = trim($value);
         }
@@ -279,17 +298,25 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $farmerCodeKey = self::getAttributeJsonKey('farmer_uniqueid', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
         $farmerPhoneKey = self::getAttributeJsonKey('farmer_mobile', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
         $farmerGenderKey = self::getAttributeJsonKey('farmer_gender', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
-        $farmerAgeRangeKey = self::getAttributeJsonKey('farmer_age', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
+        $farmerIsHouseholdHeadKey = self::getAttributeJsonKey('farmer_hhhead', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
+        $locationStringKey = $farmersRepeatKey . '/farmer_gpslocation';
+        //household head
+
 
         $farmersData = $this->_model->form_data[$farmersRepeatKey] ?? null;
         if (null === $farmersData) {
             return;
         }
-        $farmerModel = new Farm(['country_id' => $this->_model->country_id, 'odk_form_uuid' => $this->_model->form_uuid, 'field_agent_id' => $this->_model->user_id]);
+        $farmerModel = new Farm([
+            'country_id' => $this->_model->country_id,
+            'odk_form_uuid' => $this->_model->form_uuid,
+            'field_agent_id' => $this->_model->user_id,
+            'reg_date' => $this->getDate(),
+        ]);
         foreach ($farmersData as $farmerData) {
             $newFarmerModel = clone $farmerModel;
             //get village group fields
-            $villageCode = $this->getFormDataValueByKey($villageCodeKey);
+            $villageCode = $this->getFormDataValueByKey($farmerData, $villageCodeKey);
             if (!empty($villageCode)) {
                 $villageModel = CountryUnits::find()->andWhere(['code' => $villageCode, 'level' => CountryUnits::LEVEL_VILLAGE, 'country_id' => $this->_model->country_id])->one();
                 if (null !== $villageModel) {
@@ -299,16 +326,20 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                     $newFarmerModel->region_id = $newFarmerModel->district->parent_id ?? null;
                 }
             }
-            $newFarmerModel->farm_type = $this->getFormDataValueByKey($farmTypeKey);
-            $firstName = $this->getFormDataValueByKey($farmerFirstNameKey);
-            $otherNames = $this->getFormDataValueByKey($farmerOtherNamesKey);
+            $newFarmerModel->farm_type = $this->getFormDataValueByKey($farmerData, $farmTypeKey);
+            $firstName = $this->getFormDataValueByKey($farmerData, $farmerFirstNameKey);
+            $otherNames = $this->getFormDataValueByKey($farmerData, $farmerOtherNamesKey);
             $name = trim($firstName . ' ' . $otherNames);
             $newFarmerModel->name = $name;
             $newFarmerModel->farmer_name = $name;
-            $newFarmerModel->code = $this->getFormDataValueByKey($farmerCodeKey);
-            $newFarmerModel->phone = $this->getFormDataValueByKey($farmerPhoneKey);
-            $newFarmerModel->gender_code = $this->getFormDataValueByKey($farmerGenderKey);
-            $newFarmerModel->farmer_age_range = $this->getFormDataValueByKey($farmerAgeRangeKey);
+            $newFarmerModel->code = $this->getFormDataValueByKey($farmerData, $farmerCodeKey);
+            $newFarmerModel->phone = $this->getFormDataValueByKey($farmerData, $farmerPhoneKey);
+            $newFarmerModel->gender_code = $this->getFormDataValueByKey($farmerData, $farmerGenderKey);
+            $newFarmerModel->farmer_is_hh_head = $this->getFormDataValueByKey($farmerData, $farmerIsHouseholdHeadKey);
+            $geoLocation = static::splitGPRSLocationString($this->getFormDataValueByKey($farmerData, $locationStringKey));
+            $newFarmerModel->latitude = $geoLocation['latitude'];
+            $newFarmerModel->longitude = $geoLocation['longitude'];
+            $newFarmerModel->setDynamicAttributesValuesFromOdkForm($farmersData, $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
         }
     }
 
@@ -318,7 +349,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      * @param string|null $repeatKey
      * @return string
      */
-    private static function getAttributeJsonKey($attributeKey, $groupKey = null, $repeatKey = null)
+    public static function getAttributeJsonKey($attributeKey, $groupKey = null, $repeatKey = null)
     {
         $key = '';
         if (!empty($repeatKey)) {
@@ -332,9 +363,25 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         return $key;
     }
 
-    protected function getDynamicAttributesValuesInGroup($groupData, $groupKey, $tableId, $repeatKey = null)
+    /**
+     * @param string $locationString
+     * @return array
+     */
+    public static function splitGPRSLocationString($locationString)
     {
+        if (empty($locationString)) {
+            $locationString = '';
+        }
+        //format: latitude longitude altitude accuracy
+        //sample: -1.8350533333333332 37.325248333333334 1667.2 2.6
+        $arr = array_map('trim', explode(' ', $locationString));
 
+        return [
+            'latitude' => $arr[0] ?? null,
+            'longitude' => $arr[1] ?? null,
+            'altitude' => $arr[2] ?? null,
+            'accuracy' => $arr[3] ?? null,
+        ];
     }
 
 }
