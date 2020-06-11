@@ -97,7 +97,11 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $this->_model->save(false);
             //ODKJsonNotification::createManualNotifications(ODKJsonNotification::NOTIF_ODK_JSON, $this->_model->id);
         } catch (\Exception $e) {
-            Yii::error($e->getMessage());
+            $message = $e->getMessage();
+            $trace = $e->getTraceAsString();
+            Yii::$app->controller->stdout("{$message}\n");
+            Yii::$app->controller->stdout("{$trace}\n");
+            Yii::error($message);
         }
     }
 
