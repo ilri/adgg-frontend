@@ -367,8 +367,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $geoLocation = static::splitGPRSLocationString($this->getFormDataValueByKey($farmerData, $locationStringKey));
             $newFarmerModel->latitude = $geoLocation['latitude'];
             $newFarmerModel->longitude = $geoLocation['longitude'];
-            $newFarmerModel->setDynamicAttributesValuesFromOdkForm($farmersData, $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
-            $newFarmerModel->setDynamicAttributesValuesFromOdkForm($farmersData, $farmerHouseholdHeadGroupKey, $farmersRepeatKey);
+            $newFarmerModel->setDynamicAttributesValuesFromOdkForm($farmerData, $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
+            $newFarmerModel->setDynamicAttributesValuesFromOdkForm($farmerData, $farmerHouseholdHeadGroupKey, $farmersRepeatKey);
             $this->saveFarmModel($newFarmerModel, $k, true);
         }
     }

@@ -495,12 +495,6 @@ trait TableAttributeTrait
     public function setDynamicAttributesValuesFromOdkForm(array $odkData, string $odkFormGroupKey, $odkFormRepeatKey = null)
     {
         $odkAttributeNames = $this->getAdditionalAttributesOdkAttributeNames();
-        $a=serialize($odkAttributeNames);
-        $b=serialize($odkData);
-
-        \Yii::$app->controller->stdout("odk attribute Names:{$a}\n");
-        \Yii::$app->controller->stdout("Data:{$b}\n");
-        \Yii::$app->end();
         foreach ($this->getAdditionalAttributes() as $attribute) {
             $odkAttributeName = $odkAttributeNames[$attribute] ?? null;
             if (empty($odkAttributeName)) {
