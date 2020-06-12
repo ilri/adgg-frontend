@@ -113,6 +113,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             if ($this->isSupportedVersion()) {
                 //farmer registration
                 $this->registerNewFarmer();
+                //cattle registration
+                $this->registerNewCattle();
             } else {
                 $message = Lang::t('This Version ({old_version}) of ODK Form is currently not supported. Version ({version}) and above are supported.', ['old_version' => $this->_model->form_version, 'version' => self::MIN_SUPPORTED_ODK_FORM_VERSION]);
                 $this->_model->error_message = $message;
@@ -403,13 +405,17 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $householdMemberRepeatKey = $repeatKey . '/farmer_hhmember';
         $householdMemberDetailsGroupKey = 'farmer_hhmemberdetails';
         foreach ($data as $k => $householderMembers) {
-            $farmerModel = $this->_farmModels[$k] ?? null;
-            if (null === $farmerModel && !empty($this->_farmModels)) {
-                //@todo: bad hack. Needs more testing
-                $farmerModel = array_values($this->_farmModels)[0];
-            }
-            if (null === $farmerModel) {
-                continue;
+            $farmId = $this->getFarmId();
+            if (empty($farmId)) {
+                $farmerModel = $this->_farmModels[$k] ?? null;
+                if (null === $farmerModel && !empty($this->_farmModels)) {
+                    //@todo: bad hack. Needs more testing
+                    $farmerModel = array_values($this->_farmModels)[0];
+                }
+                if (null === $farmerModel || empty($farmerModel->id)) {
+                    continue;
+                }
+                $farmId = $farmerModel->id;
             }
 
             $householderMembersData = $householderMembers[$householdMemberRepeatKey] ?? null;
@@ -417,10 +423,10 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 continue;
             }
             $model = new FarmMetadataHouseholdMembers([
-                'farm_id' => $farmerModel->id,
+                'farm_id' => $farmId,
                 'type' => FarmMetadataHouseholdMembers::TYPE_HOUSEHOLD_MEMBERS,
-                'country_id' => $farmerModel->country_id,
-                'odk_form_uuid' => $farmerModel->odk_form_uuid,
+                'country_id' => $this->_model->country_id,
+                'odk_form_uuid' => $this->_model->form_uuid,
             ]);
             foreach ($householderMembersData as $k2 => $householderMember) {
                 $newModel = clone $model;
@@ -449,6 +455,11 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $farmerModel->setDynamicAttributesValuesFromOdkForm($data, $householdMembersNumberGroupKey, $repeatKey);
 
         return $farmerModel;
+    }
+
+    protected function registerNewCattle()
+    {
+        //@todo
     }
 
     /**
