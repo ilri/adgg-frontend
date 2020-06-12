@@ -67,6 +67,11 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      * @var array
      */
     private $_farmData;
+
+    /**
+     * @var Farm[]
+     */
+    private $_farmModels;
     /**
      * @var array
      */
@@ -369,8 +374,31 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $newFarmerModel->longitude = $geoLocation['longitude'];
             $newFarmerModel->setDynamicAttributesValuesFromOdkForm($farmerData, $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
             $newFarmerModel->setDynamicAttributesValuesFromOdkForm($farmerData, $farmerHouseholdHeadGroupKey, $farmersRepeatKey);
+            //Household Members (No Demographics)
+            $newFarmerModel = $this->setFarmerHouseholdMembersNumbersAttributes($newFarmerModel, $k);
+
             $this->saveFarmModel($newFarmerModel, $k, true);
         }
+
+    }
+
+    /**
+     * @param Farm $farmerModel
+     * @param string|int $index
+     * @return Farm
+     */
+    protected function setFarmerHouseholdMembersNumbersAttributes($farmerModel, $index)
+    {
+        // $farmer
+        $repeatKey = 'farmer_hhmemberscount';
+        $householdMembersNumberGroupKey = 'farmer_hhmemberno';
+        $data = $this->_model->form_data[$repeatKey][$index] ?? null;
+        if (null === $data) {
+            return $farmerModel;
+        }
+        $farmerModel->setDynamicAttributesValuesFromOdkForm($data, $householdMembersNumberGroupKey, $repeatKey);
+
+        return $farmerModel;
     }
 
     /**
@@ -380,7 +408,9 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      */
     protected function saveFarmModel($model, $index, $validate = true)
     {
-        $this->_farmData[$index] = $this->saveModel($model, $validate);
+        $data = $this->saveModel($model, $validate);
+        $this->_farmData[$index] = $data['data'];
+        $this->_farmModels[$index] = $data['model'];
     }
 
     /**
@@ -393,8 +423,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $model->ignoreAdditionalAttributes = false;
         $isSaved = $model->save($validate);
         return [
-            'attributes' => $model->attributes,
-            'errors' => $isSaved ? null : $model->getErrors(),
+            'model' => $model,
+            'data' => ['attributes' => $model->attributes, 'errors' => $isSaved ? null : $model->getErrors(),]
         ];
     }
 
