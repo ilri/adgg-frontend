@@ -11,6 +11,8 @@ namespace console\jobs;
 
 use backend\modules\core\models\CountryUnits;
 use backend\modules\core\models\Farm;
+use backend\modules\core\models\FarmMetadata;
+use backend\modules\core\models\FarmMetadataHouseholdMembers;
 use backend\modules\core\models\OdkForm;
 use backend\modules\core\models\TableAttributeInterface;
 use common\helpers\DateUtils;
@@ -76,6 +78,11 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      * @var array
      */
     private $_farmMetadata;
+
+    /**
+     * @var FarmMetadata[]
+     */
+    private $_farmMetadataModels;
     /**
      * @var array
      */
@@ -380,6 +387,47 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $this->saveFarmModel($newFarmerModel, $k, true);
         }
 
+        //Household Members (Full Demographics)
+        $this->registerFarmerHouseholdMembers();
+
+    }
+
+    protected function registerFarmerHouseholdMembers()
+    {
+        $repeatKey = 'farmer_hhroaster';
+        $data = $this->_model->form_data[$repeatKey] ?? null;
+        if (null === $data) {
+            return;
+        }
+        $householdMemberRepeatKey = $repeatKey . '/farmer_hhmember';
+        $householdMemberDetailsGroupKey = 'farmer_hhmemberdetails';
+        foreach ($data as $k => $householderMembers) {
+            $farmerModel = $this->_farmModels[$k] ?? null;
+            if (null === $farmerModel && !empty($this->_farmModels)) {
+                //@todo: bad hack. Needs more testing
+                $farmerModel = array_values($this->_farmModels)[0];
+            }
+            if (null === $farmerModel) {
+                continue;
+            }
+
+            $householderMembersData = $householderMembers[$householdMemberRepeatKey] ?? null;
+            if (null === $householderMembersData) {
+                continue;
+            }
+            $model = new FarmMetadataHouseholdMembers([
+                'farm_id' => $farmerModel->id,
+                'type' => FarmMetadataHouseholdMembers::TYPE_HOUSEHOLD_MEMBERS,
+                'country_id' => $farmerModel->country_id,
+                'odk_form_uuid' => $farmerModel->odk_form_uuid,
+            ]);
+            foreach ($householderMembersData as $k2 => $householderMember) {
+                $newModel = clone $model;
+                $newModel->setDynamicAttributesValuesFromOdkForm($householderMember, $householdMemberDetailsGroupKey, $householdMemberRepeatKey);
+                $i = $k . '_' . $k2;
+                $this->saveFarmMetadataModel($newModel, $i, true);
+            }
+        }
     }
 
     /**
@@ -402,7 +450,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     }
 
     /**
-     * @param ActiveRecord|TableAttributeInterface $model
+     * @param Farm $model
      * @param string|int $index
      * @param bool $validate
      */
@@ -411,6 +459,18 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $data = $this->saveModel($model, $validate);
         $this->_farmData[$index] = $data['data'];
         $this->_farmModels[$index] = $data['model'];
+    }
+
+    /**
+     * @param FarmMetadata $model
+     * @param $index
+     * @param bool $validate
+     */
+    protected function saveFarmMetadataModel($model, $index, $validate = true)
+    {
+        $data = $this->saveModel($model, $validate);
+        $this->_farmMetadata[$index] = $data['data'];
+        $this->_farmMetadataModels[$index] = $data['model'];
     }
 
     /**
