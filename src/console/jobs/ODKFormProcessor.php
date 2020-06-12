@@ -394,6 +394,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
 
     protected function registerFarmerHouseholdMembers()
     {
+        //@todo: pending test
         $repeatKey = 'farmer_hhroaster';
         $data = $this->_model->form_data[$repeatKey] ?? null;
         if (null === $data) {
@@ -437,6 +438,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      */
     protected function setFarmerHouseholdMembersNumbersAttributes($farmerModel, $index)
     {
+        //@todo pending test
         // $farmer
         $repeatKey = 'farmer_hhmemberscount';
         $householdMembersNumberGroupKey = 'farmer_hhmemberno';
