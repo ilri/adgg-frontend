@@ -406,18 +406,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $householdMemberDetailsGroupKey = 'farmer_hhmemberdetails';
         foreach ($data as $k => $householderMembers) {
             $farmId = $this->getFarmId();
-            if (empty($farmId)) {
-                $farmerModel = $this->_farmModels[$k] ?? null;
-                if (null === $farmerModel && !empty($this->_farmModels)) {
-                    //@todo: bad hack. Needs more testing
-                    $farmerModel = array_values($this->_farmModels)[0];
-                }
-                if (null === $farmerModel || empty($farmerModel->id)) {
-                    continue;
-                }
-                $farmId = $farmerModel->id;
-            }
-
             $householderMembersData = $householderMembers[$householdMemberRepeatKey] ?? null;
             if (null === $householderMembersData) {
                 continue;
@@ -459,7 +447,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
 
     protected function registerNewCattle()
     {
-        //@todo
+
     }
 
     /**
@@ -471,7 +459,10 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     {
         $data = $this->saveModel($model, $validate);
         $this->_farmData[$index] = $data['data'];
-        $this->_farmModels[$index] = $data['model'];
+        /* @var $model Farm */
+        $model = $data['model'];
+        $this->_farmId = $model->id;
+        $this->_farmModels[$index] = $model;
     }
 
     /**
