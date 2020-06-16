@@ -11,9 +11,13 @@ namespace console\jobs;
 
 use backend\modules\core\models\CountryUnits;
 use backend\modules\core\models\Farm;
+use backend\modules\core\models\FarmMetadata;
+use backend\modules\core\models\FarmMetadataHouseholdMembers;
 use backend\modules\core\models\OdkForm;
+use backend\modules\core\models\TableAttributeInterface;
 use common\helpers\DateUtils;
 use common\helpers\Lang;
+use common\models\ActiveRecord;
 use Yii;
 use yii\base\BaseObject;
 use yii\queue\Queue;
@@ -25,11 +29,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      * @var int
      */
     public $itemId;
-
-    /**
-     * @var array
-     */
-    private $_jsonArr;
 
     /**
      * @var OdkForm
@@ -56,6 +55,43 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      */
     private $_villageId;
 
+    /**
+     * @var int
+     */
+    private $_farmId;
+
+    /**
+     * @var string
+     */
+    private $_date;
+
+    /**
+     * @var array
+     */
+    private $_farmData;
+
+    /**
+     * @var Farm[]
+     */
+    private $_farmModels;
+    /**
+     * @var array
+     */
+    private $_farmMetadata;
+
+    /**
+     * @var FarmMetadata[]
+     */
+    private $_farmMetadataModels;
+    /**
+     * @var array
+     */
+    private $_animalsData;
+    /**
+     * @var array
+     */
+    private $_animalEventsData;
+
     const MIN_SUPPORTED_ODK_FORM_VERSION = OdkForm::ODK_FORM_VERSION_1_POINT_4;
 
     /**
@@ -66,6 +102,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     {
         $this->_model = OdkForm::find()->andWhere(['id' => $this->itemId])->one();
         if ($this->_model === null) {
+            Yii::$app->controller->stdout("No ODK form found with id: {$this->itemId}\n");
             return false;
         }
         try {
@@ -74,113 +111,32 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             }
             //check the version
             if ($this->isSupportedVersion()) {
-                $this->setRegionId();
-                $this->setDistrictId();
-                $this->setWardId();
-                $this->setVillageId();
-
-                $this->_model->is_processed = 1;
-                $this->_model->processed_at = DateUtils::mysqlTimestamp();
+                //farmer registration
+                $this->registerNewFarmer();
+                //cattle registration
+                $this->registerNewCattle();
             } else {
                 $message = Lang::t('This Version ({old_version}) of ODK Form is currently not supported. Version ({version}) and above are supported.', ['old_version' => $this->_model->form_version, 'version' => self::MIN_SUPPORTED_ODK_FORM_VERSION]);
                 $this->_model->error_message = $message;
+                $this->_model->has_errors = 1;
                 Yii::$app->controller->stdout("{$message}\n");
                 Yii::$app->end();
             }
 
+            $this->_model->is_processed = 1;
+            $this->_model->processed_at = DateUtils::mysqlTimestamp();
+            if (!empty($this->_farmData)) {
+                $this->_model->farm_data = $this->_farmData;
+            }
             $this->_model->save(false);
             //ODKJsonNotification::createManualNotifications(ODKJsonNotification::NOTIF_ODK_JSON, $this->_model->id);
         } catch (\Exception $e) {
-            Yii::error($e->getMessage());
+            $message = $e->getMessage();
+            $trace = $e->getTraceAsString();
+            Yii::$app->controller->stdout("{$message}\n");
+            Yii::$app->controller->stdout("{$trace}\n");
+            Yii::error($message);
         }
-    }
-
-    protected function processFarmerIndividual()
-    {
-        $farmerCode = $this->_jsonArr['farmer_individual/activities_farmer'] ?? null;
-        if ($farmerCode === null) {
-            Yii::info('Farmer Individual Check Failed');
-        }
-
-        $farmModel = Farm::find()->andWhere(['code' => $farmerCode])->one();
-        if ($farmModel === null) {
-            $this->_model->has_errors = 1;
-            $this->_model->error_message = Lang::t('Could not find the farm/farmer with {code_label} {code}', [
-                'code_label' => (new Farm())->getAttributeLabel('code'),
-                'code' => $farmerCode,
-            ]);
-            return false;
-        }
-
-        $attributes = [];
-        foreach ($this->_jsonArr as $k => $value) {
-            $attribute = $this->extractAttributesFromJson($k, $value);
-            if (!empty($attribute)) {
-                $attributes[] = $attribute;
-            }
-
-        }
-
-        foreach ($attributes as $attribute => $value) {
-            if (is_array($value)) {
-                foreach ($value as $attr1 => $val1) {
-                    if (is_array($val1)) {
-                        foreach ($val1 as $attr2 => $val2) {
-                            foreach ($val2 as $attr3 => $val3) {
-                                if ($farmModel->hasAttribute($attr3)) {
-                                    $farmModel->{$attr3} = $val3;
-                                }
-                            }
-                        }
-                    } else {
-                        if ($farmModel->hasAttribute($attr1)) {
-                            $farmModel->{$attr1} = $val1;
-                        }
-                    }
-                }
-            } else {
-                if ($farmModel->hasAttribute($attribute)) {
-                    $farmModel->{$attribute} = $value;
-                }
-            }
-        }
-
-        if ($farmModel->save()) {
-            $this->_model->has_errors = 0;
-        } else {
-            $this->_model->has_errors = 1;
-            $this->_model->error_message = json_encode($farmModel->getErrors());
-        }
-    }
-
-    protected function extractAttributesFromJson($key, $value)
-    {
-        $attributes = [];
-        if (!is_array($value)) {
-            $k_arr = explode('/', $key);
-            if ($k_arr[0] === 'farmer_individual') {
-                $attribute = null;
-                if (count($k_arr) > 1) {
-                    $attribute = end($k_arr);
-                } else {
-                    $attribute = $k_arr[0];
-                }
-                $attribute = trim($attribute);
-                if ($attribute !== null) {
-                    $attributes[$attribute] = $value;
-                }
-            }
-            return $attributes;
-        } else {
-            foreach ($value as $k => $v) {
-                $attribute = $this->extractAttributesFromJson($k, $v);
-                if (!empty($attribute)) {
-                    $attributes[] = $attribute;
-                }
-            }
-        }
-
-        return $attributes;
     }
 
     /**
@@ -198,9 +154,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $obj = new self($params);
             }
 
-            $id = $queue->push($obj);
-
-            return $id;
+            return $queue->push($obj);
         } catch (\Exception $e) {
             Yii::error($e->getMessage());
         }
@@ -221,7 +175,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     protected function setRegionId()
     {
         $jsonKey = 'activities_location/activities_region';;
-        $code = $this->_model->form_data[$jsonKey] ?? null;
+        $code = $this->getFormDataValueByKey($this->_model->form_data, $jsonKey);
         $id = CountryUnits::getScalar('id', ['code' => $code, 'country_id' => $this->_model->country_id, 'level' => CountryUnits::LEVEL_REGION]);
         if (empty($id)) {
             $id = null;
@@ -244,7 +198,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     protected function setDistrictId()
     {
         $jsonKey = 'activities_location/activities_zone';
-        $code = $this->_model->form_data[$jsonKey] ?? null;
+        $code = $this->getFormDataValueByKey($this->_model->form_data, $jsonKey);
         $id = CountryUnits::getScalar('id', ['code' => $code, 'country_id' => $this->_model->country_id, 'level' => CountryUnits::LEVEL_DISTRICT]);
         if (empty($id)) {
             $id = null;
@@ -267,7 +221,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     protected function setWardId()
     {
         $jsonKey = 'activities_location/activities_ward';
-        $code = $this->_model->form_data[$jsonKey] ?? null;
+        $code = $this->getFormDataValueByKey($this->_model->form_data, $jsonKey);
         $id = CountryUnits::getScalar('id', ['code' => $code, 'country_id' => $this->_model->country_id, 'level' => CountryUnits::LEVEL_WARD]);
         if (empty($id)) {
             $id = null;
@@ -290,12 +244,60 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     protected function setVillageId()
     {
         $jsonKey = 'activities_village';
-        $code = $this->_model->form_data[$jsonKey] ?? null;
+        $code = $this->getFormDataValueByKey($this->_model->form_data, $jsonKey);
         $id = CountryUnits::getScalar('id', ['code' => $code, 'country_id' => $this->_model->country_id, 'level' => CountryUnits::LEVEL_VILLAGE]);
         if (empty($id)) {
             $id = null;
         }
         $this->_villageId = $id;
+    }
+
+    /**
+     * @return int
+     */
+    protected function getFarmId()
+    {
+        if (empty($this->_farmId)) {
+            $this->setFarmId();
+        }
+        return $this->_farmId;
+    }
+
+    protected function setFarmId()
+    {
+        $jsonKey = 'activities_farmer';
+        $code = $this->getFormDataValueByKey($this->_model->form_data, $jsonKey);
+        $version1Point5 = OdkForm::getVersionNumber(OdkForm::ODK_FORM_VERSION_1_POINT_5);
+        $formVersionNumber = OdkForm::getVersionNumber($this->_model->form_version);
+        if (!empty($code) && $formVersionNumber <= $version1Point5) {
+            //ver 1.5 and below:code=odk_farm_code
+            $id = Farm::getScalar('id', ['odk_farm_code' => $code, 'country_id' => $this->_model->country_id]);
+        } else {
+            //ver 1.6 and above: code=id
+            $id = $code;
+        }
+        if (empty($id)) {
+            $id = null;
+        }
+        $this->_farmId = $id;
+    }
+
+    protected function getDate()
+    {
+        if (is_null($this->_date)) {
+            $this->setDate();
+        }
+        return $this->_date;
+    }
+
+    protected function setDate()
+    {
+        if ($this->_model->form_version === OdkForm::ODK_FORM_VERSION_1_POINT_4) {
+            $jsonKey = 'form_activity/form_datecollection';
+        } else {
+            $jsonKey = 'activities_location/form_datecollection';
+        }
+        $this->_date = $this->getFormDataValueByKey($this->_model->form_data, $jsonKey);
     }
 
     /**
@@ -308,61 +310,227 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         return ($formVersionNumber >= $minSupportedVersionNumber);
     }
 
-    //##### activities #######
-
-    protected function activityCreateAdminAreas()
+    /**
+     * @param array $data
+     * @param string $key
+     * @return mixed|string|null
+     */
+    protected function getFormDataValueByKey(array $data, string $key)
     {
-        //@todo:
+        $value = $data[$key] ?? null;
+        if (is_string($value)) {
+            $value = trim($value);
+        }
+        return $value;
     }
 
-    protected function activityRegisterUsers()
+    protected function registerNewFarmer()
     {
-        //@todo
+        //farmer registration details as defined in ODK forms
+        $farmersRepeatKey = 'farmer_general';
+        $farmerVillageGroupKey = 'farmer_notevillage';
+        $farmerGeneralDetailsGroupKey = 'farmer_generaldetails';
+        $farmerHouseholdHeadGroupKey = 'farmer_hhheaddetails';
+
+        //attributes keys
+        $villageCodeKey = self::getAttributeJsonKey('farmer_village', $farmerVillageGroupKey, $farmersRepeatKey);
+        $farmTypeKey = self::getAttributeJsonKey('farmer_farmtype', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
+        $farmerFirstNameKey = self::getAttributeJsonKey('farmer_firstname', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
+        $farmerOtherNamesKey = self::getAttributeJsonKey('farmer_othnames', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
+        $farmerCodeKey = self::getAttributeJsonKey('farmer_uniqueid', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
+        $farmerPhoneKey = self::getAttributeJsonKey('farmer_mobile', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
+        $farmerGenderKey = self::getAttributeJsonKey('farmer_gender', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
+        $farmerIsHouseholdHeadKey = self::getAttributeJsonKey('farmer_hhhead', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
+        $locationStringKey = $farmersRepeatKey . '/farmer_gpslocation';
+        //household head
+
+
+        $farmersData = $this->_model->form_data[$farmersRepeatKey] ?? null;
+        if (null === $farmersData) {
+            return;
+        }
+        $farmerModel = new Farm([
+            'country_id' => $this->_model->country_id,
+            'odk_form_uuid' => $this->_model->form_uuid,
+            'field_agent_id' => $this->_model->user_id,
+            'reg_date' => $this->getDate(),
+        ]);
+        foreach ($farmersData as $k => $farmerData) {
+            $newFarmerModel = clone $farmerModel;
+            //get village group fields
+            $villageCode = $this->getFormDataValueByKey($farmerData, $villageCodeKey);
+            if (!empty($villageCode)) {
+                $villageModel = CountryUnits::find()->andWhere(['code' => $villageCode, 'level' => CountryUnits::LEVEL_VILLAGE, 'country_id' => $this->_model->country_id])->one();
+                if (null !== $villageModel) {
+                    $newFarmerModel->village_id = $villageModel->id;
+                    $newFarmerModel->ward_id = $villageModel->parent_id;
+                    $newFarmerModel->district_id = $newFarmerModel->ward->parent_id ?? null;
+                    $newFarmerModel->region_id = $newFarmerModel->district->parent_id ?? null;
+                }
+            }
+            $newFarmerModel->farm_type = $this->getFormDataValueByKey($farmerData, $farmTypeKey);
+            $firstName = $this->getFormDataValueByKey($farmerData, $farmerFirstNameKey);
+            $otherNames = $this->getFormDataValueByKey($farmerData, $farmerOtherNamesKey);
+            $name = trim($firstName . ' ' . $otherNames);
+            $newFarmerModel->name = $name;
+            $newFarmerModel->farmer_name = $name;
+            $newFarmerModel->code = $this->getFormDataValueByKey($farmerData, $farmerCodeKey);
+            $newFarmerModel->phone = $this->getFormDataValueByKey($farmerData, $farmerPhoneKey);
+            $newFarmerModel->gender_code = $this->getFormDataValueByKey($farmerData, $farmerGenderKey);
+            $newFarmerModel->farmer_is_hh_head = $this->getFormDataValueByKey($farmerData, $farmerIsHouseholdHeadKey);
+            $geoLocation = static::splitGPRSLocationString($this->getFormDataValueByKey($farmerData, $locationStringKey));
+            $newFarmerModel->latitude = $geoLocation['latitude'];
+            $newFarmerModel->longitude = $geoLocation['longitude'];
+            $newFarmerModel->setDynamicAttributesValuesFromOdkForm($farmerData, $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
+            $newFarmerModel->setDynamicAttributesValuesFromOdkForm($farmerData, $farmerHouseholdHeadGroupKey, $farmersRepeatKey);
+            //Household Members (No Demographics)
+            $newFarmerModel = $this->setFarmerHouseholdMembersNumbersAttributes($newFarmerModel, $k);
+
+            $this->saveFarmModel($newFarmerModel, $k, true);
+        }
+
+        //Household Members (Full Demographics)
+        $this->registerFarmerHouseholdMembers();
+
     }
 
-    protected function activityCreateVouchers()
+    protected function registerFarmerHouseholdMembers()
     {
-        //@todo
+        //@todo: pending test
+        $repeatKey = 'farmer_hhroaster';
+        $data = $this->_model->form_data[$repeatKey] ?? null;
+        if (null === $data) {
+            return;
+        }
+        $householdMemberRepeatKey = $repeatKey . '/farmer_hhmember';
+        $householdMemberDetailsGroupKey = 'farmer_hhmemberdetails';
+        foreach ($data as $k => $householderMembers) {
+            $farmId = $this->getFarmId();
+            $householderMembersData = $householderMembers[$householdMemberRepeatKey] ?? null;
+            if (null === $householderMembersData) {
+                continue;
+            }
+            $model = new FarmMetadataHouseholdMembers([
+                'farm_id' => $farmId,
+                'type' => FarmMetadataHouseholdMembers::TYPE_HOUSEHOLD_MEMBERS,
+                'country_id' => $this->_model->country_id,
+                'odk_form_uuid' => $this->_model->form_uuid,
+            ]);
+            foreach ($householderMembersData as $k2 => $householderMember) {
+                $newModel = clone $model;
+                $newModel->setDynamicAttributesValuesFromOdkForm($householderMember, $householdMemberDetailsGroupKey, $householdMemberRepeatKey);
+                $i = $k . '_' . $k2;
+                $this->saveFarmMetadataModel($newModel, $i, true);
+            }
+        }
     }
 
-    protected function activityRegisterFarmer()
+    /**
+     * @param Farm $farmerModel
+     * @param string|int $index
+     * @return Farm
+     */
+    protected function setFarmerHouseholdMembersNumbersAttributes($farmerModel, $index)
     {
-        //@todo
+        //@todo pending test
+        // $farmer
+        $repeatKey = 'farmer_hhmemberscount';
+        $householdMembersNumberGroupKey = 'farmer_hhmemberno';
+        $data = $this->_model->form_data[$repeatKey][$index] ?? null;
+        if (null === $data) {
+            return $farmerModel;
+        }
+        $farmerModel->setDynamicAttributesValuesFromOdkForm($data, $householdMembersNumberGroupKey, $repeatKey);
+
+        return $farmerModel;
     }
 
-    protected function activityRegisterFarmerHouseholdMembers()
+    protected function registerNewCattle()
     {
-        //@todo
+
     }
 
-    protected function activityRegisterAnimals()
+    /**
+     * @param Farm $model
+     * @param string|int $index
+     * @param bool $validate
+     */
+    protected function saveFarmModel($model, $index, $validate = true)
     {
-        //@todo
+        $data = $this->saveModel($model, $validate);
+        $this->_farmData[$index] = $data['data'];
+        /* @var $model Farm */
+        $model = $data['model'];
+        $this->_farmId = $model->id;
+        $this->_farmModels[$index] = $model;
     }
 
-    protected function activityRegisterFarmerTechnologyMobilization()
+    /**
+     * @param FarmMetadata $model
+     * @param $index
+     * @param bool $validate
+     */
+    protected function saveFarmMetadataModel($model, $index, $validate = true)
     {
-        //@todo
+        $data = $this->saveModel($model, $validate);
+        $this->_farmMetadata[$index] = $data['data'];
+        $this->_farmMetadataModels[$index] = $data['model'];
     }
 
-    protected function activityRecordAnimalSynchronizationEvent()
+    /**
+     * @param ActiveRecord|TableAttributeInterface $model
+     * @param bool $validate
+     * @return array
+     */
+    protected function saveModel($model, $validate = true)
     {
-        //@todo
+        $model->ignoreAdditionalAttributes = false;
+        $isSaved = $model->save($validate);
+        return [
+            'model' => $model,
+            'data' => ['attributes' => $model->attributes, 'errors' => $isSaved ? null : $model->getErrors(),]
+        ];
     }
 
-    protected function activityRecordAnimalInseminationEvent()
+    /**
+     * @param string $attributeKey
+     * @param string|null $groupKey
+     * @param string|null $repeatKey
+     * @return string
+     */
+    public static function getAttributeJsonKey($attributeKey, $groupKey = null, $repeatKey = null)
     {
-        //@todo
+        $key = '';
+        if (!empty($repeatKey)) {
+            $key = $repeatKey . '/';
+        }
+        if (!empty($groupKey)) {
+            $key .= $groupKey . '/';
+        }
+        $key .= $attributeKey;
+
+        return $key;
     }
 
-    protected function activityRecordAnimalPregnancyDiagnosisEvent()
+    /**
+     * @param string $locationString
+     * @return array
+     */
+    public static function splitGPRSLocationString($locationString)
     {
-        //@todo
-    }
+        if (empty($locationString)) {
+            $locationString = '';
+        }
+        //format: latitude longitude altitude accuracy
+        //sample: -1.8350533333333332 37.325248333333334 1667.2 2.6
+        $arr = array_map('trim', explode(' ', $locationString));
 
-    protected function activityRecordAnimalMilkProductionEvent()
-    {
-        //@todo
+        return [
+            'latitude' => $arr[0] ?? null,
+            'longitude' => $arr[1] ?? null,
+            'altitude' => $arr[2] ?? null,
+            'accuracy' => $arr[3] ?? null,
+        ];
     }
 
 }

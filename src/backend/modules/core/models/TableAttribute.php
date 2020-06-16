@@ -272,7 +272,7 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
      */
     public static function getDefinedAttributes($tableId)
     {
-        return static::getData(['id', 'attribute_key', 'input_type', 'list_type_id'], ['table_id' => $tableId, 'is_active' => 1]);
+        return static::getData(['id', 'attribute_key', 'input_type', 'list_type_id','odk_attribute_name'], ['table_id' => $tableId, 'is_active' => 1]);
     }
 
     /**

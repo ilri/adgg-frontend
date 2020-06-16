@@ -11,6 +11,7 @@ namespace backend\modules\core\models;
 
 use common\models\ActiveRecord;
 use common\widgets\select2\Select2;
+use console\jobs\ODKFormProcessor;
 use yii\bootstrap4\ActiveForm;
 
 /**
@@ -46,6 +47,11 @@ trait TableAttributeTrait
      * @var bool
      */
     public $ignoreAdditionalAttributes = false;
+
+    /**
+     * @var array
+     */
+    private $_additionalAttributesOdkAttributeNames;
 
     /**
      * Returns the list of all attribute names of the model.
@@ -99,6 +105,15 @@ trait TableAttributeTrait
         return $this->_additionalAttributesListTypeIds;
     }
 
+    public function getAdditionalAttributesOdkAttributeNames(): array
+    {
+        if (empty($this->_additionalAttributesOdkAttributeNames)) {
+            $this->setAdditionalAttributes();
+        }
+
+        return $this->_additionalAttributesOdkAttributeNames;
+    }
+
     public function setAdditionalAttributes()
     {
         $tableId = static::getDefinedTableId();
@@ -108,6 +123,7 @@ trait TableAttributeTrait
             $attributeIds = [];
             $attributesInputTypes = [];
             $attributeListTypeIds = [];
+            $odkAttributeNames = [];
             foreach ($attributes as $v) {
                 $attributeKeys[] = $v['attribute_key'];
                 $attributeIds[$v['attribute_key']] = $v['id'];
@@ -115,16 +131,21 @@ trait TableAttributeTrait
                 if (!empty($v['list_type_id'])) {
                     $attributeListTypeIds[$v['attribute_key']] = $v['list_type_id'];
                 }
+                if (!empty($v['odk_attribute_name'])) {
+                    $odkAttributeNames[$v['attribute_key']] = $v['odk_attribute_name'];
+                }
             }
             $this->_additionalAttributes = $attributeKeys;
             $this->_additionalAttributeIds = $attributeIds;
             $this->_additionalAttributesInputTypes = $attributesInputTypes;
             $this->_additionalAttributesListTypeIds = $attributeListTypeIds;
+            $this->_additionalAttributesOdkAttributeNames = $odkAttributeNames;
         } else {
             $this->_additionalAttributes = [];
             $this->_additionalAttributeIds = [];
             $this->_additionalAttributesInputTypes = [];
             $this->_additionalAttributesListTypeIds = [];
+            $this->_additionalAttributesOdkAttributeNames = [];
         }
     }
 
@@ -463,5 +484,31 @@ trait TableAttributeTrait
     protected function getOtherAttributeLabels()
     {
         return TableAttribute::getListData('attribute_key', 'attribute_label', false, ['table_id' => static::getDefinedTableId()]);
+    }
+
+    /**
+     * @param array $odkData
+     * @param string $odkFormGroupKey
+     * @param null $odkFormRepeatKey
+     * @return void
+     */
+    public function setDynamicAttributesValuesFromOdkForm(array $odkData, string $odkFormGroupKey, $odkFormRepeatKey = null)
+    {
+        $odkAttributeNames = $this->getAdditionalAttributesOdkAttributeNames();
+        foreach ($this->getAdditionalAttributes() as $attribute) {
+            $odkAttributeName = $odkAttributeNames[$attribute] ?? null;
+            if (empty($odkAttributeName)) {
+                continue;
+            }
+            //get full jsonKey
+            $attributeKey = ODKFormProcessor::getAttributeJsonKey($odkAttributeName, $odkFormGroupKey, $odkFormRepeatKey);
+            if (array_key_exists($attributeKey, $odkData)) {
+                $value = $odkData[$attributeKey];
+                if (is_string($value)) {
+                    $value = trim($value);
+                }
+                $this->{$attribute} = $value;
+            }
+        }
     }
 }

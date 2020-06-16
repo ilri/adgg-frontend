@@ -47,7 +47,7 @@ class AuthController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['login', 'register', 'request-password-reset', 'reset-password', 'captcha','get-county-list'],
+                        'actions' => ['login', 'register', 'request-password-reset', 'reset-password', 'captcha', 'get-county-list'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
