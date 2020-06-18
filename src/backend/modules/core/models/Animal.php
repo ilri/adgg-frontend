@@ -64,6 +64,7 @@ use yii\helpers\Inflector;
  * @property string $updated_at
  * @property int $updated_by
  * @property string|array $additional_attributes
+ * @property string $hair_sample_id
  * @property string $animal_eartag_id
  * @property string $migration_id
  * @property string $breed_composition_details
@@ -124,7 +125,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             [['sire_tag_id', 'dam_tag_id'], 'validateSireOrDam'],
             ['sire_tag_id', 'validateSireBisexual', 'except' => [self::SCENARIO_MISTRO_DB_BULL_UPLOAD, self::SCENARIO_MISTRO_DB_COW_UPLOAD]],
             ['dam_tag_id', 'validateDamBisexual', 'except' => [self::SCENARIO_MISTRO_DB_BULL_UPLOAD, self::SCENARIO_MISTRO_DB_COW_UPLOAD]],
-            [['tmp_animal_photo', 'additional_attributes', 'org_id', 'client_id'], 'safe'],
+            [['tmp_animal_photo', 'additional_attributes', 'org_id', 'client_id', 'hair_sample_id'], 'safe'],
             [$this->getAdditionalAttributes(), 'safe'],
             [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
             ['migration_id', 'unique'],
@@ -181,6 +182,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'updated_by' => 'Updated By',
             'odkFarmCode' => 'Farm Code',
             'derivedBirthdate' => 'Derived Birthdate',
+            'hair_sample_id' => 'Hair Sample Id'
         ];
 
         return array_merge($labels, $this->getOtherAttributeLabels());
