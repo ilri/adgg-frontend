@@ -482,6 +482,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'altitude',
             'gprs_accuracy',
             'animal_type',
+            'hair_sample_id',
         ];
     }
 
