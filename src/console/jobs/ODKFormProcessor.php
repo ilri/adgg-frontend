@@ -9,6 +9,7 @@
 namespace console\jobs;
 
 
+use backend\modules\core\models\Animal;
 use backend\modules\core\models\CountryUnits;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\FarmMetadata;
@@ -71,9 +72,9 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     private $_farmData;
 
     /**
-     * @var Farm[]
+     * @var Farm
      */
-    private $_farmModels;
+    private $_farmModel;
     /**
      * @var array
      */
@@ -92,7 +93,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      */
     private $_animalEventsData;
 
-    const MIN_SUPPORTED_ODK_FORM_VERSION = OdkForm::ODK_FORM_VERSION_1_POINT_4;
+    const MIN_SUPPORTED_ODK_FORM_VERSION = OdkForm::ODK_FORM_VERSION_1_POINT_5;
 
     /**
      * @param Queue $queue which pushed and is handling the job
@@ -282,6 +283,17 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $this->_farmId = $id;
     }
 
+    /**
+     * @return Farm
+     */
+    protected function getFarmModel()
+    {
+        if (null === $this->_farmModel) {
+            $this->_farmModel = Farm::find()->andWhere(['id' => $this->getFarmId()])->one();
+        }
+        return $this->_farmModel;
+    }
+
     protected function getDate()
     {
         if (is_null($this->_date)) {
@@ -292,11 +304,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
 
     protected function setDate()
     {
-        if ($this->_model->form_version === OdkForm::ODK_FORM_VERSION_1_POINT_4) {
-            $jsonKey = 'form_activity/form_datecollection';
-        } else {
-            $jsonKey = 'activities_location/form_datecollection';
-        }
+        $jsonKey = 'activities_location/form_datecollection';
         $this->_date = $this->getFormDataValueByKey($this->_model->form_data, $jsonKey);
     }
 
@@ -447,7 +455,46 @@ class ODKFormProcessor extends BaseObject implements JobInterface
 
     protected function registerNewCattle()
     {
+        $repeatKey = 'animal_general';
+        $animalIdentificationGroupKey = 'animal_identification';
+        $animalsData = $this->_model->form_data[$repeatKey] ?? null;
+        if (null === $animalsData) {
+            return;
+        }
 
+        $farmModel = $this->getFarmModel();
+        if (null === $farmModel) {
+            $message = 'ODK Form processor: Register New Cattle aborted. Farm cannot be null. Form UUID: ' . $this->_model->form_uuid;
+            Yii::error($message);
+            return;
+        }
+        $animalModel = new Animal([
+            'farm_id' => $farmModel->id,
+            'country_id' => $farmModel->country_id,
+            'region_id' => $farmModel->region_id,
+            'district_id' => $farmModel->district_id,
+            'ward_id' => $farmModel->ward_id,
+            'village_id' => $farmModel->village_id,
+            'org_id' => $farmModel->org_id,
+            'client_id' => $farmModel->client_id,
+            'odk_form_uuid' => $this->_model->form_uuid,
+            'latitude' => $farmModel->latitude,
+            'longitude' => $farmModel->longitude,
+            'reg_date' => $this->getDate(),
+        ]);
+
+        $fixedAttributesMap = [
+            'name' => self::getAttributeJsonKey('animal_name', $animalIdentificationGroupKey, $repeatKey),
+            'tag_id' => self::getAttributeJsonKey('animal_tagid', $animalIdentificationGroupKey, $repeatKey),
+            'animal_type' => self::getAttributeJsonKey('animal_type', $animalIdentificationGroupKey, $repeatKey),
+            'animal_photo' => self::getAttributeJsonKey('animal_photo', $animalIdentificationGroupKey, $repeatKey),
+            'main_breed' => self::getAttributeJsonKey('animal_mainbreed', $animalIdentificationGroupKey, $repeatKey),
+            'breed_composition' => self::getAttributeJsonKey('animal_maincomp', $animalIdentificationGroupKey, $repeatKey),
+            'birthdate' => DateUtils::formatDate(self::getAttributeJsonKey('animal_actualdob', $animalIdentificationGroupKey, $repeatKey), 'Y-m-d'),
+        ];
+        foreach ($animalsData as $animalData) {
+
+        }
     }
 
     /**
@@ -462,7 +509,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         /* @var $model Farm */
         $model = $data['model'];
         $this->_farmId = $model->id;
-        $this->_farmModels[$index] = $model;
+        $this->_farmModel = $model;
     }
 
     /**
