@@ -601,7 +601,17 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
      */
     public function reportBuilderAdditionalUnwantedFields(): array
     {
-        return ['sire_id', 'animal_sireknown', 'farm_id', 'herd_id', 'animal_damknown', 'sire_tag_id', 'sire_type', 'dam_id', 'dam_tag_id'];
+        return [
+            'sire_id',
+            'animal_sireknown',
+            'farm_id',
+            'herd_id',
+            'animal_damknown',
+            'sire_tag_id',
+            'sire_type',
+            'dam_id',
+            'dam_tag_id'
+        ];
     }
 
     /**
