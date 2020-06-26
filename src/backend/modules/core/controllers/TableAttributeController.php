@@ -39,7 +39,7 @@ class TableAttributeController extends MasterDataController
         $this->setResourceLabel($table_id);
         $searchModel = TableAttribute::searchModel([
             'defaultOrder' => ['group_id' => SORT_ASC, 'id' => SORT_ASC],
-            'with' => ['group', 'listType','farmMetadataType'],
+            'with' => ['group', 'listType', 'farmMetadataType'],
         ]);
         $searchModel->is_active = 1;
         $searchModel->table_id = $table_id;
@@ -67,5 +67,10 @@ class TableAttributeController extends MasterDataController
     {
         $model = TableAttribute::loadModel($id);
         return $model->simpleAjaxSave('_form', 'index', ['table_id' => $model->table_id]);
+    }
+
+    public function actionDelete($id)
+    {
+        return TableAttribute::softDelete($id);
     }
 }
