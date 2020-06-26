@@ -92,7 +92,12 @@ use yii\helpers\Url;
         ],
         [
             'class' => common\widgets\grid\ActionColumn::class,
-            'template' => '{update}',
+            'template' => '{update}{delete}',
+            'visibleButtons' => [
+                'delete' => function () {
+                    return \backend\modules\auth\Session::isDev();
+                }
+            ],
             'controller' => 'table-attribute',
         ],
     ],
