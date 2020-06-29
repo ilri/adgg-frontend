@@ -88,6 +88,11 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      * @var array
      */
     private $_animalsData;
+
+    /**
+     * @var Animal[]
+     */
+    private $_animalsModels;
     /**
      * @var array
      */
@@ -492,8 +497,13 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             'breed_composition' => self::getAttributeJsonKey('animal_maincomp', $animalIdentificationGroupKey, $repeatKey),
             'birthdate' => DateUtils::formatDate(self::getAttributeJsonKey('animal_actualdob', $animalIdentificationGroupKey, $repeatKey), 'Y-m-d'),
         ];
-        foreach ($animalsData as $animalData) {
-
+        foreach ($animalsData as $k => $animalData) {
+            $newAnimalModel = clone $animalModel;
+            foreach ($fixedAttributesMap as $attr => $odkKey) {
+                $newAnimalModel->{$attr} = $this->getFormDataValueByKey($animalData, $odkKey);
+            }
+            $newAnimalModel->setDynamicAttributesValuesFromOdkForm($animalData, $animalIdentificationGroupKey, $repeatKey);
+            $this->saveAnimalModel($newAnimalModel, $k, true);
         }
     }
 
@@ -522,6 +532,18 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $data = $this->saveModel($model, $validate);
         $this->_farmMetadata[$index] = $data['data'];
         $this->_farmMetadataModels[$index] = $data['model'];
+    }
+
+    /**
+     * @param Animal $model
+     * @param $index
+     * @param bool $validate
+     */
+    protected function saveAnimalModel($model, $index, $validate = true)
+    {
+        $data = $this->saveModel($model, $validate);
+        $this->_animalsData[$index] = $data['data'];
+        $this->_animalsModels[$index] = $data['model'];
     }
 
     /**
