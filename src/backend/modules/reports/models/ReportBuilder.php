@@ -117,32 +117,32 @@ class ReportBuilder extends Model
             ],
             'FarmMetadataBreedingAIProviders' =>[
                 'class' => FarmMetadataBreedingAIProviders::class,
-                'title' =>'Farm Breeding AIProviders Metadata',
+                'title' =>'Farm Breeding AIProviders',
                 'relations' => ['farm'],
             ],
             'FarmMetadataBreedingBulls' =>[
                 'class' => FarmMetadataBreedingBulls::class,
-                'title' =>'Farm Breeding Bulls Metadata',
+                'title' =>'Farm Breeding Bulls',
                 'relations' => ['farm'],
             ],
             'FarmMetadataBreedingOtherBulls' =>[
                 'class' => FarmMetadataBreedingOtherBulls::class,
-                'title' =>'Farm Breeding Other Bulls Metadata',
+                'title' =>'Farm Breeding Other Bulls',
                 'relations' => ['farm'],
             ],
             'FarmMetadataBreedingSchemeBulls' =>[
                 'class' => FarmMetadataBreedingSchemeBulls::class,
-                'title' =>'Farm Breeding Scheme Bulls Metadata',
+                'title' =>'Farm Breeding Scheme Bulls',
                 'relations' => ['farm'],
             ],
             'FarmMetadataFeeding' =>[
                 'class' => FarmMetadataFeeding::class,
-                'title' =>'Farm Feeding Metadata',
+                'title' =>'Farm Feeding',
                 'relations' => ['farm'],
             ],
             'FarmMetadataHealth' =>[
                 'class' => FarmMetadataHealth::class,
-                'title' =>'Farm Health Metadata',
+                'title' =>'Farm Health',
                 'relations' => ['farm'],
             ],
             'Animal' => [
