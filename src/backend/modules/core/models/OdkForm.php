@@ -126,7 +126,7 @@ class OdkForm extends ActiveRecord implements ActiveSearchInterface
         if (!empty($this->country_id)) {
             return;
         }
-        if ($this->form_version === self::ODK_FORM_VERSION_1_POINT_4) {
+        if ($this->isVersion1Point4()) {
             $jsonKey = 'activities_country';
         } else {
             $jsonKey = 'activities_location/activities_country';
@@ -145,7 +145,7 @@ class OdkForm extends ActiveRecord implements ActiveSearchInterface
         parent::afterSave($insert, $changedAttributes);
 
         if ($insert) {
-            //ODKFormProcessor::push(['itemId' => $this->id]);
+            ODKFormProcessor::push(['itemId' => $this->id]);
         }
     }
 
@@ -165,6 +165,30 @@ class OdkForm extends ActiveRecord implements ActiveSearchInterface
     public static function getVersionNumber($versionString)
     {
         return (float)filter_var($versionString, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isVersion1Point4()
+    {
+        return $this->form_version === self::ODK_FORM_VERSION_1_POINT_4;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isVersion1Point5()
+    {
+        return $this->form_version === self::ODK_FORM_VERSION_1_POINT_5;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isVersion1Point6()
+    {
+        return $this->form_version === self::ODK_FORM_VERSION_1_POINT_6;
     }
 
     /**

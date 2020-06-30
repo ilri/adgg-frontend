@@ -75,7 +75,8 @@ trait ReportsTrait
     /**
      * @return array
      */
-    public function reportBuilderRelations(){
+    public function reportBuilderRelations()
+    {
         return $this->reportBuilderCommonRelations();
     }
 
@@ -83,10 +84,11 @@ trait ReportsTrait
      * @param string $field
      * @return string
      */
-    public function getFieldType(string $field){
-        if(array_key_exists($field, $this->reportBuilderFieldsMapping())){
+    public function getFieldType(string $field)
+    {
+        if (array_key_exists($field, $this->reportBuilderFieldsMapping())) {
             $field_map = $this->reportBuilderFieldsMapping()[$field];
-            if (array_key_exists('type', $field_map)){
+            if (array_key_exists('type', $field_map)) {
                 $type = $field_map['type'];
                 if (is_callable($type)) {
                     return call_user_func($type, $field);
@@ -94,8 +96,8 @@ trait ReportsTrait
                 return $type;
             }
         }
-        if($this->hasMethod('isAdditionalAttribute')){
-            if($this->isAdditionalAttribute($field)){
+        if ($this->hasMethod('isAdditionalAttribute')) {
+            if ($this->isAdditionalAttribute($field)) {
                 $inputTypes = $this->getAdditionalAttributesInputTypes();
                 return $inputTypes[$field];
             }
@@ -105,10 +107,11 @@ trait ReportsTrait
         return null;
     }
 
-    public function getFieldDropdownOptions(string $field){
-        if(array_key_exists($field, $this->reportBuilderFieldsMapping())){
+    public function getFieldDropdownOptions(string $field)
+    {
+        if (array_key_exists($field, $this->reportBuilderFieldsMapping())) {
             $field_map = $this->reportBuilderFieldsMapping()[$field];
-            if (array_key_exists('choices', $field_map)){
+            if (array_key_exists('choices', $field_map)) {
                 $choices = $field_map['choices'];
                 if (is_callable($choices)) {
                     return call_user_func($choices, $field);
@@ -116,8 +119,8 @@ trait ReportsTrait
                 return $choices;
             }
         }
-        if($this->hasMethod('isAdditionalAttribute')){
-            if($this->isAdditionalAttribute($field)){
+        if ($this->hasMethod('isAdditionalAttribute')) {
+            if ($this->isAdditionalAttribute($field)) {
                 if ($this->isSingleSelectAttribute($field) || $this->isMultiSelectAttribute($field) || $this->isCheckboxAttribute($field)) {
                     $listTypeIds = $this->getAdditionalAttributesListTypeIds();
                     $listTypeId = $listTypeIds[$field] ?? null;
@@ -137,10 +140,11 @@ trait ReportsTrait
      * @param string $field
      * @return string
      */
-    public function getFieldTooltipContent(string $field){
-        if(array_key_exists($field, $this->reportBuilderFieldsMapping())){
+    public function getFieldTooltipContent(string $field)
+    {
+        if (array_key_exists($field, $this->reportBuilderFieldsMapping())) {
             $field_map = $this->reportBuilderFieldsMapping()[$field];
-            if (array_key_exists('tooltip', $field_map)){
+            if (array_key_exists('tooltip', $field_map)) {
                 $tooltip = $field_map['tooltip'];
                 if (is_callable($tooltip)) {
                     return call_user_func($tooltip, $field);
@@ -148,8 +152,8 @@ trait ReportsTrait
                 return $tooltip;
             }
         }
-        if($this->hasMethod('isAdditionalAttribute')){
-            if($this->isAdditionalAttribute($field)){
+        if ($this->hasMethod('isAdditionalAttribute')) {
+            if ($this->isAdditionalAttribute($field)) {
                 if ($this->isSingleSelectAttribute($field) || $this->isMultiSelectAttribute($field) || $this->isCheckboxAttribute($field)) {
                     $listTypeIds = $this->getAdditionalAttributesListTypeIds();
                     $listTypeId = $listTypeIds[$field] ?? null;
@@ -191,7 +195,7 @@ trait ReportsTrait
             'country_id', 'test', 'additional_attributes', 'created_at', 'created_by', 'updated_at', 'updated_by', 'is_active', 'is_deleted', 'deleted_at', 'deleted_by',
             'password', 'password_hash', 'password_reset_token', 'profile_image', 'account_activation_token', 'auth_key', 'auto_generate_password',
             'is_main_account', 'last_login', 'level_id', 'require_password_change', 'role_id', 'timezone',
-            'event_type', 'client_id', 'district_id', 'region_id', 'ward_id', 'village_id', 'org_id', 'animal_id'
+            'event_type', 'client_id', 'district_id', 'region_id', 'ward_id', 'village_id', 'org_id', 'animal_id', 'latlng', 'map_address', 'uuid', 'migration_id', 'odk_form_uuid',
         ];
     }
 

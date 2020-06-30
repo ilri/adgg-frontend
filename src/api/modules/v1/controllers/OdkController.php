@@ -31,7 +31,7 @@ class OdkController extends Controller
                 $model = new OdkForm();
                 $model->form_data = $payload;
                 if ($model->save()) {
-                    Yii::info("ODK JSON Form {$model->uuid} successfully saved");
+                    Yii::info("ODK JSON Form {$model->form_uuid} successfully saved");
                 } else {
                     Yii::error('ODK JSON FORM validation errors: ' . json_encode($model->getErrors()));
                     Yii::info('ODK POST JSON DATA: ' . json_encode($payload));
