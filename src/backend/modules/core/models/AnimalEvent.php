@@ -25,6 +25,7 @@ use Yii;
  * @property int $org_id
  * @property int $client_id
  * @property string $event_date
+ * @property string $data_collection_date
  * @property string $latitude
  * @property string $longitude
  * @property string $map_address
@@ -80,7 +81,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
         return [
             [['animal_id', 'event_type', 'event_date'], 'required'],
             [['animal_id', 'event_type', 'country_id', 'region_id', 'district_id', 'ward_id', 'village_id', 'field_agent_id'], 'integer'],
-            [['event_date'], 'date', 'format' => 'php:Y-m-d'],
+            [['event_date', 'data_collection_date'], 'date', 'format' => 'php:Y-m-d'],
             [['latitude', 'longitude'], 'number'],
             [['map_address', 'uuid'], 'string', 'max' => 255],
             ['event_date', 'validateNoFutureDate'],
@@ -108,6 +109,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             'org_id' => 'External Organization ID',
             'client_id' => 'Client ID',
             'event_date' => 'Event Date',
+            'data_collection_date' => 'Date',
             'latitude' => 'Latitude',
             'longitude' => 'Longitude',
             'map_address' => 'Map Address',
@@ -191,6 +193,9 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             $this->village_id = $this->animal->village_id;
             $this->org_id = $this->animal->org_id;
             $this->client_id = $this->animal->client_id;
+            if (empty($this->data_collection_date)) {
+                $this->data_collection_date = $this->event_date;
+            }
             if ($this->event_type == self::EVENT_TYPE_MILKING) {
                 if (empty($this->milkday)) {
                     $this->milkday = ((float)$this->milkmor + (float)$this->milkeve + (float)$this->milkmid);
