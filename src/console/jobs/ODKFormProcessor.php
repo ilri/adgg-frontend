@@ -10,6 +10,8 @@ namespace console\jobs;
 
 
 use backend\modules\core\models\Animal;
+use backend\modules\core\models\AnimalEvent;
+use backend\modules\core\models\CalvingEvent;
 use backend\modules\core\models\CountryUnits;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\FarmMetadata;
@@ -98,6 +100,11 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      */
     private $_animalEventsData;
 
+    /**
+     * @var AnimalEvent[]
+     */
+    private $_animalEventModels;
+
     const MIN_SUPPORTED_ODK_FORM_VERSION = OdkForm::ODK_FORM_VERSION_1_POINT_5;
 
     /**
@@ -133,6 +140,15 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $this->_model->processed_at = DateUtils::mysqlTimestamp();
             if (!empty($this->_farmData)) {
                 $this->_model->farm_data = $this->_farmData;
+            }
+            if (!empty($this->_farmMetadata)) {
+                $this->_model->farm_metadata = $this->_farmMetadata;
+            }
+            if (!empty($this->_animalsData)) {
+                $this->_model->animals_data = $this->_animalsData;
+            }
+            if (!empty($this->_animalEventsData)) {
+                $this->_model->animal_events_data = $this->_animalEventsData;
             }
             $this->_model->save(false);
             //ODKJsonNotification::createManualNotifications(ODKJsonNotification::NOTIF_ODK_JSON, $this->_model->id);
@@ -504,6 +520,34 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             }
             $newAnimalModel->setDynamicAttributesValuesFromOdkForm($animalData, $animalIdentificationGroupKey, $repeatKey);
             $this->saveAnimalModel($newAnimalModel, $k, true);
+            $newAnimalModel = $this->_animalsModels[$k];
+            //calving status
+            $calvingRepeatKey = $repeatKey . '/animal_calfstatus';
+            $calvingsData = $animalData[$calvingRepeatKey] ?? null;
+            $eventModel = new CalvingEvent([
+                'animal_id' => $newAnimalModel->id,
+                'event_type' => CalvingEvent::EVENT_TYPE_CALVING,
+                'country_id' => $newAnimalModel->country_id,
+                'region_id' => $newAnimalModel->region_id,
+                'district_id' => $newAnimalModel->district_id,
+                'ward_id' => $newAnimalModel->ward_id,
+                'village_id' => $newAnimalModel->village_id,
+                'org_id' => $newAnimalModel->org_id,
+                'client_id' => $newAnimalModel->client_id,
+                'data_collection_date' => $this->getDate(),
+                'event_date' => $this->getDate(),
+                'latitude' => $newAnimalModel->latitude,
+                'longitude' => $newAnimalModel->longitude,
+                'field_agent_id' => $this->_model->user_id,
+                'odk_form_uuid' => $this->_model->form_uuid,
+            ]);
+            if (!empty($calvingsData)) {
+                foreach ($calvingsData as $i => $calvingData) {
+                    $newEventModel = clone $eventModel;
+                    $newEventModel->setDynamicAttributesValuesFromOdkForm($calvingData, 'animal_calfregistration', $calvingRepeatKey);
+                    $this->saveAnimalEventModel($newEventModel, $i, true);
+                }
+            }
         }
     }
 
@@ -545,6 +589,20 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $this->_animalsData[$index] = $data['data'];
         $this->_animalsModels[$index] = $data['model'];
     }
+
+
+    /**
+     * @param AnimalEvent $model
+     * @param $index
+     * @param bool $validate
+     */
+    protected function saveAnimalEventModel($model, $index, $validate = true)
+    {
+        $data = $this->saveModel($model, $validate);
+        $this->_animalEventsData[$index] = $data['data'];
+        $this->_animalEventModels[$index] = $data['model'];
+    }
+
 
     /**
      * @param ActiveRecord|TableAttributeInterface $model
