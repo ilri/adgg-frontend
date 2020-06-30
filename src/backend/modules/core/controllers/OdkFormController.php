@@ -119,8 +119,12 @@ class OdkFormController extends Controller
         if (!Yii::$app->request->isPost) {
             throw new ForbiddenHttpException();
         }
-
         $model = OdkForm::loadModel($id);
-        ODKFormProcessor::push(['queueId' => $model->id]);
+        if ( ODKFormProcessor::push(['itemId' => $model->id])) {
+            return Lang::t("ODK JSON Form id: {$model->id} successfully requeued");
+        } else {
+            Yii::debug($model->getErrors());
+            return Lang::t("ODK JSON Form id: {$model->id} failed to requeue");
+        }
     }
 }
