@@ -261,6 +261,48 @@ MyApp.modules.dashboard = {};
     MyApp.modules.dashboard.dataviz = function (options) {
         let obj = new DATAVIZ(options);
         obj.loadAjaxCharts();
+
+        $(".chart-filter-form").submit(function( event ) {
+            event.preventDefault();
+            //console.log(event.target);
+            let form = event.target;
+            let name = $(form).data('name');
+            let formdata = $(form).serialize();
+            let defaultCharts = options.ajaxCharts;
+            let chart = defaultCharts.find(function(chartObj) {
+                return chartObj['name'] === name;
+            });
+            //console.log(formdata)
+            //console.log(name)
+            //console.log(chart)
+            //let viz = new DATAVIZ({
+            //    ajaxAction: chart.url,
+            //    ajaxCharts : [chart]
+            //})
+            //console.log(viz);
+            //viz.loadAjaxCharts();
+            let url = chart.url;
+            let renderContainer = $(chart.renderContainer);
+            $.ajax({
+                url: url,
+                type: 'get',
+                dataType: 'html',
+                //data: {name: chart.name},
+                data: formdata + '&' + $.param({name: chart.name}),
+                success: function (data) {
+                    renderContainer.html(data).fadeIn("slow");
+                },
+                beforeSend: function (xhr) {
+                    renderContainer.html('<div class="col-md-12"><h1 class="text-center text-warning" style="margin:40px;"><i class="fa fa-spinner fa-spin fa-2x"></i> Loading...</h1></div>');
+                },
+                error: function (xhr) {
+                    renderContainer.html(xhr.responseText);
+                    if (MyApp.DEBUG_MODE) {
+                        console.log(xhr);
+                    }
+                }
+            })
+        });
     }
 
 }(jQuery));
