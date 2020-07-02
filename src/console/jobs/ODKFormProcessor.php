@@ -511,7 +511,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             'animal_photo' => self::getAttributeJsonKey('animal_photo', $animalIdentificationGroupKey, $repeatKey),
             'main_breed' => self::getAttributeJsonKey('animal_mainbreed', $animalIdentificationGroupKey, $repeatKey),
             'breed_composition' => self::getAttributeJsonKey('animal_maincomp', $animalIdentificationGroupKey, $repeatKey),
-            'birthdate' => DateUtils::formatDate(self::getAttributeJsonKey('animal_actualdob', $animalIdentificationGroupKey, $repeatKey), 'Y-m-d'),
+           // 'birthdate' => DateUtils::formatDate(self::getAttributeJsonKey('animal_actualdob', $animalIdentificationGroupKey, $repeatKey), 'Y-m-d'),
         ];
         foreach ($animalsData as $k => $animalData) {
             $newAnimalModel = clone $animalModel;

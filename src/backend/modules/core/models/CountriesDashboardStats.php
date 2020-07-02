@@ -14,6 +14,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\SqlDataProvider;
 use yii\db\Expression;
+use yii\db\Query;
 
 class CountriesDashboardStats extends Model
 {
@@ -337,15 +338,16 @@ class CountriesDashboardStats extends Model
         return $data;
     }
 
-    public static function getDashboardDateCategories($type = 'months', $max = 12, $format = 'Y-m-d'){
-        $date = new \DateTime('now');
-        $to = $date->format('Y-m-d');
-        $from = $date->modify('-1 year')->format('Y-m-d');
+    public static function getDashboardDateCategories($type = 'month', $max = 12, $format = 'Y-m-d', $from = null, $to = null){
+        $to_date = $to !== null ? new \DateTime($to) :  new \DateTime('now');
+        $to = $to_date->format('Y-m-d');
+        $from_date = $from !== null ? new \DateTime($from) : $to_date->modify('-1 year')->format('Y-m-d');
+        $from = $from_date->format('Y-m-d');
         $max_label = $max;
         $date_interval = DateUtils::getDateDiff($from, $to);
         $days_interval = $date_interval->days;
         $x_interval = (int)round(($days_interval / 30) / $max_label);
-
+        #TODO: fix bug datespan skipping February
         return  DateUtils::generateDateSpan($from, $to, $x_interval, 'month', $format);
     }
 
@@ -353,6 +355,16 @@ class CountriesDashboardStats extends Model
         $curr_year = date("Y");
         $prev_year = date("Y", strtotime("-4 years"));
         $years = range($from ?? $prev_year, $to ?? $curr_year);
+        return $years;
+    }
+
+    public static function rangeYearsDropdown(){
+        $years = [];
+        $range = static::rangeYears();
+        rsort($range);
+        foreach ($range as $year){
+            $years[$year] = $year;
+        }
         return $years;
     }
 
@@ -400,6 +412,7 @@ class CountriesDashboardStats extends Model
                 //$q_end_month = month_name($end_month_num);
                 $q_end_month = date('M', mktime(0, 0, 0, $end_month_num, 10));
 
+                $current_quarter->num = intval(round($q));
                 $current_quarter->period = "Q$q ($q_start_month - $q_end_month) $y";
                 $current_quarter->period_start = "$y-$start_month_num-01";      // yyyy-mm-dd
 
@@ -678,6 +691,202 @@ class CountriesDashboardStats extends Model
             }
         };
         return $data;
+    }
+
+    public static function getCountryAvgBodyWeight($country_id, $region_id = null, $year = '2020'){
+        $subquery = new Expression('(
+                      select
+                        `core_animal_event`.`id` AS `event_id`,
+                        `animal`.`region_id`,
+                        `core_animal_event`.`event_date` AS `milk_date`,
+                        year(`core_animal_event`.`event_date`) AS `year`,
+                        quarter(`core_animal_event`.`event_date`) AS `quarter`,
+                        `core_animal_event`.`country_id` AS `country_id`,
+                        json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
+                        \'$.\"220\"\')) AS `body_weight`,
+                        json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
+                        \'$.\"219\"\')) AS `heart_girth`,
+                        json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
+                        \'$.\"59\"\')) AS `milk_yield_morning`,
+                        json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
+                        \'$.\"68\"\')) AS `milk_yield_noon`,
+                        json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
+                        \'$.\"61\"\')) AS `milk_yield_evening`,
+                        json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
+                        \'$.\"62\"\')) AS `milk_yield_total`
+                    from
+                        ((`core_animal_event`
+                    left join `core_animal` `animal` on ((`core_animal_event`.`animal_id` = `animal`.`id`))
+                        )
+                    join `core_country` `country` on
+                        (((`country`.`id` = `core_animal_event`.`country_id`)
+                        and (`core_animal_event`.`event_type` = :event_type)
+                        ))
+                        )
+                        )'
+        );
+        $select = new Expression('
+                        `a`.`country_id`,
+                        `a`.`quarter`,
+                        `a`.`year`,
+                        CONCAT(`year`, "-Q", `quarter`) AS `year_quarter`,
+                        round(avg(`a`.`milk_yield_total`), 4) AS `avg_milk_yield_total`,
+                        round(avg(`a`.`body_weight`), 4) AS `avg_body_weight`,
+                        avg((case 
+                                when (`a`.`body_weight` = 0) then 0 
+                                when (`a`.`body_weight` is null) then 0 
+                                when (`a`.`body_weight` = \'null\') then 0 
+                                else round((`a`.`milk_yield_total` / `a`.`body_weight`), 4) end)
+                            ) AS `milk_per_weight`'
+        );
+
+        $query = new Query();
+        $query->from(['a' => $subquery]);
+        $query->addParams([
+            ':event_type' => AnimalEvent::EVENT_TYPE_MILKING,
+        ]);
+        $query->addSelect($select);
+        $query->andWhere('`year` = :year AND `country_id` = :country_id ', [':year' => $year, ':country_id' => $country_id]);
+        $query->addGroupBy("year, quarter, country_id");
+        # if we have filtered region_id, add group by region_id
+        if ($region_id !== null && $region_id != ''){
+            $query->andWhere('`region_id` = :region_id ', [':region_id' => $region_id]);
+            $query->addGroupBy("region_id");
+        }
+        $query->orderBy('quarter ASC');
+
+        $command = $query->createCommand();
+        return $command->queryAll();
+    }
+
+    public static function getCountryFertility($country_id, $region_id = null){
+        $select = new Expression('
+            `country_id`, 
+            #`region_id`, 
+            `year`, 
+            AVG(`fertility`) as `avg_fertility`
+        ');
+
+        $positive_pd_all = new Expression('(
+            select
+                `core_animal_event`.`id` AS `pdEventID`,
+                `core_animal_event`.`event_date` AS `examinationDate`,
+                year(`core_animal_event`.`event_date`) AS `year`,
+                quarter(`core_animal_event`.`event_date`) AS `quarter`,
+                `animal`.`tag_id` AS `animalTagID`,
+                `animal`.`id` AS `animal_id`,
+                `country`.`name` AS `country`,
+                `animal`.`region_id`
+            from
+                ((`core_animal_event`
+            left join `core_animal` `animal` on
+                ((`core_animal_event`.`animal_id` = `animal`.`id`)))
+            join `core_country` `country` on
+                (((`country`.`id` = `core_animal_event`.`country_id`)
+                and (`core_animal_event`.`event_type` = 4)
+                and (json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
+                \'$."131"\')) = 1))))
+        )');
+
+        $positive_pd = new Expression('(
+            select
+                `v_rpt_positive_pd_all`.`pdEventID` AS `pdEventID`,
+                `v_rpt_positive_pd_all`.`examinationDate` AS `examinationDate`,
+                `v_rpt_positive_pd_all`.`year` AS `year`,
+                `v_rpt_positive_pd_all`.`quarter` AS `quarter`,
+                `v_rpt_positive_pd_all`.`animalTagID` AS `animalTagID`,
+                `v_rpt_positive_pd_all`.`animal_id` AS `animal_id`,
+                `v_rpt_positive_pd_all`.`country` AS `country`
+            from
+                (' . $positive_pd_all->expression . ') `v_rpt_positive_pd_all`
+        )');
+
+        $insemination = new Expression('(
+            select
+				    `core_animal_event`.`event_date` AS `aIDate`,
+				    year(`core_animal_event`.`event_date`) AS `YEAR`,
+				    monthname(`core_animal_event`.`event_date`) AS `MONTH`,
+				    `animal`.`id` AS `Animal_ID`,
+				    `animal`.`tag_id` AS `animalTagID`,
+				    `animal`.`country_id`,
+				    `animal`.`region_id`
+				from
+				    ((`core_animal_event`
+				join `core_animal` `animal` on
+				    ((`core_animal_event`.`animal_id` = `animal`.`id`)))
+				join (' . $positive_pd->expression . ') `v_rpt_positive_pd` on
+				    (((`v_rpt_positive_pd`.`animal_id` = `core_animal_event`.`animal_id`)
+				    and (`core_animal_event`.`event_type` = :event_type))))
+        )');
+
+        $from = new Expression('(
+            select
+                #`a`.`animal_id` AS `animal_id`,
+                `a`.`country_id` AS `country_id`,
+                `a`.`region_id` AS `region_id`,
+                `b`.`year` AS `year`,
+                #`b`.`quarter` AS `quarter`,
+                #`b`.`pregnancies` AS `pregnancies`,
+                #`a`.`inseminations` AS `inseminations`,
+                (case
+                    when (`a`.`inseminations` = 0) then 0
+                    when (`a`.`inseminations` is null) then 0
+                    when (`a`.`inseminations` = \'null\') then 0
+                    else round(((`b`.`pregnancies` / `a`.`inseminations`) * 100), 2) end) AS `fertility`
+            from (
+                 (
+                    select
+                        `v_rpt_insemenation`.`Animal_ID` AS `animal_id`,
+                        `v_rpt_insemenation`.`country_id` AS `country_id`,
+                        `v_rpt_insemenation`.`region_id` AS `region_id`,
+                        count(`v_rpt_insemenation`.`Animal_ID`) AS `inseminations`
+                    from (
+                        '.$insemination->expression.'
+                    ) `v_rpt_insemenation`
+	                group by
+	                    `v_rpt_insemenation`.`Animal_ID`
+                 ) `a`
+                 left join (
+                     select
+                        `v_rpt_positive_pd_all`.`animal_id` AS `animal_id`,
+                        `v_rpt_positive_pd_all`.`year` AS `year`,
+                        `v_rpt_positive_pd_all`.`quarter` AS `quarter`,
+                        count(`v_rpt_positive_pd_all`.`animal_id`) AS `pregnancies`
+                     from (
+                        '.$positive_pd_all->expression.'
+                     ) `v_rpt_positive_pd_all`
+                     group by
+                        `v_rpt_positive_pd_all`.`animal_id`,
+                        `v_rpt_positive_pd_all`.`year`,
+                        `v_rpt_positive_pd_all`.`quarter`
+                 ) `b` on ((`a`.`animal_id` = `b`.`animal_id`))
+            )
+            group by 
+                `country_id`, 
+                `region_id`, 
+                `year`,
+                #`quarter`, 
+                `pregnancies`, 
+                `inseminations`
+	     )
+        ');
+
+        $query = new Query();
+        $query->from(['f' => $from]);
+        $query->addSelect($select);
+        $query->addParams([
+            ':event_type' => AnimalEvent::EVENT_TYPE_AI,
+        ]);
+        $query->andWhere('`country_id` = :country_id ', [':country_id' => $country_id]);
+        $query->addGroupBy("year, country_id");
+        if ($region_id !== null && $region_id != ''){
+            $query->andWhere('`region_id` = :region_id ', [':region_id' => $region_id]);
+            $query->addGroupBy("region_id");
+        }
+        $query->orderBy('year ASC');
+
+        $command = $query->createCommand();
+        return $command->queryAll();
     }
 
     public static function getCalvesByRegions($animal_type, $country_id = null)
