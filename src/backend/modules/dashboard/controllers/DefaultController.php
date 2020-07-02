@@ -27,10 +27,11 @@ class DefaultController extends Controller
      */
     public function actionIndex()
     {
-        if (Session::isPrivilegedAdmin()) {
+        if (Session::isPrivilegedAdmin() || Session::isCountryUser()) {
             return $this->redirect(Url::to(['/dashboard/data-viz']));
         }
-        elseif (Session::isCountryUser() || Session::isOrganizationUser()){
+
+        elseif (Session::isOrganizationUser()){
             $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
             return $this->render('index2', [
                 'countries' => $countries,
