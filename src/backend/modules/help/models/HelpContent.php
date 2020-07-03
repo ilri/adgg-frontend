@@ -11,7 +11,6 @@ use common\helpers\Lang;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
-use DOMDocument;
 use kartik\mpdf\Pdf;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;

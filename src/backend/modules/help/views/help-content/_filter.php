@@ -48,13 +48,13 @@ use yii\bootstrap4\Html;
                         <button class="btn btn-default" type="reset"
                                 onclick="$('select.select2').val('').trigger('change');"><?= Lang::t('Reset') ?></button>
                     </div>
-                    <div class="col-lg-2 offset-10">
+                    <div class="col-lg-2 offset-8">
                         <?= Html::label('') ?>
                         <a target="_blank" class="btn btn-brand btn-bold pull-right"
                            href="<?= Url::to(['read', 'format' => 'pdf', 'module' => $filterOptions['module'], 'name' => $filterOptions['name']]) ?>"
                         ><i class="far fa-file-pdf"></i> Read as PDF</a>
                     </div>
-                    <div class="col-lg-2 offset-8">
+                    <div class="col-lg-2">
                         <?= Html::label('') ?>
                         <a target="_blank" class="btn btn-brand btn-bold pull-right"
                            href="<?= Url::to(['read', 'format' => 'word', 'module' => $filterOptions['module'], 'name' => $filterOptions['name']]) ?>"
