@@ -15,14 +15,25 @@ $region_id = Yii::$app->request->get('region_id', null);
     <div id="chartContainerAIPreg" style="width:100%;"></div>
 </div>
 <?php
-
+$years = CountriesDashboardStats::rangeYears();
+$res = CountriesDashboardStats::getCountryAvgAIPerPD($filterOptions['country_id'], $region_id);
 $data = [];
+foreach ($years as $year){
+    $point = 0;
+    foreach ($res as $row){
+        if ($row['year'] == $year){
+            $point = (float) $row['insemenation_avg'];
+        }
+    }
+    $data[] = (float) $point;
+}
+//dd($res, $data);
 
 $series = [
     [
         'name' => Country::getScalar('name', ['id' => $filterOptions['country_id']]),
         'type' => 'column',
-        'data' => [0,0,0,0,0],
+        'data' => $data,
         'color' => '#771957',
         'zIndex' => 2,
     ],
@@ -32,7 +43,7 @@ $graphOptions = [
     'title' => ['text' => 'Average Insemination per Pregnancy'],
     'subtitle' => ['text' => ''],
     'xAxis' => [
-        'categories' => CountriesDashboardStats::rangeYears(),
+        'categories' => $years,
     ],
     'yAxis' => [
         'title' => [
