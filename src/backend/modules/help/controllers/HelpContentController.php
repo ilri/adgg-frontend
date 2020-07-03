@@ -85,10 +85,15 @@ class HelpContentController extends Controller
                 'models' => $models->all(),
             ]);
             switch ($format) {
+                case 'word':
+                    $options =[];
+                    return HelpContent::exportWord($content, $options);
+                    break;
                 case 'pdf':
                 default:
                     $options = [];
                     return HelpContent::exportPdf($content, $options);
+                    //return HelpContent::exportWord($content, $options);
                     break;
             }
         }

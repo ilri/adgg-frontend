@@ -11,7 +11,12 @@ use common\helpers\Lang;
 use common\models\ActiveRecord;
 use common\models\ActiveSearchInterface;
 use common\models\ActiveSearchTrait;
+use DOMDocument;
 use kartik\mpdf\Pdf;
+use PhpOffice\PhpWord\IOFactory;
+use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\Shared\Html;
+use PhpOffice\PhpWord\Style;
 
 /**
  * This is the model class for table "help_content".
@@ -264,6 +269,33 @@ class HelpContent extends ActiveRecord implements ActiveSearchInterface
 
         $pdf = new Pdf($config);
         return $pdf->render();
+
+    }
+
+    #export user manual as a word document
+
+    public static function exportWord($content, $options = []){
+        $phpWord = new PhpWord();
+        $section = $phpWord->addSection();
+        Style::addTitleStyle(1, array('size' => 14));
+        $section->addTitle("ADGG USER MANUAL");
+        $html = $content;
+        Html::addHtml($section, $html, false, false);
+
+        // Saving the document as OOXML file...
+        $objWriter = IOFactory::createWriter($phpWord, 'Word2007');
+        $temp_file_uri = tempnam('', 'xyz');
+        $objWriter->save($temp_file_uri);
+        //download code
+        header('Content-Description: File Transfer');
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename=ADGG USER MANUAL.docx');
+        header('Content-Transfer-Encoding: binary');
+        header('Expires: 0');
+        header('Content-Length: ' . filesize($temp_file_uri));
+        readfile($temp_file_uri);
+        unlink($temp_file_uri); // deletes the temporary file
+        exit;
 
     }
 
