@@ -12,6 +12,7 @@ namespace backend\modules\dashboard\controllers;
 use backend\modules\auth\Session;
 use backend\modules\core\models\Country;
 use common\helpers\Url;
+use Yii;
 use yii\web\ForbiddenHttpException;
 
 class DataVizController extends Controller
@@ -26,26 +27,48 @@ class DataVizController extends Controller
 
     public function actionIndex()
     {
+        $country_id = \Yii::$app->request->get('country_id');
+        $org_id = \Yii::$app->request->get('org_id');
         if (Session::isPrivilegedAdmin()) {
-            $country_id = \Yii::$app->request->get('country_id');
-            $org_id = \Yii::$app->request->get('org_id');
-            return $this->render('index', [
+            $view = 'index';
+            if($country_id !== null || $org_id !== null){
+                $view = 'country';
+            }
+            return $this->render($view, [
                 'filterOptions' => [
                     'country_id' => $country_id,
                     'org_id' => $org_id,
                 ]
             ]);
-        } else {
+        }
+        elseif (Session::isCountryUser() ){
+            $country_id = Session::getCountryId();
+            $org_id = Session::getOrgId();
+            return $this->render('country', [
+                'filterOptions' => [
+                    'country_id' => $country_id,
+                    'org_id' => $org_id,
+                ]
+            ]);
+        }
+        elseif (Session::isOrganizationUser() ){
+            return $this->redirect(Url::to(['/dashboard/default']));
+        }
+        else {
             throw new ForbiddenHttpException();
         }
-        //return $this->redirect(Url::to(['/dashboard/default']));
     }
 
     public function actionLoadChart($name)
     {
-        $country_id = \Yii::$app->request->get('country_id');
-        $org_id = \Yii::$app->request->get('org_id');
-        return $this->renderAjax('partials/'. $name, [
+        $country_id = Yii::$app->request->get('country_id');
+        $org_id = Yii::$app->request->get('org_id');
+        $is_country = Yii::$app->request->get('is_country', 0);
+        $view = 'partials/' . $name;
+        if ($is_country){
+            $view = 'country/' . $name;
+        }
+        return $this->renderAjax($view, [
             'filterOptions' => [
                 'country_id' => $country_id,
                 'org_id' => $org_id,
