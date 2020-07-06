@@ -535,7 +535,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 'org_id' => $newAnimalModel->org_id,
                 'client_id' => $newAnimalModel->client_id,
                 'data_collection_date' => $this->getDate(),
-                'event_date' => $this->getDate(),
+                'event_date' => $this->getDate(),//Noted issue: No calving date in ODK form
                 'latitude' => $newAnimalModel->latitude,
                 'longitude' => $newAnimalModel->longitude,
                 'field_agent_id' => $this->_model->user_id,
@@ -658,6 +658,16 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             'altitude' => $arr[2] ?? null,
             'accuracy' => $arr[3] ?? null,
         ];
+    }
+
+    protected function registerAnimalDam()
+    {
+
+    }
+
+    protected function registerAnimalSire()
+    {
+
     }
 
 }
