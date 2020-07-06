@@ -27,7 +27,9 @@ $format = Yii::$app->request->get('format', null);
         foreach ($models as $model):
             /* @var $model HelpContent */
             $i++;
-            //$model->content = preg_replace('/<img /', '<img width="1024" ', $model->content);
+        if ($format === 'word'){
+            $model->content = preg_replace('/<img /', '<img width="600" ', $model->content);
+        }
             ?>
 
             <?php if ((Session::getUserLevelId() == $model->user_level_id) || ($model->user_level_id == null) || Session::isPrivilegedAdmin()): ?>
