@@ -511,7 +511,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             'animal_photo' => self::getAttributeJsonKey('animal_photo', $animalIdentificationGroupKey, $repeatKey),
             'main_breed' => self::getAttributeJsonKey('animal_mainbreed', $animalIdentificationGroupKey, $repeatKey),
             'breed_composition' => self::getAttributeJsonKey('animal_maincomp', $animalIdentificationGroupKey, $repeatKey),
-           // 'birthdate' => DateUtils::formatDate(self::getAttributeJsonKey('animal_actualdob', $animalIdentificationGroupKey, $repeatKey), 'Y-m-d'),
+            'birthdate' => self::getAttributeJsonKey('animal_actualdob', $animalIdentificationGroupKey, $repeatKey),
         ];
         foreach ($animalsData as $k => $animalData) {
             $newAnimalModel = clone $animalModel;
@@ -535,7 +535,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 'org_id' => $newAnimalModel->org_id,
                 'client_id' => $newAnimalModel->client_id,
                 'data_collection_date' => $this->getDate(),
-                'event_date' => $this->getDate(),
+                'event_date' => $this->getDate(),//Noted issue: No calving date in ODK form
                 'latitude' => $newAnimalModel->latitude,
                 'longitude' => $newAnimalModel->longitude,
                 'field_agent_id' => $this->_model->user_id,
@@ -658,6 +658,16 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             'altitude' => $arr[2] ?? null,
             'accuracy' => $arr[3] ?? null,
         ];
+    }
+
+    protected function registerAnimalDam()
+    {
+
+    }
+
+    protected function registerAnimalSire()
+    {
+
     }
 
 }
