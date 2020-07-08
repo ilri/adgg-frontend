@@ -3,6 +3,7 @@
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\CalvingEvent;
 use backend\modules\core\models\CountriesDashboardStats;
+use backend\modules\core\models\Country;
 use backend\modules\core\models\CountryUnits;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\MilkingEvent;
@@ -18,7 +19,7 @@ use yii\helpers\Json;
 /* @var $controller \backend\controllers\BackendController */
 /* @var $filterOptions array */
 $controller = Yii::$app->controller;
-$this->title = Lang::t('Country Dashboard');
+$this->title = Lang::t('{country} Dashboard', ['country' => Country::getScalar('name', ['id' => $filterOptions['country_id']])]);
 $this->params['breadcrumbs'] = [
     $this->title,
 ];
