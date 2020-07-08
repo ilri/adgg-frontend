@@ -9,7 +9,7 @@ $tabType = Yii::$app->request->get('tab_type', null);
 ?>
 <ul class="nav nav-tabs" role="tablist">
     <li class="nav-item">
-        <a class="nav-link" href="#" data-toggle="tab" data-target="#performance">
+        <a class="nav-link active" href="#" data-toggle="tab" data-target="#performance">
             <?= Lang::t('Performance') ?>
         </a>
     </li>
