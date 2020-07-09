@@ -68,6 +68,7 @@ use yii\helpers\Inflector;
  * @property string $animal_eartag_id
  * @property string $migration_id
  * @property string $breed_composition_details
+ * @property string $odk_animal_code
  *
  * @property Farm $farm
  * @property Animal $sire

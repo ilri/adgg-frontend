@@ -519,6 +519,12 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $newAnimalModel->{$attr} = $this->getFormDataValueByKey($animalData, $odkKey);
             }
             $newAnimalModel->setDynamicAttributesValuesFromOdkForm($animalData, $animalIdentificationGroupKey, $repeatKey);
+            $damModel = $this->getOrRegisterAnimalDam($animalData, $farmModel, $k);
+            if (null !== $damModel) {
+                $newAnimalModel->dam_id = $damModel->id;
+                $newAnimalModel->dam_tag_id = $damModel->tag_id;
+            }
+
             $this->saveAnimalModel($newAnimalModel, $k, true);
             $newAnimalModel = $this->_animalsModels[$k];
             //calving status
@@ -549,6 +555,77 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 }
             }
         }
+    }
+
+    /**
+     * @param array $animalData
+     * @param Farm $farmModel
+     * @param string $index
+     * @return Animal|null
+     */
+    protected function getOrRegisterAnimalDam($animalData, $farmModel, $index)
+    {
+        //todo: Pending tests
+        $damCodeKey = self::getAttributeJsonKey('animal_damregistered', 'animal_damknownlist', 'animal_general');
+        $animalCode = $this->getFormDataValueByKey($animalData, $damCodeKey);
+        $damModel = null;
+        if (!empty($animalCode)) {
+            if (OdkForm::isVersion1Point5OrBelow($this->_model->form_version)) {
+                $damModel = Animal::find()->andWhere(['country_id' => $this->_model->country_id, 'odk_animal_code' => $animalCode])->one();
+            } else {
+                $damModel = Animal::find()->andWhere(['id' => $animalCode])->one();
+            }
+        } else {
+            //register dam as a new animal
+
+            $repeatKey = 'animal_general/animal_dam';
+            $damDetailGroupKey = 'animal_damdetails';
+            $dams = $animalData[$repeatKey] ?? null;
+            if (empty($dams)) {
+                return null;
+            }
+            $damData = array_values($dams)[0];
+            $animalModel = new Animal([
+                'farm_id' => $farmModel->id,
+                'country_id' => $farmModel->country_id,
+                'region_id' => $farmModel->region_id,
+                'district_id' => $farmModel->district_id,
+                'ward_id' => $farmModel->ward_id,
+                'village_id' => $farmModel->village_id,
+                'org_id' => $farmModel->org_id,
+                'client_id' => $farmModel->client_id,
+                'odk_form_uuid' => $this->_model->form_uuid,
+                'latitude' => $farmModel->latitude,
+                'longitude' => $farmModel->longitude,
+                'reg_date' => $this->getDate(),
+            ]);
+
+            //animal_general/animal_dam/animal_damdetails/
+            $birthdateKey = OdkForm::isVersion1Point5OrBelow($this->_model->form_version) ? 'animal_damdobfull' : 'animal_damactualdob';
+            $fixedAttributesMap = [
+                'name' => self::getAttributeJsonKey('animal_damname', $damDetailGroupKey, $repeatKey),
+                'tag_id' => self::getAttributeJsonKey('animal_damtagid', $damDetailGroupKey, $repeatKey),
+                'animal_type' => 2,//cow
+                'main_breed' => self::getAttributeJsonKey('animal_dammainbreed', $damDetailGroupKey, $repeatKey),
+                'main_breed_other' => self::getAttributeJsonKey('animal_dammainbreedoth', $damDetailGroupKey, $repeatKey),
+                'breed_composition' => self::getAttributeJsonKey('animal_dammaincomp', $damDetailGroupKey, $repeatKey),
+                'birthdate' => self::getAttributeJsonKey($birthdateKey, $damDetailGroupKey, $repeatKey),
+            ];
+
+            foreach ($fixedAttributesMap as $attr => $odkKey) {
+                $animalModel->{$attr} = $this->getFormDataValueByKey($damData, $odkKey);
+            }
+            $i = 'dam_' . $index;
+            $this->saveAnimalModel($animalModel, $i, true);
+            $damModel = $this->_animalsModels[$i] ?? null;
+        }
+
+        return $damModel;
+    }
+
+    protected function registerAnimalSire()
+    {
+
     }
 
     /**
@@ -658,16 +735,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             'altitude' => $arr[2] ?? null,
             'accuracy' => $arr[3] ?? null,
         ];
-    }
-
-    protected function registerAnimalDam()
-    {
-
-    }
-
-    protected function registerAnimalSire()
-    {
-
     }
 
 }
