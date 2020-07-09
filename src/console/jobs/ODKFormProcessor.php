@@ -720,11 +720,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $animalCode = $this->getFormDataValueByKey($animalData, $sireCodeKey);
         }
         if (!empty($animalCode)) {
-            if (OdkForm::isVersion1Point5OrBelow($this->_model->form_version)) {
-                $sireModel = Animal::find()->andWhere(['country_id' => $this->_model->country_id, 'odk_animal_code' => $animalCode])->one();
-            } else {
-                $sireModel = Animal::find()->andWhere(['id' => $animalCode])->one();
-            }
+            $sireModel = $this->getAnimalModelByOdkCode($animalCode);
         } else {
             //register sire as a new animal
             $repeatKey = 'animal_general/animal_sire';
