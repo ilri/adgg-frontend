@@ -16,6 +16,7 @@ use backend\modules\core\models\CountryUnits;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\FarmMetadata;
 use backend\modules\core\models\FarmMetadataHouseholdMembers;
+use backend\modules\core\models\FarmMetadataTechnologyMobilization;
 use backend\modules\core\models\OdkForm;
 use backend\modules\core\models\TableAttributeInterface;
 use common\helpers\DateUtils;
@@ -513,6 +514,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             'breed_composition' => self::getAttributeJsonKey('animal_maincomp', $animalIdentificationGroupKey, $repeatKey),
             'birthdate' => self::getAttributeJsonKey('animal_actualdob', $animalIdentificationGroupKey, $repeatKey),
         ];
+        $n = 1;
         foreach ($animalsData as $k => $animalData) {
             $newAnimalModel = clone $animalModel;
             foreach ($fixedAttributesMap as $attr => $odkKey) {
@@ -530,9 +532,10 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $newAnimalModel->sire_tag_id = $sireModel->tag_id;
                 $newAnimalModel->sire_type = $sireModel->animal_type == 5 ? 1 : 2;
             }
-
-            $this->saveAnimalModel($newAnimalModel, $k, true);
-            $newAnimalModel = $this->_animalsModels[$k];
+            $i = 'N-' . $n;
+            $this->saveAnimalModel($newAnimalModel, $i, true);
+            $newAnimalModel = $this->_animalsModels[$i];
+            $n++;
             //calving status
             $calvingRepeatKey = $repeatKey . '/animal_calfstatus';
             $calvingsData = $animalData[$calvingRepeatKey] ?? null;
@@ -561,6 +564,28 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 }
             }
         }
+    }
+
+    protected function registerFarmerTechnologyMobilization()
+    {
+        $repeatKey = 'farmer_techmobilization';
+        $data = $this->_model->form_data[$repeatKey] ?? null;
+        if (empty($data)) {
+            return;
+        }
+        $model = new FarmMetadataTechnologyMobilization([
+            'farm_id' => $this->getFarmId(),
+            'type' => FarmMetadataTechnologyMobilization::TYPE_TECHNOLOGY_MOBILIZATION,
+            'country_id' => $this->_model->country_id,
+            'odk_form_uuid' => $this->_model->form_uuid,
+        ]);
+        foreach ($data as $k => $datum) {
+            $newModel = clone $model;
+            $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'farmer_techmobilizationdetails', $repeatKey);
+            $i = 'technology_mobilization_' . $k;
+            $this->saveFarmMetadataModel($newModel, $i, true);
+        }
+
     }
 
     /**
