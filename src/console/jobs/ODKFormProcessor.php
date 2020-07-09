@@ -610,6 +610,12 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             }
             foreach ($syncData as $i => $syncDatum) {
                 $animalCode = $this->getFormDataValueByKey($syncDatum, $animalCodeAttributeKey);
+                $animalModel = $this->getAnimalModelByOdkCode($animalCode);
+                if (null === $animalModel) {
+                    continue;
+                }
+
+                //todo continue from here
             }
         }
     }
