@@ -127,8 +127,12 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             if ($this->isSupportedVersion()) {
                 //farmer registration
                 $this->registerNewFarmer();
-                //cattle registration
+                //farm metadata
+                $this->registerFarmerTechnologyMobilization();
+                //animal registration
                 $this->registerNewCattle();
+                //animal events
+                $this->registerAnimalSynchronization();
             } else {
                 $message = Lang::t('This Version ({old_version}) of ODK Form is currently not supported. Version ({version}) and above are supported.', ['old_version' => $this->_model->form_version, 'version' => self::MIN_SUPPORTED_ODK_FORM_VERSION]);
                 $this->_model->error_message = $message;
@@ -568,6 +572,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
 
     protected function registerFarmerTechnologyMobilization()
     {
+        //todo pending tests
         $repeatKey = 'farmer_techmobilization';
         $data = $this->_model->form_data[$repeatKey] ?? null;
         if (empty($data)) {
@@ -588,6 +593,55 @@ class ODKFormProcessor extends BaseObject implements JobInterface
 
     }
 
+    protected function registerAnimalSynchronization()
+    {
+        $repeatKey = 'animal_breeding';
+        $data = $this->_model->form_data[$repeatKey] ?? null;
+        if (null === $data) {
+            return;
+        }
+        $syncRepeatKey = $repeatKey . '/animal_breedingsync';
+        $syncGroupKey = 'breeding_syncdetails';
+        $animalCodeAttributeKey = self::getAttributeJsonKey('breeding_syncanimalcode', '', $syncRepeatKey);
+        foreach ($data as $k => $breedingData) {
+            $syncData = $breedingData[$syncRepeatKey] ?? null;
+            if (null === $syncData) {
+                continue;
+            }
+            foreach ($syncData as $i => $syncDatum) {
+                $animalCode = $this->getFormDataValueByKey($syncDatum, $animalCodeAttributeKey);
+            }
+        }
+    }
+
+    /**
+     * @param string $animalCode
+     * @return  Animal|null
+     */
+    protected function getAnimalModelByOdkCode($animalCode)
+    {
+        // IF the code starts with N- e.g N-1 then its a new animal
+        $isNewRecord = false;
+        $animalCodeArr = explode('-', $animalCode);
+        if (count($animalCodeArr) == 2) {
+            $prefix = strtoupper(trim($animalCodeArr[0]));
+            $number = trim($animalCodeArr[1]);
+            if ($prefix === 'N' && $number >= 1) {
+                $isNewRecord = true;
+            }
+        }
+        if ($isNewRecord) {
+            $model = $this->_animalsModels[$animalCode] ?? null;
+        } else {
+            if (OdkForm::isVersion1Point5OrBelow($this->_model->form_version)) {
+                $model = Animal::find()->andWhere(['country_id' => $this->_model->country_id, 'odk_animal_code' => $animalCode])->one();
+            } else {
+                $model = Animal::find()->andWhere(['id' => $animalCode])->one();
+            }
+        }
+        return $model;
+    }
+
     /**
      * @param array $animalData
      * @param Farm $farmModel
@@ -601,14 +655,9 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $animalCode = $this->getFormDataValueByKey($animalData, $damCodeKey);
         $damModel = null;
         if (!empty($animalCode)) {
-            if (OdkForm::isVersion1Point5OrBelow($this->_model->form_version)) {
-                $damModel = Animal::find()->andWhere(['country_id' => $this->_model->country_id, 'odk_animal_code' => $animalCode])->one();
-            } else {
-                $damModel = Animal::find()->andWhere(['id' => $animalCode])->one();
-            }
+            $damModel = $this->getAnimalModelByOdkCode($animalCode);
         } else {
             //register dam as a new animal
-
             $repeatKey = 'animal_general/animal_dam';
             $damDetailGroupKey = 'animal_damdetails';
             $dams = $animalData[$repeatKey] ?? null;
