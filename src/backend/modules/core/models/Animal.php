@@ -473,7 +473,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'dam_tag_id',
             'main_breed',
             'breed_composition',
-            'secondary_breed',
+            'second_breed',
             'entry_type',
             'entry_date',
             'purchase_cost',
