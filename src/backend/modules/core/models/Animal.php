@@ -35,7 +35,8 @@ use yii\helpers\Inflector;
  * @property int $client_id
  * @property int $animal_type
  * @property int $sex
- * @property string $color
+ * @property string|array $color
+ * @property string $color_other
  * @property string $birthdate
  * @property string $reg_date
  * @property int $is_derived_birthdate
@@ -49,7 +50,8 @@ use yii\helpers\Inflector;
  * @property string $dam_name
  * @property int $main_breed
  * @property int $breed_composition
- * @property int $secondary_breed
+ * @property array|string $secondary_breed
+ * @property string $secondary_breed_other
  * @property int $entry_type
  * @property string $entry_date
  * @property string $purchase_cost

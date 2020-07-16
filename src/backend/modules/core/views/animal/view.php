@@ -57,6 +57,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         [
                             'attribute' => 'color',
+                            'value' => !empty($model->color) ? Choices::getMultiSelectLabel($model->color, ChoiceTypes::CHOICE_TYPE_ANIMAL_COLORS) : $model->color_other,
                         ],
                         [
                             'attribute' => 'birthdate',
@@ -76,7 +77,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         [
                             'attribute' => 'secondary_breed',
-                            'value' => Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, $model->secondary_breed),
+                            'value' => !empty($model->secondary_breed) ? Choices::getMultiSelectLabel($model->secondary_breed, ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS) : $model->secondary_breed_other,
                         ],
                         [
                             'attribute' => 'entry_type',
