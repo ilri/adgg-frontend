@@ -16,6 +16,7 @@ use backend\modules\core\models\CountryUnits;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\FarmMetadata;
 use backend\modules\core\models\FarmMetadataHouseholdMembers;
+use backend\modules\core\models\FarmMetadataTechnologyMobilization;
 use backend\modules\core\models\OdkForm;
 use backend\modules\core\models\TableAttributeInterface;
 use common\helpers\DateUtils;
@@ -126,8 +127,12 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             if ($this->isSupportedVersion()) {
                 //farmer registration
                 $this->registerNewFarmer();
-                //cattle registration
+                //farm metadata
+                $this->registerFarmerTechnologyMobilization();
+                //animal registration
                 $this->registerNewCattle();
+                //animal events
+                $this->registerAnimalSynchronization();
             } else {
                 $message = Lang::t('This Version ({old_version}) of ODK Form is currently not supported. Version ({version}) and above are supported.', ['old_version' => $this->_model->form_version, 'version' => self::MIN_SUPPORTED_ODK_FORM_VERSION]);
                 $this->_model->error_message = $message;
@@ -513,14 +518,28 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             'breed_composition' => self::getAttributeJsonKey('animal_maincomp', $animalIdentificationGroupKey, $repeatKey),
             'birthdate' => self::getAttributeJsonKey('animal_actualdob', $animalIdentificationGroupKey, $repeatKey),
         ];
+        $n = 1;
         foreach ($animalsData as $k => $animalData) {
             $newAnimalModel = clone $animalModel;
             foreach ($fixedAttributesMap as $attr => $odkKey) {
                 $newAnimalModel->{$attr} = $this->getFormDataValueByKey($animalData, $odkKey);
             }
             $newAnimalModel->setDynamicAttributesValuesFromOdkForm($animalData, $animalIdentificationGroupKey, $repeatKey);
-            $this->saveAnimalModel($newAnimalModel, $k, true);
-            $newAnimalModel = $this->_animalsModels[$k];
+            $damModel = $this->getOrRegisterAnimalDam($animalData, $farmModel, $k);
+            if (null !== $damModel) {
+                $newAnimalModel->dam_id = $damModel->id;
+                $newAnimalModel->dam_tag_id = $damModel->tag_id;
+            }
+            $sireModel = $this->getOrRegisterAnimalSire($animalData, $farmModel, $k);
+            if (null !== $sireModel) {
+                $newAnimalModel->sire_id = $sireModel->id;
+                $newAnimalModel->sire_tag_id = $sireModel->tag_id;
+                $newAnimalModel->sire_type = $sireModel->animal_type == 5 ? 1 : 2;
+            }
+            $i = 'N-' . $n;
+            $this->saveAnimalModel($newAnimalModel, $i, true);
+            $newAnimalModel = $this->_animalsModels[$i];
+            $n++;
             //calving status
             $calvingRepeatKey = $repeatKey . '/animal_calfstatus';
             $calvingsData = $animalData[$calvingRepeatKey] ?? null;
@@ -549,6 +568,235 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 }
             }
         }
+    }
+
+    protected function registerFarmerTechnologyMobilization()
+    {
+        //todo pending tests
+        $repeatKey = 'farmer_techmobilization';
+        $data = $this->_model->form_data[$repeatKey] ?? null;
+        if (empty($data)) {
+            return;
+        }
+        $model = new FarmMetadataTechnologyMobilization([
+            'farm_id' => $this->getFarmId(),
+            'type' => FarmMetadataTechnologyMobilization::TYPE_TECHNOLOGY_MOBILIZATION,
+            'country_id' => $this->_model->country_id,
+            'odk_form_uuid' => $this->_model->form_uuid,
+        ]);
+        foreach ($data as $k => $datum) {
+            $newModel = clone $model;
+            $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'farmer_techmobilizationdetails', $repeatKey);
+            $i = 'technology_mobilization_' . $k;
+            $this->saveFarmMetadataModel($newModel, $i, true);
+        }
+
+    }
+
+    protected function registerAnimalSynchronization()
+    {
+        $repeatKey = 'animal_breeding';
+        $data = $this->_model->form_data[$repeatKey] ?? null;
+        if (null === $data) {
+            return;
+        }
+        $syncRepeatKey = $repeatKey . '/animal_breedingsync';
+        $syncGroupKey = 'breeding_syncdetails';
+        $animalCodeAttributeKey = self::getAttributeJsonKey('breeding_syncanimalcode', '', $syncRepeatKey);
+        foreach ($data as $k => $breedingData) {
+            $syncData = $breedingData[$syncRepeatKey] ?? null;
+            if (null === $syncData) {
+                continue;
+            }
+            foreach ($syncData as $i => $syncDatum) {
+                $animalCode = $this->getFormDataValueByKey($syncDatum, $animalCodeAttributeKey);
+                $animalModel = $this->getAnimalModelByOdkCode($animalCode);
+                if (null === $animalModel) {
+                    continue;
+                }
+
+                //todo continue from here
+            }
+        }
+    }
+
+    /**
+     * @param string $animalCode
+     * @return  Animal|null
+     */
+    protected function getAnimalModelByOdkCode($animalCode)
+    {
+        // IF the code starts with N- e.g N-1 then its a new animal
+        $isNewRecord = false;
+        $animalCodeArr = explode('-', $animalCode);
+        if (count($animalCodeArr) == 2) {
+            $prefix = strtoupper(trim($animalCodeArr[0]));
+            $number = trim($animalCodeArr[1]);
+            if ($prefix === 'N' && $number >= 1) {
+                $isNewRecord = true;
+            }
+        }
+        if ($isNewRecord) {
+            $model = $this->_animalsModels[$animalCode] ?? null;
+        } else {
+            if (OdkForm::isVersion1Point5OrBelow($this->_model->form_version)) {
+                $model = Animal::find()->andWhere(['country_id' => $this->_model->country_id, 'odk_animal_code' => $animalCode])->one();
+            } else {
+                $model = Animal::find()->andWhere(['id' => $animalCode])->one();
+            }
+        }
+        return $model;
+    }
+
+    /**
+     * @param array $animalData
+     * @param Farm $farmModel
+     * @param string $index
+     * @return Animal|null
+     */
+    protected function getOrRegisterAnimalDam($animalData, $farmModel, $index)
+    {
+        //todo: Pending tests
+        $damCodeKey = self::getAttributeJsonKey('animal_damregistered', 'animal_damknownlist', 'animal_general');
+        $animalCode = $this->getFormDataValueByKey($animalData, $damCodeKey);
+        $damModel = null;
+        if (!empty($animalCode)) {
+            $damModel = $this->getAnimalModelByOdkCode($animalCode);
+        } else {
+            //register dam as a new animal
+            $repeatKey = 'animal_general/animal_dam';
+            $damDetailGroupKey = 'animal_damdetails';
+            $dams = $animalData[$repeatKey] ?? null;
+            if (empty($dams)) {
+                return null;
+            }
+            $damData = array_values($dams)[0];
+            $animalModel = new Animal([
+                'farm_id' => $farmModel->id,
+                'country_id' => $farmModel->country_id,
+                'region_id' => $farmModel->region_id,
+                'district_id' => $farmModel->district_id,
+                'ward_id' => $farmModel->ward_id,
+                'village_id' => $farmModel->village_id,
+                'org_id' => $farmModel->org_id,
+                'client_id' => $farmModel->client_id,
+                'odk_form_uuid' => $this->_model->form_uuid,
+                'latitude' => $farmModel->latitude,
+                'longitude' => $farmModel->longitude,
+                'reg_date' => $this->getDate(),
+                'animal_type' => 2,//cow
+            ]);
+
+            $birthdateKey = OdkForm::isVersion1Point5OrBelow($this->_model->form_version) ? 'animal_damdobfull' : 'animal_damactualdob';
+            $fixedAttributesMap = [
+                'name' => self::getAttributeJsonKey('animal_damname', $damDetailGroupKey, $repeatKey),
+                'tag_id' => self::getAttributeJsonKey('animal_damtagid', $damDetailGroupKey, $repeatKey),
+                'main_breed' => self::getAttributeJsonKey('animal_dammainbreed', $damDetailGroupKey, $repeatKey),
+                'main_breed_other' => self::getAttributeJsonKey('animal_dammainbreedoth', $damDetailGroupKey, $repeatKey),
+                'breed_composition' => self::getAttributeJsonKey('animal_dammaincomp', $damDetailGroupKey, $repeatKey),
+                'birthdate' => self::getAttributeJsonKey($birthdateKey, $damDetailGroupKey, $repeatKey),
+            ];
+
+            foreach ($fixedAttributesMap as $attr => $odkKey) {
+                $animalModel->{$attr} = $this->getFormDataValueByKey($damData, $odkKey);
+            }
+            $i = 'dam_' . $index;
+            $this->saveAnimalModel($animalModel, $i, true);
+            $damModel = $this->_animalsModels[$i] ?? null;
+        }
+
+        return $damModel;
+    }
+
+    /**
+     * @param array $animalData
+     * @param Farm $farmModel
+     * @param string $index
+     * @return Animal|null
+     */
+    protected function getOrRegisterAnimalSire($animalData, $farmModel, $index)
+    {
+        //todo: Pending tests
+        $sireType = null;
+        $sireModel = null;
+        $sireCodeKey = self::getAttributeJsonKey('animal_sireairegistered', 'animal_sireknownlist', 'animal_general');
+        $animalCode = $this->getFormDataValueByKey($animalData, $sireCodeKey);
+        if (empty($animalCode)) {
+            $sireCodeKey = self::getAttributeJsonKey('animal_sirebullregistered', 'animal_sireknownlist', 'animal_general');
+            $animalCode = $this->getFormDataValueByKey($animalData, $sireCodeKey);
+        }
+        if (!empty($animalCode)) {
+            $sireModel = $this->getAnimalModelByOdkCode($animalCode);
+        } else {
+            //register sire as a new animal
+            $repeatKey = 'animal_general/animal_sire';
+            $sireBullDetailGroupKey = 'animal_siretypes/animal_sirebulldetails';
+            $sireStrawDetailsGroupKey = 'animal_siretypes/animal_sirestrawdetails';
+            $sires = $animalData[$repeatKey] ?? null;
+            if (empty($sires)) {
+                return null;
+            }
+            $sireData = array_values($sires)[0];
+            $sireTypeAttributeKey = self::getAttributeJsonKey('animal_siretype', 'animal_siretypes', $repeatKey);
+            $sireType = $this->getFormDataValueByKey($sireData, $sireTypeAttributeKey);
+            $animalModel = new Animal([
+                'farm_id' => $farmModel->id,
+                'country_id' => $farmModel->country_id,
+                'region_id' => $farmModel->region_id,
+                'district_id' => $farmModel->district_id,
+                'ward_id' => $farmModel->ward_id,
+                'village_id' => $farmModel->village_id,
+                'org_id' => $farmModel->org_id,
+                'client_id' => $farmModel->client_id,
+                'odk_form_uuid' => $this->_model->form_uuid,
+                'latitude' => $farmModel->latitude,
+                'longitude' => $farmModel->longitude,
+                'reg_date' => $this->getDate(),
+            ]);
+
+            if ($sireType == 2) {
+                //ai straw
+                $animalModel->animal_type = 6;
+                $fixedAttributesMap = [
+                    'tag_id' => self::getAttributeJsonKey('animal_sirestrawid', $sireStrawDetailsGroupKey, $repeatKey),
+                    'country_of_origin' => self::getAttributeJsonKey('animal_sirestrawcountry', $sireStrawDetailsGroupKey, $repeatKey),
+                    'main_breed' => self::getAttributeJsonKey('animal_sirestrawbreed', $sireStrawDetailsGroupKey, $repeatKey),
+                    'main_breed_other' => self::getAttributeJsonKey('animal_sirestrawbreedoth', $sireStrawDetailsGroupKey, $repeatKey),
+                    'breed_composition' => self::getAttributeJsonKey('animal_sirestrawcomp', $sireStrawDetailsGroupKey, $repeatKey),
+                ];
+            } else {
+                //bull
+                $animalModel->animal_type = 5;
+                $birthdateKey = OdkForm::isVersion1Point5OrBelow($this->_model->form_version) ? 'animal_siredobfull' : 'animal_sireactualdob';
+                $fixedAttributesMap = [
+                    'name' => self::getAttributeJsonKey('animal_sireregisteredname', $sireBullDetailGroupKey, $repeatKey),
+                    'short_name' => self::getAttributeJsonKey('animal_sireshortname', $sireBullDetailGroupKey, $repeatKey),
+                    'tag_id' => self::getAttributeJsonKey('animal_siretagid', $sireBullDetailGroupKey, $repeatKey),
+                    'herd_book_no' => self::getAttributeJsonKey('animal_sireherdbooknumber', $sireBullDetailGroupKey, $repeatKey),
+                    'country_of_origin' => self::getAttributeJsonKey('animal_sirecountry', $sireBullDetailGroupKey, $repeatKey),
+                    'main_breed' => self::getAttributeJsonKey('animal_siremainbreed', $sireBullDetailGroupKey, $repeatKey),
+                    'main_breed_other' => self::getAttributeJsonKey('animal_siremainbreedoth', $sireBullDetailGroupKey, $repeatKey),
+                    'breed_composition' => self::getAttributeJsonKey('animal_siremaincomp', $sireBullDetailGroupKey, $repeatKey),
+                    'secondary_breed' => self::getAttributeJsonKey('animal_siresecondbreed', $sireBullDetailGroupKey, $repeatKey),
+                    'secondary_breed_other' => self::getAttributeJsonKey('animal_siresecondbreedoth', $sireBullDetailGroupKey, $repeatKey),
+                    'birthdate' => self::getAttributeJsonKey($birthdateKey, $sireBullDetailGroupKey, $repeatKey),
+                    'sire_owner' => self::getAttributeJsonKey('animal_sireowner', $sireBullDetailGroupKey, $repeatKey),
+                    'sire_owner_scheme' => self::getAttributeJsonKey('animal_sireownerscheme', $sireBullDetailGroupKey, $repeatKey),
+                    'sire_owner_institute' => self::getAttributeJsonKey('animal_sireownerinstitute', $sireBullDetailGroupKey, $repeatKey),
+                    'sire_owner_farmer' => self::getAttributeJsonKey('animal_sireownerfarmer', $sireBullDetailGroupKey, $repeatKey),
+                    'sire_owner_farmer_phone' => self::getAttributeJsonKey('animal_sireownerfarmermobile', $sireBullDetailGroupKey, $repeatKey),
+                ];
+            }
+
+            foreach ($fixedAttributesMap as $attr => $odkKey) {
+                $animalModel->{$attr} = $this->getFormDataValueByKey($sireData, $odkKey);
+            }
+            $i = 'sire_' . $index;
+            $this->saveAnimalModel($animalModel, $i, true);
+            $sireModel = $this->_animalsModels[$i] ?? null;
+        }
+
+        return $sireModel;
     }
 
     /**
@@ -658,16 +906,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             'altitude' => $arr[2] ?? null,
             'accuracy' => $arr[3] ?? null,
         ];
-    }
-
-    protected function registerAnimalDam()
-    {
-
-    }
-
-    protected function registerAnimalSire()
-    {
-
     }
 
 }

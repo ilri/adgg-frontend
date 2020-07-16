@@ -68,6 +68,7 @@ use yii\helpers\Inflector;
  * @property string $animal_eartag_id
  * @property string $migration_id
  * @property string $breed_composition_details
+ * @property string $odk_animal_code
  *
  * @property Farm $farm
  * @property Animal $sire
@@ -472,7 +473,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'dam_tag_id',
             'main_breed',
             'breed_composition',
-            'secondary_breed',
+            'second_breed',
             'entry_type',
             'entry_date',
             'purchase_cost',

@@ -192,6 +192,18 @@ class OdkForm extends ActiveRecord implements ActiveSearchInterface
     }
 
     /**
+     * @param string $versionString
+     * @return bool
+     */
+    public static function isVersion1Point5OrBelow($versionString)
+    {
+        $version1Point5 = static::getVersionNumber(static::ODK_FORM_VERSION_1_POINT_5);
+        $givenVersion = OdkForm::getVersionNumber($versionString);
+
+        return ($givenVersion <= $version1Point5);
+    }
+
+    /**
      * @return \yii\db\ActiveQuery
      */
     public function getUser()
