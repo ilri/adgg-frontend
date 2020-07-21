@@ -568,8 +568,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             $expression = new Expression($condition, $params);
             $builder->extraFilterExpressions[] = $expression;
         }
-
-        //dd($builder->rawQuery());
+        
         $builder->rowTransformer = '\backend\modules\reports\models\Reports::transformCalfDataRow';
         return $builder;
 
