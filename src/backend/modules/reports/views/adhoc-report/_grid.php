@@ -98,12 +98,7 @@ use yii\helpers\Url;
             'filter' => false,
             'format' => 'raw',
             'value' => function (AdhocReport $model) {
-                if($model->is_standard || \common\helpers\Str::contains($model->name, ['Milk_Data_', 'Pedigree_', 'Calf_Data_', 'Pedigree_File_', 'TestDayMilk_Data_'])) {
-                    return Html::a(Lang::t('Rebuild Report') . ' <i class="fas fa-paint-roller"></i>', ['/reports/default/view','type' => $model->type, 'country_id' => $model->country_id ?? '', 'rebuild_id' => $model->id], ['data-pjax' => 0, 'target' => '_blank']);;
-                }
-                else {
-                    return Html::a(Lang::t('Rebuild Report') . ' <i class="fas fa-paint-roller"></i>', ['/reports/builder/index', 'country_id' => $model->country_id ?? '', 'rebuild_id' => $model->id], ['data-pjax' => 0, 'target' => '_blank']);
-                }
+                return Html::a(Lang::t('Rebuild Report') . ' <i class="fas fa-paint-roller"></i>', ['/reports/builder/index', 'country_id' => $model->country_id ?? '', 'rebuild_id' => $model->id], ['data-pjax' => 0, 'target' => '_blank']);
             },
             'visible' => true,
         ],
