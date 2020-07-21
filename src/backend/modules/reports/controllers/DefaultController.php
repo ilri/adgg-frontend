@@ -56,6 +56,9 @@ class DefaultController extends Controller
             case Constants::REPORT_TYPE_TESTDAY_MILKDATA:
                 $tpl_type = 'testdaymilkdata';
                 break;
+            case Constants::REPORT_TYPE_TESTDAY_MILKDATA2:
+                $tpl_type = 'testdaymilkdata2';
+                break;
             case Constants::REPORT_TYPE_CALFDATA:
                 $tpl_type = 'calfdata';
                 break;
@@ -89,6 +92,7 @@ class DefaultController extends Controller
         $builder = null;
         $returnUrl = Url::to(['/reports/adhoc-report/index']);
         $country_id = null;
+        $extraOptions = [];
         if ($type){
             $country_id = \Yii::$app->request->post('country_id');
             $returnUrl = Url::to(['/reports/default/view', 'type' => $type, 'country_id' => $country_id]);
@@ -113,6 +117,14 @@ class DefaultController extends Controller
                     $name = $builder->name;
                     $query = null;
                     break;
+                case Constants::REPORT_TYPE_TESTDAY_MILKDATA2:
+                    $builder = Reports::testDayMilkDataReport(\Yii::$app->request->post(), 2);
+                    $name = $builder->name;
+                    $extraOptions = [
+                        'version' => 2,
+                    ];
+                    $query = null;
+                    break;
                 case Constants::REPORT_TYPE_CALFDATA:
                     $builder = Reports::calfDataReport(\Yii::$app->request->post());
                     $name = $builder->name;
@@ -135,7 +147,7 @@ class DefaultController extends Controller
                 $report->country_id = $country_id;
                 $report->raw_sql = $builder->rawQuery();
                 $report->status = AdhocReport::STATUS_QUEUED;
-                $report->options = json_encode([
+                $report->options = json_encode(array_merge([
                     'filterConditions' => $builder->filterConditions,
                     'filterValues' => $builder->filterValues,
                     'excludeFromReport' => $builder->excludeFromReport,
@@ -149,7 +161,7 @@ class DefaultController extends Controller
                     'orderby' => $builder->orderBy,
                     'country_id' => $builder->country_id,
                     'reportModel' => $builder->model,
-                ]);
+                ], $extraOptions));
                 if($report->save()){
                     $transaction->commit();
                     ReportGenerator::push(['queueId' => $report->id]);
