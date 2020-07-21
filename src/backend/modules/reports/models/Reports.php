@@ -101,6 +101,10 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         return $max + 1;
     }
 
+    public static function isEmptyColumn($column){
+        return ($column == 'null' || $column == 'Null' || $column == 'NULL' || empty($column));
+    }
+
     public static function transformMilkDataRow($row, $options = []){
         $fieldAliasMapping = $options['fieldAliasMapping'] ?? [];
 
@@ -113,6 +117,64 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
 
         $row['Cattleowned'] = floatval($row['total_cattle_owned_by_female']) + floatval($row['total_cattle_owned_by_male']) + floatval($row['total_cattle_owned_joint']);
         unset($row['total_cattle_owned_by_female'], $row['total_cattle_owned_by_male'], $row['total_cattle_owned_joint']);
+
+        if(static::isEmptyColumn($row['Cattleowned'])){
+            $row['Cattleowned'] = '9999';
+        }
+        if(static::isEmptyColumn($row['milkAM'])){
+            $row['milkAM'] = '9999';
+        }
+        if(static::isEmptyColumn($row['milkPM'])){
+            $row['milkPM'] = '9999';
+        }
+        if(static::isEmptyColumn($row['TotalMilk'])){
+            $row['TotalMilk'] = '9999';
+        }
+        if(static::isEmptyColumn($row['DIM'])){
+            $row['DIM'] = '9999';
+        }
+        if(static::isEmptyColumn($row['MilkFat'])){
+            $row['MilkFat'] = '9999';
+        }
+        if(static::isEmptyColumn($row['MilkProt'])){
+            $row['MilkProt'] = '9999';
+        }
+        if(static::isEmptyColumn($row['HeartGirth'])){
+            $row['HeartGirth'] = '9999';
+        }
+        if(static::isEmptyColumn($row['Weight'])){
+            $row['Weight'] = '9999';
+        }
+        if(static::isEmptyColumn($row['estimated weight'])){
+            $row['estimated weight'] = '9999';
+        }
+        if(static::isEmptyColumn($row['Bodyscore'])){
+            $row['Bodyscore'] = '9999';
+        }
+        return $row;
+    }
+
+    public static function transformCalfDataRow($row, $options = []){
+        $fieldAliasMapping = $options['fieldAliasMapping'] ?? [];
+
+        $row['Cattleowned'] = floatval($row['total_cattle_owned_by_female']) + floatval($row['total_cattle_owned_by_male']) + floatval($row['total_cattle_owned_joint']);
+        unset($row['total_cattle_owned_by_female'], $row['total_cattle_owned_by_male'], $row['total_cattle_owned_joint']);
+
+        if(static::isEmptyColumn($row['Cattleowned'])){
+            $row['Cattleowned'] = '9999';
+        }
+        if(static::isEmptyColumn($row['HeartGirth'])){
+            $row['HeartGirth'] = '9999';
+        }
+        if(static::isEmptyColumn($row['Weight'])){
+            $row['Weight'] = '9999';
+        }
+        if(static::isEmptyColumn($row['Bodyscore'])){
+            $row['Bodyscore'] = '9999';
+        }
+        return $row;
+    }
+    public static function transformPedigreeFileRow($row, $options = []){
         return $row;
     }
 
@@ -508,7 +570,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         }
 
         //dd($builder->rawQuery());
-        $builder->rowTransformer = '\backend\modules\reports\models\Reports::transformTestDayMilkDataRow';
+        $builder->rowTransformer = '\backend\modules\reports\models\Reports::transformCalfDataRow';
         return $builder;
 
     }
@@ -767,6 +829,9 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             $expression = new Expression($condition, $params);
             $builder->extraFilterExpressions[] = $expression;
         }
+
+        // add the rowTransformer
+        $builder->rowTransformer = '\backend\modules\reports\models\Reports::transformPedigreeFileRow';
 
         return $builder;
     }
