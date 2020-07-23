@@ -352,6 +352,19 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
                     $this->dam_id = $dam['id'];
                 }
             }
+            //set sex
+            switch ($this->animal_type) {
+                case self::ANIMAL_TYPE_HEIFER:
+                case self::ANIMAL_TYPE_COW:
+                case self::ANIMAL_TYPE_FEMALE_CALF:
+                    $this->sex = 2;
+                    break;
+                case self::ANIMAL_TYPE_MALE_CALF:
+                case self::ANIMAL_TYPE_BULL:
+                case self::ANIMAL_TYPE_AI_STRAW:
+                    $this->sex = 1;
+                    break;
+            }
 
             $this->setAdditionalAttributesValues();
 
