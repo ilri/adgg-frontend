@@ -51,6 +51,7 @@ class DefaultController extends Controller
                 $tpl_type = 'milkdata';
                 break;
             case Constants::REPORT_TYPE_PEDIGREE_FILE:
+            case Constants::REPORT_TYPE_PEDIGREE_FILE2:
                 $tpl_type = 'pedigreefile';
                 break;
             case Constants::REPORT_TYPE_TESTDAY_MILKDATA:
@@ -110,6 +111,14 @@ class DefaultController extends Controller
                 case Constants::REPORT_TYPE_PEDIGREE_FILE:
                     $builder = Reports::pedigreeFileDataReport(\Yii::$app->request->post());
                     $name = $builder->name;
+                    $query = null;
+                    break;
+                case Constants::REPORT_TYPE_PEDIGREE_FILE2:
+                    $builder = Reports::pedigreeFileDataReport(\Yii::$app->request->post(), 2);
+                    $name = $builder->name;
+                    $extraOptions = [
+                        'version' => 2,
+                    ];
                     $query = null;
                     break;
                 case Constants::REPORT_TYPE_TESTDAY_MILKDATA:

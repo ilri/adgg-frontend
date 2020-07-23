@@ -3,6 +3,7 @@
 /* @var $this yii\web\View */
 
 use backend\modules\core\Constants;
+use backend\modules\reports\Constants as ReportConstants;
 use backend\modules\core\models\Country;
 use backend\modules\core\models\CountryUnits;
 use common\helpers\Lang;
@@ -15,7 +16,7 @@ use yii\helpers\Json;
 /* @var $country_id int */
 /* @var $filterOptions array */
 
-$this->title = 'Pedigree File';
+$this->title = 'Pedigree File ' . ($type == ReportConstants::REPORT_TYPE_PEDIGREE_FILE2 ? '2' : '');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <?php if (Yii::$app->user->canView(Constants::RES_REPORT_BUILDER)): ?>
