@@ -186,6 +186,16 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         return $row;
     }
     public static function transformPedigreeFileRow($row, $options = []){
+        // if report is version 2, unset Wareda and Kebele
+        if (array_key_exists('version', $options) && $options['version'] == 2){
+            unset($row['Wareda'], $row['Kebele']);
+            unset($row['SireID'], $row['DamID']);
+        }
+        else {
+            unset($row['SireRegID'], $row['DamRegID']);
+            unset($row['Ward'], $row['Village']);
+        }
+
         return $row;
     }
 
@@ -725,7 +735,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
 
     }
 
-    public static function pedigreeFileDataReport($filter)
+    public static function pedigreeFileDataReport($filter, $version = 1)
     {
         $fields = [
             'region_id' => null,
@@ -736,12 +746,16 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'district.name' => null,
             'ward.code' => null,
             'village.code' => null,
+            'ward.name' => null,
+            'village.name' => null,
             'farm.id' => null,
             'id' => null,
             'tag_id' => null,
             'sire_id' => null,
             'dam_id' => null,
-            'animal_type' => null,
+            'sire_tag_id' => null,
+            'dam_tag_id' => null,
+            'sex' => null,
             'birthdate' => null,
             'main_breed' => null,
         ];
@@ -763,16 +777,20 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'district.name' => 'District',
             'ward.code' => 'Wareda',
             'village.code' => 'Kebele',
+            'ward.name' => 'Ward',
+            'village.name' => 'Village',
             'farm.id' => 'HH_ID',
             'id' => 'AnimalID',
             'tag_id' => 'AnimalRegID',
             'sire_id' => 'SireID',
             'dam_id' => 'DamID',
-            'animal_type' => 'Sex',
+            'sire_tag_id' => 'SireRegID',
+            'dam_tag_id' => 'DamRegID',
+            'sex' => 'Sex',
             'birthdate' => 'Birthdt',
             'main_breed' => 'Breed',
         ];
-        # TODO: define these fields to be decoded elsewhere
+
         $breeds = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS;
         $animal_type = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES;
         $genders = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_GENDER;
@@ -799,7 +817,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
                     'fieldValue', // the value of this field
                 ]
             ],
-            'farm.gender_code' => [
+            'sex' => [
                 'function' => '\backend\modules\core\models\Choices::getLabel',
                 'params'=> [
                     "$genders",
@@ -839,6 +857,10 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         //$builder->limit = 50;
         $builder->country_id = $filter['country_id'] ?? null;
         $builder->name = 'Pedigree_File_' . ($filter['country_id'] ? Country::getScalar('name', ['id' => $filter['country_id']]) : '');
+
+        if ($version == 2){
+            $builder->name = $builder->name . '_v' .$version;
+        }
 
         if (!empty($from) && !empty($to)) {
             $casted_date = DbUtils::castDATE(Animal::tableName().'.[[birthdate]]');
