@@ -2,6 +2,7 @@
 
 use backend\modules\core\models\CountriesDashboardStats;
 use backend\modules\core\models\Country;
+use backend\modules\dashboard\models\DataViz;
 use common\helpers\Lang;
 use yii\helpers\Json;
 
@@ -9,6 +10,7 @@ use yii\helpers\Json;
 /* @var $filterOptions array */
 
 $region_id = Yii::$app->request->get('region_id', null);
+$graph_type = Yii::$app->request->get('graph_type', DataViz::GRAPH_BAR);
 ?>
 <div class="row">
     <div id="chartContainerFertility" style="width:100%;"></div>
@@ -25,13 +27,22 @@ foreach ($years as $year){
             $point = (float) $row['avg_fertility'];
         }
     }
-    $data[] = (float) $point;
+    if ($graph_type == DataViz::GRAPH_PIE){
+        $data[] = [
+            'name' => $year,
+            'y' => (float) $point,
+        ];
+    }
+    else {
+        $data[] = (float) $point;
+    }
+
 }
 //dd($years, $res, $data);
 $series = [
     [
         'name' => Country::getScalar('name', ['id' => $filterOptions['country_id']]),
-        'type' => 'line',
+        'type' => $graph_type,
         'data' => $data,
         'color' => '#771957',
         'zIndex' => 2,
@@ -68,6 +79,12 @@ $graphOptions = [
     ]
 ];
 $containerId = 'chartContainerFertility';
-$this->registerJs("MyApp.modules.dashboard.chart('" . $containerId . "', " . Json::encode($series) . "," . Json::encode($graphOptions) . ");");
+
+if ($graph_type == DataViz::GRAPH_PIE){
+    $this->registerJs("MyApp.modules.dashboard.piechart('" . $containerId . "', " . Json::encode($series) . "," . Json::encode($graphOptions) . ");");
+}
+else {
+    $this->registerJs("MyApp.modules.dashboard.chart('" . $containerId . "', " . Json::encode($series) . "," . Json::encode($graphOptions) . ");");
+}
 
 ?>

@@ -3,6 +3,7 @@
 use backend\modules\core\models\CountriesDashboardStats;
 use backend\modules\core\models\Country;
 use backend\modules\core\models\CountryUnits;
+use backend\modules\dashboard\models\DataViz;
 use common\helpers\Lang;
 use common\helpers\Url;
 use common\widgets\select2\Select2;
@@ -14,6 +15,7 @@ use yii\helpers\Json;
 
 $year = Yii::$app->request->get('year', date("Y"));
 $region_id = Yii::$app->request->get('region_id', null);
+$graph_type = Yii::$app->request->get('graph_type', DataViz::GRAPH_BAR);
 
 ?>
 <div class="row">
@@ -31,14 +33,22 @@ foreach ($quarters as $quarter){
             $point = (float) $row['avg_body_weight'];
         }
     }
-    $data[] = (float) $point;
+    if ($graph_type == DataViz::GRAPH_PIE){
+        $data[] = [
+            'name' => $quarter->period,
+            'y' => (float) $point,
+        ];
+    }
+    else {
+        $data[] = (float) $point;
+    }
 }
 //dd($res, $data);
 
 $series = [
     [
         'name' => Country::getScalar('name', ['id' => $filterOptions['country_id']]),
-        'type' => 'line',
+        'type' => $graph_type,
         'data' => $data,
         'color' => '#771957',
         'zIndex' => 2,
@@ -76,6 +86,10 @@ $graphOptions = [
     ]
 ];
 $containerId = 'chartContainerAvgBodyWeight';
-$this->registerJs("MyApp.modules.dashboard.chart('" . $containerId . "', " . Json::encode($series) . "," . Json::encode($graphOptions) . ");");
-
+if ($graph_type == DataViz::GRAPH_PIE){
+    $this->registerJs("MyApp.modules.dashboard.piechart('" . $containerId . "', " . Json::encode($series) . "," . Json::encode($graphOptions) . ");");
+}
+else {
+    $this->registerJs("MyApp.modules.dashboard.chart('" . $containerId . "', " . Json::encode($series) . "," . Json::encode($graphOptions) . ");");
+}
 ?>
