@@ -3,6 +3,7 @@
 use backend\modules\auth\Session;
 use backend\modules\core\models\CountriesDashboardStats;
 use backend\modules\core\models\Country;
+use backend\modules\dashboard\models\DataViz;
 use common\helpers\DateUtils;
 use common\helpers\Lang;
 use yii\helpers\Json;
@@ -12,6 +13,7 @@ use yii\helpers\Json;
 
 $year = Yii::$app->request->get('year', date("Y"));
 $region_id = Yii::$app->request->get('region_id', null);
+$graph_type = Yii::$app->request->get('graph_type', DataViz::GRAPH_COLUMN);
 
 ?>
 <div class="row">
@@ -92,7 +94,7 @@ else {
 
 $graphOptions = [
     'chart' => [
-        'type' => 'column',
+        'type' => $graph_type,
     ],
     'title' => ['text' => 'Monthly Inseminations per Breed'],
     'subtitle' => ['text' => ''],
