@@ -363,8 +363,8 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'milk_bodyscore' => null,
             'lactation.lactation_number' => null,
             'testday_no' => null,
-            'animal.farm.longitude' => null,
-            'animal.farm.latitude' => null,
+            'animal.longitude' => null,
+            'animal.latitude' => null,
         ];
         $filterConditions = array_merge($fields, [
             'region_id' => '=',
@@ -407,8 +407,8 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'milk_bodyscore' => 'Bodyscore',
             'lactation.lactation_number' => 'LactNo',
             'testday_no' => 'TDNo',
-            'animal.farm.longitude' => 'Longitude',
-            'animal.farm.latitude' => 'Latitude',
+            'animal.longitude' => 'Longitude',
+            'animal.latitude' => 'Latitude',
         ];
         $excludeFromReport = array_keys($filterValues);
         $genders = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_GENDER;
@@ -496,8 +496,8 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'animal.dam_tag_id' => null,
             'calfsex' => null,
             'animal.main_breed' => null,
-            'animal.farm.longitude' => null,
-            'animal.farm.latitude' => null,
+            'animal.longitude' => null,
+            'animal.latitude' => null,
         ];
         $filterConditions = array_merge($fields, [
             'region_id' => '=',
@@ -532,8 +532,8 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'animal.dam_tag_id' => 'Dam ID',
             'calfsex' => 'Sex',
             'animal.main_breed' => 'Breed',
-            'animal.farm.longitude' => 'Longitude',
-            'animal.farm.latitude' => 'Latitude',
+            'animal.longitude' => 'Longitude',
+            'animal.latitude' => 'Latitude',
         ];
         # TODO: define these fields to be decoded elsewhere
         $breeds = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS;
