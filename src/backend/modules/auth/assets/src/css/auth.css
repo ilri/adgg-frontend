@@ -1,11 +1,11 @@
 .kt-login-v2__container {
     padding: 1.2rem;
-    background-color:#f2f3f8;
+    background-color: rgba(242,243,248,0.75);
 }
 
 .kt-login-v2__container > .kt-login-v2__title > #site-title {
     color: rgba(0,71,48,0.8);
-    font-size: 1.7rem;
+    font-size: 1.5rem;
     font-weight: 600;
 }
 

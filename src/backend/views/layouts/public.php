@@ -25,7 +25,7 @@ $controller = Yii::$app->controller;
     <?php $this->beginBody() ?>
     <!-- begin:: Page -->
     <div class="kt-grid kt-grid--ver kt-grid--root"
-         style="background-image: linear-gradient(to bottom, rgba(242,243,248, 0.6), rgba(242,243,248, 0.1), rgba(242,243,248, 0.3)), url('<?= Yii::$app->view->theme->baseUrl ?>/assets/img/backimage1.JPG');background-size: cover; background-position: center center;">
+         style="background-image: linear-gradient(to bottom, rgba(255,255,255,0.25), rgba(255,255,255,0.15), rgba(0,0,0,0.05), rgba(0,0,0,0.25)), url('<?= Yii::$app->view->theme->baseUrl ?>/assets/img/image.png');background-size: cover; background-position: center center;">
         <div class="kt-grid__item   kt-grid__item--fluid kt-grid  kt-grid kt-grid--hor kt-login-v2" id="kt_login_v2">
             <!--begin::Item-->
             <div class="kt-grid__item  kt-grid--hor">
@@ -46,7 +46,7 @@ $controller = Yii::$app->controller;
                 <!--begin::Body-->
                 <div class="kt-login-v2__body">
                     <!--begin::Wrapper-->
-                    <div class="kt-login-v2__wrapper" style="width: 85%;">
+                    <div class="kt-login-v2__wrapper" style="width: 92%;">
                         <?= $content; ?>
                     </div>
                     <!--end::Wrapper-->
@@ -67,7 +67,7 @@ $controller = Yii::$app->controller;
                             </a>
                         </div>
                         <div class="kt-login-v2__info text-center">
-                        <span style="color: white; font-size: medium; font-weight: 500;">
+                        <span style="color: white; font-size: medium;">
                            &nbsp;&copy&nbsp;<?= date('Y'); ?>
                             <!--                          - Developed By <a href="https://competamillman.co.ke/"-->
                             <!--                                            target="_blank" style="color: #004730; font-weight: bold;">-->
