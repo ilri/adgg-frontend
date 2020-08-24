@@ -90,7 +90,7 @@ class FakerController extends Controller
         $condition = [];
         $params = [];
         $query = Animal::find()->andWhere($condition, $params);
-        $totalRecords = Animal::getCount($condition, $params);
+        $totalRecords = $query->count();
         $modelClassName = Animal::class;
         $n = 1;
         /* @var $models Animal[] */
