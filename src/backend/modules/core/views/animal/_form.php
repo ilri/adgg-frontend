@@ -1,8 +1,6 @@
 <?php
 
 use backend\modules\core\models\Animal;
-use backend\modules\core\models\AnimalHerd;
-use backend\modules\core\models\Farm;
 use backend\modules\core\models\ChoiceTypes;
 use backend\modules\core\models\Choices;
 use backend\modules\core\models\Country;
@@ -186,7 +184,7 @@ use yii\bootstrap4\ActiveForm;
                     </div>
                     <div class="col-md-4">
                         <?= $form->field($model, 'sire_id')->widget(Select2::class, [
-                            'data' => Animal::getListData('id', 'name', false, ['animal_type' => [Animal::ANIMAL_TYPE_BULL, Animal::ANIMAL_TYPE_AI_STRAW]]),
+                            'data' => Animal::getListData('id', 'name', false, ['animal_type' => [Animal::ANIMAL_TYPE_BULL]]),
                             'options' => [
                                 'placeholder' => '[select one]',
                             ],

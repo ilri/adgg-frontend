@@ -96,12 +96,6 @@ class FakerController extends Controller
         /* @var $models Animal[] */
         foreach ($query->batch(1000) as $i => $models) {
             foreach ($models as $model) {
-                if ($model->animal_type != Animal::ANIMAL_TYPE_AI_STRAW) {
-                    $this->stdout("{$modelClassName}: Record {$n} of {$totalRecords} ignored. Animal type not AI STRAW\n");
-                    $n++;
-                    continue;
-                }
-                $model->animal_type = Animal::ANIMAL_TYPE_BULL;
                 $model->save(false);
                 $this->stdout("{$modelClassName}: Updated {$n} of {$totalRecords} records\n");
                 $n++;
