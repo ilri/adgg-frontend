@@ -18,10 +18,57 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
          data-ktmenu-dropdown-timeout="500">
         <ul class="kt-menu__nav ">
             <li class="kt-menu__item kt-menu__item--submenu">
-                <a href="<?= Yii::$app->homeUrl ?>" class="kt-menu__link">
+                <a href="#" class="kt-menu__link kt-menu__toggle">
                     <i class="kt-menu__link-icon fas fa-home"></i>
                     <span class="kt-menu__link-text">DASHBOARD</span>
+                    <i class="kt-menu__ver-arrow la la-angle-right"></i>
                 </a>
+                <div class="kt-menu__submenu">
+                    <span class="kt-menu__arrow"></span>
+                    <ul class="kt-menu__subnav">
+                        <?php if (Session::isPrivilegedAdmin()): ?>
+                            <li class="kt-menu__item">
+                                <a href="<?= Yii::$app->homeUrl ?>"
+                                   class="kt-menu__link ">
+                                    <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                    <span class="kt-menu__link-text">
+                                            <?= Lang::t('All Countries') ?></span>
+                                </a>
+                            </li>
+                        <?php endif; ?>
+                    </ul>
+                    <ul class="kt-menu__subnav">
+                        <?php foreach ($countries as $country): ?>
+                            <?php if (Session::getCountryId() == $country->id || Session::isPrivilegedAdmin()): ?>
+                                <li class="kt-menu__item">
+                                    <a href="<?= Url::to(['/dashboard/data-viz/index', 'country_id' => $country->id]) ?>"
+                                       class="kt-menu__link ">
+                                        <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                        <span
+                                                class="kt-menu__link-text">
+                                                    <?php if (Session::isVillageUser()): ?>
+                                                        <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getVillageId(), 'level' => CountryUnits::LEVEL_VILLAGE]) . ' ' . 'Village' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                    <?php elseif (Session::isWardUser()): ?>
+                                                        <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getWardId(), 'level' => CountryUnits::LEVEL_WARD]) . ' ' . 'Ward' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                    <?php elseif (Session::isDistrictUser()): ?>
+                                                        <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                    <?php elseif (Session::isRegionUser()): ?>
+                                                        <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                    <?php elseif (Session::isOrganizationUser()): ?>
+                                                        <?= $unitName = Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                    <?php elseif (Session::isOrganizationClientUser()): ?>
+                                                        <?= $unitName = Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
+                                                    <?php else: ?>
+                                                        <?= Html::encode($country->name) ?>
+                                                    <?php endif; ?>
+                                            </span>
+                                    </a>
+                                </li>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+
+                    </ul>
+                </div>
             </li>
                 <li class="kt-menu__section ">
                     <h4 class="kt-menu__section-text">DATA LISTS</h4>
