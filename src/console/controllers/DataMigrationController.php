@@ -79,7 +79,7 @@ class DataMigrationController extends Controller
     {
         $query = AnimalEvent::find()->andWhere(['event_type' => AnimalEvent::EVENT_TYPE_MILKING]);
         $totalRecords = $query->count();
-        $modelClassName = Animal::class;
+        $modelClassName = AnimalEvent::class;
         $n = 1;
         /* @var $models AnimalEvent[] */
         $weightModel = new AnimalEvent([
