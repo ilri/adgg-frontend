@@ -102,7 +102,6 @@ class DataMigrationController extends Controller
                     $newWeightModel->migration_id = $model->migration_id;
                     $newWeightModel->odk_form_uuid = $model->odk_form_uuid;
                     $newWeightModel->save(false);
-                    //todo
                 }
 
                 $this->stdout("{$modelClassName}: Updated {$n} of {$totalRecords} records\n");
