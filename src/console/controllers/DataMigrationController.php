@@ -87,7 +87,9 @@ class DataMigrationController extends Controller
         ]);
         foreach ($query->batch(1000) as $i => $models) {
             foreach ($models as $model) {
-                if (!empty($model->weight) || !empty($model->milk_estimated_weight)) {
+                if (empty($model->weight) && empty($model->milk_estimated_weight) && empty($model->milk_bodyscore) && empty($model->milk_heartgirth)) {
+                    $this->stdout("{$modelClassName}: Ignored record {$n} of {$totalRecords}. No weight data\n");
+                } else {
                     $newWeightModel = clone $weightModel;
                     $newWeightModel->animal_id = $model->animal_id;
                     $newWeightModel->event_date = $model->event_date;
@@ -102,9 +104,8 @@ class DataMigrationController extends Controller
                     $newWeightModel->migration_id = $model->migration_id;
                     $newWeightModel->odk_form_uuid = $model->odk_form_uuid;
                     $newWeightModel->save(false);
+                    $this->stdout("{$modelClassName}: Updated weight event {$n} of {$totalRecords} records\n");
                 }
-
-                $this->stdout("{$modelClassName}: Updated {$n} of {$totalRecords} records\n");
                 $n++;
             }
         }
