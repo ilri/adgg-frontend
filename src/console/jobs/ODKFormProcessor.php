@@ -9,6 +9,7 @@
 namespace console\jobs;
 
 
+use backend\modules\core\models\AIEvent;
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\CalvingEvent;
@@ -134,6 +135,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerNewCattle();
                 //animal events
                 $this->registerAnimalSynchronization();
+                $this->registerAnimalAI();
             } else {
                 $message = Lang::t('This Version ({old_version}) of ODK Form is currently not supported. Version ({version}) and above are supported.', ['old_version' => $this->_model->form_version, 'version' => self::MIN_SUPPORTED_ODK_FORM_VERSION]);
                 $this->_model->error_message = $message;
@@ -596,6 +598,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
 
     protected function registerAnimalSynchronization()
     {
+        //todo pending tests
         $repeatKey = 'animal_breeding';
         $data = $this->_model->form_data[$repeatKey] ?? null;
         if (null === $data) {
@@ -606,35 +609,62 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $animalCodeAttributeKey = self::getAttributeJsonKey('breeding_syncanimalcode', '', $syncRepeatKey);
         $eventDateKey = self::getAttributeJsonKey('breeding_syncservedate', $syncGroupKey, $syncRepeatKey);
 
-        $model = new SyncEvent([
-            'event_type' => AnimalEvent::EVENT_TYPE_SYNCHRONIZATION,
+        $this->registerAnimalEvent($data, AnimalEvent::EVENT_TYPE_SYNCHRONIZATION, $syncRepeatKey, $syncGroupKey, $animalCodeAttributeKey, $eventDateKey);
+    }
+
+    protected function registerAnimalAI()
+    {
+        //todo pending tests
+        $repeatKey = 'animal_breeding';
+        $data = $this->_model->form_data[$repeatKey] ?? null;
+        if (null === $data) {
+            return;
+        }
+        $aiRepeatKey = $repeatKey . '/animal_breedingai';
+        $aiGroupKey = 'breeding_aidetails';
+        $animalCodeAttributeKey = self::getAttributeJsonKey('breeding_aianimalcode', '', $aiRepeatKey);
+        $eventDateKey = self::getAttributeJsonKey('breeding_aidate', $aiGroupKey, $aiRepeatKey);
+
+        $this->registerAnimalEvent($data, AnimalEvent::EVENT_TYPE_AI, $aiRepeatKey, $aiGroupKey, $animalCodeAttributeKey, $eventDateKey);
+    }
+
+    protected function registerAnimalEvent($rawData, $eventType, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey)
+    {
+        if (null === $rawData) {
+            return;
+        }
+
+
+        $model = new AnimalEvent([
+            'event_type' => $eventType,
             'data_collection_date' => $this->getDate(),
             'field_agent_id' => $this->_model->user_id,
             'odk_form_uuid' => $this->_model->form_uuid,
         ]);
 
-        foreach ($data as $k => $breedingData) {
-            $syncData = $breedingData[$syncRepeatKey] ?? null;
-            if (null === $syncData) {
+        foreach ($rawData as $k => $dataPoints) {
+            $dataPoint = $dataPoints[$repeatKey] ?? null;
+            if (null === $dataPoint) {
                 continue;
             }
-            foreach ($syncData as $i => $syncDatum) {
-                $animalCode = $this->getFormDataValueByKey($syncDatum, $animalCodeAttributeKey);
+            foreach ($dataPoint as $i => $data) {
+                $animalCode = $this->getFormDataValueByKey($data, $animalCodeAttributeKey);
                 $animalModel = $this->getAnimalModelByOdkCode($animalCode);
                 if (null === $animalModel) {
                     continue;
                 }
-                $eventDate = $this->getFormDataValueByKey($syncDatum, $eventDateKey);
+                $eventDate = $this->getFormDataValueByKey($data, $eventDateAttributeKey);
                 $newModel = clone $model;
                 $newModel->animal_id = $animalModel->id;
                 $newModel->event_date = $eventDate;
                 $newModel->latitude = $animalModel->latitude;
                 $newModel->longitude = $animalModel->longitude;
-                $newModel->setDynamicAttributesValuesFromOdkForm($syncDatum, $syncGroupKey, $syncRepeatKey);
+                $newModel->setDynamicAttributesValuesFromOdkForm($data, $groupKey, $repeatKey);
                 $this->saveAnimalEventModel($newModel, $i, true);
             }
         }
     }
+
 
     /**
      * @param string $animalCode

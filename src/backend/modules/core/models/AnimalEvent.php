@@ -318,7 +318,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             case self::EVENT_TYPE_MILKING:
                 return 'Milking';
             case self::EVENT_TYPE_AI:
-                return 'Insemination';
+                return 'Artificial Insemination';
             case self::EVENT_TYPE_PREGNANCY_DIAGNOSIS:
                 return 'Pregnancy Diagnosis';
             case self::EVENT_TYPE_SYNCHRONIZATION:
