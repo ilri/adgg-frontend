@@ -639,13 +639,27 @@ class ODKFormProcessor extends BaseObject implements JobInterface
 
     protected function registerAnimalMilk()
     {
+        list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCowMonitoringParams();
+        $groupKey = 'milk_prodanimal';
+        $eventDateAttributeKey = self::getAttributeJsonKey('milk_milkdate', $groupKey, $repeatKey);
+        $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_MILKING, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey);
+    }
+
+    protected function registerAnimalVaccination()
+    {
+        list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCowMonitoringParams();
+        $groupKey = 'vacc_vaccination';
+        $eventDateAttributeKey = self::getAttributeJsonKey('vacc_vaccinedate', $groupKey, $repeatKey);
+        $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_VACCINATION, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey);
+    }
+
+    protected function getCowMonitoringParams()
+    {
         $mainRepeatKey = 'cow_monitoring';
         $rawData = $this->_model->form_data[$mainRepeatKey] ?? null;
         $repeatKey = $mainRepeatKey . '/cow_monitoringanimal';
-        $groupKey = 'milk_prodanimal';
         $animalCodeAttributeKey = self::getAttributeJsonKey('cowmonitor_animalcode', $this->_model->isVersion1Point5() ? '' : 'cow_monitordetails', $repeatKey);
-        $eventDateAttributeKey = self::getAttributeJsonKey('milk_milkdate', $groupKey, $repeatKey);
-        $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_MILKING, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey);
+        return [$rawData, $repeatKey, $animalCodeAttributeKey];
     }
 
     protected function registerAnimalEvent($rawData, $eventType, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey)
