@@ -196,6 +196,9 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             if (empty($this->data_collection_date)) {
                 $this->data_collection_date = $this->event_date;
             }
+            if (empty($this->event_date)) {
+                $this->event_date = $this->data_collection_date;
+            }
             if ($this->event_type == self::EVENT_TYPE_MILKING) {
                 if (empty($this->milkday)) {
                     $this->milkday = ((float)$this->milkmor + (float)$this->milkeve + (float)$this->milkmid);
