@@ -58,18 +58,24 @@ class AIEvent extends AnimalEvent implements ImportActiveRecordInterface, Animal
             'field_agent_id',
             'animalTagId',
             'event_date',
+            'breeding_service_number',
             'breeding_aibodycondition',
             'breeding_aitype',
             'breeding_aisemensource',
             'breeding_aisemensourceoth',
+            'breeding_ai_semen_supplier',
+            'breeding_ai_semen_supplier_other',
             'breeding_aistrawtype',
             'breeding_aistrawid',
             'breeding_aisirecountry',
             'breeding_aisirebreed',
+            'breeding_aisirebreedoth',
             'breeding_aibreedcomposition',
+            'breeding_aisemenbatch',
+            'breeding_ai_payment_modes',
             'breeding_aicost',
-            'breeding_aicowweight',
-            'breeding_aisemenbatch'
+            'breeding_ai_is_subsidised',
+            'breeding_ai_voucher',
         ];
     }
 

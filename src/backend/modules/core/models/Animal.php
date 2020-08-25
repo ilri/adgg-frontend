@@ -88,7 +88,6 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     const ANIMAL_TYPE_MALE_CALF = 3;
     const ANIMAL_TYPE_FEMALE_CALF = 4;
     const ANIMAL_TYPE_BULL = 5;
-    const ANIMAL_TYPE_AI_STRAW = 6;
 
     public $odkFarmCode;
     public $derivedBirthdate;
@@ -361,7 +360,6 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
                     break;
                 case self::ANIMAL_TYPE_MALE_CALF:
                 case self::ANIMAL_TYPE_BULL:
-                case self::ANIMAL_TYPE_AI_STRAW:
                     $this->sex = 1;
                     break;
             }

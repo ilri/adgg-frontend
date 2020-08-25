@@ -31,10 +31,6 @@ use Yii;
  * @property int $milk_sample_type
  * @property string $dry_date
  * @property string $milk_notes
- * @property float $weight
- * @property float $milk_estimated_weight
- * @property float $milk_heartgirth
- * @property float $milk_bodyscore
  * @property int $dim
  * @property int $testday_no
  */
@@ -77,7 +73,9 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
     {
         return [
             'animalTagId',
+            'milk_cow_status',
             'dry_date',
+            'milk_calving_date',
             'event_date',
             'milkmor',
             'milkmid',
@@ -86,13 +84,9 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
             'milk_sample_type',
             'milkfat',
             'milkprot',
-            'milksmc',
-            'milk_bodyscore',
             'milkurea',
             'milklact',
-            'milk_heartgirth',
-            'weight',
-            'milk_estimated_weight',
+            'milksmc',
         ];
     }
 

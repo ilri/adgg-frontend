@@ -51,15 +51,16 @@ class PDEvent extends AnimalEvent implements ImportActiveRecordInterface, Animal
         return [
             'field_agent_id',
             'animalTagId',
-            'animalbreeding_pdserviceknown',
-            'breeding_pdservicedate',
             'event_date',
-            'breeding_pdexamtime',
             'animalbreeding_pdresult',
+            'breeding_pdexamtime',
+            'breeding_pdmethod',
             'breeding_pdstage',
             'breeding_pdbodyscore',
+            'breeding_pd_payment_modes',
             'breeding_pdcost',
-            'breeding_pdmethod',
+            'breeding_pd_is_subsidised',
+            'breeding_pd_voucher',
         ];
     }
 

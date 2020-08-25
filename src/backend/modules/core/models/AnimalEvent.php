@@ -60,6 +60,12 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     const EVENT_TYPE_EXITS = 9;
     const EVENT_TYPE_SAMPLING = 10;//no data available yet
     const EVENT_TYPE_CERTIFICATION = 11;//no data available yet
+    const EVENT_TYPE_VACCINATION = 12;
+    const EVENT_TYPE_PARASITE_INFECTION = 13;
+    const EVENT_TYPE_INJURY = 14;
+    const EVENT_TYPE_HOOF_HEALTH = 15;
+    const EVENT_TYPE_HOOF_TREATMENT = 16;
+
 
     public $animalTagId;
 
@@ -196,6 +202,9 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             if (empty($this->data_collection_date)) {
                 $this->data_collection_date = $this->event_date;
             }
+            if (empty($this->event_date)) {
+                $this->event_date = $this->data_collection_date;
+            }
             if ($this->event_type == self::EVENT_TYPE_MILKING) {
                 if (empty($this->milkday)) {
                     $this->milkday = ((float)$this->milkmor + (float)$this->milkeve + (float)$this->milkmid);
@@ -318,13 +327,13 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             case self::EVENT_TYPE_MILKING:
                 return 'Milking';
             case self::EVENT_TYPE_AI:
-                return 'Insemination';
+                return 'Artificial Insemination';
             case self::EVENT_TYPE_PREGNANCY_DIAGNOSIS:
                 return 'Pregnancy Diagnosis';
             case self::EVENT_TYPE_SYNCHRONIZATION:
                 return 'Synchronization';
             case self::EVENT_TYPE_WEIGHTS:
-                return 'Weights/Growth';
+                return 'Weight/Growth/Feed';
             case self::EVENT_TYPE_HEALTH:
                 return 'Health';
             case self::EVENT_TYPE_EXITS:
@@ -333,6 +342,16 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
                 return 'Sampling';
             case self::EVENT_TYPE_CERTIFICATION:
                 return 'Certification';
+            case self::EVENT_TYPE_VACCINATION:
+                return 'Vaccination';
+            case self::EVENT_TYPE_PARASITE_INFECTION:
+                return 'Parasite Infection';
+            case self::EVENT_TYPE_INJURY:
+                return 'Injury';
+            case self::EVENT_TYPE_HOOF_HEALTH:
+                return 'Hoof Health';
+            case self::EVENT_TYPE_HOOF_TREATMENT:
+                return 'Hoof Treatment';
             default:
                 return '';
         }
@@ -351,7 +370,11 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             self::EVENT_TYPE_PREGNANCY_DIAGNOSIS => static::decodeEventType(self::EVENT_TYPE_PREGNANCY_DIAGNOSIS),
             self::EVENT_TYPE_SYNCHRONIZATION => static::decodeEventType(self::EVENT_TYPE_SYNCHRONIZATION),
             self::EVENT_TYPE_WEIGHTS => static::decodeEventType(self::EVENT_TYPE_WEIGHTS),
-            self::EVENT_TYPE_HEALTH => static::decodeEventType(self::EVENT_TYPE_HEALTH),
+            self::EVENT_TYPE_VACCINATION => static::decodeEventType(self::EVENT_TYPE_VACCINATION),
+            self::EVENT_TYPE_PARASITE_INFECTION => static::decodeEventType(self::EVENT_TYPE_PARASITE_INFECTION),
+            self::EVENT_TYPE_INJURY => static::decodeEventType(self::EVENT_TYPE_INJURY),
+            self::EVENT_TYPE_HOOF_HEALTH => static::decodeEventType(self::EVENT_TYPE_HOOF_HEALTH),
+            self::EVENT_TYPE_HOOF_TREATMENT => static::decodeEventType(self::EVENT_TYPE_HOOF_TREATMENT),
             self::EVENT_TYPE_EXITS => static::decodeEventType(self::EVENT_TYPE_EXITS),
             //self::EVENT_TYPE_SAMPLING => static::decodeEventType(self::EVENT_TYPE_SAMPLING),
             //self::EVENT_TYPE_CERTIFICATION => static::decodeEventType(self::EVENT_TYPE_CERTIFICATION),
