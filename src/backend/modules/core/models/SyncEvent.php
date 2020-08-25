@@ -60,12 +60,17 @@ class SyncEvent extends AnimalEvent implements ImportActiveRecordInterface, Anim
             'event_date',
             'breeding_synctime',
             'animalbreeding_synchormonetype',
+            'breeding_synchormonetypeoth',
             'animalbreeding_syncsemensource',
             'breeding_syncsemensourceoth',
-            'breeding_synccost',
+            'breeding_sync_semen_supplier',
+            'breeding_sync_semen_supplier_other',
             'animalbreeding_syncwhodid',
             'breeding_syncwhodidoth',
             'breeding_syncwhodidothphone',
+            'breeding_sync_payment_modes',
+            'breeding_synccost',
+            'breeding_sync_voucher',
         ];
     }
 
