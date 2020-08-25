@@ -144,6 +144,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerAnimalMeasureDetails();
                 $this->registerAnimalHoofHealth();
                 $this->registerAnimalHoofTreatment();
+                $this->registerAnimalFeedProvided();
             } else {
                 $message = Lang::t('This Version ({old_version}) of ODK Form is currently not supported. Version ({version}) and above are supported.', ['old_version' => $this->_model->form_version, 'version' => self::MIN_SUPPORTED_ODK_FORM_VERSION]);
                 $this->_model->error_message = $message;
@@ -705,15 +706,63 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                     continue;
                 }
                 $newModel = clone $model;
+                $newModel->heartgirth = $this->getFormDataValueByKey($data, $heartgirthAttributeKey);
+                $newModel->weight_kg = $this->getFormDataValueByKey($data, $weightAttributeKey);
+                $newModel->body_score = $this->getFormDataValueByKey($data, $bodyscoreAttributeKey);
+                if (empty($newModel->heartgirth) && empty($newModel->weight_kg) && empty($newModel->body_score)) {
+                    continue;
+                }
                 $newModel->animal_id = $animalModel->id;
                 if (empty($newModel->event_date)) {
                     $newModel->event_date = $newModel->data_collection_date;
                 }
                 $newModel->latitude = $animalModel->latitude;
                 $newModel->longitude = $animalModel->longitude;
-                $newModel->heartgirth = $this->getFormDataValueByKey($data, $heartgirthAttributeKey);
-                $newModel->weight_kg = $this->getFormDataValueByKey($data, $weightAttributeKey);
-                $newModel->body_score = $this->getFormDataValueByKey($data, $bodyscoreAttributeKey);
+                $this->saveAnimalEventModel($newModel, $k . $i, true);
+            }
+        }
+    }
+
+    protected function registerAnimalFeedProvided()
+    {
+        list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCowMonitoringParams();
+        $groupKey = 'feed_provided';
+
+        if (null === $rawData) {
+            return;
+        }
+
+        $model = new AnimalEvent([
+            'event_type' => AnimalEvent::EVENT_TYPE_WEIGHTS,
+            'data_collection_date' => $this->getDate(),
+            'field_agent_id' => $this->_model->user_id,
+            'odk_form_uuid' => $this->_model->form_uuid,
+        ]);
+        $feedGivenAttributeKey = self::getAttributeJsonKey('feed_given', $groupKey, $repeatKey);
+        $feedWaterAttributeKey = self::getAttributeJsonKey('feed_water', $groupKey, $repeatKey);
+        foreach ($rawData as $k => $dataPoints) {
+            $dataPoint = $dataPoints[$repeatKey] ?? null;
+            if (null === $dataPoint) {
+                continue;
+            }
+            foreach ($dataPoint as $i => $data) {
+                $animalCode = $this->getFormDataValueByKey($data, $animalCodeAttributeKey);
+                $animalModel = $this->getAnimalModelByOdkCode($animalCode);
+                if (null === $animalModel) {
+                    continue;
+                }
+                $newModel = clone $model;
+                $newModel->feed_given = $this->getFormDataValueByKey($data, $feedGivenAttributeKey);
+                $newModel->animal_monitor_water = $this->getFormDataValueByKey($data, $feedWaterAttributeKey);
+                if (empty($newModel->feed_given) && empty($newModel->animal_monitor_water)) {
+                    continue;
+                }
+                if (empty($newModel->event_date)) {
+                    $newModel->event_date = $newModel->data_collection_date;
+                }
+                $newModel->latitude = $animalModel->latitude;
+                $newModel->longitude = $animalModel->longitude;
+                $newModel->animal_id = $animalModel->id;
                 $this->saveAnimalEventModel($newModel, $k . $i, true);
             }
         }
@@ -760,22 +809,18 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                         continue;
                     }
                     $newModel = clone $model;
-                    if (empty($newModel->event_date)) {
-                        $newModel->event_date = $newModel->data_collection_date;
+                    if ($newModel->setDynamicAttributesValuesFromOdkForm($repeat3Data, $groupKey, $repeat3Key)) {
+                        if (empty($newModel->event_date)) {
+                            $newModel->event_date = $newModel->data_collection_date;
+                        }
+                        $newModel->animal_id = $animalModel->id;
+                        $newModel->latitude = $animalModel->latitude;
+                        $newModel->longitude = $animalModel->longitude;
+                        $this->saveAnimalEventModel($newModel, $k . $i . $n, true);
                     }
-                    $newModel->animal_id = $animalModel->id;
-                    $newModel->setDynamicAttributesValuesFromOdkForm($repeat3Data, $groupKey, $repeat3Key);
-                    $newModel->latitude = $animalModel->latitude;
-                    $newModel->longitude = $animalModel->longitude;
-                    $this->saveAnimalEventModel($newModel, $k . $i . $n, true);
                 }
             }
-
         }
-        $animalCodeAttributeKey = self::getAttributeJsonKey('cowmonitor_animalcode', $this->_model->isVersion1Point5() ? '' : 'cow_monitordetails', $repeat2Key);
-
-        $groupKey = 'hoof_health';
-        $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_HOOF_HEALTH, $repeat2Key, $groupKey, $animalCodeAttributeKey);
     }
 
 
@@ -815,15 +860,16 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 }
                 $eventDate = $eventDateAttributeKey !== null ? $this->getFormDataValueByKey($data, $eventDateAttributeKey) : $this->getDate();
                 $newModel = clone $model;
-                $newModel->animal_id = $animalModel->id;
-                $newModel->event_date = $eventDate;
-                if (empty($newModel->event_date)) {
-                    $newModel->event_date = $newModel->data_collection_date;
+                if ($newModel->setDynamicAttributesValuesFromOdkForm($data, $groupKey, $repeatKey)) {
+                    $newModel->animal_id = $animalModel->id;
+                    $newModel->event_date = $eventDate;
+                    if (empty($newModel->event_date)) {
+                        $newModel->event_date = $newModel->data_collection_date;
+                    }
+                    $newModel->latitude = $animalModel->latitude;
+                    $newModel->longitude = $animalModel->longitude;
+                    $this->saveAnimalEventModel($newModel, $k . $i, true);
                 }
-                $newModel->latitude = $animalModel->latitude;
-                $newModel->longitude = $animalModel->longitude;
-                $newModel->setDynamicAttributesValuesFromOdkForm($data, $groupKey, $repeatKey);
-                $this->saveAnimalEventModel($newModel, $k . $i, true);
             }
         }
     }
