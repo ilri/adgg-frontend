@@ -75,7 +75,7 @@ class DataMigrationController extends Controller
         }
     }
 
-    protected function actionUpdateAnimalWeightEventsFromMilkEvent()
+    public function actionUpdateAnimalWeightEventsFromMilkEvent()
     {
         $query = AnimalEvent::find()->andWhere(['event_type' => AnimalEvent::EVENT_TYPE_MILKING]);
         $totalRecords = $query->count();
