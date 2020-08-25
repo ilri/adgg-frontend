@@ -18,6 +18,7 @@ use backend\modules\core\models\FarmMetadata;
 use backend\modules\core\models\FarmMetadataHouseholdMembers;
 use backend\modules\core\models\FarmMetadataTechnologyMobilization;
 use backend\modules\core\models\OdkForm;
+use backend\modules\core\models\SyncEvent;
 use backend\modules\core\models\TableAttributeInterface;
 use common\helpers\DateUtils;
 use common\helpers\Lang;
@@ -603,6 +604,15 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $syncRepeatKey = $repeatKey . '/animal_breedingsync';
         $syncGroupKey = 'breeding_syncdetails';
         $animalCodeAttributeKey = self::getAttributeJsonKey('breeding_syncanimalcode', '', $syncRepeatKey);
+        $eventDateKey = self::getAttributeJsonKey('breeding_syncservedate', $syncGroupKey, $syncRepeatKey);
+
+        $model = new SyncEvent([
+            'event_type' => AnimalEvent::EVENT_TYPE_SYNCHRONIZATION,
+            'data_collection_date' => $this->getDate(),
+            'field_agent_id' => $this->_model->user_id,
+            'odk_form_uuid' => $this->_model->form_uuid,
+        ]);
+
         foreach ($data as $k => $breedingData) {
             $syncData = $breedingData[$syncRepeatKey] ?? null;
             if (null === $syncData) {
@@ -614,8 +624,14 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 if (null === $animalModel) {
                     continue;
                 }
-
-                //todo continue from here
+                $eventDate = $this->getFormDataValueByKey($syncDatum, $eventDateKey);
+                $newModel = clone $model;
+                $newModel->animal_id = $animalModel->id;
+                $newModel->event_date = $eventDate;
+                $newModel->latitude = $animalModel->latitude;
+                $newModel->longitude = $animalModel->longitude;
+                $newModel->setDynamicAttributesValuesFromOdkForm($syncDatum, $syncGroupKey, $syncRepeatKey);
+                $this->saveAnimalEventModel($newModel, $i, true);
             }
         }
     }
