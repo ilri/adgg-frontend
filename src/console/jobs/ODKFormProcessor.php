@@ -141,6 +141,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerAnimalVaccination();
                 $this->registerAnimalParasiteInfection();
                 $this->registerAnimalInjury();
+                $this->registerAnimalMeasureDetails();
             } else {
                 $message = Lang::t('This Version ({old_version}) of ODK Form is currently not supported. Version ({version}) and above are supported.', ['old_version' => $this->_model->form_version, 'version' => self::MIN_SUPPORTED_ODK_FORM_VERSION]);
                 $this->_model->error_message = $message;
@@ -672,6 +673,50 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_INJURY, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey);
     }
 
+    protected function registerAnimalMeasureDetails()
+    {
+        list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCowMonitoringParams();
+        $groupKey = 'measure_details';
+
+        if (null === $rawData) {
+            return;
+        }
+
+        $model = new AnimalEvent([
+            'event_type' => AnimalEvent::EVENT_TYPE_WEIGHTS,
+            'data_collection_date' => $this->getDate(),
+            'field_agent_id' => $this->_model->user_id,
+            'odk_form_uuid' => $this->_model->form_uuid,
+        ]);
+        $heartgirthAttributeKey = self::getAttributeJsonKey('measure_heartgirth', $groupKey, $repeatKey);
+        $weightAttributeKey = self::getAttributeJsonKey('measure_weight', $groupKey, $repeatKey);
+        $bodyscoreAttributeKey = self::getAttributeJsonKey('measure_bodyscore', $groupKey, $repeatKey);
+        foreach ($rawData as $k => $dataPoints) {
+            $dataPoint = $dataPoints[$repeatKey] ?? null;
+            if (null === $dataPoint) {
+                continue;
+            }
+            foreach ($dataPoint as $i => $data) {
+                $animalCode = $this->getFormDataValueByKey($data, $animalCodeAttributeKey);
+                $animalModel = $this->getAnimalModelByOdkCode($animalCode);
+                if (null === $animalModel) {
+                    continue;
+                }
+                $newModel = clone $model;
+                $newModel->animal_id = $animalModel->id;
+                if (empty($newModel->event_date)) {
+                    $newModel->event_date = $newModel->data_collection_date;
+                }
+                $newModel->latitude = $animalModel->latitude;
+                $newModel->longitude = $animalModel->longitude;
+                $newModel->heartgirth = $this->getFormDataValueByKey($data, $heartgirthAttributeKey);
+                $newModel->weight_kg = $this->getFormDataValueByKey($data, $weightAttributeKey);
+                $newModel->body_score = $this->getFormDataValueByKey($data, $bodyscoreAttributeKey);
+                $this->saveAnimalEventModel($newModel, $i, true);
+            }
+        }
+    }
+
     protected function getCowMonitoringParams()
     {
         $mainRepeatKey = 'cow_monitoring';
@@ -681,7 +726,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         return [$rawData, $repeatKey, $animalCodeAttributeKey];
     }
 
-    protected function registerAnimalEvent($rawData, $eventType, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey)
+    protected function registerAnimalEvent($rawData, $eventType, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey = null)
     {
         if (null === $rawData) {
             return;
@@ -706,7 +751,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 if (null === $animalModel) {
                     continue;
                 }
-                $eventDate = $this->getFormDataValueByKey($data, $eventDateAttributeKey);
+                $eventDate = $eventDateAttributeKey !== null ? $this->getFormDataValueByKey($data, $eventDateAttributeKey) : $this->getDate();
                 $newModel = clone $model;
                 $newModel->animal_id = $animalModel->id;
                 $newModel->event_date = $eventDate;
