@@ -74,4 +74,31 @@ class DataMigrationController extends Controller
             }
         }
     }
+
+    protected function actionUpdateAnimalWeightEventsFromMilkEvent()
+    {
+        $query = AnimalEvent::find()->andWhere(['event_type' => AnimalEvent::EVENT_TYPE_MILKING]);
+        $totalRecords = $query->count();
+        $modelClassName = Animal::class;
+        $n = 1;
+        /* @var $models AnimalEvent[] */
+        $weightModel = new AnimalEvent([
+            'event_type' => AnimalEvent::EVENT_TYPE_WEIGHTS,
+        ]);
+        foreach ($query->batch(1000) as $i => $models) {
+            foreach ($models as $model) {
+                if (!empty($model->weight) || !empty($model->milk_estimated_weight)) {
+                    $newWeightModel=clone $weightModel;
+                    $newWeightModel->weight=$model->weight;
+                    $newWeightModel->milk_estimated_weight=$model->milk_estimated_weight;
+                    $newWeightModel->milk_bodyscore=$model->milk_bodyscore;
+                    $newWeightModel->milk_heartgirth=$model->milk_heartgirth;
+                    //todo
+                }
+
+                $this->stdout("{$modelClassName}: Updated {$n} of {$totalRecords} records\n");
+                $n++;
+            }
+        }
+    }
 }
