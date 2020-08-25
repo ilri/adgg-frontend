@@ -120,6 +120,8 @@ class ChoiceTypes extends ActiveRecord implements ActiveSearchInterface
     const CHOICE_TYPE_WATER_FEEDING = 92;
     const CHOICE_TYPE_MINERAL_TYPE = 93;
     const CHOICE_TYPE_FEED_TYPE = 94;
+    const CHOICE_TYPE_HOOF_DIGITAL_DERMATITIS = 95;
+    const CHOICE_TYPE_HOOF_HEALTH = 96;
 
     /**
      * {@inheritdoc}
