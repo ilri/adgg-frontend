@@ -124,7 +124,7 @@ class DataMigrationController extends Controller
         foreach ($query->batch(1000) as $i => $models) {
             foreach ($models as $model) {
                 if (empty($model->calfweight) && empty($model->calfhgirth) && empty($model->calfbodyscore)) {
-                    // $this->stdout("{$modelClassName}: Ignored record {$n} of {$totalRecords}. No weight data\n");
+                    $this->stdout("{$modelClassName}: Ignored record {$n} of {$totalRecords}. No weight data\n");
                 } else {
                     $animalId = Animal::getScalar('id', ['tag_id' => $model->tag_id]);
                     if (empty($animalId)) {
