@@ -110,4 +110,45 @@ class DataMigrationController extends Controller
             }
         }
     }
+
+    public function actionUpdateAnimalWeightEventsFromCalvingEvent()
+    {
+        $query = AnimalEvent::find()->andWhere(['event_type' => AnimalEvent::EVENT_TYPE_CALVING]);
+        $totalRecords = $query->count();
+        $modelClassName = AnimalEvent::class;
+        $n = 1;
+        /* @var $models AnimalEvent[] */
+        $weightModel = new AnimalEvent([
+            'event_type' => AnimalEvent::EVENT_TYPE_WEIGHTS,
+        ]);
+        foreach ($query->batch(1000) as $i => $models) {
+            foreach ($models as $model) {
+                if (empty($model->calfweight) && empty($model->calfhgirth) && empty($model->calfbodyscore)) {
+                    // $this->stdout("{$modelClassName}: Ignored record {$n} of {$totalRecords}. No weight data\n");
+                } else {
+                    $animalId = Animal::getScalar('id', ['tag_id' => $model->tag_id]);
+                    if (empty($animalId)) {
+                        $this->stdout("{$modelClassName}: Ignored record {$n} of {$totalRecords}. Calf not registered\n");
+                        $n++;
+                        continue;
+                    }
+                    $newWeightModel = clone $weightModel;
+                    $newWeightModel->animal_id = $animalId;
+                    $newWeightModel->event_date = $model->event_date;
+                    $newWeightModel->data_collection_date = $model->data_collection_date;
+                    $newWeightModel->weight_kg = $model->calfweight;
+                    $newWeightModel->body_score = $model->calfbodyscore;
+                    $newWeightModel->heartgirth = $model->calfhgirth;
+                    $newWeightModel->latitude = $model->latitude;
+                    $newWeightModel->longitude = $model->longitude;
+                    $newWeightModel->field_agent_id = $model->field_agent_id;
+                    $newWeightModel->migration_id = $model->migration_id;
+                    $newWeightModel->odk_form_uuid = $model->odk_form_uuid;
+                    $newWeightModel->save(false);
+                    $this->stdout("{$modelClassName}: Updated weight event {$n} of {$totalRecords} records\n");
+                }
+                $n++;
+            }
+        }
+    }
 }
