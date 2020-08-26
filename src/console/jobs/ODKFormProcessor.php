@@ -147,6 +147,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerAnimalFeedProvided();
                 $this->registerAnimalGrowth();
                 $this->registerCalfVaccination();
+                $this->registerCalfParasiteInfection();
             } else {
                 $message = Lang::t('This Version ({old_version}) of ODK Form is currently not supported. Version ({version}) and above are supported.', ['old_version' => $this->_model->form_version, 'version' => self::MIN_SUPPORTED_ODK_FORM_VERSION]);
                 $this->_model->error_message = $message;
@@ -825,7 +826,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         }
     }
 
-
     protected function getCowMonitoringParams()
     {
         $mainRepeatKey = 'cow_monitoring';
@@ -847,10 +847,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     {
         list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCalfMonitoringParams();
         $groupKey = 'calfmonitor_vaccination';
-
-        if (null === $rawData) {
-            return;
-        }
         $attributes = [
             'vacc_vaccine_date' => self::getAttributeJsonKey('calfmonitor_vaccinedate', $groupKey, $repeatKey),
             'vacc_vaccine_type' => self::getAttributeJsonKey('calfmonitor_vaccinetype', $groupKey, $repeatKey),
@@ -865,8 +861,29 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $this->registerCalfMonitoringEvents($rawData, AnimalEvent::EVENT_TYPE_VACCINATION, $repeatKey, $animalCodeAttributeKey, $attributes);
     }
 
+    protected function registerCalfParasiteInfection()
+    {
+        list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCalfMonitoringParams();
+        $groupKey = 'calfmonitor_parasiteinfection';
+        $attributes = [
+            'parasite_date' => self::getAttributeJsonKey('calfmonitor_parasitedate', $groupKey, $repeatKey),
+            'parasite_type' => self::getAttributeJsonKey('calfmonitor_parasitetype', $groupKey, $repeatKey),
+            'parasite_type_other' => self::getAttributeJsonKey('calfmonitor_parasiteother', $groupKey, $repeatKey),
+            'parasite_provider' => self::getAttributeJsonKey('calfmonitor_parasiteprovider', $groupKey, $repeatKey),
+            'parasite_provider_other' => self::getAttributeJsonKey('calfmonitor_parasiteproviderother', $groupKey, $repeatKey),
+            'parasite_drug_cost' => self::getAttributeJsonKey('calfmonitor_parasitedrugcost', $groupKey, $repeatKey),
+            'parasite_service_cost' => self::getAttributeJsonKey('calfmonitor_parasiteservicecost', $groupKey, $repeatKey),
+            'parasite_cow_status' => self::getAttributeJsonKey('calfmonitor_parasitecowstatus', $groupKey, $repeatKey),
+            'parasite_cow_status_other' => self::getAttributeJsonKey('calfmonitor_parasitecowstatusother', $groupKey, $repeatKey),
+        ];
+        $this->registerCalfMonitoringEvents($rawData, AnimalEvent::EVENT_TYPE_PARASITE_INFECTION, $repeatKey, $animalCodeAttributeKey, $attributes);
+    }
+
     protected function registerCalfMonitoringEvents($rawData, $eventType, $repeatKey, $animalCodeAttributeKey, $attributes)
     {
+        if (null === $rawData) {
+            return;
+        }
         $model = new AnimalEvent([
             'event_type' => $eventType,
             'data_collection_date' => $this->getDate(),
