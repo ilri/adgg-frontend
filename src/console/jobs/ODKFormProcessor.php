@@ -149,6 +149,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerCalfVaccination();
                 $this->registerCalfParasiteInfection();
                 $this->registerCalfInjury();
+                $this->registerAnimalStillBirth();
             } else {
                 $message = Lang::t('This Version ({old_version}) of ODK Form is currently not supported. Version ({version}) and above are supported.', ['old_version' => $this->_model->form_version, 'version' => self::MIN_SUPPORTED_ODK_FORM_VERSION]);
                 $this->_model->error_message = $message;
@@ -943,6 +944,25 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $repeatKey = $mainRepeatKey . '/calf_monitoringanimal';
         $animalCodeAttributeKey = self::getAttributeJsonKey('calfmonitor_animalcode', $this->_model->isVersion1Point5() ? '' : 'calf_monitordetails', $repeatKey);
         return [$rawData, $repeatKey, $animalCodeAttributeKey];
+    }
+
+    protected function registerAnimalStillBirth()
+    {
+        $mainRepeatKey = 'cow_stillbirth';
+        $rawData = $this->_model->form_data[$mainRepeatKey] ?? null;
+        $repeatKey = $mainRepeatKey . '/cow_stillbirthanimal';
+        $animalCodeAttributeKey = self::getAttributeJsonKey('cowstillbirth_animalcode', '', $repeatKey);
+        $groupKey = 'cow_stillbirthanimaldetails';
+        $sireGroupKey = 'cow_stillbirthsire';
+        $attributes = [
+            'still_birth_calving_type' => self::getAttributeJsonKey('cowstillbirth_calvingtype', $groupKey, $repeatKey),
+            'birthdate' => self::getAttributeJsonKey('cowstillbirth_date', $groupKey, $repeatKey),
+            'whydead' => self::getAttributeJsonKey('cowstillbirth_deathreason', $groupKey, $repeatKey),
+            'whydeadoth' => self::getAttributeJsonKey('cowstillbirth_deathreasonother', $groupKey, $repeatKey),
+            'calfsex' => self::getAttributeJsonKey('cowstillbirth_sex', $groupKey, $repeatKey),
+            'bull_id' => self::getAttributeJsonKey('cow_stillbirthsiretag', $sireGroupKey, $repeatKey),
+        ];
+        $this->registerCalfMonitoringEvents($rawData, AnimalEvent::EVENT_TYPE_CALVING, $repeatKey, $animalCodeAttributeKey, $attributes);
     }
 
     /**
