@@ -150,6 +150,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerCalfParasiteInfection();
                 $this->registerCalfInjury();
                 $this->registerAnimalStillBirth();
+                $this->registerAnimalExit();
             } else {
                 $message = Lang::t('This Version ({old_version}) of ODK Form is currently not supported. Version ({version}) and above are supported.', ['old_version' => $this->_model->form_version, 'version' => self::MIN_SUPPORTED_ODK_FORM_VERSION]);
                 $this->_model->error_message = $message;
@@ -965,6 +966,57 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $this->registerCalfMonitoringEvents($rawData, AnimalEvent::EVENT_TYPE_CALVING, $repeatKey, $animalCodeAttributeKey, $attributes);
     }
 
+    protected function registerAnimalExit()
+    {
+        $mainRepeatKey = 'cattle_exit';
+        $rawData = $this->_model->form_data[$mainRepeatKey] ?? null;
+        if (null === $rawData) {
+            return;
+        }
+        $repeatKey = $mainRepeatKey . '/cattle_exitanimal';
+        $animalCodeAttributeKey = self::getAttributeJsonKey('animalexit_code', '', $repeatKey);
+        $exitDetailsGroupKey = 'animalexit_details';
+        $exitMovementGroupKey = 'animalexit_movement';
+        $exitNewFarmGroupKey = 'animalexit_newonwer_farmer';
+        $eventDateAttributeKey = self::getAttributeJsonKey('animalexit_date', $exitDetailsGroupKey, $repeatKey);
+        $newOwnerTypeAttributeKey = self::getAttributeJsonKey('animalexit_newownertype', '', $repeatKey);
+
+        $model = new AnimalEvent([
+            'event_type' => AnimalEvent::EVENT_TYPE_EXITS,
+            'data_collection_date' => $this->getDate(),
+            'field_agent_id' => $this->_model->user_id,
+            'odk_form_uuid' => $this->_model->form_uuid,
+        ]);
+
+        foreach ($rawData as $k => $dataPoints) {
+            $dataPoint = $dataPoints[$repeatKey] ?? null;
+            if (null === $dataPoint) {
+                continue;
+            }
+            foreach ($dataPoint as $i => $data) {
+                $animalCode = $this->getFormDataValueByKey($data, $animalCodeAttributeKey);
+                $animalModel = $this->getAnimalModelByOdkCode($animalCode);
+                if (null === $animalModel) {
+                    continue;
+                }
+                $eventDate = $this->getFormDataValueByKey($data, $eventDateAttributeKey);
+                $newModel = clone $model;
+                $newModel->animal_id = $animalModel->id;
+                $newModel->setDynamicAttributesValuesFromOdkForm($data, $exitDetailsGroupKey, $repeatKey);
+                $newModel->setDynamicAttributesValuesFromOdkForm($data, $exitMovementGroupKey, $repeatKey);
+                $newModel->setDynamicAttributesValuesFromOdkForm($data, $exitNewFarmGroupKey, $repeatKey);
+                $newModel->exit_new_owner_type = $this->getFormDataValueByKey($data, $newOwnerTypeAttributeKey);
+                $newModel->event_date = $eventDate;
+                if (empty($newModel->event_date)) {
+                    $newModel->event_date = $newModel->data_collection_date;
+                }
+                $newModel->latitude = $animalModel->latitude;
+                $newModel->longitude = $animalModel->longitude;
+                $this->saveAnimalEventModel($newModel, $k . $i, true);
+            }
+        }
+    }
+
     /**
      * @param $rawData
      * @param $eventType
@@ -978,7 +1030,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         if (null === $rawData) {
             return;
         }
-
 
         $model = new AnimalEvent([
             'event_type' => $eventType,
