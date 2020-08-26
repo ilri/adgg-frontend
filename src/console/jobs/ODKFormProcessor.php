@@ -146,6 +146,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerAnimalHoofTreatment();
                 $this->registerAnimalFeedProvided();
                 $this->registerAnimalGrowth();
+                $this->registerCalfVaccination();
             } else {
                 $message = Lang::t('This Version ({old_version}) of ODK Form is currently not supported. Version ({version}) and above are supported.', ['old_version' => $this->_model->form_version, 'version' => self::MIN_SUPPORTED_ODK_FORM_VERSION]);
                 $this->_model->error_message = $message;
@@ -840,6 +841,63 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $groupKey = 'calfmonitor_growth';
         $eventDateAttributeKey = self::getAttributeJsonKey('calfmonitor_date', $groupKey, $repeatKey);
         $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_WEIGHTS, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey);
+    }
+
+    protected function registerCalfVaccination()
+    {
+        list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCalfMonitoringParams();
+        $groupKey = 'calfmonitor_vaccination';
+
+        if (null === $rawData) {
+            return;
+        }
+        $attributes = [
+            'vacc_vaccine_date' => self::getAttributeJsonKey('calfmonitor_vaccinedate', $groupKey, $repeatKey),
+            'vacc_vaccine_type' => self::getAttributeJsonKey('calfmonitor_vaccinetype', $groupKey, $repeatKey),
+            'vacc_vaccine_type_other' => self::getAttributeJsonKey('calfmonitor_othervaccinetype', $groupKey, $repeatKey),
+            'vacc_vaccine_provider' => self::getAttributeJsonKey('calfmonitor_vaccineprovider', $groupKey, $repeatKey),
+            'vacc_vaccine_provider_other' => self::getAttributeJsonKey('calfmonitor_vaccineproviderother', $groupKey, $repeatKey),
+            'vacc_vaccine_drug_cost' => self::getAttributeJsonKey('calfmonitor_vaccinedrugcost', $groupKey, $repeatKey),
+            'vacc_vaccine_service_cost' => self::getAttributeJsonKey('calfmonitor_vaccineservicecost', $groupKey, $repeatKey),
+            'vacc_vaccine_cow_status' => self::getAttributeJsonKey('calfmonitor_vaccinecowstatus', $groupKey, $repeatKey),
+            'vacc_vaccine_cow_status_other' => self::getAttributeJsonKey('calfmonitor_parasitecowstatusother', $groupKey, $repeatKey),
+        ];
+        $this->registerCalfMonitoringEvents($rawData, AnimalEvent::EVENT_TYPE_VACCINATION, $repeatKey, $animalCodeAttributeKey, $attributes);
+    }
+
+    protected function registerCalfMonitoringEvents($rawData, $eventType, $repeatKey, $animalCodeAttributeKey, $attributes)
+    {
+        $model = new AnimalEvent([
+            'event_type' => $eventType,
+            'data_collection_date' => $this->getDate(),
+            'field_agent_id' => $this->_model->user_id,
+            'odk_form_uuid' => $this->_model->form_uuid,
+        ]);
+
+        foreach ($rawData as $k => $dataPoints) {
+            $dataPoint = $dataPoints[$repeatKey] ?? null;
+            if (null === $dataPoint) {
+                continue;
+            }
+            foreach ($dataPoint as $i => $data) {
+                $animalCode = $this->getFormDataValueByKey($data, $animalCodeAttributeKey);
+                $animalModel = $this->getAnimalModelByOdkCode($animalCode);
+                if (null === $animalModel) {
+                    continue;
+                }
+                $newModel = clone $model;
+                $newModel->animal_id = $animalModel->id;
+                foreach ($attributes as $attr => $odkKey) {
+                    $newModel->{$attr} = $this->getFormDataValueByKey($data, $odkKey);
+                }
+                if (empty($newModel->event_date)) {
+                    $newModel->event_date = $newModel->data_collection_date;
+                }
+                $newModel->latitude = $animalModel->latitude;
+                $newModel->longitude = $animalModel->longitude;
+                $this->saveAnimalEventModel($newModel, $k . $i, true);
+            }
+        }
     }
 
     protected function getCalfMonitoringParams()
