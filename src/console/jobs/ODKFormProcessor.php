@@ -145,6 +145,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerAnimalHoofHealth();
                 $this->registerAnimalHoofTreatment();
                 $this->registerAnimalFeedProvided();
+                $this->registerAnimalGrowth();
             } else {
                 $message = Lang::t('This Version ({old_version}) of ODK Form is currently not supported. Version ({version}) and above are supported.', ['old_version' => $this->_model->form_version, 'version' => self::MIN_SUPPORTED_ODK_FORM_VERSION]);
                 $this->_model->error_message = $message;
@@ -833,6 +834,14 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         return [$rawData, $repeatKey, $animalCodeAttributeKey];
     }
 
+    protected function registerAnimalGrowth()
+    {
+        list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCalfMonitoringParams();
+        $groupKey = 'calfmonitor_growth';
+        $eventDateAttributeKey = self::getAttributeJsonKey('calfmonitor_date', $groupKey, $repeatKey);
+        $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_WEIGHTS, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey);
+    }
+
     protected function getCalfMonitoringParams()
     {
         $mainRepeatKey = 'calf_monitoring';
@@ -842,6 +851,14 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         return [$rawData, $repeatKey, $animalCodeAttributeKey];
     }
 
+    /**
+     * @param $rawData
+     * @param $eventType
+     * @param $repeatKey
+     * @param $groupKey
+     * @param $animalCodeAttributeKey
+     * @param null $eventDateAttributeKey
+     */
     protected function registerAnimalEvent($rawData, $eventType, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey = null)
     {
         if (null === $rawData) {
