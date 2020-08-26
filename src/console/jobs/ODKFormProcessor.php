@@ -148,6 +148,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerAnimalGrowth();
                 $this->registerCalfVaccination();
                 $this->registerCalfParasiteInfection();
+                $this->registerCalfInjury();
             } else {
                 $message = Lang::t('This Version ({old_version}) of ODK Form is currently not supported. Version ({version}) and above are supported.', ['old_version' => $this->_model->form_version, 'version' => self::MIN_SUPPORTED_ODK_FORM_VERSION]);
                 $this->_model->error_message = $message;
@@ -877,6 +878,24 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             'parasite_cow_status_other' => self::getAttributeJsonKey('calfmonitor_parasitecowstatusother', $groupKey, $repeatKey),
         ];
         $this->registerCalfMonitoringEvents($rawData, AnimalEvent::EVENT_TYPE_PARASITE_INFECTION, $repeatKey, $animalCodeAttributeKey, $attributes);
+    }
+
+    protected function registerCalfInjury()
+    {
+        list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCalfMonitoringParams();
+        $groupKey = 'calfmonitor_injury';
+        $attributes = [
+            'injury_date' => self::getAttributeJsonKey('calfmonitor_injurydate', $groupKey, $repeatKey),
+            'injury_type' => self::getAttributeJsonKey('calfmonitor_injurytype', $groupKey, $repeatKey),
+            'injury_type_other' => self::getAttributeJsonKey('calfmonitor_injurytypeother', $groupKey, $repeatKey),
+            'injury_service_provider' => self::getAttributeJsonKey('calfmonitor_injuryserviceprovider', $groupKey, $repeatKey),
+            'injury_service_provider_other' => self::getAttributeJsonKey('calfmonitor_injuryserviceproviderother', $groupKey, $repeatKey),
+            'injury_drug_cost' => self::getAttributeJsonKey('calfmonitor_injurydrugcost', $groupKey, $repeatKey),
+            'injury_service_cost' => self::getAttributeJsonKey('calfmonitor_injuryservicecost', $groupKey, $repeatKey),
+            'injury_cow_status' => self::getAttributeJsonKey('calfmonitor_injurycowstatus', $groupKey, $repeatKey),
+            'injury_cow_status_other' => self::getAttributeJsonKey('calfmonitor_injurycowstatusother', $groupKey, $repeatKey),
+        ];
+        $this->registerCalfMonitoringEvents($rawData, AnimalEvent::EVENT_TYPE_INJURY, $repeatKey, $animalCodeAttributeKey, $attributes);
     }
 
     protected function registerCalfMonitoringEvents($rawData, $eventType, $repeatKey, $animalCodeAttributeKey, $attributes)
