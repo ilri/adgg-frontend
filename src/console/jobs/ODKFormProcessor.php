@@ -151,6 +151,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerCalfInjury();
                 $this->registerAnimalStillBirth();
                 $this->registerAnimalExit();
+                $this->registerAnimalECFVaccination();
             } else {
                 $message = Lang::t('This Version ({old_version}) of ODK Form is currently not supported. Version ({version}) and above are supported.', ['old_version' => $this->_model->form_version, 'version' => self::MIN_SUPPORTED_ODK_FORM_VERSION]);
                 $this->_model->error_message = $message;
@@ -1007,6 +1008,50 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $newModel->setDynamicAttributesValuesFromOdkForm($data, $exitNewFarmGroupKey, $repeatKey);
                 $newModel->exit_new_owner_type = $this->getFormDataValueByKey($data, $newOwnerTypeAttributeKey);
                 $newModel->event_date = $eventDate;
+                if (empty($newModel->event_date)) {
+                    $newModel->event_date = $newModel->data_collection_date;
+                }
+                $newModel->latitude = $animalModel->latitude;
+                $newModel->longitude = $animalModel->longitude;
+                $this->saveAnimalEventModel($newModel, $k . $i, true);
+            }
+        }
+    }
+
+    protected function registerAnimalECFVaccination()
+    {
+        $mainRepeatKey = 'ecf_vaccination';
+        $rawData = $this->_model->form_data[$mainRepeatKey] ?? null;
+        if (null === $rawData) {
+            return;
+        }
+        $model = new AnimalEvent([
+            'event_type' => AnimalEvent::EVENT_TYPE_VACCINATION,
+            'data_collection_date' => $this->getDate(),
+            'field_agent_id' => $this->_model->user_id,
+            'odk_form_uuid' => $this->_model->form_uuid,
+        ]);
+
+        $animalRepeat = $mainRepeatKey . '/ecf_vaccinationanimal';
+        $animalCodeAttributeKey = self::getAttributeJsonKey('ecf_vaccinationanimalcode', '', $animalRepeat);
+        foreach ($rawData as $k => $dataPoints) {
+            $dataPoint = $dataPoints[$animalRepeat] ?? null;
+            if (null === $dataPoint) {
+                continue;
+            }
+            $baseModel = clone $model;
+            $baseModel->setDynamicAttributesValuesFromOdkForm($dataPoints, 'ecf_vaccinationvial', $mainRepeatKey);
+            $baseModel->setDynamicAttributesValuesFromOdkForm($dataPoints, 'ecf_vaccinationlist', $mainRepeatKey);
+            foreach ($dataPoint as $i => $data) {
+                $animalCode = $this->getFormDataValueByKey($data, $animalCodeAttributeKey);
+                $animalModel = $this->getAnimalModelByOdkCode($animalCode);
+                if (null === $animalModel) {
+                    continue;
+                }
+                $newModel = clone $baseModel;
+                $newModel->animal_id = $animalModel->id;
+                $newModel->setDynamicAttributesValuesFromOdkForm($data, 'ecf_vaccinationdetails', $animalRepeat);
+                $newModel->event_date = $newModel->ecf_date;
                 if (empty($newModel->event_date)) {
                     $newModel->event_date = $newModel->data_collection_date;
                 }
