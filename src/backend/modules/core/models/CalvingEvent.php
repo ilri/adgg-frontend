@@ -72,6 +72,9 @@ class CalvingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
             'calftagsec',
             'tag_id',
             'calfcolor',
+            'calfweight',
+            'calfbodyscore',
+            'calfhgirth',
             'calftagimage',
             'calfbodyimage',
         ];
