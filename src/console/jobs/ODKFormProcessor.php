@@ -16,6 +16,7 @@ use backend\modules\core\models\CalvingEvent;
 use backend\modules\core\models\CountryUnits;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\FarmMetadata;
+use backend\modules\core\models\FarmMetadataFeedbackToHousehold;
 use backend\modules\core\models\FarmMetadataHouseholdMembers;
 use backend\modules\core\models\FarmMetadataImprovedFodderAdoption;
 use backend\modules\core\models\FarmMetadataMilkUtilization;
@@ -136,6 +137,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerFarmerTechnologyMobilization();
                 $this->registerFarmerMilkUtilization();
                 $this->registerFarmerImprovedFodderAdoption();
+                $this->registerFarmerFeedbackToHousehold();
                 //animal registration
                 $this->registerNewCattle();
                 //animal events
@@ -702,6 +704,36 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'improved_fodderdetails', $repeatKey);
             $i = 'improved_fodder_adoption_' . $k;
             $this->saveFarmMetadataModel($newModel, $i, true);
+        }
+
+    }
+
+    protected function registerFarmerFeedbackToHousehold()
+    {
+        $repeatKey = 'farmer_feedback';
+        $data = $this->_model->form_data[$repeatKey] ?? null;
+        if (empty($data)) {
+            return;
+        }
+        $model = new FarmMetadataFeedbackToHousehold([
+            'farm_id' => $this->getFarmId(),
+            'type' => FarmMetadataTechnologyMobilization::TYPE_FEEDBACK_TO_HOUSEHOLD,
+            'country_id' => $this->_model->country_id,
+            'odk_form_uuid' => $this->_model->form_uuid,
+        ]);
+        $memberRepeatKey = $repeatKey . '/farmer_feedbackmembers';
+        $memberGroupKey = 'farmer_membersdetails';
+        foreach ($data as $k => $datum) {
+            $members = $datum[$memberRepeatKey] ?? null;
+            if (null == $members) {
+                continue;
+            }
+            foreach ($members as $i => $member) {
+                $newModel = clone $model;
+                $newModel->setDynamicAttributesValuesFromOdkForm($datum, $memberGroupKey, $memberRepeatKey);
+                $i = 'feedback_to_household_' . $k;
+                $this->saveFarmMetadataModel($newModel, $i, true);
+            }
         }
 
     }
