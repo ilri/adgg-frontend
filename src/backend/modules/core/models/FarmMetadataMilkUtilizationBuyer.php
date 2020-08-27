@@ -9,10 +9,10 @@
 namespace backend\modules\core\models;
 
 
-class FarmMetadataMilkUtilizationBuyerMorning extends FarmMetadata
+class FarmMetadataMilkUtilizationBuyer extends FarmMetadata
 {
     public static function getDefineMetadataType(): int
     {
-        return self::TYPE_MILK_UTILIZATION_BUYER_MORNING;
+        return self::TYPE_MILK_UTILIZATION_BUYER;
     }
 }

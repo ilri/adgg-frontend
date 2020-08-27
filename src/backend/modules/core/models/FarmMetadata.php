@@ -38,8 +38,7 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
     const TYPE_HOUSEHOLD_MEMBERS = 8;
     const TYPE_TECHNOLOGY_MOBILIZATION = 9;
     const TYPE_MILK_UTILIZATION = 10;
-    const TYPE_MILK_UTILIZATION_BUYER_MORNING = 11;
-    const TYPE_MILK_UTILIZATION_BUYER_EVENING = 12;
+    const TYPE_MILK_UTILIZATION_BUYER = 11;
 
 
     /**

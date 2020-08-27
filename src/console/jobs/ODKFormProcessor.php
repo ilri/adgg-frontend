@@ -18,6 +18,7 @@ use backend\modules\core\models\Farm;
 use backend\modules\core\models\FarmMetadata;
 use backend\modules\core\models\FarmMetadataHouseholdMembers;
 use backend\modules\core\models\FarmMetadataMilkUtilization;
+use backend\modules\core\models\FarmMetadataMilkUtilizationBuyer;
 use backend\modules\core\models\FarmMetadataTechnologyMobilization;
 use backend\modules\core\models\OdkForm;
 use backend\modules\core\models\SyncEvent;
@@ -627,13 +628,56 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             'country_id' => $this->_model->country_id,
             'odk_form_uuid' => $this->_model->form_uuid,
         ]);
+        $buyersMorningRepeatKey = $repeatKey . '/milk_utilizationbuyermorning';
+        $buyersEveningRepeatKey = $repeatKey . '/milk_utilizationbuyerevening';
+        $morningBuyerTimeAttributeKey = self::getAttributeJsonKey('milk_buyermngtime', '', $buyersMorningRepeatKey);
+        $buyersMorningGroupKey = 'milk_buyermng';
+        $buyersEveningGroupKey = 'milk_buyerevng';
+        $eveningBuyerAttributes = [
+            'milk_utilize_buyer_time' => self::getAttributeJsonKey('milk_buyerevngtime', '', $buyersEveningRepeatKey),
+            'milk_utilize_buyer_type' => self::getAttributeJsonKey('milk_buyerevngtype', $buyersEveningGroupKey, $buyersEveningRepeatKey),
+            'milk_utilize_buyer_type_other' => self::getAttributeJsonKey('milk_buyerevngtypeoth', $buyersEveningGroupKey, $buyersEveningRepeatKey),
+            'milk_utilize_buyer_sold_quantity' => self::getAttributeJsonKey('milk_buyerevngquantity', $buyersEveningGroupKey, $buyersEveningRepeatKey),
+            'milk_utilize_buyer_price' => self::getAttributeJsonKey('milk_buyerevngprice', $buyersEveningGroupKey, $buyersEveningRepeatKey),
+            'milk_utilize_buyer_payment_method' => self::getAttributeJsonKey('milk_buyerevngpayment', $buyersEveningGroupKey, $buyersEveningRepeatKey),
+            'milk_utilize_buyer_payment_method_other' => self::getAttributeJsonKey('milk_buyerevngpaymentoth', $buyersEveningGroupKey, $buyersEveningRepeatKey),
+        ];
         foreach ($data as $k => $datum) {
             $newModel = clone $model;
             $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'milk_utilizationyesterday', $repeatKey);
             $i = 'milk_utilization_' . $k;
             $this->saveFarmMetadataModel($newModel, $i, true);
 
-            //save
+            $buyerModel = new FarmMetadataMilkUtilizationBuyer([
+                'farm_id' => $this->getFarmId(),
+                'type' => FarmMetadataTechnologyMobilization::TYPE_MILK_UTILIZATION_BUYER,
+                'country_id' => $this->_model->country_id,
+                'odk_form_uuid' => $this->_model->form_uuid,
+            ]);
+            //save morning milk buyers
+            $morningBuyers = $datum[$buyersMorningRepeatKey] ?? null;
+            if (null === $morningBuyers) {
+                $morningBuyers = [];
+            }
+            foreach ($morningBuyers as $n => $morningBuyer) {
+                $newBuyerModel = clone $buyerModel;
+                $newBuyerModel->milk_utilize_buyer_time = $this->getFormDataValueByKey($morningBuyer, $morningBuyerTimeAttributeKey);
+                $newBuyerModel->setDynamicAttributesValuesFromOdkForm($morningBuyer, $buyersMorningGroupKey, $buyersMorningRepeatKey);
+                $this->saveFarmMetadataModel($newBuyerModel, $i . 'morning_' . $n, true);
+            }
+
+            //save evening milk buyers
+            $eveningBuyers = $datum[$buyersEveningRepeatKey] ?? null;
+            if (null === $eveningBuyers) {
+                $eveningBuyers = [];
+            }
+            foreach ($eveningBuyers as $n => $eveningBuyer) {
+                $newBuyerModel = clone $buyerModel;
+                foreach ($eveningBuyerAttributes as $attr => $odkKey) {
+                    $newBuyerModel->{$attr} = $this->getFormDataValueByKey($eveningBuyer, $odkKey);
+                }
+                $this->saveFarmMetadataModel($newBuyerModel, $i . 'evening_' . $n, true);
+            }
         }
 
     }
