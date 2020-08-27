@@ -17,6 +17,7 @@ use backend\modules\core\models\CountryUnits;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\FarmMetadata;
 use backend\modules\core\models\FarmMetadataHouseholdMembers;
+use backend\modules\core\models\FarmMetadataImprovedFodderAdoption;
 use backend\modules\core\models\FarmMetadataMilkUtilization;
 use backend\modules\core\models\FarmMetadataMilkUtilizationBuyer;
 use backend\modules\core\models\FarmMetadataTechnologyMobilization;
@@ -134,6 +135,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 //farm metadata
                 $this->registerFarmerTechnologyMobilization();
                 $this->registerFarmerMilkUtilization();
+                $this->registerFarmerImprovedFodderAdoption();
                 //animal registration
                 $this->registerNewCattle();
                 //animal events
@@ -678,6 +680,28 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 }
                 $this->saveFarmMetadataModel($newBuyerModel, $i . 'evening_' . $n, true);
             }
+        }
+
+    }
+
+    protected function registerFarmerImprovedFodderAdoption()
+    {
+        $repeatKey = 'improved_fodder';
+        $data = $this->_model->form_data[$repeatKey] ?? null;
+        if (empty($data)) {
+            return;
+        }
+        $model = new FarmMetadataImprovedFodderAdoption([
+            'farm_id' => $this->getFarmId(),
+            'type' => FarmMetadataTechnologyMobilization::TYPE_IMPROVED_FODDER_ADOPTION,
+            'country_id' => $this->_model->country_id,
+            'odk_form_uuid' => $this->_model->form_uuid,
+        ]);
+        foreach ($data as $k => $datum) {
+            $newModel = clone $model;
+            $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'improved_fodderdetails', $repeatKey);
+            $i = 'improved_fodder_adoption_' . $k;
+            $this->saveFarmMetadataModel($newModel, $i, true);
         }
 
     }
