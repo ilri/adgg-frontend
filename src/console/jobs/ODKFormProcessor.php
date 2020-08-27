@@ -17,6 +17,7 @@ use backend\modules\core\models\CountryUnits;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\FarmMetadata;
 use backend\modules\core\models\FarmMetadataHouseholdMembers;
+use backend\modules\core\models\FarmMetadataMilkUtilization;
 use backend\modules\core\models\FarmMetadataTechnologyMobilization;
 use backend\modules\core\models\OdkForm;
 use backend\modules\core\models\SyncEvent;
@@ -131,6 +132,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerNewFarmer();
                 //farm metadata
                 $this->registerFarmerTechnologyMobilization();
+                $this->registerFarmerMilkUtilization();
                 //animal registration
                 $this->registerNewCattle();
                 //animal events
@@ -608,6 +610,30 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'farmer_techmobilizationdetails', $repeatKey);
             $i = 'technology_mobilization_' . $k;
             $this->saveFarmMetadataModel($newModel, $i, true);
+        }
+
+    }
+
+    protected function registerFarmerMilkUtilization()
+    {
+        $repeatKey = 'milk_utilization';
+        $data = $this->_model->form_data[$repeatKey] ?? null;
+        if (empty($data)) {
+            return;
+        }
+        $model = new FarmMetadataMilkUtilization([
+            'farm_id' => $this->getFarmId(),
+            'type' => FarmMetadataTechnologyMobilization::TYPE_MILK_UTILIZATION,
+            'country_id' => $this->_model->country_id,
+            'odk_form_uuid' => $this->_model->form_uuid,
+        ]);
+        foreach ($data as $k => $datum) {
+            $newModel = clone $model;
+            $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'milk_utilizationyesterday', $repeatKey);
+            $i = 'milk_utilization_' . $k;
+            $this->saveFarmMetadataModel($newModel, $i, true);
+
+            //save
         }
 
     }
