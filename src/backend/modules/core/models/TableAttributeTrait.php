@@ -490,10 +490,11 @@ trait TableAttributeTrait
      * @param array $odkData
      * @param string $odkFormGroupKey
      * @param null $odkFormRepeatKey
-     * @return void
+     * @return bool
      */
     public function setDynamicAttributesValuesFromOdkForm(array $odkData, string $odkFormGroupKey, $odkFormRepeatKey = null)
     {
+        $isSet = false;
         $odkAttributeNames = $this->getAdditionalAttributesOdkAttributeNames();
         foreach ($this->getAdditionalAttributes() as $attribute) {
             $odkAttributeName = $odkAttributeNames[$attribute] ?? null;
@@ -508,7 +509,9 @@ trait TableAttributeTrait
                     $value = trim($value);
                 }
                 $this->{$attribute} = $value;
+                $isSet = true;
             }
         }
+        return $isSet;
     }
 }

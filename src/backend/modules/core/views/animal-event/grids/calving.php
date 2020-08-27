@@ -94,20 +94,6 @@ use yii\helpers\Url;
             'enableSorting' => false,
         ],
         [
-            'attribute' => 'calfweight',
-            'enableSorting' => false,
-        ],
-        [
-            'attribute' => 'calfhgirth',
-            'enableSorting' => false,
-
-        ],
-        [
-            'attribute' => 'calfbodyscore',
-            'enableSorting' => false,
-
-        ],
-        [
             'attribute' => 'intuse',
             'value' => function (AnimalEvent $model) {
                 return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_CALVE_USE, $model->intuse);

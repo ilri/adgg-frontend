@@ -143,6 +143,15 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerAnimalInjury();
                 $this->registerAnimalMeasureDetails();
                 $this->registerAnimalHoofHealth();
+                $this->registerAnimalHoofTreatment();
+                $this->registerAnimalFeedProvided();
+                $this->registerAnimalGrowth();
+                $this->registerCalfVaccination();
+                $this->registerCalfParasiteInfection();
+                $this->registerCalfInjury();
+                $this->registerAnimalStillBirth();
+                $this->registerAnimalExit();
+                $this->registerAnimalECFVaccination();
             } else {
                 $message = Lang::t('This Version ({old_version}) of ODK Form is currently not supported. Version ({version}) and above are supported.', ['old_version' => $this->_model->form_version, 'version' => self::MIN_SUPPORTED_ODK_FORM_VERSION]);
                 $this->_model->error_message = $message;
@@ -674,13 +683,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_INJURY, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey);
     }
 
-    protected function registerAnimalHoofHealth()
-    {
-        list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCowMonitoringParams();
-        $groupKey = 'hoof_health';
-        $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_HOOF_HEALTH, $repeatKey, $groupKey, $animalCodeAttributeKey);
-    }
-
     protected function registerAnimalMeasureDetails()
     {
         list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCowMonitoringParams();
@@ -711,16 +713,119 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                     continue;
                 }
                 $newModel = clone $model;
+                $newModel->heartgirth = $this->getFormDataValueByKey($data, $heartgirthAttributeKey);
+                $newModel->weight_kg = $this->getFormDataValueByKey($data, $weightAttributeKey);
+                $newModel->body_score = $this->getFormDataValueByKey($data, $bodyscoreAttributeKey);
+                if (empty($newModel->heartgirth) && empty($newModel->weight_kg) && empty($newModel->body_score)) {
+                    continue;
+                }
                 $newModel->animal_id = $animalModel->id;
                 if (empty($newModel->event_date)) {
                     $newModel->event_date = $newModel->data_collection_date;
                 }
                 $newModel->latitude = $animalModel->latitude;
                 $newModel->longitude = $animalModel->longitude;
-                $newModel->heartgirth = $this->getFormDataValueByKey($data, $heartgirthAttributeKey);
-                $newModel->weight_kg = $this->getFormDataValueByKey($data, $weightAttributeKey);
-                $newModel->body_score = $this->getFormDataValueByKey($data, $bodyscoreAttributeKey);
-                $this->saveAnimalEventModel($newModel, $i, true);
+                $this->saveAnimalEventModel($newModel, $k . $i, true);
+            }
+        }
+    }
+
+    protected function registerAnimalFeedProvided()
+    {
+        list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCowMonitoringParams();
+        $groupKey = 'feed_provided';
+
+        if (null === $rawData) {
+            return;
+        }
+
+        $model = new AnimalEvent([
+            'event_type' => AnimalEvent::EVENT_TYPE_WEIGHTS,
+            'data_collection_date' => $this->getDate(),
+            'field_agent_id' => $this->_model->user_id,
+            'odk_form_uuid' => $this->_model->form_uuid,
+        ]);
+        $feedGivenAttributeKey = self::getAttributeJsonKey('feed_given', $groupKey, $repeatKey);
+        $feedWaterAttributeKey = self::getAttributeJsonKey('feed_water', $groupKey, $repeatKey);
+        foreach ($rawData as $k => $dataPoints) {
+            $dataPoint = $dataPoints[$repeatKey] ?? null;
+            if (null === $dataPoint) {
+                continue;
+            }
+            foreach ($dataPoint as $i => $data) {
+                $animalCode = $this->getFormDataValueByKey($data, $animalCodeAttributeKey);
+                $animalModel = $this->getAnimalModelByOdkCode($animalCode);
+                if (null === $animalModel) {
+                    continue;
+                }
+                $newModel = clone $model;
+                $newModel->feed_given = $this->getFormDataValueByKey($data, $feedGivenAttributeKey);
+                $newModel->animal_monitor_water = $this->getFormDataValueByKey($data, $feedWaterAttributeKey);
+                if (empty($newModel->feed_given) && empty($newModel->animal_monitor_water)) {
+                    continue;
+                }
+                if (empty($newModel->event_date)) {
+                    $newModel->event_date = $newModel->data_collection_date;
+                }
+                $newModel->latitude = $animalModel->latitude;
+                $newModel->longitude = $animalModel->longitude;
+                $newModel->animal_id = $animalModel->id;
+                $this->saveAnimalEventModel($newModel, $k . $i, true);
+            }
+        }
+    }
+
+    protected function registerAnimalHoofHealth()
+    {
+        list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCowMonitoringParams();
+        $groupKey = 'hoof_health';
+        $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_HOOF_HEALTH, $repeatKey, $groupKey, $animalCodeAttributeKey);
+    }
+
+    protected function registerAnimalHoofTreatment()
+    {
+        list($rawData, $repeat2Key, $animalCodeAttributeKey) = $this->getCowMonitoringParams();
+        $groupKey = 'hoof_treatmentdetails';
+        $repeat1Key = 'cow_monitoring';
+        $rawData = $this->_model->form_data[$repeat1Key] ?? null;
+        if (null === $rawData) {
+            return;
+        }
+        $repeat2Key = $repeat1Key . '/cow_monitoringanimal';
+        $repeat3Key = $repeat2Key . '/cow_monitoringhooftreat';
+        $model = new AnimalEvent([
+            'event_type' => AnimalEvent::EVENT_TYPE_HOOF_TREATMENT,
+            'data_collection_date' => $this->getDate(),
+            'field_agent_id' => $this->_model->user_id,
+            'odk_form_uuid' => $this->_model->form_uuid,
+        ]);
+        foreach ($rawData as $k => $repeat1Data) {
+            $repeat2DataSet = $repeat1Data[$repeat2Key] ?? null;
+            if (null === $repeat2DataSet) {
+                continue;
+            }
+            foreach ($repeat2DataSet as $i => $repeat2Data) {
+                $repeat3DataSet = $repeat2Data[$repeat3Key] ?? null;
+                if (null === $repeat3DataSet) {
+                    continue;
+                }
+                foreach ($repeat3DataSet as $n => $repeat3Data) {
+                    $animalCode = $this->getFormDataValueByKey($repeat3Data, $animalCodeAttributeKey);
+                    $animalModel = $this->getAnimalModelByOdkCode($animalCode);
+                    if (null === $animalModel) {
+                        continue;
+                    }
+                    $newModel = clone $model;
+                    if ($newModel->setDynamicAttributesValuesFromOdkForm($repeat3Data, $groupKey, $repeat3Key)) {
+                        if (empty($newModel->event_date)) {
+                            $newModel->event_date = $newModel->data_collection_date;
+                        }
+                        $newModel->animal_id = $animalModel->id;
+                        $newModel->latitude = $animalModel->latitude;
+                        $newModel->longitude = $animalModel->longitude;
+                        $this->saveAnimalEventModel($newModel, $k . $i . $n, true);
+                    }
+                }
             }
         }
     }
@@ -734,12 +839,242 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         return [$rawData, $repeatKey, $animalCodeAttributeKey];
     }
 
+    protected function registerAnimalGrowth()
+    {
+        list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCalfMonitoringParams();
+        $groupKey = 'calfmonitor_growth';
+        $eventDateAttributeKey = self::getAttributeJsonKey('calfmonitor_date', $groupKey, $repeatKey);
+        $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_WEIGHTS, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey);
+    }
+
+    protected function registerCalfVaccination()
+    {
+        list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCalfMonitoringParams();
+        $groupKey = 'calfmonitor_vaccination';
+        $attributes = [
+            'vacc_vaccine_date' => self::getAttributeJsonKey('calfmonitor_vaccinedate', $groupKey, $repeatKey),
+            'vacc_vaccine_type' => self::getAttributeJsonKey('calfmonitor_vaccinetype', $groupKey, $repeatKey),
+            'vacc_vaccine_type_other' => self::getAttributeJsonKey('calfmonitor_othervaccinetype', $groupKey, $repeatKey),
+            'vacc_vaccine_provider' => self::getAttributeJsonKey('calfmonitor_vaccineprovider', $groupKey, $repeatKey),
+            'vacc_vaccine_provider_other' => self::getAttributeJsonKey('calfmonitor_vaccineproviderother', $groupKey, $repeatKey),
+            'vacc_vaccine_drug_cost' => self::getAttributeJsonKey('calfmonitor_vaccinedrugcost', $groupKey, $repeatKey),
+            'vacc_vaccine_service_cost' => self::getAttributeJsonKey('calfmonitor_vaccineservicecost', $groupKey, $repeatKey),
+            'vacc_vaccine_cow_status' => self::getAttributeJsonKey('calfmonitor_vaccinecowstatus', $groupKey, $repeatKey),
+            'vacc_vaccine_cow_status_other' => self::getAttributeJsonKey('calfmonitor_parasitecowstatusother', $groupKey, $repeatKey),
+        ];
+        $this->registerCalfMonitoringEvents($rawData, AnimalEvent::EVENT_TYPE_VACCINATION, $repeatKey, $animalCodeAttributeKey, $attributes);
+    }
+
+    protected function registerCalfParasiteInfection()
+    {
+        list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCalfMonitoringParams();
+        $groupKey = 'calfmonitor_parasiteinfection';
+        $attributes = [
+            'parasite_date' => self::getAttributeJsonKey('calfmonitor_parasitedate', $groupKey, $repeatKey),
+            'parasite_type' => self::getAttributeJsonKey('calfmonitor_parasitetype', $groupKey, $repeatKey),
+            'parasite_type_other' => self::getAttributeJsonKey('calfmonitor_parasiteother', $groupKey, $repeatKey),
+            'parasite_provider' => self::getAttributeJsonKey('calfmonitor_parasiteprovider', $groupKey, $repeatKey),
+            'parasite_provider_other' => self::getAttributeJsonKey('calfmonitor_parasiteproviderother', $groupKey, $repeatKey),
+            'parasite_drug_cost' => self::getAttributeJsonKey('calfmonitor_parasitedrugcost', $groupKey, $repeatKey),
+            'parasite_service_cost' => self::getAttributeJsonKey('calfmonitor_parasiteservicecost', $groupKey, $repeatKey),
+            'parasite_cow_status' => self::getAttributeJsonKey('calfmonitor_parasitecowstatus', $groupKey, $repeatKey),
+            'parasite_cow_status_other' => self::getAttributeJsonKey('calfmonitor_parasitecowstatusother', $groupKey, $repeatKey),
+        ];
+        $this->registerCalfMonitoringEvents($rawData, AnimalEvent::EVENT_TYPE_PARASITE_INFECTION, $repeatKey, $animalCodeAttributeKey, $attributes);
+    }
+
+    protected function registerCalfInjury()
+    {
+        list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCalfMonitoringParams();
+        $groupKey = 'calfmonitor_injury';
+        $attributes = [
+            'injury_date' => self::getAttributeJsonKey('calfmonitor_injurydate', $groupKey, $repeatKey),
+            'injury_type' => self::getAttributeJsonKey('calfmonitor_injurytype', $groupKey, $repeatKey),
+            'injury_type_other' => self::getAttributeJsonKey('calfmonitor_injurytypeother', $groupKey, $repeatKey),
+            'injury_service_provider' => self::getAttributeJsonKey('calfmonitor_injuryserviceprovider', $groupKey, $repeatKey),
+            'injury_service_provider_other' => self::getAttributeJsonKey('calfmonitor_injuryserviceproviderother', $groupKey, $repeatKey),
+            'injury_drug_cost' => self::getAttributeJsonKey('calfmonitor_injurydrugcost', $groupKey, $repeatKey),
+            'injury_service_cost' => self::getAttributeJsonKey('calfmonitor_injuryservicecost', $groupKey, $repeatKey),
+            'injury_cow_status' => self::getAttributeJsonKey('calfmonitor_injurycowstatus', $groupKey, $repeatKey),
+            'injury_cow_status_other' => self::getAttributeJsonKey('calfmonitor_injurycowstatusother', $groupKey, $repeatKey),
+        ];
+        $this->registerCalfMonitoringEvents($rawData, AnimalEvent::EVENT_TYPE_INJURY, $repeatKey, $animalCodeAttributeKey, $attributes);
+    }
+
+    protected function registerCalfMonitoringEvents($rawData, $eventType, $repeatKey, $animalCodeAttributeKey, $attributes)
+    {
+        if (null === $rawData) {
+            return;
+        }
+        $model = new AnimalEvent([
+            'event_type' => $eventType,
+            'data_collection_date' => $this->getDate(),
+            'field_agent_id' => $this->_model->user_id,
+            'odk_form_uuid' => $this->_model->form_uuid,
+        ]);
+
+        foreach ($rawData as $k => $dataPoints) {
+            $dataPoint = $dataPoints[$repeatKey] ?? null;
+            if (null === $dataPoint) {
+                continue;
+            }
+            foreach ($dataPoint as $i => $data) {
+                $animalCode = $this->getFormDataValueByKey($data, $animalCodeAttributeKey);
+                $animalModel = $this->getAnimalModelByOdkCode($animalCode);
+                if (null === $animalModel) {
+                    continue;
+                }
+                $newModel = clone $model;
+                $newModel->animal_id = $animalModel->id;
+                foreach ($attributes as $attr => $odkKey) {
+                    $newModel->{$attr} = $this->getFormDataValueByKey($data, $odkKey);
+                }
+                if (empty($newModel->event_date)) {
+                    $newModel->event_date = $newModel->data_collection_date;
+                }
+                $newModel->latitude = $animalModel->latitude;
+                $newModel->longitude = $animalModel->longitude;
+                $this->saveAnimalEventModel($newModel, $k . $i, true);
+            }
+        }
+    }
+
+    protected function getCalfMonitoringParams()
+    {
+        $mainRepeatKey = 'calf_monitoring';
+        $rawData = $this->_model->form_data[$mainRepeatKey] ?? null;
+        $repeatKey = $mainRepeatKey . '/calf_monitoringanimal';
+        $animalCodeAttributeKey = self::getAttributeJsonKey('calfmonitor_animalcode', $this->_model->isVersion1Point5() ? '' : 'calf_monitordetails', $repeatKey);
+        return [$rawData, $repeatKey, $animalCodeAttributeKey];
+    }
+
+    protected function registerAnimalStillBirth()
+    {
+        $mainRepeatKey = 'cow_stillbirth';
+        $rawData = $this->_model->form_data[$mainRepeatKey] ?? null;
+        $repeatKey = $mainRepeatKey . '/cow_stillbirthanimal';
+        $animalCodeAttributeKey = self::getAttributeJsonKey('cowstillbirth_animalcode', '', $repeatKey);
+        $groupKey = 'cow_stillbirthanimaldetails';
+        $sireGroupKey = 'cow_stillbirthsire';
+        $attributes = [
+            'still_birth_calving_type' => self::getAttributeJsonKey('cowstillbirth_calvingtype', $groupKey, $repeatKey),
+            'birthdate' => self::getAttributeJsonKey('cowstillbirth_date', $groupKey, $repeatKey),
+            'whydead' => self::getAttributeJsonKey('cowstillbirth_deathreason', $groupKey, $repeatKey),
+            'whydeadoth' => self::getAttributeJsonKey('cowstillbirth_deathreasonother', $groupKey, $repeatKey),
+            'calfsex' => self::getAttributeJsonKey('cowstillbirth_sex', $groupKey, $repeatKey),
+            'bull_id' => self::getAttributeJsonKey('cow_stillbirthsiretag', $sireGroupKey, $repeatKey),
+        ];
+        $this->registerCalfMonitoringEvents($rawData, AnimalEvent::EVENT_TYPE_CALVING, $repeatKey, $animalCodeAttributeKey, $attributes);
+    }
+
+    protected function registerAnimalExit()
+    {
+        $mainRepeatKey = 'cattle_exit';
+        $rawData = $this->_model->form_data[$mainRepeatKey] ?? null;
+        if (null === $rawData) {
+            return;
+        }
+        $repeatKey = $mainRepeatKey . '/cattle_exitanimal';
+        $animalCodeAttributeKey = self::getAttributeJsonKey('animalexit_code', '', $repeatKey);
+        $exitDetailsGroupKey = 'animalexit_details';
+        $exitMovementGroupKey = 'animalexit_movement';
+        $exitNewFarmGroupKey = 'animalexit_newonwer_farmer';
+        $eventDateAttributeKey = self::getAttributeJsonKey('animalexit_date', $exitDetailsGroupKey, $repeatKey);
+        $newOwnerTypeAttributeKey = self::getAttributeJsonKey('animalexit_newownertype', '', $repeatKey);
+
+        $model = new AnimalEvent([
+            'event_type' => AnimalEvent::EVENT_TYPE_EXITS,
+            'data_collection_date' => $this->getDate(),
+            'field_agent_id' => $this->_model->user_id,
+            'odk_form_uuid' => $this->_model->form_uuid,
+        ]);
+
+        foreach ($rawData as $k => $dataPoints) {
+            $dataPoint = $dataPoints[$repeatKey] ?? null;
+            if (null === $dataPoint) {
+                continue;
+            }
+            foreach ($dataPoint as $i => $data) {
+                $animalCode = $this->getFormDataValueByKey($data, $animalCodeAttributeKey);
+                $animalModel = $this->getAnimalModelByOdkCode($animalCode);
+                if (null === $animalModel) {
+                    continue;
+                }
+                $eventDate = $this->getFormDataValueByKey($data, $eventDateAttributeKey);
+                $newModel = clone $model;
+                $newModel->animal_id = $animalModel->id;
+                $newModel->setDynamicAttributesValuesFromOdkForm($data, $exitDetailsGroupKey, $repeatKey);
+                $newModel->setDynamicAttributesValuesFromOdkForm($data, $exitMovementGroupKey, $repeatKey);
+                $newModel->setDynamicAttributesValuesFromOdkForm($data, $exitNewFarmGroupKey, $repeatKey);
+                $newModel->exit_new_owner_type = $this->getFormDataValueByKey($data, $newOwnerTypeAttributeKey);
+                $newModel->event_date = $eventDate;
+                if (empty($newModel->event_date)) {
+                    $newModel->event_date = $newModel->data_collection_date;
+                }
+                $newModel->latitude = $animalModel->latitude;
+                $newModel->longitude = $animalModel->longitude;
+                $this->saveAnimalEventModel($newModel, $k . $i, true);
+            }
+        }
+    }
+
+    protected function registerAnimalECFVaccination()
+    {
+        $mainRepeatKey = 'ecf_vaccination';
+        $rawData = $this->_model->form_data[$mainRepeatKey] ?? null;
+        if (null === $rawData) {
+            return;
+        }
+        $model = new AnimalEvent([
+            'event_type' => AnimalEvent::EVENT_TYPE_VACCINATION,
+            'data_collection_date' => $this->getDate(),
+            'field_agent_id' => $this->_model->user_id,
+            'odk_form_uuid' => $this->_model->form_uuid,
+        ]);
+
+        $animalRepeat = $mainRepeatKey . '/ecf_vaccinationanimal';
+        $animalCodeAttributeKey = self::getAttributeJsonKey('ecf_vaccinationanimalcode', '', $animalRepeat);
+        foreach ($rawData as $k => $dataPoints) {
+            $dataPoint = $dataPoints[$animalRepeat] ?? null;
+            if (null === $dataPoint) {
+                continue;
+            }
+            $baseModel = clone $model;
+            $baseModel->setDynamicAttributesValuesFromOdkForm($dataPoints, 'ecf_vaccinationvial', $mainRepeatKey);
+            $baseModel->setDynamicAttributesValuesFromOdkForm($dataPoints, 'ecf_vaccinationlist', $mainRepeatKey);
+            foreach ($dataPoint as $i => $data) {
+                $animalCode = $this->getFormDataValueByKey($data, $animalCodeAttributeKey);
+                $animalModel = $this->getAnimalModelByOdkCode($animalCode);
+                if (null === $animalModel) {
+                    continue;
+                }
+                $newModel = clone $baseModel;
+                $newModel->animal_id = $animalModel->id;
+                $newModel->setDynamicAttributesValuesFromOdkForm($data, 'ecf_vaccinationdetails', $animalRepeat);
+                $newModel->event_date = $newModel->ecf_date;
+                if (empty($newModel->event_date)) {
+                    $newModel->event_date = $newModel->data_collection_date;
+                }
+                $newModel->latitude = $animalModel->latitude;
+                $newModel->longitude = $animalModel->longitude;
+                $this->saveAnimalEventModel($newModel, $k . $i, true);
+            }
+        }
+    }
+
+    /**
+     * @param $rawData
+     * @param $eventType
+     * @param $repeatKey
+     * @param $groupKey
+     * @param $animalCodeAttributeKey
+     * @param null $eventDateAttributeKey
+     */
     protected function registerAnimalEvent($rawData, $eventType, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey = null)
     {
         if (null === $rawData) {
             return;
         }
-
 
         $model = new AnimalEvent([
             'event_type' => $eventType,
@@ -761,15 +1096,16 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 }
                 $eventDate = $eventDateAttributeKey !== null ? $this->getFormDataValueByKey($data, $eventDateAttributeKey) : $this->getDate();
                 $newModel = clone $model;
-                $newModel->animal_id = $animalModel->id;
-                $newModel->event_date = $eventDate;
-                if (empty($newModel->event_date)) {
-                    $newModel->event_date = $newModel->data_collection_date;
+                if ($newModel->setDynamicAttributesValuesFromOdkForm($data, $groupKey, $repeatKey)) {
+                    $newModel->animal_id = $animalModel->id;
+                    $newModel->event_date = $eventDate;
+                    if (empty($newModel->event_date)) {
+                        $newModel->event_date = $newModel->data_collection_date;
+                    }
+                    $newModel->latitude = $animalModel->latitude;
+                    $newModel->longitude = $animalModel->longitude;
+                    $this->saveAnimalEventModel($newModel, $k . $i, true);
                 }
-                $newModel->latitude = $animalModel->latitude;
-                $newModel->longitude = $animalModel->longitude;
-                $newModel->setDynamicAttributesValuesFromOdkForm($data, $groupKey, $repeatKey);
-                $this->saveAnimalEventModel($newModel, $i, true);
             }
         }
     }
