@@ -39,6 +39,7 @@ class FarmMetadataTypeController extends Controller
         $this->hasPrivilege(Acl::ACTION_VIEW);
         $searchModel = FarmMetadataType::searchModel([
             'defaultOrder' => ['id' => SORT_ASC],
+            'code' => FarmMetadataType::getScalar('max([[code]])+1') ?? null,
         ]);
         $searchModel->is_active = 1;
         return $this->render('index', [
