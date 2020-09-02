@@ -16,7 +16,11 @@ use backend\modules\core\models\CalvingEvent;
 use backend\modules\core\models\CountryUnits;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\FarmMetadata;
+use backend\modules\core\models\FarmMetadataFeedbackToHousehold;
 use backend\modules\core\models\FarmMetadataHouseholdMembers;
+use backend\modules\core\models\FarmMetadataImprovedFodderAdoption;
+use backend\modules\core\models\FarmMetadataMilkUtilization;
+use backend\modules\core\models\FarmMetadataMilkUtilizationBuyer;
 use backend\modules\core\models\FarmMetadataTechnologyMobilization;
 use backend\modules\core\models\OdkForm;
 use backend\modules\core\models\SyncEvent;
@@ -131,6 +135,9 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerNewFarmer();
                 //farm metadata
                 $this->registerFarmerTechnologyMobilization();
+                $this->registerFarmerMilkUtilization();
+                $this->registerFarmerImprovedFodderAdoption();
+                $this->registerFarmerFeedbackToHousehold();
                 //animal registration
                 $this->registerNewCattle();
                 //animal events
@@ -608,6 +615,125 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'farmer_techmobilizationdetails', $repeatKey);
             $i = 'technology_mobilization_' . $k;
             $this->saveFarmMetadataModel($newModel, $i, true);
+        }
+
+    }
+
+    protected function registerFarmerMilkUtilization()
+    {
+        $repeatKey = 'milk_utilization';
+        $data = $this->_model->form_data[$repeatKey] ?? null;
+        if (empty($data)) {
+            return;
+        }
+        $model = new FarmMetadataMilkUtilization([
+            'farm_id' => $this->getFarmId(),
+            'type' => FarmMetadataTechnologyMobilization::TYPE_MILK_UTILIZATION,
+            'country_id' => $this->_model->country_id,
+            'odk_form_uuid' => $this->_model->form_uuid,
+        ]);
+        $buyersMorningRepeatKey = $repeatKey . '/milk_utilizationbuyermorning';
+        $buyersEveningRepeatKey = $repeatKey . '/milk_utilizationbuyerevening';
+        $morningBuyerTimeAttributeKey = self::getAttributeJsonKey('milk_buyermngtime', '', $buyersMorningRepeatKey);
+        $buyersMorningGroupKey = 'milk_buyermng';
+        $buyersEveningGroupKey = 'milk_buyerevng';
+        $eveningBuyerAttributes = [
+            'milk_utilize_buyer_time' => self::getAttributeJsonKey('milk_buyerevngtime', '', $buyersEveningRepeatKey),
+            'milk_utilize_buyer_type' => self::getAttributeJsonKey('milk_buyerevngtype', $buyersEveningGroupKey, $buyersEveningRepeatKey),
+            'milk_utilize_buyer_type_other' => self::getAttributeJsonKey('milk_buyerevngtypeoth', $buyersEveningGroupKey, $buyersEveningRepeatKey),
+            'milk_utilize_buyer_sold_quantity' => self::getAttributeJsonKey('milk_buyerevngquantity', $buyersEveningGroupKey, $buyersEveningRepeatKey),
+            'milk_utilize_buyer_price' => self::getAttributeJsonKey('milk_buyerevngprice', $buyersEveningGroupKey, $buyersEveningRepeatKey),
+            'milk_utilize_buyer_payment_method' => self::getAttributeJsonKey('milk_buyerevngpayment', $buyersEveningGroupKey, $buyersEveningRepeatKey),
+            'milk_utilize_buyer_payment_method_other' => self::getAttributeJsonKey('milk_buyerevngpaymentoth', $buyersEveningGroupKey, $buyersEveningRepeatKey),
+        ];
+        foreach ($data as $k => $datum) {
+            $newModel = clone $model;
+            $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'milk_utilizationyesterday', $repeatKey);
+            $i = 'milk_utilization_' . $k;
+            $this->saveFarmMetadataModel($newModel, $i, true);
+
+            $buyerModel = new FarmMetadataMilkUtilizationBuyer([
+                'farm_id' => $this->getFarmId(),
+                'type' => FarmMetadataTechnologyMobilization::TYPE_MILK_UTILIZATION_BUYER,
+                'country_id' => $this->_model->country_id,
+                'odk_form_uuid' => $this->_model->form_uuid,
+            ]);
+            //save morning milk buyers
+            $morningBuyers = $datum[$buyersMorningRepeatKey] ?? null;
+            if (null === $morningBuyers) {
+                $morningBuyers = [];
+            }
+            foreach ($morningBuyers as $n => $morningBuyer) {
+                $newBuyerModel = clone $buyerModel;
+                $newBuyerModel->milk_utilize_buyer_time = $this->getFormDataValueByKey($morningBuyer, $morningBuyerTimeAttributeKey);
+                $newBuyerModel->setDynamicAttributesValuesFromOdkForm($morningBuyer, $buyersMorningGroupKey, $buyersMorningRepeatKey);
+                $this->saveFarmMetadataModel($newBuyerModel, $i . 'morning_' . $n, true);
+            }
+
+            //save evening milk buyers
+            $eveningBuyers = $datum[$buyersEveningRepeatKey] ?? null;
+            if (null === $eveningBuyers) {
+                $eveningBuyers = [];
+            }
+            foreach ($eveningBuyers as $n => $eveningBuyer) {
+                $newBuyerModel = clone $buyerModel;
+                foreach ($eveningBuyerAttributes as $attr => $odkKey) {
+                    $newBuyerModel->{$attr} = $this->getFormDataValueByKey($eveningBuyer, $odkKey);
+                }
+                $this->saveFarmMetadataModel($newBuyerModel, $i . 'evening_' . $n, true);
+            }
+        }
+
+    }
+
+    protected function registerFarmerImprovedFodderAdoption()
+    {
+        $repeatKey = 'improved_fodder';
+        $data = $this->_model->form_data[$repeatKey] ?? null;
+        if (empty($data)) {
+            return;
+        }
+        $model = new FarmMetadataImprovedFodderAdoption([
+            'farm_id' => $this->getFarmId(),
+            'type' => FarmMetadataTechnologyMobilization::TYPE_IMPROVED_FODDER_ADOPTION,
+            'country_id' => $this->_model->country_id,
+            'odk_form_uuid' => $this->_model->form_uuid,
+        ]);
+        foreach ($data as $k => $datum) {
+            $newModel = clone $model;
+            $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'improved_fodderdetails', $repeatKey);
+            $i = 'improved_fodder_adoption_' . $k;
+            $this->saveFarmMetadataModel($newModel, $i, true);
+        }
+
+    }
+
+    protected function registerFarmerFeedbackToHousehold()
+    {
+        $repeatKey = 'farmer_feedback';
+        $data = $this->_model->form_data[$repeatKey] ?? null;
+        if (empty($data)) {
+            return;
+        }
+        $model = new FarmMetadataFeedbackToHousehold([
+            'farm_id' => $this->getFarmId(),
+            'type' => FarmMetadataTechnologyMobilization::TYPE_FEEDBACK_TO_HOUSEHOLD,
+            'country_id' => $this->_model->country_id,
+            'odk_form_uuid' => $this->_model->form_uuid,
+        ]);
+        $memberRepeatKey = $repeatKey . '/farmer_feedbackmembers';
+        $memberGroupKey = 'farmer_membersdetails';
+        foreach ($data as $k => $datum) {
+            $members = $datum[$memberRepeatKey] ?? null;
+            if (null == $members) {
+                continue;
+            }
+            foreach ($members as $i => $member) {
+                $newModel = clone $model;
+                $newModel->setDynamicAttributesValuesFromOdkForm($datum, $memberGroupKey, $memberRepeatKey);
+                $i = 'feedback_to_household_' . $k;
+                $this->saveFarmMetadataModel($newModel, $i, true);
+            }
         }
 
     }
