@@ -51,7 +51,7 @@ class FarmMetadataTypeController extends Controller
         $this->hasPrivilege(Acl::ACTION_CREATE);
         $model = new FarmMetadataType([
             'is_active' => 1,
-            'code' => FarmMetadataType::getScalar('max([[code]])+1') ?? null,
+            'code' => FarmMetadataType::getScalar('max([[code]])+1') ?? 1,
         ]);
         return $model->simpleAjaxSave();
     }
