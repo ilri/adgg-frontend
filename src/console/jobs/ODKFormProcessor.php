@@ -601,7 +601,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         if (empty($data)) {
             return;
         }
-        $model = new FarmMetadataTechnologyMobilization([
+        $model = new FarmMetadata([
             'farm_id' => $this->getFarmId(),
             'type' => FarmMetadataTechnologyMobilization::TYPE_TECHNOLOGY_MOBILIZATION,
             'country_id' => $this->_model->country_id,
@@ -610,10 +610,9 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         foreach ($data as $k => $datum) {
             $newModel = clone $model;
             $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'farmer_techmobilizationdetails', $repeatKey);
-            $i = 'technology_mobilization_' . $k;
+            $i = $newModel->type . $k;
             $this->saveFarmMetadataModel($newModel, $i, true);
         }
-
     }
 
     protected function registerFarmerMilkUtilization()
@@ -623,7 +622,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         if (empty($data)) {
             return;
         }
-        $model = new FarmMetadataMilkUtilization([
+        $model = new FarmMetadata([
             'farm_id' => $this->getFarmId(),
             'type' => FarmMetadataTechnologyMobilization::TYPE_MILK_UTILIZATION,
             'country_id' => $this->_model->country_id,
@@ -646,7 +645,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         foreach ($data as $k => $datum) {
             $newModel = clone $model;
             $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'milk_utilizationyesterday', $repeatKey);
-            $i = 'milk_utilization_' . $k;
+            $i = $newModel->type. $k;
             $this->saveFarmMetadataModel($newModel, $i, true);
 
             $buyerModel = new FarmMetadataMilkUtilizationBuyer([
