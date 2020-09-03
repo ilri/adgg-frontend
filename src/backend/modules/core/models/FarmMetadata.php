@@ -42,6 +42,7 @@ class FarmMetadata extends ActiveRecord implements ActiveSearchInterface, TableA
     const TYPE_IMPROVED_FODDER_ADOPTION = 12;
     const TYPE_FEEDBACK_TO_HOUSEHOLD = 13;
     const TYPE_LAND_OWNERSHIP = 14;
+    const TYPE_WATER_SOURCE=15;
 
 
     /**
