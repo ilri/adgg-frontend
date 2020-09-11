@@ -140,6 +140,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerCattleHousingAndStructures();
                 $this->registerCattleBreedingTechnologies();
                 $this->registerCattleHealthServices();
+                $this->registerCattleFeedingSystems();
                 //animal registration
                 $this->registerNewCattle();
                 //animal events
@@ -936,6 +937,31 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'health_vaccdetails', $repeatKey);
             $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'health_prevdetails', $repeatKey);
             $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'health_othdetails', $repeatKey);
+            $i = $newModel->type . $k;
+            $this->saveFarmMetadataModel($newModel, $i, true);
+        }
+    }
+
+    protected function registerCattleFeedingSystems()
+    {
+        $repeatKey = 'feeding_systems';
+        $data = $this->_model->form_data[$repeatKey] ?? null;
+        if (empty($data)) {
+            return;
+        }
+        $model = new FarmMetadata([
+            'farm_id' => $this->getFarmId(),
+            'type' => FarmMetadata::TYPE_FEEDING_SYSTEMS,
+            'country_id' => $this->_model->country_id,
+            'odk_form_uuid' => $this->_model->form_uuid,
+        ]);
+        foreach ($data as $k => $datum) {
+            $newModel = clone $model;
+            $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'feeding_cattle', $repeatKey);
+            $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'fodder_grown', $repeatKey);
+            $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'fodder_purchases', $repeatKey);
+            $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'residue_feeds', $repeatKey);
+            $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'concentrate_feeds', $repeatKey);
             $i = $newModel->type . $k;
             $this->saveFarmMetadataModel($newModel, $i, true);
         }
