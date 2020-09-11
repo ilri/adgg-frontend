@@ -16,7 +16,6 @@ use backend\modules\core\models\CountryUnits;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\FarmMetadata;
 use backend\modules\core\models\FarmMetadataHouseholdMembers;
-use backend\modules\core\models\FarmMetadataMilkUtilization;
 use backend\modules\core\models\FarmMetadataMilkUtilizationBuyer;
 use backend\modules\core\models\FarmMetadataTechnologyMobilization;
 use backend\modules\core\models\OdkForm;
@@ -135,6 +134,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerFarmerImprovedFodderAdoption();
                 $this->registerFarmerFeedbackToHousehold();
                 $this->registerLandOwnership();
+                $this->registerWaterSources();
                 //animal registration
                 $this->registerNewCattle();
                 //animal events
@@ -645,7 +645,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         foreach ($data as $k => $datum) {
             $newModel = clone $model;
             $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'milk_utilizationyesterday', $repeatKey);
-            $i = $newModel->type. $k;
+            $i = $newModel->type . $k;
             $this->saveFarmMetadataModel($newModel, $i, true);
 
             $buyerModel = new FarmMetadataMilkUtilizationBuyer([
@@ -712,6 +712,29 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     protected function registerLandOwnership()
     {
         $this->registerFarmMetadataHasMultiple(FarmMetadata::TYPE_LAND_OWNERSHIP, 'land_ownership', 'land_plots', 'land_plotsdetails');
+    }
+
+    protected function registerWaterSources()
+    {
+        $repeatKey = 'water_sources';
+        $data = $this->_model->form_data[$repeatKey] ?? null;
+        if (empty($data)) {
+            return;
+        }
+        $model = new FarmMetadata([
+            'farm_id' => $this->getFarmId(),
+            'type' => FarmMetadata::TYPE_WATER_SOURCE,
+            'country_id' => $this->_model->country_id,
+            'odk_form_uuid' => $this->_model->form_uuid,
+        ]);
+        foreach ($data as $k => $datum) {
+            $newModel = clone $model;
+            $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'water_home', $repeatKey);
+            $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'water_livestock', $repeatKey);
+            $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'water_constraints', $repeatKey);
+            $i = $newModel->type . $k;
+            $this->saveFarmMetadataModel($newModel, $i, true);
+        }
     }
 
     /**
@@ -1281,7 +1304,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      */
     protected function getOrRegisterAnimalDam($animalData, $farmModel, $index)
     {
-        //todo: Pending tests
         $damCodeKey = self::getAttributeJsonKey('animal_damregistered', 'animal_damknownlist', 'animal_general');
         $animalCode = $this->getFormDataValueByKey($animalData, $damCodeKey);
         $damModel = null;
@@ -1341,7 +1363,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      */
     protected function getOrRegisterAnimalSire($animalData, $farmModel, $index)
     {
-        //todo: Pending tests
         $sireType = null;
         $sireModel = null;
         $sireCodeKey = self::getAttributeJsonKey('animal_sireairegistered', 'animal_sireknownlist', 'animal_general');
