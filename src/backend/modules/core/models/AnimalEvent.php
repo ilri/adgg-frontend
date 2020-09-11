@@ -58,7 +58,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     const EVENT_TYPE_WEIGHTS = 6;
     const EVENT_TYPE_HEALTH = 7;
     const EVENT_TYPE_EXITS = 9;
-    const EVENT_TYPE_SAMPLING = 10;//no data available yet
+    const EVENT_TYPE_HAIR_SAMPLING = 10;//no data available yet
     const EVENT_TYPE_CERTIFICATION = 11;//no data available yet
     const EVENT_TYPE_VACCINATION = 12;
     const EVENT_TYPE_PARASITE_INFECTION = 13;
@@ -338,8 +338,8 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
                 return 'Health';
             case self::EVENT_TYPE_EXITS:
                 return 'Exits';
-            case self::EVENT_TYPE_SAMPLING:
-                return 'Sampling';
+            case self::EVENT_TYPE_HAIR_SAMPLING:
+                return 'Hair Sampling';
             case self::EVENT_TYPE_CERTIFICATION:
                 return 'Certification';
             case self::EVENT_TYPE_VACCINATION:
@@ -376,7 +376,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             self::EVENT_TYPE_HOOF_HEALTH => static::decodeEventType(self::EVENT_TYPE_HOOF_HEALTH),
             self::EVENT_TYPE_HOOF_TREATMENT => static::decodeEventType(self::EVENT_TYPE_HOOF_TREATMENT),
             self::EVENT_TYPE_EXITS => static::decodeEventType(self::EVENT_TYPE_EXITS),
-            //self::EVENT_TYPE_SAMPLING => static::decodeEventType(self::EVENT_TYPE_SAMPLING),
+            self::EVENT_TYPE_HAIR_SAMPLING => static::decodeEventType(self::EVENT_TYPE_HAIR_SAMPLING),
             //self::EVENT_TYPE_CERTIFICATION => static::decodeEventType(self::EVENT_TYPE_CERTIFICATION),
         ], $prompt);
     }
