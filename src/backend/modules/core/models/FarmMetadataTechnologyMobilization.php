@@ -9,7 +9,7 @@
 namespace backend\modules\core\models;
 
 
-class FarmMetadataTechnologyMobilization extends FarmMetadata
+class FarmMetadataTechnologyMobilization extends FarmMetadata implements FarmMetadataInterface
 {
 
     public static function getDefineMetadataType(): int

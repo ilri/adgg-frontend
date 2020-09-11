@@ -9,7 +9,7 @@
 namespace backend\modules\core\models;
 
 
-class FarmMetadataHouseholdMembers extends FarmMetadata
+class FarmMetadataHouseholdMembers extends FarmMetadata implements FarmMetadataInterface
 {
 
     public static function getDefineMetadataType(): int

@@ -9,7 +9,7 @@
 namespace backend\modules\core\models;
 
 
-class FarmMetadataMilkUtilization extends FarmMetadata
+class FarmMetadataMilkUtilization extends FarmMetadata implements FarmMetadataInterface
 {
     public static function getDefineMetadataType(): int
     {
