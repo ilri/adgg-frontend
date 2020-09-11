@@ -14,6 +14,6 @@ class FarmMetadataBreeding extends FarmMetadata implements FarmMetadataInterface
 
     public static function getDefineMetadataType(): int
     {
-        return self::TYPE_BREEDING_TECHNOLOGIES_METADATA;
+        return self::TYPE_BREEDING_TECHNOLOGIES;
     }
 }

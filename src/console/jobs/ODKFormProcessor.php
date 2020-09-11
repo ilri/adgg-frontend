@@ -138,6 +138,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerHouseholdLivestockDetails();
                 $this->registerGroupMembership();
                 $this->registerCattleHousingAndStructures();
+                $this->registerCattleBreedingTechnologies();
                 //animal registration
                 $this->registerNewCattle();
                 //animal events
@@ -753,18 +754,10 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             'country_id' => $this->_model->country_id,
             'odk_form_uuid' => $this->_model->form_uuid,
         ]);
-        $otherSpeciesModel = new FarmMetadata([
-            'farm_id' => $this->getFarmId(),
-            'type' => FarmMetadata::TYPE_OTHER_SPECIES_DETAILS,
-            'country_id' => $this->_model->country_id,
-            'odk_form_uuid' => $this->_model->form_uuid,
-        ]);
-        $cattleDetailsModel = new FarmMetadata([
-            'farm_id' => $this->getFarmId(),
-            'type' => FarmMetadata::TYPE_CATTLE_DETAILS,
-            'country_id' => $this->_model->country_id,
-            'odk_form_uuid' => $this->_model->form_uuid,
-        ]);
+        $otherSpeciesModel = clone $livestockDetailsModel;
+        $otherSpeciesModel->type = FarmMetadata::TYPE_OTHER_SPECIES_DETAILS;
+        $cattleDetailsModel = clone $livestockDetailsModel;
+        $cattleDetailsModel->type = FarmMetadata::TYPE_CATTLE_DETAILS;
         $otherSpeciesRepeatKey = $repeatKey . '/livestock_other';
         $cattleDetailsRepeatKey = $repeatKey . '/livestock_cattle';
         $otherSpeciesCodeAttributeKey = self::getAttributeJsonKey('livestock_code', '', $otherSpeciesRepeatKey);
@@ -813,19 +806,15 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         if (empty($data)) {
             return;
         }
+        $structureDetailsRepeatKey = $repeatKey . '/cattle_housingstructures';
         $housingModel = new FarmMetadata([
             'farm_id' => $this->getFarmId(),
             'type' => FarmMetadata::TYPE_CATTLE_HOUSING_AND_STRUCTURES,
             'country_id' => $this->_model->country_id,
             'odk_form_uuid' => $this->_model->form_uuid,
         ]);
-        $structureDetailsModel = new FarmMetadata([
-            'farm_id' => $this->getFarmId(),
-            'type' => FarmMetadata::TYPE_FARM_STRUCTURE_DETAILS,
-            'country_id' => $this->_model->country_id,
-            'odk_form_uuid' => $this->_model->form_uuid,
-        ]);
-        $structureDetailsRepeatKey = $repeatKey . '/cattle_housingstructures';
+        $structureDetailsModel = clone $housingModel;
+        $structureDetailsModel->type = FarmMetadata::TYPE_FARM_STRUCTURE_DETAILS;
         foreach ($data as $k => $datum) {
             //Cattle Housing and Structures
             $newModel = clone $housingModel;
@@ -840,6 +829,85 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                     $newModel = clone $structureDetailsModel;
                     $newModel->setDynamicAttributesValuesFromOdkForm($farmStructureData, '', $structureDetailsRepeatKey);
                     $newModel->setDynamicAttributesValuesFromOdkForm($farmStructureData, 'house_cattlestructures', $structureDetailsRepeatKey);
+                    $i = $newModel->type . $k . $n;
+                    $this->saveFarmMetadataModel($newModel, $i, true);
+                }
+            }
+        }
+    }
+
+    protected function registerCattleBreedingTechnologies()
+    {
+        $repeatKey = 'breeding_tech';
+        $data = $this->_model->form_data[$repeatKey] ?? null;
+        if (empty($data)) {
+            return;
+        }
+        $breedingTechModel = new FarmMetadata([
+            'farm_id' => $this->getFarmId(),
+            'type' => FarmMetadata::TYPE_BREEDING_TECHNOLOGIES,
+            'country_id' => $this->_model->country_id,
+            'odk_form_uuid' => $this->_model->form_uuid,
+        ]);
+        $ownBullsRepeatKey = $repeatKey . '/breed_owndetails';
+        $otherBullsRepeatKey = $repeatKey . '/breed_otherdetails';
+        $schemeBullsRepeatKey = $repeatKey . '/breed_schemedetails';
+        $AIProviderRepeatKey = $repeatKey . '/breed_aidetails';
+        $breedingTechOwnBullsModel = clone $breedingTechModel;
+        $breedingTechOwnBullsModel->type = FarmMetadata::TYPE_BREEDING_BULLS;
+        $breedingTechOtherBullsModel = clone $breedingTechModel;
+        $breedingTechOtherBullsModel->type = FarmMetadata::TYPE_BREEDING_OTHER_BULLS;
+        $breedingTechSchemeBullsModel = clone $breedingTechModel;
+        $breedingTechSchemeBullsModel->type = FarmMetadata::TYPE_BREEDING_SCHEME_BULLS;
+        $AIProviderModel = clone $breedingTechModel;
+        $AIProviderModel->type = FarmMetadata::TYPE_BREEDING_AI_PROVIDERS;
+
+        foreach ($data as $k => $datum) {
+            $newModel = clone $breedingTechModel;
+            $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'breed_methods', $repeatKey);
+            $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'breed_own', $repeatKey);
+            $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'breed_other', $repeatKey);
+            $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'breed_scheme', $repeatKey);
+            $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'breed_ai', $repeatKey);
+            $i = $newModel->type . $k;
+            $this->saveFarmMetadataModel($newModel, $i, true);
+            //Details of Own Bull used
+            $ownBullsData = $datum[$ownBullsRepeatKey] ?? null;
+            if (!empty($ownBullsData)) {
+                foreach ($ownBullsData as $n => $ownBullData) {
+                    $newModel = clone $breedingTechOwnBullsModel;
+                    $newModel->setDynamicAttributesValuesFromOdkForm($ownBullData, 'breed_owndetail', $ownBullsRepeatKey);
+                    $i = $newModel->type . $k . $n;
+                    $this->saveFarmMetadataModel($newModel, $i, true);
+                }
+            }
+            //Details of Other Farmer bull used
+            $otherBullsData = $datum[$otherBullsRepeatKey] ?? null;
+            if (!empty($otherBullsData)) {
+                foreach ($otherBullsData as $n => $otherBullData) {
+                    $newModel = clone $breedingTechOtherBullsModel;
+                    $newModel->setDynamicAttributesValuesFromOdkForm($otherBullData, 'breed_otherdetail', $otherBullsRepeatKey);
+                    $i = $newModel->type . $k . $n;
+                    $this->saveFarmMetadataModel($newModel, $i, true);
+                }
+            }
+            //Details of Scheme Bull used
+            $schemeBullsData = $datum[$schemeBullsRepeatKey] ?? null;
+            if (!empty($schemeBullsData)) {
+                foreach ($schemeBullsData as $n => $schemeBullData) {
+                    $newModel = clone $breedingTechSchemeBullsModel;
+                    $newModel->setDynamicAttributesValuesFromOdkForm($schemeBullData, 'breed_schemedetail', $schemeBullsRepeatKey);
+                    $i = $newModel->type . $k . $n;
+                    $this->saveFarmMetadataModel($newModel, $i, true);
+                }
+            }
+            //Details of AI provider
+            $AIProvidersData = $datum[$AIProviderRepeatKey] ?? null;
+            if (!empty($AIProvidersData)) {
+                foreach ($AIProvidersData as $n => $AIProviderData) {
+                    $newModel = clone $AIProviderModel;
+                    $newModel->setDynamicAttributesValuesFromOdkForm($AIProviderData, 'breed_aidetail', $AIProviderRepeatKey);
+                    $newModel->setDynamicAttributesValuesFromOdkForm($AIProviderData, 'breed_aidetail/breed_aidetailtype', $AIProviderRepeatKey);
                     $i = $newModel->type . $k . $n;
                     $this->saveFarmMetadataModel($newModel, $i, true);
                 }
