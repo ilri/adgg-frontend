@@ -136,6 +136,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerLandOwnership();
                 $this->registerWaterSources();
                 $this->registerHouseholdLivestockDetails();
+                $this->registerGroupMembership();
                 //animal registration
                 $this->registerNewCattle();
                 //animal events
@@ -797,6 +798,11 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 }
             }
         }
+    }
+
+    protected function registerGroupMembership()
+    {
+        $this->registerFarmMetadataHasMultiple(FarmMetadata::TYPE_GROUP_MEMBERSHIP, 'livestock_group', 'livestock_groupmember', 'group_membership');
     }
 
     /**
