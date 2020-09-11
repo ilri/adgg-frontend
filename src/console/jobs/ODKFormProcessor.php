@@ -141,6 +141,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerCattleBreedingTechnologies();
                 $this->registerCattleHealthServices();
                 $this->registerCattleFeedingSystems();
+                $this->registerFarmExtensionServices();
                 //animal registration
                 $this->registerNewCattle();
                 //animal events
@@ -962,6 +963,27 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'fodder_purchases', $repeatKey);
             $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'residue_feeds', $repeatKey);
             $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'concentrate_feeds', $repeatKey);
+            $i = $newModel->type . $k;
+            $this->saveFarmMetadataModel($newModel, $i, true);
+        }
+    }
+
+    protected function registerFarmExtensionServices()
+    {
+        $repeatKey = 'farm_extension';
+        $data = $this->_model->form_data[$repeatKey] ?? null;
+        if (empty($data)) {
+            return;
+        }
+        $model = new FarmMetadata([
+            'farm_id' => $this->getFarmId(),
+            'type' => FarmMetadata::TYPE_FARM_EXTENSION_SERVICES,
+            'country_id' => $this->_model->country_id,
+            'odk_form_uuid' => $this->_model->form_uuid,
+        ]);
+        foreach ($data as $k => $datum) {
+            $newModel = clone $model;
+            $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'farm_extensionservices', $repeatKey);
             $i = $newModel->type . $k;
             $this->saveFarmMetadataModel($newModel, $i, true);
         }
