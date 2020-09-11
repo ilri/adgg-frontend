@@ -9,7 +9,7 @@
 namespace backend\modules\core\models;
 
 
-class FarmMetadataWaterSource extends FarmMetadata
+class FarmMetadataWaterSource extends FarmMetadata implements FarmMetadataInterface
 {
     public static function getDefineMetadataType(): int
     {

@@ -9,7 +9,7 @@
 namespace backend\modules\core\models;
 
 
-class FarmMetadataLandOwnership extends FarmMetadata
+class FarmMetadataLandOwnership extends FarmMetadata implements FarmMetadataInterface
 {
 
     public static function getDefineMetadataType(): int

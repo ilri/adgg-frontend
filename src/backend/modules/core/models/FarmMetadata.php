@@ -23,14 +23,14 @@ use common\models\ActiveSearchTrait;
  * @property Farm $farm
  * @property FarmMetadataType $metadataType
  */
-class FarmMetadata extends ActiveRecord implements ActiveSearchInterface, TableAttributeInterface, FarmMetadataInterface, UploadExcelInterface
+class FarmMetadata extends ActiveRecord implements ActiveSearchInterface, TableAttributeInterface, UploadExcelInterface
 {
     use ActiveSearchTrait, TableAttributeTrait, CountryDataTrait;
 
     //types
-    const TYPE_FEEDING_SYSTEMS_METADATA = 1;
-    const TYPE_HEALTH_SERVICES_METADATA = 2;
-    const TYPE_BREEDING_TECHNOLOGIES_METADATA = 3;
+    const TYPE_FEEDING_SYSTEMS = 1;
+    const TYPE_HEALTH_SERVICES = 2;
+    const TYPE_BREEDING_TECHNOLOGIES = 3;
     const TYPE_BREEDING_BULLS = 4;
     const TYPE_BREEDING_OTHER_BULLS = 5;
     const TYPE_BREEDING_SCHEME_BULLS = 6;
@@ -42,7 +42,13 @@ class FarmMetadata extends ActiveRecord implements ActiveSearchInterface, TableA
     const TYPE_IMPROVED_FODDER_ADOPTION = 12;
     const TYPE_FEEDBACK_TO_HOUSEHOLD = 13;
     const TYPE_LAND_OWNERSHIP = 14;
-    const TYPE_WATER_SOURCE=15;
+    const TYPE_WATER_SOURCE = 15;
+    const TYPE_LIVESTOCK_DETAILS = 16;
+    const TYPE_OTHER_SPECIES_DETAILS = 17;
+    const TYPE_CATTLE_DETAILS = 18;
+    const TYPE_GROUP_MEMBERSHIP = 19;
+    const TYPE_CATTLE_HOUSING_AND_STRUCTURES = 20;
+    const TYPE_FARM_STRUCTURE_DETAILS = 21;
 
 
     /**
@@ -244,10 +250,5 @@ class FarmMetadata extends ActiveRecord implements ActiveSearchInterface, TableA
         $attrs = array_diff($attrs, $unwanted);
         sort($attrs);
         return $attrs;
-    }
-
-    public static function getDefineMetadataType(): int
-    {
-        return 0;//to be overridden by sub-classes
     }
 }

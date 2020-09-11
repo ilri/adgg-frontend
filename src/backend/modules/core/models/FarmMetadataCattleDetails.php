@@ -2,17 +2,18 @@
 /**
  * Created by PhpStorm.
  * @author: Fred <mconyango@gmail.com>
- * Date: 2020-08-27
- * Time: 4:35 PM
+ * Date: 2020-09-11
+ * Time: 4:06 PM
  */
 
 namespace backend\modules\core\models;
 
 
-class FarmMetadataImprovedFodderAdoption extends FarmMetadata implements FarmMetadataInterface
+class FarmMetadataCattleDetails extends FarmMetadata implements FarmMetadataInterface
 {
+
     public static function getDefineMetadataType(): int
     {
-        return self::TYPE_IMPROVED_FODDER_ADOPTION;
+        return self::TYPE_CATTLE_DETAILS;
     }
 }
