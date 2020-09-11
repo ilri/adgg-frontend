@@ -808,58 +808,38 @@ class ODKFormProcessor extends BaseObject implements JobInterface
 
     protected function registerCattleHousingAndStructures()
     {
-        $repeatKey = 'livestock_details';
+        $repeatKey = 'cattle_housing';
         $data = $this->_model->form_data[$repeatKey] ?? null;
         if (empty($data)) {
             return;
         }
-        $livestockDetailsModel = new FarmMetadata([
+        $housingModel = new FarmMetadata([
             'farm_id' => $this->getFarmId(),
-            'type' => FarmMetadata::TYPE_LIVESTOCK_DETAILS,
+            'type' => FarmMetadata::TYPE_CATTLE_HOUSING_AND_STRUCTURES,
             'country_id' => $this->_model->country_id,
             'odk_form_uuid' => $this->_model->form_uuid,
         ]);
-        $otherSpeciesModel = new FarmMetadata([
+        $structureDetailsModel = new FarmMetadata([
             'farm_id' => $this->getFarmId(),
-            'type' => FarmMetadata::TYPE_OTHER_SPECIES_DETAILS,
+            'type' => FarmMetadata::TYPE_FARM_STRUCTURE_DETAILS,
             'country_id' => $this->_model->country_id,
             'odk_form_uuid' => $this->_model->form_uuid,
         ]);
-        $cattleDetailsModel = new FarmMetadata([
-            'farm_id' => $this->getFarmId(),
-            'type' => FarmMetadata::TYPE_CATTLE_DETAILS,
-            'country_id' => $this->_model->country_id,
-            'odk_form_uuid' => $this->_model->form_uuid,
-        ]);
-        $otherSpeciesRepeatKey = $repeatKey . '/livestock_other';
-        $cattleDetailsRepeatKey = $repeatKey . '/livestock_cattle';
-        $otherSpeciesCodeAttributeKey = self::getAttributeJsonKey('livestock_code', '', $otherSpeciesRepeatKey);
-        $cattleCategoryCodeAttributeKey = self::getAttributeJsonKey('cattle_code', '', $cattleDetailsRepeatKey);
+        $structureDetailsRepeatKey = $repeatKey . '/cattle_housingstructures';
         foreach ($data as $k => $datum) {
-            //livestock details
-            $newModel = clone $livestockDetailsModel;
-            $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'cattle_ownership', $repeatKey);
-            $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'cattle_dairyproblems', $repeatKey);
+            //Cattle Housing and Structures
+            $newModel = clone $housingModel;
+            $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'cattle_housed/cattle_house', $repeatKey);
+            $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'cattle_housed', $repeatKey);
             $i = $newModel->type . $k;
             $this->saveFarmMetadataModel($newModel, $i, true);
-            //other species owned
-            $otherSpeciesData = $datum[$otherSpeciesRepeatKey] ?? null;
-            if (!empty($otherSpeciesData)) {
-                foreach ($otherSpeciesData as $n => $otherSpeciesDatum) {
-                    $newModel = clone $otherSpeciesModel;
-                    $newModel->livestock_species = $this->getFormDataValueByKey($otherSpeciesDatum, $otherSpeciesCodeAttributeKey);
-                    $newModel->setDynamicAttributesValuesFromOdkForm($otherSpeciesDatum, 'livestock_othernumber', $otherSpeciesRepeatKey);
-                    $i = $newModel->type . $k . $n;
-                    $this->saveFarmMetadataModel($newModel, $i, true);
-                }
-            }
-            //cattle details
-            $cattleDetailsData = $datum[$cattleDetailsRepeatKey] ?? null;
-            if (!empty($cattleDetailsData)) {
-                foreach ($cattleDetailsData as $n => $cattleDetailsDatum) {
-                    $newModel = clone $cattleDetailsModel;
-                    $newModel->cattle_category = $this->getFormDataValueByKey($cattleDetailsDatum, $cattleCategoryCodeAttributeKey);
-                    $newModel->setDynamicAttributesValuesFromOdkForm($cattleDetailsDatum, 'cattle_number', $cattleDetailsRepeatKey);
+            //Farm structures details
+            $farmStructuresData = $datum[$structureDetailsRepeatKey] ?? null;
+            if (!empty($farmStructuresData)) {
+                foreach ($farmStructuresData as $n => $farmStructureData) {
+                    $newModel = clone $structureDetailsModel;
+                    $newModel->setDynamicAttributesValuesFromOdkForm($farmStructureData, '', $structureDetailsRepeatKey);
+                    $newModel->setDynamicAttributesValuesFromOdkForm($farmStructureData, 'house_cattlestructures', $structureDetailsRepeatKey);
                     $i = $newModel->type . $k . $n;
                     $this->saveFarmMetadataModel($newModel, $i, true);
                 }
