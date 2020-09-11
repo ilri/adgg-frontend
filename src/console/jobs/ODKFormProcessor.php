@@ -163,6 +163,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerAnimalStillBirth();
                 $this->registerAnimalExit();
                 $this->registerAnimalECFVaccination();
+                $this->registerCattleHairSampling();
             } else {
                 $message = Lang::t('This Version ({old_version}) of ODK Form is currently not supported. Version ({version}) and above are supported.', ['old_version' => $this->_model->form_version, 'version' => self::MIN_SUPPORTED_ODK_FORM_VERSION]);
                 $this->_model->error_message = $message;
@@ -1470,6 +1471,16 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->saveAnimalEventModel($newModel, $k . $i, true);
             }
         }
+    }
+
+    protected function registerCattleHairSampling()
+    {
+        $mainRepeatKey = 'animal_hairsampling';
+        $rawData = $this->_model->form_data[$mainRepeatKey] ?? null;
+        $repeatKey = $mainRepeatKey . '/animal_hairsamplingdetails';
+        $animalCodeAttributeKey = self::getAttributeJsonKey('hairsampling_animalcode', '', $repeatKey);
+        $groupKey = 'hairsampling_details';
+        $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_HAIR_SAMPLING, $repeatKey, $groupKey, $animalCodeAttributeKey);
     }
 
     /**
