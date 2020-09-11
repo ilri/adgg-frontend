@@ -23,7 +23,7 @@ use common\models\ActiveSearchTrait;
  * @property Farm $farm
  * @property FarmMetadataType $metadataType
  */
-abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterface, TableAttributeInterface, FarmMetadataInterface, UploadExcelInterface
+class FarmMetadata extends ActiveRecord implements ActiveSearchInterface, TableAttributeInterface, FarmMetadataInterface, UploadExcelInterface
 {
     use ActiveSearchTrait, TableAttributeTrait, CountryDataTrait;
 
@@ -41,6 +41,8 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
     const TYPE_MILK_UTILIZATION_BUYER = 11;
     const TYPE_IMPROVED_FODDER_ADOPTION = 12;
     const TYPE_FEEDBACK_TO_HOUSEHOLD = 13;
+    const TYPE_LAND_OWNERSHIP = 14;
+    const TYPE_WATER_SOURCE=15;
 
 
     /**
@@ -242,5 +244,10 @@ abstract class FarmMetadata extends ActiveRecord implements ActiveSearchInterfac
         $attrs = array_diff($attrs, $unwanted);
         sort($attrs);
         return $attrs;
+    }
+
+    public static function getDefineMetadataType(): int
+    {
+        return 0;//to be overridden by sub-classes
     }
 }

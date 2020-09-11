@@ -9,21 +9,17 @@
 namespace console\jobs;
 
 
-use backend\modules\core\models\AIEvent;
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\CalvingEvent;
 use backend\modules\core\models\CountryUnits;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\FarmMetadata;
-use backend\modules\core\models\FarmMetadataFeedbackToHousehold;
 use backend\modules\core\models\FarmMetadataHouseholdMembers;
-use backend\modules\core\models\FarmMetadataImprovedFodderAdoption;
 use backend\modules\core\models\FarmMetadataMilkUtilization;
 use backend\modules\core\models\FarmMetadataMilkUtilizationBuyer;
 use backend\modules\core\models\FarmMetadataTechnologyMobilization;
 use backend\modules\core\models\OdkForm;
-use backend\modules\core\models\SyncEvent;
 use backend\modules\core\models\TableAttributeInterface;
 use common\helpers\DateUtils;
 use common\helpers\Lang;
@@ -138,6 +134,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerFarmerMilkUtilization();
                 $this->registerFarmerImprovedFodderAdoption();
                 $this->registerFarmerFeedbackToHousehold();
+                $this->registerLandOwnership();
                 //animal registration
                 $this->registerNewCattle();
                 //animal events
@@ -490,7 +487,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      * @param string|int $index
      * @return Farm
      */
-    protected function setFarmerHouseholdMembersNumbersAttributes($farmerModel, $index)
+    protected function setFarmerHouseholdMembersNumbersAttributes(Farm $farmerModel, $index)
     {
         //@todo pending test
         // $farmer
@@ -604,7 +601,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         if (empty($data)) {
             return;
         }
-        $model = new FarmMetadataTechnologyMobilization([
+        $model = new FarmMetadata([
             'farm_id' => $this->getFarmId(),
             'type' => FarmMetadataTechnologyMobilization::TYPE_TECHNOLOGY_MOBILIZATION,
             'country_id' => $this->_model->country_id,
@@ -613,10 +610,9 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         foreach ($data as $k => $datum) {
             $newModel = clone $model;
             $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'farmer_techmobilizationdetails', $repeatKey);
-            $i = 'technology_mobilization_' . $k;
+            $i = $newModel->type . $k;
             $this->saveFarmMetadataModel($newModel, $i, true);
         }
-
     }
 
     protected function registerFarmerMilkUtilization()
@@ -626,7 +622,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         if (empty($data)) {
             return;
         }
-        $model = new FarmMetadataMilkUtilization([
+        $model = new FarmMetadata([
             'farm_id' => $this->getFarmId(),
             'type' => FarmMetadataTechnologyMobilization::TYPE_MILK_UTILIZATION,
             'country_id' => $this->_model->country_id,
@@ -649,7 +645,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         foreach ($data as $k => $datum) {
             $newModel = clone $model;
             $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'milk_utilizationyesterday', $repeatKey);
-            $i = 'milk_utilization_' . $k;
+            $i = $newModel->type. $k;
             $this->saveFarmMetadataModel($newModel, $i, true);
 
             $buyerModel = new FarmMetadataMilkUtilizationBuyer([
@@ -693,7 +689,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         if (empty($data)) {
             return;
         }
-        $model = new FarmMetadataImprovedFodderAdoption([
+        $model = new FarmMetadata([
             'farm_id' => $this->getFarmId(),
             'type' => FarmMetadataTechnologyMobilization::TYPE_IMPROVED_FODDER_ADOPTION,
             'country_id' => $this->_model->country_id,
@@ -702,7 +698,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         foreach ($data as $k => $datum) {
             $newModel = clone $model;
             $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'improved_fodderdetails', $repeatKey);
-            $i = 'improved_fodder_adoption_' . $k;
+            $i = $newModel->type . $k;
             $this->saveFarmMetadataModel($newModel, $i, true);
         }
 
@@ -710,32 +706,45 @@ class ODKFormProcessor extends BaseObject implements JobInterface
 
     protected function registerFarmerFeedbackToHousehold()
     {
-        $repeatKey = 'farmer_feedback';
-        $data = $this->_model->form_data[$repeatKey] ?? null;
+        $this->registerFarmMetadataHasMultiple(FarmMetadata::TYPE_FEEDBACK_TO_HOUSEHOLD, 'farmer_feedback', 'farmer_feedbackmembers', 'farmer_membersdetails');
+    }
+
+    protected function registerLandOwnership()
+    {
+        $this->registerFarmMetadataHasMultiple(FarmMetadata::TYPE_LAND_OWNERSHIP, 'land_ownership', 'land_plots', 'land_plotsdetails');
+    }
+
+    /**
+     * @param int $metadataType
+     * @param string $firstRepeatKey
+     * @param string $secondRepeatKey
+     * @param string|null $groupKey
+     */
+    protected function registerFarmMetadataHasMultiple($metadataType, $firstRepeatKey, $secondRepeatKey, $groupKey = null)
+    {
+        $data = $this->_model->form_data[$firstRepeatKey] ?? null;
         if (empty($data)) {
             return;
         }
-        $model = new FarmMetadataFeedbackToHousehold([
+        $model = new FarmMetadata([
             'farm_id' => $this->getFarmId(),
-            'type' => FarmMetadataTechnologyMobilization::TYPE_FEEDBACK_TO_HOUSEHOLD,
+            'type' => $metadataType,
             'country_id' => $this->_model->country_id,
             'odk_form_uuid' => $this->_model->form_uuid,
         ]);
-        $memberRepeatKey = $repeatKey . '/farmer_feedbackmembers';
-        $memberGroupKey = 'farmer_membersdetails';
+        $secondRepeatKey = $firstRepeatKey . '/' . $secondRepeatKey;
         foreach ($data as $k => $datum) {
-            $members = $datum[$memberRepeatKey] ?? null;
-            if (null == $members) {
+            $dataLines = $datum[$secondRepeatKey] ?? null;
+            if (null == $dataLines) {
                 continue;
             }
-            foreach ($members as $i => $member) {
+            foreach ($dataLines as $i => $dataLine) {
                 $newModel = clone $model;
-                $newModel->setDynamicAttributesValuesFromOdkForm($datum, $memberGroupKey, $memberRepeatKey);
-                $i = 'feedback_to_household_' . $k;
+                $newModel->setDynamicAttributesValuesFromOdkForm($dataLine, $groupKey, $secondRepeatKey);
+                $i = $newModel->type . $i . $k;
                 $this->saveFarmMetadataModel($newModel, $i, true);
             }
         }
-
     }
 
     protected function registerAnimalSynchronization()
