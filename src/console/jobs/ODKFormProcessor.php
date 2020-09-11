@@ -137,6 +137,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerWaterSources();
                 $this->registerHouseholdLivestockDetails();
                 $this->registerGroupMembership();
+                $this->registerCattleHousingAndStructures();
                 //animal registration
                 $this->registerNewCattle();
                 //animal events
@@ -803,6 +804,67 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     protected function registerGroupMembership()
     {
         $this->registerFarmMetadataHasMultiple(FarmMetadata::TYPE_GROUP_MEMBERSHIP, 'livestock_group', 'livestock_groupmember', 'group_membership');
+    }
+
+    protected function registerCattleHousingAndStructures()
+    {
+        $repeatKey = 'livestock_details';
+        $data = $this->_model->form_data[$repeatKey] ?? null;
+        if (empty($data)) {
+            return;
+        }
+        $livestockDetailsModel = new FarmMetadata([
+            'farm_id' => $this->getFarmId(),
+            'type' => FarmMetadata::TYPE_LIVESTOCK_DETAILS,
+            'country_id' => $this->_model->country_id,
+            'odk_form_uuid' => $this->_model->form_uuid,
+        ]);
+        $otherSpeciesModel = new FarmMetadata([
+            'farm_id' => $this->getFarmId(),
+            'type' => FarmMetadata::TYPE_OTHER_SPECIES_DETAILS,
+            'country_id' => $this->_model->country_id,
+            'odk_form_uuid' => $this->_model->form_uuid,
+        ]);
+        $cattleDetailsModel = new FarmMetadata([
+            'farm_id' => $this->getFarmId(),
+            'type' => FarmMetadata::TYPE_CATTLE_DETAILS,
+            'country_id' => $this->_model->country_id,
+            'odk_form_uuid' => $this->_model->form_uuid,
+        ]);
+        $otherSpeciesRepeatKey = $repeatKey . '/livestock_other';
+        $cattleDetailsRepeatKey = $repeatKey . '/livestock_cattle';
+        $otherSpeciesCodeAttributeKey = self::getAttributeJsonKey('livestock_code', '', $otherSpeciesRepeatKey);
+        $cattleCategoryCodeAttributeKey = self::getAttributeJsonKey('cattle_code', '', $cattleDetailsRepeatKey);
+        foreach ($data as $k => $datum) {
+            //livestock details
+            $newModel = clone $livestockDetailsModel;
+            $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'cattle_ownership', $repeatKey);
+            $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'cattle_dairyproblems', $repeatKey);
+            $i = $newModel->type . $k;
+            $this->saveFarmMetadataModel($newModel, $i, true);
+            //other species owned
+            $otherSpeciesData = $datum[$otherSpeciesRepeatKey] ?? null;
+            if (!empty($otherSpeciesData)) {
+                foreach ($otherSpeciesData as $n => $otherSpeciesDatum) {
+                    $newModel = clone $otherSpeciesModel;
+                    $newModel->livestock_species = $this->getFormDataValueByKey($otherSpeciesDatum, $otherSpeciesCodeAttributeKey);
+                    $newModel->setDynamicAttributesValuesFromOdkForm($otherSpeciesDatum, 'livestock_othernumber', $otherSpeciesRepeatKey);
+                    $i = $newModel->type . $k . $n;
+                    $this->saveFarmMetadataModel($newModel, $i, true);
+                }
+            }
+            //cattle details
+            $cattleDetailsData = $datum[$cattleDetailsRepeatKey] ?? null;
+            if (!empty($cattleDetailsData)) {
+                foreach ($cattleDetailsData as $n => $cattleDetailsDatum) {
+                    $newModel = clone $cattleDetailsModel;
+                    $newModel->cattle_category = $this->getFormDataValueByKey($cattleDetailsDatum, $cattleCategoryCodeAttributeKey);
+                    $newModel->setDynamicAttributesValuesFromOdkForm($cattleDetailsDatum, 'cattle_number', $cattleDetailsRepeatKey);
+                    $i = $newModel->type . $k . $n;
+                    $this->saveFarmMetadataModel($newModel, $i, true);
+                }
+            }
+        }
     }
 
     /**

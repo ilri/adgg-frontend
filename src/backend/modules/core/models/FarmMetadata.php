@@ -48,6 +48,7 @@ class FarmMetadata extends ActiveRecord implements ActiveSearchInterface, TableA
     const TYPE_CATTLE_DETAILS = 18;
     const TYPE_GROUP_MEMBERSHIP = 19;
     const TYPE_CATTLE_HOUSING_AND_STRUCTURES = 20;
+    const TYPE_FARM_STRUCTURE_DETAILS = 21;
 
 
     /**
