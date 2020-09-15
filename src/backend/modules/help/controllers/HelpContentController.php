@@ -100,6 +100,7 @@ class HelpContentController extends Controller
 
         return $this->render('read', [
             'models' => $models->all(),
+            'forAndroid' => $forAndroid,
             'filterOptions' => [
                 'module' => $module,
                 'name' => $name,

@@ -8,7 +8,10 @@ use yii\helpers\HtmlPurifier;
 
 /* @var $this yii\web\View */
 /* @var $models HelpContent[] */
-$this->title = 'Help Content';
+$this->title = 'User Manual';
+if ($forAndroid) {
+    $this->title = 'Android App Manual';
+}
 if (Session::isPrivilegedAdmin()) {
     $this->params['breadcrumbs'][] = ['label' => 'Help Contents', 'url' => ['index']];
 }
