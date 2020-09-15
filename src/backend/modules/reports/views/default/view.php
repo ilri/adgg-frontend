@@ -3,6 +3,7 @@
 /* @var $this yii\web\View */
 
 use backend\modules\core\Constants;
+use backend\modules\core\models\Country;
 use backend\modules\reports\models\Reports;
 use common\helpers\Lang;
 use common\helpers\Url;
@@ -17,6 +18,10 @@ use yii\bootstrap\Html;
 
 $this->title = 'Standard Extracts';
 $this->params['breadcrumbs'][] = $this->title;
+if($country_id) {
+    $this->params['breadcrumbs'][] = Country::getScalar('name', ['id' => $country_id]);
+}
+
 ?>
 <?php if (Yii::$app->user->canView(Constants::RES_REPORT_BUILDER)): ?>
 <div class="row">

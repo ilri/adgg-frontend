@@ -13,7 +13,9 @@ use yii\bootstrap\Html;
 
 $this->title = 'Standard Extracts';
 $this->params['breadcrumbs'][] = $this->title;
-$this->params['breadcrumbs'][] =  Country::getScalar('name', ['id' => $country_id]);
+if ($country_id) {
+    $this->params['breadcrumbs'][] = Country::getScalar('name', ['id' => $country_id]);
+}
 ?>
 <?php if (Yii::$app->user->canView(Constants::RES_REPORT_BUILDER)): ?>
 <div class="row">
