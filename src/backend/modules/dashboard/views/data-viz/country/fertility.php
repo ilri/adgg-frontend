@@ -50,14 +50,14 @@ $series = [
 
 ];
 $graphOptions = [
-    'title' => ['text' => 'Fertility'],
+    'title' => ['text' => 'Conception Rate'],
     'subtitle' => ['text' => ''],
     'xAxis' => [
         'categories' => $years,
     ],
     'yAxis' => [
         'title' => [
-            'text' => 'Fertilities',
+            'text' => 'Conception Rate (%)',
         ]
     ],
     'colors' => [
@@ -69,10 +69,10 @@ $graphOptions = [
             function () {
                 var type = this.userOptions.type;
                 if(type === 'line'){
-                    return this.name + ' (Fertilities)';
+                    return this.name + ' (Conception Rate (%))';
                 }
                 else {
-                    return this.name + ' (Fertilities)';
+                    return this.name + ' (Conception Rate (%))';
                 }
             }
         ")
