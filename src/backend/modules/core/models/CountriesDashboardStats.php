@@ -969,29 +969,6 @@ class CountriesDashboardStats extends Model
     }
 
     public static function getCountryAvgAIPerPD($country_id, $region_id = null){
-        $previous_pd_event_date = new Expression('(
-            select
-                `core_animal_event`.`animal_id` AS `animal_id`,
-                max(`core_animal_event`.`event_date`) AS `prevPdEventDate`
-            from
-                `core_animal_event`
-            where
-                ((`core_animal_event`.`event_type` = 4)
-                and `core_animal_event`.`id` in (
-                select
-                    `v_rpt_positive_pd`.`pdEventID`
-                from
-                    `v_rpt_positive_pd`) is false
-                and `core_animal_event`.`animal_id` in (
-                select
-                    `v_rpt_positive_pd`.`animal_id`
-                from
-                    `v_rpt_positive_pd`)
-                and (json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
-                \'$."131"\')) = 1))
-            group by
-                `core_animal_event`.`animal_id`
-        )');
         $positive_pd_all = new Expression('(
             select
                 `core_animal_event`.`id` AS `pdEventID`,
@@ -1047,6 +1024,30 @@ class CountriesDashboardStats extends Model
 			join ('.$positive_pd->expression.') `v_rpt_positive_pd` on
 			    (((`v_rpt_positive_pd`.`animal_id` = `core_animal_event`.`animal_id`)
 			    and (`core_animal_event`.`event_type` = :event_type))))
+        )');
+
+        $previous_pd_event_date = new Expression('(
+            select
+                `core_animal_event`.`animal_id` AS `animal_id`,
+                max(`core_animal_event`.`event_date`) AS `prevPdEventDate`
+            from
+                `core_animal_event`
+            where
+                ((`core_animal_event`.`event_type` = 4)
+                and `core_animal_event`.`id` in (
+                select
+                    `v_rpt_positive_pd`.`pdEventID`
+                from
+                    (' . $positive_pd->expression . ') `v_rpt_positive_pd`) is false
+                and `core_animal_event`.`animal_id` in (
+                select
+                    `v_rpt_positive_pd`.`animal_id`
+                from
+                    (' . $positive_pd->expression . ') `v_rpt_positive_pd`)
+                and (json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
+                \'$."131"\')) = 1))
+            group by
+                `core_animal_event`.`animal_id`
         )');
 
         $select = new Expression('
