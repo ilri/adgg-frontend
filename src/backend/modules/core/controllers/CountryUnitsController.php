@@ -16,6 +16,7 @@ use backend\modules\core\forms\UploadOrganizationRefUnits;
 use backend\modules\core\models\Country;
 use backend\modules\core\models\CountryUnits;
 use common\controllers\UploadExcelTrait;
+use common\helpers\Str;
 use yii\base\InvalidArgumentException;
 use yii\helpers\Html;
 
@@ -105,6 +106,9 @@ class CountryUnitsController extends Controller
         if ($level == CountryUnits::LEVEL_REGION) {
             $data = CountryUnits::getListData('id', 'name', $placeholder, ['country_id' => $country_id, 'level' => $level]);
         } else {
+            if (Str::contains($parent_id, ',')){
+                $parent_id = explode(',', $parent_id);
+            }
             $data = CountryUnits::getListData('id', 'name', $placeholder, ['parent_id' => $parent_id, 'level' => $level]);
         }
         return json_encode($data);

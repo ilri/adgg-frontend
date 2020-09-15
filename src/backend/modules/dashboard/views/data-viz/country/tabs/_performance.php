@@ -22,23 +22,10 @@ $tabType = Yii::$app->request->get('tab_type', null);
             <?php $idPrefix = 'fertility-g-filter-'; ?>
             <div class="chartFilters col-md-12 mb-4">
                 <?= Html::beginForm(Url::to(array_merge(['load-chart'], Yii::$app->request->get())), 'post', ['class' => 'row justify-content-md-center chart-filter-form', 'id' => $idPrefix. 'form', 'data-name' => 'fertility']) ?>
-                <div class="col-md-2">
-                    <br>
-                    <?= Select2::widget([
-                        'name' => 'region_id',
-                        'value' => $filterOptions['region_id'] ?? null,
-                        'data' => CountryUnits::getListData('id', 'name', '-- All Regions --', ['country_id' => $filterOptions['country_id'], 'level' => CountryUnits::LEVEL_REGION]),
-                        'theme' => Select2::THEME_BOOTSTRAP,
-                        'options' => [
-                            'id' => $idPrefix . 'region_id',
-                            'class' => 'form-control parent-depdropdown',
-                            'data-url' => Url::to(['/core/country-units/get-list', 'country_id' => 'idV', 'level' => CountryUnits::LEVEL_REGION, 'placeholder' => '-- All Regions --']),
-                        ],
-                        'pluginOptions' => [
-                            'allowClear' => false
-                        ],
-                    ]); ?>
-                </div>
+                <?= $this->render('/data-viz/country/_location_filters', [
+                    'filterOptions' => $filterOptions,
+                    'idPrefix' => $idPrefix
+                ]) ?>
                 <div class="col-md-2">
                     <br>
                     <?= Select2::widget([
@@ -55,6 +42,7 @@ $tabType = Yii::$app->request->get('tab_type', null);
                         ],
                     ]); ?>
                 </div>
+
                 <div class="col-md-2">
                     <br>
                     <button class="btn btn-primary pull-left" type="submit"><?= Lang::t('Go') ?></button>
@@ -74,23 +62,10 @@ $tabType = Yii::$app->request->get('tab_type', null);
             <?php $idPrefix = 'avg-body-weight-g-filter-'; ?>
             <div class="chartFilters col-md-12 mb-4">
                 <?= Html::beginForm(Url::to(array_merge(['load-chart'], Yii::$app->request->get())), 'post', ['class' => 'row justify-content-md-center chart-filter-form', 'id' => $idPrefix. 'form', 'data-name' => 'avg_body_weight']) ?>
-                <div class="col-md-2">
-                    <br>
-                    <?= Select2::widget([
-                        'name' => 'region_id',
-                        'value' => $filterOptions['region_id'] ?? null,
-                        'data' => CountryUnits::getListData('id', 'name', '-- All Regions --', ['country_id' => $filterOptions['country_id'], 'level' => CountryUnits::LEVEL_REGION]),
-                        'theme' => Select2::THEME_BOOTSTRAP,
-                        'options' => [
-                            'id' => $idPrefix . 'region_id',
-                            'class' => 'form-control parent-depdropdown',
-                            'data-url' => Url::to(['/core/country-units/get-list', 'country_id' => 'idV', 'level' => CountryUnits::LEVEL_REGION, 'placeholder' => '-- All Regions --']),
-                        ],
-                        'pluginOptions' => [
-                            'allowClear' => false
-                        ],
-                    ]); ?>
-                </div>
+                <?= $this->render('/data-viz/country/_location_filters', [
+                    'filterOptions' => $filterOptions,
+                    'idPrefix' => $idPrefix
+                ]) ?>
                 <div class="col-md-2">
                     <br>
                     <?= Select2::widget([
@@ -142,23 +117,10 @@ $tabType = Yii::$app->request->get('tab_type', null);
             <?php $idPrefix = 'avg_milk_yield-g-filter-'; ?>
             <div class="chartFilters col-md-12 mb-4">
                 <?= Html::beginForm(Url::to(array_merge(['load-chart'], Yii::$app->request->get())), 'post', ['class' => 'row justify-content-md-center chart-filter-form', 'id' => $idPrefix. 'form', 'data-name' => 'avg_milk_yield']) ?>
-                <div class="col-md-2">
-                    <br>
-                    <?= Select2::widget([
-                        'name' => 'region_id',
-                        'value' => $filterOptions['region_id'] ?? null,
-                        'data' => CountryUnits::getListData('id', 'name', '-- All Regions --', ['country_id' => $filterOptions['country_id'], 'level' => CountryUnits::LEVEL_REGION]),
-                        'theme' => Select2::THEME_BOOTSTRAP,
-                        'options' => [
-                            'id' => $idPrefix . 'region_id',
-                            'class' => 'form-control',
-                            'data-url' => Url::to(['/core/country-units/get-list', 'country_id' => 'idV', 'level' => CountryUnits::LEVEL_REGION, 'placeholder' => '-- All Regions --']),
-                        ],
-                        'pluginOptions' => [
-                            'allowClear' => false
-                        ],
-                    ]); ?>
-                </div>
+                <?= $this->render('/data-viz/country/_location_filters', [
+                    'filterOptions' => $filterOptions,
+                    'idPrefix' => $idPrefix
+                ]) ?>
                 <div class="col-md-2">
                     <br>
                     <?= Select2::widget([
