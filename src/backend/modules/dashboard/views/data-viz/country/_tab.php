@@ -9,13 +9,23 @@ $tabType = Yii::$app->request->get('tab_type', null);
 ?>
 <ul class="nav nav-tabs" role="tablist">
     <li class="nav-item">
-        <a class="nav-link active" href="#" data-toggle="tab" data-target="#performance">
-            <?= Lang::t('Performance') ?>
+        <a class="nav-link" href="#" data-toggle="tab" data-target="#summaries">
+            <?= Lang::t('Summaries') ?>
         </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="#" data-toggle="tab" data-target="#insemination">
-            <?= Lang::t('Insemination') ?>
+        <a class="nav-link active" href="#" data-toggle="tab" data-target="#performance">
+            <?= Lang::t('Animal Performance') ?>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" data-toggle="tab" data-target="#service">
+            <?= Lang::t('Animal Service') ?>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" data-toggle="tab" data-target="#genetic">
+            <?= Lang::t('Animal Genetic Ranking') ?>
         </a>
     </li>
     <!--<li class="nav-item">
