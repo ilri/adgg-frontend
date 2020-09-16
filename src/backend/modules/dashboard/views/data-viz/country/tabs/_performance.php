@@ -30,8 +30,8 @@ $tabType = Yii::$app->request->get('tab_type', null);
                     <br>
                     <?= Select2::widget([
                         'name' => 'graph_type',
-                        'value' => $filterOptions['graph_type'] ?? null,
-                        'data' => DataViz::graphTypeOptions() ,
+                        'value' => $filterOptions['graph_type'] ?? DataViz::GRAPH_LINE,
+                        'data' => DataViz::graphTypeOptions(false, [DataViz::GRAPH_PIE]) ,
                         'theme' => Select2::THEME_BOOTSTRAP,
                         'options' => [
                             'id' => $idPrefix . 'graph_type',
@@ -86,7 +86,7 @@ $tabType = Yii::$app->request->get('tab_type', null);
                     <br>
                     <?= Select2::widget([
                         'name' => 'graph_type',
-                        'value' => $filterOptions['graph_type'] ?? null,
+                        'value' => $filterOptions['graph_type'] ?? DataViz::GRAPH_LINE,
                         'data' => DataViz::graphTypeOptions() ,
                         'theme' => Select2::THEME_BOOTSTRAP,
                         'options' => [
@@ -141,7 +141,7 @@ $tabType = Yii::$app->request->get('tab_type', null);
                     <br>
                     <?= Select2::widget([
                         'name' => 'graph_type',
-                        'value' => $filterOptions['graph_type'] ?? null,
+                        'value' => $filterOptions['graph_type'] ?? DataViz::GRAPH_LINE,
                         'data' => DataViz::graphTypeOptions() ,
                         'theme' => Select2::THEME_BOOTSTRAP,
                         'options' => [

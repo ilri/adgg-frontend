@@ -27,6 +27,7 @@ $tabType = Yii::$app->request->get('tab_type', null);
             'id' => $idPrefix . 'region_id',
             'multiple' => true,
             'class' => 'form-control select2 parent-depdropdown',
+            'placeholder' => '-- All Regions --',
             'data-url' => Url::to(['/core/country-units/get-list', 'country_id' => 'idV', 'level' => CountryUnits::LEVEL_REGION, 'placeholder' => '-- All Regions --']),
             'data-child-selectors' => [
                 '#' . $idPrefix .'district_id',
@@ -48,6 +49,7 @@ $tabType = Yii::$app->request->get('tab_type', null);
             'id' => $idPrefix . 'district_id',
             'multiple' => true,
             'class' => 'form-control select2 parent-depdropdown',
+            'placeholder' => '-- All Districts --',
             'data-url' => Url::to(['/core/country-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_DISTRICT, 'placeholder' => '-- All Districts --']),
             'data-child-selectors' => [
                 '#' . $idPrefix .'ward_id',
@@ -68,6 +70,7 @@ $tabType = Yii::$app->request->get('tab_type', null);
             'id' => $idPrefix . 'ward_id',
             'multiple' => true,
             'class' => 'form-control select2 parent-depdropdown',
+            'placeholder' => '-- All Wards --',
             'data-url' => Url::to(['/core/country-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_WARD, 'placeholder' => '-- All Wards --']),
             'data-selected' => $filterOptions['ward_id'] ?? null,
             'data-child-selectors' => [
@@ -89,6 +92,7 @@ $tabType = Yii::$app->request->get('tab_type', null);
             'id' => $idPrefix . 'village_id',
             'multiple' => true,
             'class' => 'form-control select2',
+            'placeholder' => '-- All Villages --',
             'data-url' => Url::to(['/core/country-units/get-list', 'parent_id' => 'idV', 'level' => CountryUnits::LEVEL_VILLAGE, 'placeholder' => '-- All Villages --']),
             'data-selected' => $filterOptions['village_id'] ?? null,
         ],

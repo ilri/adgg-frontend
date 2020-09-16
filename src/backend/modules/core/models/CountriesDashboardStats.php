@@ -758,7 +758,7 @@ class CountriesDashboardStats extends Model
         return $command->queryAll();
     }
 
-    public static function getCountryFertility($country_id, $region_id = null){
+    public static function getCountryFertility($country_id, $region_id = null, $queryFilters = []){
         $select = new Expression('
             `country_id`, 
             #`region_id`, 
@@ -808,7 +808,10 @@ class CountriesDashboardStats extends Model
 				    `animal`.`id` AS `Animal_ID`,
 				    `animal`.`tag_id` AS `animalTagID`,
 				    `animal`.`country_id`,
-				    `animal`.`region_id`
+				    `animal`.`region_id`,
+				    `animal`.`district_id`,
+				    `animal`.`ward_id`,
+				    `animal`.`village_id`
 				from
 				    ((`core_animal_event`
 				join `core_animal` `animal` on
@@ -820,13 +823,16 @@ class CountriesDashboardStats extends Model
 
         $from = new Expression('(
             select
-                #`a`.`animal_id` AS `animal_id`,
+                /*#`a`.`animal_id` AS `animal_id`,*/
                 `a`.`country_id` AS `country_id`,
                 `a`.`region_id` AS `region_id`,
+                `a`.`district_id` AS `district_id`,
+				`a`.`ward_id` AS `ward_id`,
+				`a`.`village_id` AS `village_id`,
                 `b`.`year` AS `year`,
-                #`b`.`quarter` AS `quarter`,
+                /*#`b`.`quarter` AS `quarter`,
                 #`b`.`pregnancies` AS `pregnancies`,
-                #`a`.`inseminations` AS `inseminations`,
+                #`a`.`inseminations` AS `inseminations`,*/
                 (case
                     when (`a`.`inseminations` = 0) then 0
                     when (`a`.`inseminations` is null) then 0
@@ -838,6 +844,9 @@ class CountriesDashboardStats extends Model
                         `v_rpt_insemenation`.`Animal_ID` AS `animal_id`,
                         `v_rpt_insemenation`.`country_id` AS `country_id`,
                         `v_rpt_insemenation`.`region_id` AS `region_id`,
+                        `v_rpt_insemenation`.`district_id`,
+				        `v_rpt_insemenation`.`ward_id`,
+				        `v_rpt_insemenation`.`village_id`,
                         count(`v_rpt_insemenation`.`Animal_ID`) AS `inseminations`
                     from (
                         '.$insemination->expression.'
@@ -863,8 +872,9 @@ class CountriesDashboardStats extends Model
             group by 
                 `country_id`, 
                 `region_id`, 
+                `district_id`, `ward_id`, `village_id`,
                 `year`,
-                #`quarter`, 
+                /*#`quarter`, */
                 `pregnancies`, 
                 `inseminations`
 	     )
@@ -879,12 +889,17 @@ class CountriesDashboardStats extends Model
         $query->andWhere('`country_id` = :country_id ', [':country_id' => $country_id]);
         $query->addGroupBy("year, country_id");
         if ($region_id !== null && $region_id != ''){
-            $query->andWhere('`region_id` = :region_id ', [':region_id' => $region_id]);
+            $query->andWhere(['[[region_id]]' => $region_id]);
             $query->addGroupBy("region_id");
+            $query->addSelect(['[[region_id]]']);
+        }
+        foreach ($queryFilters as $k => $v){
+            $query->andWhere(['[['.$k.']]' => $v]);
         }
         $query->orderBy('year ASC');
 
         $command = $query->createCommand();
+        //dd($command->rawSql);
         return $command->queryAll();
     }
 
