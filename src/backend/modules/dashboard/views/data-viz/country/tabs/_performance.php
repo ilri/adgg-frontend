@@ -85,9 +85,25 @@ $tabType = Yii::$app->request->get('tab_type', null);
                 <div class="col-md-2">
                     <br>
                     <?= Select2::widget([
+                        'name' => 'animal_type',
+                        'value' => $filterOptions['animal_type'] ?? DataViz::ANIMAL_TYPE_CALF,
+                        'data' => DataViz::animalTypeOptions('--Animal Type--') ,
+                        'theme' => Select2::THEME_BOOTSTRAP,
+                        'options' => [
+                            'id' => $idPrefix . 'animal_type',
+                            'class' => 'form-control',
+                        ],
+                        'pluginOptions' => [
+                            'allowClear' => false
+                        ],
+                    ]); ?>
+                </div>
+                <div class="col-md-2">
+                    <br>
+                    <?= Select2::widget([
                         'name' => 'graph_type',
                         'value' => $filterOptions['graph_type'] ?? DataViz::GRAPH_LINE,
-                        'data' => DataViz::graphTypeOptions() ,
+                        'data' => DataViz::graphTypeOptions(false, [DataViz::GRAPH_PIE]) ,
                         'theme' => Select2::THEME_BOOTSTRAP,
                         'options' => [
                             'id' => $idPrefix . 'graph_type',
@@ -142,7 +158,7 @@ $tabType = Yii::$app->request->get('tab_type', null);
                     <?= Select2::widget([
                         'name' => 'graph_type',
                         'value' => $filterOptions['graph_type'] ?? DataViz::GRAPH_LINE,
-                        'data' => DataViz::graphTypeOptions() ,
+                        'data' => DataViz::graphTypeOptions(false, [DataViz::GRAPH_PIE]) ,
                         'theme' => Select2::THEME_BOOTSTRAP,
                         'options' => [
                             'id' => $idPrefix . 'graph_type',

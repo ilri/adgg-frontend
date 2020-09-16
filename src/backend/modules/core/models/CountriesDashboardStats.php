@@ -692,42 +692,48 @@ class CountriesDashboardStats extends Model
         return $data;
     }
 
-    public static function getCountryAvgBodyWeight($country_id, $region_id = null, $year = '2020'){
+    public static function getCountryAvgBodyWeight($country_id, $region_id = null, $year = '2020', $queryFilters = []){
         $subquery = new Expression('(
-                      select
-                        `core_animal_event`.`id` AS `event_id`,
-                        `animal`.`region_id`,
-                        `core_animal_event`.`event_date` AS `milk_date`,
-                        year(`core_animal_event`.`event_date`) AS `year`,
-                        quarter(`core_animal_event`.`event_date`) AS `quarter`,
-                        `core_animal_event`.`country_id` AS `country_id`,
-                        json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
-                        \'$.\"220\"\')) AS `body_weight`,
-                        json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
-                        \'$.\"219\"\')) AS `heart_girth`,
-                        json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
-                        \'$.\"59\"\')) AS `milk_yield_morning`,
-                        json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
-                        \'$.\"68\"\')) AS `milk_yield_noon`,
-                        json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
-                        \'$.\"61\"\')) AS `milk_yield_evening`,
-                        json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
-                        \'$.\"62\"\')) AS `milk_yield_total`
-                    from
-                        ((`core_animal_event`
-                    left join `core_animal` `animal` on ((`core_animal_event`.`animal_id` = `animal`.`id`))
-                        )
-                    join `core_country` `country` on
-                        (((`country`.`id` = `core_animal_event`.`country_id`)
-                        and (`core_animal_event`.`event_type` = :event_type)
-                        ))
-                        )
-                        )'
+              select
+                `core_animal_event`.`id` AS `event_id`,
+                `animal`.`region_id`,
+                `animal`.`district_id`,
+                `animal`.`ward_id`,
+                `animal`.`village_id`,
+                `animal`.`animal_type`,
+                `core_animal_event`.`event_date` AS `milk_date`,
+                year(`core_animal_event`.`event_date`) AS `year`,
+                quarter(`core_animal_event`.`event_date`) AS `quarter`,
+                month(`core_animal_event`.`event_date`) AS `month`,
+                `core_animal_event`.`country_id` AS `country_id`,
+                json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
+                \'$.\"220\"\')) AS `body_weight`,
+                json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
+                \'$.\"219\"\')) AS `heart_girth`,
+                json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
+                \'$.\"59\"\')) AS `milk_yield_morning`,
+                json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
+                \'$.\"68\"\')) AS `milk_yield_noon`,
+                json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
+                \'$.\"61\"\')) AS `milk_yield_evening`,
+                json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
+                \'$.\"62\"\')) AS `milk_yield_total`
+            from
+                ((`core_animal_event`
+            left join `core_animal` `animal` on ((`core_animal_event`.`animal_id` = `animal`.`id`))
+                )
+            join `core_country` `country` on
+                (((`country`.`id` = `core_animal_event`.`country_id`)
+                and (`core_animal_event`.`event_type` = :event_type)
+                ))
+                )
+                )'
         );
         $select = new Expression('
                         `a`.`country_id`,
                         `a`.`quarter`,
                         `a`.`year`,
+                        `a`.`month`,
                         CONCAT(`year`, "-Q", `quarter`) AS `year_quarter`,
                         round(avg(`a`.`milk_yield_total`), 4) AS `avg_milk_yield_total`,
                         round(avg(`a`.`body_weight`), 4) AS `avg_body_weight`,
@@ -746,15 +752,20 @@ class CountriesDashboardStats extends Model
         ]);
         $query->addSelect($select);
         $query->andWhere('`year` = :year AND `country_id` = :country_id ', [':year' => $year, ':country_id' => $country_id]);
-        $query->addGroupBy("year, quarter, country_id");
+        $query->addGroupBy("year, quarter, month, country_id");
         # if we have filtered region_id, add group by region_id
         if ($region_id !== null && $region_id != ''){
-            $query->andWhere('`region_id` = :region_id ', [':region_id' => $region_id]);
+            $query->andWhere(['[[region_id]]' => $region_id]);
             $query->addGroupBy("region_id");
+            $query->addSelect(['[[region_id]]']);
         }
-        $query->orderBy('quarter ASC');
+        foreach ($queryFilters as $k => $v){
+            $query->andWhere(['[['.$k.']]' => $v]);
+        }
+        $query->orderBy('month ASC');
 
         $command = $query->createCommand();
+        //dd($command->rawSql);
         return $command->queryAll();
     }
 
