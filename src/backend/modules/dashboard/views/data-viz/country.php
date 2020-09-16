@@ -51,6 +51,22 @@ $options = [
     'ajaxAction' => Url::to(array_merge(['data-viz/load-chart', 'is_country' => true], $filterOptions)),
     'ajaxCharts' => [
         [
+            'name' => 'country_summary',
+            'renderContainer' => '#summaries_boxes'
+        ],
+        [
+            'name' => 'country_breeds',
+            'renderContainer' => '#summaries_breeds_by_region'
+        ],
+        [
+            'name' => 'country_animalsbycategories',
+            'renderContainer' => '#summaries_categories_by_region',
+        ],
+        [
+            'name' => 'country_table',
+            'renderContainer' => '#summaries_table_by_region'
+        ],
+        [
             'name' => 'fertility',
             'renderContainer' => '#fertility'
         ],

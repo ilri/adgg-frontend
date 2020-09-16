@@ -191,11 +191,12 @@ class CountriesDashboardStats extends Model
 
     /**
      * @param null $country_id
+     * @param null $region_id
      * @param array $param
      * @return array
      * @throws \Exception
      */
-    public static function getAnimalsGroupedByBreeds($country_id = null)
+    public static function getAnimalsGroupedByBreeds($country_id = null, $region_id = null)
     {
         $condition = '';
         $params = [];
@@ -206,7 +207,7 @@ class CountriesDashboardStats extends Model
         foreach ($breeds as $id => $label) {
             list($newCondition, $newParams) = DbUtils::appendCondition('main_breed', $id, $condition, $params);
             $count = Animal::find()->andWhere($newCondition, $newParams)
-                ->andFilterWhere(['country_id' => $country_id])
+                ->andFilterWhere(['country_id' => $country_id, 'region_id' => $region_id])
                 ->count();
             if ($count > 0) {
                 $data[] = [
@@ -518,7 +519,7 @@ class CountriesDashboardStats extends Model
         return $command;
     }
 
-    public static function getAnimalsWithMilk($condition = '', $params = [], $durationType = null){
+    public static function getAnimalsWithMilk($condition = '', $params = [], $durationType = null, $country_id = null){
         if (!empty($durationType)){
 
             $today = DateUtils::formatToLocalDate(date('Y-m-d H:i:s', time()), 'Y-m-d');
@@ -534,6 +535,7 @@ class CountriesDashboardStats extends Model
                     break;
             }
         }
+        //list($condition, $params) = DbUtils::appendCondition(Animal::tableName().'.[[country_id]]', $country_id, $condition, $params);
         $command = static::getAnimalsWithMilkQuery($condition, $params);
         return $command->scalar();
     }
@@ -626,6 +628,37 @@ class CountriesDashboardStats extends Model
         };
         return $data;
     }
+    public static function getAnimalsByCategoriesRegionsForDataViz($filter = [], $country_id = null){
+        $data = [];
+        //$countries = static::getDashboardCountryCategories();
+        $regions = CountryUnits::getListData('id', 'name', '', ['country_id' => $country_id, 'level' => CountryUnits::LEVEL_REGION]);
+        $animal_types = Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, false);
+        $years = static::rangeYears();
+        foreach ($regions as $id => $region) {
+            foreach ($animal_types as $typeid => $type) {
+                foreach ($years as $year) {
+                    $params = [];
+                    $condition = '';
+                    //list($condition, $params) = DbUtils::appendCondition('country_id', $country_id, $condition, $params);
+                    list($condition, $params) = DbUtils::appendCondition('region_id', $id, $condition, $params);
+                    list($condition, $params) = DbUtils::appendCondition('animal_type', $typeid, $condition, $params);
+                    //list($condition, $params) = DbUtils::appendCondition(DbUtils::castYEAR('reg_date', Animal::getDb()), $year, $condition, $params, 'AND', '<=');
+                    if (!empty($condition))
+                        $condition .= ' AND ';
+                    $casted_date = DbUtils::castYEAR(Animal::tableName() . '.[[reg_date]]', Animal::getDb());
+                    $condition .= $casted_date . ' <= :end_date';
+                    $params[':end_date'] = $year;
+                    $count = Animal::getCount($condition, $params);
+                    $data[$region][$type][$year] = [
+                        'label' => $year,
+                        'value' => floatval(number_format($count, 2, '.', '')),
+                    ];
+                }
+
+            }
+        };
+        return $data;
+    }
 
     public static function getRegisteredAnimalsForDataViz(){
         $data = [];
@@ -661,6 +694,18 @@ class CountriesDashboardStats extends Model
         foreach ($countries as $id => $country) {
             $data[$country] = static::getAnimalsGroupedByBreeds($id);
         };
+        return $data;
+    }
+    public static function getAnimalBreedsByRegionsForDataViz($country_id = null){
+        $data = [];
+        $regions = CountryUnits::getListData('id', 'name', '', ['country_id' => $country_id,'level' => CountryUnits::LEVEL_REGION]);
+        //dd($regions);
+        $countries = static::getDashboardCountryCategories();
+        $animal_breeds = Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, false);
+        foreach ($regions as $id => $region) {
+            $data[$region] = static::getAnimalsGroupedByBreeds($country_id, $id);
+        };
+        //dd($data);
         return $data;
     }
 

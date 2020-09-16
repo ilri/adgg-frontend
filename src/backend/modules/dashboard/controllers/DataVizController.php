@@ -69,6 +69,7 @@ class DataVizController extends Controller
             $view = 'country/' . $name;
         }
         return $this->renderAjax($view, [
+            'country_id' => $country_id,
             'filterOptions' => [
                 'country_id' => $country_id,
                 'org_id' => $org_id,
