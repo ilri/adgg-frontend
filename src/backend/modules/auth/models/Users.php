@@ -274,6 +274,13 @@ class Users extends UserIdentity implements ActiveSearchInterface, UploadExcelIn
         return DbUtils::appendInCondition($levelIdAttribute, $levelIds, $condition, $params, 'NOT IN');
     }
 
+    public static function getFieldAgentListData($valueColumn = 'id', $textColumn = 'name', $prompt = false, $condition = '', $params = [], $options = [])
+    {
+        $roleIds = Roles::getColumnData('id', ['is_field_agent' => 1]);
+        list($condition, $params) = DbUtils::appendInCondition('role_id', $roleIds, $condition, $params, 'IN');
+        return static::getListData($valueColumn, $textColumn, $prompt, $condition, $params, $options);
+    }
+
     /**
      * @param bool $throwException
      * @param bool $allowSameLevel

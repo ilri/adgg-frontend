@@ -14,6 +14,8 @@ use yii\helpers\Json;
 $year = Yii::$app->request->get('year', date("Y"));
 $region_id = Yii::$app->request->get('region_id', null);
 $graph_type = Yii::$app->request->get('graph_type', DataViz::GRAPH_COLUMN);
+$filters = Yii::$app->request->getQueryParams();
+$queryFilters = array_intersect_key($filters, array_flip(['district_id', 'ward_id', 'village_id', 'field_agent_id']));
 
 ?>
 <div class="row">
@@ -21,7 +23,7 @@ $graph_type = Yii::$app->request->get('graph_type', DataViz::GRAPH_COLUMN);
 </div>
 <?php
 $months = CountriesDashboardStats::getDashboardDateCategories($type = 'month', $max = 12, $format = 'Y-m-d', $from = "$year-01-01", $to = "$year-12-31");
-$res = CountriesDashboardStats::getCountryMonthlyInseminations($filterOptions['country_id'], $region_id, $year);
+$res = CountriesDashboardStats::getCountryMonthlyInseminations($filterOptions['country_id'], $region_id, $year, $queryFilters);
 $colors = [
     '#800080', '#641E16', '#6298D7', '#2B7B48', '#9C0204',
     '#CD90C9', '#DCA8D9', '#EBC0E8',
@@ -36,8 +38,8 @@ $data = [];
 $breed_data = [];
 foreach ($res as $row){
     $point = (int) $row['inseminations'];
-    $breed_data[$row['main_breed']]['name'] = $row['label'];
-    $breed_data[$row['main_breed']]['data'][$row['month']] = $point;
+    $breed_data[$row['ai_sire_breed']]['name'] = $row['ai_sire_breed_label'];
+    $breed_data[$row['ai_sire_breed']]['data'][$row['month']] = $point;
 }
 foreach ($breed_data as $breed => $bd){
     $points = [];
@@ -96,11 +98,11 @@ $graphOptions = [
     'chart' => [
         'type' => $graph_type,
     ],
-    'title' => ['text' => 'Monthly Inseminations per Breed'],
+    'title' => ['text' => 'Total Inseminations Done By Breed'],
     'subtitle' => ['text' => ''],
     'xAxis' => [
         'title' => [
-            'text' => 'Monthly Inseminations',
+            'text' => 'Total Inseminations',
             'style' => ['fontWeight' => 'normal'],
         ],
         'categories' => array_map(function ($date){
@@ -109,7 +111,7 @@ $graphOptions = [
     ],
     'yAxis' => [
         'title' => [
-            'text' => 'Monthly Inseminations',
+            'text' => 'Total Inseminations',
             'style' => ['fontWeight' => 'normal'],
         ]
     ],
