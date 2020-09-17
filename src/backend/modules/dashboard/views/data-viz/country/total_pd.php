@@ -1,11 +1,11 @@
 <?php
 
-use backend\modules\core\models\Animal;
 use backend\modules\core\models\CountriesDashboardStats;
 use backend\modules\core\models\Country;
 use backend\modules\core\models\CountryUnits;
 use backend\modules\dashboard\models\DataViz;
 use common\helpers\DateUtils;
+use common\helpers\Lang;
 use yii\helpers\Json;
 
 /* @var $this yii\web\View */
@@ -14,31 +14,19 @@ use yii\helpers\Json;
 $year = Yii::$app->request->get('year', date("Y"));
 $region_id = Yii::$app->request->get('region_id', null);
 $graph_type = Yii::$app->request->get('graph_type', DataViz::GRAPH_LINE);
-$animal_type = Yii::$app->request->get('animal_type', DataViz::ANIMAL_TYPE_CALF);
 $filters = Yii::$app->request->getQueryParams();
-$queryFilters = array_intersect_key($filters, array_flip(['district_id', 'ward_id', 'village_id']));
-
-if ($animal_type == DataViz::ANIMAL_TYPE_CALF){
-    $queryFilters['animal_type'] = [
-        Animal::ANIMAL_TYPE_FEMALE_CALF, Animal::ANIMAL_TYPE_MALE_CALF, Animal::ANIMAL_TYPE_HEIFER
-    ];
-}
-elseif($animal_type == DataViz::ANIMAL_TYPE_COW) {
-    $queryFilters['animal_type'] = [
-        Animal::ANIMAL_TYPE_COW
-    ];
-}
-
-//dd($filters, $queryFilters);
+$queryFilters = array_intersect_key($filters, array_flip(['district_id', 'ward_id', 'village_id', 'field_agent_id']));
 ?>
 <div class="row">
-    <div id="chartContainerAvgBodyWeight" style="width:100%;"></div>
+    <div id="chartContainerAIPreg" style="width:100%;"></div>
 </div>
 <?php
-//$quarters = CountriesDashboardStats::getQuarters("$year-12-31", "$year-01-01");
+//$years = CountriesDashboardStats::rangeYears();
 $months = CountriesDashboardStats::getDashboardDateCategories($type = 'month', $max = 12, $format = 'Y-m-d', $from = "$year-01-01", $to = "$year-12-31");
-$res = CountriesDashboardStats::getCountryAvgBodyWeight($filterOptions['country_id'], $region_id, $year, $queryFilters);
+$res = CountriesDashboardStats::getCountryTotalPD($filterOptions['country_id'], $region_id, $year, $queryFilters);
+
 $data = [];
+
 $colors = [
     '#800080', '#641E16', '#6298D7', '#2B7B48', '#9C0204',
     '#CD90C9', '#DCA8D9', '#EBC0E8',
@@ -57,7 +45,7 @@ if ($region_id === null){
         $point = 0;
         foreach ($res as $row){
             if ($row['month'] == $month_num){
-                $point = (float) $row['avg_body_weight'];
+                $point = (float) $row['pd_examinations'];
             }
         }
         $data[] = (float) $point;
@@ -76,7 +64,7 @@ else {
     foreach ($res as $row){
         $region = $row['region_id'];
         $name = CountryUnits::getScalar('name', ['id' => $region]);
-        $point = (float) $row['avg_body_weight'];
+        $point = (float) $row['pd_examinations'];
         $year = $row['year'];
         $region_data[$name][$row['month']] = $point;
     }
@@ -124,7 +112,6 @@ else {
     }
 
 }
-
 //dd($months, $res, $region_data, $data);
 
 $_series = [
@@ -135,19 +122,19 @@ $_series = [
         'color' => '#771957',
         'zIndex' => 2,
     ],
-];
 
+];
 $graphOptions = [
-    'title' => ['text' => 'Average Body Weight'],
+    'title' => ['text' => 'Total Pregnancy Diagnosis done'],
     'subtitle' => ['text' => ''],
     'xAxis' => [
         'categories' => array_map(function ($date){
-            return \common\helpers\DateUtils::formatDate($date, 'M Y');
+            return DateUtils::formatDate($date, 'M Y');
         }, $months),
     ],
     'yAxis' => [
         'title' => [
-            'text' => 'Avg Body Weight (Kg)',
+            'text' => 'Total Pregnancy Diagnosis',
         ]
     ],
     'colors' => [
@@ -159,16 +146,16 @@ $graphOptions = [
             function () {
                 var type = this.userOptions.type;
                 if(type === 'line'){
-                    return this.name + ' (Avg Body Weight)';
+                    return this.name;
                 }
                 else {
-                    return this.name + ' (Avg Body Weight)';
+                    return this.name;
                 }
             }
         ")
     ]
 ];
-$containerId = 'chartContainerAvgBodyWeight';
+$containerId = 'chartContainerAIPreg';
 if ($graph_type == DataViz::GRAPH_PIE){
     $this->registerJs("MyApp.modules.dashboard.piechart('" . $containerId . "', " . Json::encode($series) . "," . Json::encode($graphOptions) . ");");
 }

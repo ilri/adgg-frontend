@@ -15,6 +15,9 @@ class DataViz
     const GRAPH_AREA = 'area';
     const GRAPH_AREASPLINE = 'areaspline';
 
+    const ANIMAL_TYPE_COW = 1;
+    const ANIMAL_TYPE_CALF = 2;
+
 
     /**
      * get all the graph types
@@ -42,6 +45,15 @@ class DataViz
             }
         }
 
+        return Utils::appendDropDownListPrompt($options, $add_tip);
+    }
+
+    public static function animalTypeOptions($add_tip = false)
+    {
+        $options = [
+            self::ANIMAL_TYPE_CALF => Lang::t('Calf'),
+            self::ANIMAL_TYPE_COW => Lang::t('Cow'),
+        ];
         return Utils::appendDropDownListPrompt($options, $add_tip);
     }
 }

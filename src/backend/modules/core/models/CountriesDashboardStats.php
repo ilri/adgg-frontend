@@ -191,11 +191,12 @@ class CountriesDashboardStats extends Model
 
     /**
      * @param null $country_id
+     * @param null $region_id
      * @param array $param
      * @return array
      * @throws \Exception
      */
-    public static function getAnimalsGroupedByBreeds($country_id = null)
+    public static function getAnimalsGroupedByBreeds($country_id = null, $region_id = null)
     {
         $condition = '';
         $params = [];
@@ -206,7 +207,7 @@ class CountriesDashboardStats extends Model
         foreach ($breeds as $id => $label) {
             list($newCondition, $newParams) = DbUtils::appendCondition('main_breed', $id, $condition, $params);
             $count = Animal::find()->andWhere($newCondition, $newParams)
-                ->andFilterWhere(['country_id' => $country_id])
+                ->andFilterWhere(['country_id' => $country_id, 'region_id' => $region_id])
                 ->count();
             if ($count > 0) {
                 $data[] = [
@@ -518,7 +519,7 @@ class CountriesDashboardStats extends Model
         return $command;
     }
 
-    public static function getAnimalsWithMilk($condition = '', $params = [], $durationType = null){
+    public static function getAnimalsWithMilk($condition = '', $params = [], $durationType = null, $country_id = null){
         if (!empty($durationType)){
 
             $today = DateUtils::formatToLocalDate(date('Y-m-d H:i:s', time()), 'Y-m-d');
@@ -533,6 +534,9 @@ class CountriesDashboardStats extends Model
                     list($condition, $params) = DbUtils::appendCondition(DbUtils::castMONTH($dateField, Animal::getDb()), $this_month, $condition, $params);
                     break;
             }
+        }
+        if (!empty($country_id)) {
+            list($condition, $params) = DbUtils::appendCondition(Animal::tableName() . '.[[country_id]]', $country_id, $condition, $params);
         }
         $command = static::getAnimalsWithMilkQuery($condition, $params);
         return $command->scalar();
@@ -626,6 +630,26 @@ class CountriesDashboardStats extends Model
         };
         return $data;
     }
+    public static function getAnimalsByCategoriesRegionsForDataViz($filter = [], $country_id = null){
+        $data = [];
+        $regions = CountryUnits::getListData('id', 'name', '', ['country_id' => $country_id, 'level' => CountryUnits::LEVEL_REGION]);
+        $animal_types = Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, false);
+        foreach ($regions as $id => $region) {
+            foreach ($animal_types as $typeid => $type) {
+                    $params = [];
+                    $condition = '';
+                    list($condition, $params) = DbUtils::appendCondition('region_id', $id, $condition, $params);
+                    list($condition, $params) = DbUtils::appendCondition('animal_type', $typeid, $condition, $params);
+                    if (!empty($condition))
+                    $count = Animal::getCount($condition, $params);
+                    $data[$region][$type] = [
+                        'label' => $type,
+                        'value' => floatval(number_format($count, 2, '.', '')),
+                    ];
+            }
+        };
+        return $data;
+    }
 
     public static function getRegisteredAnimalsForDataViz(){
         $data = [];
@@ -663,6 +687,18 @@ class CountriesDashboardStats extends Model
         };
         return $data;
     }
+    public static function getAnimalBreedsByRegionsForDataViz($country_id = null){
+        $data = [];
+        $regions = CountryUnits::getListData('id', 'name', '', ['country_id' => $country_id,'level' => CountryUnits::LEVEL_REGION]);
+        //dd($regions);
+        $countries = static::getDashboardCountryCategories();
+        $animal_breeds = Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, false);
+        foreach ($regions as $id => $region) {
+            $data[$region] = static::getAnimalsGroupedByBreeds($country_id, $id);
+        };
+        //dd($data);
+        return $data;
+    }
 
     public static function getAIForDataViz(){
         $data = [];
@@ -692,42 +728,104 @@ class CountriesDashboardStats extends Model
         return $data;
     }
 
-    public static function getCountryAvgBodyWeight($country_id, $region_id = null, $year = '2020'){
+    public static function getCountryTotalPD($country_id, $region_id = null, $year = '2020', $queryFilters = []){
+        $positive_pd_all = new Expression('(
+            select
+                `core_animal_event`.`id` AS `pdEventID`,
+                `core_animal_event`.`event_date` AS `examinationDate`,
+                `core_animal_event`.`field_agent_id` AS `field_agent_id`,
+                year(`core_animal_event`.`event_date`) AS `year`,
+                quarter(`core_animal_event`.`event_date`) AS `quarter`,
+                month(`core_animal_event`.`event_date`) AS `month`,
+                `animal`.`tag_id` AS `animalTagID`,
+                `animal`.`id` AS `animal_id`,
+                `country`.`name` AS `country`,
+                `core_animal_event`.`country_id` AS `country_id`,
+			    `animal`.`region_id` AS `region_id`,
+			    `animal`.`district_id`,
+    	        `animal`.`ward_id`,
+    	        `animal`.`village_id`
+            from
+                ((`core_animal_event`
+                    left join `core_animal` `animal` on (`core_animal_event`.`animal_id` = `animal`.`id`)
+                 )
+                join `core_country` `country` on
+                    (((`country`.`id` = `core_animal_event`.`country_id`)
+                    and (`core_animal_event`.`event_type` = 4)
+                    #and (json_unquote(json_extract(`core_animal_event`.`additional_attributes`,\'$."131"\')) = 1)
+                    ))
+                )
+        )');
+        $select = new Expression('
+            `country_id`,
+            #`region_id`,
+            `month`,
+            `year`,
+            COUNT(`pdEventID`) AS `pd_examinations`
+        ');
+        $query = new Query();
+        $query->from(['pd' => $positive_pd_all]);
+        $query->addSelect($select);
+        $query->andWhere('[[country_id]] = :country_id ', [':country_id' => $country_id]);
+        $query->andWhere('year([[examinationDate]]) = :year ', [':year' => $year]);
+        $query->addGroupBy("year, month, country_id");
+        if ($region_id !== null && $region_id != ''){
+            $query->andWhere(['[[region_id]]' => $region_id]);
+            $query->addGroupBy("region_id");
+            $query->addSelect("region_id");
+        }
+        foreach ($queryFilters as $k => $v){
+            $query->andWhere(['[['.$k.']]' => $v]);
+        }
+        $query->orderBy('year ASC, month ASC');
+
+        $command = $query->createCommand();
+        //dd($command->rawSql);
+        return $command->queryAll();
+    }
+
+    public static function getCountryAvgBodyWeight($country_id, $region_id = null, $year = '2020', $queryFilters = []){
         $subquery = new Expression('(
-                      select
-                        `core_animal_event`.`id` AS `event_id`,
-                        `animal`.`region_id`,
-                        `core_animal_event`.`event_date` AS `milk_date`,
-                        year(`core_animal_event`.`event_date`) AS `year`,
-                        quarter(`core_animal_event`.`event_date`) AS `quarter`,
-                        `core_animal_event`.`country_id` AS `country_id`,
-                        json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
-                        \'$.\"220\"\')) AS `body_weight`,
-                        json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
-                        \'$.\"219\"\')) AS `heart_girth`,
-                        json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
-                        \'$.\"59\"\')) AS `milk_yield_morning`,
-                        json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
-                        \'$.\"68\"\')) AS `milk_yield_noon`,
-                        json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
-                        \'$.\"61\"\')) AS `milk_yield_evening`,
-                        json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
-                        \'$.\"62\"\')) AS `milk_yield_total`
-                    from
-                        ((`core_animal_event`
-                    left join `core_animal` `animal` on ((`core_animal_event`.`animal_id` = `animal`.`id`))
-                        )
-                    join `core_country` `country` on
-                        (((`country`.`id` = `core_animal_event`.`country_id`)
-                        and (`core_animal_event`.`event_type` = :event_type)
-                        ))
-                        )
-                        )'
+              select
+                `core_animal_event`.`id` AS `event_id`,
+                `animal`.`region_id`,
+                `animal`.`district_id`,
+                `animal`.`ward_id`,
+                `animal`.`village_id`,
+                `animal`.`animal_type`,
+                `core_animal_event`.`event_date` AS `milk_date`,
+                year(`core_animal_event`.`event_date`) AS `year`,
+                quarter(`core_animal_event`.`event_date`) AS `quarter`,
+                month(`core_animal_event`.`event_date`) AS `month`,
+                `core_animal_event`.`country_id` AS `country_id`,
+                json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
+                \'$.\"220\"\')) AS `body_weight`,
+                json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
+                \'$.\"219\"\')) AS `heart_girth`,
+                json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
+                \'$.\"59\"\')) AS `milk_yield_morning`,
+                json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
+                \'$.\"68\"\')) AS `milk_yield_noon`,
+                json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
+                \'$.\"61\"\')) AS `milk_yield_evening`,
+                json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
+                \'$.\"62\"\')) AS `milk_yield_total`
+            from
+                ((`core_animal_event`
+            left join `core_animal` `animal` on ((`core_animal_event`.`animal_id` = `animal`.`id`))
+                )
+            join `core_country` `country` on
+                (((`country`.`id` = `core_animal_event`.`country_id`)
+                and (`core_animal_event`.`event_type` = :event_type)
+                ))
+                )
+                )'
         );
         $select = new Expression('
                         `a`.`country_id`,
                         `a`.`quarter`,
                         `a`.`year`,
+                        `a`.`month`,
                         CONCAT(`year`, "-Q", `quarter`) AS `year_quarter`,
                         round(avg(`a`.`milk_yield_total`), 4) AS `avg_milk_yield_total`,
                         round(avg(`a`.`body_weight`), 4) AS `avg_body_weight`,
@@ -746,19 +844,24 @@ class CountriesDashboardStats extends Model
         ]);
         $query->addSelect($select);
         $query->andWhere('`year` = :year AND `country_id` = :country_id ', [':year' => $year, ':country_id' => $country_id]);
-        $query->addGroupBy("year, quarter, country_id");
+        $query->addGroupBy("year, quarter, month, country_id");
         # if we have filtered region_id, add group by region_id
         if ($region_id !== null && $region_id != ''){
-            $query->andWhere('`region_id` = :region_id ', [':region_id' => $region_id]);
+            $query->andWhere(['[[region_id]]' => $region_id]);
             $query->addGroupBy("region_id");
+            $query->addSelect(['[[region_id]]']);
         }
-        $query->orderBy('quarter ASC');
+        foreach ($queryFilters as $k => $v){
+            $query->andWhere(['[['.$k.']]' => $v]);
+        }
+        $query->orderBy('month ASC');
 
         $command = $query->createCommand();
+        //dd($command->rawSql);
         return $command->queryAll();
     }
 
-    public static function getCountryFertility($country_id, $region_id = null){
+    public static function getCountryFertility($country_id, $region_id = null, $queryFilters = []){
         $select = new Expression('
             `country_id`, 
             #`region_id`, 
@@ -808,7 +911,10 @@ class CountriesDashboardStats extends Model
 				    `animal`.`id` AS `Animal_ID`,
 				    `animal`.`tag_id` AS `animalTagID`,
 				    `animal`.`country_id`,
-				    `animal`.`region_id`
+				    `animal`.`region_id`,
+				    `animal`.`district_id`,
+				    `animal`.`ward_id`,
+				    `animal`.`village_id`
 				from
 				    ((`core_animal_event`
 				join `core_animal` `animal` on
@@ -820,13 +926,16 @@ class CountriesDashboardStats extends Model
 
         $from = new Expression('(
             select
-                #`a`.`animal_id` AS `animal_id`,
+                /*#`a`.`animal_id` AS `animal_id`,*/
                 `a`.`country_id` AS `country_id`,
                 `a`.`region_id` AS `region_id`,
+                `a`.`district_id` AS `district_id`,
+				`a`.`ward_id` AS `ward_id`,
+				`a`.`village_id` AS `village_id`,
                 `b`.`year` AS `year`,
-                #`b`.`quarter` AS `quarter`,
+                /*#`b`.`quarter` AS `quarter`,
                 #`b`.`pregnancies` AS `pregnancies`,
-                #`a`.`inseminations` AS `inseminations`,
+                #`a`.`inseminations` AS `inseminations`,*/
                 (case
                     when (`a`.`inseminations` = 0) then 0
                     when (`a`.`inseminations` is null) then 0
@@ -838,6 +947,9 @@ class CountriesDashboardStats extends Model
                         `v_rpt_insemenation`.`Animal_ID` AS `animal_id`,
                         `v_rpt_insemenation`.`country_id` AS `country_id`,
                         `v_rpt_insemenation`.`region_id` AS `region_id`,
+                        `v_rpt_insemenation`.`district_id`,
+				        `v_rpt_insemenation`.`ward_id`,
+				        `v_rpt_insemenation`.`village_id`,
                         count(`v_rpt_insemenation`.`Animal_ID`) AS `inseminations`
                     from (
                         '.$insemination->expression.'
@@ -863,8 +975,9 @@ class CountriesDashboardStats extends Model
             group by 
                 `country_id`, 
                 `region_id`, 
+                `district_id`, `ward_id`, `village_id`,
                 `year`,
-                #`quarter`, 
+                /*#`quarter`, */
                 `pregnancies`, 
                 `inseminations`
 	     )
@@ -879,16 +992,21 @@ class CountriesDashboardStats extends Model
         $query->andWhere('`country_id` = :country_id ', [':country_id' => $country_id]);
         $query->addGroupBy("year, country_id");
         if ($region_id !== null && $region_id != ''){
-            $query->andWhere('`region_id` = :region_id ', [':region_id' => $region_id]);
+            $query->andWhere(['[[region_id]]' => $region_id]);
             $query->addGroupBy("region_id");
+            $query->addSelect(['[[region_id]]']);
+        }
+        foreach ($queryFilters as $k => $v){
+            $query->andWhere(['[['.$k.']]' => $v]);
         }
         $query->orderBy('year ASC');
 
         $command = $query->createCommand();
+        //dd($command->rawSql);
         return $command->queryAll();
     }
 
-    public static function getCountryMonthlyInseminations($country_id, $region_id = null, $year = '2020'){
+    public static function getCountryMonthlyInseminations($country_id, $region_id = null, $year = '2020', $queryFilters = []){
         $positive_pd_all = new Expression('(
             select
                 `core_animal_event`.`id` AS `pdEventID`,
@@ -927,7 +1045,8 @@ class CountriesDashboardStats extends Model
             (
                 (`core_animal_event`
                     join `core_animal` `animal` on ((`core_animal_event`.`animal_id` = `animal`.`id`))
-                    join `core_master_list` `list_type` on (`animal`.`main_breed` = `list_type`.`value`) AND `list_type`.`list_type_id` = 8
+                    #join `core_master_list` `list_type` on (`animal`.`main_breed` = `list_type`.`value`) AND `list_type`.`list_type_id` = 8
+                    join `core_master_list` `list_type_b` on (json_unquote(json_extract(`core_animal_event`.`additional_attributes`,\'$."111"\')) = `list_type_b`.`value`) AND `list_type_b`.`list_type_id` = 8
                 )
             join (' . $positive_pd->expression . ') `v_rpt_positive_pd` on
                 (((`v_rpt_positive_pd`.`animal_id` = `core_animal_event`.`animal_id`)
@@ -945,8 +1064,10 @@ class CountriesDashboardStats extends Model
             #`animal`.`tag_id` AS `animalTagID`,
             `animal`.`country_id`,
             #`animal`.`region_id`,
-            `list_type`.`label`,
-            `animal`.`main_breed`
+            #`list_type`.`label` AS `main_breed_label`,
+            #`animal`.`main_breed`,
+            json_unquote(json_extract(`core_animal_event`.`additional_attributes`,\'$."111"\')) AS `ai_sire_breed`,
+            `list_type_b`.`label` AS `ai_sire_breed_label`
         ');
 
         $query = new Query();
@@ -955,43 +1076,30 @@ class CountriesDashboardStats extends Model
         $query->addParams([
             ':event_type' => AnimalEvent::EVENT_TYPE_AI,
         ]);
-        $query->andWhere('`animal`.`country_id` = :country_id ', [':country_id' => $country_id]);
-        $query->andWhere('year(`core_animal_event`.`event_date`) = :year ', [':year' => $year]);
-        $query->addGroupBy("year, country_id, month, monthname, label, main_breed");
+        $query->andWhere('[[animal]].[[country_id]] = :country_id ', [':country_id' => $country_id]);
+        $query->andWhere('year([[core_animal_event]].[[event_date]]) = :year ', [':year' => $year]);
+        $query->addGroupBy("year, country_id, month, monthname, ai_sire_breed, ai_sire_breed_label");
         if ($region_id !== null && $region_id != ''){
-            $query->andWhere('`animal`.`region_id` = :region_id ', [':region_id' => $region_id]);
+            $query->andWhere(['[[animal]].[[region_id]]' => $region_id]);
             //$query->addGroupBy("region_id");
+        }
+        foreach ($queryFilters as $k => $v){
+            if ($k == 'field_agent_id'){
+                $query->andWhere(['[[core_animal_event]].[['.$k.']]' => $v]);
+            }
+            else {
+                $query->andWhere(['[[animal]].[['.$k.']]' => $v]);
+            }
+
         }
         $query->orderBy('year ASC, month ASC');
 
         $command = $query->createCommand();
+        //dd($command->rawSql);
         return $command->queryAll();
     }
 
     public static function getCountryAvgAIPerPD($country_id, $region_id = null){
-        $previous_pd_event_date = new Expression('(
-            select
-                `core_animal_event`.`animal_id` AS `animal_id`,
-                max(`core_animal_event`.`event_date`) AS `prevPdEventDate`
-            from
-                `core_animal_event`
-            where
-                ((`core_animal_event`.`event_type` = 4)
-                and `core_animal_event`.`id` in (
-                select
-                    `v_rpt_positive_pd`.`pdEventID`
-                from
-                    `v_rpt_positive_pd`) is false
-                and `core_animal_event`.`animal_id` in (
-                select
-                    `v_rpt_positive_pd`.`animal_id`
-                from
-                    `v_rpt_positive_pd`)
-                and (json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
-                \'$."131"\')) = 1))
-            group by
-                `core_animal_event`.`animal_id`
-        )');
         $positive_pd_all = new Expression('(
             select
                 `core_animal_event`.`id` AS `pdEventID`,
@@ -1047,6 +1155,30 @@ class CountriesDashboardStats extends Model
 			join ('.$positive_pd->expression.') `v_rpt_positive_pd` on
 			    (((`v_rpt_positive_pd`.`animal_id` = `core_animal_event`.`animal_id`)
 			    and (`core_animal_event`.`event_type` = :event_type))))
+        )');
+
+        $previous_pd_event_date = new Expression('(
+            select
+                `core_animal_event`.`animal_id` AS `animal_id`,
+                max(`core_animal_event`.`event_date`) AS `prevPdEventDate`
+            from
+                `core_animal_event`
+            where
+                ((`core_animal_event`.`event_type` = 4)
+                and `core_animal_event`.`id` in (
+                select
+                    `v_rpt_positive_pd`.`pdEventID`
+                from
+                    (' . $positive_pd->expression . ') `v_rpt_positive_pd`) is false
+                and `core_animal_event`.`animal_id` in (
+                select
+                    `v_rpt_positive_pd`.`animal_id`
+                from
+                    (' . $positive_pd->expression . ') `v_rpt_positive_pd`)
+                and (json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
+                \'$."131"\')) = 1))
+            group by
+                `core_animal_event`.`animal_id`
         )');
 
         $select = new Expression('

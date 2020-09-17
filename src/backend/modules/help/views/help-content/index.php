@@ -8,14 +8,14 @@ use common\helpers\Url;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Help & Documentation';
+$this->title = 'Help Content';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <div class="row">
     <div class="col-md-12" title="Click to view details">
         <div class="well">
-            <h3><?= Lang::t('Help & Documentation') ?></h3>
+            <h3><?= Lang::t('Help Content') ?></h3>
             <hr>
             <div class="row">
                 <div class="col-lg-4 col-xl-4 order-lg-2 order-xl-2">
