@@ -42,11 +42,11 @@ use common\helpers\Lang;
     <div class='card my-2 '>
         <div class="card-body">
             <h1 class="text-center kt-label-font-color-4 mb-0">
-                <?= Yii::$app->formatter->asDecimal(CountriesDashboardStats::getAnimalsWithMilk($country_id)) ?>
+                <?= Yii::$app->formatter->asDecimal(CountriesDashboardStats::getAnimalsWithMilk('', [], null, $country_id)) ?>
             </h1>
             <h5 class="text-center mb-4">Animals with Milk Records</h5>
             <p class="text-center">
-                <span class="kt-font-success">+<strong><?= Yii::$app->formatter->asDecimal(CountriesDashboardStats::getAnimalsWithMilk('', [], Animal::STATS_THIS_MONTH)) ?></strong> this month</span>
+                <span class="kt-font-success">+<strong><?= Yii::$app->formatter->asDecimal(CountriesDashboardStats::getAnimalsWithMilk('', [], Animal::STATS_THIS_MONTH, $country_id)) ?></strong> this month</span>
             </p>
         </div>
     </div>

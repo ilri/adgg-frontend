@@ -70,10 +70,6 @@ $graphOptions = [
     'title' => ['text' => 'Types of Breeds kept per Region'],
     'subtitle' => ['text' => ''],
     'xAxis' => [
-        'title' => [
-            'text' => (Session::isPrivilegedAdmin() || Session::isCountryUser()) ? 'Regions' : '',
-            'style' => ['fontWeight' => 'normal'],
-        ],
         'categories' => array_merge($regions, $empty_regions),
     ],
     'yAxis' => [
