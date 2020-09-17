@@ -17,4 +17,7 @@ use yii\helpers\Url;
     <li class="nav-item">
         <a class="nav-link" href="<?= Url::to(['/core/lookup-list/index']) ?>"><?= Lang::t('Lists') ?></a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link" href="<?= Url::to(['/core/breed-group/index']) ?>"><?= Lang::t('Breeds Groups') ?></a>
+    </li>
 </ul>
