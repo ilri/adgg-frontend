@@ -535,7 +535,9 @@ class CountriesDashboardStats extends Model
                     break;
             }
         }
-        list($condition, $params) = DbUtils::appendCondition(Animal::tableName(). '.[[country_id]]', $country_id, $condition, $params);
+        if (!empty($country_id)) {
+            list($condition, $params) = DbUtils::appendCondition(Animal::tableName() . '.[[country_id]]', $country_id, $condition, $params);
+        }
         $command = static::getAnimalsWithMilkQuery($condition, $params);
         return $command->scalar();
     }

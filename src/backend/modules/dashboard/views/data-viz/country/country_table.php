@@ -14,10 +14,9 @@ use yii\helpers\Html;
 /* @var $filterOptions array */
 
 $countries = CountriesDashboardStats::getDashboardCountryCategories();
-$regions = CountryUnits::getListData('id', 'name', '', ['country_id' => $country_id,'level' => CountryUnits::LEVEL_REGION]);
+$regions = CountryUnits::getListData('id', 'name', false, ['country_id' => $country_id,'level' => CountryUnits::LEVEL_REGION]);
 
 $region_ids = array_keys($regions);
-//$projects = Choices::getList(ChoiceTypes::CHOICE_TYPE_PROJECT, false);
 
 ?>
 <div class="row">
