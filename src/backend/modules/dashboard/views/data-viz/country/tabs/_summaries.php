@@ -16,12 +16,8 @@ use yii\helpers\Json;
 $controller = Yii::$app->controller;
 $tabType = Yii::$app->request->get('tab_type', null);
 ?>
-<div class="mb-3">
-    <div class="card card-body">
-        <div class="col-md-12" id="summaries_boxes"></div>
-    </div>
-</div>
-
+<div class="row" id="summaries_boxes" style="display:flex;flex-direction:row;"></div>
+<br/>
 <div class="mb-3">
     <div class="card card-body">
         <div class="col-md-12" id="summaries_breeds_by_region"></div>
@@ -31,5 +27,10 @@ $tabType = Yii::$app->request->get('tab_type', null);
 <div class="mb-3">
     <div class="card card-body">
         <div class="col-md-12" id="summaries_categories_by_region"></div>
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="col-md-12">
+        <div class="card card-body" id="summaries_table_by_region"></div>
     </div>
 </div>
