@@ -737,6 +737,62 @@ class CountriesDashboardStats extends Model
         return $data;
     }
 
+    public static function getCountryTotalPD($country_id, $region_id = null, $year = '2020', $queryFilters = []){
+        $positive_pd_all = new Expression('(
+            select
+                `core_animal_event`.`id` AS `pdEventID`,
+                `core_animal_event`.`event_date` AS `examinationDate`,
+                `core_animal_event`.`field_agent_id` AS `field_agent_id`,
+                year(`core_animal_event`.`event_date`) AS `year`,
+                quarter(`core_animal_event`.`event_date`) AS `quarter`,
+                month(`core_animal_event`.`event_date`) AS `month`,
+                `animal`.`tag_id` AS `animalTagID`,
+                `animal`.`id` AS `animal_id`,
+                `country`.`name` AS `country`,
+                `core_animal_event`.`country_id` AS `country_id`,
+			    `animal`.`region_id` AS `region_id`,
+			    `animal`.`district_id`,
+    	        `animal`.`ward_id`,
+    	        `animal`.`village_id`
+            from
+                ((`core_animal_event`
+                    left join `core_animal` `animal` on (`core_animal_event`.`animal_id` = `animal`.`id`)
+                 )
+                join `core_country` `country` on
+                    (((`country`.`id` = `core_animal_event`.`country_id`)
+                    and (`core_animal_event`.`event_type` = 4)
+                    #and (json_unquote(json_extract(`core_animal_event`.`additional_attributes`,\'$."131"\')) = 1)
+                    ))
+                )
+        )');
+        $select = new Expression('
+            `country_id`,
+            #`region_id`,
+            `month`,
+            `year`,
+            COUNT(`pdEventID`) AS `pd_examinations`
+        ');
+        $query = new Query();
+        $query->from(['pd' => $positive_pd_all]);
+        $query->addSelect($select);
+        $query->andWhere('[[country_id]] = :country_id ', [':country_id' => $country_id]);
+        $query->andWhere('year([[examinationDate]]) = :year ', [':year' => $year]);
+        $query->addGroupBy("year, month, country_id");
+        if ($region_id !== null && $region_id != ''){
+            $query->andWhere(['[[region_id]]' => $region_id]);
+            $query->addGroupBy("region_id");
+            $query->addSelect("region_id");
+        }
+        foreach ($queryFilters as $k => $v){
+            $query->andWhere(['[['.$k.']]' => $v]);
+        }
+        $query->orderBy('year ASC, month ASC');
+
+        $command = $query->createCommand();
+        //dd($command->rawSql);
+        return $command->queryAll();
+    }
+
     public static function getCountryAvgBodyWeight($country_id, $region_id = null, $year = '2020', $queryFilters = []){
         $subquery = new Expression('(
               select

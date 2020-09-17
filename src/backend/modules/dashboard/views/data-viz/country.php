@@ -79,8 +79,8 @@ $options = [
             'renderContainer' => '#avg_milk_yield'
         ],
         [
-            'name' => 'avg_ai_preg',
-            'renderContainer' => '#avg_ai_preg'
+            'name' => 'total_pd',
+            'renderContainer' => '#total_pd'
         ],
         [
             'name' => 'ai_per_breed',

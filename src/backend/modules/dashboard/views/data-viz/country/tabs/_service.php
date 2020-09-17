@@ -92,20 +92,40 @@ $tabType = Yii::$app->request->get('tab_type', null);
 <div class="row mb-3">
     <div class="card card-body">
         <div class="col-md-12">
-            <?php $idPrefix = 'avg_ai_preg-g-filter-'; ?>
+            <?php $idPrefix = 'total_pd-g-filter-'; ?>
             <div class="chartFilters col-md-12 mb-4">
-                <?= Html::beginForm(Url::to(array_merge(['load-chart'], Yii::$app->request->get())), 'post', ['class' => 'row justify-content-md-center chart-filter-form', 'id' => $idPrefix. 'form', 'data-name' => 'avg_ai_preg']) ?>
+                <?= Html::beginForm(Url::to(array_merge(['load-chart'], Yii::$app->request->get())), 'post', ['class' => 'row justify-content-md-center chart-filter-form', 'id' => $idPrefix. 'form', 'data-name' => 'total_pd']) ?>
+                <?= $this->render('/data-viz/country/_location_filters', [
+                    'filterOptions' => $filterOptions,
+                    'idPrefix' => $idPrefix
+                ]) ?>
                 <div class="col-md-2">
                     <br>
                     <?= Select2::widget([
-                        'name' => 'region_id',
-                        'value' => $filterOptions['region_id'] ?? null,
-                        'data' => CountryUnits::getListData('id', 'name', '-- All Regions --', ['country_id' => $filterOptions['country_id'], 'level' => CountryUnits::LEVEL_REGION]),
+                        'name' => 'field_agent_id',
+                        'value' => $filterOptions['field_agent_id'] ?? null,
+                        'data' => Users::getFieldAgentListData('id', 'name', '--Field Agent--', ['country_id' => $filterOptions['country_id']]) ,
                         'theme' => Select2::THEME_BOOTSTRAP,
                         'options' => [
-                            'id' => $idPrefix . 'region_id',
-                            'class' => 'form-control parent-depdropdown',
-                            'data-url' => Url::to(['/core/country-units/get-list', 'country_id' => 'idV', 'level' => CountryUnits::LEVEL_REGION, 'placeholder' => '-- All Regions --']),
+                            'id' => $idPrefix . 'field_agent_id',
+                            'multiple' => true,
+                            'class' => 'form-control',
+                        ],
+                        'pluginOptions' => [
+                            'allowClear' => false
+                        ],
+                    ]); ?>
+                </div>
+                <div class="col-md-2">
+                    <br>
+                    <?= Select2::widget([
+                        'name' => 'year',
+                        'value' => $filterOptions['year'] ?? null,
+                        'data' => CountriesDashboardStats::rangeYearsDropdown() ,
+                        'theme' => Select2::THEME_BOOTSTRAP,
+                        'options' => [
+                            'id' => $idPrefix . 'year',
+                            'class' => 'form-control',
                         ],
                         'pluginOptions' => [
                             'allowClear' => false
@@ -116,8 +136,8 @@ $tabType = Yii::$app->request->get('tab_type', null);
                     <br>
                     <?= Select2::widget([
                         'name' => 'graph_type',
-                        'value' => $filterOptions['graph_type'] ?? DataViz::GRAPH_COLUMN,
-                        'data' => DataViz::graphTypeOptions() ,
+                        'value' => $filterOptions['graph_type'] ?? DataViz::GRAPH_LINE,
+                        'data' => DataViz::graphTypeOptions(false, [DataViz::GRAPH_PIE]) ,
                         'theme' => Select2::THEME_BOOTSTRAP,
                         'options' => [
                             'id' => $idPrefix . 'graph_type',
@@ -137,7 +157,7 @@ $tabType = Yii::$app->request->get('tab_type', null);
                 </div>
                 <?= Html::endForm() ?>
             </div>
-            <div class="col-md-12" id="avg_ai_preg"></div>
+            <div class="col-md-12" id="total_pd"></div>
         </div>
     </div>
 </div>
