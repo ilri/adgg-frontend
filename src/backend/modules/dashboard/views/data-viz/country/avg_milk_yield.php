@@ -13,7 +13,7 @@ use yii\helpers\Json;
 
 $year = Yii::$app->request->get('year', date("Y"));
 $region_id = Yii::$app->request->get('region_id', null);
-$graph_type = Yii::$app->request->get('graph_type', DataViz::GRAPH_BAR);
+$graph_type = Yii::$app->request->get('graph_type', DataViz::GRAPH_LINE);
 $filters = Yii::$app->request->getQueryParams();
 $queryFilters = array_intersect_key($filters, array_flip(['district_id', 'ward_id', 'village_id']));
 ?>
