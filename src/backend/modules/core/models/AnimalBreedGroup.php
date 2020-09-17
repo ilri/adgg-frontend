@@ -71,7 +71,7 @@ class AnimalBreedGroup extends ActiveRecord implements ActiveSearchInterface
      * @return array
      * @throws \Exception
      */
-    public static function breedsList($prompt = false)
+    public static function getBreedsList($prompt = false)
     {
         return Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, $prompt);
     }
