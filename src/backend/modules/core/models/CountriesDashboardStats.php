@@ -535,7 +535,7 @@ class CountriesDashboardStats extends Model
                     break;
             }
         }
-        //list($condition, $params) = DbUtils::appendCondition(Animal::tableName().'.[[country_id]]', $country_id, $condition, $params);
+        list($condition, $params) = DbUtils::appendCondition(Animal::tableName(). '.[[country_id]]', $country_id, $condition, $params);
         $command = static::getAnimalsWithMilkQuery($condition, $params);
         return $command->scalar();
     }
@@ -630,31 +630,20 @@ class CountriesDashboardStats extends Model
     }
     public static function getAnimalsByCategoriesRegionsForDataViz($filter = [], $country_id = null){
         $data = [];
-        //$countries = static::getDashboardCountryCategories();
         $regions = CountryUnits::getListData('id', 'name', '', ['country_id' => $country_id, 'level' => CountryUnits::LEVEL_REGION]);
         $animal_types = Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, false);
-        $years = static::rangeYears();
         foreach ($regions as $id => $region) {
             foreach ($animal_types as $typeid => $type) {
-                foreach ($years as $year) {
                     $params = [];
                     $condition = '';
-                    //list($condition, $params) = DbUtils::appendCondition('country_id', $country_id, $condition, $params);
                     list($condition, $params) = DbUtils::appendCondition('region_id', $id, $condition, $params);
                     list($condition, $params) = DbUtils::appendCondition('animal_type', $typeid, $condition, $params);
-                    //list($condition, $params) = DbUtils::appendCondition(DbUtils::castYEAR('reg_date', Animal::getDb()), $year, $condition, $params, 'AND', '<=');
                     if (!empty($condition))
-                        $condition .= ' AND ';
-                    $casted_date = DbUtils::castYEAR(Animal::tableName() . '.[[reg_date]]', Animal::getDb());
-                    $condition .= $casted_date . ' <= :end_date';
-                    $params[':end_date'] = $year;
                     $count = Animal::getCount($condition, $params);
-                    $data[$region][$type][$year] = [
-                        'label' => $year,
+                    $data[$region][$type] = [
+                        'label' => $type,
                         'value' => floatval(number_format($count, 2, '.', '')),
                     ];
-                }
-
             }
         };
         return $data;
