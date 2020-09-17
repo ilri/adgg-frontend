@@ -138,7 +138,7 @@ $_series = [
 ];
 
 $graphOptions = [
-    'title' => ['text' => 'Average Body Weight per Quarter'],
+    'title' => ['text' => 'Average Body Weight'],
     'subtitle' => ['text' => ''],
     'xAxis' => [
         'categories' => array_map(function ($date){
@@ -147,7 +147,7 @@ $graphOptions = [
     ],
     'yAxis' => [
         'title' => [
-            'text' => 'Avg Body Weight',
+            'text' => 'Avg Body Weight (Kg)',
         ]
     ],
     'colors' => [
