@@ -42,26 +42,6 @@ if (count($chart_data) > 0) {
         }
     }
 }
-//dd($countries,$empty_countries,$data);
-/*
-$series = [
-    [
-        'name' => 'Fresian',
-        'data' => [10,12,13],
-        'color' => '#771957',
-    ],
-    [
-        'name' => 'Zebu',
-        'data' => [15,16,17],
-        'color' => '#7F5298',
-    ],
-    [
-        'name' => 'Borana',
-        'data' => [14,15,15],
-        'color' => '#7986CB',
-    ],
-];
-*/
 $series = $data;
 $graphOptions = [
     'chart' => [
