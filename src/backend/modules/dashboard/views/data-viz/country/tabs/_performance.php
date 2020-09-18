@@ -86,12 +86,34 @@ $tabType = Yii::$app->request->get('tab_type', null);
                     <br>
                     <?= Select2::widget([
                         'name' => 'animal_type',
-                        'value' => $filterOptions['animal_type'] ?? DataViz::ANIMAL_TYPE_CALF,
+                        'value' => $filterOptions['animal_type'] ?? null,
                         'data' => DataViz::animalTypeOptions('--Animal Type--') ,
                         'theme' => Select2::THEME_BOOTSTRAP,
                         'options' => [
                             'id' => $idPrefix . 'animal_type',
+                            'class' => 'form-control select2 parent-depdropdown',
+                            'placeholder' => '-- All Animal Types --',
+                            'data-child-selectors' => [
+                                '#' . $idPrefix .'age_range',
+                            ],
+                        ],
+                        'pluginOptions' => [
+                            'allowClear' => false
+                        ],
+                    ]); ?>
+                </div>
+                <div class="col-md-2">
+                    <br>
+                    <?= Select2::widget([
+                        'name' => 'age_range',
+                        'value' => $filterOptions['age_range'] ?? null,
+                        'data' => DataViz::animalTypeOptions('--Age Range--') ,
+                        'theme' => Select2::THEME_BOOTSTRAP,
+                        'options' => [
+                            'id' => $idPrefix . 'age_range',
                             'class' => 'form-control',
+                            'placeholder' => '-- Age Range --',
+                            'data-url' => Url::to(['/dashboard/data-viz/get-ages', 'animal_type' => 'idV', 'placeholder' => '-- Age Range --']),
                         ],
                         'pluginOptions' => [
                             'allowClear' => false
@@ -146,6 +168,22 @@ $tabType = Yii::$app->request->get('tab_type', null);
                         'theme' => Select2::THEME_BOOTSTRAP,
                         'options' => [
                             'id' => $idPrefix . 'year',
+                            'class' => 'form-control',
+                        ],
+                        'pluginOptions' => [
+                            'allowClear' => false
+                        ],
+                    ]); ?>
+                </div>
+                <div class="col-md-2">
+                    <br>
+                    <?= Select2::widget([
+                        'name' => 'dim_range',
+                        'value' => $filterOptions['dim_range'] ?? null,
+                        'data' => DataViz::dimRange('--Days in Milk--') ,
+                        'theme' => Select2::THEME_BOOTSTRAP,
+                        'options' => [
+                            'id' => $idPrefix . 'dim_range',
                             'class' => 'form-control',
                         ],
                         'pluginOptions' => [

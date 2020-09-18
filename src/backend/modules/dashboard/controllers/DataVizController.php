@@ -11,6 +11,7 @@ namespace backend\modules\dashboard\controllers;
 
 use backend\modules\auth\Session;
 use backend\modules\core\models\Country;
+use backend\modules\dashboard\models\DataViz;
 use common\helpers\Url;
 use Yii;
 use yii\web\ForbiddenHttpException;
@@ -75,6 +76,16 @@ class DataVizController extends Controller
                 'org_id' => $org_id,
             ],
         ]);
+    }
+
+    public function actionGetAges($animal_type, $placeholder = false)
+    {
+        if ($animal_type == DataViz::ANIMAL_TYPE_COW) {
+            $data = DataViz::ageRangeCows($placeholder);
+        } else {
+            $data = DataViz::ageRangeCalves($placeholder);
+        }
+        return json_encode($data);
     }
 
 }

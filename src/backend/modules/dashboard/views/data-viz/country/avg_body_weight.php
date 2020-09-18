@@ -14,13 +14,13 @@ use yii\helpers\Json;
 $year = Yii::$app->request->get('year', date("Y"));
 $region_id = Yii::$app->request->get('region_id', null);
 $graph_type = Yii::$app->request->get('graph_type', DataViz::GRAPH_LINE);
-$animal_type = Yii::$app->request->get('animal_type', DataViz::ANIMAL_TYPE_CALF);
+$animal_type = Yii::$app->request->get('animal_type', null);
 $filters = Yii::$app->request->getQueryParams();
 $queryFilters = array_intersect_key($filters, array_flip(['district_id', 'ward_id', 'village_id']));
 
 if ($animal_type == DataViz::ANIMAL_TYPE_CALF){
     $queryFilters['animal_type'] = [
-        Animal::ANIMAL_TYPE_FEMALE_CALF, Animal::ANIMAL_TYPE_MALE_CALF, Animal::ANIMAL_TYPE_HEIFER
+        Animal::ANIMAL_TYPE_FEMALE_CALF, Animal::ANIMAL_TYPE_HEIFER
     ];
 }
 elseif($animal_type == DataViz::ANIMAL_TYPE_COW) {
