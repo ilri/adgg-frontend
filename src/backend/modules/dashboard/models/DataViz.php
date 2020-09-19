@@ -68,13 +68,14 @@ class DataViz
     }
 
     public static function ageRangeCows($add_tip = false){
+        // we show the values in months digits
         $options = [
-            '2-3' => Lang::t('2-3 years'),
-            '3-4' => Lang::t('3-4 years'),
-            '4-5' => Lang::t('4-5 years'),
-            '5-6' => Lang::t('5-6 years'),
-            '6-7' => Lang::t('6-7 years'),
-            '8>' => Lang::t('8 and above'),
+            '24-36' => Lang::t('2-3 years'),
+            '36-48' => Lang::t('3-4 years'),
+            '48-60' => Lang::t('4-5 years'),
+            '60-72' => Lang::t('5-6 years'),
+            '72-84' => Lang::t('6-7 years'),
+            '96>' => Lang::t('8 and above'),
         ];
         return Utils::appendDropDownListPrompt($options, $add_tip);
     }

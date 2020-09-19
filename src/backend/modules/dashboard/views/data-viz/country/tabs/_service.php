@@ -38,6 +38,7 @@ $tabType = Yii::$app->request->get('tab_type', null);
                             'id' => $idPrefix . 'field_agent_id',
                             'multiple' => true,
                             'class' => 'form-control',
+                            'placeholder' => '-- Field Agents --',
                         ],
                         'pluginOptions' => [
                             'allowClear' => false
@@ -110,6 +111,7 @@ $tabType = Yii::$app->request->get('tab_type', null);
                             'id' => $idPrefix . 'field_agent_id',
                             'multiple' => true,
                             'class' => 'form-control',
+                            'placeholder' => '-- Field Agents --',
                         ],
                         'pluginOptions' => [
                             'allowClear' => false

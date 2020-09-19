@@ -10,6 +10,7 @@ use common\helpers\ArrayHelper;
 use common\helpers\DateUtils;
 use common\helpers\DbUtils;
 use common\helpers\Lang;
+use common\helpers\Str;
 use Yii;
 use yii\base\Model;
 use yii\data\SqlDataProvider;
@@ -785,6 +786,11 @@ class CountriesDashboardStats extends Model
     }
 
     public static function getCountryAvgBodyWeight($country_id, $region_id = null, $year = '2020', $queryFilters = []){
+        // unset age_range and dim_range from $queryFilters so we can handle them in a special way
+        $dim_range = $queryFilters['dim_range'] ?? null;
+        $age_range = $queryFilters['age_range'] ?? null;
+        unset($queryFilters['age_range'], $queryFilters['dim_range']);
+
         $subquery = new Expression('(
               select
                 `core_animal_event`.`id` AS `event_id`,
@@ -793,7 +799,9 @@ class CountriesDashboardStats extends Model
                 `animal`.`ward_id`,
                 `animal`.`village_id`,
                 `animal`.`animal_type`,
+                `animal`.`birthdate`,
                 `core_animal_event`.`event_date` AS `milk_date`,
+                (SELECT ROUND(DATEDIFF( `milk_date`, `birthdate`) / 30,2 ) ) as `age`,
                 year(`core_animal_event`.`event_date`) AS `year`,
                 quarter(`core_animal_event`.`event_date`) AS `quarter`,
                 month(`core_animal_event`.`event_date`) AS `month`,
@@ -809,7 +817,15 @@ class CountriesDashboardStats extends Model
                 json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
                 \'$.\"61\"\')) AS `milk_yield_evening`,
                 json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
-                \'$.\"62\"\')) AS `milk_yield_total`
+                \'$.\"62\"\')) AS `milk_yield_total`,
+                json_unquote(json_extract(`core_animal_event`.`additional_attributes`,
+                \'$.\"221\"\')) AS `days_in_milk_raw`,
+                (case 
+                        when (json_unquote(json_extract(`core_animal_event`.`additional_attributes`,\'$.\"221\"\')) = 0) then 0 
+                        when (json_unquote(json_extract(`core_animal_event`.`additional_attributes`,\'$.\"221\"\')) is null) then 0 
+                        when (json_unquote(json_extract(`core_animal_event`.`additional_attributes`,\'$.\"221\"\')) = "null") then 0  
+                        else round(json_unquote(json_extract(`core_animal_event`.`additional_attributes`,\'$.\"221\"\')))
+                 end) as `days_in_milk`
             from
                 ((`core_animal_event`
             left join `core_animal` `animal` on ((`core_animal_event`.`animal_id` = `animal`.`id`))
@@ -843,8 +859,45 @@ class CountriesDashboardStats extends Model
             ':event_type' => AnimalEvent::EVENT_TYPE_MILKING,
         ]);
         $query->addSelect($select);
-        $query->andWhere('`year` = :year AND `country_id` = :country_id ', [':year' => $year, ':country_id' => $country_id]);
-        $query->addGroupBy("year, quarter, month, country_id");
+
+        $age_filter = [];
+        if ($age_range !== null){
+            $age_filter['age'] = $age_range;
+        }
+        if ($dim_range !== null){
+            $age_filter['days_in_milk'] = $dim_range;
+        }
+
+        foreach ($age_filter as $field => $values){
+            $all_clauses = [];
+            foreach ($values as $k => $v){
+                $clauses = [];
+                // check if $v has a hyphen and split
+                if (Str::contains($v, '-')){
+                    $parts = explode('-', $v); // e.g [0,6]
+                    $clauses[] = ['>=', $field, $parts[0]];
+                    $clauses[] = ['<=', $field, $parts[1]];
+                }
+                // in cases like 96>
+                if (Str::contains($v, '>')){
+                    $parts = explode('>', $v); // e.g [96]
+                    $clauses[] = ['>=', $field, $parts[0]];
+                }
+                $all_clauses[] = $clauses;
+            }
+            foreach ($all_clauses as $k => $clauses){
+                // the first $k we append with and, the rest with or
+                if ($k == 0){
+                    $query->andWhere(array_merge(['and'], $clauses));
+                }
+                else {
+                    //POSSIBLE BUG:  this generates an OR condition outside the WHERE when it's put after the other where conditions
+                    $query->orWhere(array_merge(['and'], $clauses));
+                }
+            }
+        }
+
+        $query->andWhere(['year' => $year, 'country_id' => $country_id]);
         # if we have filtered region_id, add group by region_id
         if ($region_id !== null && $region_id != ''){
             $query->andWhere(['[[region_id]]' => $region_id]);
@@ -854,6 +907,8 @@ class CountriesDashboardStats extends Model
         foreach ($queryFilters as $k => $v){
             $query->andWhere(['[['.$k.']]' => $v]);
         }
+        $query->addGroupBy("year, quarter, month, country_id");
+
         $query->orderBy('month ASC');
 
         $command = $query->createCommand();

@@ -23,12 +23,12 @@ $this->params['breadcrumbs'] = [
 ?>
 <?= $this->render('country/_tab', []) ?>
 <div class="tab-content">
-    <div class="tab-pane" id="summaries" role="tabpanel">
+    <div class="tab-pane active" id="summaries" role="tabpanel">
         <?= $this->render('country/tabs/_summaries', [
                 'filterOptions' => $filterOptions
         ]) ?>
     </div>
-    <div class="tab-pane active" id="performance" role="tabpanel">
+    <div class="tab-pane" id="performance" role="tabpanel">
         <?= $this->render('country/tabs/_performance', [
                 'filterOptions' => $filterOptions
         ]) ?>

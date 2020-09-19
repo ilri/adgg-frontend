@@ -92,7 +92,7 @@ $tabType = Yii::$app->request->get('tab_type', null);
                         'options' => [
                             'id' => $idPrefix . 'animal_type',
                             'class' => 'form-control select2 parent-depdropdown',
-                            'placeholder' => '-- All Animal Types --',
+                            'placeholder' => '-- Animal Type --',
                             'data-child-selectors' => [
                                 '#' . $idPrefix .'age_range',
                             ],
@@ -107,10 +107,11 @@ $tabType = Yii::$app->request->get('tab_type', null);
                     <?= Select2::widget([
                         'name' => 'age_range',
                         'value' => $filterOptions['age_range'] ?? null,
-                        'data' => DataViz::animalTypeOptions('--Age Range--') ,
+                        'data' => [] ,
                         'theme' => Select2::THEME_BOOTSTRAP,
                         'options' => [
                             'id' => $idPrefix . 'age_range',
+                            'multiple' => true,
                             'class' => 'form-control',
                             'placeholder' => '-- Age Range --',
                             'data-url' => Url::to(['/dashboard/data-viz/get-ages', 'animal_type' => 'idV', 'placeholder' => '-- Age Range --']),
@@ -184,7 +185,9 @@ $tabType = Yii::$app->request->get('tab_type', null);
                         'theme' => Select2::THEME_BOOTSTRAP,
                         'options' => [
                             'id' => $idPrefix . 'dim_range',
+                            'multiple' => true,
                             'class' => 'form-control',
+                            'placeholder' => '-- Days in Milk --',
                         ],
                         'pluginOptions' => [
                             'allowClear' => false
