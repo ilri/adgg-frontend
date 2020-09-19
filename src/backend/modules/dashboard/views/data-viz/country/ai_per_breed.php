@@ -48,8 +48,8 @@ $data = [];
 $breed_data = [];
 foreach ($res as $row){
     $point = (int) $row['inseminations'];
-    $breed_data[$row['ai_sire_breed']]['name'] = $row['ai_sire_breed_label'];
-    $breed_data[$row['ai_sire_breed']]['data'][$row['month']] = $point;
+    $breed_data[$row['breed_group_id']]['name'] = $row['breed_group_name'];
+    $breed_data[$row['breed_group_id']]['data'][$row['month']] = $point;
 }
 foreach ($breed_data as $breed => $bd){
     $points = [];
