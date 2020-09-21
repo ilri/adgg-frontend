@@ -25,8 +25,18 @@ $queryFilters = array_intersect_key($filters, array_flip(['district_id', 'ward_i
 $months = CountriesDashboardStats::getDashboardDateCategories($type = 'month', $max = 12, $format = 'Y-m-d', $from = "$year-01-01", $to = "$year-12-31");
 $res = CountriesDashboardStats::getCountryMonthlyInseminations($filterOptions['country_id'], $region_id, $year, $queryFilters);
 $colors = [
-    '#800080', '#641E16', '#6298D7', '#2B7B48', '#9C0204',
-    '#CD90C9', '#DCA8D9', '#EBC0E8',
+    '#9EEDB3', '#001D00', '#004619', '#002C00',
+    '#1B4F72', '#336083', '#487293', '#5D84A5',
+    '#7197B6', '#86AAC8', '#9BBEDA', '#B0D2EC',
+    '#771957', '#7986CB', '#7F5298', '#65B27C',
+    '#056030', '#2B7B48', '#27921E', '#81D097',
+    '#6298D7', '#45ADC3', '#2EAB86', '#489661',
+    '#177380', '#D3E36F', '#DBB450', '#C97434',
+    '#AE2921', '#8C2B16', '#F00C0C', '#350d36',
+    '#EB6060', '#E39494', '#9C0204', '#853536',
+    '#C25D55', '#FF9900', '#875F03', '#F6FF00',
+    '#800080', '#902C8E', '#A0479D', '#AF60AC',
+    '#BE78BB', '#CD90C9', '#DCA8D9', '#EBC0E8',
     '#FAD8F7', '#000000', '#1E1E1E', '#363636',
     '#4F4F4F', '#6A6A6A', '#878787', '#A4A4A4',
     '#C3C3C3', '#E2E2E2', '#ECBEB3', '#FFD7CD',
@@ -89,7 +99,7 @@ else {
         [
             'name' => Country::getScalar('name', ['id' => $filterOptions['country_id']]),
             'data' => [0,0,0,0,0,0,0,0,0,0,0,0],
-            'color' => '#771957',
+            'color' => '#7986CB',
         ]
     ];
 }
