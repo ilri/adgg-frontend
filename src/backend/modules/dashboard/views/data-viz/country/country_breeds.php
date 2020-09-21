@@ -16,17 +16,22 @@ use yii\helpers\Json;
 $chart_data = CountriesDashboardStats::getAnimalBreedsByRegionsForDataViz($country_id);
 $data = [];
 $colors = [
-    '#fe0000', '#86cc31', '#61812e', '#94e2dd',
-    '#0f767a', '#1be19f', '#0a60a8', '#d5d2e7',
-    '#830c6f', '#cd49dc', '#ab6eaf', '#f6b0ec',
-    '#3441c5', '#e3488e', '#562fff', '#d2c966',
-    '#5e4028', '#fea53b', '#a07d62', '#20f53d',
-    '#fe0000', '#b3e467', '#022114', '#cafafa',
-    '#509d99', '#59faea', '#245a62', '#4cf185',
-    '#2f882d', '#020b39', '#9baad8', '#2f158b',
-    '#a17bf2', '#49406e', '#ef66f0', '#71114b',
-    '#feafda', '#9a05cb', '#b66c96', '#88fe0e',
+    '#9EEDB3', '#001D00', '#004619',
+    '#1B4F72', '#5D84A5', '#350d36',
+    '#771957', '#7F5298', '#65B27C',
+    '#D3E36F', '#DBB450', '#C97434',
+    '#AE2921', '#27921E', '#F00C0C',
+    '#C25D55', '#FF9900', '#875F03',
+    '#EBC0E8', '#000000', '#363636',
+    '#C6E6FF', '#F6FF00', '#022114',
+    '#509d99', '#59faea', '#245a62',
+    '#61812e', '#4cf185', '#9baad8',
+    '#0f767a', '#1be19f', '#0a60a8',
+    '#e3488e', '#d2c966', '#2f158b',
+    '#a07d62', '#20f53d', '#020b39',
+    '#fe0000', '#b3e467',
 ];
+shuffle($colors);
 $empty_regions = [];
 $breed_colors = [];
 $regions = [];
@@ -86,18 +91,7 @@ $graphOptions = [
             'stacking' => 'normal',
         ]
     ],
-    'colors' => [
-        '#fe0000', '#86cc31', '#61812e', '#94e2dd',
-        '#0f767a', '#1be19f', '#0a60a8', '#d5d2e7',
-        '#830c6f', '#cd49dc', '#ab6eaf', '#f6b0ec',
-        '#3441c5', '#e3488e', '#562fff', '#d2c966',
-        '#5e4028', '#fea53b', '#a07d62', '#20f53d',
-        '#fe0000', '#b3e467', '#022114', '#cafafa',
-        '#509d99', '#59faea', '#245a62', '#4cf185',
-        '#2f882d', '#020b39', '#9baad8', '#2f158b',
-        '#a17bf2', '#49406e', '#ef66f0', '#71114b',
-        '#feafda', '#9a05cb', '#b66c96', '#88fe0e',
-    ],
+    'colors' => $colors,
 ];
 $containerId = 'chartContainerBreeds';
 $this->registerJs("MyApp.modules.dashboard.chart('" . $containerId . "', " . Json::encode($series) . "," . Json::encode($graphOptions) . ");");

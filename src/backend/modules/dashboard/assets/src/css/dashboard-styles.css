@@ -2,10 +2,10 @@ th.dt-category-name {
     text-align: center;
 }
 
-.select2-search__field{
-    width: 100% !important;
-}
-
 th.dt-row-name {
     font-weight: 500
+}
+
+.select2-search__field{
+    width: 100% !important;
 }

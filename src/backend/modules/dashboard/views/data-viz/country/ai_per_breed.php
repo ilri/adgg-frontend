@@ -25,24 +25,22 @@ $queryFilters = array_intersect_key($filters, array_flip(['district_id', 'ward_i
 $months = CountriesDashboardStats::getDashboardDateCategories($type = 'month', $max = 12, $format = 'Y-m-d', $from = "$year-01-01", $to = "$year-12-31");
 $res = CountriesDashboardStats::getCountryMonthlyInseminations($filterOptions['country_id'], $region_id, $year, $queryFilters);
 $colors = [
-    '#9EEDB3', '#001D00', '#004619', '#002C00',
-    '#1B4F72', '#336083', '#487293', '#5D84A5',
-    '#7197B6', '#86AAC8', '#9BBEDA', '#B0D2EC',
-    '#771957', '#7986CB', '#7F5298', '#65B27C',
-    '#056030', '#2B7B48', '#27921E', '#81D097',
-    '#6298D7', '#45ADC3', '#2EAB86', '#489661',
-    '#177380', '#D3E36F', '#DBB450', '#C97434',
-    '#AE2921', '#8C2B16', '#F00C0C', '#350d36',
-    '#EB6060', '#E39494', '#9C0204', '#853536',
-    '#C25D55', '#FF9900', '#875F03', '#F6FF00',
-    '#800080', '#902C8E', '#A0479D', '#AF60AC',
-    '#BE78BB', '#CD90C9', '#DCA8D9', '#EBC0E8',
-    '#FAD8F7', '#000000', '#1E1E1E', '#363636',
-    '#4F4F4F', '#6A6A6A', '#878787', '#A4A4A4',
-    '#C3C3C3', '#E2E2E2', '#ECBEB3', '#FFD7CD',
-    '#641E16', '#783429', '#8B4A3E', '#9F6054',
-    '#B2776A', '#C58E82', '#D9A69A', '#C6E6FF',
+    '#9EEDB3', '#001D00', '#004619',
+    '#1B4F72', '#5D84A5', '#350d36',
+    '#771957', '#7F5298', '#65B27C',
+    '#D3E36F', '#DBB450', '#C97434',
+    '#AE2921', '#27921E', '#F00C0C',
+    '#C25D55', '#FF9900', '#875F03',
+    '#EBC0E8', '#000000', '#363636',
+    '#C6E6FF', '#F6FF00', '#022114',
+    '#509d99', '#59faea', '#245a62',
+    '#61812e', '#4cf185', '#9baad8',
+    '#0f767a', '#1be19f', '#0a60a8',
+    '#e3488e', '#d2c966', '#2f158b',
+    '#a07d62', '#20f53d', '#020b39',
+    '#fe0000', '#b3e467',
 ];
+shuffle($colors);
 $breed_colors = [];
 $data = [];
 $breed_data = [];
@@ -130,16 +128,7 @@ $graphOptions = [
             'stacking' => 'normal',
         ]
     ],
-    'colors' => [
-        '#1B4F72', '#336083', '#487293', '#5D84A5',
-        '#7197B6', '#86AAC8', '#9BBEDA', '#B0D2EC',
-        '#177380', '#D3E36F', '#DBB450', '#C97434',
-        '#AE2921', '#8C2B16', '#F00C0C', '#350d36',
-        '#EB6060', '#E39494', '#9C0204', '#853536',
-        '#C25D55', '#FF9900', '#875F03', '#F6FF00',
-        '#800080', '#902C8E', '#A0479D', '#AF60AC',
-        '#BE78BB', '#CD90C9', '#DCA8D9', '#EBC0E8',
-    ],
+    'colors' => $colors,
 ];
 $containerId = 'chartContainerAIBreeds';
 $this->registerJs("MyApp.modules.dashboard.chart('" . $containerId . "', " . Json::encode($series) . "," . Json::encode($graphOptions) . ");");

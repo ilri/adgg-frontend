@@ -42,6 +42,7 @@ $colors = [
     '#641E16', '#783429', '#8B4A3E', '#9F6054',
     '#B2776A', '#C58E82', '#D9A69A', '#C6E6FF',
 ];
+shuffle($colors);
 $series_colors = [];
 $region_data = [];
 
@@ -130,10 +131,7 @@ $graphOptions = [
             'text' => 'Conception Rate (%)',
         ]
     ],
-    'colors' => [
-        '#AE2921', '#000000', '#004619',
-        '#7F5298', '#7986CB', '#81D097',
-    ],
+    'colors' => $colors,
     'legend' => [
         'labelFormatter' => new \yii\web\JsExpression("
             function () {
