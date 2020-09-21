@@ -715,7 +715,7 @@ class CountriesDashboardStats extends Model
         $countries = static::getDashboardCountryCategories();
         $animal_breeds = Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, false);
         foreach ($countries as $id => $country) {
-            $data[$country] = static::getAnimalsGroupedByBreeds($id);
+            $data[$country] = static::getAnimalsByBreedGroups($id);
         };
         return $data;
     }
