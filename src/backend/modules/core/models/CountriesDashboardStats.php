@@ -1109,10 +1109,10 @@ class CountriesDashboardStats extends Model
                 and (`core_animal_event`.`event_type` = :event_type)))
             )
         )
-        JOIN `core_animal_breed_group` `breed_group` ON (
-            json_unquote(json_extract(`core_animal_event`.`additional_attributes`,\'$."111"\')) MEMBER OF(`breed_group`.`breeds`) 
-            AND `breed_group`.`is_active` = 1
-        )
+        #JOIN `core_animal_breed_group` `breed_group` ON (
+        #    json_unquote(json_extract(`core_animal_event`.`additional_attributes`,\'$."111"\')) MEMBER OF(`breed_group`.`breeds`) 
+        #    AND `breed_group`.`is_active` = 1
+        #)
         ');
 
         $select = new Expression('
@@ -1127,10 +1127,10 @@ class CountriesDashboardStats extends Model
             #`animal`.`region_id`,
             #`list_type`.`label` AS `main_breed_label`,
             #`animal`.`main_breed`,
-            #json_unquote(json_extract(`core_animal_event`.`additional_attributes`,\'$."111"\')) AS `ai_sire_breed`,
-            #`list_type_b`.`label` AS `ai_sire_breed_label`,
-            `breed_group`.`id` AS `breed_group_id`,
-            `breed_group`.`name` AS `breed_group_name`
+            #`breed_group`.`id` AS `breed_group_id`,
+            #`breed_group`.`name` AS `breed_group_name`
+            json_unquote(json_extract(`core_animal_event`.`additional_attributes`,\'$."111"\')) AS `ai_sire_breed`,
+            `list_type_b`.`label` AS `ai_sire_breed_label`
         ');
 
         $query = new Query();
@@ -1141,7 +1141,7 @@ class CountriesDashboardStats extends Model
         ]);
         $query->andWhere('[[animal]].[[country_id]] = :country_id ', [':country_id' => $country_id]);
         $query->andWhere('year([[core_animal_event]].[[event_date]]) = :year ', [':year' => $year]);
-        $query->addGroupBy("year, country_id, month, monthname, breed_group_id, breed_group_name");
+        $query->addGroupBy("year, country_id, month, monthname, ai_sire_breed, ai_sire_breed_label");
         if ($region_id !== null && $region_id != ''){
             $query->andWhere(['[[animal]].[[region_id]]' => $region_id]);
             //$query->addGroupBy("region_id");
