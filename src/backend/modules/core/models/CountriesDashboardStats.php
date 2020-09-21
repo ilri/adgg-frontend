@@ -219,7 +219,38 @@ class CountriesDashboardStats extends Model
         };
         return $data;
     }
-
+    /**
+     * @param null $country_id
+     * @param null $region_id
+     * @param array $param
+     * @return array
+     * @throws \Exception
+     */
+    public static function getAnimalsByBreedGroups($country_id = null, $region_id = null)
+    {
+        $condition = '';
+        $params = [];
+        //list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
+        $data = [];
+        // get breeds
+        $breeds = Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS);
+        $breed_groups = AnimalBreedGroup::getListData('name', 'breeds', false, '', [], ['orderBy'=>'name']);
+        //dd($breed_groups, $breeds);
+        foreach ($breed_groups as $name => $breeds) {
+            $ids = json_decode($breeds);
+            list($newCondition, $newParams) = DbUtils::appendInCondition('main_breed', $ids, $condition, $params);
+            $count = Animal::find()->andWhere($newCondition, $newParams)
+                ->andFilterWhere(['country_id' => $country_id, 'region_id' => $region_id])
+                ->count();
+            if ($count > 0) {
+                $data[] = [
+                    'label' => $name,
+                    'value' => floatval(number_format($count, 2, '.', '')),
+                ];
+            }
+        };
+        return $data;
+    }
     /**
      * @param null $country_id
      * @return array
@@ -690,12 +721,12 @@ class CountriesDashboardStats extends Model
     }
     public static function getAnimalBreedsByRegionsForDataViz($country_id = null){
         $data = [];
-        $regions = CountryUnits::getListData('id', 'name', '', ['country_id' => $country_id,'level' => CountryUnits::LEVEL_REGION]);
+        $regions = CountryUnits::getListData('id', 'name', false, ['country_id' => $country_id,'level' => CountryUnits::LEVEL_REGION]);
         //dd($regions);
         $countries = static::getDashboardCountryCategories();
         $animal_breeds = Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, false);
         foreach ($regions as $id => $region) {
-            $data[$region] = static::getAnimalsGroupedByBreeds($country_id, $id);
+            $data[$region] = static::getAnimalsByBreedGroups($country_id, $id);
         };
         //dd($data);
         return $data;
