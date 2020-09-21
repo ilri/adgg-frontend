@@ -664,7 +664,7 @@ class CountriesDashboardStats extends Model
     }
     public static function getAnimalsByCategoriesRegionsForDataViz($filter = [], $country_id = null){
         $data = [];
-        $regions = CountryUnits::getListData('id', 'name', '', ['country_id' => $country_id, 'level' => CountryUnits::LEVEL_REGION]);
+        $regions = CountryUnits::getListData('id', 'name', false, ['country_id' => $country_id, 'level' => CountryUnits::LEVEL_REGION]);
         $animal_types = Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, false);
         foreach ($regions as $id => $region) {
             foreach ($animal_types as $typeid => $type) {
