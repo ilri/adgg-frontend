@@ -2,7 +2,9 @@
     margin: 0 auto;
     height: 400px;
 }
-
+.select2-search__field{
+    width: 100% !important;
+}
 #mapBox {
     width: 86%;
     float: left;
@@ -158,8 +160,5 @@
         margin-top: 0;
         border-left: none;
         border-top: 1px solid silver;
-    }
-    .select2-search__field{
-        width: 100% !important;
     }
 }
