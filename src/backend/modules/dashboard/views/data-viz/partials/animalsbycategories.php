@@ -59,7 +59,7 @@ if (count($chart_data) > 0) {
                 'name' => $breed,
                 'data' => $values,
                 'stack' => $country,
-                //'color' => $breed_colors[$breed],
+                'color' => $breed_colors[$breed],
             ];
             if ($country != $first_stack){
                 $item['linkedTo'] = $breed;
