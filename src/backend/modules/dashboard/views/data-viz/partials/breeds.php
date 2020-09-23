@@ -64,7 +64,7 @@ if (count($chart_data) > 0) {
             $data[] = [
                 'name' => $t,
                 'data' => $dv,
-                //'color' => $breed_colors[$t],
+                'color' => $breed_colors[$t],
             ];
         }
     }
