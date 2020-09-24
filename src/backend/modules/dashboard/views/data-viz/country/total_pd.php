@@ -28,24 +28,21 @@ $res = CountriesDashboardStats::getCountryTotalPD($filterOptions['country_id'], 
 $data = [];
 
 $colors = [
-    '#9EEDB3', '#001D00', '#004619', '#002C00',
-    '#1B4F72', '#336083', '#487293', '#5D84A5',
-    '#7197B6', '#86AAC8', '#9BBEDA', '#B0D2EC',
-    '#771957', '#7986CB', '#7F5298', '#65B27C',
-    '#056030', '#2B7B48', '#27921E', '#81D097',
-    '#6298D7', '#45ADC3', '#2EAB86', '#489661',
-    '#177380', '#D3E36F', '#DBB450', '#C97434',
-    '#AE2921', '#8C2B16', '#F00C0C', '#350d36',
-    '#EB6060', '#E39494', '#9C0204', '#853536',
-    '#C25D55', '#FF9900', '#875F03', '#F6FF00',
-    '#800080', '#902C8E', '#A0479D', '#AF60AC',
-    '#BE78BB', '#CD90C9', '#DCA8D9', '#EBC0E8',
-    '#FAD8F7', '#000000', '#1E1E1E', '#363636',
-    '#4F4F4F', '#6A6A6A', '#878787', '#A4A4A4',
-    '#C3C3C3', '#E2E2E2', '#ECBEB3', '#FFD7CD',
-    '#641E16', '#783429', '#8B4A3E', '#9F6054',
-    '#B2776A', '#C58E82', '#D9A69A', '#C6E6FF',
+    '#9EEDB3', '#1B4F72', '#001D00',
+    '#5D84A5', '#771957', '#7F5298',
+    '#350d36', '#65B27C', '#004619',
+    '#D3E36F', '#C97434', '#AE2921',
+    '#DBB450', '#27921E', '#0a60a8',
+    '#C25D55', '#875F03',
+    '#EBC0E8', '#1be19f',
+    '#C6E6FF', '#022114', '#245a62',
+    '#509d99', '#59faea',
+    '#61812e', '#9baad8',
+    '#e3488e', '#d2c966', '#2f158b',
+    '#a07d62', '#20f53d', '#020b39',
+    '#b3e467', '#4cf185', '#0f767a',
 ];
+//shuffle($colors);
 $series_colors = [];
 $region_data = [];
 
@@ -103,7 +100,7 @@ else {
             'name' => $name,
             'type' => $graph_type,
             'data' => $points,
-            'color' => $series_colors[$name],
+            //'color' => $series_colors[$name],
             'zIndex' => 2,
         ];
         $data[] = $item;
@@ -147,10 +144,7 @@ $graphOptions = [
             'text' => 'Total Pregnancy Diagnosis',
         ]
     ],
-    'colors' => [
-        '#AE2921', '#000000', '#004619',
-        '#7F5298', '#7986CB', '#81D097',
-    ],
+    'colors' => $colors,
     'legend' => [
         'labelFormatter' => new \yii\web\JsExpression("
             function () {

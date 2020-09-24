@@ -18,15 +18,12 @@ use yii\helpers\Json;
 </div>
 <?php
 $chart_data = CountriesDashboardStats::getAnimalsByCategoriesForDataViz($filterOptions);
+$colorOptions = CountriesDashboardStats::colorOptions();
 $colors = [
-    '#800080', '#641E16', '#6298D7', '#2B7B48', '#9C0204',
-    '#CD90C9', '#DCA8D9', '#EBC0E8',
-    '#FAD8F7', '#000000', '#1E1E1E', '#363636',
-    '#4F4F4F', '#6A6A6A', '#878787', '#A4A4A4',
-    '#C3C3C3', '#E2E2E2', '#ECBEB3', '#FFD7CD',
-    '#641E16', '#783429', '#8B4A3E', '#9F6054',
-    '#B2776A', '#C58E82', '#D9A69A', '#C6E6FF',
+    '#7D3701', '#641E16', '#27921E',
+    '#EB6060', '#489661', '#C97434',
 ];
+shuffle($colors);
 $data = [];
 $breed_colors = [];
 $first_stack = null;
@@ -37,21 +34,13 @@ if (count($chart_data) > 0) {
             $values = [];
             foreach ($breed_data as $year => $ydata){
                 $values[] = $ydata['value'];
-                if (!empty($colors)){
-                    $color_key = array_rand($colors);
-                    $color = $colors[$color_key];
-                    unset($colors[$color_key]);
-                    if (!array_key_exists($breed, $breed_colors)){
-                        $breed_colors[$breed] = $color;
-                    }
-                }
             }
             $item = [
                 'id' => $breed,
                 'name' => $breed,
                 'data' => $values,
                 'stack' => $country,
-                'color' => $breed_colors[$breed],
+                'color' => $colorOptions['animal_types'][$breed],
             ];
             if ($country != $first_stack){
                 $item['linkedTo'] = $breed;
@@ -146,15 +135,7 @@ $graphOptions = [
             'groupPadding'  => 0.10,
         ]
     ],
-    'colors' => [
-        '#800080', '#641E16', '#6298D7', '#2B7B48', '#9C0204',
-        '#CD90C9', '#DCA8D9', '#EBC0E8',
-        '#FAD8F7', '#000000', '#1E1E1E', '#363636',
-        '#4F4F4F', '#6A6A6A', '#878787', '#A4A4A4',
-        '#C3C3C3', '#E2E2E2', '#ECBEB3', '#FFD7CD',
-        '#641E16', '#783429', '#8B4A3E', '#9F6054',
-        '#B2776A', '#C58E82', '#D9A69A', '#C6E6FF',
-    ],
+    'colors' => $colors,
 ];
 $containerId = 'chartContainerAC';
 $this->registerJs("MyApp.modules.dashboard.chart('" . $containerId . "', " . Json::encode($series) . "," . Json::encode($graphOptions) . ");");

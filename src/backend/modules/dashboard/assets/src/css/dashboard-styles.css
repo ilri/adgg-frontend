@@ -5,3 +5,7 @@ th.dt-category-name {
 th.dt-row-name {
     font-weight: 500
 }
+
+.select2-search__field{
+    width: 100% !important;
+}

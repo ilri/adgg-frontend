@@ -27,6 +27,51 @@ class CountriesDashboardStats extends Model
     CONST INSEMINATION_PD_CALVING_REPORT = 5;
     CONST GENOTYPE_ANIMALS_REPORT = 6;
 
+    public static function colorOptions(){
+        $animalTypeColors = [
+            Animal::ANIMAL_TYPE_COW => '#7D3701',
+            Animal::ANIMAL_TYPE_HEIFER => '#C25D55',
+            Animal::ANIMAL_TYPE_FEMALE_CALF => '#27921E',
+            Animal::ANIMAL_TYPE_BULL => '#FFBF8E',
+            Animal::ANIMAL_TYPE_MALE_CALF => '#489661',
+            Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, Animal::ANIMAL_TYPE_COW) => '#7D3701',
+            Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, Animal::ANIMAL_TYPE_HEIFER) => '#C25D55',
+            Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, Animal::ANIMAL_TYPE_FEMALE_CALF) => '#27921E',
+            Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, Animal::ANIMAL_TYPE_BULL) => '#FFBF8E',
+            Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, Animal::ANIMAL_TYPE_MALE_CALF) => '#489661',
+        ];
+
+        return [
+            'animal_types' => $animalTypeColors,
+        ];
+    }
+
+    public static function breedColorsFromGroups(){
+        $colors = [];
+        $groups = AnimalBreedGroup::getData(['id', 'name', 'breeds', 'color']);
+        foreach ($groups as $row){
+            $color = new \common\helpers\Color($row['color']);
+            $adjustment = \common\helpers\Color::DEFAULT_ADJUST;
+            $breeds = json_decode($row['breeds']);
+            //$breeds = Choices::getColumnData('label', ['list_type_id' => ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, 'value' => $row['breeds']]);
+            //
+            foreach ($breeds as $k => $breed_value){
+                $breed = Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, $breed_value);
+                $breed_color = (string) $color;
+                $adjustment += 4;
+                // if it's dark or light, generate shades for each breed
+                if ($color->isLight()){
+                    $breed_color = $color->darken($adjustment);
+                }
+                else {
+                    $breed_color = $color->lighten($adjustment);
+                }
+                $colors[$breed] = '#' . $breed_color;
+            }
+        }
+        return $colors;
+    }
+
     /**
      * @param $report_id
      * @param null $country_id
@@ -233,19 +278,21 @@ class CountriesDashboardStats extends Model
         //list($condition, $params) = Animal::appendOrgSessionIdCondition($condition, $params);
         $data = [];
         // get breeds
-        $breeds = Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS);
-        $breed_groups = AnimalBreedGroup::getListData('name', 'breeds', false, '', [], ['orderBy'=>'name']);
-        //dd($breed_groups, $breeds);
-        foreach ($breed_groups as $name => $breeds) {
-            $ids = json_decode($breeds);
+        //$breeds = Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS);
+        //$breed_groups = AnimalBreedGroup::getListData('name', 'breeds', false, '', [], ['orderBy'=>'name']);
+        $list = AnimalBreedGroup::getData(['id', 'name', 'breeds', 'color'], '', [], ['orderBy' => 'name']);
+        //dd($list);
+        foreach ($list as $k => $row) {
+            $ids = json_decode($row['breeds']);
             list($newCondition, $newParams) = DbUtils::appendInCondition('main_breed', $ids, $condition, $params);
             $count = Animal::find()->andWhere($newCondition, $newParams)
                 ->andFilterWhere(['country_id' => $country_id, 'region_id' => $region_id])
                 ->count();
             if ($count > 0) {
                 $data[] = [
-                    'label' => $name,
+                    'label' => $row['name'],
                     'value' => floatval(number_format($count, 2, '.', '')),
+                    'color' => $row['color']
                 ];
             }
         };
@@ -713,9 +760,9 @@ class CountriesDashboardStats extends Model
     public static function getAnimalsByBreedsForDataViz(){
         $data = [];
         $countries = static::getDashboardCountryCategories();
-        $animal_breeds = Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, false);
+        //$animal_breeds = Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, false);
         foreach ($countries as $id => $country) {
-            $data[$country] = static::getAnimalsGroupedByBreeds($id);
+            $data[$country] = static::getAnimalsByBreedGroups($id);
         };
         return $data;
     }
@@ -723,8 +770,8 @@ class CountriesDashboardStats extends Model
         $data = [];
         $regions = CountryUnits::getListData('id', 'name', false, ['country_id' => $country_id,'level' => CountryUnits::LEVEL_REGION]);
         //dd($regions);
-        $countries = static::getDashboardCountryCategories();
-        $animal_breeds = Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, false);
+        //$countries = static::getDashboardCountryCategories();
+        //$animal_breeds = Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, false);
         foreach ($regions as $id => $region) {
             $data[$region] = static::getAnimalsByBreedGroups($country_id, $id);
         };
