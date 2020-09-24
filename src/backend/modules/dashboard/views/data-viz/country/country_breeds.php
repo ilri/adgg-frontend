@@ -16,20 +16,19 @@ use yii\helpers\Json;
 $chart_data = CountriesDashboardStats::getAnimalBreedsByRegionsForDataViz($country_id);
 $data = [];
 $colors = [
-    '#9EEDB3', '#001D00', '#004619',
-    '#1B4F72', '#5D84A5', '#350d36',
-    '#771957', '#7F5298', '#65B27C',
-    '#D3E36F', '#DBB450', '#C97434',
-    '#AE2921', '#27921E', '#F00C0C',
-    '#C25D55', '#FF9900', '#875F03',
-    '#EBC0E8', '#000000', '#363636',
-    '#C6E6FF', '#F6FF00', '#022114',
-    '#509d99', '#59faea', '#245a62',
-    '#61812e', '#4cf185', '#9baad8',
-    '#0f767a', '#1be19f', '#0a60a8',
+    '#9EEDB3', '#1B4F72', '#001D00',
+    '#5D84A5', '#771957', '#7F5298',
+    '#350d36', '#65B27C', '#004619',
+    '#D3E36F', '#C97434', '#AE2921',
+    '#DBB450', '#27921E', '#0a60a8',
+    '#C25D55', '#875F03',
+    '#EBC0E8', '#1be19f',
+    '#C6E6FF', '#022114', '#245a62',
+    '#509d99', '#59faea',
+    '#61812e', '#9baad8',
     '#e3488e', '#d2c966', '#2f158b',
     '#a07d62', '#20f53d', '#020b39',
-    '#fe0000', '#b3e467',
+    '#b3e467', '#4cf185', '#0f767a',
 ];
 shuffle($colors);
 $empty_regions = [];
@@ -42,6 +41,7 @@ if (count($chart_data) > 0) {
         if (count($region_data)){
             $regions[] = $region;
             foreach ($region_data as $rdata){
+                $breed_colors[$rdata['label']] = $rdata['color'];
                 $values[$rdata['label']][] = $rdata['value'];
             }
         }
@@ -50,15 +50,6 @@ if (count($chart_data) > 0) {
         }
     }
     foreach ($values as $t => $dv){
-
-        if (!empty($colors)){
-            $color_key = array_rand($colors);
-            $color = $colors[$color_key];
-            unset($colors[$color_key]);
-            if (!array_key_exists($t, $breed_colors)){
-                $breed_colors[$t] = $color;
-            }
-        }
         // remove those with zeros for all regions
         $sum = array_sum($dv);
         if($sum > 0){

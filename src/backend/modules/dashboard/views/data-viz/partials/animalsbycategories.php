@@ -18,21 +18,10 @@ use yii\helpers\Json;
 </div>
 <?php
 $chart_data = CountriesDashboardStats::getAnimalsByCategoriesForDataViz($filterOptions);
+$colorOptions = CountriesDashboardStats::colorOptions();
 $colors = [
-    '#9EEDB3', '#001D00', '#004619',
-    '#1B4F72', '#5D84A5', '#350d36',
-    '#771957', '#7F5298', '#65B27C',
-    '#D3E36F', '#DBB450', '#C97434',
-    '#AE2921', '#27921E', '#F00C0C',
-    '#C25D55', '#FF9900', '#875F03',
-    '#EBC0E8', '#000000', '#363636',
-    '#C6E6FF', '#F6FF00', '#022114',
-    '#509d99', '#59faea', '#245a62',
-    '#61812e', '#4cf185', '#9baad8',
-    '#0f767a', '#1be19f', '#0a60a8',
-    '#e3488e', '#d2c966', '#2f158b',
-    '#a07d62', '#20f53d', '#020b39',
-    '#fe0000', '#b3e467',
+    '#7D3701', '#641E16', '#27921E',
+    '#EB6060', '#489661', '#C97434',
 ];
 shuffle($colors);
 $data = [];
@@ -45,21 +34,13 @@ if (count($chart_data) > 0) {
             $values = [];
             foreach ($breed_data as $year => $ydata){
                 $values[] = $ydata['value'];
-                if (!empty($colors)){
-                    $color_key = array_rand($colors);
-                    $color = $colors[$color_key];
-                    unset($colors[$color_key]);
-                    if (!array_key_exists($breed, $breed_colors)){
-                        $breed_colors[$breed] = $color;
-                    }
-                }
             }
             $item = [
                 'id' => $breed,
                 'name' => $breed,
                 'data' => $values,
                 'stack' => $country,
-                'color' => $breed_colors[$breed],
+                'color' => $colorOptions['animal_types'][$breed],
             ];
             if ($country != $first_stack){
                 $item['linkedTo'] = $breed;
