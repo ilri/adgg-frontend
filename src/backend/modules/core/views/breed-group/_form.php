@@ -47,6 +47,7 @@ $form = ActiveForm::begin([
             'allowClear' => false
         ],
     ]) ?>
+    <?= $form->field($model, 'color', [])->hint("Hex Color code (e.g #000000) to be used for data visualization. Breeds in the group will use this color as a base for their own colors automatically generated") ?>
     <?php if (!$model->isNewRecord): ?>
         <?= $form->field($model, 'is_active', [])->checkbox() ?>
     <?php endif; ?>

@@ -31,7 +31,9 @@ $colors = [
     '#a07d62', '#20f53d', '#020b39',
     '#fe0000', '#b3e467',
 ];
-shuffle($colors);
+// one per country, this will be applied to the columns, for lines we will use the Color util to generate a dark or lighter shade for each
+$country_colors = ['Kenya' => '#875F03', 'Tanzania' => '#65B27C', 'Ethiopia' => '#5D84A5'];
+
 $data = [];
 
 if (count($animals) > 0) {
@@ -44,6 +46,7 @@ if (count($animals) > 0) {
             'name' => $country,
             'type' => 'column',
             'data' => $values,
+            'color' => $country_colors[$country],
         ];
     }
 }
@@ -53,11 +56,22 @@ if (count($animals_with_milk) > 0) {
         foreach ($country_data as $cdata){
             $values[] = $cdata['value'];
         }
+        // generate a color which is a shade of the country color
+        $color = new \common\helpers\Color($country_colors[$country]);
+        $line_color = (string) $color;
+        // if it's dark or light, generate shades for each breed
+        if ($color->isLight()){
+            $line_color = $color->darken(\common\helpers\Color::DEFAULT_ADJUST + 12);
+        }
+        else {
+            $line_color = $color->lighten(\common\helpers\Color::DEFAULT_ADJUST + 12);
+        }
         $data[] = [
             'name' => $country,
             'type' => 'line',
             'data' => $values,
             'zIndex' => 2,
+            'color' =>  '#'.$line_color,
         ];
     }
 }

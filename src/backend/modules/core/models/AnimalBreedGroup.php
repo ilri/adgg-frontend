@@ -11,6 +11,7 @@ use common\models\ActiveSearchTrait;
  *
  * @property int $id
  * @property string $name
+ * @property string $color
  * @property string|array $breeds
  * @property int $is_active
  * @property string $created_at
@@ -37,7 +38,7 @@ class AnimalBreedGroup extends ActiveRecord implements ActiveSearchInterface
             [['name', 'breeds'], 'required'],
             [['breeds'], 'safe'],
             [['is_active'], 'integer'],
-            [['name'], 'string', 'max' => 128],
+            [['name', 'color'], 'string', 'max' => 128],
             ['name', 'unique'],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];

@@ -24,6 +24,7 @@ $queryFilters = array_intersect_key($filters, array_flip(['district_id', 'ward_i
 <?php
 $months = CountriesDashboardStats::getDashboardDateCategories($type = 'month', $max = 12, $format = 'Y-m-d', $from = "$year-01-01", $to = "$year-12-31");
 $res = CountriesDashboardStats::getCountryMonthlyInseminations($filterOptions['country_id'], $region_id, $year, $queryFilters);
+$colorOptions = CountriesDashboardStats::breedColorsFromGroups();
 $colors = [
     '#9EEDB3', '#001D00', '#004619',
     '#1B4F72', '#5D84A5', '#350d36',
@@ -59,16 +60,9 @@ foreach ($breed_data as $breed => $bd){
         }
         $points[] = $point;
     }
-    # set a random color
-    $color_key = array_rand($colors);
-    $color = $colors[$color_key];
-    unset($colors[$color_key]);
-    if (!array_key_exists($breed, $breed_colors)){
-        $breed_colors[$breed] = $color;
-    }
     $data[$breed]['name'] = $bd['name'];
     $data[$breed]['data'] = $points;
-    $data[$breed]['color'] = $breed_colors[$breed];
+    $data[$breed]['color'] = $colorOptions[$bd['name']];
 }
 //dd($res, $breed_data, array_values($data));
 

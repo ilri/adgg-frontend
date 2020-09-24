@@ -42,6 +42,7 @@ if (count($chart_data) > 0) {
         if (count($region_data)){
             $regions[] = $region;
             foreach ($region_data as $rdata){
+                $breed_colors[$rdata['label']] = $rdata['color'];
                 $values[$rdata['label']][] = $rdata['value'];
             }
         }
@@ -50,15 +51,6 @@ if (count($chart_data) > 0) {
         }
     }
     foreach ($values as $t => $dv){
-
-        if (!empty($colors)){
-            $color_key = array_rand($colors);
-            $color = $colors[$color_key];
-            unset($colors[$color_key]);
-            if (!array_key_exists($t, $breed_colors)){
-                $breed_colors[$t] = $color;
-            }
-        }
         // remove those with zeros for all regions
         $sum = array_sum($dv);
         if($sum > 0){

@@ -29,6 +29,16 @@ use common\widgets\grid\GridView;
             'filter' => false,
         ],
         [
+            'attribute' => 'color',
+            'value' => function (AnimalBreedGroup $model) {
+                if(!empty($model->color)){
+                    return '<span class="badge" style="background-color: '.$model->color.'">'.$model->color.'</span>';
+                }
+            },
+            'format' => 'raw',
+            'filter' => false,
+        ],
+        [
             'attribute' => 'is_active',
             'format' => 'boolean',
             'filter' => Utils::booleanOptions(),

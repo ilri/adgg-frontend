@@ -188,6 +188,54 @@ MyApp.modules.dashboard = {};
                 '#641E16', '#783429', '#8B4A3E', '#9F6054',
                 '#B2776A', '#C58E82', '#D9A69A', '#C6E6FF',
             ],
+            color: [
+                // countries
+                '#875F03', '#65B27C', '#5DB4A5',
+                // Holsteins
+                '#7F5298',
+                '#800080', '#902C8E', '#A0479D', '#AF60AC',
+
+                //Holstein Crosses
+                '#EBC0E8',
+                '#BE78BB', '#CD90C9', '#DCA8D9', '#EBC0E8',
+                //jerseys
+                '#C25D55',
+                '#B2776A', '#C58E82', '#D9A69A',
+                '#641E16', '#783429', '#8B4A3E', '#9F6054',
+                //Guernsey
+                '#A07D62',
+                //Ayrshires
+                '#C97434',
+                '#E3955A', '#FFBF8E', '#A5561A', '#7D3701',
+                '#c97a34', '#A55B1A',
+                //Ayrshire crosses
+                '#DBB450',
+                //Brown Swiss
+                '#771957',
+                //jersey Guernsey crosses
+                '#D2C966',
+                //Ind Zebu
+                '#245A62',
+                //Ind Zebu Tzn
+                '#509D99',
+                '#0d81e2','#0e87eb','#138cf1','#1c90f2',
+                '#2695f2','#309af3','#399ef3','#43a3f4','#4ca8f4',
+                '#56adf5',
+                //Ind Zebu Ken
+                '#9BAAD8',
+                //Ind Zebu Eth
+                '#0A60A8',
+                //Ind Sanga
+                '#65B27C',
+                //Exotic B Taurus Dual purpose
+                '#2F158B',
+                '#336699', '#1a334d', '#8cb3d9', '',
+                //Unknown - use a lighter gray
+                '#363636',
+                '#4F4F4F', '#6A6A6A', '#878787',
+                '#7D3701', '#641E16', '#27921E',
+                '#FFBF8E', '#489661', '#C97434',
+            ]
         };
         this.container = container;
         this.series = series;

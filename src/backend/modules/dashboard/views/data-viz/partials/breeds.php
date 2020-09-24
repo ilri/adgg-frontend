@@ -41,6 +41,7 @@ if (count($chart_data) > 0) {
         if (count($country_data)){
             $countries[] = $country;
             foreach ($country_data as $cdata){
+                $breed_colors[$cdata['label']] = $cdata['color'];
                 $values[$cdata['label']][] = $cdata['value'];
             }
         }
@@ -48,16 +49,9 @@ if (count($chart_data) > 0) {
             $empty_countries[] = $country;
         }
     }
+    ksort($values);
+    //dd($values);
     foreach ($values as $t => $dv){
-        # shuffle colors
-        if (!empty($colors)){
-            $color_key = array_rand($colors);
-            $color = $colors[$color_key];
-            unset($colors[$color_key]);
-            if (!array_key_exists($t, $breed_colors)){
-                $breed_colors[$t] = $color;
-            }
-        }
         // remove those with zeros for all countries
         $sum = array_sum($dv);
         if($sum > 0){
