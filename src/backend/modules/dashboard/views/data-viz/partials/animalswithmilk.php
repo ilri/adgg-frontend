@@ -16,20 +16,19 @@ $animals = CountriesDashboardStats::getAnimalsCumulativeForDataViz($filterOption
 $animals_with_milk = CountriesDashboardStats::getAnimalsWithMilkForDataViz($filterOptions);
 //dd($animals, $animals_with_milk);
 $colors = [
-    '#9EEDB3', '#001D00', '#004619',
-    '#1B4F72', '#5D84A5', '#350d36',
-    '#771957', '#7F5298', '#65B27C',
-    '#D3E36F', '#DBB450', '#C97434',
-    '#AE2921', '#27921E',
+    '#9EEDB3', '#1B4F72', '#001D00',
+    '#5D84A5', '#771957', '#7F5298',
+    '#350d36', '#65B27C', '#004619',
+    '#D3E36F', '#C97434', '#AE2921',
+    '#DBB450', '#27921E', '#0a60a8',
     '#C25D55', '#875F03',
-    '#EBC0E8',
-    '#C6E6FF',  '#022114',
-    '#509d99', '#59faea', '#245a62',
-    '#61812e', '#4cf185', '#9baad8',
-    '#0f767a', '#1be19f', '#0a60a8',
+    '#EBC0E8', '#1be19f',
+    '#C6E6FF', '#022114', '#245a62',
+    '#509d99', '#59faea',
+    '#61812e', '#9baad8',
     '#e3488e', '#d2c966', '#2f158b',
     '#a07d62', '#20f53d', '#020b39',
-    '#b3e467',
+    '#b3e467', '#4cf185', '#0f767a',
 ];
 // one per country, this will be applied to the columns, for lines we will use the Color util to generate a dark or lighter shade for each
 $country_colors = ['Kenya' => '#875F03', 'Tanzania' => '#65B27C', 'Ethiopia' => '#5D84A5'];
