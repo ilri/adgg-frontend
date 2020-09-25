@@ -29,16 +29,16 @@ class CountriesDashboardStats extends Model
 
     public static function colorOptions(){
         $animalTypeColors = [
-            Animal::ANIMAL_TYPE_COW => '#7D3701',
-            Animal::ANIMAL_TYPE_HEIFER => '#C25D55',
-            Animal::ANIMAL_TYPE_FEMALE_CALF => '#27921E',
-            Animal::ANIMAL_TYPE_BULL => '#FFBF8E',
-            Animal::ANIMAL_TYPE_MALE_CALF => '#489661',
-            Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, Animal::ANIMAL_TYPE_COW) => '#7D3701',
-            Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, Animal::ANIMAL_TYPE_HEIFER) => '#C25D55',
-            Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, Animal::ANIMAL_TYPE_FEMALE_CALF) => '#27921E',
-            Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, Animal::ANIMAL_TYPE_BULL) => '#FFBF8E',
-            Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, Animal::ANIMAL_TYPE_MALE_CALF) => '#489661',
+            Animal::ANIMAL_TYPE_COW => '#509D99',
+            Animal::ANIMAL_TYPE_HEIFER => '#0A60A8',
+            Animal::ANIMAL_TYPE_FEMALE_CALF => '#9BAAD8',
+            Animal::ANIMAL_TYPE_BULL => '#7F5298',
+            Animal::ANIMAL_TYPE_MALE_CALF => '#A07D62',
+            Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, Animal::ANIMAL_TYPE_COW) => '#509D99',
+            Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, Animal::ANIMAL_TYPE_HEIFER) => '#0A60A8',
+            Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, Animal::ANIMAL_TYPE_FEMALE_CALF) => '#9BAAD8',
+            Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, Animal::ANIMAL_TYPE_BULL) => '#7F5298',
+            Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, Animal::ANIMAL_TYPE_MALE_CALF) => '#A07D62',
         ];
 
         return [
