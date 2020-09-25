@@ -139,6 +139,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         if(static::isEmptyColumn($row['MilkProt'])){
             $row['MilkProt'] = '9999';
         }
+        /*
         if(static::isEmptyColumn($row['HeartGirth'])){
             $row['HeartGirth'] = '9999';
         }
@@ -151,6 +152,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         if(static::isEmptyColumn($row['Bodyscore'])){
             $row['Bodyscore'] = '9999';
         }
+        */
         // if report is version 2, unset Wareda and Kebele
         if (array_key_exists('version', $options) && $options['version'] == 2){
             unset($row['Wareda'], $row['Kebele']);
@@ -174,6 +176,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         if(static::isEmptyColumn($row['Cattleowned'])){
             $row['Cattleowned'] = '9999';
         }
+        /*
         if(static::isEmptyColumn($row['HeartGirth'])){
             $row['HeartGirth'] = '9999';
         }
@@ -183,6 +186,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         if(static::isEmptyColumn($row['Bodyscore'])){
             $row['Bodyscore'] = '9999';
         }
+        */
         return $row;
     }
     public static function transformPedigreeFileRow($row, $options = []){
@@ -224,10 +228,10 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'milkeve' => null,
             'milkday' => null,
             'dim' => null,
-            'milk_heartgirth' => null,
-            'weight' => null,
-            'milk_estimated_weight' => null,
-            'milk_bodyscore' => null,
+            //'milk_heartgirth' => null,
+            //'weight' => null,
+            //'milk_estimated_weight' => null,
+            //'milk_bodyscore' => null,
             'milkfat' => null,
             'milkprot' => null,
             'lactation.lactation_number' => null,
@@ -357,10 +361,10 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'dim' => null,
             'milkfat' => null,
             'milkprot' => null,
-            'milk_heartgirth' => null,
-            'weight' => null,
-            'milk_estimated_weight' => null,
-            'milk_bodyscore' => null,
+            //'milk_heartgirth' => null,
+            //'weight' => null,
+            //'milk_estimated_weight' => null,
+            //'milk_bodyscore' => null,
             'lactation.lactation_number' => null,
             'testday_no' => null,
             'animal.longitude' => null,
@@ -488,10 +492,10 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'animal.farm.total_cattle_owned_joint' => null,
             'animal.tag_id' => null,
             'animal.birthdate' => null,
-            'calfhgirth' => null,
-            'calfweight' => null,
+            //'calfhgirth' => null,
+            //'calfweight' => null,
             //'calf_estimated_weight' => null,
-            'calfbodyscore' => null,
+            //'calfbodyscore' => null,
             'animal.sire_tag_id' => null,
             'animal.dam_tag_id' => null,
             'calfsex' => null,
