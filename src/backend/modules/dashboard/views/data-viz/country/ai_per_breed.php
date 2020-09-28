@@ -22,7 +22,8 @@ $queryFilters = array_intersect_key($filters, array_flip(['district_id', 'ward_i
     <div id="chartContainerAIBreeds" title="" style="width:100%;"></div>
 </div>
 <?php
-$months = CountriesDashboardStats::getDashboardDateCategories($type = 'month', $max = 12, $format = 'Y-m-d', $from = "$year-01-01", $to = "$year-12-31");
+$maxMonths = DateUtils::formatDate(date('Y-m-d'), 'n');
+$months = CountriesDashboardStats::getDashboardDateCategories($type = 'month', $max = $maxMonths, $format = 'Y-m-d', $from = "$year-01-01", $to = date('Y-m-d'));
 $res = CountriesDashboardStats::getCountryMonthlyInseminations($filterOptions['country_id'], $region_id, $year, $queryFilters);
 $colorOptions = CountriesDashboardStats::breedColorsFromGroups();
 $colors = [
@@ -40,7 +41,7 @@ $colors = [
     '#a07d62', '#20f53d', '#020b39',
     '#b3e467', '#4cf185', '#0f767a',
 ];
-shuffle($colors);
+//shuffle($colors);
 $breed_colors = [];
 $data = [];
 $breed_data = [];
@@ -52,7 +53,7 @@ foreach ($res as $row){
 foreach ($breed_data as $breed => $bd){
     $points = [];
     foreach ($months as $month){
-        $point = 0;
+        $point = null;
         $month_num = DateUtils::formatDate($month, 'n');
         if (array_key_exists($month_num, $bd['data'])){
             $point = $bd['data'][$month_num];
@@ -89,7 +90,7 @@ else {
     $series = [
         [
             'name' => Country::getScalar('name', ['id' => $filterOptions['country_id']]),
-            'data' => [0,0,0,0,0,0,0,0,0,0,0,0],
+            'data' => array_fill(0, $maxMonths, 0),
             'color' => '#7986CB',
         ]
     ];

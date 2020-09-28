@@ -21,8 +21,8 @@ $queryFilters = array_intersect_key($filters, array_flip(['district_id', 'ward_i
     <div id="chartContainerAvgMilkYield" style="width:100%;"></div>
 </div>
 <?php
-//$quarters = CountriesDashboardStats::getQuarters("$year-12-31", "$year-01-01");
-$months = CountriesDashboardStats::getDashboardDateCategories($type = 'month', $max = 12, $format = 'Y-m-d', $from = "$year-01-01", $to = "$year-12-31");
+$maxMonths = DateUtils::formatDate(date('Y-m-d'), 'n');
+$months = CountriesDashboardStats::getDashboardDateCategories($type = 'month', $max = $maxMonths, $format = 'Y-m-d', $from = "$year-01-01", $to = date('Y-m-d'));
 $res = CountriesDashboardStats::getCountryAvgBodyWeight($filterOptions['country_id'], $region_id, $year, $queryFilters);
 $data = [];
 
@@ -51,13 +51,13 @@ $region_data = [];
 if ($region_id === null){
     foreach ($months as $month){
         $month_num = DateUtils::formatDate($month, 'n');
-        $point = 0;
+        $point = null;
         foreach ($res as $row){
             if ($row['month'] == $month_num){
                 $point = (float) $row['avg_milk_yield_total'];
             }
         }
-        $data[] = (float) $point;
+        $data[] = $point !== null ? (float) $point : $point;
     }
     $series = [
         [
@@ -81,7 +81,7 @@ else {
         $points = [];
         foreach ($months as $month) {
             $month_num = DateUtils::formatDate($month, 'n');
-            $point = 0;
+            $point = null;
             foreach ($ydata as $y => $value){
                 if ($y == $month_num){
                     $point = (float) $value;
@@ -114,7 +114,7 @@ else {
         $series = [
             [
                 'name' => Country::getScalar('name', ['id' => $filterOptions['country_id']]),
-                'data' => [0,0,0,0,0,0,0,0,0,0,0,0],
+                'data' => array_fill(0, $maxMonths, 0),
                 'color' => '#F00C0C',
             ]
         ];
