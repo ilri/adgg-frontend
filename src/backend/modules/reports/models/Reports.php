@@ -923,11 +923,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         $builder->orderBy = $orderBy;
         //$builder->limit = 50;
         $builder->country_id = $filter['country_id'] ?? null;
-        $builder->name = 'Pedigree_File_' . ($filter['country_id'] ? Country::getScalar('name', ['id' => $filter['country_id']]) : '');
-
-        if ($version == 2){
-            $builder->name = $builder->name . '_v' .$version;
-        }
+        $builder->name = 'Pedigree_File_' . ($version == 2 ? $builder->name = $builder->name . 'System_ID_' : $builder->name = $builder->name . 'Original_ID_') . ($filter['country_id'] ? Country::getScalar('name', ['id' => $filter['country_id']]) : '');
 
         if (!empty($from) && !empty($to)) {
             $casted_date = DbUtils::castDATE(Animal::tableName().'.[[birthdate]]');

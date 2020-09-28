@@ -16,7 +16,7 @@ use yii\helpers\Json;
 /* @var $country_id int */
 /* @var $filterOptions array */
 
-$this->title = 'Pedigree File ' . ($type == ReportConstants::REPORT_TYPE_PEDIGREE_FILE2 ? '2' : '');
+$this->title = 'Pedigree File-' . ($type == ReportConstants::REPORT_TYPE_PEDIGREE_FILE2 ? 'System ID' : 'Original ID');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <?php if (Yii::$app->user->canView(Constants::RES_REPORT_BUILDER)): ?>
