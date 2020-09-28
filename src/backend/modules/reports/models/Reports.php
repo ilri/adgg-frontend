@@ -112,8 +112,8 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         $row['cattletotalowned'] = floatval($row['total_cattle_owned_by_female']) + floatval($row['total_cattle_owned_by_male']) + floatval($row['total_cattle_owned_joint']);
         unset($row['total_cattle_owned_by_female'], $row['total_cattle_owned_by_male'], $row['total_cattle_owned_joint']);
 
-        if(static::isEmptyColumn($row['heartGirth'])){
-            $row['heartGirth'] = '9999';
+        if(static::isEmptyColumn($row['heartgirth'])){
+            $row['heartgirth'] = '9999';
         }
         if(static::isEmptyColumn($row['weight'])){
             $row['weight'] = '9999';
