@@ -68,6 +68,15 @@ class ReportBuilder extends Model
      */
     public $decodeFields = [];
     /**
+     * extra joins that are not relation e.g join with subquery
+     * each join has 2 items
+     * first part of array is table (this can also be a SELECT query), and second part is the join condition
+     * keys are the join alias
+     * 'm' => ['SELECT id, name FROM core_master_list', 'm.value = animal.main_breed']
+     * @var array
+     */
+    public $extraJoins = [];
+    /**
      * full name of function to modify each row when populating csv
      * e.g, add additional columns, decode data etc.
      * this will replace the need to populate $decodeFields[]
@@ -459,10 +468,11 @@ class ReportBuilder extends Model
      * @param string $field
      * @param \yii\db\ActiveRecord $class
      * @param string|null $field_alias
-     * @param bool append_field_alias
+     * @param bool $append_field_alias
+     * @param null $table_alias
      * @return string
      */
-    public static function getFullColumnName($field, $class, $field_alias = null, $append_field_alias = false)
+    public static function getFullColumnName($field, $class, $field_alias = null, $append_field_alias = false, $table_alias = null)
     {
         // check if field is a joined relation
         if (strpos($field, '.')) {
@@ -491,7 +501,7 @@ class ReportBuilder extends Model
             $modelClass = $class;
             // append table name to field to remove ambiguity.
             $fieldName = $field;
-            $tableAlias = $modelClass::tableName();
+            $tableAlias = $table_alias !== null ? $table_alias : $modelClass::tableName();
             $fieldLabelAlias = $modelClass::shortClassName();
         }
         # quote the table alias
@@ -668,6 +678,13 @@ class ReportBuilder extends Model
                     $on .= static::getFullColumnName($f, $modelClass);
                 }
                 $query->leftJoin($subRelationClass::tableName() . ' as ' . $subRelationName, $on);
+            }
+        }
+
+        if (count($this->extraJoins)){
+            $extraJoins = $this->extraJoins;
+            foreach ($extraJoins as $alias => $join){
+                $query->leftJoin([ $alias => $join[0] ], $join[1]);
             }
         }
 

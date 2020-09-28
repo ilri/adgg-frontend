@@ -6,6 +6,7 @@ use backend\modules\core\models\Animal;
 use backend\modules\core\models\CalvingEvent;
 use backend\modules\core\models\Country;
 use backend\modules\core\models\MilkingEvent;
+use backend\modules\core\models\WeightEvent;
 use common\helpers\ArrayHelper;
 use common\helpers\DateUtils;
 use common\helpers\DbUtils;
@@ -110,6 +111,19 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
 
         $row['cattletotalowned'] = floatval($row['total_cattle_owned_by_female']) + floatval($row['total_cattle_owned_by_male']) + floatval($row['total_cattle_owned_joint']);
         unset($row['total_cattle_owned_by_female'], $row['total_cattle_owned_by_male'], $row['total_cattle_owned_joint']);
+
+        if(static::isEmptyColumn($row['heartGirth'])){
+            $row['heartGirth'] = '9999';
+        }
+        if(static::isEmptyColumn($row['weight'])){
+            $row['weight'] = '9999';
+        }
+        if(static::isEmptyColumn($row['estimated weight'])){
+            $row['estimated weight'] = '9999';
+        }
+        if(static::isEmptyColumn($row['bodyscore'])){
+            $row['bodyscore'] = '9999';
+        }
         return $row;
     }
     public static function transformTestDayMilkDataRow($row, $options = []){
@@ -139,7 +153,6 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         if(static::isEmptyColumn($row['MilkProt'])){
             $row['MilkProt'] = '9999';
         }
-        /*
         if(static::isEmptyColumn($row['HeartGirth'])){
             $row['HeartGirth'] = '9999';
         }
@@ -152,7 +165,6 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         if(static::isEmptyColumn($row['Bodyscore'])){
             $row['Bodyscore'] = '9999';
         }
-        */
         // if report is version 2, unset Wareda and Kebele
         if (array_key_exists('version', $options) && $options['version'] == 2){
             unset($row['Wareda'], $row['Kebele']);
@@ -176,7 +188,6 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         if(static::isEmptyColumn($row['Cattleowned'])){
             $row['Cattleowned'] = '9999';
         }
-        /*
         if(static::isEmptyColumn($row['HeartGirth'])){
             $row['HeartGirth'] = '9999';
         }
@@ -186,7 +197,9 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         if(static::isEmptyColumn($row['Bodyscore'])){
             $row['Bodyscore'] = '9999';
         }
-        */
+        if(static::isEmptyColumn($row['estimated weight'])){
+            $row['estimated weight'] = '9999';
+        }
         return $row;
     }
     public static function transformPedigreeFileRow($row, $options = []){
@@ -330,6 +343,23 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         // add the rowTransformer
         $builder->rowTransformer = '\backend\modules\reports\models\Reports::transformMilkDataRow';
 
+        $builder->extraJoins = [
+            'weight' => [
+                'core_animal_event',
+                '[[core_animal_event]].[[data_collection_date]] = [[weight.data_collection_date]] AND [[weight]].[[event_type]] = 6 AND [[weight]].[[animal_id]] = [[core_animal_event]].[[animal_id]]'
+            ],
+        ];
+        $weightFields = [
+            'heartgirth' => 'heartgirth',
+            'weight_kg' => 'weight',
+            'body_score' => 'bodyscore',
+            'estimated_weight' => 'estimated weight'
+        ];
+        foreach ($weightFields as $weightField => $alias){
+            $field = ReportBuilder::getFullColumnName($weightField, new WeightEvent(), $alias, true, 'weight');
+            $builder->extraSelectExpressions[] = new Expression($field);
+        }
+
         return $builder;
     }
 
@@ -471,6 +501,23 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         // add the rowTransformer
         $builder->rowTransformer = '\backend\modules\reports\models\Reports::transformTestDayMilkDataRow';
 
+        $builder->extraJoins = [
+            'weight' => [
+                'core_animal_event',
+                '[[core_animal_event]].[[data_collection_date]] = [[weight.data_collection_date]] AND [[weight]].[[event_type]] = 6 AND [[weight]].[[animal_id]] = [[core_animal_event]].[[animal_id]]'
+            ],
+        ];
+        $weightFields = [
+            'heartgirth' => 'HeartGirth',
+            'weight_kg' => 'Weight',
+            'body_score' => 'Bodyscore',
+            'estimated_weight' => 'estimated weight'
+        ];
+        foreach ($weightFields as $weightField => $alias){
+            $field = ReportBuilder::getFullColumnName($weightField, new WeightEvent(), $alias, true, 'weight');
+            $builder->extraSelectExpressions[] = new Expression($field);
+        }
+
         return $builder;
     }
 
@@ -494,7 +541,6 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'animal.birthdate' => null,
             //'calfhgirth' => null,
             //'calfweight' => null,
-            //'calf_estimated_weight' => null,
             //'calfbodyscore' => null,
             'animal.sire_tag_id' => null,
             'animal.dam_tag_id' => null,
@@ -601,6 +647,23 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             $params[':to'] = $to;
             $expression = new Expression($condition, $params);
             $builder->extraFilterExpressions[] = $expression;
+        }
+
+        $builder->extraJoins = [
+            'weight' => [
+                'core_animal_event',
+                '[[core_animal_event]].[[data_collection_date]] = [[weight.data_collection_date]] AND [[weight]].[[event_type]] = 6 AND [[weight]].[[animal_id]] = [[core_animal_event]].[[animal_id]]'
+            ],
+        ];
+        $weightFields = [
+            'heartgirth' => 'HeartGirth',
+            'weight_kg' => 'Weight',
+            'body_score' => 'Bodyscore',
+            'estimated_weight' => 'estimated weight'
+        ];
+        foreach ($weightFields as $weightField => $alias){
+            $field = ReportBuilder::getFullColumnName($weightField, new WeightEvent(), $alias, true, 'weight');
+            $builder->extraSelectExpressions[] = new Expression($field);
         }
         
         $builder->rowTransformer = '\backend\modules\reports\models\Reports::transformCalfDataRow';
