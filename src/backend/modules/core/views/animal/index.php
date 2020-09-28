@@ -4,12 +4,16 @@
 /* @var $searchModel \backend\modules\core\models\Animal */
 /* @var $country \backend\modules\core\models\Country */
 /* @var $controller \backend\controllers\BackendController */
+
+use backend\modules\core\models\Country;
+
 $controller = Yii::$app->controller;
 
 $this->title = $controller->getPageTitle();
-$this->params['breadcrumbs'] = [
-    $this->title
-];
+if ($country) {
+    $this->params['breadcrumbs'][] = Country::getScalar('name', ['id' => $country]);
+}
+$this->params['breadcrumbs'] [] = $this->title;
 ?>
 <div class="row">
     <div class="col-lg-12">
