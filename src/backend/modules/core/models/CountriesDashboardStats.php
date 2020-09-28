@@ -427,7 +427,7 @@ class CountriesDashboardStats extends Model
         //$date_interval = DateUtils::getDateDiff($from, $to);
         //$days_interval = $date_interval->days;
         //$x_interval = (int)round(($days_interval / 30) / $max_label);
-        return  array_slice(DateUtils::generateDateSpan($from, $to, 1, 'month', $format), 0, 12);
+        return array_slice(DateUtils::generateDateSpan($from, $to, 1, 'month', $format), 0, $max);
     }
 
     public static function rangeYears($from = null, $to = null){
