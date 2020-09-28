@@ -216,6 +216,16 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             unset($row['Ward'], $row['Village']);
         }
 
+        if(static::isEmptyColumn($row['HeartGirth'])){
+            $row['HeartGirth'] = '9999';
+        }
+        if(static::isEmptyColumn($row['EstimatedWeight'])){
+            $row['EstimatedWeight'] = '9999';
+        }
+        if(static::isEmptyColumn($row['Bodyscore'])){
+            $row['Bodyscore'] = '9999';
+        }
+
         return $row;
     }
 
