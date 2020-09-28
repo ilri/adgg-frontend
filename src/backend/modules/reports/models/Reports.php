@@ -200,6 +200,9 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         if(static::isEmptyColumn($row['estimated weight'])){
             $row['estimated weight'] = '9999';
         }
+        if(static::isEmptyColumn($row['Sex'])){
+            $row['Sex'] = '';
+        }
         return $row;
     }
     public static function transformPedigreeFileRow($row, $options = []){
@@ -811,20 +814,29 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'village_id' => null,
             'region.name' => null,
             'district.name' => null,
-            'ward.code' => null,
-            'village.code' => null,
+            //'ward.code' => null,
+            //'village.code' => null,
             'ward.name' => null,
             'village.name' => null,
-            'farm.id' => null,
-            'id' => null,
-            'tag_id' => null,
-            'sire_id' => null,
-            'dam_id' => null,
-            'sire_tag_id' => null,
-            'dam_tag_id' => null,
-            'sex' => null,
-            'birthdate' => null,
-            'main_breed' => null,
+            'animal.farm.id' => null,
+            'animal.farm.animcatowned' => null,
+            //'animal.id' => null,
+            'animal.tag_id' => null,
+            //'animal.sire_id' => null,
+            //'animal.dam_id' => null,
+            'animal.sire_tag_id' => null,
+            'animal.dam_tag_id' => null,
+            'animal.birthdate' => null,
+            'animal.animal_type' => null,
+            'animal.breed_combination' => null,
+            'heartgirth' => null,
+            'estimated_weight' => null,
+            'body_score' => null,
+            'animal.longitude' => null,
+            'animal.latitude' => null,
+            //'sex' => null,
+            //'birthdate' => null,
+            //'main_breed' => null,
         ];
 
         $filterConditions = array_merge($fields, [
@@ -846,31 +858,40 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'village.code' => 'Kebele',
             'ward.name' => 'Ward',
             'village.name' => 'Village',
-            'farm.id' => 'HH_ID',
-            'id' => 'AnimalID',
-            'tag_id' => 'AnimalRegID',
-            'sire_id' => 'SireID',
-            'dam_id' => 'DamID',
-            'sire_tag_id' => 'SireRegID',
-            'dam_tag_id' => 'DamRegID',
-            'sex' => 'Sex',
-            'birthdate' => 'Birthdt',
-            'main_breed' => 'Breed',
+            'animal.farm.id' => 'Farm_ID',
+            'animal.farm.animcatowned' => 'AnimalCategoriesOwned',
+            //'animal.id' => 'AnimalID',
+            'animal.tag_id' => 'AnimalRegID',
+            'animal.sire_id' => 'SireID',
+            'animal.dam_id' => 'DamID',
+            'animal.sire_tag_id' => 'SireRegID',
+            'animal.dam_tag_id' => 'DamRegID',
+            'animal.birthdate' => 'BirthDate',
+            'animal.animal_type' => 'AnimalType',
+            'animal.breed_combination' => 'BreedCombination',
+            'heartgirth' => 'HeartGirth',
+            'estimated_weight' => 'EstimatedWeight',
+            'body_score' => 'BodyScore',
+            'animal.longitude' => 'Longitude',
+            'animal.latitude' => 'Latitude',
+            //'sex' => 'Sex',
+            //'birthdate' => 'Birthdate',
+            //'main_breed' => 'Breed',
         ];
 
-        $breeds = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS;
+        //$breeds = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS;
         $animal_type = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES;
-        $genders = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_GENDER;
+        //$genders = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_GENDER;
         $decodedFields = [
-            'main_breed' => [
+            /*'main_breed' => [
                 'function' => '\backend\modules\core\models\Choices::getLabel',
                 'params'=> [
                     //'\backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS',
                     "$breeds",
                     'fieldValue', // the value of this field
                 ]
-            ],
-            'animal_type' => [
+            ],*/
+            'animal.animal_type' => [
                 'function' => '\backend\modules\core\models\Choices::getLabel',
                 'params'=> [
                     //'\backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS',
@@ -878,7 +899,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
                     'fieldValue', // the value of this field
                 ]
             ],
-            'deformities' => [
+            /*'deformities' => [
                 'function' => '\backend\modules\core\models\Animal::decodeDeformities',
                 'params'=> [
                     'fieldValue', // the value of this field
@@ -896,8 +917,8 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
                 'params'=> [
                     'fieldValue', // the value of this field
                 ]
-            ],
-            'birthdate' => [
+            ],*/
+            'animal.birthdate' => [
                 'function' => '\common\helpers\DateUtils::formatDate',
                 'params' => [
                     'fieldValue',
@@ -914,7 +935,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         $orderBy = '';
 
         $builder = new ReportBuilder();
-        $builder->model = 'Animal';
+        $builder->model = 'Weights_Event';
         $builder->filterConditions = $filterConditions;
         $builder->filterValues = $filterValues;
         $builder->fieldAliases = $fieldAliases;
@@ -937,6 +958,10 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             $expression = new Expression($condition, $params);
             $builder->extraFilterExpressions[] = $expression;
         }
+
+        $builder->extraFilterExpressions[] = [
+            '[[animal]].[[animal_type]]' => [3,4],
+        ];
 
         // add the rowTransformer
         $builder->rowTransformer = '\backend\modules\reports\models\Reports::transformPedigreeFileRow';
