@@ -4,8 +4,13 @@
 /* @var $searchModel backend\modules\auth\models\Users */
 /* @var $countryModel \backend\modules\core\models\Country */
 
+use backend\modules\core\models\Country;
+
 $this->title = \common\helpers\Lang::t('Users');
-$this->params['breadcrumbs'][] = $this->title;
+if ($countryModel) {
+    $this->params['breadcrumbs'][] = Country::getScalar('name', ['id' => $countryModel]);
+}
+$this->params['breadcrumbs'] [] = $this->title;
 ?>
 <div class="row">
     <div class="col-lg-12">

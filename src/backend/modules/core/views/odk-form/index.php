@@ -3,12 +3,17 @@
 /* @var $this \yii\web\View */
 /* @var $searchModel \backend\modules\core\models\OdkForm */
 /* @var $controller \backend\controllers\BackendController */
+/* @var $country int*/
+
+use backend\modules\core\models\Country;
+
 $controller = Yii::$app->controller;
 
 $this->title = $controller->getPageTitle();
-$this->params['breadcrumbs'] = [
-    $this->title
-];
+if ($country) {
+    $this->params['breadcrumbs'][] = Country::getScalar('name', ['id' => $country]);
+}
+$this->params['breadcrumbs'] [] = $this->title;
 ?>
 <div class="row">
     <div class="col-lg-12">

@@ -64,6 +64,7 @@ class HerdController extends Controller
 
         return $this->render('index', [
             'searchModel' => $searchModel,
+            'country_id' => $country_id,
         ]);
     }
     public function actionView($id)
