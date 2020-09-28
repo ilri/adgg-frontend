@@ -2,6 +2,7 @@
 
 use backend\controllers\BackendController;
 use backend\modules\core\models\AnimalEvent;
+use backend\modules\core\models\Country;
 use common\helpers\Lang;
 use yii\web\View;
 
@@ -15,9 +16,10 @@ use yii\web\View;
 $controller = Yii::$app->controller;
 
 $this->title = Lang::t('{resource} data', ['resource' => $controller->resourceLabel]);
-$this->params['breadcrumbs'] = [
-    $this->title
-];
+if ($country) {
+    $this->params['breadcrumbs'][] = Country::getScalar('name', ['id' => $country]);
+}
+$this->params['breadcrumbs'] [] = $this->title;
 
 ?>
 <div class="row">
