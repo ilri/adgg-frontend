@@ -12,10 +12,10 @@ use yii\bootstrap\Html;
 /* @var int $country_id */
 
 $this->title = 'Standard Extracts';
-$this->params['breadcrumbs'][] = $this->title;
 if ($country_id) {
     $this->params['breadcrumbs'][] = Country::getScalar('name', ['id' => $country_id]);
 }
+$this->params['breadcrumbs'][] = $this->title;
 ?>
 <?php if (Yii::$app->user->canView(Constants::RES_REPORT_BUILDER)): ?>
 <div class="row">
@@ -46,7 +46,7 @@ if ($country_id) {
                     <!--begin::Portlet-->
                     <div class="kt-portlet">
                         <a href="<?= Url::to(['view', 'type' => ReportConstants::REPORT_TYPE_PEDIGREE_FILE, 'country_id' => $country_id]) ?>" class="kt-iconbox kt-iconbox--active">
-                            <div class="kt-iconbox__title"><?= Lang::t('Pedigree File Original'); ?></div>
+                            <div class="kt-iconbox__title"><?= Lang::t('Pedigree File-Original ID'); ?></div>
                         </a>
                     </div>
                     <!--end::Portlet-->
@@ -55,7 +55,7 @@ if ($country_id) {
                     <!--begin::Portlet-->
                     <div class="kt-portlet">
                         <a href="<?= Url::to(['view', 'type' => ReportConstants::REPORT_TYPE_PEDIGREE_FILE2, 'country_id' => $country_id]) ?>" class="kt-iconbox kt-iconbox--active">
-                            <div class="kt-iconbox__title"><?= Lang::t('Pedigree File'); ?></div>
+                            <div class="kt-iconbox__title"><?= Lang::t('Pedigree File-System ID'); ?></div>
                         </a>
                     </div>
                     <!--end::Portlet-->

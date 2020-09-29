@@ -46,6 +46,7 @@ class ExcelUploadStatusController extends Controller
 
         return $this->render('index', [
             'searchModel' => $searchModel,
+            'country' => $country_id,
         ]);
     }
 

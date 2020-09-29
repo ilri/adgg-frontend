@@ -11,7 +11,10 @@ use yii\helpers\Html;
 /* @var $country Country */
 /* @var $events */
 $this->title = 'Events';
-$this->params['breadcrumbs'][] = $this->title;
+if ($country) {
+    $this->params['breadcrumbs'][] = Country::getScalar('name', ['id' => $country]);
+}
+$this->params['breadcrumbs'] [] = $this->title;
 ?>
 <div class="row">
     <div class="col-md-12" title="Click to view details">

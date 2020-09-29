@@ -18,8 +18,10 @@ use yii\helpers\Json;
 /* @var $rebuild_options array  */
 
 $this->title = 'Extract Builder';
+if ($country_id) {
+    $this->params['breadcrumbs'][] = Country::getScalar('name', ['id' => $country_id]);
+}
 $this->params['breadcrumbs'][] = $this->title;
-
 ?>
     <div class="row">
         <div class="col-md-12">
