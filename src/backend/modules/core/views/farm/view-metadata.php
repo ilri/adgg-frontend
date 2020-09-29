@@ -78,7 +78,7 @@ $code = Yii::$app->request->get('type');
     ?>
 <?php endif; ?>
 <?php if (empty($metadataModel)):?>
-    <div class="alert alert-warning align-content-center" role="alert">This Data has not yet been uploaded.</div>
+    <div class="alert alert-warning align-content-center" role="alert">No data was recorded on this event.</div>
 <?php endif;?>
 <?php
 $childrenOfParentType = FarmMetadataType::find()->andWhere(['parent_id' => $code, 'is_active' => 1])->all();
