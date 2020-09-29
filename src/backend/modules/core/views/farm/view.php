@@ -3,6 +3,7 @@
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\Choices;
 use backend\modules\core\models\ChoiceTypes;
+use backend\modules\core\models\Country;
 use backend\modules\core\models\Farm;
 use common\widgets\gmap\SingleViewWidget;
 use yii\bootstrap\Html;
@@ -18,6 +19,9 @@ use yii\widgets\DetailView;
 $controller = Yii::$app->controller;
 $this->title = Html::encode($farmModel->name);
 $this->params['breadcrumbs'][] = ['label' => Inflector::pluralize($controller->resourceLabel), 'url' => ['index', 'country_id' => $farmModel->country_id]];
+if ($farmModel->country_id) {
+    $this->params['breadcrumbs'][] = Country::getScalar('name', ['id' => $farmModel->country_id]);
+}
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <?= $this->render('_profileHeader', ['farmModel' => $farmModel]) ?>

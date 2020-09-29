@@ -17,11 +17,10 @@ use yii\bootstrap\Html;
 /* @var $filterOptions array */
 
 $this->title = 'Standard Extracts';
-$this->params['breadcrumbs'][] = $this->title;
 if($country_id) {
-    $this->params['breadcrumbs'][] = Country::getScalar('name', ['id' => $country_id]);
+    $this->params['breadcrumbs'][] = ['label'=> Country::getScalar('name', ['id' => $country_id]), 'url' => ['index', 'country_id'=>$country_id]];
 }
-
+$this->params['breadcrumbs'][] = $this->title;
 ?>
 <?php if (Yii::$app->user->canView(Constants::RES_REPORT_BUILDER)): ?>
 <div class="row">
