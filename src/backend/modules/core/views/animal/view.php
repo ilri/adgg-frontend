@@ -3,6 +3,7 @@
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\Choices;
 use backend\modules\core\models\ChoiceTypes;
+use backend\modules\core\models\Country;
 use common\helpers\DateUtils;
 use yii\bootstrap\Html;
 use yii\helpers\Inflector;
@@ -14,6 +15,9 @@ use yii\widgets\DetailView;
 $controller = Yii::$app->controller;
 $this->title = Html::encode($model->name);
 $this->params['breadcrumbs'][] = ['label' => Inflector::pluralize($controller->resourceLabel), 'url' => ['index', 'country_id' => $model->country_id],];
+if ($model->country_id) {
+    $this->params['breadcrumbs'][] = Country::getScalar('name', ['id' => $model->country_id]);
+}
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
