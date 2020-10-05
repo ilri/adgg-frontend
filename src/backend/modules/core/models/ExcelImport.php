@@ -36,6 +36,7 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
     const TYPE_FARM_DATA = 1;
     const TYPE_FARM_METADATA = 2;
     const TYPE_ANIMAL_DATA = 10;
+    const TYPE_UPDATE_ANIMAL_DATA = 11;
     const TYPE_HERD_DATA = 20;
     const TYPE_ANIMAL_EVENT_CALVING = 30;
     const TYPE_ANIMAL_EVENT_MILK = 31;
@@ -163,6 +164,8 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
                 return 'Farm Metadata';
             case self::TYPE_ANIMAL_DATA:
                 return 'Animal Data';
+            case self::TYPE_UPDATE_ANIMAL_DATA:
+                return 'Update Animal Data';
             case self::TYPE_HERD_DATA:
                 return 'Herd Data';
             case self::TYPE_ANIMAL_EVENT_CALVING:

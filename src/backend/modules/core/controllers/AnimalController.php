@@ -12,8 +12,11 @@ namespace backend\modules\core\controllers;
 use backend\modules\auth\Acl;
 use backend\modules\auth\Session;
 use backend\modules\core\Constants;
+use backend\modules\core\forms\UpdateAnimalBirthdate;
+use backend\modules\core\forms\UpdateAnimals;
 use backend\modules\core\forms\UploadAnimals;
 use backend\modules\core\models\Animal;
+use backend\modules\core\models\AnimalUpdate;
 use backend\modules\core\models\Country;
 use backend\modules\core\models\Farm;
 use common\controllers\UploadExcelTrait;
@@ -73,7 +76,7 @@ class AnimalController extends Controller
         $searchModel->farm_id = $farm_id;
         $searchModel->sire_tag_id = $sire_tag_id;
         $searchModel->dam_tag_id = $dam_tag_id;
-        $searchModel->main_breed=$main_breed;
+        $searchModel->main_breed = $main_breed;
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -154,6 +157,27 @@ class AnimalController extends Controller
     public function actionUploadPreview()
     {
         $form = new UploadAnimals(Animal::class);
+        return $form->previewAction();
+    }
+
+    public function actionExcelUpdate()
+    {
+        $this->hasPrivilege(Acl::ACTION_UPDATE);
+
+        $form = new UpdateAnimals(AnimalUpdate::class);
+        $resp = $this->uploadExcelConsole($form, 'excel-update', Yii::$app->request->queryParams);
+        if ($resp !== false) {
+            return $resp;
+        }
+
+        return $this->render('excel-update', [
+            'model' => $form,
+        ]);
+    }
+
+    public function actionExcelUpdatePreview()
+    {
+        $form = new UpdateAnimals(AnimalUpdate::class);
         return $form->previewAction();
     }
 
