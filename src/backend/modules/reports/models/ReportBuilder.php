@@ -124,34 +124,34 @@ class ReportBuilder extends Model
                 'title' => 'Farm',
                 'relations' => ['fieldAgent', 'country', 'region', 'district', 'ward', 'village', 'org', 'client'],
             ],
-            'FarmMetadataBreedingAIProviders' =>[
+            'FarmMetadataBreedingAIProviders' => [
                 'class' => FarmMetadataBreedingAIProviders::class,
-                'title' =>'Farm Breeding AIProviders',
+                'title' => 'Farm Breeding AIProviders',
                 'relations' => ['farm'],
             ],
-            'FarmMetadataBreedingBulls' =>[
+            'FarmMetadataBreedingBulls' => [
                 'class' => FarmMetadataBreedingBulls::class,
-                'title' =>'Farm Breeding Bulls',
+                'title' => 'Farm Breeding Bulls',
                 'relations' => ['farm'],
             ],
-            'FarmMetadataBreedingOtherBulls' =>[
+            'FarmMetadataBreedingOtherBulls' => [
                 'class' => FarmMetadataBreedingOtherBulls::class,
-                'title' =>'Farm Breeding Other Bulls',
+                'title' => 'Farm Breeding Other Bulls',
                 'relations' => ['farm'],
             ],
-            'FarmMetadataBreedingSchemeBulls' =>[
+            'FarmMetadataBreedingSchemeBulls' => [
                 'class' => FarmMetadataBreedingSchemeBulls::class,
-                'title' =>'Farm Breeding Scheme Bulls',
+                'title' => 'Farm Breeding Scheme Bulls',
                 'relations' => ['farm'],
             ],
-            'FarmMetadataFeeding' =>[
+            'FarmMetadataFeeding' => [
                 'class' => FarmMetadataFeeding::class,
-                'title' =>'Farm Feeding',
+                'title' => 'Farm Feeding',
                 'relations' => ['farm'],
             ],
-            'FarmMetadataHealth' =>[
+            'FarmMetadataHealth' => [
                 'class' => FarmMetadataHealth::class,
-                'title' =>'Farm Health',
+                'title' => 'Farm Health',
                 'relations' => ['farm'],
             ],
             'Animal' => [
@@ -335,21 +335,23 @@ class ReportBuilder extends Model
             // build attribute tree for each relation, recursively...
             foreach ($relations as $relation) {
                 $relationClass = static::getRelationClass($model, $relation);
-                $parent = $parent !== null ? $parent . '.' .$relation : $relation;
+                $parent = $parent !== null ? $parent . '.' . $relation : $relation;
                 //$parent = $relationName;
                 //$parent = $relation;
                 $tree['level'] = $currentLevel;
-                $tree['relations'][$relation] = static::buildModelTree($relationClass, $currentLevel, $maxLevel, $parent,true, $relation);
+                $tree['relations'][$relation] = static::buildModelTree($relationClass, $currentLevel, $maxLevel, $parent, true, $relation);
             }
         }
         return $tree;
     }
 
-    public static function buildAttributesHTML(array $attributes){
+    public static function buildAttributesHTML(array $attributes)
+    {
         $html = '';
     }
 
-    public static function renderReportModelHTML(string $reportModel){
+    public static function renderReportModelHTML(string $reportModel)
+    {
         $modelOptions = static::reportableModels()[$reportModel];
         /* @var $class ActiveRecord */
         $class = new $modelOptions['class']();
@@ -362,18 +364,19 @@ class ReportBuilder extends Model
         return $html;
     }
 
-    public static function renderModelHTML(ActiveRecord $model, array $reportModelOptions, $parents = [], $is_relation = false){
+    public static function renderModelHTML(ActiveRecord $model, array $reportModelOptions, $parents = [], $is_relation = false)
+    {
         $name = $reportModelOptions['name'];
         $title = $reportModelOptions['title'] ?? $reportModelOptions['name'];
         $tree = static::buildModelTree($model, $reportModelOptions['currentLevel'], $reportModelOptions['maxLevel']);
         $html = '';
         //$html .= static::buildAttributesHTML($tree['attributes']);
-        foreach ($tree['attributes'] as $attribute){
+        foreach ($tree['attributes'] as $attribute) {
             // check how many parents this model has so that we can appropriately name the attributes
             $html .= \Yii::$app->controller->renderPartial('partials/_attribute', [
                 'attribute' => $attribute,
-                'attributeTitle' => count($parents) ? (implode('.', $parents) . ' . '. $model->getAttributeLabel($attribute)) : $model->getAttributeLabel($attribute),
-                'attributeName' => count($parents) ? (implode('.', $parents) . ' . '. $attribute) : $attribute,
+                'attributeTitle' => count($parents) ? (implode('.', $parents) . ' . ' . $model->getAttributeLabel($attribute)) : $model->getAttributeLabel($attribute),
+                'attributeName' => count($parents) ? (implode('.', $parents) . ' . ' . $attribute) : $attribute,
                 'attributeLabel' => $model->getAttributeLabel($attribute),
                 'class' => $model,
                 'modelName' => $name,
@@ -381,14 +384,14 @@ class ReportBuilder extends Model
                 'parentModelTitle' => $title,
             ]);
         }
-        if(array_key_exists('relations', $tree)){
-            foreach ($tree['relations'] as $relation => $attrs){
+        if (array_key_exists('relations', $tree)) {
+            foreach ($tree['relations'] as $relation => $attrs) {
                 $relationName = $relation;
                 $html .= '<li data-toggle="collapse"';
-                $html .= '   data-target="#collapse'.$relationName .'"';
+                $html .= '   data-target="#collapse' . $relationName . '"';
                 $html .= '  aria-expanded="false"';
-                $html .= '  aria-controls="collapse'.$relationName .'">';
-                $html .= '  > '.$relationName .'</li>';
+                $html .= '  aria-controls="collapse' . $relationName . '">';
+                $html .= '  > ' . $relationName . '</li>';
 
                 $relationClass = static::getRelationClass($model, $relation);
                 // set all the parents of this relation and use it when determining the attribute names to display
@@ -424,13 +427,13 @@ class ReportBuilder extends Model
             case 'IN':
             case 'NOT IN':
                 $values = [];
-                if(is_array($value)){
+                if (is_array($value)) {
                     $values = $value;
                 }
-                if(is_string($value)) {
+                if (is_string($value)) {
                     $values = array_map('trim', explode(',', $value));
                 }
-                if(empty($values)){
+                if (empty($values)) {
                     return [];
                 }
                 return [$operator, $column, $values];
@@ -618,27 +621,24 @@ class ReportBuilder extends Model
                 # handle other json columns that are not additional attributes in a special way
                 #
                 $columnDbType = $fieldModelClass->getAttributeSchemaType($fieldName);
-                if ($columnDbType == Schema::TYPE_JSON){
+                if ($columnDbType == Schema::TYPE_JSON) {
                     //$params = [':field' => $aliasedField, ':value' => $filter];
                     //$sqlCondition = new Expression('JSON_SEARCH(:field,"one",:value)', $params);
-                    if (is_array($filter) && !empty($filter)){
-                        foreach ($filter as $value){
-                            if ($conditionOperator == 'IN'){
-                                $sqlCondition = new Expression('"'.$value.'" MEMBER OF('.$aliasedField.')');
+                    if (is_array($filter) && !empty($filter)) {
+                        foreach ($filter as $value) {
+                            if ($conditionOperator == 'IN') {
+                                $sqlCondition = new Expression('"' . $value . '" MEMBER OF(' . $aliasedField . ')');
                                 $query->orWhere($sqlCondition);
-                            }
-                            elseif ($conditionOperator == 'NOT IN'){
-                                $sqlCondition = new Expression('"'.$value.'" MEMBER OF('.$aliasedField.') = 0');
+                            } elseif ($conditionOperator == 'NOT IN') {
+                                $sqlCondition = new Expression('"' . $value . '" MEMBER OF(' . $aliasedField . ') = 0');
                                 $query->andWhere($sqlCondition);
                             }
                         }
-                    }
-                    else if (!empty($filter)){
-                        $sqlCondition = new Expression('"'.$filter.'" MEMBER OF('.$aliasedField.')');
+                    } else if (!empty($filter)) {
+                        $sqlCondition = new Expression('"' . $filter . '" MEMBER OF(' . $aliasedField . ')');
                         $query->andWhere($sqlCondition);
                     }
-                }
-                else {
+                } else {
                     $sqlCondition = static::buildCondition($conditionOperator, $aliasedField, $filter);
                     $query->andFilterWhere($sqlCondition);
                 }
@@ -681,10 +681,10 @@ class ReportBuilder extends Model
             }
         }
 
-        if (count($this->extraJoins)){
+        if (count($this->extraJoins)) {
             $extraJoins = $this->extraJoins;
-            foreach ($extraJoins as $alias => $join){
-                $query->leftJoin([ $alias => $join[0] ], $join[1]);
+            foreach ($extraJoins as $alias => $join) {
+                $query->leftJoin([$alias => $join[0]], $join[1]);
             }
         }
 
