@@ -665,7 +665,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         $builder->name = 'Calf_Data_' . ($filter['country_id'] ? Country::getScalar('name', ['id' => $filter['country_id']]) : '');
 
         $animalTypes = [Animal::ANIMAL_TYPE_MALE_CALF, Animal::ANIMAL_TYPE_FEMALE_CALF];
-        list($condition, $params) = DbUtils::appendInCondition('animal.type', $animalTypes);
+        list($condition, $params) = DbUtils::appendInCondition('{{%animal}}.[[type]]', $animalTypes);
         $expression = new Expression($condition, $params);
         $builder->extraFilterExpressions[] = $expression;
         if (!empty($from) && !empty($to)) {
