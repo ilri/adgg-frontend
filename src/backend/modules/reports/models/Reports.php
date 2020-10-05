@@ -102,76 +102,79 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         return $max + 1;
     }
 
-    public static function isEmptyColumn($column){
+    public static function isEmptyColumn($column)
+    {
         return ($column == 'null' || $column == 'Null' || $column == 'NULL' || empty($column));
     }
 
-    public static function transformMilkDataRow($row, $options = []){
+    public static function transformMilkDataRow($row, $options = [])
+    {
         $fieldAliasMapping = $options['fieldAliasMapping'] ?? [];
 
         $row['cattletotalowned'] = floatval($row['total_cattle_owned_by_female']) + floatval($row['total_cattle_owned_by_male']) + floatval($row['total_cattle_owned_joint']);
         unset($row['total_cattle_owned_by_female'], $row['total_cattle_owned_by_male'], $row['total_cattle_owned_joint']);
 
-        if(static::isEmptyColumn($row['heartgirth'])){
+        if (static::isEmptyColumn($row['heartgirth'])) {
             $row['heartgirth'] = '9999';
         }
-        if(static::isEmptyColumn($row['weight'])){
+        if (static::isEmptyColumn($row['weight'])) {
             $row['weight'] = '9999';
         }
-        if(static::isEmptyColumn($row['estimated weight'])){
+        if (static::isEmptyColumn($row['estimated weight'])) {
             $row['estimated weight'] = '9999';
         }
-        if(static::isEmptyColumn($row['bodyscore'])){
+        if (static::isEmptyColumn($row['bodyscore'])) {
             $row['bodyscore'] = '9999';
         }
         return $row;
     }
-    public static function transformTestDayMilkDataRow($row, $options = []){
+
+    public static function transformTestDayMilkDataRow($row, $options = [])
+    {
         $fieldAliasMapping = $options['fieldAliasMapping'] ?? [];
 
         $row['Cattleowned'] = floatval($row['total_cattle_owned_by_female']) + floatval($row['total_cattle_owned_by_male']) + floatval($row['total_cattle_owned_joint']);
         unset($row['total_cattle_owned_by_female'], $row['total_cattle_owned_by_male'], $row['total_cattle_owned_joint']);
 
-        if(static::isEmptyColumn($row['Cattleowned'])){
+        if (static::isEmptyColumn($row['Cattleowned'])) {
             $row['Cattleowned'] = '9999';
         }
-        if(static::isEmptyColumn($row['milkAM'])){
+        if (static::isEmptyColumn($row['milkAM'])) {
             $row['milkAM'] = '9999';
         }
-        if(static::isEmptyColumn($row['milkPM'])){
+        if (static::isEmptyColumn($row['milkPM'])) {
             $row['milkPM'] = '9999';
         }
-        if(static::isEmptyColumn($row['TotalMilk'])){
+        if (static::isEmptyColumn($row['TotalMilk'])) {
             $row['TotalMilk'] = '9999';
         }
-        if(static::isEmptyColumn($row['DIM'])){
+        if (static::isEmptyColumn($row['DIM'])) {
             $row['DIM'] = '9999';
         }
-        if(static::isEmptyColumn($row['MilkFat'])){
+        if (static::isEmptyColumn($row['MilkFat'])) {
             $row['MilkFat'] = '9999';
         }
-        if(static::isEmptyColumn($row['MilkProt'])){
+        if (static::isEmptyColumn($row['MilkProt'])) {
             $row['MilkProt'] = '9999';
         }
-        if(static::isEmptyColumn($row['HeartGirth'])){
+        if (static::isEmptyColumn($row['HeartGirth'])) {
             $row['HeartGirth'] = '9999';
         }
-        if(static::isEmptyColumn($row['Weight'])){
+        if (static::isEmptyColumn($row['Weight'])) {
             $row['Weight'] = '9999';
         }
-        if(static::isEmptyColumn($row['estimated weight'])){
+        if (static::isEmptyColumn($row['estimated weight'])) {
             $row['estimated weight'] = '9999';
         }
-        if(static::isEmptyColumn($row['Bodyscore'])){
+        if (static::isEmptyColumn($row['Bodyscore'])) {
             $row['Bodyscore'] = '9999';
         }
         // if report is version 2, unset Wareda and Kebele
-        if (array_key_exists('version', $options) && $options['version'] == 2){
+        if (array_key_exists('version', $options) && $options['version'] == 2) {
             unset($row['Wareda'], $row['Kebele']);
             // set AnimalId to be value of AnimalRegID (tag_id) and unset AnimalRegId
             $row['AnimalID'] = $row['AnimalRegID'];
-        }
-        else {
+        } else {
             unset($row['Ward'], $row['Village']);
         }
         unset($row['AnimalRegID']);
@@ -179,57 +182,60 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         return $row;
     }
 
-    public static function transformCalfDataRow($row, $options = []){
+    public static function transformCalfDataRow($row, $options = [])
+    {
         $fieldAliasMapping = $options['fieldAliasMapping'] ?? [];
 
         $row['Cattleowned'] = floatval($row['total_cattle_owned_by_female']) + floatval($row['total_cattle_owned_by_male']) + floatval($row['total_cattle_owned_joint']);
         unset($row['total_cattle_owned_by_female'], $row['total_cattle_owned_by_male'], $row['total_cattle_owned_joint']);
 
-        if(static::isEmptyColumn($row['Cattleowned'])){
+        if (static::isEmptyColumn($row['Cattleowned'])) {
             $row['Cattleowned'] = '9999';
         }
-        if(static::isEmptyColumn($row['HeartGirth'])){
+        if (static::isEmptyColumn($row['HeartGirth'])) {
             $row['HeartGirth'] = '9999';
         }
-        if(static::isEmptyColumn($row['Weight'])){
+        if (static::isEmptyColumn($row['Weight'])) {
             $row['Weight'] = '9999';
         }
-        if(static::isEmptyColumn($row['Bodyscore'])){
+        if (static::isEmptyColumn($row['Bodyscore'])) {
             $row['Bodyscore'] = '9999';
         }
-        if(static::isEmptyColumn($row['estimated weight'])){
+        if (static::isEmptyColumn($row['estimated weight'])) {
             $row['estimated weight'] = '9999';
         }
-        if(static::isEmptyColumn($row['Sex'])){
+        if (static::isEmptyColumn($row['Sex'])) {
             $row['Sex'] = '';
         }
         return $row;
     }
-    public static function transformPedigreeFileRow($row, $options = []){
+
+    public static function transformPedigreeFileRow($row, $options = [])
+    {
         // if report is version 2, unset Wareda and Kebele
-        if (array_key_exists('version', $options) && $options['version'] == 2){
+        if (array_key_exists('version', $options) && $options['version'] == 2) {
             unset($row['Wareda'], $row['Kebele']);
             unset($row['SireID'], $row['DamID']);
-        }
-        else {
+        } else {
             unset($row['SireRegID'], $row['DamRegID']);
             unset($row['Ward'], $row['Village']);
         }
 
-        if(static::isEmptyColumn($row['HeartGirth'])){
+        if (static::isEmptyColumn($row['HeartGirth'])) {
             $row['HeartGirth'] = '9999';
         }
-        if(static::isEmptyColumn($row['EstimatedWeight'])){
+        if (static::isEmptyColumn($row['EstimatedWeight'])) {
             $row['EstimatedWeight'] = '9999';
         }
-        if(static::isEmptyColumn($row['BodyScore'])){
+        if (static::isEmptyColumn($row['BodyScore'])) {
             $row['BodyScore'] = '9999';
         }
 
         return $row;
     }
 
-    public static function milkDataReport($filter){
+    public static function milkDataReport($filter)
+    {
         $fields = [
             'region_id' => null,
             'district_id' => null,
@@ -321,7 +327,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             ],
             'animal.farm.gender_code' => [
                 'function' => '\backend\modules\core\models\Choices::getLabel',
-                'params'=> [
+                'params' => [
                     "$genders",
                     'fieldValue', // the value of this field
                 ]
@@ -346,7 +352,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         $builder->name = 'Milk_Data_' . ($filter['country_id'] ? Country::getScalar('name', ['id' => $filter['country_id']]) : '');
 
         if (!empty($from) && !empty($to)) {
-            $casted_date = DbUtils::castDATE(MilkingEvent::tableName().'.[[event_date]]');
+            $casted_date = DbUtils::castDATE(MilkingEvent::tableName() . '.[[event_date]]');
             $condition = '(' . $casted_date . '>=:from AND ' . $casted_date . '<=:to)';
             $params[':from'] = $from;
             $params[':to'] = $to;
@@ -368,7 +374,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'body_score' => 'bodyscore',
             'estimated_weight' => 'estimated weight'
         ];
-        foreach ($weightFields as $weightField => $alias){
+        foreach ($weightFields as $weightField => $alias) {
             $field = ReportBuilder::getFullColumnName($weightField, new WeightEvent(), $alias, true, 'weight');
             $builder->extraSelectExpressions[] = new Expression($field);
         }
@@ -376,7 +382,8 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         return $builder;
     }
 
-    public static function testDayMilkDataReport($filter, $version = 1){
+    public static function testDayMilkDataReport($filter, $version = 1)
+    {
         $fields = [
             'region_id' => null,
             'district_id' => null,
@@ -476,7 +483,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             ],
             'animal.farm.gender_code' => [
                 'function' => '\backend\modules\core\models\Choices::getLabel',
-                'params'=> [
+                'params' => [
                     "$genders",
                     'fieldValue', // the value of this field
                 ]
@@ -499,12 +506,12 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         //$builder->limit = 50;
         $builder->country_id = $filter['country_id'] ?? null;
         $builder->name = 'TestDayMilk_Data_' . ($filter['country_id'] ? Country::getScalar('name', ['id' => $filter['country_id']]) : '');
-        if ($version == 2){
-            $builder->name = $builder->name . '_v' .$version;
+        if ($version == 2) {
+            $builder->name = $builder->name . '_v' . $version;
         }
 
         if (!empty($from) && !empty($to)) {
-            $casted_date = DbUtils::castDATE(MilkingEvent::tableName().'.[[event_date]]');
+            $casted_date = DbUtils::castDATE(MilkingEvent::tableName() . '.[[event_date]]');
             $condition = '(' . $casted_date . '>=:from AND ' . $casted_date . '<=:to)';
             $params[':from'] = $from;
             $params[':to'] = $to;
@@ -526,7 +533,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'body_score' => 'Bodyscore',
             'estimated_weight' => 'estimated weight'
         ];
-        foreach ($weightFields as $weightField => $alias){
+        foreach ($weightFields as $weightField => $alias) {
             $field = ReportBuilder::getFullColumnName($weightField, new WeightEvent(), $alias, true, 'weight');
             $builder->extraSelectExpressions[] = new Expression($field);
         }
@@ -534,7 +541,8 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         return $builder;
     }
 
-    public static function calfDataReport($filter){
+    public static function calfDataReport($filter)
+    {
         $fields = [
             'region_id' => null,
             'district_id' => null,
@@ -550,14 +558,16 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'animal.farm.total_cattle_owned_by_female' => null,
             'animal.farm.total_cattle_owned_by_male' => null,
             'animal.farm.total_cattle_owned_joint' => null,
+            'animal.id' => null,
             'animal.tag_id' => null,
             'animal.birthdate' => null,
-            //'calfhgirth' => null,
-            //'calfweight' => null,
-            //'calfbodyscore' => null,
+            'heartgirth' => null,
+            'weight_kg' => null,
+            'estimated_weight' => null,
+            'body_score' => null,
             'animal.sire_tag_id' => null,
             'animal.dam_tag_id' => null,
-            'calfsex' => null,
+            'animal.sex' => null,
             'animal.main_breed' => null,
             'animal.longitude' => null,
             'animal.latitude' => null,
@@ -585,15 +595,16 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'animal.farm.total_cattle_owned_by_female' => 'total_cattle_owned_by_female',
             'animal.farm.total_cattle_owned_by_male' => 'total_cattle_owned_by_male',
             'animal.farm.total_cattle_owned_joint' => 'total_cattle_owned_joint',
-            'animal.tag_id' => 'AnimalID',
+            'animal.tag_id' => 'AnimalTagID',
+            'animal.id' => 'AnimalID',
             'animal.birthdate' => 'Birthdate',
-            'calfhgirth' => 'HeartGirth',
-            'calfweight' => 'Weight',
-            //'calf_estimated_weight' => 'estimated weight',
-            'calfbodyscore' => 'Bodyscore',
+            'heartgirth' => 'HeartGirth',
+            'weight_kg' => 'Weight',
+            'estimated_weight' => 'estimated weight',
+            'body_score' => 'Bodyscore',
             'animal.sire_tag_id' => 'Sire ID',
             'animal.dam_tag_id' => 'Dam ID',
-            'calfsex' => 'Sex',
+            'animal.sex' => 'Sex',
             'animal.main_breed' => 'Breed',
             'animal.longitude' => 'Longitude',
             'animal.latitude' => 'Latitude',
@@ -605,7 +616,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         $decodedFields = [
             'animal.main_breed' => [
                 'function' => '\backend\modules\core\models\Choices::getLabel',
-                'params'=> [
+                'params' => [
                     //'\backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS',
                     "$breeds",
                     'fieldValue', // the value of this field
@@ -620,14 +631,14 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             ],
             'animal.farm.gender_code' => [
                 'function' => '\backend\modules\core\models\Choices::getLabel',
-                'params'=> [
+                'params' => [
                     "$genders",
                     'fieldValue', // the value of this field
                 ]
             ],
-            'calfsex' => [
+            'animal.sex' => [
                 'function' => '\backend\modules\core\models\Choices::getLabel',
-                'params'=> [
+                'params' => [
                     "$genders",
                     'fieldValue', // the value of this field
                 ]
@@ -642,7 +653,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         $orderBy = '';
 
         $builder = new ReportBuilder();
-        $builder->model = 'Calving_Event';
+        $builder->model = 'Weights_Event';
         $builder->filterConditions = $filterConditions;
         $builder->filterValues = $filterValues;
         $builder->fieldAliases = $fieldAliases;
@@ -653,38 +664,24 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         $builder->country_id = $filter['country_id'] ?? null;
         $builder->name = 'Calf_Data_' . ($filter['country_id'] ? Country::getScalar('name', ['id' => $filter['country_id']]) : '');
 
+        $animalTypes = [Animal::ANIMAL_TYPE_MALE_CALF, Animal::ANIMAL_TYPE_FEMALE_CALF];
+        list($condition, $params) = DbUtils::appendInCondition('animal.type', $animalTypes);
+        $expression = new Expression($condition, $params);
+        $builder->extraFilterExpressions[] = $expression;
         if (!empty($from) && !empty($to)) {
-            $casted_date = DbUtils::castDATE(CalvingEvent::tableName().'.[[event_date]]');
+            $casted_date = DbUtils::castDATE(CalvingEvent::tableName() . '.[[event_date]]');
             $condition = '(' . $casted_date . '>=:from AND ' . $casted_date . '<=:to)';
-            $params[':from'] = $from;
-            $params[':to'] = $to;
+            $params = [':from' => $from, ':to' => $to];
             $expression = new Expression($condition, $params);
             $builder->extraFilterExpressions[] = $expression;
         }
-
-        $builder->extraJoins = [
-            'weight' => [
-                'core_animal_event',
-                '[[core_animal_event]].[[data_collection_date]] = [[weight.data_collection_date]] AND [[weight]].[[event_type]] = 6 AND [[weight]].[[animal_id]] = [[core_animal_event]].[[animal_id]]'
-            ],
-        ];
-        $weightFields = [
-            'heartgirth' => 'HeartGirth',
-            'weight_kg' => 'Weight',
-            'body_score' => 'Bodyscore',
-            'estimated_weight' => 'estimated weight'
-        ];
-        foreach ($weightFields as $weightField => $alias){
-            $field = ReportBuilder::getFullColumnName($weightField, new WeightEvent(), $alias, true, 'weight');
-            $builder->extraSelectExpressions[] = new Expression($field);
-        }
-        
         $builder->rowTransformer = '\backend\modules\reports\models\Reports::transformCalfDataRow';
         return $builder;
 
     }
 
-    public static function pedigreeDataReport($filter){
+    public static function pedigreeDataReport($filter)
+    {
         $fields = [
             'region_id' => null,
             'district_id' => null,
@@ -739,7 +736,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         $decodedFields = [
             'main_breed' => [
                 'function' => '\backend\modules\core\models\Choices::getLabel',
-                'params'=> [
+                'params' => [
                     //'\backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS',
                     "$breeds",
                     'fieldValue', // the value of this field
@@ -747,7 +744,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             ],
             'animal_type' => [
                 'function' => '\backend\modules\core\models\Choices::getLabel',
-                'params'=> [
+                'params' => [
                     //'\backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS',
                     "$animal_type",
                     'fieldValue', // the value of this field
@@ -755,20 +752,20 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             ],
             'deformities' => [
                 'function' => '\backend\modules\core\models\Animal::decodeDeformities',
-                'params'=> [
+                'params' => [
                     'fieldValue', // the value of this field
                 ]
             ],
             'farm.gender_code' => [
                 'function' => '\backend\modules\core\models\Choices::getLabel',
-                'params'=> [
+                'params' => [
                     "$genders",
                     'fieldValue', // the value of this field
                 ]
             ],
             'farm.farmer_is_hh_head' => [
                 'function' => '\common\helpers\Utils::decodeBoolean',
-                'params'=> [
+                'params' => [
                     'fieldValue', // the value of this field
                 ]
             ],
@@ -801,7 +798,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         $builder->name = 'Pedigree_' . ($filter['country_id'] ? Country::getScalar('name', ['id' => $filter['country_id']]) : '');
 
         if (!empty($from) && !empty($to)) {
-            $casted_date = DbUtils::castDATE(Animal::tableName().'.[[birthdate]]');
+            $casted_date = DbUtils::castDATE(Animal::tableName() . '.[[birthdate]]');
             $condition = '(' . $casted_date . '>=:from AND ' . $casted_date . '<=:to)';
             $params[':from'] = $from;
             $params[':to'] = $to;
@@ -903,7 +900,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             ],*/
             'animal.animal_type' => [
                 'function' => '\backend\modules\core\models\Choices::getLabel',
-                'params'=> [
+                'params' => [
                     //'\backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS',
                     "$animal_type",
                     'fieldValue', // the value of this field
@@ -957,7 +954,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         $builder->name = 'Pedigree_File_' . ($version == 2 ? $builder->name = $builder->name . 'System_ID_' : $builder->name = $builder->name . 'Original_ID_') . ($filter['country_id'] ? Country::getScalar('name', ['id' => $filter['country_id']]) : '');
 
         if (!empty($from) && !empty($to)) {
-            $casted_date = DbUtils::castDATE(Animal::tableName().'.[[birthdate]]');
+            $casted_date = DbUtils::castDATE(Animal::tableName() . '.[[birthdate]]');
             $condition = '(' . $casted_date . '>=:from AND ' . $casted_date . '<=:to)';
             $params[':from'] = $from;
             $params[':to'] = $to;
@@ -966,7 +963,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         }
 
         $builder->extraFilterExpressions[] = [
-            '[[animal]].[[animal_type]]' => [3,4],
+            '[[animal]].[[animal_type]]' => [3, 4],
         ];
 
         // add the rowTransformer
