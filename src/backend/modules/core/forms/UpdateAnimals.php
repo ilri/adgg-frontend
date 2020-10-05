@@ -13,6 +13,7 @@ use backend\modules\core\models\ExcelImport;
 use backend\modules\core\models\AnimalUpdate;
 use common\excel\ExcelUploadForm;
 use common\excel\ImportInterface;
+use Yii;
 
 class UpdateAnimals extends ExcelUploadForm implements ImportInterface
 {
@@ -51,8 +52,7 @@ class UpdateAnimals extends ExcelUploadForm implements ImportInterface
             $row['birthdate'] = static::getDateColumnData($row['birthdate'] ?? null);
             $insert_data[$k] = $row;
         }
-        $targetModel = new AnimalUpdate();
-        $this->save($insert_data, $targetModel, true, ['tag_id' => '{tag_id}']);
+        $this->saveModels($insert_data);
     }
 
     /**
@@ -61,5 +61,40 @@ class UpdateAnimals extends ExcelUploadForm implements ImportInterface
     public function setUploadType()
     {
         $this->_uploadType = ExcelImport::TYPE_UPDATE_ANIMAL_DATA;
+    }
+
+    /**
+     * @param array $data
+     * @return bool
+     */
+    public function saveModels(array $data)
+    {
+        if (empty($data)) {
+            return false;
+        }
+
+        $nMax = 0;
+        foreach ($data as $n => $row) {
+            $tagId = $row['tag_id'];
+            $model = $this->getAnimalModel($tagId);
+            if (null === $model) {
+                Yii::$app->controller->stdout("Row {$n} update failed. Animal Tag Id ($tagId) does not exist.\n");
+                continue;
+            }
+            $this->saveExcelRow($model, $row, $n);
+            $nMax = $n;
+        }
+
+        $this->updateCurrentProcessedRow($nMax);
+    }
+
+    /**
+     * @param $tagId
+     * @return array|AnimalUpdate|\yii\db\ActiveRecord|null
+     */
+    protected function getAnimalModel($tagId)
+    {
+        $tagId = trim($tagId);
+        return AnimalUpdate::find()->andWhere(['tag_id' => $tagId])->one();
     }
 }
