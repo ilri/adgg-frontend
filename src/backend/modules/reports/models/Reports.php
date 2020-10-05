@@ -201,9 +201,9 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         if (static::isEmptyColumn($row['Bodyscore'])) {
             $row['Bodyscore'] = '9999';
         }
-        if (static::isEmptyColumn($row['estimated weight'])) {
+       /* if (static::isEmptyColumn($row['estimated weight'])) {
             $row['estimated weight'] = '9999';
-        }
+        }*/
         if (static::isEmptyColumn($row['Sex'])) {
             $row['Sex'] = '';
         }
@@ -600,7 +600,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'animal.birthdate' => 'Birthdate',
             'heartgirth' => 'HeartGirth',
             'weight_kg' => 'Weight',
-            'estimated_weight' => 'estimated weight',
+            //'estimated_weight' => 'estimated weight',
             'body_score' => 'Bodyscore',
             'animal.sire_tag_id' => 'Sire ID',
             'animal.dam_tag_id' => 'Dam ID',
@@ -665,7 +665,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         $builder->name = 'Calf_Data_' . ($filter['country_id'] ? Country::getScalar('name', ['id' => $filter['country_id']]) : '');
 
         $animalTypes = [Animal::ANIMAL_TYPE_MALE_CALF, Animal::ANIMAL_TYPE_FEMALE_CALF];
-        list($condition, $params) = DbUtils::appendInCondition('{{%animal}}.[[type]]', $animalTypes);
+        list($condition, $params) = DbUtils::appendInCondition('{{%animal}}.[[animal_type]]', $animalTypes);
         $expression = new Expression($condition, $params);
         $builder->extraFilterExpressions[] = $expression;
         if (!empty($from) && !empty($to)) {
