@@ -563,7 +563,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'animal.birthdate' => null,
             'heartgirth' => null,
             'weight_kg' => null,
-            'estimated_weight' => null,
+            //'estimated_weight' => null,
             'body_score' => null,
             'animal.sire_tag_id' => null,
             'animal.dam_tag_id' => null,
