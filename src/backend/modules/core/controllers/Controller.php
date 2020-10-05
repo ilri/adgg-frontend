@@ -62,6 +62,8 @@ class Controller extends BackendController
                             'upload-metadata',
                             'view-metadata',
                             'upload-metadata-preview',
+                            'excel-update',
+                            'excel-update-preview',
                         ],
                         'allow' => true,
                         'roles' => ['@'],
