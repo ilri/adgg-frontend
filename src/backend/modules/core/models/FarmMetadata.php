@@ -138,7 +138,7 @@ class FarmMetadata extends ActiveRecord implements ActiveSearchInterface, TableA
 
     public function getExcelColumns()
     {
-        $additionalAttributes = TableAttribute::getColumnData('attribute_key', ['table_id' => static::getDefinedTableId(), 'farm_metadata_type' => static::getDefineMetadataType()], [], ['orderBy' => ['group_id' => SORT_ASC, 'id' => SORT_ASC]]);
+        $additionalAttributes = TableAttribute::getColumnData('attribute_key', ['table_id' => static::getDefinedTableId(), 'farm_metadata_type' => static::getDefinedMetadataType()], [], ['orderBy' => ['group_id' => SORT_ASC, 'id' => SORT_ASC]]);
         return ArrayHelper::merge(['farmCode',], $additionalAttributes);
     }
 
@@ -241,7 +241,7 @@ class FarmMetadata extends ActiveRecord implements ActiveSearchInterface, TableA
         $this->ignoreAdditionalAttributes = true;
         $attributes = $this->attributes();
         $attrs = [];
-        $fields = TableAttribute::getData(['attribute_key'], ['table_id' => self::getDefinedTableId(), 'farm_metadata_type' => static::getDefineMetadataType()]);
+        $fields = TableAttribute::getData(['attribute_key'], ['table_id' => self::getDefinedTableId(), 'farm_metadata_type' => static::getDefinedMetadataType()]);
 
         foreach ($fields as $k => $field) {
             $attrs[] = $field['attribute_key'];

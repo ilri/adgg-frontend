@@ -12,7 +12,7 @@ namespace backend\modules\core\models;
 class FarmMetadataCattleDetails extends FarmMetadata implements FarmMetadataInterface
 {
 
-    public static function getDefineMetadataType(): int
+    public static function getDefinedMetadataType(): int
     {
         return self::TYPE_CATTLE_DETAILS;
     }

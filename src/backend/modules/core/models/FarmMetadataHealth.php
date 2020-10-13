@@ -11,7 +11,7 @@ namespace backend\modules\core\models;
 
 class FarmMetadataHealth extends FarmMetadata implements FarmMetadataInterface
 {
-    public static function getDefineMetadataType(): int
+    public static function getDefinedMetadataType(): int
     {
         return self::TYPE_HEALTH_SERVICES;
     }

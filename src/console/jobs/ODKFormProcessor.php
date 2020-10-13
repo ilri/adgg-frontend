@@ -194,6 +194,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             Yii::$app->controller->stdout("{$message}\n");
             Yii::$app->controller->stdout("{$trace}\n");
             Yii::error($message);
+            Yii::error($trace);
         }
     }
 

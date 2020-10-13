@@ -15,5 +15,5 @@ interface FarmMetadataInterface
     /**
      * @return int
      */
-    public static function getDefineMetadataType(): int;
+    public static function getDefinedMetadataType(): int;
 }

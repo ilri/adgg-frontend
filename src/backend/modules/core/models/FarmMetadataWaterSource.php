@@ -11,7 +11,7 @@ namespace backend\modules\core\models;
 
 class FarmMetadataWaterSource extends FarmMetadata implements FarmMetadataInterface
 {
-    public static function getDefineMetadataType(): int
+    public static function getDefinedMetadataType(): int
     {
         return self::TYPE_WATER_SOURCE;
     }
