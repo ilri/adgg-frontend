@@ -1732,6 +1732,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      */
     protected function saveFarmMetadataModel($model, $index, $validate = true)
     {
+        $farmId=$this->getFarmId();
+        Yii::$app->controller->stdout("Farm ID: {$farmId}\n");
         $data = $this->saveModel($model, $validate);
         $this->_farmMetadata[$index] = $data['data'];
         $this->_farmMetadataModels[$index] = $data['model'];
