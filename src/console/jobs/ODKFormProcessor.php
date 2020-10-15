@@ -9,17 +9,24 @@
 namespace console\jobs;
 
 
+use backend\modules\core\models\AIEvent;
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\CalvingEvent;
 use backend\modules\core\models\CountryUnits;
+use backend\modules\core\models\ExitsEvent;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\FarmMetadata;
 use backend\modules\core\models\FarmMetadataHouseholdMembers;
 use backend\modules\core\models\FarmMetadataMilkUtilizationBuyer;
 use backend\modules\core\models\FarmMetadataTechnologyMobilization;
+use backend\modules\core\models\HealthEvent;
+use backend\modules\core\models\MilkingEvent;
 use backend\modules\core\models\OdkForm;
+use backend\modules\core\models\PDEvent;
+use backend\modules\core\models\SyncEvent;
 use backend\modules\core\models\TableAttributeInterface;
+use backend\modules\core\models\WeightEvent;
 use common\helpers\DateUtils;
 use common\helpers\Lang;
 use common\models\ActiveRecord;
@@ -1499,13 +1506,22 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         if (null === $rawData) {
             return;
         }
-
-        $model = new AnimalEvent([
+        $params = [
             'event_type' => $eventType,
             'data_collection_date' => $this->getDate(),
             'field_agent_id' => $this->_model->user_id,
             'odk_form_uuid' => $this->_model->form_uuid,
-        ]);
+        ];
+        switch ($eventType) {
+            case AnimalEvent::EVENT_TYPE_CALVING:
+                $model = new CalvingEvent($params);
+                break;
+            case AnimalEvent::EVENT_TYPE_MILKING:
+                $model = new MilkingEvent($params);
+                break;
+            default:
+                $model = new AnimalEvent($params);
+        }
 
         foreach ($rawData as $k => $dataPoints) {
             $dataPoint = $dataPoints[$repeatKey] ?? null;

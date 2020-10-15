@@ -11,7 +11,6 @@ namespace backend\modules\core\models;
 
 use common\excel\ImportActiveRecordInterface;
 use common\helpers\ArrayHelper;
-use common\helpers\DateUtils;
 use common\helpers\DbUtils;
 use Yii;
 
@@ -59,14 +58,6 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
     }
 
     /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getLactation()
-    {
-        return $this->hasOne(CalvingEvent::class, ['id' => 'lactation_id']);
-    }
-
-    /**
      * @return array
      */
     public function getExcelColumns()
@@ -88,54 +79,6 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
             'milklact',
             'milksmc',
         ];
-    }
-
-    protected function setDIM()
-    {
-        if ($this->event_type != self::EVENT_TYPE_MILKING || null === $this->lactation || empty($this->lactation->event_date) || empty($this->event_date)) {
-            return;
-        }
-        if (!empty($this->dim)) {
-            return;
-        }
-        $diff = DateUtils::getDateDiff($this->lactation->event_date, $this->event_date);
-        $this->dim = $diff->days;
-    }
-
-    /**
-     * @param int $animalId
-     * @param int $lactationId
-     * @throws \yii\db\Exception
-     */
-    public static function setTestDayNo($animalId, $lactationId)
-    {
-        list($sql, $params) = static::getTestDayNoUpdateSql($animalId, $lactationId, 1);
-        if (!empty($sql)) {
-            Yii::$app->db->createCommand($sql, $params)->execute();
-        }
-    }
-
-    /**
-     * @param int $animalId
-     * @param int $lactationId
-     * @param int $i
-     * @return array
-     * @throws \Exception
-     */
-    public static function getTestDayNoUpdateSql($animalId, $lactationId, $i = 1)
-    {
-        $data = static::getData(['id'], ['event_type' => self::EVENT_TYPE_MILKING, 'animal_id' => $animalId, 'lactation_id' => $lactationId], [], ['orderBy' => ['event_date' => SORT_ASC]]);
-        $n = 1;
-        $sql = "";
-        $params = [];
-        $table = static::tableName();
-        foreach ($data as $row) {
-            $sql .= "UPDATE {$table} SET [[testday_no]]=:tdno{$n}{$i} WHERE [[id]]=:id{$n}{$i};";
-            $params[":tdno{$n}{$i}"] = $n;
-            $params[":id{$n}{$i}"] = $row['id'];
-            $n++;
-        }
-        return [$sql, $params];
     }
 
     /**
