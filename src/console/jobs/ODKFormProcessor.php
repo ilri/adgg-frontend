@@ -9,24 +9,18 @@
 namespace console\jobs;
 
 
-use backend\modules\core\models\AIEvent;
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\CalvingEvent;
 use backend\modules\core\models\CountryUnits;
-use backend\modules\core\models\ExitsEvent;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\FarmMetadata;
 use backend\modules\core\models\FarmMetadataHouseholdMembers;
 use backend\modules\core\models\FarmMetadataMilkUtilizationBuyer;
 use backend\modules\core\models\FarmMetadataTechnologyMobilization;
-use backend\modules\core\models\HealthEvent;
 use backend\modules\core\models\MilkingEvent;
 use backend\modules\core\models\OdkForm;
-use backend\modules\core\models\PDEvent;
-use backend\modules\core\models\SyncEvent;
 use backend\modules\core\models\TableAttributeInterface;
-use backend\modules\core\models\WeightEvent;
 use common\helpers\DateUtils;
 use common\helpers\Lang;
 use common\models\ActiveRecord;
@@ -175,9 +169,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $message = Lang::t('This Version ({old_version}) of ODK Form is currently not supported. Version ({version}) and above are supported.', ['old_version' => $this->_model->form_version, 'version' => self::MIN_SUPPORTED_ODK_FORM_VERSION]);
                 $this->_model->error_message = $message;
                 $this->_model->has_errors = 1;
-                $this->_model->save(false);
                 Yii::$app->controller->stdout("{$message}\n");
-                Yii::$app->end();
             }
 
             $this->_model->is_processed = 1;
