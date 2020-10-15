@@ -325,7 +325,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
 
     protected function setFarmId()
     {
-        $jsonKey = 'activities_farmer';
+        $jsonKey = 'farmer_platformuniqueid';
         $code = $this->getFormDataValueByKey($this->_model->form_data, $jsonKey);
         $version1Point5 = OdkForm::getVersionNumber(OdkForm::ODK_FORM_VERSION_1_POINT_5);
         $formVersionNumber = OdkForm::getVersionNumber($this->_model->form_version);
@@ -1032,7 +1032,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $data = $this->_model->form_data[$repeatKey] ?? null;
         $syncRepeatKey = $repeatKey . '/animal_breedingsync';
         $syncGroupKey = 'breeding_syncdetails';
-        $animalCodeAttributeKey = self::getAttributeJsonKey('breeding_syncanimalcode', '', $syncRepeatKey);
+        $animalCodeAttributeKey = self::getAttributeJsonKey('breeding_syncanimalplatformuniqueid', '', $syncRepeatKey);
         $eventDateKey = self::getAttributeJsonKey('breeding_syncservedate', $syncGroupKey, $syncRepeatKey);
 
         $this->registerAnimalEvent($data, AnimalEvent::EVENT_TYPE_SYNCHRONIZATION, $syncRepeatKey, $syncGroupKey, $animalCodeAttributeKey, $eventDateKey);
@@ -1045,7 +1045,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $data = $this->_model->form_data[$repeatKey] ?? null;
         $aiRepeatKey = $repeatKey . '/animal_breedingai';
         $aiGroupKey = 'breeding_aidetails';
-        $animalCodeAttributeKey = self::getAttributeJsonKey('breeding_aianimalcode', '', $aiRepeatKey);
+        $animalCodeAttributeKey = self::getAttributeJsonKey('breeding_aianimalplatformuniqueid', '', $aiRepeatKey);
         $eventDateKey = self::getAttributeJsonKey('breeding_aidate', $aiGroupKey, $aiRepeatKey);
 
         $this->registerAnimalEvent($data, AnimalEvent::EVENT_TYPE_AI, $aiRepeatKey, $aiGroupKey, $animalCodeAttributeKey, $eventDateKey);
@@ -1058,7 +1058,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $data = $this->_model->form_data[$repeatKey] ?? null;
         $pdRepeatKey = $repeatKey . '/animal_breedingpd';
         $pdGroupKey = 'breeding_pdresults';
-        $animalCodeAttributeKey = self::getAttributeJsonKey('breeding_pdanimalcode', '', $pdRepeatKey);
+        $animalCodeAttributeKey = self::getAttributeJsonKey('breeding_pdanimalplatformuniqueid', '', $pdRepeatKey);
         $eventDateKey = self::getAttributeJsonKey('breeding_pdservicedate', $pdGroupKey, $pdRepeatKey);
 
         $this->registerAnimalEvent($data, AnimalEvent::EVENT_TYPE_PREGNANCY_DIAGNOSIS, $pdRepeatKey, $pdGroupKey, $animalCodeAttributeKey, $eventDateKey);
@@ -1248,7 +1248,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $mainRepeatKey = 'cow_monitoring';
         $rawData = $this->_model->form_data[$mainRepeatKey] ?? null;
         $repeatKey = $mainRepeatKey . '/cow_monitoringanimal';
-        $animalCodeAttributeKey = self::getAttributeJsonKey('cowmonitor_animalcode', $this->_model->isVersion1Point5() ? '' : 'cow_monitordetails', $repeatKey);
+        $animalCodeAttributeKey = self::getAttributeJsonKey('cowmonitor_animalplatformuniqueid', $this->_model->isVersion1Point5() ? '' : 'cow_monitordetails', $repeatKey);
         return [$rawData, $repeatKey, $animalCodeAttributeKey];
     }
 
@@ -1357,7 +1357,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $mainRepeatKey = 'calf_monitoring';
         $rawData = $this->_model->form_data[$mainRepeatKey] ?? null;
         $repeatKey = $mainRepeatKey . '/calf_monitoringanimal';
-        $animalCodeAttributeKey = self::getAttributeJsonKey('calfmonitor_animalcode', $this->_model->isVersion1Point5() ? '' : 'calf_monitordetails', $repeatKey);
+        $animalCodeAttributeKey = self::getAttributeJsonKey('calfmonitor_animalplatformuniqueid', $this->_model->isVersion1Point5() ? '' : 'calf_monitordetails', $repeatKey);
         return [$rawData, $repeatKey, $animalCodeAttributeKey];
     }
 
@@ -1366,7 +1366,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $mainRepeatKey = 'cow_stillbirth';
         $rawData = $this->_model->form_data[$mainRepeatKey] ?? null;
         $repeatKey = $mainRepeatKey . '/cow_stillbirthanimal';
-        $animalCodeAttributeKey = self::getAttributeJsonKey('cowstillbirth_animalcode', '', $repeatKey);
+        $animalCodeAttributeKey = self::getAttributeJsonKey('cowstillbirth_animalplatformuniqueid', '', $repeatKey);
         $groupKey = 'cow_stillbirthanimaldetails';
         $sireGroupKey = 'cow_stillbirthsire';
         $attributes = [
@@ -1388,7 +1388,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             return;
         }
         $repeatKey = $mainRepeatKey . '/cattle_exitanimal';
-        $animalCodeAttributeKey = self::getAttributeJsonKey('animalexit_code', '', $repeatKey);
+        $animalCodeAttributeKey = self::getAttributeJsonKey('animalexit_platformuniqueid', '', $repeatKey);
         $exitDetailsGroupKey = 'animalexit_details';
         $exitMovementGroupKey = 'animalexit_movement';
         $exitNewFarmGroupKey = 'animalexit_newonwer_farmer';
@@ -1480,7 +1480,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $mainRepeatKey = 'animal_hairsampling';
         $rawData = $this->_model->form_data[$mainRepeatKey] ?? null;
         $repeatKey = $mainRepeatKey . '/animal_hairsamplingdetails';
-        $animalCodeAttributeKey = self::getAttributeJsonKey('hairsampling_animalcode', '', $repeatKey);
+        $animalCodeAttributeKey = self::getAttributeJsonKey('hairsampling_animalplatformuniqueid', '', $repeatKey);
         $groupKey = 'hairsampling_details';
         $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_HAIR_SAMPLING, $repeatKey, $groupKey, $animalCodeAttributeKey);
     }
@@ -1569,7 +1569,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      */
     protected function getOrRegisterAnimalDam($animalData, $farmModel, $index)
     {
-        $damCodeKey = self::getAttributeJsonKey('animal_damregistered', 'animal_damknownlist', 'animal_general');
+        $damCodeKey = self::getAttributeJsonKey('animal_damplatformuniqueid', 'animal_damknownlist', 'animal_general');
         $animalCode = $this->getFormDataValueByKey($animalData, $damCodeKey);
         $damModel = null;
         if (!empty($animalCode)) {
@@ -1630,12 +1630,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     {
         $sireType = null;
         $sireModel = null;
-        $sireCodeKey = self::getAttributeJsonKey('animal_sireairegistered', 'animal_sireknownlist', 'animal_general');
+        $sireCodeKey = self::getAttributeJsonKey('animal_sirebullplatformuniqueid', 'animal_sireknownlist', 'animal_general');
         $animalCode = $this->getFormDataValueByKey($animalData, $sireCodeKey);
-        if (empty($animalCode)) {
-            $sireCodeKey = self::getAttributeJsonKey('animal_sirebullregistered', 'animal_sireknownlist', 'animal_general');
-            $animalCode = $this->getFormDataValueByKey($animalData, $sireCodeKey);
-        }
         if (!empty($animalCode)) {
             $sireModel = $this->getAnimalModelByOdkCode($animalCode);
         } else {
