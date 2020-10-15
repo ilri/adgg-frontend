@@ -11,7 +11,7 @@ namespace backend\modules\core\models;
 
 class FarmMetadataMilkUtilization extends FarmMetadata implements FarmMetadataInterface
 {
-    public static function getDefineMetadataType(): int
+    public static function getDefinedMetadataType(): int
     {
         return self::TYPE_MILK_UTILIZATION;
     }

@@ -48,7 +48,7 @@ class UploadFarmMetadata extends ExcelUploadForm implements ImportInterface
 
         /* @var $model FarmMetadata */
         $model = new $this->activeRecordModelClass();
-        $model->type = $model::getDefineMetadataType();
+        $model->type = $model::getDefinedMetadataType();
         foreach ($batch as $k => $excel_row) {
             $row = $this->getExcelRowColumns($excel_row, $columns);
             if (empty($row)) {

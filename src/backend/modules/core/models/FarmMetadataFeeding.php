@@ -11,7 +11,7 @@ namespace backend\modules\core\models;
 
 class FarmMetadataFeeding extends FarmMetadata implements FarmMetadataInterface
 {
-    public static function getDefineMetadataType(): int
+    public static function getDefinedMetadataType(): int
     {
         return self::TYPE_FEEDING_SYSTEMS;
     }

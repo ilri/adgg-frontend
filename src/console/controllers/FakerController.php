@@ -9,18 +9,38 @@ namespace console\controllers;
 
 
 use backend\modules\core\models\Animal;
+use backend\modules\core\models\OdkForm;
 use common\models\ActiveRecord;
+use console\jobs\ODKFormProcessor;
 use yii\console\Controller;
 
 class FakerController extends Controller
 {
     public function actionTest()
     {
+        //ODKFormProcessor::push(['itemId' => 17720]);
         //\console\jobs\ODKFormProcessor::push(['itemId' => 7794]);
         //$this->resetModels(Animal::class);
         //$this->setFarmLocationDetails();
         //\console\jobs\ODKFormProcessor::push(['itemId' => 8494]);
-        $this->resetAnimals();
+        //$this->resetAnimals();
+        $this->processUnprocessedOdkForm();
+    }
+
+    protected function processUnprocessedOdkForm()
+    {
+        $query = OdkForm::find()->andWhere(['is_processed' => 0]);
+        $totalRecords = $query->count();
+        $n = 1;
+        $modelClassName = OdkForm::class;
+        /* @var $models OdkForm[] */
+        foreach ($query->batch() as $i => $models) {
+            foreach ($models as $model) {
+                ODKFormProcessor::push(['itemId' => $model->id]);
+                $this->stdout("{$modelClassName}: Queued {$n} of {$totalRecords} records\n");
+                $n++;
+            }
+        }
     }
 
     protected function setFarmLocationDetails()
