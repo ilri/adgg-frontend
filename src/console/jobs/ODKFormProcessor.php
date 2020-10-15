@@ -1777,6 +1777,10 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     {
         $model->ignoreAdditionalAttributes = false;
         $isSaved = $model->save($validate);
+        if ($model->hasErrors()) {
+            $this->_model->has_errors = 1;
+            $this->_model->error_message = get_class($model) . ": validation errors";
+        }
         return [
             'model' => $model,
             'data' => ['attributes' => $model->attributes, 'errors' => $isSaved ? null : $model->getErrors(),]
