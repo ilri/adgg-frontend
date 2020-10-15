@@ -168,6 +168,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $message = Lang::t('This Version ({old_version}) of ODK Form is currently not supported. Version ({version}) and above are supported.', ['old_version' => $this->_model->form_version, 'version' => self::MIN_SUPPORTED_ODK_FORM_VERSION]);
                 $this->_model->error_message = $message;
                 $this->_model->has_errors = 1;
+                $this->_model->save(false);
                 Yii::$app->controller->stdout("{$message}\n");
                 Yii::$app->end();
             }
