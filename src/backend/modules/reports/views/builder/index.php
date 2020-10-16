@@ -95,6 +95,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                                 if (count($modelData['relations'])) {
                                                     $relations = $modelData['relations'];
                                                     $sub_relations = $modelData['sub_relations'] ?? [];
+                                                    dd($relations);
                                                     foreach ($relations as $relationName) {
                                                         $relation = $class->getRelation($relationName);
                                                         /* @var $relationModelClass ActiveRecord */
