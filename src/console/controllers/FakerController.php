@@ -18,9 +18,9 @@ class FakerController extends Controller
 {
     public function actionTest()
     {
-        //ODKFormProcessor::push(['itemId' => 17720]);
+        //ODKFormProcessor::push(['itemId' => 17697]);
         //\console\jobs\ODKFormProcessor::push(['itemId' => 7794]);
-        //$this->resetModels(Animal::class);
+        //$this->resetModels(OdkForm::class);
         //$this->setFarmLocationDetails();
         //\console\jobs\ODKFormProcessor::push(['itemId' => 8494]);
         //$this->resetAnimals();

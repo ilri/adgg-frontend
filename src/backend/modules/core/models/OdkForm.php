@@ -115,6 +115,9 @@ class OdkForm extends ActiveRecord implements ActiveSearchInterface
             $this->form_version = $this->form_data['_version'] ?? null;
             $this->setCountryId();
             $this->setUserId();
+            if (empty($this->error_message)) {
+                $this->setErrorMessage();
+            }
 
             return true;
         }
@@ -137,6 +140,56 @@ class OdkForm extends ActiveRecord implements ActiveSearchInterface
             if (!empty($countryId)) {
                 $this->country_id = $countryId;
             }
+        }
+    }
+
+    protected function setErrorMessage()
+    {
+        $errorMessage = [];
+        if (!empty($this->farm_data)) {
+            foreach ($this->farm_data as $i => $farmData) {
+                if (!empty($farmData['errors'])) {
+                    $errorMessage[] = Farm::class . ": Validation errors.";
+                    break;
+                }
+            }
+        }
+        if (!empty($this->farm_metadata)) {
+            foreach ($this->farm_metadata as $i => $farmMetaData) {
+                if (!empty($farmMetaData['errors'])) {
+                    $errorMessage[] = FarmMetadata::class . ": Validation errors.";
+                    break;
+                }
+            }
+        }
+        if (!empty($this->animals_data)) {
+            foreach ($this->animals_data as $i => $animalData) {
+                if (!empty($animalData['errors'])) {
+                    $errorMessage[] = Animal::class . ": Validation errors.";
+                    break;
+                }
+            }
+        }
+        if (!empty($this->animal_events_data)) {
+            foreach ($this->animal_events_data as $i => $animalEventData) {
+                if (!empty($animalEventData['errors'])) {
+                    $errorMessage[] = AnimalEvent::class . ": Validation errors.";
+                    break;
+                }
+            }
+        }
+        if (!empty($this->user_data)) {
+            foreach ($this->user_data as $i => $userData) {
+                if (!empty($userData['errors'])) {
+                    $errorMessage[] = Users::class . ": Validation errors.";
+                    break;
+                }
+            }
+        }
+
+        if (!empty($errorMessage)) {
+            $this->has_errors = 1;
+            $this->error_message = implode(', ', $errorMessage);
         }
     }
 

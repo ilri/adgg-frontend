@@ -18,6 +18,7 @@ use backend\modules\core\models\FarmMetadata;
 use backend\modules\core\models\FarmMetadataHouseholdMembers;
 use backend\modules\core\models\FarmMetadataMilkUtilizationBuyer;
 use backend\modules\core\models\FarmMetadataTechnologyMobilization;
+use backend\modules\core\models\MilkingEvent;
 use backend\modules\core\models\OdkForm;
 use backend\modules\core\models\TableAttributeInterface;
 use common\helpers\DateUtils;
@@ -168,9 +169,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $message = Lang::t('This Version ({old_version}) of ODK Form is currently not supported. Version ({version}) and above are supported.', ['old_version' => $this->_model->form_version, 'version' => self::MIN_SUPPORTED_ODK_FORM_VERSION]);
                 $this->_model->error_message = $message;
                 $this->_model->has_errors = 1;
-                $this->_model->save(false);
                 Yii::$app->controller->stdout("{$message}\n");
-                Yii::$app->end();
             }
 
             $this->_model->is_processed = 1;
@@ -1499,13 +1498,22 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         if (null === $rawData) {
             return;
         }
-
-        $model = new AnimalEvent([
+        $params = [
             'event_type' => $eventType,
             'data_collection_date' => $this->getDate(),
             'field_agent_id' => $this->_model->user_id,
             'odk_form_uuid' => $this->_model->form_uuid,
-        ]);
+        ];
+        switch ($eventType) {
+            case AnimalEvent::EVENT_TYPE_CALVING:
+                $model = new CalvingEvent($params);
+                break;
+            case AnimalEvent::EVENT_TYPE_MILKING:
+                $model = new MilkingEvent($params);
+                break;
+            default:
+                $model = new AnimalEvent($params);
+        }
 
         foreach ($rawData as $k => $dataPoints) {
             $dataPoint = $dataPoints[$repeatKey] ?? null;
@@ -1769,6 +1777,10 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     {
         $model->ignoreAdditionalAttributes = false;
         $isSaved = $model->save($validate);
+        if ($model->hasErrors()) {
+            $this->_model->has_errors = 1;
+            $this->_model->error_message = get_class($model) . ": validation errors";
+        }
         return [
             'model' => $model,
             'data' => ['attributes' => $model->attributes, 'errors' => $isSaved ? null : $model->getErrors(),]
