@@ -20,11 +20,11 @@ class FakerController extends Controller
     {
         //ODKFormProcessor::push(['itemId' => 17697]);
         //\console\jobs\ODKFormProcessor::push(['itemId' => 7794]);
-        $this->resetModels(OdkForm::class);
+        //$this->resetModels(OdkForm::class);
         //$this->setFarmLocationDetails();
         //\console\jobs\ODKFormProcessor::push(['itemId' => 8494]);
         //$this->resetAnimals();
-        // $this->processUnprocessedOdkForm();
+        $this->processUnprocessedOdkForm();
     }
 
     protected function processUnprocessedOdkForm()
