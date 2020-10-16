@@ -545,4 +545,9 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     {
         return array_merge(['animal'], $this->reportBuilderCommonRelations(), $this->reportBuilderCoreDataRelations());
     }
+
+    public function getEventType(): int
+    {
+        return $this->event_type;
+    }
 }
