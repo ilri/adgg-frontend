@@ -1783,7 +1783,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         }
         return [
             'model' => $model,
-            'data' => ['attributes' => $model, 'errors' => $isSaved ? null : $model->getErrors(),]
+            'data' => ['attributes' => $model->attributes, 'errors' => $isSaved ? null : $model->getErrors(),]
         ];
     }
 
