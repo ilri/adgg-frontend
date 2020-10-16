@@ -548,6 +548,6 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
 
     public function getEventType(): int
     {
-        return $this->event_type;
+        return 1;
     }
 }
