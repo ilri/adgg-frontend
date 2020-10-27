@@ -154,7 +154,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
      */
     public function getLactation()
     {
-        return $this->hasOne(AnimalEvent::class, ['id' => 'lactation_id']);
+        return $this->hasOne(CalvingEvent::class, ['id' => 'lactation_id']);
     }
 
 
@@ -544,10 +544,5 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     public function reportBuilderRelations()
     {
         return array_merge(['animal'], $this->reportBuilderCommonRelations(), $this->reportBuilderCoreDataRelations());
-    }
-
-    public function getEventType(): int
-    {
-        return $this->event_type;
     }
 }
