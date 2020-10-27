@@ -64,6 +64,7 @@ class CalvingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
             'intuseoth',
             'calfdeformities',
             'calfdeformitiesoth',
+            'calfweightknown',
             'calvdatedead',
             'whydead',
             'whydeadoth',
