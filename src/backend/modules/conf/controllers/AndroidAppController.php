@@ -44,7 +44,7 @@ class AndroidAppController extends Controller
     public function actionCreate()
     {
         $model = new AndroidApps(['is_active' => 1]);
-        return $model->simpleAjaxSaveRenderAjax();
+        return $model->simpleAjaxSave();
     }
 
     /**
@@ -56,7 +56,7 @@ class AndroidAppController extends Controller
     public function actionUpdate($id)
     {
         $model = AndroidApps::loadModel($id);
-        return $model->simpleAjaxSaveRenderAjax();
+        return $model->simpleAjaxSave();
     }
 
     /**
