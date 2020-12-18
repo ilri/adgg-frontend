@@ -13,6 +13,8 @@ use backend\modules\core\models\Animal;
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\AnimalHerd;
 use backend\modules\core\models\Farm;
+use backend\modules\core\models\OdkForm;
+use console\jobs\ODKFormProcessor;
 use yii\console\Controller;
 
 class DataMigrationController extends Controller
@@ -147,6 +149,25 @@ class DataMigrationController extends Controller
                     $newWeightModel->save(false);
                     $this->stdout("{$modelClassName}: Updated weight event {$n} of {$totalRecords} records\n");
                 }
+                $n++;
+            }
+        }
+    }
+
+    public function actionReprocessFailedOdkForms()
+    {
+        $condition = ['has_errors' => 1, 'is_processed' => 1];
+        $query = OdkForm::find()->andWhere($condition);
+        $totalRecords = $query->count();
+        $n = 1;
+        $modelClassName = OdkForm::class;
+        /* @var $models OdkForm[] */
+        foreach ($query->batch() as $i => $models) {
+            foreach ($models as $model) {
+                $model->save(false);
+                OdkForm::updateAll(['has_errors' => 0, 'is_processed' => 0], ['id' => $model->id]);
+                ODKFormProcessor::push(['itemId' => $model->id]);
+                $this->stdout("{$modelClassName}: queued {$n} of {$totalRecords} records\n");
                 $n++;
             }
         }
