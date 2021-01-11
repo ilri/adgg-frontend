@@ -7,6 +7,7 @@ use common\widgets\select2\Select2;
 use yii\bootstrap4\Html;
 
 /* @var $model \backend\modules\help\models\HelpContent */
+/* @var $forAndroid  */
 ?>
 
 <div class="accordion mb-5" id="accordion">
@@ -51,13 +52,13 @@ use yii\bootstrap4\Html;
                     <div class="col-lg-2 offset-8">
                         <?= Html::label('') ?>
                         <a target="_blank" class="btn btn-brand btn-bold pull-right"
-                           href="<?= Url::to(['read', 'format' => 'pdf', 'module' => $filterOptions['module'], 'name' => $filterOptions['name']]) ?>"
+                           href="<?= Url::to(['read', 'format' => 'pdf', 'module' => $filterOptions['module'], 'name' => $filterOptions['name'],'forAndroid'=>$forAndroid]) ?>"
                         ><i class="far fa-file-pdf"></i> Read as PDF</a>
                     </div>
                     <div class="col-lg-2">
                         <?= Html::label('') ?>
                         <a target="_blank" class="btn btn-brand btn-bold pull-right"
-                           href="<?= Url::to(['read', 'format' => 'word', 'module' => $filterOptions['module'], 'name' => $filterOptions['name']]) ?>"
+                           href="<?= Url::to(['read', 'format' => 'word', 'module' => $filterOptions['module'], 'name' => $filterOptions['name'],'forAndroid'=>$forAndroid]) ?>"
                         ><i class="far fa-file-word"></i> Read as Word</a>
                     </div>
                 </div>
