@@ -22,7 +22,7 @@ $user = Yii::$app->user->identity;
     <!-- begin:: Header Topbar -->
     <div class="kt-header__topbar">
         <div class="kt-header__topbar-item">
-            <a class="kt-header__topbar-wrapper" href="<?=Url::to(['/help/help-content/read']) ?>">
+            <a class="kt-header__topbar-wrapper" href="<?=Url::to(['/help/help-content/read','forAndroid'=>false]) ?>">
                 <span class="kt-header__topbar-icon" title="Help" style="color: white; font-size: medium">Help</span>
             </a>
         </div>
