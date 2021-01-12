@@ -7,6 +7,8 @@ use yii\helpers\Html;
 use yii\helpers\HtmlPurifier;
 
 /* @var $this yii\web\View */
+/* @var $forAndroid  */
+
 /* @var $models HelpContent[] */
 $this->title = 'User Manual';
 if ($forAndroid) {
@@ -22,7 +24,8 @@ $format = Yii::$app->request->get('format', null);
 ?>
 <div class="help-content-view">
     <?php if ($format === null): ?>
-        <?= $this->render('_filter', ['filterOptions' => $filterOptions,]) ?>
+        <?= $this->render('_filter', ['filterOptions' => $filterOptions,'forAndroid' => $forAndroid,
+        ]) ?>
     <?php endif; ?>
     <div class="accordion mb-5" id="accordion">
         <?php

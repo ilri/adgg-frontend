@@ -83,6 +83,7 @@ class HelpContentController extends Controller
         if ($format !== null) {
             $content = $this->renderPartial('read', [
                 'models' => $models->all(),
+                'forAndroid' => $forAndroid,
             ]);
             switch ($format) {
                 case 'word':
