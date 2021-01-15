@@ -214,11 +214,11 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
     {
         // if report is version 2, unset Wareda and Kebele
         if (array_key_exists('version', $options) && $options['version'] == 2) {
-            unset($row['Wareda'], $row['Kebele']);
+            //unset($row['Wareda'], $row['Kebele']);
             unset($row['SireID'], $row['DamID']);
         } else {
             unset($row['SireRegID'], $row['DamRegID']);
-            unset($row['Ward'], $row['Village']);
+            //unset($row['Ward'], $row['Village']);
         }
 
         if (static::isEmptyColumn($row['HeartGirth'])) {
@@ -393,8 +393,8 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'district.name' => null,
             'ward.code' => null,
             'village.code' => null,
-            'ward.name' => null,
-            'village.name' => null,
+            //'ward.name' => null,
+            //'village.name' => null,
             'animal.farm.id' => null,
             'animal.farm.gender_code' => null,
             'animal.farm.total_cattle_owned' => null,
@@ -411,10 +411,6 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'dim' => null,
             'milkfat' => null,
             'milkprot' => null,
-            //'milk_heartgirth' => null,
-            //'weight' => null,
-            //'milk_estimated_weight' => null,
-            //'milk_bodyscore' => null,
             'lactation.lactation_number' => null,
             'testday_no' => null,
             'animal.longitude' => null,
@@ -438,10 +434,10 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'animal.tag_id' => 'AnimalRegID',
             'region.name' => 'Region',
             'district.name' => 'District',
-            'ward.code' => 'Wareda',
-            'village.code' => 'Kebele',
-            'ward.name' => 'Ward',
-            'village.name' => 'Village',
+            'ward.code' => $version == 2 ? 'Ward' :'Wareda',
+            'village.code' => $version == 2 ? 'Village' :'Kebele',
+            //'ward.name' => 'Ward',
+            //'village.name' => 'Village',
             'animal.farm.id' => 'HH_ID',
             'animal.farm.gender_code' => 'FarmerGender',
             'animal.farm.total_cattle_owned' => 'Cattleowned',
@@ -689,8 +685,8 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'village_id' => null,
             'region.name' => null,
             'district.name' => null,
-            'ward.name' => null,
-            'village.name' => null,
+            'ward.code' => null,
+            'village.code' => null,
             'farm.id' => null,
             'tag_id' => null,
             'sire_tag_id' => null,
@@ -718,8 +714,8 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         $fieldAliases = [
             'region.name' => 'Region',
             'district.name' => 'District',
-            'ward.name' => 'Ward',
-            'village.name' => 'Village',
+            'ward.code' => 'Ward',
+            'village.code' => 'Village',
             'farm.id' => 'hh_id',
             'tag_id' => 'animalid',
             'sire_tag_id' => 'siretagid',
@@ -821,10 +817,10 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'village_id' => null,
             'region.name' => null,
             'district.name' => null,
-            //'ward.code' => null,
-            //'village.code' => null,
-            'ward.name' => null,
-            'village.name' => null,
+            'ward.code' => null,
+            'village.code' => null,
+            //'ward.name' => null,
+            //'village.name' => null,
             'animal.farm.id' => null,
             'animal.farm.animcatowned' => null,
             //'animal.id' => null,
@@ -861,10 +857,10 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         $fieldAliases = [
             'region.name' => 'Region',
             'district.name' => 'District',
-            'ward.code' => 'Wareda',
-            'village.code' => 'Kebele',
-            'ward.name' => 'Ward',
-            'village.name' => 'Village',
+            'ward.code' => $version == 2 ? 'Ward' :'Wareda',
+            'village.code' => $version == 2 ? 'Village' :'Kebele',
+            //'ward.name' => 'Ward',
+            //'village.name' => 'Village',
             'animal.farm.id' => 'Farm_ID',
             'animal.farm.animcatowned' => 'AnimalCategoriesOwned',
             //'animal.id' => 'AnimalID',
