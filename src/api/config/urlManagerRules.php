@@ -5,6 +5,29 @@
  * Date & Time: 2017-04-08 1:00 PM
  */
 return [
+//    Sms Feedback Endpoint
+    [
+        'class' => \yii\rest\UrlRule::class,
+        'pluralize' => false,
+        'controller' => [
+            'smsfeedback' => 'v1/sms-feedback',
+        ],
+        'tokens' => [
+            '{id}' => '<id:\\w+>',
+            '{code}' => '<code:\\w+>',
+        ],
+        'extraPatterns' => [
+        ]
+    ],
+//    Landing page end point not token required
+    [
+        'class' => \yii\rest\UrlRule::class,
+        'pluralize' => false,
+        'controller' => [
+            'landingpageaggregate' => 'v1/landing-page-aggregate',
+        ],
+        'except' => ['delete', 'update', 'create'],
+    ],
     [
         'class' => \yii\rest\UrlRule::class,
         'pluralize' => false,

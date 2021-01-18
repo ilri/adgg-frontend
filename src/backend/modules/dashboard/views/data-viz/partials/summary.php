@@ -18,9 +18,9 @@ use common\helpers\Lang;
                 <?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME)) ?>
             </h1>
             <h5 class="text-center mb-4">Farms Registered</h5>
-            <p class="text-center">
-                <span class="text-center kt-font-success">+<strong><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_THIS_MONTH)) ?></strong> this month</span>
-            </p>
+<!--            <p class="text-center">-->
+<!--                <span class="text-center kt-font-success">+<strong>--><?//= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_THIS_MONTH)) ?><!--</strong> this month</span>-->
+<!--            </p>-->
         </div>
     </div>
 </div>
@@ -31,9 +31,9 @@ use common\helpers\Lang;
                 <?= Yii::$app->formatter->asDecimal(Animal::getDashboardStats(Animal::STATS_ALL_TIME)) ?>
             </h1>
             <h5 class="text-center mb-4">Animals Registered</h5>
-            <p class="text-center">
-                <span class="kt-font-success">+<strong><?= Yii::$app->formatter->asDecimal(Animal::getDashboardStats(Animal::STATS_THIS_MONTH)) ?></strong> this month</span>
-            </p>
+<!--            <p class="text-center">-->
+<!--                <span class="kt-font-success">+<strong>--><?//= Yii::$app->formatter->asDecimal(Animal::getDashboardStats(Animal::STATS_THIS_MONTH)) ?><!--</strong> this month</span>-->
+<!--            </p>-->
         </div>
     </div>
 </div>
@@ -44,9 +44,9 @@ use common\helpers\Lang;
                 <?= Yii::$app->formatter->asDecimal(CountriesDashboardStats::getAnimalsWithMilk()) ?>
             </h1>
             <h5 class="text-center mb-4">Animals with Milk Records</h5>
-            <p class="text-center">
-                <span class="kt-font-success">+<strong><?= Yii::$app->formatter->asDecimal(CountriesDashboardStats::getAnimalsWithMilk('', [], Animal::STATS_THIS_MONTH)) ?></strong> this month</span>
-            </p>
+<!--            <p class="text-center">-->
+<!--                <span class="kt-font-success">+<strong>--><?//= Yii::$app->formatter->asDecimal(CountriesDashboardStats::getAnimalsWithMilk('', [], Animal::STATS_THIS_MONTH)) ?><!--</strong> this month</span>-->
+<!--            </p>-->
         </div>
     </div>
 </div>

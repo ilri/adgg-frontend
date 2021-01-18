@@ -1470,4 +1470,27 @@ class CountriesDashboardStats extends Model
 
         return $query->count();
     }
+    public static function getLandingPageAggregates($param = null)
+    {
+        return  Yii::$app->db->createCommand("CALL sp_dashboard_report($param)")->queryAll();
+    }
+    public static function getSmsFeedback($param = null)
+    {
+        return  Yii::$app->db->createCommand("CALL sp_feedback_algorithims($param)")->queryAll();
+    }
+    public static function getMilkingCounts($country_id = null, $event_type = 2)
+    {
+        $query = AnimalEvent::find();
+        $query->andFilterWhere(['country_id' => $country_id]);
+        $query->andFilterWhere(['event_type' => $event_type]);
+
+        if (Session::isFieldAgent()) {
+            $query->andWhere(['field_agent_id' => Session::getUserId()]);
+        }
+        $condition = ''; $params = [];
+        list($condition, $params) = AnimalEvent::appendOrgSessionIdCondition($condition, $params);
+        $query->andWhere($condition, $params);
+
+        return $query->count();
+    }
 }
