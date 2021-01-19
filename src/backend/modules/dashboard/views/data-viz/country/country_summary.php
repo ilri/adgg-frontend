@@ -19,10 +19,7 @@ use common\helpers\Lang;
                 <?= Yii::$app->formatter->asDecimal(CountriesDashboardStats::getFarmCounts($country_id)) ?>
             </h1>
             <h5 class="text-center mb-4">Farms Registered</h5>
-<!--            changes not required for now so should remain commented-->
-<!--            <p class="text-center">-->
-<!--                <span class="text-center kt-font-success">+<strong>--><?//= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_THIS_MONTH, false, ['country_id' => $country_id])) ?><!--</strong> this month</span>-->
-<!--            </p>-->
+
         </div>
     </div>
 </div>
@@ -33,10 +30,7 @@ use common\helpers\Lang;
                 <?= Yii::$app->formatter->asDecimal(CountriesDashboardStats::getAnimalCounts($country_id)) ?>
             </h1>
             <h5 class="text-center mb-4">Animals Registered</h5>
-<!--         changes not required for now so should remain commented-->
-<!--            <p class="text-center">-->
-<!--                <span class="kt-font-success">+<strong>--><?//= Yii::$app->formatter->asDecimal(Animal::getDashboardStats(Animal::STATS_THIS_MONTH, false, ['country_id'=>$country_id])) ?><!--</strong> this month</span>-->
-<!--            </p>-->
+
         </div>
     </div>
 </div>
@@ -47,9 +41,7 @@ use common\helpers\Lang;
                 <?= Yii::$app->formatter->asDecimal(CountriesDashboardStats::getMilkingCounts($country_id)) ?>
             </h1>
             <h5 class="text-center mb-4">Animals with Milk Records</h5>
-<!--            <p class="text-center">-->
-<!--                <span class="kt-font-success">+<strong>--><?//= Yii::$app->formatter->asDecimal(CountriesDashboardStats::getAnimalsWithMilk('', [], Animal::STATS_THIS_MONTH, $country_id)) ?><!--</strong> this month</span>-->
-<!--            </p>-->
+
         </div>
     </div>
 </div>
