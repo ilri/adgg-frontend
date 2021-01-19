@@ -12,6 +12,9 @@ use backend\modules\core\models\CountriesDashboardStats;
 class SmsFeedbackController extends ActiveController
 {
     use JwtAuthTrait;
+
+    public $modelClass = CountriesDashboardStats::class;
+
     public function init()
     {
         parent::init();
