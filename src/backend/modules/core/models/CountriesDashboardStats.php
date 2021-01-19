@@ -1470,10 +1470,12 @@ class CountriesDashboardStats extends Model
 
         return $query->count();
     }
+
     public static function getLandingPageAggregates($param = null)
     {
         return  Yii::$app->db->createCommand("CALL sp_dashboard_report($param)")->queryAll();
     }
+
     public static function getSmsFeedback($param = null)
     {
         return  Yii::$app->db->createCommand("CALL sp_feedback_algorithims($param)")->queryAll();
