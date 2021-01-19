@@ -7,7 +7,7 @@ namespace api\modules\v1\controllers;
 use api\controllers\ActiveController;
 use backend\modules\core\models\CountriesDashboardStats;
 
-class LandingPageAggregates extends ActiveController
+class LandingPageAggregatesController extends ActiveController
 {
 
     public function init()
