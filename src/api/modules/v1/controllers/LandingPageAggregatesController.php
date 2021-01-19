@@ -9,6 +9,7 @@ use backend\modules\core\models\CountriesDashboardStats;
 
 class LandingPageAggregatesController extends ActiveController
 {
+    public $modelClass = CountriesDashboardStats::class;
 
     public function init()
     {

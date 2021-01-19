@@ -24,7 +24,7 @@ return [
         'class' => \yii\rest\UrlRule::class,
         'pluralize' => false,
         'controller' => [
-            'landingpageaggregate' => 'v1/landing-page-aggregate',
+            'landingpageaggregates' => 'v1/landing-page-aggregates',
         ],
         'except' => ['delete', 'update', 'create'],
     ],
