@@ -20,9 +20,9 @@ class SmsFeedbackController extends ActiveController
         parent::init();
     }
 
-    public function actionIndex($param=null){
+    public function actionIndex($lactationNumber=null){
         if (Session::isPrivilegedAdmin() || Session::isCountryUser() || Session::isOrganizationUser()) {
-            return CountriesDashboardStats::getSmsFeedback($param);
+            return CountriesDashboardStats::getSmsFeedback($lactationNumber);
         } else {
             throw new ForbiddenHttpException("Not allowed to access this page");
 

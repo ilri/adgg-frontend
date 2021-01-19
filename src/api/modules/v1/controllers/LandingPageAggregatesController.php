@@ -16,7 +16,7 @@ class LandingPageAggregatesController extends ActiveController
         parent::init();
     }
 
-    public function actionIndex($param=null){
-        return CountriesDashboardStats::getLandingPageAggregates($param);
+    public function actionIndex($report_type=null){
+        return CountriesDashboardStats::getLandingPageAggregates($report_type);
     }
 }
