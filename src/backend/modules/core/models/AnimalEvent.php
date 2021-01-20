@@ -41,7 +41,8 @@ use Yii;
  * @property string $lactation_number
  * @property string|array $additional_attributes
  * @property string $migration_id
- *
+ * @property int $dim
+
  * @property Animal $animal
  * @property Country $country
  * @property Users $fieldAgent
