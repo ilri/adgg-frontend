@@ -57,7 +57,7 @@ trait AnimalEventValidators
                 $this->addError($attribute, Lang::t("The animal has not calved within the last {interval} days Condition: {condition}, params: {params}", [
                     'interval' => $interval,
                     'condition' => $condition,
-                    'params' => $params,
+                    'params' => implode($params),
                 ]));
             }
         }
