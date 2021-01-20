@@ -53,6 +53,7 @@ trait AnimalEventValidators
             $interval = 1000;
             $condition = '[[animal_id]]=:animal_id AND [[event_type]]=:event_type AND ([[event_date]] BETWEEN (:event_date - INTERVAL :interval DAY) AND :event_date)';
             $params = [':animal_id' => $this->animal_id, ':event_type' => AnimalEvent::EVENT_TYPE_CALVING, ':event_date' => $eventDate, ':interval' => $interval];
+            var_dump($params);
             if (!static::exists($condition, $params)) {
                 $this->addError($attribute, Lang::t("The animal has not calved within the last {interval} days", [
                     'interval' => $interval,
