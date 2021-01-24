@@ -1480,6 +1480,7 @@ class CountriesDashboardStats extends Model
     {
         return  Yii::$app->db->createCommand("CALL sp_feedback_algorithims($param)")->queryAll();
     }
+
     public static function getMilkingCounts($country_id = null, $event_type = 2)
     {
         $query = AnimalEvent::find();

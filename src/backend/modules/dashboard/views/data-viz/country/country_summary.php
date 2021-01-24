@@ -41,7 +41,6 @@ use common\helpers\Lang;
                 <?= Yii::$app->formatter->asDecimal(CountriesDashboardStats::getMilkingCounts($country_id)) ?>
             </h1>
             <h5 class="text-center mb-4">Total number of Milk Records</h5>
-
         </div>
     </div>
 </div>
