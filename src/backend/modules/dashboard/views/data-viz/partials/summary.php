@@ -36,9 +36,9 @@ use common\helpers\Lang;
     <div class='card my-2 '>
         <div class="card-body">
             <h1 class="text-center kt-label-font-color-4 mb-0">
-                <?= Yii::$app->formatter->asDecimal(CountriesDashboardStats::getMilkingCounts()) ?>
+                <?= Yii::$app->formatter->asDecimal(CountriesDashboardStats::getAnimalsWithMilk()) ?>
             </h1>
-            <h5 class="text-center mb-4">Total number of Milk Records</h5>
+            <h5 class="text-center mb-4">Animals with Milk Records</h5>
         </div>
     </div>
 </div>
