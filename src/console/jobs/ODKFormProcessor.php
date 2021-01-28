@@ -516,6 +516,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     {
         $repeatKey = 'animal_general';
         $animalIdentificationGroupKey = 'animal_identification';
+        $animalagedetailsGroupKey = 'animal_agedetails';
         $animalsData = $this->_model->form_data[$repeatKey] ?? null;
         if (null === $animalsData) {
             return;
@@ -545,11 +546,11 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $fixedAttributesMap = [
             'name' => self::getAttributeJsonKey('animal_name', $animalIdentificationGroupKey, $repeatKey),
             'tag_id' => self::getAttributeJsonKey('animal_tagid', $animalIdentificationGroupKey, $repeatKey),
-            'animal_type' => self::getAttributeJsonKey('animal_type', $animalIdentificationGroupKey, $repeatKey),
+            'animal_type' => self::getAttributeJsonKey('animal_type', $animalagedetailsGroupKey, $repeatKey),
             'animal_photo' => self::getAttributeJsonKey('animal_photo', $animalIdentificationGroupKey, $repeatKey),
             'main_breed' => self::getAttributeJsonKey('animal_mainbreed', $animalIdentificationGroupKey, $repeatKey),
             'breed_composition' => self::getAttributeJsonKey('animal_maincomp', $animalIdentificationGroupKey, $repeatKey),
-            'birthdate' => self::getAttributeJsonKey('animal_actualdob', $animalIdentificationGroupKey, $repeatKey),
+            'birthdate' => self::getAttributeJsonKey('animal_actualdob', $animalagedetailsGroupKey, $repeatKey),
         ];
         $n = 1;
         foreach ($animalsData as $k => $animalData) {
