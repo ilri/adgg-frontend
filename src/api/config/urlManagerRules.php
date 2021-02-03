@@ -68,7 +68,7 @@ return [
             'androidVersion' => 'v1/android-app-version',
             'countries' => 'v1/countries',
         ],
-        'except' => ['delete', 'update', 'create'],
+        'except' => ['delete'],
     ],
     [
         'class' => \yii\rest\UrlRule::class,
