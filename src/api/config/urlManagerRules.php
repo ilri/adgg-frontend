@@ -68,8 +68,13 @@ return [
             'androidVersion' => 'v1/android-app-version',
             'countries' => 'v1/countries',
         ],
-        'except' => ['delete'],
+        'extraPatterns' => [
+            'GET event-read' => 'event-read',
+            'POST event-write' => 'event-write',
+            'OPTIONS <action>' => 'options',
+        ]
     ],
+
     [
         'class' => \yii\rest\UrlRule::class,
         'pluralize' => false,
