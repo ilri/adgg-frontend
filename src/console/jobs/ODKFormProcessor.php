@@ -395,12 +395,11 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     {
         //farmer registration details as defined in ODK forms
         $farmersRepeatKey = 'farmer_general';
-        $farmerVillageGroupKey = 'farmer_notevillage';
         $farmerGeneralDetailsGroupKey = 'farmer_generaldetails';
         $farmerHouseholdHeadGroupKey = 'farmer_hhheaddetails';
 
         //attributes keys
-        $villageCodeKey = self::getAttributeJsonKey('farmer_village', $farmerVillageGroupKey, $farmersRepeatKey);
+        $villageCodeKey = self::getAttributeJsonKey('activities_village',  $farmersRepeatKey);
         $farmTypeKey = self::getAttributeJsonKey('farmer_farmtype', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
         $farmerFirstNameKey = self::getAttributeJsonKey('farmer_firstname', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
         $farmerOtherNamesKey = self::getAttributeJsonKey('farmer_othnames', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
