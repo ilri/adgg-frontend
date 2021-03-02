@@ -187,12 +187,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->_model->animal_events_data = $this->_animalEventsData;
             }
             $this->_model->save(false);
-            //ODKJsonNotification::createManualNotifications(ODKJsonNotification::NOTIF_ODK_JSON, $this->_model->id);
+            ODKJsonNotification::createManualNotifications(ODKJsonNotification::NOTIF_ODK_JSON, $this->_model->id);
         } catch (\Exception $e) {
-            var_dump($e);
-            $this->_model;
-
-
             $message = $e->getMessage();
             $message = 'ODK FORM UUID:' . $this->_model->form_uuid . ': ' . $message;
             $trace = $e->getTraceAsString();
