@@ -81,5 +81,15 @@
     "vendor-dir": "src/vendor",
     "process-timeout": 1800,
     "sort-packages": true
+  },
+  "scripts": {
+    "post-install-cmd": [
+      "php -r \"chmod( __DIR__ . '/uploads', 0777);\"",
+      "php -r \"chmod( __DIR__ . '/assets', 0777);\"",
+      "php -r \"chmod( __DIR__ . '/src/backend/runtime', 0777);\"",
+      "php -r \"chmod( __DIR__ . '/src/console/runtime', 0777);\"",
+      "php -r \"chmod( __DIR__ . '/src/api/runtime', 0777);\"",
+      "php -r \"chmod( __DIR__ . '/public', 0777);\""
+    ]
   }
 }

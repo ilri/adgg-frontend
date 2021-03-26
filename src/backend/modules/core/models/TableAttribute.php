@@ -80,7 +80,7 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
             [['attribute_key', 'attribute_label', 'table_id', 'input_type'], 'required'],
             [['table_id', 'group_id', 'input_type', 'list_type_id', 'is_active', 'event_type', 'is_alias', 'farm_metadata_type'], 'integer'],
             [['default_value'], 'string'],
-            [['attribute_key', 'alias_to','odk_attribute_name'], 'string', 'max' => 128],
+            [['attribute_key', 'alias_to', 'odk_attribute_name'], 'string', 'max' => 128],
             [['attribute_label'], 'string', 'max' => 255],
             [['group_id'], 'exist', 'skipOnError' => true, 'targetClass' => TableAttributesGroup::class, 'targetAttribute' => ['group_id' => 'id']],
             ['attribute_key', 'unique', 'targetAttribute' => ['table_id', 'attribute_key'], 'message' => Lang::t('{attribute} already exists.')],
@@ -272,7 +272,7 @@ class TableAttribute extends ActiveRecord implements ActiveSearchInterface
      */
     public static function getDefinedAttributes($tableId)
     {
-        return static::getData(['id', 'attribute_key', 'input_type', 'list_type_id','odk_attribute_name'], ['table_id' => $tableId, 'is_active' => 1]);
+        return static::getData(['id', 'attribute_key', 'input_type', 'list_type_id', 'odk_attribute_name'], ['table_id' => $tableId, 'is_active' => 1]);
     }
 
     /**

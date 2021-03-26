@@ -142,7 +142,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerCattleBreedingTechnologies();
                 $this->registerCattleHealthServices();
                 $this->registerCattleFeedingSystems();
-                $this->registerFarmExtensionServices();
+                //$this->registerFarmExtensionServices();
                 //animal registration
                 $this->registerNewCattle();
                 //animal events
@@ -187,7 +187,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->_model->animal_events_data = $this->_animalEventsData;
             }
             $this->_model->save(false);
-            //ODKJsonNotification::createManualNotifications(ODKJsonNotification::NOTIF_ODK_JSON, $this->_model->id);
+            ODKJsonNotification::createManualNotifications(ODKJsonNotification::NOTIF_ODK_JSON, $this->_model->id);
         } catch (\Exception $e) {
             $message = $e->getMessage();
             $message = 'ODK FORM UUID:' . $this->_model->form_uuid . ': ' . $message;
@@ -399,7 +399,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $farmerHouseholdHeadGroupKey = 'farmer_hhheaddetails';
 
         //attributes keys
-        $villageCodeKey = self::getAttributeJsonKey('activities_village',  $farmersRepeatKey);
         $farmTypeKey = self::getAttributeJsonKey('farmer_farmtype', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
         $farmerFirstNameKey = self::getAttributeJsonKey('farmer_firstname', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
         $farmerOtherNamesKey = self::getAttributeJsonKey('farmer_othnames', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
@@ -423,17 +422,10 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         ]);
         foreach ($farmersData as $k => $farmerData) {
             $newFarmerModel = clone $farmerModel;
-            //get village group fields
-            $villageCode = $this->getFormDataValueByKey($farmerData, $villageCodeKey);
-            if (!empty($villageCode)) {
-                $villageModel = CountryUnits::find()->andWhere(['code' => $villageCode, 'level' => CountryUnits::LEVEL_VILLAGE, 'country_id' => $this->_model->country_id])->one();
-                if (null !== $villageModel) {
-                    $newFarmerModel->village_id = $villageModel->id;
-                    $newFarmerModel->ward_id = $villageModel->parent_id;
-                    $newFarmerModel->district_id = $newFarmerModel->ward->parent_id ?? null;
-                    $newFarmerModel->region_id = $newFarmerModel->district->parent_id ?? null;
-                }
-            }
+            $newFarmerModel->village_id = $this->getVillageId();
+            $newFarmerModel->ward_id = $this->getWardId();
+            $newFarmerModel->district_id = $this->getDistrictId();
+            $newFarmerModel->region_id = $this->getRegionId();
             $newFarmerModel->farm_type = $this->getFormDataValueByKey($farmerData, $farmTypeKey);
             $firstName = $this->getFormDataValueByKey($farmerData, $farmerFirstNameKey);
             $otherNames = $this->getFormDataValueByKey($farmerData, $farmerOtherNamesKey);

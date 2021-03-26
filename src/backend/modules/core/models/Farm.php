@@ -50,7 +50,6 @@ use yii\helpers\Html;
  * @property string $odk_farm_code
  * @property string|array $additional_attributes
  * @property string $migration_id
- *
  * @property Users $fieldAgent
  * @property Animal $animals
  * @property AnimalHerd [] $herds
