@@ -871,7 +871,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'animal.dam_tag_id' => 'DamRegID',
             'animal.birthdate' => 'BirthDate',
             'animal.animal_type' => 'AnimalType',
-            'animal.main_breed' => 'BreedCombination',
+            'animal.main_breed' => 'Breed',
             'heartgirth' => 'HeartGirth',
             'estimated_weight' => 'EstimatedWeight',
             'body_score' => 'BodyScore',
@@ -882,18 +882,18 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             //'main_breed' => 'Breed',
         ];
 
-        //$breeds = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS;
+        $breeds = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS;
         $animal_type = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES;
         //$genders = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_GENDER;
         $decodedFields = [
-            /*'main_breed' => [
+            'animal.main_breed' => [
                 'function' => '\backend\modules\core\models\Choices::getLabel',
                 'params'=> [
                     //'\backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS',
                     "$breeds",
                     'fieldValue', // the value of this field
                 ]
-            ],*/
+            ],
             'animal.animal_type' => [
                 'function' => '\backend\modules\core\models\Choices::getLabel',
                 'params' => [
