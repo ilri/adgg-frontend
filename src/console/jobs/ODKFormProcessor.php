@@ -143,7 +143,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerCattleBreedingTechnologies();
                 $this->registerCattleHealthServices();
                 $this->registerCattleFeedingSystems();
-                //$this->registerFarmExtensionServices();
+                $this->registerFarmExtensionServices();
                 //animal registration
                 $this->registerNewCattle();
                 //animal events
@@ -964,7 +964,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
 
     protected function registerFarmExtensionServices()
     {
-        /*
+
         $repeatKey = 'farm_extension';
         $data = $this->_model->form_data[$repeatKey] ?? null;
         if (empty($data)) {
@@ -982,7 +982,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $i = $newModel->type . $k;
             $this->saveFarmMetadataModel($newModel, $i, true);
         }
-        */
     }
 
     /**
