@@ -1,8 +1,8 @@
 {
-  "name": "competamillman/medsource",
-  "description": "MEDSOURCE ERP",
+  "name": "competamillman/adgg",
+  "description": "ADGG SYSTEM",
   "keywords": [
-    "Medsource ERP"
+    "ADGG SYSTEM"
   ],
   "type": "project",
   "license": "BSD-3-Clause",
