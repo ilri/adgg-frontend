@@ -130,6 +130,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 //farmer registration
                 $this->registerNewFarmer();
                 //farm metadata
+                $this->registerFarmerHouseholdMembers();
                 $this->registerFarmerTechnologyMobilization();
                 $this->registerFarmerMilkUtilization();
                 $this->registerFarmerImprovedFodderAdoption();
@@ -446,9 +447,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
 
             $this->saveFarmModel($newFarmerModel, $k, true);
         }
-
-        //Household Members (Full Demographics)
-        $this->registerFarmerHouseholdMembers();
 
     }
 
