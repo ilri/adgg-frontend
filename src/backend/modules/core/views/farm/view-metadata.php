@@ -34,13 +34,14 @@ $code = Yii::$app->request->get('type');
     $attributeModels = TableAttribute::find()->andWhere(['farm_metadata_type' => $metadataTypeModel->code, 'is_active' => 1])->all();
     $attributeGroupIds = [];
     $attributeGroups = null;
+    $showGridView = $metadataTypeModel->farmer_has_multiple ? true : false;
     foreach ($attributeModels as $attrModel) {
         $attributeGroupIds[] = $attrModel->group_id;
     }
     $attributeGroups = array_unique($attributeGroupIds);
     $values = [];
     foreach ($attributeGroups as $key => $id) {
-        $attributes = $metadataModel->getViewAttributes($metadataTypeModel->code, $id, false);
+        $attributes = $metadataModel->getViewAttributes($metadataTypeModel->code, $id, $showGridView);
         if (empty($attributes)) {
             //we do not want to show groups with no attributes.
             continue;
@@ -62,12 +63,24 @@ $code = Yii::$app->request->get('type');
                      data-parent="#accordion<?= $id ?>" style="">
                     <div class="card-body">
                         <br/>
-                        <?= DetailView::widget([
-                            'model' => $metadataModel,
-                            'options' => ['class' => 'table detail-view table-striped'],
-                            'attributes' => $attributes,
-                        ])
-                        ?>
+                        <?php if ($showGridView): ?>
+                            <?= GridView::widget([
+                                'searchModel' => $metadataModel,
+                                'title' => $this->title,
+                                'id' => $id,
+                                'createButton' => ['visible' => false, 'modal' => false],
+                                'toolbarButtons' => [
+                                ],
+                                'columns' => $attributes,
+                            ]); ?>
+                        <?php else: ?>
+                            <?= DetailView::widget([
+                                'model' => $metadataModel,
+                                'options' => ['class' => 'table detail-view table-striped'],
+                                'attributes' => $attributes,
+                            ])
+                            ?>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -77,9 +90,11 @@ $code = Yii::$app->request->get('type');
     }
     ?>
 <?php endif; ?>
-<?php if (empty($metadataModel)):?>
+<?php if (empty($metadataModel)): ?>
     <div class="alert alert-warning align-content-center" role="alert">No data was recorded on this event.</div>
-<?php endif;?>
+<?php endif; ?>
+
+
 <?php
 $childrenOfParentType = FarmMetadataType::find()->andWhere(['parent_id' => $code, 'is_active' => 1])->all();
 foreach ($childrenOfParentType as $childType) {
@@ -108,12 +123,14 @@ foreach ($childrenOfParentType as $childType) {
             <div class="accordion accordion-outline" id="accordion<?= $childTypeGroupId ?>">
                 <div class="card">
                     <div class="card-header" id="heading<?= $childTypeGroupId ?>">
-                        <div class="card-title collapsed" data-toggle="collapse" data-target="#collapse<?= $childTypeGroupId ?>"
+                        <div class="card-title collapsed" data-toggle="collapse"
+                             data-target="#collapse<?= $childTypeGroupId ?>"
                              aria-expanded="false" aria-controls="collapse<?= $childTypeGroupId ?>">
                             <?= $childTypeGroupName ?>
                         </div>
                     </div>
-                    <div id="collapse<?= $childTypeGroupId ?>" class="card-body-wrapper collapse" aria-labelledby="<?= $childTypeGroupId ?>"
+                    <div id="collapse<?= $childTypeGroupId ?>" class="card-body-wrapper collapse"
+                         aria-labelledby="<?= $childTypeGroupId ?>"
                          data-parent="#accordion<?= $childTypeGroupId ?>" style="">
                         <div class="card-body">
                             <?= GridView::widget([
