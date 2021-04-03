@@ -1,5 +1,6 @@
 <?php
 
+use backend\modules\auth\Session;
 use common\helpers\Lang;
 use common\widgets\select2\Select2;
 use yii\bootstrap\ActiveForm;
@@ -41,7 +42,7 @@ $form = ActiveForm::begin([
     <div class="modal-body">
         <div class="hidden" id="my-modal-notif"></div>
         <?= $form->field($model, 'name'); ?>
-        <?php if (\backend\modules\auth\Session::isDev()): ?>
+        <?php if (Session::isDev()|| Session::isSuperAdmin()): ?>
             <?= $form->field($model, 'level_id')->widget(Select2::class, [
                 'data' => \backend\modules\auth\models\UserLevels::getListData(),
                 'modal' => true,
