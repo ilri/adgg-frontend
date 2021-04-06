@@ -1518,19 +1518,16 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             foreach ($dataPoint as $i => $data) {
                 $animalCode = $this->getFormDataValueByKey($data, $animalCodeAttributeKey);
                 $animalModel = $this->getAnimalModelByOdkCode($animalCode);
-                if (null === $animalModel) {
-                    continue;
-                }
                 $eventDate = $eventDateAttributeKey !== null ? $this->getFormDataValueByKey($data, $eventDateAttributeKey) : $this->getDate();
                 $newModel = clone $model;
                 if ($newModel->setDynamicAttributesValuesFromOdkForm($data, $groupKey, $repeatKey)) {
-                    $newModel->animal_id = $animalModel->id;
+                    $newModel->animal_id = $animalModel->id ?? null;
                     $newModel->event_date = $eventDate;
                     if (empty($newModel->event_date)) {
                         $newModel->event_date = $newModel->data_collection_date;
                     }
-                    $newModel->latitude = $animalModel->latitude;
-                    $newModel->longitude = $animalModel->longitude;
+                    $newModel->latitude = $animalModel->latitude ?? null;
+                    $newModel->longitude = $animalModel->longitude ?? null;
                     $this->saveAnimalEventModel($newModel, $k . $i, true);
                 }
             }
