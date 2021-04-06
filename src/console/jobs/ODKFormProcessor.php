@@ -1117,9 +1117,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             foreach ($dataPoint as $i => $data) {
                 $animalCode = $this->getFormDataValueByKey($data, $animalCodeAttributeKey);
                 $animalModel = $this->getAnimalModelByOdkCode($animalCode);
-                if (null === $animalModel) {
-                    continue;
-                }
                 $newModel = clone $model;
                 $newModel->heartgirth = $this->getFormDataValueByKey($data, $heartgirthAttributeKey);
                 $newModel->weight_kg = $this->getFormDataValueByKey($data, $weightAttributeKey);
@@ -1127,12 +1124,12 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 if (empty($newModel->heartgirth) && empty($newModel->weight_kg) && empty($newModel->body_score)) {
                     continue;
                 }
-                $newModel->animal_id = $animalModel->id;
+                $newModel->animal_id = $animalModel->id ?? null;
                 if (empty($newModel->event_date)) {
                     $newModel->event_date = $newModel->data_collection_date;
                 }
-                $newModel->latitude = $animalModel->latitude;
-                $newModel->longitude = $animalModel->longitude;
+                $newModel->latitude = $animalModel->latitude ?? null;
+                $newModel->longitude = $animalModel->longitude ?? null;
                 $this->saveAnimalEventModel($newModel, $k . $i, true);
             }
         }
@@ -1163,9 +1160,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             foreach ($dataPoint as $i => $data) {
                 $animalCode = $this->getFormDataValueByKey($data, $animalCodeAttributeKey);
                 $animalModel = $this->getAnimalModelByOdkCode($animalCode);
-                if (null === $animalModel) {
-                    continue;
-                }
                 $newModel = clone $model;
                 $newModel->feed_given = $this->getFormDataValueByKey($data, $feedGivenAttributeKey);
                 $newModel->animal_monitor_water = $this->getFormDataValueByKey($data, $feedWaterAttributeKey);
@@ -1175,9 +1169,9 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 if (empty($newModel->event_date)) {
                     $newModel->event_date = $newModel->data_collection_date;
                 }
-                $newModel->latitude = $animalModel->latitude;
-                $newModel->longitude = $animalModel->longitude;
-                $newModel->animal_id = $animalModel->id;
+                $newModel->latitude = $animalModel->latitude ?? null;
+                $newModel->longitude = $animalModel->longitude ?? null;
+                $newModel->animal_id = $animalModel->id ?? null;
                 $this->saveAnimalEventModel($newModel, $k . $i, true);
             }
         }
@@ -1220,17 +1214,14 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 foreach ($repeat3DataSet as $n => $repeat3Data) {
                     $animalCode = $this->getFormDataValueByKey($repeat3Data, $animalCodeAttributeKey);
                     $animalModel = $this->getAnimalModelByOdkCode($animalCode);
-                    if (null === $animalModel) {
-                        continue;
-                    }
                     $newModel = clone $model;
                     if ($newModel->setDynamicAttributesValuesFromOdkForm($repeat3Data, $groupKey, $repeat3Key)) {
                         if (empty($newModel->event_date)) {
                             $newModel->event_date = $newModel->data_collection_date;
                         }
-                        $newModel->animal_id = $animalModel->id;
-                        $newModel->latitude = $animalModel->latitude;
-                        $newModel->longitude = $animalModel->longitude;
+                        $newModel->animal_id = $animalModel->id ?? null;
+                        $newModel->latitude = $animalModel->latitude ?? null;
+                        $newModel->longitude = $animalModel->longitude ?? null;
                         $this->saveAnimalEventModel($newModel, $k . $i . $n, true);
                     }
                 }
@@ -1329,19 +1320,16 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             foreach ($dataPoint as $i => $data) {
                 $animalCode = $this->getFormDataValueByKey($data, $animalCodeAttributeKey);
                 $animalModel = $this->getAnimalModelByOdkCode($animalCode);
-                if (null === $animalModel) {
-                    continue;
-                }
                 $newModel = clone $model;
-                $newModel->animal_id = $animalModel->id;
+                $newModel->animal_id = $animalModel->id ?? null;
                 foreach ($attributes as $attr => $odkKey) {
                     $newModel->{$attr} = $this->getFormDataValueByKey($data, $odkKey);
                 }
                 if (empty($newModel->event_date)) {
                     $newModel->event_date = $newModel->data_collection_date;
                 }
-                $newModel->latitude = $animalModel->latitude;
-                $newModel->longitude = $animalModel->longitude;
+                $newModel->latitude = $animalModel->latitude ?? null;
+                $newModel->longitude = $animalModel->longitude ?? null;
                 $this->saveAnimalEventModel($newModel, $k . $i, true);
             }
         }
@@ -1405,12 +1393,9 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             foreach ($dataPoint as $i => $data) {
                 $animalCode = $this->getFormDataValueByKey($data, $animalCodeAttributeKey);
                 $animalModel = $this->getAnimalModelByOdkCode($animalCode);
-                if (null === $animalModel) {
-                    continue;
-                }
                 $eventDate = $this->getFormDataValueByKey($data, $eventDateAttributeKey);
                 $newModel = clone $model;
-                $newModel->animal_id = $animalModel->id;
+                $newModel->animal_id = $animalModel->id ?? null;
                 $newModel->setDynamicAttributesValuesFromOdkForm($data, $exitDetailsGroupKey, $repeatKey);
                 $newModel->setDynamicAttributesValuesFromOdkForm($data, $exitMovementGroupKey, $repeatKey);
                 $newModel->setDynamicAttributesValuesFromOdkForm($data, $exitNewFarmGroupKey, $repeatKey);
@@ -1419,8 +1404,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 if (empty($newModel->event_date)) {
                     $newModel->event_date = $newModel->data_collection_date;
                 }
-                $newModel->latitude = $animalModel->latitude;
-                $newModel->longitude = $animalModel->longitude;
+                $newModel->latitude = $animalModel->latitude ?? null;
+                $newModel->longitude = $animalModel->longitude ?? null;
                 $this->saveAnimalEventModel($newModel, $k . $i, true);
             }
         }
@@ -1453,18 +1438,15 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             foreach ($dataPoint as $i => $data) {
                 $animalCode = $this->getFormDataValueByKey($data, $animalCodeAttributeKey);
                 $animalModel = $this->getAnimalModelByOdkCode($animalCode);
-                if (null === $animalModel) {
-                    continue;
-                }
                 $newModel = clone $baseModel;
-                $newModel->animal_id = $animalModel->id;
+                $newModel->animal_id = $animalModel->id ?? null;
                 $newModel->setDynamicAttributesValuesFromOdkForm($data, 'ecf_vaccinationdetails', $animalRepeat);
                 $newModel->event_date = $newModel->ecf_date;
                 if (empty($newModel->event_date)) {
                     $newModel->event_date = $newModel->data_collection_date;
                 }
-                $newModel->latitude = $animalModel->latitude;
-                $newModel->longitude = $animalModel->longitude;
+                $newModel->latitude = $animalModel->latitude ?? null;
+                $newModel->longitude = $animalModel->longitude ?? null;
                 $this->saveAnimalEventModel($newModel, $k . $i, true);
             }
         }
