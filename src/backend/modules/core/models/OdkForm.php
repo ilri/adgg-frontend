@@ -288,14 +288,14 @@ class OdkForm extends ActiveRecord implements ActiveSearchInterface
                         if (null === $v3) {
                             unset($jsonArr[$k][$k2][$k3]);
                         }
-                        if ($k3 === "additional_attributes" && is_array($v3)) {
+                        /*if ($k3 === "additional_attributes" && is_array($v3)) {
                             foreach ($v3 as $k4 => $v4) {
                                 if (null === $v4) {
                                     unset($jsonArr[$k][$k2][$k3][$k4]);
                                 }
                             }
-                        }
-                        if ($k3 === "latlng") {
+                        }*/
+                        if ($k3 === "latlng" || $k3 === "additional_attributes") {
                             unset($jsonArr[$k][$k2][$k3]);
                         }
                     }
