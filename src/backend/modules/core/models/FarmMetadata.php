@@ -71,6 +71,7 @@ class FarmMetadata extends ActiveRecord implements ActiveSearchInterface, TableA
             [['additional_attributes'], 'safe'],
             ['type', 'uniqueTypeValidator'],
             [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
+            ['farm_id', 'exist', 'targetClass' => Farm::class, 'targetAttribute' => ['farm_id' => 'id']],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
     }

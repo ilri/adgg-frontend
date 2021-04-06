@@ -128,6 +128,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             ['sire_tag_id', 'validateSireBisexual', 'except' => [self::SCENARIO_MISTRO_DB_BULL_UPLOAD, self::SCENARIO_MISTRO_DB_COW_UPLOAD]],
             ['dam_tag_id', 'validateDamBisexual', 'except' => [self::SCENARIO_MISTRO_DB_BULL_UPLOAD, self::SCENARIO_MISTRO_DB_COW_UPLOAD]],
             [['tmp_animal_photo', 'additional_attributes', 'org_id', 'client_id', 'hair_sample_id'], 'safe'],
+            ['farm_id', 'exist', 'targetClass' => Farm::class, 'targetAttribute' => ['farm_id' => 'id']],
             [$this->getAdditionalAttributes(), 'safe'],
             [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
             ['migration_id', 'unique'],
