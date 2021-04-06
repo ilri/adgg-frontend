@@ -124,7 +124,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
     </div>
-<?php if ($model->has_errors && !empty($model->error_json)): ?>
+<?php if ($model->has_errors): ?>
     <br>
     <div class="accordion accordion-outline" id="accordion3">
         <div class="card">
@@ -132,19 +132,49 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="card-title collapsed" data-toggle="collapse" data-target="#collapseThree"
                      aria-expanded="false"
                      aria-controls="collapseThree">
-                    Validation Errors
+                    Processing details
                 </div>
             </div>
             <div id="collapseThree" class="card-body-wrapper collapse" aria-labelledby="headingThree"
                  data-parent="#accordion3" style="">
                 <div class="card-body">
                     <br/>
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <pre class="show-pretty-json"
-                                 data-json='<?= json_encode([], JSON_FORCE_OBJECT) ?>'></pre>
+                    <?php if (!empty($model->farm_data)): ?>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <h3>Farm data</h3>
+                                <pre class="show-pretty-json"
+                                     data-json='<?= json_encode([$model->farm_data], JSON_FORCE_OBJECT) ?>'></pre>
+                            </div>
                         </div>
-                    </div>
+                    <?php endif; ?>
+                    <?php if (!empty($model->farm_metadata)): ?>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <h3>Farm metadata</h3>
+                                <pre class="show-pretty-json"
+                                     data-json='<?= json_encode([$model->farm_metadata], JSON_FORCE_OBJECT) ?>'></pre>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                    <?php if (!empty($model->animals_data)): ?>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <h3>Animal data</h3>
+                                <pre class="show-pretty-json"
+                                     data-json='<?= json_encode([$model->animals_data], JSON_FORCE_OBJECT) ?>'></pre>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                    <?php if (!empty($model->animal_events_data)): ?>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <h3>Animal events data</h3>
+                                <pre class="show-pretty-json"
+                                     data-json='<?= json_encode([$model->animal_events_data], JSON_FORCE_OBJECT) ?>'></pre>
+                            </div>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
