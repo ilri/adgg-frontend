@@ -47,6 +47,12 @@ use yii\helpers\Url;
             },
         ],
         [
+            'attribute' => 'processed_at',
+            'value' => function (OdkForm $model) {
+                return \common\helpers\DateUtils::formatToLocalDate($model->processed_at);
+            },
+        ],
+        [
             'class' => common\widgets\grid\ActionColumn::class,
             'template' => '{process}{view}{delete}',
             'viewOptions' => ['data-pjax' => 0, 'title' => 'View details', 'data-use-uuid' => true],
