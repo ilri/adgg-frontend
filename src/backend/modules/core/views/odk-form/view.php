@@ -90,6 +90,10 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'attribute' => 'created_at',
                                 'value' => DateUtils::formatToLocalDate($model->created_at),
                             ],
+                            [
+                                'attribute' => 'processed_at',
+                                'value' => DateUtils::formatToLocalDate($model->processed_at),
+                            ],
                         ],
                     ]) ?>
                 </div>
