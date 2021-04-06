@@ -1744,8 +1744,10 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $newModel = Animal::find()->andWhere(['tag_id' => $model->tag_id])->one();
         if ($newModel !== null) {
             $newModel->ignoreAdditionalAttributes = false;
-            foreach ($model->attributes as $k => $v) {
-                $newModel->{$k} = $v;
+            foreach ($model->safeAttributes() as $attr) {
+                if ($attr !== 'id') {
+                    $newModel->{$attr} = $model->{$attr};
+                }
             }
         } else {
             $newModel = clone $model;
