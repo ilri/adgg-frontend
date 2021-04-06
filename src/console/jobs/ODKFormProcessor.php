@@ -1741,7 +1741,16 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      */
     protected function saveAnimalModel($model, $index, $validate = true)
     {
-        $data = $this->saveModel($model, $validate);
+        if (Animal::exists(['tag_id' => $model->tag_id])) {
+            $newModel = new Animal();
+            $newModel->ignoreAdditionalAttributes = false;
+            foreach ($model->attributes as $k => $v) {
+                $newModel->{$k} = $v;
+            }
+        } else {
+            $newModel = clone $model;
+        }
+        $data = $this->saveModel($newModel, $validate);
         $this->_animalsData[$index] = $data['data'];
         $this->_animalsModels[$index] = $data['model'];
     }
@@ -1754,6 +1763,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      */
     protected function saveAnimalEventModel($model, $index, $validate = true)
     {
+        $index = $model->event_type . '_' . $index;
         $data = $this->saveModel($model, $validate);
         $this->_animalEventsData[$index] = $data['data'];
         $this->_animalEventModels[$index] = $data['model'];
@@ -1775,7 +1785,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         }
         return [
             'model' => $model,
-            'data' => ['attributes' => $model->attributes, 'errors' => $isSaved ? null : $model->getErrors(),]
+            'data' => ['attributes' => $model->attributes, 'errors' => $isSaved ? null : $model->getErrors(), 'id' => $model->id]
         ];
     }
 
