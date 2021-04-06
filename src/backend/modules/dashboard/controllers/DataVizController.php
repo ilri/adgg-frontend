@@ -29,10 +29,6 @@ class DataVizController extends Controller
 
     public function actionIndex()
     {
-        $str = 'platformuniqueid/breeding_syncanimalplatformuniqueid';
-        $substr = Str::str_lreplace('platformuniqueid', 'code', $str);
-        dd($str, $substr);
-
         $country_id = \Yii::$app->request->get('country_id');
         $org_id = \Yii::$app->request->get('org_id');
         if (Session::isPrivilegedAdmin()) {
