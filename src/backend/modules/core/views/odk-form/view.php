@@ -144,7 +144,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             <div class="col-lg-12">
                                 <h3>Farm data</h3>
                                 <pre class="show-pretty-json"
-                                     data-json='<?= json_encode([$model->farm_data], JSON_FORCE_OBJECT) ?>'></pre>
+                                     data-json='<?= json_encode($model->farm_data, JSON_FORCE_OBJECT) ?>'></pre>
                             </div>
                         </div>
                     <?php endif; ?>
@@ -153,7 +153,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             <div class="col-lg-12">
                                 <h3>Farm metadata</h3>
                                 <pre class="show-pretty-json"
-                                     data-json='<?= json_encode([$model->farm_metadata], JSON_FORCE_OBJECT) ?>'></pre>
+                                     data-json='<?= json_encode($model->farm_metadata, JSON_FORCE_OBJECT) ?>'></pre>
                             </div>
                         </div>
                     <?php endif; ?>
@@ -162,7 +162,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             <div class="col-lg-12">
                                 <h3>Animal data</h3>
                                 <pre class="show-pretty-json"
-                                     data-json='<?= json_encode([$model->animals_data], JSON_FORCE_OBJECT) ?>'></pre>
+                                     data-json='<?= json_encode($model->animals_data, JSON_FORCE_OBJECT) ?>'></pre>
                             </div>
                         </div>
                     <?php endif; ?>
@@ -171,7 +171,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             <div class="col-lg-12">
                                 <h3>Animal events data</h3>
                                 <pre class="show-pretty-json"
-                                     data-json='<?= json_encode([$model->animal_events_data], JSON_FORCE_OBJECT) ?>'></pre>
+                                     data-json='<?= json_encode($model->animal_events_data, JSON_FORCE_OBJECT) ?>'></pre>
                             </div>
                         </div>
                     <?php endif; ?>
