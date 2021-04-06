@@ -125,7 +125,6 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
     </div>
-<?php if ($model->has_errors): ?>
     <br>
     <div class="accordion accordion-outline" id="accordion3">
         <div class="card">
@@ -180,7 +179,6 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
     </div>
-<?php endif; ?>
 <?php
 $options = [];
 $this->registerJs("MyApp.modules.core.showPrettyOdkJson(" . Json::encode($options) . ");");
