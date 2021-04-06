@@ -12,6 +12,7 @@ namespace backend\modules\dashboard\controllers;
 use backend\modules\auth\Session;
 use backend\modules\core\models\Country;
 use backend\modules\dashboard\models\DataViz;
+use common\helpers\Str;
 use common\helpers\Url;
 use Yii;
 use yii\web\ForbiddenHttpException;
@@ -28,11 +29,15 @@ class DataVizController extends Controller
 
     public function actionIndex()
     {
+        $str = 'platformuniqueid/breeding_syncanimalplatformuniqueid';
+        $substr = Str::str_lreplace('platformuniqueid', 'code', $str);
+        dd($str, $substr);
+
         $country_id = \Yii::$app->request->get('country_id');
         $org_id = \Yii::$app->request->get('org_id');
         if (Session::isPrivilegedAdmin()) {
             $view = 'index';
-            if($country_id !== null || $org_id !== null){
+            if ($country_id !== null || $org_id !== null) {
                 $view = 'country';
             }
             return $this->render($view, [
@@ -41,8 +46,7 @@ class DataVizController extends Controller
                     'org_id' => $org_id,
                 ]
             ]);
-        }
-        elseif (Session::isCountryUser() ){
+        } elseif (Session::isCountryUser()) {
             $country_id = Session::getCountryId();
             $org_id = Session::getOrgId();
             return $this->render('country', [
@@ -51,11 +55,9 @@ class DataVizController extends Controller
                     'org_id' => $org_id,
                 ]
             ]);
-        }
-        elseif (Session::isOrganizationUser() ){
+        } elseif (Session::isOrganizationUser()) {
             return $this->redirect(Url::to(['/dashboard/default']));
-        }
-        else {
+        } else {
             throw new ForbiddenHttpException();
         }
     }
@@ -66,7 +68,7 @@ class DataVizController extends Controller
         $org_id = Yii::$app->request->get('org_id');
         $is_country = Yii::$app->request->get('is_country', 0);
         $view = 'partials/' . $name;
-        if ($is_country){
+        if ($is_country) {
             $view = 'country/' . $name;
         }
         return $this->renderAjax($view, [

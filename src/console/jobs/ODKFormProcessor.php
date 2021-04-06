@@ -23,6 +23,7 @@ use backend\modules\core\models\OdkForm;
 use backend\modules\core\models\TableAttributeInterface;
 use common\helpers\DateUtils;
 use common\helpers\Lang;
+use common\helpers\Str;
 use common\models\ActiveRecord;
 use Yii;
 use yii\base\BaseObject;
@@ -1475,6 +1476,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         if (null === $rawData) {
             return;
         }
+        $newAnimalCodeAttributeKey = Str::str_lreplace('platformuniqueid', 'code', $animalCodeAttributeKey);
         $params = [
             'event_type' => $eventType,
             'data_collection_date' => $this->getDate(),
@@ -1499,6 +1501,9 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             }
             foreach ($dataPoint as $i => $data) {
                 $animalCode = $this->getFormDataValueByKey($data, $animalCodeAttributeKey);
+                if (Str::isEmpty($animalCode)) {
+                    $animalCode = $this->getFormDataValueByKey($data, $newAnimalCodeAttributeKey);
+                }
                 $animalModel = $this->getAnimalModelByOdkCode($animalCode);
                 $eventDate = $eventDateAttributeKey !== null ? $this->getFormDataValueByKey($data, $eventDateAttributeKey) : $this->getDate();
                 $newModel = clone $model;
