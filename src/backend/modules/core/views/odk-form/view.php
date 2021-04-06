@@ -154,7 +154,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             <div class="col-lg-12">
                                 <h3>Farm metadata</h3>
                                 <pre class="show-pretty-json"
-                                     data-json='<?= json_encode($model->farm_metadata, JSON_FORCE_OBJECT) ?>'></pre>
+                                     data-json='<?= json_encode(OdkForm::cleanDataModelJson($model->farm_metadata), JSON_FORCE_OBJECT) ?>'></pre>
                             </div>
                         </div>
                     <?php endif; ?>
