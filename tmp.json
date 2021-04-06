@@ -1,5 +1,6 @@
 {
   "N-1": {
+    "id": null,
     "errors": {
       "tag_id": [
         "Animal Tag ID already exists."
@@ -15,7 +16,7 @@
       "latlng": null,
       "org_id": null,
       "tag_id": "kaka2",
-      "farm_id": 504271,
+      "farm_id": 504288,
       "herd_id": null,
       "sire_id": null,
       "ward_id": "11024",
@@ -98,6 +99,7 @@
     }
   },
   "N-2": {
+    "id": null,
     "errors": {
       "tag_id": [
         "Animal Tag ID already exists."
@@ -113,7 +115,7 @@
       "latlng": null,
       "org_id": null,
       "tag_id": "kaka3",
-      "farm_id": 504271,
+      "farm_id": 504288,
       "herd_id": null,
       "sire_id": null,
       "ward_id": "11024",

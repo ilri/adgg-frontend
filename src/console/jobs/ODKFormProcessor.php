@@ -1741,8 +1741,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      */
     protected function saveAnimalModel($model, $index, $validate = true)
     {
-        if (Animal::exists(['tag_id' => $model->tag_id])) {
-            $newModel = new Animal();
+        $newModel = Animal::find()->andWhere(['tag_id' => $model->tag_id])->one();
+        if ($newModel !== null) {
             $newModel->ignoreAdditionalAttributes = false;
             foreach ($model->attributes as $k => $v) {
                 $newModel->{$k} = $v;
