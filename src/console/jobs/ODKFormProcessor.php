@@ -127,6 +127,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             if (is_string($this->_model->form_data)) {
                 $this->_model->form_data = json_decode($this->_model->form_data, true);
             }
+            $this->_model->has_errors = 0;
             //check the version
             if ($this->isSupportedVersion()) {
                 //farmer registration
