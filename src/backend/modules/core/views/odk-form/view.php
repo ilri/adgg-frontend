@@ -1,5 +1,6 @@
 <?php
 
+use backend\modules\core\models\OdkForm;
 use common\helpers\DateUtils;
 use common\helpers\Lang;
 use yii\helpers\Json;
@@ -144,7 +145,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             <div class="col-lg-12">
                                 <h3>Farm data</h3>
                                 <pre class="show-pretty-json"
-                                     data-json='<?= json_encode($model->farm_data, JSON_FORCE_OBJECT) ?>'></pre>
+                                     data-json='<?= json_encode(OdkForm::cleanDataModelJson($model->farm_data), JSON_FORCE_OBJECT) ?>'></pre>
                             </div>
                         </div>
                     <?php endif; ?>
