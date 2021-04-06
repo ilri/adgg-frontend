@@ -1505,7 +1505,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 if (Str::isEmpty($animalCode)) {
                     $animalCode = $this->getFormDataValueByKey($data, $newAnimalCodeAttributeKey);
                 }
-                Yii::$app->controller->stdout("Animal Code: {$animalCode}, attributeKey: {$animalCodeAttributeKey}, newAttribute Key:{$newAnimalCodeAttributeKey}\n");
+                //Yii::$app->controller->stdout("Animal Code: {$animalCode}, attributeKey: {$animalCodeAttributeKey}, newAttribute Key:{$newAnimalCodeAttributeKey}\n");
                 $animalModel = $this->getAnimalModelByOdkCode($animalCode);
                 $eventDate = $eventDateAttributeKey !== null ? $this->getFormDataValueByKey($data, $eventDateAttributeKey) : $this->getDate();
                 $newModel = clone $model;
