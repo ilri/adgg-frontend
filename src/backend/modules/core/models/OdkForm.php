@@ -295,6 +295,9 @@ class OdkForm extends ActiveRecord implements ActiveSearchInterface
                                 }
                             }
                         }
+                        if ($k3 === "latlng") {
+                            unset($jsonArr[$k][$k2][$k3]);
+                        }
                     }
                 }
             }
