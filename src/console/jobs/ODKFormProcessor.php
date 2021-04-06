@@ -1505,6 +1505,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 if (Str::isEmpty($animalCode)) {
                     $animalCode = $this->getFormDataValueByKey($data, $newAnimalCodeAttributeKey);
                 }
+                Yii::$app->controller->stdout("Animal Code: {$animalCode}, attributeKey: {$animalCodeAttributeKey}, newAttribute Key:{$newAnimalCodeAttributeKey}\n");
                 $animalModel = $this->getAnimalModelByOdkCode($animalCode);
                 $eventDate = $eventDateAttributeKey !== null ? $this->getFormDataValueByKey($data, $eventDateAttributeKey) : $this->getDate();
                 $newModel = clone $model;
@@ -1528,7 +1529,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      */
     protected function getAnimalModelByOdkCode($animalCode)
     {
-        Yii::$app->controller->stdout("Animal code: {$animalCode}\n");
         // IF the code starts with N- e.g N-1 then its a new animal
         $isNewRecord = false;
         $animalCodeArr = explode('-', $animalCode);
@@ -1548,8 +1548,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $model = Animal::find()->andWhere(['id' => $animalCode])->one();
             }
         }
-        $attributes = serialize($model->attributes);
-        Yii::$app->controller->stdout("Model: {$attributes}\n");
+
         return $model;
     }
 
