@@ -1528,6 +1528,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      */
     protected function getAnimalModelByOdkCode($animalCode)
     {
+        Yii::$app->controller->stdout("Animal code: {$animalCode}\n");
         // IF the code starts with N- e.g N-1 then its a new animal
         $isNewRecord = false;
         $animalCodeArr = explode('-', $animalCode);
@@ -1547,6 +1548,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $model = Animal::find()->andWhere(['id' => $animalCode])->one();
             }
         }
+        $attributes = serialize($model->attributes);
+        Yii::$app->controller->stdout("Model: {$attributes}\n");
         return $model;
     }
 
