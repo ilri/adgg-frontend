@@ -22,6 +22,8 @@ use yii\swiftmailer\Mailer;
 
 class SendEmail extends BaseObject implements JobInterface
 {
+    const MAX_ATTEMPTS = 3;
+
     /**
      * @var string
      */
@@ -31,14 +33,17 @@ class SendEmail extends BaseObject implements JobInterface
      * @var string
      */
     public $subject;
+
     /**
      * @var string
      */
     public $sender_name;
+
     /**
      * @var string
      */
     public $sender_email;
+
     /**
      * @var string
      */
@@ -53,6 +58,7 @@ class SendEmail extends BaseObject implements JobInterface
      * @var string
      */
     public $cc;
+
     /**
      * @var string
      */
@@ -88,14 +94,10 @@ class SendEmail extends BaseObject implements JobInterface
      */
     public $id;
 
-
-    const MAX_ATTEMPTS = 3;
-
     public function init()
     {
         parent::init();
     }
-
 
     /**
      * @param Queue $queue which pushed and is handling the job

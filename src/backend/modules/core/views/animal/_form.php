@@ -151,7 +151,16 @@ use yii\bootstrap4\ActiveForm;
                         ]) ?>
                     </div>
                     <div class="col-md-4">
-                        <?= $form->field($model, 'color') ?>
+                        <?= $form->field($model, 'color')->widget(Select2::class, [
+                            'data' => Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_COLORS),
+                            'options' => [
+                                'placeholder' => '[select one]',
+                                'multiple' => true,
+                            ],
+                            'pluginOptions' => [
+                                'allowClear' => false
+                            ],
+                        ]) ?>
                     </div>
                     <div class="col-md-4">
                         <?= $form->field($model, 'birthdate')->textInput(['class' => 'form-control show-datepicker', 'data-max-date' => DateUtils::getToday()]) ?>

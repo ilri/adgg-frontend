@@ -23,6 +23,7 @@ use backend\modules\core\models\OdkForm;
 use backend\modules\core\models\TableAttributeInterface;
 use common\helpers\DateUtils;
 use common\helpers\Lang;
+use common\helpers\Str;
 use common\models\ActiveRecord;
 use Yii;
 use yii\base\BaseObject;
@@ -117,6 +118,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     public function execute($queue)
     {
         $this->_model = OdkForm::find()->andWhere(['id' => $this->itemId])->one();
+        Yii::$app->controller->stdout("Processing started..\n");
         if ($this->_model === null) {
             Yii::$app->controller->stdout("No ODK form found with id: {$this->itemId}\n");
             return false;
@@ -125,11 +127,13 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             if (is_string($this->_model->form_data)) {
                 $this->_model->form_data = json_decode($this->_model->form_data, true);
             }
+            $this->_model->has_errors = 0;
             //check the version
             if ($this->isSupportedVersion()) {
                 //farmer registration
                 $this->registerNewFarmer();
                 //farm metadata
+                $this->registerFarmerHouseholdMembers();
                 $this->registerFarmerTechnologyMobilization();
                 $this->registerFarmerMilkUtilization();
                 $this->registerFarmerImprovedFodderAdoption();
@@ -187,7 +191,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->_model->animal_events_data = $this->_animalEventsData;
             }
             $this->_model->save(false);
-            //ODKJsonNotification::createManualNotifications(ODKJsonNotification::NOTIF_ODK_JSON, $this->_model->id);
+            ODKJsonNotification::createManualNotifications(ODKJsonNotification::NOTIF_ODK_JSON, $this->_model->id);
         } catch (\Exception $e) {
             $message = $e->getMessage();
             $message = 'ODK FORM UUID:' . $this->_model->form_uuid . ': ' . $message;
@@ -197,6 +201,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             Yii::error($message);
             Yii::error($trace);
         }
+
+        Yii::$app->controller->stdout("Processing ends..\n");
     }
 
     /**
@@ -395,12 +401,10 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     {
         //farmer registration details as defined in ODK forms
         $farmersRepeatKey = 'farmer_general';
-        $farmerVillageGroupKey = 'farmer_notevillage';
         $farmerGeneralDetailsGroupKey = 'farmer_generaldetails';
         $farmerHouseholdHeadGroupKey = 'farmer_hhheaddetails';
 
         //attributes keys
-        $villageCodeKey = self::getAttributeJsonKey('farmer_village', $farmerVillageGroupKey, $farmersRepeatKey);
         $farmTypeKey = self::getAttributeJsonKey('farmer_farmtype', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
         $farmerFirstNameKey = self::getAttributeJsonKey('farmer_firstname', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
         $farmerOtherNamesKey = self::getAttributeJsonKey('farmer_othnames', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
@@ -424,17 +428,10 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         ]);
         foreach ($farmersData as $k => $farmerData) {
             $newFarmerModel = clone $farmerModel;
-            //get village group fields
-            $villageCode = $this->getFormDataValueByKey($farmerData, $villageCodeKey);
-            if (!empty($villageCode)) {
-                $villageModel = CountryUnits::find()->andWhere(['code' => $villageCode, 'level' => CountryUnits::LEVEL_VILLAGE, 'country_id' => $this->_model->country_id])->one();
-                if (null !== $villageModel) {
-                    $newFarmerModel->village_id = $villageModel->id;
-                    $newFarmerModel->ward_id = $villageModel->parent_id;
-                    $newFarmerModel->district_id = $newFarmerModel->ward->parent_id ?? null;
-                    $newFarmerModel->region_id = $newFarmerModel->district->parent_id ?? null;
-                }
-            }
+            $newFarmerModel->village_id = $this->getVillageId();
+            $newFarmerModel->ward_id = $this->getWardId();
+            $newFarmerModel->district_id = $this->getDistrictId();
+            $newFarmerModel->region_id = $this->getRegionId();
             $newFarmerModel->farm_type = $this->getFormDataValueByKey($farmerData, $farmTypeKey);
             $firstName = $this->getFormDataValueByKey($farmerData, $farmerFirstNameKey);
             $otherNames = $this->getFormDataValueByKey($farmerData, $farmerOtherNamesKey);
@@ -455,9 +452,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
 
             $this->saveFarmModel($newFarmerModel, $k, true);
         }
-
-        //Household Members (Full Demographics)
-        $this->registerFarmerHouseholdMembers();
 
     }
 
@@ -517,6 +511,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $repeatKey = 'animal_general';
         $animalIdentificationGroupKey = 'animal_identification';
         $animalagedetailsGroupKey = 'animal_agedetails';
+        $animalbreeddetailsGroupKey = 'animal_breeddetails';
         $animalsData = $this->_model->form_data[$repeatKey] ?? null;
         if (null === $animalsData) {
             return;
@@ -548,8 +543,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             'tag_id' => self::getAttributeJsonKey('animal_tagid', $animalIdentificationGroupKey, $repeatKey),
             'animal_type' => self::getAttributeJsonKey('animal_type', $animalagedetailsGroupKey, $repeatKey),
             'animal_photo' => self::getAttributeJsonKey('animal_photo', $animalIdentificationGroupKey, $repeatKey),
-            'main_breed' => self::getAttributeJsonKey('animal_mainbreed', $animalIdentificationGroupKey, $repeatKey),
-            'breed_composition' => self::getAttributeJsonKey('animal_maincomp', $animalIdentificationGroupKey, $repeatKey),
+            'main_breed' => self::getAttributeJsonKey('animal_mainbreed', $animalbreeddetailsGroupKey, $repeatKey),
+            'breed_composition' => self::getAttributeJsonKey('animal_maincomp', $animalbreeddetailsGroupKey, $repeatKey),
             'birthdate' => self::getAttributeJsonKey('animal_dobfull', $animalagedetailsGroupKey, $repeatKey),
         ];
         $n = 1;
@@ -974,7 +969,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
 
     protected function registerFarmExtensionServices()
     {
-        /*
+
         $repeatKey = 'farm_extension';
         $data = $this->_model->form_data[$repeatKey] ?? null;
         if (empty($data)) {
@@ -992,7 +987,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $i = $newModel->type . $k;
             $this->saveFarmMetadataModel($newModel, $i, true);
         }
-        */
     }
 
     /**
@@ -1125,9 +1119,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             foreach ($dataPoint as $i => $data) {
                 $animalCode = $this->getFormDataValueByKey($data, $animalCodeAttributeKey);
                 $animalModel = $this->getAnimalModelByOdkCode($animalCode);
-                if (null === $animalModel) {
-                    continue;
-                }
                 $newModel = clone $model;
                 $newModel->heartgirth = $this->getFormDataValueByKey($data, $heartgirthAttributeKey);
                 $newModel->weight_kg = $this->getFormDataValueByKey($data, $weightAttributeKey);
@@ -1135,12 +1126,12 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 if (empty($newModel->heartgirth) && empty($newModel->weight_kg) && empty($newModel->body_score)) {
                     continue;
                 }
-                $newModel->animal_id = $animalModel->id;
+                $newModel->animal_id = $animalModel->id ?? null;
                 if (empty($newModel->event_date)) {
                     $newModel->event_date = $newModel->data_collection_date;
                 }
-                $newModel->latitude = $animalModel->latitude;
-                $newModel->longitude = $animalModel->longitude;
+                $newModel->latitude = $animalModel->latitude ?? null;
+                $newModel->longitude = $animalModel->longitude ?? null;
                 $this->saveAnimalEventModel($newModel, $k . $i, true);
             }
         }
@@ -1171,9 +1162,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             foreach ($dataPoint as $i => $data) {
                 $animalCode = $this->getFormDataValueByKey($data, $animalCodeAttributeKey);
                 $animalModel = $this->getAnimalModelByOdkCode($animalCode);
-                if (null === $animalModel) {
-                    continue;
-                }
                 $newModel = clone $model;
                 $newModel->feed_given = $this->getFormDataValueByKey($data, $feedGivenAttributeKey);
                 $newModel->animal_monitor_water = $this->getFormDataValueByKey($data, $feedWaterAttributeKey);
@@ -1183,9 +1171,9 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 if (empty($newModel->event_date)) {
                     $newModel->event_date = $newModel->data_collection_date;
                 }
-                $newModel->latitude = $animalModel->latitude;
-                $newModel->longitude = $animalModel->longitude;
-                $newModel->animal_id = $animalModel->id;
+                $newModel->latitude = $animalModel->latitude ?? null;
+                $newModel->longitude = $animalModel->longitude ?? null;
+                $newModel->animal_id = $animalModel->id ?? null;
                 $this->saveAnimalEventModel($newModel, $k . $i, true);
             }
         }
@@ -1228,17 +1216,14 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 foreach ($repeat3DataSet as $n => $repeat3Data) {
                     $animalCode = $this->getFormDataValueByKey($repeat3Data, $animalCodeAttributeKey);
                     $animalModel = $this->getAnimalModelByOdkCode($animalCode);
-                    if (null === $animalModel) {
-                        continue;
-                    }
                     $newModel = clone $model;
                     if ($newModel->setDynamicAttributesValuesFromOdkForm($repeat3Data, $groupKey, $repeat3Key)) {
                         if (empty($newModel->event_date)) {
                             $newModel->event_date = $newModel->data_collection_date;
                         }
-                        $newModel->animal_id = $animalModel->id;
-                        $newModel->latitude = $animalModel->latitude;
-                        $newModel->longitude = $animalModel->longitude;
+                        $newModel->animal_id = $animalModel->id ?? null;
+                        $newModel->latitude = $animalModel->latitude ?? null;
+                        $newModel->longitude = $animalModel->longitude ?? null;
                         $this->saveAnimalEventModel($newModel, $k . $i . $n, true);
                     }
                 }
@@ -1251,7 +1236,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $mainRepeatKey = 'cow_monitoring';
         $rawData = $this->_model->form_data[$mainRepeatKey] ?? null;
         $repeatKey = $mainRepeatKey . '/cow_monitoringanimal';
-        $animalCodeAttributeKey = self::getAttributeJsonKey('cowmonitor_animalplatformuniqueid', $this->_model->isVersion1Point5() ? '' : 'cow_monitordetails', $repeatKey);
+        $animalCodeAttributeKey = self::getAttributeJsonKey('cowmonitor_animalplatformuniqueid', $this->_model->isVersion1Point5() ? '' : '', $repeatKey);
         return [$rawData, $repeatKey, $animalCodeAttributeKey];
     }
 
@@ -1337,19 +1322,16 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             foreach ($dataPoint as $i => $data) {
                 $animalCode = $this->getFormDataValueByKey($data, $animalCodeAttributeKey);
                 $animalModel = $this->getAnimalModelByOdkCode($animalCode);
-                if (null === $animalModel) {
-                    continue;
-                }
                 $newModel = clone $model;
-                $newModel->animal_id = $animalModel->id;
+                $newModel->animal_id = $animalModel->id ?? null;
                 foreach ($attributes as $attr => $odkKey) {
                     $newModel->{$attr} = $this->getFormDataValueByKey($data, $odkKey);
                 }
                 if (empty($newModel->event_date)) {
                     $newModel->event_date = $newModel->data_collection_date;
                 }
-                $newModel->latitude = $animalModel->latitude;
-                $newModel->longitude = $animalModel->longitude;
+                $newModel->latitude = $animalModel->latitude ?? null;
+                $newModel->longitude = $animalModel->longitude ?? null;
                 $this->saveAnimalEventModel($newModel, $k . $i, true);
             }
         }
@@ -1413,12 +1395,9 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             foreach ($dataPoint as $i => $data) {
                 $animalCode = $this->getFormDataValueByKey($data, $animalCodeAttributeKey);
                 $animalModel = $this->getAnimalModelByOdkCode($animalCode);
-                if (null === $animalModel) {
-                    continue;
-                }
                 $eventDate = $this->getFormDataValueByKey($data, $eventDateAttributeKey);
                 $newModel = clone $model;
-                $newModel->animal_id = $animalModel->id;
+                $newModel->animal_id = $animalModel->id ?? null;
                 $newModel->setDynamicAttributesValuesFromOdkForm($data, $exitDetailsGroupKey, $repeatKey);
                 $newModel->setDynamicAttributesValuesFromOdkForm($data, $exitMovementGroupKey, $repeatKey);
                 $newModel->setDynamicAttributesValuesFromOdkForm($data, $exitNewFarmGroupKey, $repeatKey);
@@ -1427,8 +1406,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 if (empty($newModel->event_date)) {
                     $newModel->event_date = $newModel->data_collection_date;
                 }
-                $newModel->latitude = $animalModel->latitude;
-                $newModel->longitude = $animalModel->longitude;
+                $newModel->latitude = $animalModel->latitude ?? null;
+                $newModel->longitude = $animalModel->longitude ?? null;
                 $this->saveAnimalEventModel($newModel, $k . $i, true);
             }
         }
@@ -1461,18 +1440,15 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             foreach ($dataPoint as $i => $data) {
                 $animalCode = $this->getFormDataValueByKey($data, $animalCodeAttributeKey);
                 $animalModel = $this->getAnimalModelByOdkCode($animalCode);
-                if (null === $animalModel) {
-                    continue;
-                }
                 $newModel = clone $baseModel;
-                $newModel->animal_id = $animalModel->id;
+                $newModel->animal_id = $animalModel->id ?? null;
                 $newModel->setDynamicAttributesValuesFromOdkForm($data, 'ecf_vaccinationdetails', $animalRepeat);
                 $newModel->event_date = $newModel->ecf_date;
                 if (empty($newModel->event_date)) {
                     $newModel->event_date = $newModel->data_collection_date;
                 }
-                $newModel->latitude = $animalModel->latitude;
-                $newModel->longitude = $animalModel->longitude;
+                $newModel->latitude = $animalModel->latitude ?? null;
+                $newModel->longitude = $animalModel->longitude ?? null;
                 $this->saveAnimalEventModel($newModel, $k . $i, true);
             }
         }
@@ -1501,6 +1477,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         if (null === $rawData) {
             return;
         }
+        $newAnimalCodeAttributeKey = Str::str_lreplace('platformuniqueid', 'code', $animalCodeAttributeKey);
         $params = [
             'event_type' => $eventType,
             'data_collection_date' => $this->getDate(),
@@ -1525,20 +1502,21 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             }
             foreach ($dataPoint as $i => $data) {
                 $animalCode = $this->getFormDataValueByKey($data, $animalCodeAttributeKey);
-                $animalModel = $this->getAnimalModelByOdkCode($animalCode);
-                if (null === $animalModel) {
-                    continue;
+                if (Str::isEmpty($animalCode)) {
+                    $animalCode = $this->getFormDataValueByKey($data, $newAnimalCodeAttributeKey);
                 }
+                //Yii::$app->controller->stdout("Animal Code: {$animalCode}, attributeKey: {$animalCodeAttributeKey}, newAttribute Key:{$newAnimalCodeAttributeKey}\n");
+                $animalModel = $this->getAnimalModelByOdkCode($animalCode);
                 $eventDate = $eventDateAttributeKey !== null ? $this->getFormDataValueByKey($data, $eventDateAttributeKey) : $this->getDate();
                 $newModel = clone $model;
                 if ($newModel->setDynamicAttributesValuesFromOdkForm($data, $groupKey, $repeatKey)) {
-                    $newModel->animal_id = $animalModel->id;
+                    $newModel->animal_id = $animalModel->id ?? null;
                     $newModel->event_date = $eventDate;
                     if (empty($newModel->event_date)) {
                         $newModel->event_date = $newModel->data_collection_date;
                     }
-                    $newModel->latitude = $animalModel->latitude;
-                    $newModel->longitude = $animalModel->longitude;
+                    $newModel->latitude = $animalModel->latitude ?? null;
+                    $newModel->longitude = $animalModel->longitude ?? null;
                     $this->saveAnimalEventModel($newModel, $k . $i, true);
                 }
             }
@@ -1570,6 +1548,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $model = Animal::find()->andWhere(['id' => $animalCode])->one();
             }
         }
+
         return $model;
     }
 
@@ -1752,7 +1731,18 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      */
     protected function saveAnimalModel($model, $index, $validate = true)
     {
-        $data = $this->saveModel($model, $validate);
+        $newModel = Animal::find()->andWhere(['tag_id' => $model->tag_id])->one();
+        if ($newModel !== null) {
+            $newModel->ignoreAdditionalAttributes = false;
+            foreach ($model->safeAttributes() as $attr) {
+                if ($attr !== 'id') {
+                    $newModel->{$attr} = $model->{$attr};
+                }
+            }
+        } else {
+            $newModel = clone $model;
+        }
+        $data = $this->saveModel($newModel, $validate);
         $this->_animalsData[$index] = $data['data'];
         $this->_animalsModels[$index] = $data['model'];
     }
@@ -1765,6 +1755,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      */
     protected function saveAnimalEventModel($model, $index, $validate = true)
     {
+        $index = $model->event_type . '_' . $index;
         $data = $this->saveModel($model, $validate);
         $this->_animalEventsData[$index] = $data['data'];
         $this->_animalEventModels[$index] = $data['model'];
@@ -1786,7 +1777,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         }
         return [
             'model' => $model,
-            'data' => ['attributes' => $model->attributes, 'errors' => $isSaved ? null : $model->getErrors(),]
+            'data' => ['attributes' => $model->attributes, 'errors' => $isSaved ? null : $model->getErrors(), 'id' => $model->id]
         ];
     }
 

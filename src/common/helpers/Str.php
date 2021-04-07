@@ -87,4 +87,21 @@ class Str extends \Illuminate\Support\Str
         return preg_replace("/[^A-Za-z0-9 ]/", '', $string);
     }
 
+    /**
+     * @param string $search
+     * @param string $replace
+     * @param string $subject
+     * @return mixed|string|string[]
+     */
+    public static function str_lreplace($search, $replace, $subject)
+    {
+        $pos = strrpos($subject, $search);
+
+        if ($pos !== false) {
+            $subject = substr_replace($subject, $replace, $pos, strlen($search));
+        }
+
+        return $subject;
+    }
+
 }
