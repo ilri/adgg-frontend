@@ -413,8 +413,8 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'milkprot' => null,
             'lactation.lactation_number' => null,
             'testday_no' => null,
-            'animal.longitude' => null,
-            'animal.latitude' => null,
+//            'animal.longitude' => null,
+//            'animal.latitude' => null,
         ];
         $filterConditions = array_merge($fields, [
             'region_id' => '=',
@@ -457,8 +457,8 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'milk_bodyscore' => 'Bodyscore',
             'lactation.lactation_number' => 'LactNo',
             'testday_no' => 'TDNo',
-            'animal.longitude' => 'Longitude',
-            'animal.latitude' => 'Latitude',
+//            'animal.longitude' => 'Longitude',
+//            'animal.latitude' => 'Latitude',
         ];
         $excludeFromReport = array_keys($filterValues);
         $genders = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_GENDER;
