@@ -12,8 +12,17 @@ use backend\modules\core\models\FarmMetadataBreedingAIProviders;
 use backend\modules\core\models\FarmMetadataBreedingBulls;
 use backend\modules\core\models\FarmMetadataBreedingOtherBulls;
 use backend\modules\core\models\FarmMetadataBreedingSchemeBulls;
+use backend\modules\core\models\FarmMetadataCattleDetails;
+use backend\modules\core\models\FarmMetadataCattleHousingAndStructures;
+use backend\modules\core\models\FarmMetadataExtensionServices;
+use backend\modules\core\models\FarmMetadataFarmStructureDetails;
 use backend\modules\core\models\FarmMetadataFeeding;
 use backend\modules\core\models\FarmMetadataHealth;
+use backend\modules\core\models\FarmMetadataMilkUtilization;
+use backend\modules\core\models\FarmMetadataMilkUtilizationBuyer;
+use backend\modules\core\models\FarmMetadataOtherSpeciesDetails;
+use backend\modules\core\models\FarmMetadataTechnologyMobilization;
+use backend\modules\core\models\FarmMetadataWaterSource;
 use backend\modules\core\models\HealthEvent;
 use backend\modules\core\models\MilkingEvent;
 use backend\modules\core\models\PDEvent;
@@ -152,6 +161,56 @@ class ReportBuilder extends Model
             'FarmMetadataHealth' => [
                 'class' => FarmMetadataHealth::class,
                 'title' => 'Farm Health',
+                'relations' => ['farm'],
+            ],
+            'FarmMetadataExtensionService' => [
+                'class' => FarmMetadataExtensionServices::class,
+                'title' => 'Farm Extension Servise',
+                'relations' => ['farm'],
+            ],
+            'FarmMetadataFarmStructureDetails' => [
+                'class' => FarmMetadataFarmStructureDetails::class,
+                'title' => 'Farm Structure Deatails',
+                'relations' => ['farm'],
+            ],
+            'FarmMetadataCattleDetails' => [
+                'class' => FarmMetadataCattleDetails::class,
+                'title' => 'Farm Cattle Details',
+                'relations' => ['farm'],
+            ],
+            'FarmMetadataCattleHousingAndStructures' => [
+                'class' => FarmMetadataCattleHousingAndStructures::class,
+                'title' => 'Farm Cattle Details',
+                'relations' => ['farm'],
+            ],
+            'FarmMetadataMilkUUtilization' => [
+                'class' => FarmMetadataMilkUtilization::class,
+                'title' => 'Farm Milk Utilization',
+                'relations' => ['farm'],
+            ],
+            'FarmMetadataMilkUUtilizationBuyer' => [
+                'class' => FarmMetadataMilkUtilizationBuyer::class,
+                'title' => 'Farm Milk Utilization Buyer',
+                'relations' => ['farm'],
+            ],
+            'FarmMetadataGroupMembership' => [
+                'class' => FarmMetadataMilkUtilizationBuyer::class,
+                'title' => 'Farm Group Membership',
+                'relations' => ['farm'],
+            ],
+            'FarmMetadataOtherSpeciesDetails' => [
+                'class' => FarmMetadataOtherSpeciesDetails::class,
+                'title' => 'Farm Other Species Details',
+                'relations' => ['farm'],
+            ],
+            'FarmMetadataTechnologyMobilization' => [
+                'class' => FarmMetadataTechnologyMobilization::class,
+                'title' => 'Farm Technology Mobilization',
+                'relations' => ['farm'],
+            ],
+            'FarmMetadataWaterSource' => [
+                'class' => FarmMetadataWaterSource::class,
+                'title' => 'Farm Water Sources',
                 'relations' => ['farm'],
             ],
             'Animal' => [
