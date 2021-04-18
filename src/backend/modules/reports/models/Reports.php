@@ -454,7 +454,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'milk_heartgirth' => 'HeartGirth',
             'weight' => 'Weight',
             'milk_estimated_weight' => 'estimated weight',
-            'milk_bodyscore' => 'Bodyscore',
+//            'milk_bodyscore' => 'Bodyscore',
             'lactation.lactation_number' => 'LactNo',
             'testday_no' => 'TDNo',
 //            'animal.longitude' => 'Longitude',
