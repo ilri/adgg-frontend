@@ -527,7 +527,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'heartgirth' => 'HeartGirth',
             'weight_kg' => 'Weight',
             'body_score' => 'Bodyscore',
-            'estimated_weight' => 'estimated weighty'
+            'estimated_weight' => 'estimated weight'
         ];
         foreach ($weightFields as $weightField => $alias) {
             $field = ReportBuilder::getFullColumnName($weightField, new WeightEvent(), $alias, true, 'weight');
