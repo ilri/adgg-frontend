@@ -526,7 +526,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         $weightFields = [
             'heartgirth' => 'HeartGirth',
             'weight_kg' => 'Weight',
-            'body_score' => 'Bodyscore',
+//            'body_score' => 'Bodyscore',
             'estimated_weight' => 'estimated weight'
         ];
         foreach ($weightFields as $weightField => $alias) {
