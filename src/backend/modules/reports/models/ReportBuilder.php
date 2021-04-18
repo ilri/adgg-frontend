@@ -19,6 +19,7 @@ use backend\modules\core\models\FarmMetadataFarmStructureDetails;
 use backend\modules\core\models\FarmMetadataFeeding;
 use backend\modules\core\models\FarmMetadataGroupMembership;
 use backend\modules\core\models\FarmMetadataHealth;
+use backend\modules\core\models\FarmMetadataHouseholdMembers;
 use backend\modules\core\models\FarmMetadataMilkUtilization;
 use backend\modules\core\models\FarmMetadataMilkUtilizationBuyer;
 use backend\modules\core\models\FarmMetadataOtherSpeciesDetails;
@@ -162,6 +163,11 @@ class ReportBuilder extends Model
             'FarmMetadataHealth' => [
                 'class' => FarmMetadataHealth::class,
                 'title' => 'Farm Health',
+                'relations' => ['farm'],
+            ],
+            'FarmMetadataHoseholdMembers' => [
+                'class' => FarmMetadataHouseholdMembers::class,
+                'title' => 'Farm Household Members',
                 'relations' => ['farm'],
             ],
             'FarmMetadataExtensionService' => [
