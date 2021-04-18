@@ -837,7 +837,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'body_score' => null,
             'animal.longitude' => null,
             'animal.latitude' => null,
-            'sex' => null,
+            'animal.sex' => null,
             //'birthdate' => null,
             //'main_breed' => null,
         ];
@@ -877,7 +877,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'body_score' => 'BodyScore',
             'animal.longitude' => 'Longitude',
             'animal.latitude' => 'Latitude',
-            'sex' => 'Sex',
+            'animal.sex' => 'Sex',
             //'birthdate' => 'Birthdate',
             //'main_breed' => 'Breed',
         ];
