@@ -837,7 +837,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'body_score' => null,
             'animal.longitude' => null,
             'animal.latitude' => null,
-            //'sex' => null,
+            'sex' => null,
             //'birthdate' => null,
             //'main_breed' => null,
         ];
@@ -877,14 +877,14 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'body_score' => 'BodyScore',
             'animal.longitude' => 'Longitude',
             'animal.latitude' => 'Latitude',
-            //'sex' => 'Sex',
+            'sex' => 'Sex',
             //'birthdate' => 'Birthdate',
             //'main_breed' => 'Breed',
         ];
 
         $breeds = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS;
         $animal_type = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES;
-        //$genders = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_GENDER;
+        $genders = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_GENDER;
         $decodedFields = [
             'animal.main_breed' => [
                 'function' => '\backend\modules\core\models\Choices::getLabel',
@@ -902,12 +902,12 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
                     'fieldValue', // the value of this field
                 ]
             ],
-            /*'deformities' => [
-                'function' => '\backend\modules\core\models\Animal::decodeDeformities',
-                'params'=> [
-                    'fieldValue', // the value of this field
-                ]
-            ],
+//            /*'deformities' => [
+//                'function' => '\backend\modules\core\models\Animal::decodeDeformities',
+//                'params'=> [
+//                    'fieldValue', // the value of this field
+//                ]
+//            ],
             'sex' => [
                 'function' => '\backend\modules\core\models\Choices::getLabel',
                 'params'=> [
@@ -915,12 +915,12 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
                     'fieldValue', // the value of this field
                 ]
             ],
-            'farm.farmer_is_hh_head' => [
-                'function' => '\common\helpers\Utils::decodeBoolean',
-                'params'=> [
-                    'fieldValue', // the value of this field
-                ]
-            ],*/
+//            'farm.farmer_is_hh_head' => [
+//                'function' => '\common\helpers\Utils::decodeBoolean',
+//                'params'=> [
+//                    'fieldValue', // the value of this field
+//                ]
+//            ],*/
             'animal.birthdate' => [
                 'function' => '\common\helpers\DateUtils::formatDate',
                 'params' => [
