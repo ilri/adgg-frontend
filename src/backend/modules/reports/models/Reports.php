@@ -455,7 +455,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'weight' => 'Weight',
             'milk_estimated_weight' => 'estimated weight',
             'milk_bodyscore' => 'Bodyscore',
-            'lactation.lactation_number' => 'LactNo',
+            'lactation.lactation_number' => 'Lactation Number D',
             'testday_no' => 'TDNo',
 //            'animal.longitude' => 'Longitude',
 //            'animal.latitude' => 'Latitude',
@@ -517,22 +517,22 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         // add the rowTransformer
         $builder->rowTransformer = '\backend\modules\reports\models\Reports::transformTestDayMilkDataRow';
 
-//        $builder->extraJoins = [
-//            'weight' => [
-//                'core_animal_event',
-//                '[[core_animal_event]].[[data_collection_date]] = [[weight.data_collection_date]] AND [[weight]].[[event_type]] = 6 AND [[weight]].[[animal_id]] = [[core_animal_event]].[[animal_id]]'
-//            ],
-//        ];
-//        $weightFields = [
-//            'heartgirth' => 'HeartGirth',
-//            'weight_kg' => 'Weight',
-//            'body_score' => 'Bodyscore',
-//            'estimated_weight' => 'estimated weight'
-//        ];
-//        foreach ($weightFields as $weightField => $alias) {
-//            $field = ReportBuilder::getFullColumnName($weightField, new WeightEvent(), $alias, true, 'weight');
-//            $builder->extraSelectExpressions[] = new Expression($field);
-//        }
+        $builder->extraJoins = [
+            'weight' => [
+                'core_animal_event',
+                '[[core_animal_event]].[[data_collection_date]] = [[weight.data_collection_date]] AND [[weight]].[[event_type]] = 6 AND [[weight]].[[animal_id]] = [[core_animal_event]].[[animal_id]]'
+            ],
+        ];
+        $weightFields = [
+            'heartgirth' => 'HeartGirth',
+            'weight_kg' => 'Weight',
+            'body_score' => 'Bodyscore',
+            'estimated_weight' => 'estimated weight'
+        ];
+        foreach ($weightFields as $weightField => $alias) {
+            $field = ReportBuilder::getFullColumnName($weightField, new WeightEvent(), $alias, true, 'weight');
+            $builder->extraSelectExpressions[] = new Expression($field);
+        }
 
         return $builder;
     }
