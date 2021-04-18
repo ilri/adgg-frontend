@@ -940,7 +940,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         $orderBy = '';
 
         $builder = new ReportBuilder();
-        $builder->model = 'Weights_Event';
+//        $builder->model = 'Weights_Event';
         $builder->filterConditions = $filterConditions;
         $builder->filterValues = $filterValues;
         $builder->fieldAliases = $fieldAliases;
