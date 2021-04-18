@@ -870,7 +870,6 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'animal.sire_tag_id' => 'SireRegID',
             'animal.dam_tag_id' => 'DamRegID',
             'animal.birthdate' => 'BirthDate',
-            'sex' => 'Sex',
 //            'animal.animal_type' => 'AnimalType',
             'animal.main_breed' => 'Breed',
 //            'heartgirth' => 'HeartGirth',
@@ -878,7 +877,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
 //            'body_score' => 'BodyScore',
 //            'animal.longitude' => 'Longitude',
 //            'animal.latitude' => 'Latitude',
-            //'sex' => 'Sex',
+            'sex' => 'Sex',
             //'birthdate' => 'Birthdate',
             //'main_breed' => 'Breed',
         ];
