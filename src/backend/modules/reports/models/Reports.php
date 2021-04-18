@@ -908,7 +908,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
 //                    'fieldValue', // the value of this field
 //                ]
 //            ],
-            'sex' => [
+            'animal.sex' => [
                 'function' => '\backend\modules\core\models\Choices::getLabel',
                 'params'=> [
                     "$genders",
