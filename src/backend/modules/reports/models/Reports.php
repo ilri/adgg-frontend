@@ -833,9 +833,9 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'animal.sex' => null,
 //            'animal.animal_type' => null,
             'animal.main_breed' => null,
-//            'heartgirth' => null,
-//            'estimated_weight' => null,
-//            'body_score' => null,
+            'heartgirth' => null,
+            'estimated_weight' => null,
+            'body_score' => null,
 //            'animal.longitude' => null,
 //            'animal.latitude' => null,
 
@@ -940,7 +940,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         $orderBy = '';
 
         $builder = new ReportBuilder();
-//        $builder->model = 'Weights_Event';
+        $builder->model = 'Weights_Event';
         $builder->filterConditions = $filterConditions;
         $builder->filterValues = $filterValues;
         $builder->fieldAliases = $fieldAliases;
