@@ -874,9 +874,9 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'animal.sex' => 'Sex',
 //            'animal.animal_type' => 'AnimalType',
             'animal.main_breed' => 'Breed',
-//            'heartgirth' => 'HeartGirth',
-//            'estimated_weight' => 'EstimatedWeight',
-//            'body_score' => 'BodyScore',
+            'heartgirth' => 'HeartGirth',
+            'estimated_weight' => 'EstimatedWeight',
+            'body_score' => 'BodyScore',
 //            'animal.longitude' => 'Longitude',
 //            'animal.latitude' => 'Latitude',
 
