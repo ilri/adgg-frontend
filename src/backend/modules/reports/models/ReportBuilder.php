@@ -187,7 +187,7 @@ class ReportBuilder extends Model
             ],
             'FarmMetadataCattleHousingAndStructures' => [
                 'class' => FarmMetadataCattleHousingAndStructures::class,
-                'title' => 'Farm Cattle Details',
+                'title' => 'Farm Cattle Housing Structures',
                 'relations' => ['farm'],
             ],
             'FarmMetadataMilkUUtilization' => [
