@@ -411,10 +411,8 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'dim' => null,
             'milkfat' => null,
             'milkprot' => null,
-            'heartgirth' => null,
-            'weight_kg' => null,
-            'body_score' => null,
-            'estimated_weight' => null,
+        ];
+        $extraFields = [
             'lactation.lactation_number' => null,
             'testday_no' => null,
 //            'animal.longitude' => null,
@@ -527,6 +525,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
                 '[[core_animal_event]].[[data_collection_date]] = [[weight.data_collection_date]] AND [[weight]].[[event_type]] = 6 AND [[weight]].[[animal_id]] = [[core_animal_event]].[[animal_id]]'
             ],
         ];
+        $builder->extraFields = $extraFields;
         $weightFields = [
             'heartgirth' => 'HeartGirth',
             'weight_kg' => 'Weight',

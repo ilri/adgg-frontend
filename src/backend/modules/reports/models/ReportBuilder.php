@@ -124,6 +124,11 @@ class ReportBuilder extends Model
     public $name;
 
     /**
+     * @var array
+     */
+    public $extraFields = [];
+
+    /**
      * @return array
      */
     public static function reportableModels()
@@ -793,6 +798,84 @@ class ReportBuilder extends Model
                 $query->addSelect($expression);
             }
         }
+
+        // get the attributes for select
+        foreach ($this->extraFields as $field => $conditionOperator) {
+            $fieldAlias = str_replace('.', '_', $field);
+            $fieldModelClass = $class;
+            $fieldName = $field;
+
+            if (strpos($field, '.')) {
+                if (substr_count($field, '.') > 1) {
+                    // animal.farm.farmer_name
+                    $relationName = (explode('.', $field)[0]); // animal
+                    $subRelationName = (explode('.', $field)[1]); // farm
+                    // add subrelation to other joins
+                    $other_joins[$subRelationName] = $relationName;
+                    $joins[] = $relationName;
+                    $relationClass = static::getRelationClass($class, $relationName); // Animal::class
+                    $fieldModelClass = static::getRelationClass($relationClass, $subRelationName); // Farm::class
+                    $fieldName = (explode('.', $field)[2]);
+                } else {
+                    $relationName = (explode('.', $field)[0]);
+                    $joins[] = $relationName;
+                    $fieldModelClass = static::getRelationClass($class, $relationName);
+                    $fieldName = (explode('.', $field)[1]);
+                }
+            }
+            # field with table alias
+            $aliasedField = static::getFullColumnName($field, $class);
+            # field with table and column alias
+            $field_alias = ArrayHelper::getValue($this->fieldAliases, $field);
+            $selectField = static::getFullColumnName($field, $class, $field_alias, true);
+
+            // add field to select
+            //$query->addSelect(new Expression( $aliasedField . ' AS "' . $field . '"'));
+
+            if (!in_array($field, $this->excludeFromReport)) {
+                $query->addSelect(new Expression($selectField));
+            }
+            // extract alias from selectField
+
+            $field_alias_array = explode('AS', $selectField);
+            $generated_alias = str_replace('[[', '', $field_alias_array[1]);
+            $generated_alias = str_replace(']]', '', $generated_alias);
+            $generated_alias = trim($generated_alias);
+
+            $this->fieldAliasMapping[$field] = $generated_alias;
+
+            // build the condition
+            if (!empty($conditionOperator)) {
+                // get the condition value for this field
+                $filter = $this->filterValues[$field] ?? '';
+                #
+                # handle other json columns that are not additional attributes in a special way
+                #
+                $columnDbType = $fieldModelClass->getAttributeSchemaType($fieldName);
+                if ($columnDbType == Schema::TYPE_JSON) {
+                    //$params = [':field' => $aliasedField, ':value' => $filter];
+                    //$sqlCondition = new Expression('JSON_SEARCH(:field,"one",:value)', $params);
+                    if (is_array($filter) && !empty($filter)) {
+                        foreach ($filter as $value) {
+                            if ($conditionOperator == 'IN') {
+                                $sqlCondition = new Expression('"' . $value . '" MEMBER OF(' . $aliasedField . ')');
+                                $query->orWhere($sqlCondition);
+                            } elseif ($conditionOperator == 'NOT IN') {
+                                $sqlCondition = new Expression('"' . $value . '" MEMBER OF(' . $aliasedField . ') = 0');
+                                $query->andWhere($sqlCondition);
+                            }
+                        }
+                    } else if (!empty($filter)) {
+                        $sqlCondition = new Expression('"' . $filter . '" MEMBER OF(' . $aliasedField . ')');
+                        $query->andWhere($sqlCondition);
+                    }
+                } else {
+                    $sqlCondition = static::buildCondition($conditionOperator, $aliasedField, $filter);
+                    $query->andFilterWhere($sqlCondition);
+                }
+            }
+        }
+
         return $query;
 
     }
