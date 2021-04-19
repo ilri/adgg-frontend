@@ -411,7 +411,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'dim' => null,
             'milkfat' => null,
             'milkprot' => null,
-
+            'milk_heartgirth' => null,
 //            'lactation.lactation_number' => null,
 //            'testday_no' => null,
 //            'animal.longitude' => null,
