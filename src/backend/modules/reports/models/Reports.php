@@ -841,6 +841,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'body_score' => null,
 //            'animal.longitude' => null,
 //            'animal.latitude' => null,
+
             //'birthdate' => null,
             //'main_breed' => null,
         ];
@@ -934,12 +935,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             ]
         ];
 
-        $excludeFromReport = array_merge(array_keys($filterValues,
-        [
-            'heartgirth' => '=',
-            'estimated_weight' => '=',
-            'body_score' => '=',
-        ]));
+        $excludeFromReport = array_keys($filterValues);
 
         $from = ArrayHelper::getValue($filter, 'from');
         $to = ArrayHelper::getValue($filter, 'to');
