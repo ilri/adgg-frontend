@@ -411,10 +411,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'dim' => null,
             'milkfat' => null,
             'milkprot' => null,
-            'milk_heartgirth' => null,
-            'weight' => null,
-            'milk_estimated_weight' => null,
-            'milk_bodyscore' => null,
+
 //            'lactation.lactation_number' => null,
 //            'testday_no' => null,
 //            'animal.longitude' => null,
@@ -530,7 +527,6 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         $weightFields = [
             'heartgirth' => 'HeartGirth',
             'weight_kg' => 'Weight',
-            'body_score' => 'Bodyscore',
             'estimated_weight' => 'estimated weight'
         ];
         foreach ($weightFields as $weightField => $alias) {
