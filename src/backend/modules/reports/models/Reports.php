@@ -934,7 +934,12 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             ]
         ];
 
-        $excludeFromReport = array_keys($filterValues);
+        $excludeFromReport = array_merge(array_keys($filterValues,
+        [
+            'heartgirth' => '=',
+            'estimated_weight' => '=',
+            'body_score' => '=',
+        ]));
 
         $from = ArrayHelper::getValue($filter, 'from');
         $to = ArrayHelper::getValue($filter, 'to');
