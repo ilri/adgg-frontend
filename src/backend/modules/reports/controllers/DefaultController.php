@@ -71,7 +71,7 @@ class DefaultController extends Controller
         $searchModel->type = $type;
         $searchModel->country_id = $country_id;
 
-        return $this->render('view',[
+        return $this->render('view', [
             'type' => $type,
             'tpl' => $tpl_type,
             'country_id' => $country_id,
