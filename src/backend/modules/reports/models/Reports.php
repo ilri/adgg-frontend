@@ -402,7 +402,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'animal.farm.total_cattle_owned_by_male' => null,
             'animal.farm.total_cattle_owned_joint' => null,
             'animal.id' => null,
-            'animal.tag_id' => null,
+//            'animal.tag_id' => null,
             'lactation.event_date' => null,
             'event_date' => null,
             'milkmor' => null,
@@ -433,7 +433,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         $fieldAliases = [
             'lactation.event_date' => 'CalvDate',
             'animal.id' => 'AnimalID',
-            'animal.tag_id' => 'AnimalRegID',
+//            'animal.tag_id' => 'AnimalRegID',
             'region.name' => 'Region',
             'district.name' => 'District',
             'ward.code' => $version == 2 ? 'Ward' :'Wareda',
