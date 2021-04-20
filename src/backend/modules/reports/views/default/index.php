@@ -38,7 +38,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <!--begin::Portlet-->
                     <div class="kt-portlet">
                         <a href="<?= Url::to(['view', 'type' => ReportConstants::REPORT_TYPE_TESTDAY_MILKDATA, 'country_id' => $country_id]) ?>" class="kt-iconbox kt-iconbox--active">
-                            <div class="kt-iconbox__title"><?= Lang::t('Test Day Milk Data Original'); ?></div>
+                            <div class="kt-iconbox__title"><?= Lang::t('Test Day Milk Data-EBV'); ?></div>
                         </a>
                     </div>
                     <!--end::Portlet-->
