@@ -248,10 +248,10 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'animal.farm.id' => null,
             'animal.farm.gender_code' => null,
             'animal.farm.total_cattle_owned' => null,
-            'animal.farm.total_cattle_owned_by_female' => null,
-            'animal.farm.total_cattle_owned_by_male' => null,
-            'animal.farm.total_cattle_owned_joint' => null,
-            'animal.tag_id' => null,
+//            'animal.farm.total_cattle_owned_by_female' => null,
+//            'animal.farm.total_cattle_owned_by_male' => null,
+//            'animal.farm.total_cattle_owned_joint' => null,
+            'animal.id' => null,
             'lactation.event_date' => null,
             'event_date' => null,
             'testday_no' => null,
@@ -282,7 +282,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         ];
         $fieldAliases = [
             'lactation.event_date' => 'CalvDate',
-            'animal.tag_id' => 'animalid',
+            'animal.id' => 'animalid',
             'region.name' => 'Region',
             'district.name' => 'District',
             'ward.name' => 'Ward',
@@ -290,9 +290,9 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'animal.farm.id' => 'hh_id',
             'animal.farm.gender_code' => 'farmergender',
             'animal.farm.total_cattle_owned' => 'cattletotalowned',
-            'animal.farm.total_cattle_owned_by_female' => 'total_cattle_owned_by_female',
-            'animal.farm.total_cattle_owned_by_male' => 'total_cattle_owned_by_male',
-            'animal.farm.total_cattle_owned_joint' => 'total_cattle_owned_joint',
+//            'animal.farm.total_cattle_owned_by_female' => 'total_cattle_owned_by_female',
+//            'animal.farm.total_cattle_owned_by_male' => 'total_cattle_owned_by_male',
+//            'animal.farm.total_cattle_owned_joint' => 'total_cattle_owned_joint',
             'event_date' => 'milkdate',
             'testday_no' => 'TDNo',
             'milkmor' => 'milkmor',
@@ -402,7 +402,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'animal.farm.total_cattle_owned_by_male' => null,
             'animal.farm.total_cattle_owned_joint' => null,
             'animal.id' => null,
-            'animal.tag_id' => null,
+//            'animal.tag_id' => null,
             'lactation.event_date' => null,
             'event_date' => null,
             'milkmor' => null,
@@ -411,10 +411,12 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'dim' => null,
             'milkfat' => null,
             'milkprot' => null,
+        ];
+        $extraFields = [
             'lactation.lactation_number' => null,
             'testday_no' => null,
-            'animal.longitude' => null,
-            'animal.latitude' => null,
+//            'animal.longitude' => null,
+//            'animal.latitude' => null,
         ];
         $filterConditions = array_merge($fields, [
             'region_id' => '=',
@@ -431,7 +433,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         $fieldAliases = [
             'lactation.event_date' => 'CalvDate',
             'animal.id' => 'AnimalID',
-            'animal.tag_id' => 'AnimalRegID',
+//            'animal.tag_id' => 'AnimalRegID',
             'region.name' => 'Region',
             'district.name' => 'District',
             'ward.code' => $version == 2 ? 'Ward' :'Wareda',
@@ -457,8 +459,8 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'milk_bodyscore' => 'Bodyscore',
             'lactation.lactation_number' => 'LactNo',
             'testday_no' => 'TDNo',
-            'animal.longitude' => 'Longitude',
-            'animal.latitude' => 'Latitude',
+//            'animal.longitude' => 'Longitude',
+//            'animal.latitude' => 'Latitude',
         ];
         $excludeFromReport = array_keys($filterValues);
         $genders = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_GENDER;
@@ -523,6 +525,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
                 '[[core_animal_event]].[[data_collection_date]] = [[weight.data_collection_date]] AND [[weight]].[[event_type]] = 6 AND [[weight]].[[animal_id]] = [[core_animal_event]].[[animal_id]]'
             ],
         ];
+        $builder->extraFields = $extraFields;
         $weightFields = [
             'heartgirth' => 'HeartGirth',
             'weight_kg' => 'Weight',
@@ -830,14 +833,15 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'animal.sire_tag_id' => null,
             'animal.dam_tag_id' => null,
             'animal.birthdate' => null,
-            'animal.animal_type' => null,
+            'animal.sex' => null,
+//            'animal.animal_type' => null,
             'animal.main_breed' => null,
             'heartgirth' => null,
             'estimated_weight' => null,
             'body_score' => null,
-            'animal.longitude' => null,
-            'animal.latitude' => null,
-            //'sex' => null,
+//            'animal.longitude' => null,
+//            'animal.latitude' => null,
+
             //'birthdate' => null,
             //'main_breed' => null,
         ];
@@ -870,21 +874,22 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'animal.sire_tag_id' => 'SireRegID',
             'animal.dam_tag_id' => 'DamRegID',
             'animal.birthdate' => 'BirthDate',
-            'animal.animal_type' => 'AnimalType',
+            'animal.sex' => 'Sex',
+//            'animal.animal_type' => 'AnimalType',
             'animal.main_breed' => 'Breed',
             'heartgirth' => 'HeartGirth',
             'estimated_weight' => 'EstimatedWeight',
             'body_score' => 'BodyScore',
-            'animal.longitude' => 'Longitude',
-            'animal.latitude' => 'Latitude',
-            //'sex' => 'Sex',
+//            'animal.longitude' => 'Longitude',
+//            'animal.latitude' => 'Latitude',
+
             //'birthdate' => 'Birthdate',
             //'main_breed' => 'Breed',
         ];
 
         $breeds = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS;
         $animal_type = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES;
-        //$genders = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_GENDER;
+        $genders = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_GENDER;
         $decodedFields = [
             'animal.main_breed' => [
                 'function' => '\backend\modules\core\models\Choices::getLabel',
@@ -902,25 +907,25 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
                     'fieldValue', // the value of this field
                 ]
             ],
-            /*'deformities' => [
-                'function' => '\backend\modules\core\models\Animal::decodeDeformities',
-                'params'=> [
-                    'fieldValue', // the value of this field
-                ]
-            ],
-            'sex' => [
+//            /*'deformities' => [
+//                'function' => '\backend\modules\core\models\Animal::decodeDeformities',
+//                'params'=> [
+//                    'fieldValue', // the value of this field
+//                ]
+//            ],
+            'animal.sex' => [
                 'function' => '\backend\modules\core\models\Choices::getLabel',
                 'params'=> [
                     "$genders",
                     'fieldValue', // the value of this field
                 ]
             ],
-            'farm.farmer_is_hh_head' => [
-                'function' => '\common\helpers\Utils::decodeBoolean',
-                'params'=> [
-                    'fieldValue', // the value of this field
-                ]
-            ],*/
+//            'farm.farmer_is_hh_head' => [
+//                'function' => '\common\helpers\Utils::decodeBoolean',
+//                'params'=> [
+//                    'fieldValue', // the value of this field
+//                ]
+//            ],*/
             'animal.birthdate' => [
                 'function' => '\common\helpers\DateUtils::formatDate',
                 'params' => [
