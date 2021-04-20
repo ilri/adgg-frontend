@@ -29,7 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <!--begin::Portlet-->
                     <div class="kt-portlet">
                         <a href="<?= Url::to(['view', 'type' => ReportConstants::REPORT_TYPE_PEDIGREE_FILE2, 'country_id' => $country_id]) ?>" class="kt-iconbox kt-iconbox--active">
-                            <div class="kt-iconbox__title"><?= Lang::t('Pedigree File-System ID'); ?></div>
+                            <div class="kt-iconbox__title"><?= Lang::t('Pedigree File All Animals'); ?></div>
                         </a>
                     </div>
                     <!--end::Portlet-->
