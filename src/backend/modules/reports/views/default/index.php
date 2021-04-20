@@ -24,33 +24,33 @@ $this->params['breadcrumbs'][] = $this->title;
             <h3><?= Lang::t(strtoupper($this->title)) ?> : <?= strtoupper(Country::getScalar('name', ['id' => $country_id])) ?></h3>
             <hr>
             <div class="row">
-                <div class="col-lg-4 col-xl-4 order-lg-2 order-xl-2 hidden ">
-                    <!--begin::Portlet-->
-                    <div class="kt-portlet">
-                        <a href="<?= Url::to(['view', 'type' => ReportConstants::REPORT_TYPE_MILKDATA, 'country_id' => $country_id]) ?>" class="kt-iconbox kt-iconbox--active">
-                            <div class="kt-iconbox__title"><?= Lang::t('Milk Data'); ?></div>
-                        </a>
-                    </div>
-                    <!--end::Portlet-->
-                </div>
-                <div class="col-lg-4 col-xl-4 order-lg-2 order-xl-2 hidden ">
-                    <!--begin::Portlet-->
-                    <div class="kt-portlet">
-                        <a href="<?= Url::to(['view', 'type' => ReportConstants::REPORT_TYPE_PEDIGREE, 'country_id' => $country_id]) ?>" class="kt-iconbox kt-iconbox--active">
-                            <div class="kt-iconbox__title"><?= Lang::t('Pedigree'); ?></div>
-                        </a>
-                    </div>
-                    <!--end::Portlet-->
-                </div>
-                <div class="col-lg-4 col-xl-4 order-lg-2 order-xl-2">
-                    <!--begin::Portlet-->
-                    <div class="kt-portlet">
-                        <a href="<?= Url::to(['view', 'type' => ReportConstants::REPORT_TYPE_PEDIGREE_FILE, 'country_id' => $country_id]) ?>" class="kt-iconbox kt-iconbox--active">
-                            <div class="kt-iconbox__title"><?= Lang::t('Pedigree File-Original ID'); ?></div>
-                        </a>
-                    </div>
-                    <!--end::Portlet-->
-                </div>
+<!--                <div class="col-lg-4 col-xl-4 order-lg-2 order-xl-2 hidden ">-->
+<!--                    <!--begin::Portlet-->-->
+<!--                    <div class="kt-portlet">-->
+<!--                        <a href="--><?//= Url::to(['view', 'type' => ReportConstants::REPORT_TYPE_MILKDATA, 'country_id' => $country_id]) ?><!--" class="kt-iconbox kt-iconbox--active">-->
+<!--                            <div class="kt-iconbox__title">--><?//= Lang::t('Milk Data'); ?><!--</div>-->
+<!--                        </a>-->
+<!--                    </div>-->
+<!--                    <!--end::Portlet-->-->
+<!--                </div>-->
+<!--                <div class="col-lg-4 col-xl-4 order-lg-2 order-xl-2 hidden ">-->
+<!--                    <!--begin::Portlet-->-->
+<!--                    <div class="kt-portlet">-->
+<!--                        <a href="--><?//= Url::to(['view', 'type' => ReportConstants::REPORT_TYPE_PEDIGREE, 'country_id' => $country_id]) ?><!--" class="kt-iconbox kt-iconbox--active">-->
+<!--                            <div class="kt-iconbox__title">--><?//= Lang::t('Pedigree'); ?><!--</div>-->
+<!--                        </a>-->
+<!--                    </div>-->
+<!--                    <!--end::Portlet-->-->
+<!--                </div>-->
+<!--                <div class="col-lg-4 col-xl-4 order-lg-2 order-xl-2">-->
+<!--                    <!--begin::Portlet-->-->
+<!--                    <div class="kt-portlet">-->
+<!--                        <a href="--><?//= Url::to(['view', 'type' => ReportConstants::REPORT_TYPE_PEDIGREE_FILE, 'country_id' => $country_id]) ?><!--" class="kt-iconbox kt-iconbox--active">-->
+<!--                            <div class="kt-iconbox__title">--><?//= Lang::t('Pedigree File-Original ID'); ?><!--</div>-->
+<!--                        </a>-->
+<!--                    </div>-->
+<!--                    <!--end::Portlet-->-->
+<!--                </div>-->
                 <div class="col-lg-4 col-xl-4 order-lg-2 order-xl-2">
                     <!--begin::Portlet-->
                     <div class="kt-portlet">
@@ -60,15 +60,15 @@ $this->params['breadcrumbs'][] = $this->title;
                     </div>
                     <!--end::Portlet-->
                 </div>
-                <div class="col-lg-4 col-xl-4 order-lg-2 order-xl-2">
-                    <!--begin::Portlet-->
-                    <div class="kt-portlet">
-                        <a href="<?= Url::to(['view', 'type' => ReportConstants::REPORT_TYPE_TESTDAY_MILKDATA, 'country_id' => $country_id]) ?>" class="kt-iconbox kt-iconbox--active">
-                            <div class="kt-iconbox__title"><?= Lang::t('Test Day Milk Data Original'); ?></div>
-                        </a>
-                    </div>
-                    <!--end::Portlet-->
-                </div>
+<!--                <div class="col-lg-4 col-xl-4 order-lg-2 order-xl-2">-->
+<!--                    <!--begin::Portlet-->-->
+<!--                    <div class="kt-portlet">-->
+<!--                        <a href="--><?//= Url::to(['view', 'type' => ReportConstants::REPORT_TYPE_TESTDAY_MILKDATA, 'country_id' => $country_id]) ?><!--" class="kt-iconbox kt-iconbox--active">-->
+<!--                            <div class="kt-iconbox__title">--><?//= Lang::t('Test Day Milk Data Original'); ?><!--</div>-->
+<!--                        </a>-->
+<!--                    </div>-->
+<!--                    <!--end::Portlet-->-->
+<!--                </div>-->
                 <div class="col-lg-4 col-xl-4 order-lg-2 order-xl-2">
                     <!--begin::Portlet-->
                     <div class="kt-portlet">
