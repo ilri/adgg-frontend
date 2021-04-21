@@ -836,9 +836,9 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'animal.sex' => null,
 //            'animal.animal_type' => null,
             'animal.main_breed' => null,
-            'heartgirth' => null,
-            'estimated_weight' => null,
-            'body_score' => null,
+//            'heartgirth' => null,
+//            'estimated_weight' => null,
+//            'body_score' => null,
 //            'animal.longitude' => null,
 //            'animal.latitude' => null,
 
@@ -877,9 +877,9 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'animal.sex' => 'Sex',
 //            'animal.animal_type' => 'AnimalType',
             'animal.main_breed' => 'Breed',
-            'heartgirth' => 'HeartGirth',
-            'estimated_weight' => 'EstimatedWeight',
-            'body_score' => 'BodyScore',
+//            'heartgirth' => 'HeartGirth',
+//            'estimated_weight' => 'EstimatedWeight',
+//            'body_score' => 'BodyScore',
 //            'animal.longitude' => 'Longitude',
 //            'animal.latitude' => 'Latitude',
 
@@ -943,7 +943,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         $orderBy = '';
 
         $builder = new ReportBuilder();
-        $builder->model = 'Weights_Event';
+        $builder->model = 'Animal';
         $builder->filterConditions = $filterConditions;
         $builder->filterValues = $filterValues;
         $builder->fieldAliases = $fieldAliases;
@@ -952,7 +952,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         $builder->orderBy = $orderBy;
         //$builder->limit = 50;
         $builder->country_id = $filter['country_id'] ?? null;
-        $builder->name = 'Pedigree_File_' . ($version == 2 ? $builder->name = $builder->name . 'System_ID_' : $builder->name = $builder->name . 'Original_ID_') . ($filter['country_id'] ? Country::getScalar('name', ['id' => $filter['country_id']]) : '');
+        $builder->name = 'Pedigree_' . ($filter['country_id'] ? Country::getScalar('name', ['id' => $filter['country_id']]) : '');
 
         if (!empty($from) && !empty($to)) {
             $casted_date = DbUtils::castDATE(Animal::tableName() . '.[[birthdate]]');
@@ -962,14 +962,6 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             $expression = new Expression($condition, $params);
             $builder->extraFilterExpressions[] = $expression;
         }
-
-        $builder->extraFilterExpressions[] = [
-            '[[animal]].[[animal_type]]' => [3, 4],
-        ];
-
-        // add the rowTransformer
-        $builder->rowTransformer = '\backend\modules\reports\models\Reports::transformPedigreeFileRow';
-
         return $builder;
     }
 }
