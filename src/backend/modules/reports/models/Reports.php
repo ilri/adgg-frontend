@@ -824,18 +824,18 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'village.code' => null,
             //'ward.name' => null,
             //'village.name' => null,
-            'animal.farm.id' => null,
+            'farm.id' => null,
 //            'animal.farm.animcatowned' => null,
-            'animal.id' => null,
-            'animal.tag_id' => null,
+            'id' => null,
+            'tag_id' => null,
             //'animal.sire_id' => null,
             //'animal.dam_id' => null,
-            'animal.sire_tag_id' => null,
-            'animal.dam_tag_id' => null,
-            'animal.birthdate' => null,
-            'animal.sex' => null,
+            'sire_tag_id' => null,
+            'dam_tag_id' => null,
+            'birthdate' => null,
+            'sex' => null,
 //            'animal.animal_type' => null,
-            'animal.main_breed' => null,
+            'main_breed' => null,
 //            'heartgirth' => null,
 //            'estimated_weight' => null,
 //            'body_score' => null,
@@ -865,18 +865,18 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'village.code' => $version == 2 ? 'Village' :'Kebele',
             //'ward.name' => 'Ward',
             //'village.name' => 'Village',
-            'animal.farm.id' => 'Farm_ID',
+            'farm.id' => 'Farm_ID',
 //            'animal.farm.animcatowned' => 'AnimalCategoriesOwned',
-            'animal.id' => 'AnimalID',
-            'animal.tag_id' => 'AnimalRegID',
-            'animal.sire_id' => 'SireID',
-            'animal.dam_id' => 'DamID',
-            'animal.sire_tag_id' => 'SireRegID',
-            'animal.dam_tag_id' => 'DamRegID',
-            'animal.birthdate' => 'BirthDate',
-            'animal.sex' => 'Sex',
+            'id' => 'AnimalID',
+            'tag_id' => 'AnimalRegID',
+            'sire_id' => 'SireID',
+            'dam_id' => 'DamID',
+            'sire_tag_id' => 'SireRegID',
+            'dam_tag_id' => 'DamRegID',
+            'birthdate' => 'BirthDate',
+            'sex' => 'Sex',
 //            'animal.animal_type' => 'AnimalType',
-            'animal.main_breed' => 'Breed',
+            'main_breed' => 'Breed',
 //            'heartgirth' => 'HeartGirth',
 //            'estimated_weight' => 'EstimatedWeight',
 //            'body_score' => 'BodyScore',
@@ -891,7 +891,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         $animal_type = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES;
         $genders = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_GENDER;
         $decodedFields = [
-            'animal.main_breed' => [
+            'main_breed' => [
                 'function' => '\backend\modules\core\models\Choices::getLabel',
                 'params'=> [
                     //'\backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS',
@@ -899,7 +899,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
                     'fieldValue', // the value of this field
                 ]
             ],
-            'animal.animal_type' => [
+            'animal_type' => [
                 'function' => '\backend\modules\core\models\Choices::getLabel',
                 'params' => [
                     //'\backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS',
@@ -913,7 +913,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
 //                    'fieldValue', // the value of this field
 //                ]
 //            ],
-            'animal.sex' => [
+            'sex' => [
                 'function' => '\backend\modules\core\models\Choices::getLabel',
                 'params'=> [
                     "$genders",
@@ -926,7 +926,7 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
 //                    'fieldValue', // the value of this field
 //                ]
 //            ],*/
-            'animal.birthdate' => [
+            'birthdate' => [
                 'function' => '\common\helpers\DateUtils::formatDate',
                 'params' => [
                     'fieldValue',
