@@ -415,8 +415,8 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         $extraFields = [
             'lactation.lactation_number' => null,
             'testday_no' => null,
-//            'animal.longitude' => null,
-//            'animal.latitude' => null,
+            'animal.longitude' => null,
+            'animal.latitude' => null,
         ];
         $filterConditions = array_merge($fields, [
             'region_id' => '=',
@@ -455,12 +455,12 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'milkprot' => 'MilkProt',
             'milk_heartgirth' => 'HeartGirth',
             'weight' => 'Weight',
-            'milk_estimated_weight' => 'estimated weight',
             'milk_bodyscore' => 'Bodyscore',
+            'milk_estimated_weight' => 'estimated weight',
             'lactation.lactation_number' => 'LactNo',
             'testday_no' => 'TDNo',
-//            'animal.longitude' => 'Longitude',
-//            'animal.latitude' => 'Latitude',
+            'animal.longitude' => 'Longitude',
+            'animal.latitude' => 'Latitude',
         ];
         $excludeFromReport = array_keys($filterValues);
         $genders = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_GENDER;
@@ -529,8 +529,9 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
         $weightFields = [
             'heartgirth' => 'HeartGirth',
             'weight_kg' => 'Weight',
-            'body_score' => 'Bodyscore',
-            'estimated_weight' => 'estimated weight'
+            'estimated_weight' => 'estimated weight',
+            'body_score' => 'Bodyscore'
+
         ];
         foreach ($weightFields as $weightField => $alias) {
             $field = ReportBuilder::getFullColumnName($weightField, new WeightEvent(), $alias, true, 'weight');
@@ -558,14 +559,14 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'animal.farm.total_cattle_owned_by_male' => null,
             'animal.farm.total_cattle_owned_joint' => null,
             'animal.id' => null,
-            'animal.tag_id' => null,
+//            'animal.tag_id' => null,
             'animal.birthdate' => null,
             'heartgirth' => null,
             'weight_kg' => null,
-            //'estimated_weight' => null,
+            'estimated_weight' => null,
             'body_score' => null,
-            'animal.sire_tag_id' => null,
-            'animal.dam_tag_id' => null,
+            'animal.sire_id' => null,
+            'animal.dam_id' => null,
             'animal.sex' => null,
             'animal.main_breed' => null,
             'animal.longitude' => null,
@@ -594,15 +595,15 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'animal.farm.total_cattle_owned_by_female' => 'total_cattle_owned_by_female',
             'animal.farm.total_cattle_owned_by_male' => 'total_cattle_owned_by_male',
             'animal.farm.total_cattle_owned_joint' => 'total_cattle_owned_joint',
-            'animal.tag_id' => 'AnimalTagID',
+//            'animal.tag_id' => 'AnimalTagID',
             'animal.id' => 'AnimalID',
             'animal.birthdate' => 'Birthdate',
             'heartgirth' => 'HeartGirth',
             'weight_kg' => 'Weight',
-            //'estimated_weight' => 'estimated weight',
+            'estimated_weight' => 'estimated weight',
             'body_score' => 'Bodyscore',
-            'animal.sire_tag_id' => 'Sire ID',
-            'animal.dam_tag_id' => 'Dam ID',
+            'animal.sire_id' => 'Sire ID',
+            'animal.dam_id' => 'Dam ID',
             'animal.sex' => 'Sex',
             'animal.main_breed' => 'Breed',
             'animal.longitude' => 'Longitude',
@@ -832,8 +833,8 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'dam_id' => null,
 //            'sire_tag_id' => null,
 //            'dam_tag_id' => null,
-            'birthdate' => null,
             'sex' => null,
+            'birthdate' => null,
 //            'animal.animal_type' => null,
             'main_breed' => null,
 //            'heartgirth' => null,
@@ -871,10 +872,10 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             'tag_id' => 'AnimalRegID',
             'sire_id' => 'SireID',
             'dam_id' => 'DamID',
-            'sire_tag_id' => 'SireRegID',
-            'dam_tag_id' => 'DamRegID',
-            'birthdate' => 'BirthDate',
+//            'sire_tag_id' => 'SireRegID',
+//            'dam_tag_id' => 'DamRegID',
             'sex' => 'Sex',
+            'birthdate' => 'BirthDate',
 //            'animal.animal_type' => 'AnimalType',
             'main_breed' => 'Breed',
 //            'heartgirth' => 'HeartGirth',
