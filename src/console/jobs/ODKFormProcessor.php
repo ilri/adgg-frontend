@@ -506,7 +506,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         return $farmerModel;
     }
 
-    protected function registerNewCattle()
+    protected function  registerNewCattle()
     {
         $repeatKey = 'animal_general';
         $animalIdentificationGroupKey = 'animal_identification';
@@ -1147,7 +1147,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         }
 
         $model = new AnimalEvent([
-            'event_type' => AnimalEvent::EVENT_TYPE_WEIGHTS,
+            'event_type' => AnimalEvent::EVENT_TYPE_FEEDING,
             'data_collection_date' => $this->getDate(),
             'field_agent_id' => $this->_model->user_id,
             'odk_form_uuid' => $this->_model->form_uuid,
