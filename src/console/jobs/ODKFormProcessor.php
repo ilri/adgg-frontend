@@ -1590,14 +1590,14 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 'animal_type' => 2,//cow
             ]);
 
-            $birthdateKey = OdkForm::isVersion1Point5OrBelow($this->_model->form_version) ? 'animal_damdobfull' : 'animal_damactualdob';
+//            $birthdateKey = OdkForm::isVersion1Point5OrBelow($this->_model->form_version) ? 'animal_damdobfull' : 'animal_damactualdob';
             $fixedAttributesMap = [
                 'name' => self::getAttributeJsonKey('animal_damname', $damDetailGroupKey, $repeatKey),
                 'tag_id' => self::getAttributeJsonKey('animal_damtagid', $damDetailGroupKey, $repeatKey),
                 'main_breed' => self::getAttributeJsonKey('animal_dammainbreed', $damDetailGroupKey, $repeatKey),
                 'main_breed_other' => self::getAttributeJsonKey('animal_dammainbreedoth', $damDetailGroupKey, $repeatKey),
                 'breed_composition' => self::getAttributeJsonKey('animal_dammaincomp', $damDetailGroupKey, $repeatKey),
-                'birthdate' => self::getAttributeJsonKey($birthdateKey, $damDetailGroupKey, $repeatKey),
+                'birthdate' => self::getAttributeJsonKey('animal_damactualdob', $damDetailGroupKey, $repeatKey),
             ];
 
             foreach ($fixedAttributesMap as $attr => $odkKey) {
