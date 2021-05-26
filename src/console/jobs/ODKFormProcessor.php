@@ -1597,7 +1597,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 'main_breed' => self::getAttributeJsonKey('animal_dammainbreed', $damDetailGroupKey, $repeatKey),
                 'main_breed_other' => self::getAttributeJsonKey('animal_dammainbreedoth', $damDetailGroupKey, $repeatKey),
                 'breed_composition' => self::getAttributeJsonKey('animal_dammaincomp', $damDetailGroupKey, $repeatKey),
-                'birthdate' => self::getAttributeJsonKey('animal_damactualdob', $damDetailGroupKey, $repeatKey),
+                'birthdate' => self::getAttributeJsonKey('animal_damdobyear', $damDetailGroupKey, $repeatKey),
             ];
 
             foreach ($fixedAttributesMap as $attr => $odkKey) {
