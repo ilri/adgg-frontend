@@ -538,6 +538,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             'reg_date' => $this->getDate(),
         ]);
 
+        $birthdate = date_format('animal_actualdob',"Y-m-d");
+
         $fixedAttributesMap = [
             'name' => self::getAttributeJsonKey('animal_name', $animalIdentificationGroupKey, $repeatKey),
             'tag_id' => self::getAttributeJsonKey('animal_tagid', $animalIdentificationGroupKey, $repeatKey),
@@ -545,7 +547,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             'animal_photo' => self::getAttributeJsonKey('animal_photo', $animalIdentificationGroupKey, $repeatKey),
             'main_breed' => self::getAttributeJsonKey('animal_mainbreed', $animalbreeddetailsGroupKey, $repeatKey),
             'breed_composition' => self::getAttributeJsonKey('animal_maincomp', $animalbreeddetailsGroupKey, $repeatKey),
-            'birthdate' => self::getAttributeJsonKey('animal_actualdob', $animalagedetailsGroupKey, $repeatKey),
+            'birthdate' => self::getAttributeJsonKey($birthdate, $animalagedetailsGroupKey, $repeatKey),
         ];
         $n = 1;
         foreach ($animalsData as $k => $animalData) {
