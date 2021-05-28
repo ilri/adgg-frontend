@@ -537,8 +537,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             'longitude' => $farmModel->longitude,
             'reg_date' => $this->getDate(),
         ]);
-
-        $birthdate = date_format('animal_actualdob',"Y-m-d");
+        $birthdate = "animal_actualdob";
+        $birthdate = date("H:i:s",strtotime($birthdate));
 
         $fixedAttributesMap = [
             'name' => self::getAttributeJsonKey('animal_name', $animalIdentificationGroupKey, $repeatKey),

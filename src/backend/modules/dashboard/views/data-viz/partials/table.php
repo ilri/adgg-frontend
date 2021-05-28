@@ -40,9 +40,9 @@ $projects = Choices::getList(ChoiceTypes::CHOICE_TYPE_PROJECT, false);
                     <?php foreach ($countries as $k => $name): ?>
                         <tr>
                             <th class="dt-row-name"><a href="<?= Url::to(['/dashboard/data-viz/index', 'country_id' => $k]) ?>"><?= Html::encode($name) ?></a></th>
-                            <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => 'LSF', 'country_id' => $k])) ?></td>
-                            <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => 'MSF', 'country_id' => $k])) ?></td>
-                            <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => 'SSF', 'country_id' => $k])) ?></td>
+                            <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => '1', 'country_id' => $k])) ?></td>
+                            <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => '2', 'country_id' => $k])) ?></td>
+                            <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => '3', 'country_id' => $k])) ?></td>
                             <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => null, 'country_id' => $k])) ?></td>
                             <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['country_id' => $k])) ?></td>
                             <td><?= Yii::$app->formatter->asDecimal(Animal::getDashboardStats(Animal::STATS_ALL_TIME, false, [],  'created_at', null, null, ['country_id' => $k])) ?></td>
