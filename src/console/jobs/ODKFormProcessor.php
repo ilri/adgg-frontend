@@ -1605,11 +1605,22 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 'main_breed' => self::getAttributeJsonKey('animal_dammainbreed', $damDetailGroupKey, $repeatKey),
                 'main_breed_other' => self::getAttributeJsonKey('animal_dammainbreedoth', $damDetailGroupKey, $repeatKey),
                 'breed_composition' => self::getAttributeJsonKey('animal_dammaincomp', $damDetailGroupKey, $repeatKey),
-                'birthdate' => self::getAttributeJsonKey('animal_damdobyear', $damDetailGroupKey, $repeatKey),
+                'birthdate' => self::getAttributeJsonKey('animal_damactualdob', $damDetailGroupKey, $repeatKey),
             ];
 
+//            foreach ($fixedAttributesMap as $attr => $odkKey) {
+//                $animalModel->{$attr} = $this->getFormDataValueByKey($damData, $odkKey);
+//            }
             foreach ($fixedAttributesMap as $attr => $odkKey) {
-                $animalModel->{$attr} = $this->getFormDataValueByKey($damData, $odkKey);
+                // birthdate has to be processed separately
+                // convert datetime to date first
+                if ($attr == 'birthdate') {
+                    $datetime = $this->getFormDataValueByKey($damData, $odkKey);
+                    $birthdate = date('Y-m-d', strtotime($datetime));
+                    $animalModel->{$attr} = $birthdate;
+                } else {
+                    $animalModel->{$attr} = $this->getFormDataValueByKey($damData, $odkKey);
+                }
             }
             $i = 'dam_' . $index;
             $this->saveAnimalModel($animalModel, $i, true);
@@ -1685,7 +1696,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                     'breed_composition' => self::getAttributeJsonKey('animal_siremaincomp', $sireBullDetailGroupKey, $repeatKey),
                     'secondary_breed' => self::getAttributeJsonKey('animal_siresecondbreed', $sireBullDetailGroupKey, $repeatKey),
                     'secondary_breed_other' => self::getAttributeJsonKey('animal_siresecondbreedoth', $sireBullDetailGroupKey, $repeatKey),
-                    'birthdate' => self::getAttributeJsonKey($birthdateKey, $sireBullDetailGroupKey, $repeatKey),
+                    'birthdate' => self::getAttributeJsonKey('animal_sireactualdob', $sireBullDetailGroupKey, $repeatKey),
                     'sire_owner' => self::getAttributeJsonKey('animal_sireowner', $sireBullDetailGroupKey, $repeatKey),
                     'sire_owner_scheme' => self::getAttributeJsonKey('animal_sireownerscheme', $sireBullDetailGroupKey, $repeatKey),
                     'sire_owner_institute' => self::getAttributeJsonKey('animal_sireownerinstitute', $sireBullDetailGroupKey, $repeatKey),
@@ -1694,8 +1705,20 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 ];
             }
 
+//            foreach ($fixedAttributesMap as $attr => $odkKey) {
+//                $animalModel->{$attr} = $this->getFormDataValueByKey($sireData, $odkKey);
+//            }
+
             foreach ($fixedAttributesMap as $attr => $odkKey) {
-                $animalModel->{$attr} = $this->getFormDataValueByKey($sireData, $odkKey);
+                // birthdate has to be processed separately
+                // convert datetime to date first
+                if ($attr == 'birthdate') {
+                    $datetime = $this->getFormDataValueByKey($sireData, $odkKey);
+                    $birthdate = date('Y-m-d', strtotime($datetime));
+                    $animalModel->{$attr} = $birthdate;
+                } else {
+                    $animalModel->{$attr} = $this->getFormDataValueByKey($sireData, $odkKey);
+                }
             }
             $i = 'sire_' . $index;
             $this->saveAnimalModel($animalModel, $i, true);
