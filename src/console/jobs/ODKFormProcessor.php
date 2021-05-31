@@ -537,8 +537,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             'longitude' => $farmModel->longitude,
             'reg_date' => $this->getDate(),
         ]);
-        $birthdate = "animal_actualdob";
-        $birthdate = date("H:i:s",strtotime($birthdate));
 
         $fixedAttributesMap = [
             'name' => self::getAttributeJsonKey('animal_name', $animalIdentificationGroupKey, $repeatKey),
@@ -547,13 +545,21 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             'animal_photo' => self::getAttributeJsonKey('animal_photo', $animalIdentificationGroupKey, $repeatKey),
             'main_breed' => self::getAttributeJsonKey('animal_mainbreed', $animalbreeddetailsGroupKey, $repeatKey),
             'breed_composition' => self::getAttributeJsonKey('animal_maincomp', $animalbreeddetailsGroupKey, $repeatKey),
-            'birthdate' => self::getAttributeJsonKey($birthdate, $animalagedetailsGroupKey, $repeatKey),
+            'birthdate' => self::getAttributeJsonKey('animal_actualdob', $animalagedetailsGroupKey, $repeatKey),
         ];
         $n = 1;
         foreach ($animalsData as $k => $animalData) {
             $newAnimalModel = clone $animalModel;
             foreach ($fixedAttributesMap as $attr => $odkKey) {
-                $newAnimalModel->{$attr} = $this->getFormDataValueByKey($animalData, $odkKey);
+                // birthdate has to be processed separately
+                // convert datetime to date first
+                if ($attr == 'birthdate') {
+                    $datetime = $this->getFormDataValueByKey($animalData, $odkKey);
+                    $birthdate = date('Y-m-d', strtotime($datetime));
+                    $newAnimalModel->{$attr} = $birthdate;
+                } else {
+                    $newAnimalModel->{$attr} = $this->getFormDataValueByKey($animalData, $odkKey);
+                }
             }
             $newAnimalModel->setDynamicAttributesValuesFromOdkForm($animalData, $animalIdentificationGroupKey, $repeatKey);
             $damModel = $this->getOrRegisterAnimalDam($animalData, $farmModel, $k);
