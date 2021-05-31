@@ -554,9 +554,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 // birthdate has to be processed separately
                 // convert datetime to date first
                 if ($attr == 'birthdate') {
-                    $datetime = $this->getFormDataValueByKey($animalData, $odkKey);
-                    $birthdate = date('Y-m-d', strtotime($datetime));
-                    $newAnimalModel->{$attr} = $birthdate;
+                    $birthdate = new \DateTime($this->getFormDataValueByKey($animalData, $odkKey));
+                    $newAnimalModel->{$attr} = $birthdate->format('Y-m-d');
                 } else {
                     $newAnimalModel->{$attr} = $this->getFormDataValueByKey($animalData, $odkKey);
                 }
