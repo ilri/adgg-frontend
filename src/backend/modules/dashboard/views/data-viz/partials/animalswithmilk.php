@@ -31,7 +31,7 @@ $colors = [
     '#b3e467', '#4cf185', '#0f767a',
 ];
 // one per country, this will be applied to the columns, for lines we will use the Color util to generate a dark or lighter shade for each
-$country_colors = ['Kenya' => '#875F03', 'Tanzania' => '#65B27C', 'Ethiopia' => '#5D84A5','Uganda' => '#FCDC04', 'Nigeria' => '#008000'];
+$country_colors = ['Kenya' => '#875F03', 'Tanzania' => '#65B27C', 'Ethiopia' => '#5D84A5','Uganda' => '#FCDC04', 'Nigeria' => '#008000','Zambia' => '#00FF00'];
 
 $data = [];
 
