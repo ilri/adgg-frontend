@@ -65,7 +65,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         [
                             'attribute' => 'birthdate',
-                            'value' => DateUtils::formatDate($model->birthdate, 'd-M-Y'),
+                            'value' => DateUtils::formatDate($model->birthdate, 'Y-m-d'),
                         ],
                         [
                             'attribute' => 'deformities',
