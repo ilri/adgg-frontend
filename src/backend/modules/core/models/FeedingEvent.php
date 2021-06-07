@@ -45,7 +45,7 @@ use yii\helpers\ArrayHelper;
  * @property string $residue_source
  * @property string $residue_types
  */
-class FeedingEvent extends AnimalEvent implements ImportActiveRecordInterface
+class FeedingEvent extends AnimalEvent  implements ImportActiveRecordInterface, AnimalEventInterface
 {
     public function rules()
     {
