@@ -46,15 +46,13 @@ use yii\bootstrap4\ActiveForm;
             <div class="kt-section__body">
                 <div class="row">
                     <div class="col-md-8">
-                        <?php if (!Session::isCountry()): ?>
-                            <?= $form->field($model, 'country_id')->widget(Select2::class, [
-                                'data' => Country::getListData(),
-                                'options' => ['placeholder' => '[select one]'],
-                                'pluginOptions' => [
-                                    'allowClear' => false
-                                ],
-                            ]) ?>
-                        <?php endif; ?>
+                        <?= $form->field($model, 'country_id')->widget(Select2::class, [
+                            'data' => Country::getListData(),
+                            'options' => ['placeholder' => '[select one]'],
+                            'pluginOptions' => [
+                                'allowClear' => false
+                            ],
+                        ]) ?>
                         <?= $form->field($model, 'farm_type')->widget(Select2::class, [
                             'data' => Choices::getList(ChoiceTypes::CHOICE_TYPE_FARM_TYPE, false),
                             'options' => ['placeholder' => '[select one]'],
