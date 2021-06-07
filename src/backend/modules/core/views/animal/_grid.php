@@ -76,7 +76,7 @@ use yii\helpers\Url;
         [
             'attribute' => 'birthdate',
             'value' => function (Animal $model) {
-                DateUtils::formatDate($model->birthdate, 'd-M-Y');
+                return DateUtils::formatDate($model->birthdate, 'd-M-Y');
             },
             'filter' => false,
         ],
