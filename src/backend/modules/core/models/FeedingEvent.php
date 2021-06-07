@@ -4,21 +4,15 @@
 namespace backend\modules\core\models;
 
 
-use common\excel\ImportActiveRecordInterface;
-use common\helpers\DbUtils;
-use yii\helpers\ArrayHelper;
+use common\helpers\ArrayHelper;
 
 /**
  * Class FeedingEvent
  * @package backend\modules\core\models
  *
- * @property string $concetrate_propotion
- * @property string $feed_lactation
- * @property string $fodder_acres
- * @property string $fodder_propotion
- * @property string $residue_source
+ *
  */
-class FeedingEvent extends AnimalEvent  implements ImportActiveRecordInterface, AnimalEventInterface
+class FeedingEvent extends AnimalEvent  implements  AnimalEventInterface
 {
     public function rules()
     {
@@ -32,22 +26,6 @@ class FeedingEvent extends AnimalEvent  implements ImportActiveRecordInterface, 
         return ArrayHelper::merge(parent::attributeLabels(), [
             'event_date' => 'Feeding Date',
         ]);
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getExcelColumns()
-    {
-        return [
-            'animalTagId',
-            'event_date',
-            'concentrate_propotion',
-            'feed_lactation',
-            'fodder_acres',
-            'residue_propotion',
-            'residue_source',
-        ];
     }
 
 
@@ -65,5 +43,21 @@ class FeedingEvent extends AnimalEvent  implements ImportActiveRecordInterface, 
     public function reportBuilderAdditionalUnwantedFields(): array
     {
         return ['lactation_id', 'lactation_number'];
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getExcelColumns()
+    {
+        return [
+            'animalTagId',
+            'event_date',
+            'concentrate_propotion',
+            'feed_lactation',
+            'fodder_acres',
+            'residue_propotion',
+            'residue_source',
+        ];
     }
 }
