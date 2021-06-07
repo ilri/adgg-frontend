@@ -35,7 +35,7 @@ use yii\web\View;
             },
         ],
         [
-            'attribute' => 'concentrate_propotion',
+            'attribute' => 'concetrate_propotion',
             'enableSorting' => false,
         ],
         [
@@ -43,7 +43,7 @@ use yii\web\View;
             'enableSorting' => false,
         ],
         [
-            'attribute' => 'fodder_accre',
+            'attribute' => 'fodder_acres',
             'enableSorting' => false,
         ],
         [
