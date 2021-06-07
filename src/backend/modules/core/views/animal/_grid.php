@@ -81,6 +81,12 @@ use yii\helpers\Url;
             'filter' => false,
         ],
         [
+            'attribute' => 'Breed',
+            'value' => function (Animal $model) {
+                return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, $model->main_breed);
+            }
+        ],
+        [
             'class' => common\widgets\grid\ActionColumn::class,
             'template' => '{update}{view}',
             'visibleButtons' => [
