@@ -57,7 +57,7 @@ class FeedingEvent extends AnimalEvent implements ImportActiveRecordInterface
     public function attributeLabels()
     {
         return ArrayHelper::merge(parent::attributeLabels(), [
-            'event_date' => 'FeedingController Date',
+            'event_date' => 'Feeding Date',
         ]);
     }
 
