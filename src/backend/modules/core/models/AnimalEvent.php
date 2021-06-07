@@ -385,7 +385,9 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             case self::EVENT_TYPE_SYNCHRONIZATION:
                 return 'Synchronization';
             case self::EVENT_TYPE_WEIGHTS:
-                return 'Weight/Growth/Feed';
+                return 'Weight/Growth';
+            case self::EVENT_TYPE_FEEDING:
+                return 'Feeding';
             case self::EVENT_TYPE_HEALTH:
                 return 'Health';
             case self::EVENT_TYPE_EXITS:
@@ -422,6 +424,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             self::EVENT_TYPE_PREGNANCY_DIAGNOSIS => static::decodeEventType(self::EVENT_TYPE_PREGNANCY_DIAGNOSIS),
             self::EVENT_TYPE_SYNCHRONIZATION => static::decodeEventType(self::EVENT_TYPE_SYNCHRONIZATION),
             self::EVENT_TYPE_WEIGHTS => static::decodeEventType(self::EVENT_TYPE_WEIGHTS),
+            self::EVENT_TYPE_FEEDING => static::decodeEventType(self::EVENT_TYPE_FEEDING),
             self::EVENT_TYPE_VACCINATION => static::decodeEventType(self::EVENT_TYPE_VACCINATION),
             self::EVENT_TYPE_PARASITE_INFECTION => static::decodeEventType(self::EVENT_TYPE_PARASITE_INFECTION),
             self::EVENT_TYPE_INJURY => static::decodeEventType(self::EVENT_TYPE_INJURY),
