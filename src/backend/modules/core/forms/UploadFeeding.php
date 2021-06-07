@@ -43,6 +43,9 @@ class UploadFeeding extends UploadAnimalEvent implements ImportInterface
     }
 
 
+    /**
+     * @return int|string|void
+     */
     public function setUploadType()
     {
         $this->_uploadType = ExcelImport::TYPE_ANIMAL_EVENT_FEEDING;

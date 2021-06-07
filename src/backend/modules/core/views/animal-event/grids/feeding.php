@@ -35,7 +35,7 @@ use yii\web\View;
             },
         ],
         [
-            'attribute' => 'concetrate_propotion',
+            'attribute' => 'concentrate_propotion',
             'enableSorting' => false,
         ],
         [
