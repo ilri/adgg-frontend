@@ -18,7 +18,7 @@ use yii\web\View;
     'columns' => [
         [
             'attribute' => 'event_date',
-            'label' => 'Weight Date',
+            'label' => 'Feeding Date',
             'format' => ['date', 'php:d-M-Y'],
         ],
         [
