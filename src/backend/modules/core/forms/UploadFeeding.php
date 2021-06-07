@@ -18,6 +18,12 @@ class UploadFeeding extends UploadAnimalEvent implements ImportInterface
         $this->sampleExcelFileName = 'feeding-event.xlsx';
     }
 
+
+    /**
+     * @param $batch
+     * @return mixed|void
+     * @throws \Exception
+     */
     public function processExcelBatchData($batch)
     {
         $columns = [];
@@ -35,6 +41,7 @@ class UploadFeeding extends UploadAnimalEvent implements ImportInterface
         $model = new FeedingEvent(['country_id' => $this->country_id, 'event_type' => $this->event_type]);
         $this->save($insert_data, $model, false);
     }
+
 
     public function setUploadType()
     {
