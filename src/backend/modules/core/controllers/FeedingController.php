@@ -9,9 +9,8 @@ use backend\modules\core\Constants;
 use backend\modules\core\forms\UploadFeeding;
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\FeedingEvent;
-use backend\modules\core\models\WeightEvent;
 use common\controllers\UploadExcelTrait;
-use common\excel\ExcelUploadForm;
+use Yii;
 
 class FeedingController extends Controller
 {
