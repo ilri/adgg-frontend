@@ -9,7 +9,7 @@ use backend\modules\core\models\ExcelImport;
 use backend\modules\core\models\FeedingEvent;
 use common\excel\ImportInterface;
 
-class UploadFeeding extends UploadAnimalEvent implements ImportInterface
+class UploadFeedingEvent extends UploadAnimalEvent implements ImportInterface
 {
     public function init()
     {
