@@ -35,23 +35,11 @@ use yii\web\View;
             },
         ],
         [
-            'attribute' => 'concentrate_propotion',
+            'attribute' => 'feed_water',
             'enableSorting' => false,
         ],
         [
-            'attribute' => 'feed_lactation',
-            'enableSorting' => false,
-        ],
-        [
-            'attribute' => 'fodder_acres',
-            'enableSorting' => false,
-        ],
-        [
-            'attribute' => 'residue_propotion',
-            'enableSorting' => false,
-        ],
-        [
-            'attribute' => 'residue_source',
+            'attribute' => 'feed_given',
             'enableSorting' => false,
         ],
     ],
