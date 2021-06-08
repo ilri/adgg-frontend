@@ -54,11 +54,8 @@ class FeedingEvent extends AnimalEvent  implements ImportActiveRecordInterface, 
         return [
             'animalTagId',
             'event_date',
-            'concentrate_propotion',
-            'feed_lactation',
-            'fodder_acres',
-            'residue_propotion',
-            'residue_source',
+            'feed_given',
+            'feed_water',
         ];
     }
 }
