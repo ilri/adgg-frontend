@@ -44,6 +44,7 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
     const TYPE_ANIMAL_EVENT_SYNC = 33;
     const TYPE_ANIMAL_EVENT_PD = 34;
     const TYPE_ANIMAL_EVENT_WEIGHT = 35;
+    const TYPE_ANIMAL_EVENT_FEEDING =37;
     const TYPE_ANIMAL_EVENT_HEALTH = 36;
     const TYPE_ANIMAL_EVENT_EXITS = 38;
     const TYPE_ORGANIZATION_REF_UNITS = 40;
@@ -180,6 +181,8 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
                 return 'Pregnancy Diagnosis';
             case self::TYPE_ANIMAL_EVENT_WEIGHT:
                 return 'Weight';
+            case self::TYPE_ANIMAL_EVENT_FEEDING:
+                return 'Weight';
             case self::TYPE_ANIMAL_EVENT_HEALTH:
                 return 'Health';
             case self::TYPE_ANIMAL_EVENT_EXITS:
@@ -211,6 +214,7 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
             self::TYPE_ANIMAL_EVENT_SYNC => static::decodeType(self::TYPE_ANIMAL_EVENT_SYNC),
             self::TYPE_ANIMAL_EVENT_PD => static::decodeType(self::TYPE_ANIMAL_EVENT_PD),
             self::TYPE_ANIMAL_EVENT_WEIGHT => static::decodeType(self::TYPE_ANIMAL_EVENT_WEIGHT),
+            self::TYPE_ANIMAL_EVENT_FEEDING => static::decodeType(self::TYPE_ANIMAL_EVENT_FEEDING),
             self::TYPE_ANIMAL_EVENT_HEALTH => static::decodeType(self::TYPE_ANIMAL_EVENT_HEALTH),
             self::TYPE_ANIMAL_EVENT_EXITS => static::decodeType(self::TYPE_ANIMAL_EVENT_EXITS),
             self::TYPE_ORGANIZATION_REF_UNITS => static::decodeType(self::TYPE_ORGANIZATION_REF_UNITS),
