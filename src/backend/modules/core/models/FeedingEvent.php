@@ -4,7 +4,8 @@
 namespace backend\modules\core\models;
 
 
-use common\helpers\ArrayHelper;
+use common\excel\ImportActiveRecordInterface;
+use yii\helpers\ArrayHelper;
 
 /**
  * Class FeedingEvent
@@ -12,7 +13,7 @@ use common\helpers\ArrayHelper;
  *
  *
  */
-class FeedingEvent extends AnimalEvent  implements  AnimalEventInterface
+class FeedingEvent extends AnimalEvent  implements ImportActiveRecordInterface, AnimalEventInterface
 {
     public function rules()
     {

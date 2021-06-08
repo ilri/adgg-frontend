@@ -162,7 +162,7 @@ class ReportBuilder extends Model
             ],
             'FarmMetadataFeeding' => [
                 'class' => FarmMetadataFeeding::class,
-                'title' => 'Farm FeedingController',
+                'title' => 'Farm FeedingEventController',
                 'relations' => ['farm'],
             ],
             'FarmMetadataHealth' => [
