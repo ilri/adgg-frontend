@@ -20,7 +20,7 @@ use yii\web\View;
     'columns' => [
         [
             'attribute' => 'event_date',
-            'label' => 'Feeding Date',
+            'label' => 'Vaccination Date',
             'format' => ['date', 'php:d-M-Y'],
         ],
         [
