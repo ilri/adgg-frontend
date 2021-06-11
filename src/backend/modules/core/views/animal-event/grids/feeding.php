@@ -45,7 +45,9 @@ use yii\web\View;
 //            'enableSorting' => false,
 //        ],
         [
-            'attribute' => function ($data) {
+            'attribute' => 'feed_given',
+            'label'=>'feed_given',
+            'value'=> function ($data) {
                 return $data->feed_given; // $data['name'] for array data, e.g. using SqlDataProvider.
             },
             'enableSorting' => false,
