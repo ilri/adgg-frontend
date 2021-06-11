@@ -2,6 +2,8 @@
 
 use backend\modules\core\models\AnimalEvent;
 use common\helpers\Lang;
+use backend\modules\core\models\Choices;
+use backend\modules\core\models\ChoiceTypes;
 use common\widgets\grid\GridView;
 use yii\helpers\Url;
 use yii\web\View;
@@ -40,7 +42,9 @@ use yii\web\View;
 //        ],
         [
             'attribute' => 'feed_given',
-            'enableSorting' => false,
+            'value' => function (AnimalEvent $model) {
+                return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_FEED_TYPE, $model->feed_given);
+            },
         ],
     ],
 ]);
