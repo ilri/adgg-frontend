@@ -36,6 +36,8 @@ $events = AnimalEvent::eventTypeOptions();
             $url = 'feeding-event/index';
         } elseif ($key == AnimalEvent::EVENT_TYPE_VACCINATION) {
             $url = 'vaccination-event/index';
+        }elseif ($key == AnimalEvent::EVENT_TYPE_PARASITE_INFECTION) {
+            $url = 'parasite-infection-event/index';
         }elseif ($key == AnimalEvent::EVENT_TYPE_HEALTH) {
             $url = 'health-event/index';
         } elseif ($key == AnimalEvent::EVENT_TYPE_EXITS) {
