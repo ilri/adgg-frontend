@@ -11,7 +11,8 @@ use yii\helpers\ArrayHelper;
  * Class FeedingEvent
  * @package backend\modules\core\models
  *
- *
+ *@property string $feed_given
+ *@property string $feed_water
  */
 class FeedingEvent extends AnimalEvent  implements ImportActiveRecordInterface, AnimalEventInterface
 {
@@ -54,11 +55,8 @@ class FeedingEvent extends AnimalEvent  implements ImportActiveRecordInterface, 
         return [
             'animalTagId',
             'event_date',
-            'concentrate_propotion',
-            'feed_lactation',
-            'fodder_acres',
-            'residue_propotion',
-            'residue_source',
+            'feed_given',
+            'feed_water',
         ];
     }
 }

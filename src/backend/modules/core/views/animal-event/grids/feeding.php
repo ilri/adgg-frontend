@@ -2,6 +2,8 @@
 
 use backend\modules\core\models\AnimalEvent;
 use common\helpers\Lang;
+use backend\modules\core\models\Choices;
+use backend\modules\core\models\ChoiceTypes;
 use common\widgets\grid\GridView;
 use yii\helpers\Url;
 use yii\web\View;
@@ -35,24 +37,12 @@ use yii\web\View;
             },
         ],
         [
-            'attribute' => 'concentrate_propotion',
-            'enableSorting' => false,
-        ],
-        [
-            'attribute' => 'feed_lactation',
-            'enableSorting' => false,
-        ],
-        [
-            'attribute' => 'fodder_acres',
-            'enableSorting' => false,
-        ],
-        [
-            'attribute' => 'residue_propotion',
-            'enableSorting' => false,
-        ],
-        [
-            'attribute' => 'residue_source',
-            'enableSorting' => false,
+            'attribute' => 'feed_given',
+            'label'=>'Feed Given',
+            'value' => function (AnimalEvent $model) {
+                 return Choices::getMultiSelectLabel($model->feed_given,ChoiceTypes::CHOICE_TYPE_FEED_TYPE);
+            },
+            'enableSorting' => true,
         ],
     ],
 ]);
