@@ -37,20 +37,12 @@ use yii\web\View;
             },
         ],
         [
-            'attribute' => 'feed_water',
-            'label'=>'feed_water',
-            'value' => function (AnimalEvent $model) {
-                return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_WATER_FEEDING,$model->feed_water);
-            },
-            'enableSorting' => false,
-        ],
-        [
             'attribute' => 'feed_given',
             'label'=>'feed_given',
             'value' => function (AnimalEvent $model) {
                  return Choices::getMultiSelectLabel($model->feed_given,ChoiceTypes::CHOICE_TYPE_FEED_TYPE);
             },
-            'enableSorting' => false,
+            'enableSorting' => true,
         ],
     ],
 ]);
