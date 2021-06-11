@@ -10,7 +10,6 @@ use backend\modules\core\forms\UploadVaccinationEvent;
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\VaccinationEvent;
 use common\controllers\UploadExcelTrait;
-
 use Yii;
 
 class VaccinationEventController extends Controller

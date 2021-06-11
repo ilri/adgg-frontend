@@ -8,7 +8,6 @@ use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\ExcelImport;
 use backend\modules\core\models\VaccinationEvent;
 use common\excel\ImportInterface;
-use yii\base\BaseObject;
 
 class UploadVaccinationEvent extends UploadAnimalEvent implements ImportInterface
 {
