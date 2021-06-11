@@ -4,6 +4,7 @@
 namespace backend\modules\core\models;
 
 
+use common\excel\ImportActiveRecordInterface;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -19,7 +20,7 @@ use yii\helpers\ArrayHelper;
  * @property string $vacc_vaccinecowstatus
  * @property string $vacc_vaccinecowstatusother
  */
-class VaccinationEvent extends AnimalEvent implements \common\excel\ImportActiveRecordInterface, AnimalEventInterface
+class VaccinationEvent extends AnimalEvent implements ImportActiveRecordInterface, AnimalEventInterface
 {
 
     public function rules()
