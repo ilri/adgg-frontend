@@ -47,6 +47,18 @@ use yii\web\View;
             'attribute' => 'vacc_vaccine_provider',
             'enableSorting' => false,
         ],
+        [
+            'attribute' => 'vacc_vaccine_provider_other',
+            'enableSorting' => false,
+        ],
+        [
+            'attribute' => 'vacc_vaccine_drug_cost',
+            'enableSorting' => false,
+        ],
+        [
+            'attribute' => 'vacc_vaccine_service_cost',
+            'enableSorting' => false,
+        ],
     ],
 ]);
 ?>
