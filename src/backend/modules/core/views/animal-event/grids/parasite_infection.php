@@ -36,13 +36,29 @@ use yii\web\View;
                 return $model->animal->name;
             },
         ],
+//        [
+//            'attribute' => 'parasite_type',
+//            'label'=>'Parasite Type',
+//            'value' => function (AnimalEvent $model) {
+//                return Choices::getMultiSelectLabel($model->parasite_type,ChoiceTypes::CHOICE_TYPE_PARASITE_TYPE);
+//            },
+//            'enableSorting' => true,
+//        ],
         [
-            'attribute' => 'parasite_type',
-            'label'=>'Parasite Type',
-            'value' => function (AnimalEvent $model) {
-                return Choices::getMultiSelectLabel($model->parasite_type,ChoiceTypes::CHOICE_TYPE_PARASITE_TYPE);
-            },
-            'enableSorting' => true,
+            'attribute' => 'parasite_type_other',
+            'enableSorting' => false,
+        ],
+        [
+            'attribute' => 'parasite_provider',
+            'enableSorting' => false,
+        ],
+        [
+            'attribute' => 'parasite_provider_other',
+            'enableSorting' => false,
+        ],
+        [
+            'attribute' => 'parasite_drug_cost',
+            'enableSorting' => false,
         ],
     ],
 ]);
