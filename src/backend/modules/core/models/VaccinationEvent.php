@@ -11,14 +11,14 @@ use yii\helpers\ArrayHelper;
  * Class VaccinationEvent
  * @package backend\modules\core\models
  *
- * @property string $vacc_vaccinetype
- * @property string $vacc_othervaccinetype
- * @property string $vacc_vaccineprovider
- * @property string $vacc_vaccineproviderother
- * @property string $vacc_vaccinedrugcost
- * @property string $vacc_vaccineservicecost
- * @property string $vacc_vaccinecowstatus
- * @property string $vacc_vaccinecowstatusother
+ * @property string $vvacc_vaccine_type
+ * @property string $vacc_vaccine_type_other
+ * @property string $vacc_vaccine_provider
+ * @property string $vvacc_vaccine_provider_other
+ * @property string $vacc_vaccine_drug_cost
+ * @property string $vacc_vaccine_service_cost
+ * @property string $vvacc_vaccine_cow_status
+ * @property string $vacc_vaccine_cow_status_other
  */
 class VaccinationEvent extends AnimalEvent implements ImportActiveRecordInterface, AnimalEventInterface
 {
