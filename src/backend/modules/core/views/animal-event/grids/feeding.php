@@ -40,10 +40,13 @@ use yii\web\View;
 //            'attribute' => 'feed_water',
 //            'enableSorting' => false,
 //        ],
+//        [
+//            'attribute' => 'feed_given',
+//            'enableSorting' => false,
+//        ],
         [
-            'attribute' => 'feed_given',
-            'value' => function (AnimalEvent $model) {
-                return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_FEED_TYPE, $model->feed_given);
+            'attribute' => function ($data) {
+                return $data->feed_given; // $data['name'] for array data, e.g. using SqlDataProvider.
             },
         ],
     ],
