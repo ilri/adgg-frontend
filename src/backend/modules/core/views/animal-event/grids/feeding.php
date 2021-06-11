@@ -38,7 +38,7 @@ use yii\web\View;
         ],
         [
             'attribute' => 'feed_given',
-            'label'=>'feed_given',
+            'label'=>'Feed Given',
             'value' => function (AnimalEvent $model) {
                  return Choices::getMultiSelectLabel($model->feed_given,ChoiceTypes::CHOICE_TYPE_FEED_TYPE);
             },
