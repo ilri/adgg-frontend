@@ -48,8 +48,7 @@ use yii\web\View;
             'attribute' => 'feed_given',
             'label'=>'feed_given',
             'value' => function (AnimalEvent $model) {
-                var_dump(Choices::getLabel(ChoiceTypes::CHOICE_TYPE_FEED_TYPE, $model->feed_given));
-                 return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_FEED_TYPE, $model->feed_given);
+                 return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_FEED_TYPE, $model['feed_given']);
             },
             'enableSorting' => false,
         ],
