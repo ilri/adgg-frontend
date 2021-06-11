@@ -48,6 +48,7 @@ use yii\web\View;
             'attribute' => function ($data) {
                 return $data->feed_given; // $data['name'] for array data, e.g. using SqlDataProvider.
             },
+            'enableSorting' => false,
         ],
     ],
 ]);
