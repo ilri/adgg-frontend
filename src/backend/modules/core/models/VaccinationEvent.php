@@ -47,7 +47,7 @@ class VaccinationEvent extends AnimalEvent implements ImportActiveRecordInterfac
     }
 
     /**
-     * @inheritDoc
+     * @return string[]
      */
     public function reportBuilderAdditionalUnwantedFields(): array
     {
