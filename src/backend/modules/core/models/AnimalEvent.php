@@ -397,7 +397,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             case self::EVENT_TYPE_CERTIFICATION:
                 return 'Certification';
             case self::EVENT_TYPE_VACCINATION:
-                return 'Vaccination';
+                return 'VaccinationEvent';
             case self::EVENT_TYPE_PARASITE_INFECTION:
                 return 'Parasite Infection';
             case self::EVENT_TYPE_INJURY:
