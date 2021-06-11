@@ -34,10 +34,10 @@ use yii\web\View;
                 return $model->animal->name;
             },
         ],
-        [
-            'attribute' => 'feed_water',
-            'enableSorting' => false,
-        ],
+//        [
+//            'attribute' => 'feed_water',
+//            'enableSorting' => false,
+//        ],
         [
             'attribute' => 'feed_given',
             'enableSorting' => false,
