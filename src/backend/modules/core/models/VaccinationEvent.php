@@ -11,7 +11,7 @@ use yii\helpers\ArrayHelper;
  * Class VaccinationEvent
  * @package backend\modules\core\models
  *
- * @property string $vvacc_vaccine_type
+ * @property string $vacc_vaccine_type
  * @property string $vacc_vaccine_type_other
  * @property string $vacc_vaccine_provider
  * @property string $vvacc_vaccine_provider_other
