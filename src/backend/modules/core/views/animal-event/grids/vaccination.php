@@ -35,13 +35,17 @@ use yii\web\View;
                 return $model->animal->name;
             },
         ],
+//        [
+//            'attribute' => 'vacc_vaccine_type',
+//            'label'=>'Vaccine Type',
+//            'value' => function (AnimalEvent $model) {
+//                return Choices::getMultiSelectLabel($model->vacc_vaccine_type,ChoiceTypes::CHOICE_TYPE_VACCINE_TYPE);
+//            },
+//            'enableSorting' => true,
+//        ],
         [
-            'attribute' => 'vacc_vaccine_type',
-            'label'=>'Vaccine Type',
-            'value' => function (AnimalEvent $model) {
-                return Choices::getMultiSelectLabel($model->vacc_vaccine_type,ChoiceTypes::CHOICE_TYPE_VACCINE_TYPE);
-            },
-            'enableSorting' => true,
+            'attribute' => 'vacc_vaccine_provider',
+            'enableSorting' => false,
         ],
     ],
 ]);
