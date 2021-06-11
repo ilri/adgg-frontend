@@ -62,14 +62,14 @@ class VaccinationEvent extends AnimalEvent implements ImportActiveRecordInterfac
         return [
             'animalTagId',
             'event_date',
-            'vacc_vaccinetype',
-            'vacc_othervaccinetype',
-            'vacc_vaccineprovider',
-            'vacc_vaccineproviderother',
-            'vacc_vaccinedrugcost',
-            'vacc_vaccineservicecost',
-            'vacc_vaccinecowstatus',
-            'vacc_vaccinecowstatusother',
+            'vacc_vaccine_type',
+            'vacc_vaccine_type_other',
+            'vacc_vaccine_provider',
+            'vacc_vaccine_provider_other',
+            'vacc_vaccine_drug_cost',
+            'vacc_vaccine_service_cost',
+            'vacc_vaccine_cow_status',
+            'vacc_vaccine_cow_status_other',
         ];
     }
 }
