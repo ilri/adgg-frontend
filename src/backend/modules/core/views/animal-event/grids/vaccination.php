@@ -1,5 +1,4 @@
 <?php
-
 use backend\modules\core\models\AnimalEvent;
 use common\helpers\Lang;
 use backend\modules\core\models\Choices;
@@ -20,7 +19,7 @@ use yii\web\View;
     'columns' => [
         [
             'attribute' => 'event_date',
-            'label' => 'Vaccination Date',
+            'label' => 'Feeding Date',
             'format' => ['date', 'php:d-M-Y'],
         ],
         [
