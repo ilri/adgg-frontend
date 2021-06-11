@@ -47,8 +47,8 @@ use yii\web\View;
         [
             'attribute' => 'feed_given',
             'label'=>'feed_given',
-            'value'=> function ($data) {
-                return array($data->feed_given); // $data['name'] for array data, e.g. using SqlDataProvider.
+            'value' => function (AnimalEvent $model) {
+                return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_FEED_TYPE, $model->feed_given);
             },
             'enableSorting' => false,
         ],
