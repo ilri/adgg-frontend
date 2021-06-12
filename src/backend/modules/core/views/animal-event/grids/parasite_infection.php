@@ -45,6 +45,10 @@ use yii\web\View;
 //            'enableSorting' => true,
 //        ],
         [
+            'attribute' => 'parasite_type',
+            'enableSorting' => false,
+        ],
+        [
             'attribute' => 'parasite_type_other',
             'enableSorting' => false,
         ],
