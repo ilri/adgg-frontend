@@ -43,10 +43,6 @@ use yii\web\View;
 //            'enableSorting' => false,
 //        ],
         [
-            'attribute' => 'injury_type',
-            'enableSorting' => false,
-        ],
-        [
             'attribute' => 'injury_type_other',
             'enableSorting' => false,
         ],
