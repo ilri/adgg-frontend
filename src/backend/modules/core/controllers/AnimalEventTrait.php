@@ -68,8 +68,23 @@ trait AnimalEventTrait
             case AnimalEvent::EVENT_TYPE_FEEDING:
                 $grid = 'feeding';
                 break;
+            case AnimalEvent::EVENT_TYPE_PARASITE_INFECTION:
+                $grid = 'parasite_infection';
+                break;
+            case AnimalEvent::EVENT_TYPE_INJURY:
+                $grid = 'injury';
+                break;
+            case AnimalEvent::EVENT_TYPE_HOOF_HEALTH:
+                $grid = 'hoof_health';
+                break;
+            case AnimalEvent::EVENT_TYPE_VACCINATION:
+                $grid = 'vaccination';
+                break;
             case AnimalEvent::EVENT_TYPE_HEALTH:
                 $grid = 'health';
+                break;
+            case AnimalEvent::EVENT_TYPE_HOOF_TREATMENT:
+                $grid = 'hoof_treatment';
                 break;
             case AnimalEvent::EVENT_TYPE_EXITS:
                 $grid = 'exits';
