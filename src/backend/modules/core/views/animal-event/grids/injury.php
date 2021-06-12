@@ -46,7 +46,7 @@ use yii\web\View;
         [
             'attribute' => 'injury_type',
             'value' => function (AnimalEvent $model) {
-                return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_INJURIES, $model->injury_type);
+                return Choices::getMultiSelectLabel($model->injury_type,ChoiceTypes::CHOICE_TYPE_ANIMAL_INJURIES);
             },
             'enableSorting' => false,
         ],
