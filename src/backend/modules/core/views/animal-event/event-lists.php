@@ -57,7 +57,9 @@ $this->params['breadcrumbs'] [] = $this->title;
                         $url = 'vaccination-event/index';
                     } elseif ($key == AnimalEvent::EVENT_TYPE_PARASITE_INFECTION) {
                         $url = 'parasite-infection-event/index';
-                    } elseif ($key == AnimalEvent::EVENT_TYPE_HEALTH) {
+                    } elseif ($key == AnimalEvent::EVENT_TYPE_INJURY) {
+                        $url = 'injury-event/index';
+                    }elseif ($key == AnimalEvent::EVENT_TYPE_HEALTH) {
                         $url = 'health-event/index';
                     } elseif ($key == AnimalEvent::EVENT_TYPE_EXITS) {
                         $url = 'exit-event/index';
