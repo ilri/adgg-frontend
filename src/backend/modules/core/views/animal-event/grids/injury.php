@@ -44,6 +44,13 @@ use yii\web\View;
 //            'enableSorting' => true,
 //        ],
         [
+            'attribute' => 'injury_type',
+            'value' => function (AnimalEvent $model) {
+                return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_INJURIES, $model->injury_type);
+            },
+            'enableSorting' => false,
+        ],
+        [
             'attribute' => 'injury_type_other',
             'enableSorting' => false,
         ],
