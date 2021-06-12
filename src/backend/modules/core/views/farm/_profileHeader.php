@@ -76,7 +76,7 @@ $type = Yii::$app->request->get('type', null);
                        href="<?= Url::to(['view-metadata', 'farm_id' => $farmModel->id, 'type' => $value]) ?>">
                         <?= Lang::t(' {metadataType}', ['metadataType' => $label]) ?>
                         <span class="badge badge-secondary badge-pill">
-                            <?= FarmMetadata::getCount(['view-metadata', 'farm_id' => $farmModel->id, 'type' => $value]) ?>
+                            <?= FarmMetadata::getCount(['farm_id' => $farmModel->id],['metadataType' => $label]) ?>
                         </span>
                     </a>
                 </li>
