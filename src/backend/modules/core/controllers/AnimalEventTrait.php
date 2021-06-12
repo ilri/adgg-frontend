@@ -83,6 +83,9 @@ trait AnimalEventTrait
             case AnimalEvent::EVENT_TYPE_HEALTH:
                 $grid = 'health';
                 break;
+            case AnimalEvent::EVENT_TYPE_HOOF_TREATMENT:
+                $grid = 'hoof_treatment';
+                break;
             case AnimalEvent::EVENT_TYPE_EXITS:
                 $grid = 'exits';
                 break;
