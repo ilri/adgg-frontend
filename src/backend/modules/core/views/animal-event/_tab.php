@@ -40,8 +40,10 @@ $events = AnimalEvent::eventTypeOptions();
             $url = 'parasite-infection-event/index';
         } elseif ($key == AnimalEvent::EVENT_TYPE_INJURY) {
             $url = 'injury-event/index';
-        } elseif ($key == AnimalEvent::EVENT_TYPE_HEALTH) {
-            $url = 'health-event/index';
+        } elseif ($key == AnimalEvent::EVENT_TYPE_INJURY) {
+            $url = 'injury-event/index';
+        } elseif ($key == AnimalEvent::EVENT_TYPE_HOOF_HEALTH) {
+            $url = 'hoof-health-event/index';
         } elseif ($key == AnimalEvent::EVENT_TYPE_EXITS) {
             $url = 'exit-event/index';
         }
