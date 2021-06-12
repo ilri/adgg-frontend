@@ -10,6 +10,7 @@ use yii\helpers\Url;
 
 /* @var $this \yii\web\View */
 /* @var $farmModel Farm */
+/* @var $farmmetadataModel FarmMetadata */
 $type = Yii::$app->request->get('type', null);
 ?>
 
@@ -75,7 +76,7 @@ $type = Yii::$app->request->get('type', null);
                        href="<?= Url::to(['view-metadata', 'farm_id' => $farmModel->id, 'type' => $value]) ?>">
                         <?= Lang::t(' {metadataType}', ['metadataType' => $label]) ?>
                         <span class="badge badge-secondary badge-pill">
-                            <?= FarmMetadata::getCount(['farm_id' => $farmModel->id]) ?>
+                            <?= FarmMetadata::getCount(['farm_id' => $farmmetadataModel->farm_id,'type' => $farmmetadataModel->type]) ?>
                         </span>
                     </a>
                 </li>
