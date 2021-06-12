@@ -36,20 +36,12 @@ use yii\web\View;
             },
         ],
 //        [
-//            'attribute' => 'vacc_vaccine_type',
-//            'label'=>'Vaccine Type',
+//            'attribute' => 'injury_type',
 //            'value' => function (AnimalEvent $model) {
-//                return Choices::getMultiSelectLabel($model->vacc_vaccine_type,ChoiceTypes::CHOICE_TYPE_VACCINE_TYPE);
+//                return Choices::getMultiSelectLabel($model->injury_type,ChoiceTypes::CHOICE_TYPE_ANIMAL_INJURIES);
 //            },
-//            'enableSorting' => true,
+//            'enableSorting' => false,
 //        ],
-        [
-            'attribute' => 'injury_type',
-            'value' => function (AnimalEvent $model) {
-                return Choices::getMultiSelectLabel($model->injury_type,ChoiceTypes::CHOICE_TYPE_ANIMAL_INJURIES);
-            },
-            'enableSorting' => false,
-        ],
         [
             'attribute' => 'injury_type_other',
             'enableSorting' => false,
