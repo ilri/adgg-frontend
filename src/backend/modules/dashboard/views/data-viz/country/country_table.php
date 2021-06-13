@@ -42,8 +42,8 @@ $region_ids = array_keys($regions);
                     <tr>
                         <th class="dt-row-name"><?= Html::encode("All Regions") ?></th>
                         <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => '2', 'country_id' => $country_id])) ?></td>
-                        <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => '3', 'country_id' => $country_id])) ?></td>
                         <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => '1', 'country_id' => $country_id])) ?></td>
+                        <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => '3', 'country_id' => $country_id])) ?></td>
                         <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => null, 'country_id' => $country_id])) ?></td>
                         <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['country_id' => $country_id])) ?></td>
                         <td><?= Yii::$app->formatter->asDecimal(Animal::getDashboardStats(Animal::STATS_ALL_TIME, false, [],  'created_at', null, null, ['country_id' => $country_id])) ?></td>
@@ -52,8 +52,8 @@ $region_ids = array_keys($regions);
                         <tr>
                             <th class="dt-row-name"><?= Html::encode($name) ?></th>
                             <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => '2', 'region_id' => $k])) ?></td>
-                            <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => '3', 'region_id' => $k])) ?></td>
                             <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => '1', 'region_id' => $k])) ?></td>
+                            <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => '3', 'region_id' => $k])) ?></td>
                             <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => null, 'region_id' => $k])) ?></td>
                             <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['region_id' => $k])) ?></td>
                             <td><?= Yii::$app->formatter->asDecimal(Animal::getDashboardStats(Animal::STATS_ALL_TIME, false, [],  'created_at', null, null, ['region_id' => $k])) ?></td>
