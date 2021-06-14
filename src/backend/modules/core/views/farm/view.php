@@ -46,9 +46,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         [
                             'attribute' => 'farm_type',
-                            'value' => function (Farm $farmModel) {
-                                return $farmModel->getRelationAttributeValue('farm_type', 'name');
-                            },
                             'hidden' => false,
                         ],
                         [
@@ -88,9 +85,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         [
                             'attribute' => 'project',
-                            'value' => function (Farm $farmModel) {
-                                return $farmModel->getRelationAttributeValue('project', 'name');
-                            },
                             'hidden' => false,
                         ],
                         [
