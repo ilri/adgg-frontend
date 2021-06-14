@@ -82,7 +82,7 @@ use yii\helpers\Url;
         ],
         [
             'attribute' => 'farm_type',
-            'hidden' => true,
+            'hidden' => false,
         ],
         [
             'attribute' => 'gender_code',
@@ -90,7 +90,7 @@ use yii\helpers\Url;
         ],
         [
             'attribute' => 'project',
-            'hidden' => true,
+            'hidden' => false,
         ],
         [
             'attribute' => 'is_active',
