@@ -82,6 +82,9 @@ use yii\helpers\Url;
         ],
         [
             'attribute' => 'farm_type',
+            'value' => function (Farm $model) {
+                return $model->getRelationAttributeValue('farm_type', 'name');
+            },
             'hidden' => false,
         ],
         [
@@ -90,6 +93,9 @@ use yii\helpers\Url;
         ],
         [
             'attribute' => 'project',
+            'value' => function (Farm $model) {
+                return $model->getRelationAttributeValue('project', 'name');
+            },
             'hidden' => false,
         ],
         [
