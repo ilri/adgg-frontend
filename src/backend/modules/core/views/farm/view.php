@@ -46,6 +46,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         [
                             'attribute' => 'farm_type',
+                            'hidden' => false,
                         ],
                         [
                             'attribute' => 'country_id',
@@ -84,6 +85,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         [
                             'attribute' => 'project',
+                            'hidden' => false,
                         ],
                         [
                             'attribute' => 'map_address',
