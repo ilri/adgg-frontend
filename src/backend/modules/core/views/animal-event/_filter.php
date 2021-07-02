@@ -40,6 +40,17 @@ use yii\bootstrap4\Html;
                             ],
                         ]); ?>
                     </div>
+                    <div class="col-lg-2">
+                        <?= Html::label($model->getAttributeLabel('animal_id')) ?>
+                        <?= Select2::widget([
+                            'name' => 'animal_id',
+                            'value' => $model->animal_id,
+                            'data' => AnimalEvent::getListData('id', 'tag_id', false, ['animal_id' => $model->animal_id]),
+                            'pluginOptions' => [
+                                'allowClear' => true
+                            ],
+                        ]); ?>
+                    </div>
                     <?php if ($model->showCountryField()): ?>
                         <div class="col-lg-2">
                             <?= Html::label($model->getAttributeLabel('country_id')) ?>
