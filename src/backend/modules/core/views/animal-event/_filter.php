@@ -40,6 +40,7 @@ use yii\bootstrap4\Html;
                             ],
                         ]); ?>
                     </div>
+
                     <?php if ($model->showCountryField()): ?>
                         <div class="col-lg-2">
                             <?= Html::label($model->getAttributeLabel('country_id')) ?>

@@ -23,8 +23,8 @@ $projects = Choices::getList(ChoiceTypes::CHOICE_TYPE_PROJECT, false);
             <thead>
             <tr>
                 <th></th>
-                <th>Total LSF</th>
                 <th>Total SSF</th>
+                <th>Total LSF</th>
                 <th>Total MSF</th>
                 <th>Undefined Farm Type</th>
                 <th>Total Farms</th>
