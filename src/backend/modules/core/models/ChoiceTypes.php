@@ -131,6 +131,7 @@ class ChoiceTypes extends ActiveRecord implements ActiveSearchInterface
     const CHOICE_TYPE_PAYMENT_METHOD = 103;
     const CHOICE_TYPE_PHONE_LIST = 104;
     const CHOICE_TYPE_EXTENSION_SERVICE = 105;
+    const CHOICE_TYPE_DISEASES_SCREENED = 20005;
 
     /**
      * {@inheritdoc}
