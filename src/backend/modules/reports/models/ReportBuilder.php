@@ -25,11 +25,13 @@ use backend\modules\core\models\FarmMetadataMilkUtilizationBuyer;
 use backend\modules\core\models\FarmMetadataOtherSpeciesDetails;
 use backend\modules\core\models\FarmMetadataTechnologyMobilization;
 use backend\modules\core\models\FarmMetadataWaterSource;
+use backend\modules\core\models\FeedingEvent;
 use backend\modules\core\models\HealthEvent;
 use backend\modules\core\models\MilkingEvent;
 use backend\modules\core\models\PDEvent;
 use backend\modules\core\models\SyncEvent;
 use backend\modules\core\models\TableAttribute;
+use backend\modules\core\models\VaccinationEvent;
 use backend\modules\core\models\WeightEvent;
 use common\helpers\ArrayHelper;
 use common\helpers\Utils;
@@ -318,6 +320,30 @@ class ReportBuilder extends Model
                 'class' => ExitsEvent::class,
                 'title' => 'Exits Events',
                 'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_EXITS],
+                'relations' => $eventRelations,
+                'sub_relations' => [
+                    'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.herd' => ['animal.herd_id' => 'herd.id'],
+                    'animal.sire' => ['animal.sire_id' => 'sire.id'],
+                    'animal.dam' => ['animal.dam_id' => 'dam.id'],
+                ],
+            ],
+            'Vaccination_Event' => [
+                'class' => VaccinationEvent::class,
+                'title' => 'Vaccination Events',
+                'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_VACCINATION],
+                'relations' => $eventRelations,
+                'sub_relations' => [
+                    'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.herd' => ['animal.herd_id' => 'herd.id'],
+                    'animal.sire' => ['animal.sire_id' => 'sire.id'],
+                    'animal.dam' => ['animal.dam_id' => 'dam.id'],
+                ],
+            ],
+            'Feeding_Event' => [
+                'class' => FeedingEvent::class,
+                'title' => 'Feeding Events',
+                'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_FEEDING],
                 'relations' => $eventRelations,
                 'sub_relations' => [
                     'animal.farm' => ['animal.farm_id' => 'farm.id'],
