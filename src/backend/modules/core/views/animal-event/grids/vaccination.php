@@ -59,6 +59,14 @@ use yii\web\View;
             'attribute' => 'vacc_vaccine_service_cost',
             'enableSorting' => false,
         ],
+        [
+            'attribute' => 'diseases_screened',
+            'label'=>'Which ones do you screen for?',
+            'value' => function (AnimalEvent $model) {
+                return Choices::getMultiSelectLabel($model->diseases_screened,ChoiceTypes::CHOICE_TYPE_DISEASES_SCREENED);
+            },
+            'enableSorting' => true,
+        ],
     ],
 ]);
 ?>
