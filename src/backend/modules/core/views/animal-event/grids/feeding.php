@@ -44,6 +44,7 @@ use yii\web\View;
             },
             'enableSorting' => true,
         ],
+
     ],
 ]);
 ?>
