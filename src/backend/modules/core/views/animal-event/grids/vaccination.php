@@ -67,6 +67,14 @@ use yii\web\View;
             },
             'enableSorting' => true,
         ],
+        [
+            'attribute' => 'diseases_acaricides_type',
+            'label'=>'Which acaricides do you use?',
+            'value' => function (AnimalEvent $model) {
+                return $model->diseases_acaricides_type;
+            },
+            'enableSorting' => true,
+        ],
     ],
 ]);
 ?>

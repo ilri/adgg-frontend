@@ -12,7 +12,6 @@ use yii\helpers\ArrayHelper;
  * @package backend\modules\core\models
  *
  * @property string $vacc_vaccine_type
- * @property string $diseases_screened
  * @property string $vacc_vaccine_type_other
  * @property string $vacc_vaccine_provider
  * @property string $vvacc_vaccine_provider_other
@@ -20,6 +19,8 @@ use yii\helpers\ArrayHelper;
  * @property string $vacc_vaccine_service_cost
  * @property string $vvacc_vaccine_cow_status
  * @property string $vacc_vaccine_cow_status_other
+ * @property string $diseases_screened
+ * @property string $diseases_acaricides_type
  */
 class VaccinationEvent extends AnimalEvent implements ImportActiveRecordInterface, AnimalEventInterface
 {
@@ -72,6 +73,7 @@ class VaccinationEvent extends AnimalEvent implements ImportActiveRecordInterfac
             'vacc_vaccine_cow_status',
             'vacc_vaccine_cow_status_other',
             'diseases_screened',
+            'diseases_acaricides_type',
         ];
     }
 }
