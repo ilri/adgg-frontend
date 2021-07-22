@@ -122,7 +122,7 @@ use yii\bootstrap4\ActiveForm;
 
                     <?php if ($model->showWardField()): ?>
                         <div class="col-md-4">
-                            <?= $form->field($model, 'ward_id')->widget(Select2::class, [
+                            <?= $form->field($model, 'ward_code')->widget(Select2::class, [
                                 'data' => CountryUnits::getListData('id', 'code', false, ['country_id' => $model->country_id, 'level' => CountryUnits::LEVEL_WARD]),
                                 'options' => [
                                     'class' => 'form-control parent-depdropdown',
