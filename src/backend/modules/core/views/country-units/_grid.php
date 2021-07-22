@@ -48,9 +48,9 @@ use yii\helpers\Url;
         ],
         [
             'attribute' => 'parent_id',
-            'label' => $model->getAttributeLabel('code'),
+            'label' => $model->getAttributeLabel('parent_id'),
             'value' => function (CountryUnits $model) {
-                return $model->getRelationAttributeValue('child', 'code');
+                return $model->getRelationAttributeValue('parent', 'code');
             },
             'visible' => $model->level > CountryUnits::LEVEL_REGION,
             'filter' => CountryUnits::getListData('id', 'name', false, ['level' => $model->level - 1, 'country_id' => $model->country_id])
