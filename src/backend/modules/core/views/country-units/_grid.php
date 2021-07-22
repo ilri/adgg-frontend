@@ -47,6 +47,15 @@ use yii\helpers\Url;
             'filter' => CountryUnits::getListData('id', 'name', false, ['level' => $model->level - 1, 'country_id' => $model->country_id])
         ],
         [
+            'attribute' => 'parent_id',
+            'label' => $model->getAttributeLabel('code'),
+            'value' => function (CountryUnits $model) {
+                return $model->getRelationAttributeValue('parent', 'code');
+            },
+            'visible' => $model->level > CountryUnits::LEVEL_REGION,
+            'filter' => CountryUnits::getListData('id', 'name', false, ['level' => $model->level - 1, 'country_id' => $model->country_id])
+        ],
+        [
             'attribute' => 'is_active',
             'value' => function (CountryUnits $model) {
                 return Html::tag('span', Utils::decodeBoolean($model->is_active), ['class' => $model->is_active ? 'kt-badge  kt-badge--success kt-badge--inline kt-badge--pill' : 'kt-badge  kt-badge--metal kt-badge--inline kt-badge--pill']);
