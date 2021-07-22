@@ -131,7 +131,7 @@ use yii\bootstrap4\ActiveForm;
                                         '#' . Html::getInputId($model, 'village_id'),
                                     ],
                                     'data-url' => Url::to(['OrganizationRef-units/get-list', 'parent_id' => 'idV', 'placeholder' => true, 'level' => CountryUnits::LEVEL_WARD]),
-                                    'data-selected' => $model->ward_id,
+                                    'data-selected' => $model->code,
                                 ],
                                 'pluginOptions' => [
                                     'allowClear' => false
