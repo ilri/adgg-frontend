@@ -119,7 +119,7 @@ use yii\bootstrap4\ActiveForm;
                             ]) ?>
                         </div>
                     <?php endif; ?>
-                    ///
+
                     <?php if ($model->showWardField()): ?>
                         <div class="col-md-4">
                             <?= $form->field($model, 'ward_id')->widget(Select2::class, [
