@@ -26,6 +26,7 @@ use backend\modules\core\models\FarmMetadataOtherSpeciesDetails;
 use backend\modules\core\models\FarmMetadataTechnologyMobilization;
 use backend\modules\core\models\FarmMetadataWaterSource;
 use backend\modules\core\models\FeedingEvent;
+use backend\modules\core\models\HairsamplingEvent;
 use backend\modules\core\models\HealthEvent;
 use backend\modules\core\models\MilkingEvent;
 use backend\modules\core\models\PDEvent;
@@ -340,6 +341,18 @@ class ReportBuilder extends Model
                     'animal.dam' => ['animal.dam_id' => 'dam.id'],
                 ],
             ],
+            'Hairsampling_Event' => [
+                'class' => HairsamplingEvent::class,
+                'title' => 'Hair sampling Events',
+                'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_HAIR_SAMPLING],
+                'relations' => $eventRelations,
+                'sub_relations' => [
+                    'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.herd' => ['animal.herd_id' => 'herd.id'],
+                    'animal.sire' => ['animal.sire_id' => 'sire.id'],
+                    'animal.dam' => ['animal.dam_id' => 'dam.id'],
+                ],
+            ],
             'Feeding_Event' => [
                 'class' => FeedingEvent::class,
                 'title' => 'Feeding Events',
@@ -352,6 +365,7 @@ class ReportBuilder extends Model
                     'animal.dam' => ['animal.dam_id' => 'dam.id'],
                 ],
             ],
+
         ];
 
     }

@@ -74,6 +74,13 @@ $this->params['breadcrumbs'][] = $this->title;
                             'hidden' => false,
                         ],
                         [
+                            'attribute' => 'ward_code',
+                            'value' => function (Farm $farmModel) {
+                                return $farmModel->getRelationAttributeValue('ward', 'code');
+                            },
+                            'hidden' => false,
+                        ],
+                        [
                             'attribute' => 'village_id',
                             'value' => function (Farm $farmModel) {
                                 return $farmModel->getRelationAttributeValue('village', 'name');
