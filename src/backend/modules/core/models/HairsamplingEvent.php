@@ -5,13 +5,13 @@ namespace backend\modules\core\models;
 
 
 use common\excel\ImportActiveRecordInterface;
-use common\helpers\DbUtils;
+use yii\helpers\ArrayHelper;
 
 /**
  * Class HairsamplingEvent
  * @package backend\modules\core\models
  *
- * @property string hair_sampling_code
+ * @property string $hair_sampling_code
  */
 class HairsamplingEvent extends AnimalEvent implements ImportActiveRecordInterface, AnimalEventInterface
 {
@@ -35,7 +35,7 @@ class HairsamplingEvent extends AnimalEvent implements ImportActiveRecordInterfa
      */
     public function getEventType(): int
     {
-        return self::EVENT_TYPE_INJURY;
+        return self::EVENT_TYPE_HAIR_SAMPLING;
     }
 
     /**
