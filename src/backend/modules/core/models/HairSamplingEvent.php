@@ -20,7 +20,7 @@ use yii\helpers\ArrayHelper;
  * @property float $HOL
  * @property float $JER
  */
-class HairsamplingEvent extends AnimalEvent implements ImportActiveRecordInterface, AnimalEventInterface
+class HairSamplingEvent extends AnimalEvent implements ImportActiveRecordInterface, AnimalEventInterface
 {
 
     public function rules()
@@ -33,7 +33,7 @@ class HairsamplingEvent extends AnimalEvent implements ImportActiveRecordInterfa
     public function attributeLabels()
     {
         return ArrayHelper::merge(parent::attributeLabels(), [
-            'event_date' => 'Hairsampling Date',
+            'event_date' => 'Hair sampling Date',
         ]);
     }
 
