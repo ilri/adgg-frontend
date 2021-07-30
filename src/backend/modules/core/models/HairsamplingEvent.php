@@ -12,6 +12,13 @@ use yii\helpers\ArrayHelper;
  * @package backend\modules\core\models
  *
  * @property string $hair_sampling_code
+ * @property float $Bos_Indicus
+ * @property float $Ndama
+ * @property float $AYR
+ * @property float $BF
+ * @property float $GUE
+ * @property float $HOL
+ * @property float $JER
  */
 class HairsamplingEvent extends AnimalEvent implements ImportActiveRecordInterface, AnimalEventInterface
 {
@@ -55,6 +62,13 @@ class HairsamplingEvent extends AnimalEvent implements ImportActiveRecordInterfa
             'animalTagId',
             'event_date',
             'hair_sampling_code',
+            'Bos_Indicus',
+            'Ndama',
+            'AYR',
+            'BF	',
+            'GUE',
+            'HOL',
+            'JER',
         ];
     }
 }
