@@ -6,13 +6,13 @@ namespace backend\modules\core\controllers;
 
 use backend\modules\auth\Acl;
 use backend\modules\core\Constants;
-use backend\modules\core\forms\UploadHairsamplingEvent;
+use backend\modules\core\forms\UploadHairSamplingEvent;
 use backend\modules\core\models\AnimalEvent;
-use backend\modules\core\models\HairsamplingEvent;
+use backend\modules\core\models\HairSamplingEvent;
 use common\controllers\UploadExcelTrait;
 use Yii;
 
-class HairsamplingEventController extends Controller
+class HairSamplingEventController extends Controller
 {
     use AnimalEventTrait, UploadExcelTrait;
 
@@ -21,7 +21,7 @@ class HairsamplingEventController extends Controller
         parent::init();
 
         $this->resource = Constants::RES_ANIMAL_EVENTS;
-        $this->resourceLabel = 'Vaccination';
+        $this->resourceLabel = 'Hair Sampling';
     }
 
     public function actionIndex($animal_id = null, $country_id = null, $org_id = null, $client_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $from = null, $to = null)
@@ -34,8 +34,8 @@ class HairsamplingEventController extends Controller
     {
         $this->hasPrivilege(Acl::ACTION_CREATE);
 
-        $form = new UploadHairsamplingEvent(HairsamplingEvent::class);
-        $resp = $this->uploadExcelConsole($form, 'hairsampling-event/index', Yii::$app->request->queryParams);
+        $form = new UploadHairSamplingEvent(HairSamplingEvent::class);
+        $resp = $this->uploadExcelConsole($form, 'hair-sampling-event/index', Yii::$app->request->queryParams);
         if ($resp !== false) {
             return $resp;
         }
@@ -47,7 +47,7 @@ class HairsamplingEventController extends Controller
 
     public function actionUploadPreview()
     {
-        $form = new UploadHairsamplingEvent(HairsamplingEvent::class);
+        $form = new UploadHairSamplingEvent(HairSamplingEvent::class);
         return $form->previewAction();
     }
 
