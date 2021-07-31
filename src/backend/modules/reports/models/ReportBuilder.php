@@ -341,10 +341,10 @@ class ReportBuilder extends Model
                     'animal.dam' => ['animal.dam_id' => 'dam.id'],
                 ],
             ],
-            'Hairsampling_Event' => [
+            'Sampling_Event' => [
                 'class' => SamplingEvent::class,
                 'title' => 'Hair sampling Events',
-                'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_HAIR_SAMPLING],
+                'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_SAMPLING],
                 'relations' => $eventRelations,
                 'sub_relations' => [
                     'animal.farm' => ['animal.farm_id' => 'farm.id'],
