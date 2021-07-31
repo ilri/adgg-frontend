@@ -10,8 +10,8 @@ namespace backend\modules\core\models;
 
 
 use common\excel\ImportActiveRecordInterface;
-use common\helpers\ArrayHelper;
-use Yii;
+use common\helpers\DbUtils;
+use yii\helpers\ArrayHelper;
 
 
 /**
@@ -45,22 +45,6 @@ class SamplingEvent extends AnimalEvent implements ImportActiveRecordInterface, 
     }
 
     /**
-     * @inheritDoc
-     */
-    public function getEventType(): int
-    {
-        return self::EVENT_TYPE_SAMPLING;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function reportBuilderAdditionalUnwantedFields(): array
-    {
-        return ['lactation_id', 'lactation_number'];
-    }
-
-    /**
      * @return string[]
      */
     public function getExcelColumns()
@@ -77,5 +61,39 @@ class SamplingEvent extends AnimalEvent implements ImportActiveRecordInterface, 
             'HOL',
             'JER',
         ];
+    }
+
+    /**
+     * @param int $durationType
+     * @param false $sum
+     * @param array $filters
+     * @param string $dateField
+     * @param null $from
+     * @param null $to
+     * @param string $condition
+     * @param array $params
+     * @return int
+     * @throws \Exception
+     */
+    public static function getDashboardStats($durationType, $sum = false, $filters = [], $dateField = 'event_date', $from = null, $to = null, $condition = '', $params = [])
+    {
+        list($condition, $params) = DbUtils::appendCondition('event_type', self::EVENT_TYPE_SAMPLING, $condition, $params);
+        return parent::getDashboardStats($durationType, $sum, $filters, $dateField, $from, $to, $condition, $params);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEventType(): int
+    {
+        return self::EVENT_TYPE_SAMPLING;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function reportBuilderAdditionalUnwantedFields(): array
+    {
+        return ['lactation_id', 'lactation_number'];
     }
 }
