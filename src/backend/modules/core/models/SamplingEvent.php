@@ -1,11 +1,18 @@
 <?php
-
+/**
+ * Created by PhpStorm.
+ * @author: Fred <mconyango@gmail.com>
+ * Date: 2019-10-15
+ * Time: 8:49 AM
+ */
 
 namespace backend\modules\core\models;
 
 
 use common\excel\ImportActiveRecordInterface;
-use yii\helpers\ArrayHelper;
+use common\helpers\ArrayHelper;
+use Yii;
+
 
 /**
  * Class HairsamplingEvent
