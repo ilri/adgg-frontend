@@ -42,7 +42,6 @@ use Yii;
  * @property string|array $additional_attributes
  * @property string $migration_id
  * @property int $dim
-
  * @property Animal $animal
  * @property Country $country
  * @property Users $fieldAgent
@@ -60,7 +59,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     const EVENT_TYPE_WEIGHTS = 6;
     const EVENT_TYPE_HEALTH = 7;
     const EVENT_TYPE_EXITS = 9;
-    const EVENT_TYPE_HAIR_SAMPLING = 10;//no data available yet
+    const EVENT_TYPE_HAIR_SAMPLING = 10;
     const EVENT_TYPE_CERTIFICATION = 11;//no data available yet
     const EVENT_TYPE_VACCINATION = 12;
     const EVENT_TYPE_PARASITE_INFECTION = 13;
