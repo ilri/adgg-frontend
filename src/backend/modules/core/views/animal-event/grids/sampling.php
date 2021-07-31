@@ -51,6 +51,22 @@ use yii\web\View;
             'attribute' => 'AYR',
             'enableSorting' => false,
         ],
+        [
+            'attribute' => 'BF',
+            'enableSorting' => false,
+        ],
+        [
+            'attribute' => 'GUE',
+            'enableSorting' => false,
+        ],
+        [
+            'attribute' => 'HOL',
+            'enableSorting' => false,
+        ],
+        [
+            'attribute' => 'JER',
+            'enableSorting' => false,
+        ],
     ],
 ]);
 ?>
