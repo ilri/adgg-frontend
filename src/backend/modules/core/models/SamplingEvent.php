@@ -42,7 +42,7 @@ class SamplingEvent extends AnimalEvent implements ImportActiveRecordInterface, 
      */
     public function getEventType(): int
     {
-        return self::EVENT_TYPE_HAIR_SAMPLING;
+        return self::EVENT_TYPE_SAMPLING;
     }
 
     /**
