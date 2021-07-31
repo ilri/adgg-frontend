@@ -12,7 +12,7 @@ use backend\modules\core\models\SamplingEvent;
 use common\controllers\UploadExcelTrait;
 use Yii;
 
-class asdSamplingEventController extends Controller
+class SamplingEventController extends Controller
 {
     use AnimalEventTrait, UploadExcelTrait;
 
