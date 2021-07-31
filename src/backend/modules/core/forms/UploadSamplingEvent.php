@@ -6,16 +6,16 @@ namespace backend\modules\core\forms;
 
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\ExcelImport;
-use backend\modules\core\models\HairSamplingEvent;
+use backend\modules\core\models\SamplingEvent;
 use common\excel\ImportInterface;
 
-class UploadHairSamplingEvent extends UploadAnimalEvent implements ImportInterface
+class UploadSamplingEvent extends UploadAnimalEvent implements ImportInterface
 {
     public function init()
     {
         parent::init();
-        $this->event_type = AnimalEvent::EVENT_TYPE_HAIR_SAMPLING;
-        $this->sampleExcelFileName = 'hair-sampling-event.xlsx';
+        $this->event_type = AnimalEvent::EVENT_TYPE_SAMPLING;
+        $this->sampleExcelFileName = 'sampling-event.xlsx';
     }
 
 
@@ -38,7 +38,7 @@ class UploadHairSamplingEvent extends UploadAnimalEvent implements ImportInterfa
             $insert_data[$k] = $row;
         }
 
-        $model = new HairSamplingEvent(['country_id' => $this->country_id, 'event_type' => $this->event_type]);
+        $model = new SamplingEvent(['country_id' => $this->country_id, 'event_type' => $this->event_type]);
         $this->save($insert_data, $model, false);
     }
 
@@ -48,6 +48,6 @@ class UploadHairSamplingEvent extends UploadAnimalEvent implements ImportInterfa
      */
     public function setUploadType()
     {
-        $this->_uploadType = ExcelImport::TYPE_ANIMAL_EVENT_HAIRSAMPLING;
+        $this->_uploadType = ExcelImport::TYPE_ANIMAL_EVENT_SAMPLING;
     }
 }
