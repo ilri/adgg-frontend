@@ -48,8 +48,8 @@ $events = AnimalEvent::eventTypeOptions();
             $url = 'hoof-treatment-event/index';
         } elseif ($key == AnimalEvent::EVENT_TYPE_EXITS) {
             $url = 'exit-event/index';
-        }elseif ($key == AnimalEvent::EVENT_TYPE_HAIR_SAMPLING) {
-            $url = 'hair-sampling-event/index';
+        }elseif ($key == AnimalEvent::EVENT_TYPE_SAMPLING) {
+            $url = 'sampling-event/index';
         }
 
         ?>
