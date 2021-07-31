@@ -1,8 +1,6 @@
 <?php
 use backend\modules\core\models\AnimalEvent;
 use common\helpers\Lang;
-use backend\modules\core\models\Choices;
-use backend\modules\core\models\ChoiceTypes;
 use common\widgets\grid\GridView;
 use yii\helpers\Url;
 use yii\web\View;
