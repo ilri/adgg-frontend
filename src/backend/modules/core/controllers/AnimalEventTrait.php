@@ -89,6 +89,9 @@ trait AnimalEventTrait
             case AnimalEvent::EVENT_TYPE_EXITS:
                 $grid = 'exits';
                 break;
+            case AnimalEvent::EVENT_TYPE_SAMPLING:
+                $grid = 'sampling';
+                break;
         }
 
         return $this->render('@coreModule/views/animal-event/index', [
