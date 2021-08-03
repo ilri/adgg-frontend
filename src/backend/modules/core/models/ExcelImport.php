@@ -192,8 +192,8 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
                 return 'Health';
             case self::TYPE_ANIMAL_EVENT_EXITS:
                 return 'Exits';
-            case self::TYPE_ANIMAL_EVENT_HAIRSAMPLING:
-                return 'Hairsampling';
+            case self::TYPE_ANIMAL_EVENT_SAMPLING:
+                return 'Sampling';
             case self::TYPE_ORGANIZATION_REF_UNITS:
                 return 'Country Administrative Units';
             case self::TYPE_USERS:
