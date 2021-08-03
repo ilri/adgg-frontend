@@ -224,7 +224,7 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
             self::TYPE_ANIMAL_EVENT_FEEDING => static::decodeType(self::TYPE_ANIMAL_EVENT_FEEDING),
             self::TYPE_ANIMAL_EVENT_HEALTH => static::decodeType(self::TYPE_ANIMAL_EVENT_HEALTH),
             self::TYPE_ANIMAL_EVENT_EXITS => static::decodeType(self::TYPE_ANIMAL_EVENT_EXITS),
-            self::TYPE_ANIMAL_EVENT_HAIRSAMPLING => static::decodeType(self::TYPE_ANIMAL_EVENT_HAIRSAMPLING),
+            self::TYPE_ANIMAL_EVENT_SAMPLING => static::decodeType(self::TYPE_ANIMAL_EVENT_SAMPLING),
             self::TYPE_ORGANIZATION_REF_UNITS => static::decodeType(self::TYPE_ORGANIZATION_REF_UNITS),
             self::TYPE_USERS => static::decodeType(self::TYPE_USERS),
         ], $prompt);
