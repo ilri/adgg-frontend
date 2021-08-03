@@ -25,8 +25,8 @@ $region_ids = array_keys($regions);
             <thead>
             <tr>
                 <th></th>
-                <th>Total SSF</th>
                 <th>Total LSF</th>
+                <th>Total SSF</th>
                 <th>Total MSF</th>
                 <th>Undefined Farm Types</th>
                 <th>Total Farms</th>
