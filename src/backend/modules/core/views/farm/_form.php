@@ -120,25 +120,6 @@ use yii\bootstrap4\ActiveForm;
                         </div>
                     <?php endif; ?>
 
-                    <?php if ($model->showWardField()): ?>
-                        <div class="col-md-4">
-                            <?= $form->field($model, 'ward_code')->widget(Select2::class, [
-                                'data' => CountryUnits::getListData('id', 'code', false, ['country_id' => $model->country_id, 'level' => CountryUnits::LEVEL_WARD]),
-                                'options' => [
-                                    'class' => 'form-control parent-depdropdown',
-                                    'placeholder' => '[select one]',
-                                    'data-child-selectors' => [
-                                        '#' . Html::getInputId($model, 'village_id'),
-                                    ],
-                                    'data-url' => Url::to(['OrganizationRef-units/get-list', 'parent_id' => 'idV', 'placeholder' => true, 'level' => CountryUnits::LEVEL_WARD]),
-                                    'data-selected' => $model->code,
-                                ],
-                                'pluginOptions' => [
-                                    'allowClear' => false
-                                ],
-                            ]) ?>
-                        </div>
-                    <?php endif; ?>
                     <?php if ($model->showVillageField()): ?>
                         <div class="col-md-4">
                             <?= $form->field($model, 'village_id')->widget(Select2::class, [
