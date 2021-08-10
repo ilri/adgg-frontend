@@ -87,13 +87,6 @@ use yii\helpers\Url;
             'enableSorting' => false,
         ],
         [
-            'attribute' => 'calfdeformities',
-            'value' => function (AnimalEvent $model) {
-                return Choices::getMultiSelectLabel($model->calfdeformities, ChoiceTypes::CHOICE_TYPE_CALVE_DEFORMITY);
-            },
-            'enableSorting' => false,
-        ],
-        [
             'attribute' => 'intuse',
             'value' => function (AnimalEvent $model) {
                 return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_CALVE_USE, $model->intuse);
