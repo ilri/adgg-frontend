@@ -55,6 +55,7 @@ class UploadFarmMetadata extends ExcelUploadForm implements ImportInterface
                 continue;
             }
             $row['farm_id'] = $this->getFarmId($row['farmCode']);
+            $row['country_id'] = $this->country_id;
             $insert_data[$k] = $row;
         }
         $this->save($insert_data, $model, false);

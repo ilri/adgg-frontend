@@ -83,11 +83,7 @@ $hasChildren = !empty($metadataTypeParentModel->children);
                                         'allowClear' => false
                                     ],
                                 ]) ?>
-                                <?= $this->render('@common/excel/views/uploadExcel', [
-                                     'model' => $model,
-                                    'form_id' => $formId,
-                                    'previewUrl' => Url::to(['upload-metadata-preview', 'type' => Yii::$app->request->get('type')])]); ?>
-
+                                <?= $this->render('@common/excel/views/uploadExcel', ['model' => $model, 'form_id' => $formId, 'previewUrl' => Url::to(['upload-metadata-preview', 'type' => Yii::$app->request->get('type')])]); ?>
                             </div>
                             <div class="col-md-4">
                                 <?= $this->render('@common/excel/views/guide', ['model' => $model, 'sampleUrl' => Url::to(['/helper/download-excel-sample', 'route' => 'farm.xlsx']),]); ?>
