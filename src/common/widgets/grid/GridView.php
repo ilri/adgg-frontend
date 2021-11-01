@@ -89,6 +89,8 @@ HTML;
      */
     public $toolbarButtons = [];
 
+    public $downloadallButton = [];
+
     /**
      * @var ActiveRecord
      */

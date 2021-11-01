@@ -1,6 +1,8 @@
 <?php
 
 use backend\modules\core\models\FarmMetadataType;
+use backend\modules\core\models\Country;
+use common\widgets\select2\Select2;
 use common\forms\ActiveField;
 use yii\bootstrap\Html;
 use common\helpers\Url;
@@ -74,6 +76,13 @@ $hasChildren = !empty($metadataTypeParentModel->children);
                     <div class="kt-section__body">
                         <div class="row">
                             <div class="col-md-8">
+                                <?= $form->field($model, 'country_id')->widget(Select2::class, [
+                                    'data' => Country::getListData(),
+                                    'options' => ['placeholder' => '[select one]'],
+                                    'pluginOptions' => [
+                                        'allowClear' => false
+                                    ],
+                                ]) ?>
                                 <?= $this->render('@common/excel/views/uploadExcel', ['model' => $model, 'form_id' => $formId, 'previewUrl' => Url::to(['upload-metadata-preview', 'type' => Yii::$app->request->get('type')])]); ?>
                             </div>
                             <div class="col-md-4">

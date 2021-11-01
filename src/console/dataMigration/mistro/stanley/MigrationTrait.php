@@ -6,10 +6,10 @@
  * Time: 10:55 PM
  */
 
-namespace console\dataMigration\mistro\stanley2;
+namespace console\dataMigration\mistro\stanley;
 
 
-use Yii;
+use \Yii;
 
 trait MigrationTrait
 {
@@ -29,6 +29,6 @@ trait MigrationTrait
      */
     public static function getDb()
     {
-        return Yii::$app->get('mistroDbStanley2');
+        return Yii::$app->get('stan2019');
     }
 }
