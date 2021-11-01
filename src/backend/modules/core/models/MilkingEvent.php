@@ -40,11 +40,11 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
         return ArrayHelper::merge(parent::rules(), [
             [['milkmor', 'milkmid', 'milkmid'], 'number', 'min' => 0, 'max' => 30, 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
             [['milkday'], 'number', 'min' => 0, 'max' => 60, 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
-            [['milkfat'], 'number', 'min' => 1.5, 'max' => 9, 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
-            [['milkprot'], 'number', 'min' => 1.5, 'max' => 5, 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
+            [['milkfat'], 'number', 'min' => 2, 'max' => 10, 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
+            [['milkprot'], 'number', 'min' => 2, 'max' => 6, 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
             [['milksmc'], 'number', 'min' => 30000, 'max' => 99999999999, 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
             ['milkurea', 'number', 'min' => 8, 'max' => 25, 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
-            ['milklact', 'number', 'min' => 3, 'max' => 7, 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
+            ['milklact', 'number', 'min' => 2, 'max' => 6, 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
             // ['event_date', 'validateMilkingDate', 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
             [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
         ]);
