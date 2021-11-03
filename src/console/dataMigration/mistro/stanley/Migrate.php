@@ -6,7 +6,7 @@
  * Time: 10:24 PM
  */
 
-namespace console\dataMigration\mistro\stanley1;
+namespace console\dataMigration\mistro\stanley;
 
 
 use console\dataMigration\mistro\MigrateInterface;

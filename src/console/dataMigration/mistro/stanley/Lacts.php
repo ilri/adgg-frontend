@@ -1,6 +1,6 @@
 <?php
 
-namespace console\dataMigration\mistro\stanley1;
+namespace console\dataMigration\mistro\stanley;
 
 class Lacts extends \console\dataMigration\mistro\klba\Lacts
 {
