@@ -29,6 +29,6 @@ trait MigrationTrait
      */
     public static function getDb()
     {
-        return Yii::$app->get('stan2019');
+        return Yii::$app->get('mistroDbStanley');
     }
 }
