@@ -9,7 +9,7 @@
 namespace console\dataMigration\mistro\stanley;
 
 
-use \Yii;
+use yii;
 
 trait MigrationTrait
 {
