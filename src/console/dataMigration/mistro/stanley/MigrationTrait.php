@@ -9,7 +9,9 @@
 namespace console\dataMigration\mistro\stanley;
 
 
-use yii;
+
+use yii\db\Connection;
+use yii\base\InvalidConfigException;
 
 trait MigrationTrait
 {
@@ -23,9 +25,11 @@ trait MigrationTrait
         return Migrate::ORG_NAME;
     }
 
+
+
     /**
-     * @return \yii\db\Connection the database connection used by this AR class.
-     * @throws \yii\base\InvalidConfigException
+     * @return Connection the database connection used by this AR class.
+     * @throws InvalidConfigException
      */
     public static function getDb()
     {
