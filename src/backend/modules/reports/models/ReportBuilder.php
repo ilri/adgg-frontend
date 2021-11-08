@@ -14,7 +14,7 @@ use backend\modules\core\models\FarmMetadataBreedingOtherBulls;
 use backend\modules\core\models\FarmMetadataBreedingSchemeBulls;
 use backend\modules\core\models\FarmMetadataCattleDetails;
 use backend\modules\core\models\FarmMetadataCattleHousingAndStructures;
-use backend\modules\core\models\FarmMetadataConcentrates;
+use backend\modules\core\models\FarmMetadataConcentrateFeeding;
 use backend\modules\core\models\FarmMetadataExtensionServices;
 use backend\modules\core\models\FarmMetadataFarmStructureDetails;
 use backend\modules\core\models\FarmMetadataFeeding;
@@ -235,8 +235,8 @@ class ReportBuilder extends Model
                 'title' => 'Farm Improved Fodder Adoption Sources',
                 'relations' => ['farm'],
             ],
-            'FarmMetadataConcentrates' => [
-                'class' => FarmMetadataConcentrates::class,
+            'FarmMetadataConcentrateFeeding' => [
+                'class' => FarmMetadataConcentrateFeeding::class,
                 'title' => 'Concentrates',
                 'relations' => ['farm'],
             ],
