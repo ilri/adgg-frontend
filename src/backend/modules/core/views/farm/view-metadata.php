@@ -25,9 +25,10 @@ if ($metadataModel !== null) {
     $this->title = Html::encode($farmModel->name);
 }
 $this->params['breadcrumbs'][] = ['label' => Inflector::pluralize($controller->resourceLabel), 'url' => ['index', 'country_id' => $farmModel->country_id]];
-if ($metadataModel->country_id) {
-    $this->params['breadcrumbs'][] = Country::getScalar('name', ['id' => $metadataModel->country_id]);
-}
+//if ($metadataModel->country_id) {
+//    $this->params['breadcrumbs'][] = Country::getScalar('name', ['id' => $metadataModel->country_id]);
+//}
+//$this->params['breadcrumbs'][] = Country::getScalar('name', ['id' => $metadataModel->country_id]);
 $this->params['breadcrumbs'][] = $this->title;
 $code = Yii::$app->request->get('type');
 
