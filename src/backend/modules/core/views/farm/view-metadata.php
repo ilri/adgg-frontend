@@ -28,7 +28,7 @@ $this->params['breadcrumbs'][] = ['label' => Inflector::pluralize($controller->r
 //if ($metadataModel->country_id) {
 //    $this->params['breadcrumbs'][] = Country::getScalar('name', ['id' => $metadataModel->country_id]);
 //}
-$this->params['breadcrumbs'][] = Country::getScalar('name', ['id' => $metadataModel->country_id]);
+//$this->params['breadcrumbs'][] = Country::getScalar('name', ['id' => $metadataModel->country_id]);
 $this->params['breadcrumbs'][] = $this->title;
 $code = Yii::$app->request->get('type');
 
