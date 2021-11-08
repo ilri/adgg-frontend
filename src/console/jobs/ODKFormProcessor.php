@@ -137,6 +137,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerFarmerTechnologyMobilization();
                 $this->registerFarmerMilkUtilization();
                 $this->registerFarmerImprovedFodderAdoption();
+                $this->registerConcentrate();
                 $this->registerFarmerFeedbackToHousehold();
                 $this->registerLandOwnership();
                 $this->registerWaterSources();
@@ -711,6 +712,28 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         foreach ($data as $k => $datum) {
             $newModel = clone $model;
             $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'improved_fodderdetails', $repeatKey);
+            $i = $newModel->type . $k;
+            $this->saveFarmMetadataModel($newModel, $i, true);
+        }
+
+    }
+
+    protected function registerConcentrate()
+    {
+        $repeatKey = 'feeding_systems';
+        $data = $this->_model->form_data[$repeatKey] ?? null;
+        if (empty($data)) {
+            return;
+        }
+        $model = new FarmMetadata([
+            'farm_id' => $this->getFarmId(),
+            'type' => FarmMetadata::TYPE_CONCENTRATES,
+            'country_id' => $this->_model->country_id,
+            'odk_form_uuid' => $this->_model->form_uuid,
+        ]);
+        foreach ($data as $k => $datum) {
+            $newModel = clone $model;
+            $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'concentrate_feeds', $repeatKey);
             $i = $newModel->type . $k;
             $this->saveFarmMetadataModel($newModel, $i, true);
         }
