@@ -3,6 +3,7 @@
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\FarmMetadata;
 use backend\modules\core\models\FarmMetadataType;
+use backend\modules\core\models\Country;
 use backend\modules\core\models\TableAttribute;
 use backend\modules\core\models\TableAttributesGroup;
 use common\helpers\Lang;
