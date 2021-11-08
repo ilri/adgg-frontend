@@ -9,7 +9,7 @@
 namespace backend\modules\core\models;
 
 
-class FarmMetadataConcentrates extends FarmMetadata implements FarmMetadataInterface
+class FarmMetadataConcentrateFeeding extends FarmMetadata implements FarmMetadataInterface
 {
     public static function getDefinedMetadataType(): int
     {
