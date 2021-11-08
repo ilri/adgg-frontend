@@ -20,6 +20,7 @@ use backend\modules\core\models\FarmMetadataFeeding;
 use backend\modules\core\models\FarmMetadataGroupMembership;
 use backend\modules\core\models\FarmMetadataHealth;
 use backend\modules\core\models\FarmMetadataHouseholdMembers;
+use backend\modules\core\models\FarmMetadataImprovedFodderAdoption;
 use backend\modules\core\models\FarmMetadataMilkUtilization;
 use backend\modules\core\models\FarmMetadataMilkUtilizationBuyer;
 use backend\modules\core\models\FarmMetadataOtherSpeciesDetails;
@@ -226,6 +227,11 @@ class ReportBuilder extends Model
             'FarmMetadataWaterSource' => [
                 'class' => FarmMetadataWaterSource::class,
                 'title' => 'Farm Water Sources',
+                'relations' => ['farm'],
+            ],
+            'FarmMetadataImprovedFodderAdoption' => [
+                'class' => FarmMetadataImprovedFodderAdoption::class,
+                'title' => 'Farm Improved Fodder Adoption Sources',
                 'relations' => ['farm'],
             ],
             'Animal' => [
