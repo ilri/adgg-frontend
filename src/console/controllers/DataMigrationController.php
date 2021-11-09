@@ -22,10 +22,26 @@ class DataMigrationController extends Controller
     public function actionRun()
     {
         $time_start = microtime(true);
-        $this->doMigration();
+        //$this->doMigration();
+        $this->requeueStalledOdkForms();
         $time_end = microtime(true);
         $executionTime = round($time_end - $time_start, 2);
         $this->stdout("DATA MIGRATION TASK EXECUTED IN {$executionTime} SECONDS\n");
+    }
+
+    protected function requeueStalledOdkForms()
+    {
+        $query = OdkForm::find()->andWhere(['is_processed' => 0]);
+        $modelClassName = OdkForm::class;
+        $totalRecords = $query->count();
+        $n = 1;
+        foreach ($query->batch(100) as $i => $models) {
+            foreach ($models as $model) {
+                ODKFormProcessor::push(['itemId' => $model->id]);
+                $this->stdout("{$modelClassName}: processed {$n} of {$totalRecords} records\n");
+                $n++;
+            }
+        }
     }
 
     protected function doMigration()
