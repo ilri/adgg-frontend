@@ -118,7 +118,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     public function execute($queue)
     {
         $this->_model = OdkForm::find()->andWhere(['id' => $this->itemId])->one();
-        Yii::$app->controller->stdout("Processing started..\n");
+        $form_uuid = $this->_model->form_uuid ?? null;
+        Yii::$app->controller->stdout("Processing started...File Id={$form_uuid}\n");
         if ($this->_model === null) {
             Yii::$app->controller->stdout("No ODK form found with id: {$this->itemId}\n");
             return false;
@@ -192,6 +193,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             }
             $this->_model->save(false);
             ODKJsonNotification::createManualNotifications(ODKJsonNotification::NOTIF_ODK_JSON, $this->_model->id);
+            Yii::$app->controller->stdout("Processing successful..\n");
         } catch (\Exception $e) {
             $message = $e->getMessage();
             $message = 'ODK FORM UUID:' . $this->_model->form_uuid . ': ' . $message;
