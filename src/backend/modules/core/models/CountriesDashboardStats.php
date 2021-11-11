@@ -280,7 +280,7 @@ class CountriesDashboardStats extends Model
         // get breeds
         //$breeds = Choices::getList(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS);
         //$breed_groups = AnimalBreedGroup::getListData('name', 'breeds', false, '', [], ['orderBy'=>'name']);
-        $list = AnimalBreedGroup::getData(['id', 'name', 'breeds', 'color'], '', [], ['orderBy' => 'name']);
+        $list = AnimalBreedGroup::getData(['id', 'name', 'breeds'], '', [], ['orderBy' => 'name']);
         //dd($list);
         foreach ($list as $k => $row) {
             $ids = json_decode($row['breeds']);
