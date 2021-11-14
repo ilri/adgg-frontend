@@ -528,6 +528,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         }
         $animalModel = new Animal([
             'farm_id' => $farmModel->id,
+            'field_agent_id' => $this->_model->user_id,
             'country_id' => $farmModel->country_id,
             'region_id' => $farmModel->region_id,
             'district_id' => $farmModel->district_id,
