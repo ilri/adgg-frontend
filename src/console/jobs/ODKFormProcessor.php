@@ -1493,7 +1493,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $repeatKey = $mainRepeatKey . '/animal_hairsamplingdetails';
         $animalCodeAttributeKey = self::getAttributeJsonKey('hairsampling_animalplatformuniqueid', '', $repeatKey);
         $groupKey = 'hairsampling_details';
-        $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_HAIR_SAMPLING, $repeatKey, $groupKey, $animalCodeAttributeKey);
+        $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_SAMPLING, $repeatKey, $groupKey, $animalCodeAttributeKey);
     }
 
     /**
