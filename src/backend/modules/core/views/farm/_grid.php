@@ -19,6 +19,12 @@ use yii\helpers\Url;
     },
     'columns' => [
         [
+            'attribute' => 'field_agent_id',
+            'value' => function (Farm $model) {
+                return $model->getRelationAttributeValue('fieldAgent', 'name');
+            }
+        ],
+        [
             'attribute' => 'code',
             'hidden' => true,
         ],
@@ -74,12 +80,7 @@ use yii\helpers\Url;
             },
             'hidden' => false,
         ],
-        [
-            'attribute' => 'field_agent_id',
-            'value' => function (Farm $model) {
-                return $model->getRelationAttributeValue('fieldAgent', 'name');
-            }
-        ],
+
         [
             'attribute' => 'farm_type',
             'hidden' => false,
