@@ -204,6 +204,14 @@ use yii\bootstrap4\Html;
                             ],
                         ]); ?>
                     </div>
+                    <div class="col-lg-1">
+                        <?= Html::label($model->getAttributeLabel('From')) ?>
+                        <?= Html::textInput('from', $model->_dateFilterFrom, ['class' => 'form-control show-datepicker', 'placeholder' => 'From']) ?>
+                    </div>
+                    <div class="col-lg-1">
+                        <?= Html::label($model->getAttributeLabel('to')) ?>
+                        <?= Html::textInput('to', $model->_dateFilterTo, ['class' => 'form-control show-datepicker', 'placeholder' => 'To']) ?>
+                    </div>
                     <div class="col-lg-2">
                         <br>
                         <button class="btn btn-primary pull-left" type="submit"><?= Lang::t('Go') ?></button>
