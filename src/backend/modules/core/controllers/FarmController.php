@@ -93,14 +93,14 @@ class FarmController extends Controller
         $searchModel->_dateFilterFrom = $dateFilter['from'];
         $searchModel->_dateFilterTo = $dateFilter['to'];
         $searchModel->odk_code = $odk_code;
+        $grid = null;
         if (Session::isVillageUser()) {
             $searchModel->field_agent_id = Session::getUserId();
         }
         return $this->render('index', [
             'searchModel' => $searchModel,
             'country' => $country,
-            'from' => $dateFilter,
-            'to' => $dateFilter,
+            'grid' => $grid,
         ]);
 
     }
