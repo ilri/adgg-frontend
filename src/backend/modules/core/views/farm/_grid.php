@@ -25,6 +25,9 @@ use yii\helpers\Url;
             }
         ],
         [
+            'attribute' => 'reg_date',
+        ],
+        [
             'attribute' => 'code',
             'hidden' => true,
         ],
