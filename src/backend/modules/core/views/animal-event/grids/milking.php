@@ -19,6 +19,12 @@ use yii\web\View;
     ],
     'columns' => [
         [
+            'attribute' => 'field_agent_id',
+            'value' => function (AnimalEvent $model) {
+                return $model->getRelationAttributeValue('fieldAgent', 'name');
+            }
+        ],
+        [
             'attribute' => 'animal_id',
             'value' => function (AnimalEvent $model) {
                 return $model->animal->tag_id;
@@ -31,12 +37,7 @@ use yii\web\View;
 //                return $model->animal->name;
 //            },
 //        ],
-        [
-            'attribute' => 'field_agent_id',
-            'value' => function (AnimalEvent $model) {
-                return $model->getRelationAttributeValue('fieldAgent', 'name');
-            }
-        ],
+
         [
             'attribute' => 'event_date',
             'label' => 'Milk Date',
@@ -59,38 +60,38 @@ use yii\web\View;
             'attribute' => 'milkday',
             'enableSorting' => false,
         ],
-//        [
-//            'attribute' => 'milkfat',
-//            'enableSorting' => false,
-//        ],
-//        [
-//            'attribute' => 'milkprot',
-//            'enableSorting' => false,
-//        ],
-//        [
-//            'attribute' => 'milklact',
-//            'enableSorting' => false,
-//        ],
-//        [
-//            'attribute' => 'milksmc',
-//            'enableSorting' => false,
-//        ],
-//        [
-//            'attribute' => 'milkurea',
-//            'enableSorting' => false,
-//        ],
-//        [
-//            'attribute' => 'milkurea',
-//            'enableSorting' => false,
-//        ],
-//        [
-//            'attribute' => 'milk_sample_type',
-//            'value' => function (AnimalEvent $model) {
-//                return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_MILK_SAMPLE_TYPE, $model->milk_sample_type);
-//            },
-//            'enableSorting' => false,
-//            'visible' => false,
-//        ],
+        [
+            'attribute' => 'milkfat',
+            'enableSorting' => false,
+        ],
+        [
+            'attribute' => 'milkprot',
+            'enableSorting' => false,
+        ],
+        [
+            'attribute' => 'milklact',
+            'enableSorting' => false,
+        ],
+        [
+            'attribute' => 'milksmc',
+            'enableSorting' => false,
+        ],
+        [
+            'attribute' => 'milkurea',
+            'enableSorting' => false,
+        ],
+        [
+            'attribute' => 'milkurea',
+            'enableSorting' => false,
+        ],
+        [
+            'attribute' => 'milk_sample_type',
+            'value' => function (AnimalEvent $model) {
+                return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_MILK_SAMPLE_TYPE, $model->milk_sample_type);
+            },
+            'enableSorting' => false,
+            'visible' => false,
+        ],
     ],
 ]);
 ?>
