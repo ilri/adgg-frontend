@@ -25,6 +25,9 @@ use yii\helpers\Url;
             'attribute' => 'tag_id',
         ],
         [
+            'attribute' => 'reg_date',
+        ],
+        [
             'attribute' => 'name',
         ],
         [
