@@ -19,6 +19,12 @@ use yii\helpers\Url;
     ],
     'columns' => [
         [
+            'attribute' => 'field_agent_id',
+            'value' => function (AnimalEvent $model) {
+                return $model->getRelationAttributeValue('fieldAgent', 'name');
+            }
+        ],
+        [
             'attribute' => 'animal_id',
             'value' => function (AnimalEvent $model) {
                 return $model->animal->tag_id;
