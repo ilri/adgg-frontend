@@ -99,6 +99,8 @@ class FarmController extends Controller
         return $this->render('index', [
             'searchModel' => $searchModel,
             'country' => $country,
+            'from' => $dateFilter,
+            'to' => $dateFilter,
         ]);
 
     }
