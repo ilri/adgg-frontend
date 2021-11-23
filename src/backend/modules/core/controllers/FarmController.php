@@ -19,6 +19,7 @@ use backend\modules\core\models\Farm;
 use backend\modules\core\models\FarmMetadata;
 use backend\modules\core\models\FarmMetadataType;
 use common\controllers\UploadExcelTrait;
+use common\helpers\DateUtils;
 use common\helpers\Lang;
 use common\helpers\Url;
 use Yii;
@@ -58,6 +59,7 @@ class FarmController extends Controller
     public function actionIndex($country_id = null, $org_id = null, $client_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $name = null, $code = null, $phone = null, $project = null, $farm_type = null, $gender_code = null, $is_active = null, $odk_code = null,$from = null, $to = null)
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
+        $dateFilter = DateUtils::getDateFilterParams($from, $to, 'reg_date', false, false);
         $country_id = Session::getCountryId($country_id);
         $org_id = Session::getOrgId($org_id);
         $client_id = Session::getClientId($client_id);
@@ -88,8 +90,8 @@ class FarmController extends Controller
         $searchModel->farm_type = $farm_type;
         $searchModel->gender_code = $gender_code;
         $searchModel->is_active = $is_active;
-        $searchModel->reg_date = $from;
-        $searchModel->reg_date = $to;
+        $searchModel->_dateFilterFrom = $dateFilter['from'];
+        $searchModel->_dateFilterTo = $dateFilter['to'];
         $searchModel->odk_code = $odk_code;
         if (Session::isVillageUser()) {
             $searchModel->field_agent_id = Session::getUserId();
@@ -98,6 +100,7 @@ class FarmController extends Controller
             'searchModel' => $searchModel,
             'country' => $country,
         ]);
+
     }
 
     public function actionCreate($country_id = null)
