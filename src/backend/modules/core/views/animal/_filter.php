@@ -195,6 +195,14 @@ use yii\bootstrap4\Html;
                         <?= Html::label($model->getAttributeLabel('dam_tag_id')) ?>
                         <?= Html::textInput('dam_tag_id', $model->dam_tag_id, ['class' => 'form-control']) ?>
                     </div>
+                    <div class="col-lg-1">
+                        <?= Html::label($model->getAttributeLabel('From')) ?>
+                        <?= Html::textInput('from', $model->_dateFilterFrom, ['class' => 'form-control show-datepicker', 'placeholder' => 'From']) ?>
+                    </div>
+                    <div class="col-lg-1">
+                        <?= Html::label($model->getAttributeLabel('To')) ?>
+                        <?= Html::textInput('to', $model->_dateFilterTo, ['class' => 'form-control show-datepicker', 'placeholder' => 'To']) ?>
+                    </div>
                     <div class="col-lg-2">
                         <br>
                         <button class="btn btn-primary pull-left" type="submit"><?= Lang::t('Go') ?></button>
