@@ -44,6 +44,7 @@ class AnimalController extends Controller
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
         $dateFilter = DateUtils::getDateFilterParams($from, $to, Animal::tableName() . '.`reg_date`' , false, false);
+        var_dump($dateFilter); die;
         $country_id = Session::getCountryId($country_id);
         $org_id = Session::getOrgId($org_id);
         $client_id = Session::getClientId($client_id);
