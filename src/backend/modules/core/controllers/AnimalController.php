@@ -20,6 +20,7 @@ use backend\modules\core\models\AnimalUpdate;
 use backend\modules\core\models\Country;
 use backend\modules\core\models\Farm;
 use common\controllers\UploadExcelTrait;
+use common\helpers\DateUtils;
 use common\helpers\Lang;
 use common\helpers\Url;
 use Yii;
@@ -37,9 +38,10 @@ class AnimalController extends Controller
         $this->resourceLabel = 'Animal';
     }
 
-    public function actionIndex($country_id = null, $org_id = null, $client_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $animal_type = null, $farm_id = null, $farm_type = null, $main_breed = null, $name = null, $tag_id = null, $sire_tag_id = null, $dam_tag_id = null)
+    public function actionIndex($country_id = null, $org_id = null, $client_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $animal_type = null, $farm_id = null, $farm_type = null, $main_breed = null, $name = null, $tag_id = null, $sire_tag_id = null, $dam_tag_id = null,$from = null, $to = null)
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
+        $dateFilter = DateUtils::getDateFilterParams($from, $to, 'reg_date', false, false);
         $country_id = Session::getCountryId($country_id);
         $org_id = Session::getOrgId($org_id);
         $client_id = Session::getClientId($client_id);
@@ -48,7 +50,7 @@ class AnimalController extends Controller
         $ward_id = Session::getWardId($ward_id);
         $village_id = Session::getVillageId($village_id);
         $country = Country::findOne(['id' => $country_id]);
-        $condition = '';
+        $condition = $dateFilter['condition'];
         $params = [];
         $searchModel = Animal::searchModel([
             'defaultOrder' => ['id' => SORT_ASC],
@@ -77,10 +79,13 @@ class AnimalController extends Controller
         $searchModel->sire_tag_id = $sire_tag_id;
         $searchModel->dam_tag_id = $dam_tag_id;
         $searchModel->main_breed = $main_breed;
+        $searchModel->_dateFilterFrom = $dateFilter['from'];
+        $searchModel->_dateFilterTo = $dateFilter['to'];
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'country' => $country,
+            'dateFilter' => $dateFilter,
         ]);
     }
 
