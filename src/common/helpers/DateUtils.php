@@ -620,9 +620,9 @@ class DateUtils
             if ($end_date !== $start_date)
                 $title .= ' - ' . static::formatToLocalDate($end_date, 'D dS M y');
             if ($cast_date)
-                $date_field = !empty($table_name) ? 'DATE(' . $table_name . '.' . $date_field . ')' : 'DATE([[' . $date_field . ']])';
+                $date_field = !empty($table_name) ? 'DATE(' . $table_name . '.' . $date_field . ')' : 'DATE(' . $date_field . ')';
             else
-                $date_field = !empty($table_name) ? $table_name . '.[[' . $date_field . ']]' : '[[' . $date_field . ']]';
+                $date_field = !empty($table_name) ? $table_name . '.' . $date_field . '' : '' . $date_field . '';
             $condition .= $date_field . '>=' . Yii::$app->db->quoteValue($start_date) . ' AND ' . $date_field . '<=' . Yii::$app->db->quoteValue($end_date);
         }
 
