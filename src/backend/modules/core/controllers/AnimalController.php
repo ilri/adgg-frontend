@@ -43,7 +43,7 @@ class AnimalController extends Controller
     public function actionIndex($country_id = null, $org_id = null, $client_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $animal_type = null, $farm_id = null, $farm_type = null, $main_breed = null, $name = null, $tag_id = null, $sire_tag_id = null, $dam_tag_id = null,$from = null, $to = null)
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
-        $casted_date = DbUtils::castDATE(Animal::tableName() . '.[[reg_date]]');
+        $casted_date = DbUtils::castDATE(Animal::tableName() .'.reg_date');
         $dateFilter = DateUtils::getDateFilterParams($from, $to, $casted_date, false, false);
         $country_id = Session::getCountryId($country_id);
         $org_id = Session::getOrgId($org_id);
