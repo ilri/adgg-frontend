@@ -43,8 +43,12 @@ class AnimalController extends Controller
     public function actionIndex($country_id = null, $org_id = null, $client_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $animal_type = null, $farm_id = null, $farm_type = null, $main_breed = null, $name = null, $tag_id = null, $sire_tag_id = null, $dam_tag_id = null,$from = null, $to = null)
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
-        $casted_date = DbUtils::castDATE(Animal::tableName() .'.reg_date');
-        $dateFilter = DateUtils::getDateFilterParams($from, $to, $casted_date, false, false);
+        $casted_date = DbUtils::castDATE(Animal::tableName() . '.[[reg_date]]');
+        $condition = '(' . $casted_date . '>=:from AND ' . $casted_date . '<=:to)';
+        $params[':from'] = $from;
+        $params[':to'] = $to;
+//        $casted_date = DbUtils::castDATE(Animal::tableName() .'.reg_date');
+//        $dateFilter = DateUtils::getDateFilterParams($from, $to, $casted_date, false, false);
         $country_id = Session::getCountryId($country_id);
         $org_id = Session::getOrgId($org_id);
         $client_id = Session::getClientId($client_id);
@@ -53,7 +57,7 @@ class AnimalController extends Controller
         $ward_id = Session::getWardId($ward_id);
         $village_id = Session::getVillageId($village_id);
         $country = Country::findOne(['id' => $country_id]);
-        $condition = $dateFilter['condition'];
+//        $condition = $dateFilter['condition'];
         $params = [];
         $searchModel = Animal::searchModel([
             'defaultOrder' => ['id' => SORT_ASC],
@@ -82,12 +86,11 @@ class AnimalController extends Controller
         $searchModel->sire_tag_id = $sire_tag_id;
         $searchModel->dam_tag_id = $dam_tag_id;
         $searchModel->main_breed = $main_breed;
-        $searchModel->_dateFilterFrom = $dateFilter['from'];
-        $searchModel->_dateFilterTo = $dateFilter['to'];
+        $searchModel->_dateFilterFrom = $params['from'];
+        $searchModel->_dateFilterTo = $params['to'];
         return $this->render('index', [
             'searchModel' => $searchModel,
             'country' => $country,
-            'dateFilter' => $dateFilter,
         ]);
     }
 
