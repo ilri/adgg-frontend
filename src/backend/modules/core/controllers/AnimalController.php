@@ -81,7 +81,6 @@ class AnimalController extends Controller
         $searchModel->main_breed = $main_breed;
         $searchModel->_dateFilterFrom = $dateFilter['from'];
         $searchModel->_dateFilterTo = $dateFilter['to'];
-
         return $this->render('index', [
             'searchModel' => $searchModel,
             'country' => $country,
