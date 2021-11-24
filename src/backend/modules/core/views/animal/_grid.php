@@ -22,6 +22,12 @@ use yii\helpers\Url;
     ],
     'columns' => [
         [
+            'attribute' => 'field_agent_id',
+            'value' => function (Animal $model) {
+                return $model->getRelationAttributeValue('fieldAgent', 'name');
+            }
+        ],
+        [
             'attribute' => 'tag_id',
         ],
         [
