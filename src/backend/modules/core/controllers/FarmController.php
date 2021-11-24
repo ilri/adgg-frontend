@@ -68,7 +68,7 @@ class FarmController extends Controller
         $ward_id = Session::getWardId($ward_id);
         $village_id = Session::getVillageId($village_id);
         $country = Country::findOne(['id' => $country_id]);
-        $condition = '';
+        $condition = $dateFilter['condition'];
         $params = [];
         $searchModel = Farm::searchModel([
             'defaultOrder' => ['id' => SORT_DESC],
