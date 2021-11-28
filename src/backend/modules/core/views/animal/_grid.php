@@ -28,6 +28,13 @@ use yii\helpers\Url;
 //            }
 //        ],
         [
+            'attribute' => 'farm_id',
+            'value' => function (Animal $model) {
+                return $model->getRelationAttributeValue('fieldAgent', 'name');
+            },
+            'filter' => false,
+        ],
+        [
             'attribute' => 'tag_id',
         ],
         [
