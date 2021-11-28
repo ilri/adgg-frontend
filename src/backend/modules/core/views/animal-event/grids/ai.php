@@ -20,6 +20,13 @@ use yii\helpers\Url;
     ],
     'columns' => [
         [
+            'attribute' => 'farm_id',
+            'value' => function (Animal $model) {
+                return $model->getRelationAttributeValue('fieldAgent', 'name');
+            },
+            'filter' => false,
+        ],
+        [
             'attribute' => 'event_date',
             'label' => 'AI Date',
             'format' => ['date', 'php:d-M-Y'],
