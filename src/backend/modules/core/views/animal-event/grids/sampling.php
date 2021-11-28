@@ -16,6 +16,13 @@ use yii\web\View;
     ],
     'columns' => [
         [
+            'attribute' => 'farm_id',
+            'value' => function (Animal $model) {
+                return $model->getRelationAttributeValue('fieldAgent', 'name');
+            },
+            'filter' => false,
+        ],
+        [
             'attribute' => 'hair_sampling_code',
             'enableSorting' => true,
         ],
