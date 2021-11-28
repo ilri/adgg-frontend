@@ -19,11 +19,10 @@ use yii\web\View;
     ],
     'columns' => [
         [
-            'attribute' => 'farm_id',
-            'value' => function (Animal $model) {
+            'attribute' => 'field_agent_id',
+            'value' => function (AnimalEvent $model) {
                 return $model->getRelationAttributeValue('fieldAgent', 'name');
-            },
-            'filter' => false,
+            }
         ],
         [
             'attribute' => 'event_date',
