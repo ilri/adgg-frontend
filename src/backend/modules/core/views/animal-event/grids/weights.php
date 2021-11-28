@@ -22,6 +22,12 @@ use yii\web\View;
     ],
     'columns' => [
         [
+            'attribute' => 'field_agent_id',
+            'value' => function (AnimalEvent $model) {
+                return $model->getRelationAttributeValue('fieldAgent', 'name');
+            }
+        ],
+        [
             'attribute' => 'event_date',
             'label' => 'Weight Date',
             'format' => ['date', 'php:d-M-Y'],
