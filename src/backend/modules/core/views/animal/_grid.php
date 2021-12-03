@@ -56,13 +56,13 @@ use yii\helpers\Url;
                 return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, $model->animal_type);
             }
         ],
-        [
-            'attribute' => 'color',
-            'value' => function (Animal $model) {
-                return !empty($model->color) ? Choices::getMultiSelectLabel($model->color, ChoiceTypes::CHOICE_TYPE_ANIMAL_COLORS) : $model->color_other;
-            }
-
-        ],
+//        [
+//            'attribute' => 'color',
+//            'value' => function (Animal $model) {
+//                return !empty($model->color) ? Choices::getMultiSelectLabel($model->color, ChoiceTypes::CHOICE_TYPE_ANIMAL_COLORS) : $model->color_other;
+//            }
+//
+//        ],
         [
             'attribute' => 'main_breed',
             'value' => function (Animal $model) {
