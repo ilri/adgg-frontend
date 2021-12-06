@@ -40,7 +40,7 @@ use yii\web\View;
 
         [
             'attribute' => 'event_date',
-            'label' => 'Milk Date',
+            'label' => 'Collection Date',
             'format' => ['date', 'php:d-M-Y'],
         ],
         [
