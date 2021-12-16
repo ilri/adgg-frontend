@@ -44,6 +44,11 @@ use yii\web\View;
             'format' => ['date', 'php:d-M-Y'],
         ],
         [
+            'attribute' => 'milk_milkdate',
+            'label' => 'milk Date',
+            'format' => ['date', 'php:d-M-Y'],
+        ],
+        [
             'attribute' => 'dry_date',
             'label' => 'Dry Date',
             'format' => ['date', 'php:d-M-Y'],
