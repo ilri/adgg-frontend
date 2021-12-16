@@ -139,6 +139,11 @@ class DefaultController extends Controller
                     $name = $builder->name;
                     $query = null;
                     break;
+                case Constants::REPORT_TYPE_HAIR_SAMPLING:
+                    $builder = Reports::hairsampleReport(\Yii::$app->request->post());
+                    $name = $builder->name;
+                    $query = null;
+                    break;
                 default:
                     $builder = null;
                     $query = null;

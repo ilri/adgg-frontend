@@ -6,6 +6,7 @@ use backend\modules\core\models\Animal;
 use backend\modules\core\models\CalvingEvent;
 use backend\modules\core\models\Country;
 use backend\modules\core\models\MilkingEvent;
+use backend\modules\core\models\SamplingEvent;
 use backend\modules\core\models\WeightEvent;
 use common\helpers\ArrayHelper;
 use common\helpers\DateUtils;
@@ -963,6 +964,100 @@ class Reports extends ActiveRecord implements ActiveSearchInterface
             $expression = new Expression($condition, $params);
             $builder->extraFilterExpressions[] = $expression;
         }
+        return $builder;
+    }
+
+    public static function hairsampleReport($filter, $version = 1){
+        $fields = [
+            'region_id' => null,
+            'district_id' => null,
+            'ward_id' => null,
+            'village_id' => null,
+            'region.name' => null,
+            'district.name' => null,
+            'ward.code' => null,
+            'village.code' => null,
+            'farm.id' => null,
+            'id' => null,
+            'tag_id' => null,
+            'event_date' => null,
+        ];
+
+        $filterConditions = array_merge($fields, [
+            'region_id' => '=',
+            'district_id' => '=',
+            'ward_id' => '=',
+            'village_id' => '=',
+        ]);
+        $filterValues = [
+            'region_id' => $filter['region_id'],
+            'district_id' => $filter['district_id'],
+            'ward_id' => $filter['ward_id'],
+            'village_id' => $filter['village_id'],
+        ];
+        $fieldAliases = [
+            'region.name' => 'Region',
+            'district.name' => 'District',
+            'ward.code' => $version == 2 ? 'Ward' :'Wareda',
+            'village.code' => $version == 2 ? 'Village' :'Kebele',
+            'animal.id' => 'AnimalID',
+            'animal.tag_id' => 'AnimalRegID',
+        ];
+
+        $breeds = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS;
+        $animal_type = \backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES;
+        $decodedFields = [
+            'main_breed' => [
+                'function' => '\backend\modules\core\models\Choices::getLabel',
+                'params'=> [
+                    //'\backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS',
+                    "$breeds",
+                    'fieldValue', // the value of this field
+                ]
+            ],
+            'animal_type' => [
+                'function' => '\backend\modules\core\models\Choices::getLabel',
+                'params' => [
+                    //'\backend\modules\core\models\ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS',
+                    "$animal_type",
+                    'fieldValue', // the value of this field
+                ]
+            ],
+        ];
+
+        $excludeFromReport = array_keys($filterValues);
+
+        $from = ArrayHelper::getValue($filter, 'from');
+        $to = ArrayHelper::getValue($filter, 'to');
+
+        $orderBy = '';
+
+        $builder = new ReportBuilder();
+        $builder->model = 'Sampling_Event';
+        $builder->filterConditions = $filterConditions;
+        $builder->filterValues = $filterValues;
+        $builder->fieldAliases = $fieldAliases;
+        $builder->excludeFromReport = $excludeFromReport;
+        $builder->decodeFields = $decodedFields;
+        $builder->orderBy = $orderBy;
+        //$builder->limit = 50;
+        $builder->country_id = $filter['country_id'] ?? null;
+        $builder->name = 'HairSampling_Data_' . ($filter['country_id'] ? Country::getScalar('name', ['id' => $filter['country_id']]) : '');
+        if ($version == 2) {
+            $builder->name = $builder->name . '_v' . $version;
+        }
+
+        if (!empty($from) && !empty($to)) {
+            $casted_date = DbUtils::castDATE(SamplingEvent::tableName() . '.[[event_date]]');
+            $condition = '(' . $casted_date . '>=:from AND ' . $casted_date . '<=:to)';
+            $params[':from'] = $from;
+            $params[':to'] = $to;
+            $expression = new Expression($condition, $params);
+            $builder->extraFilterExpressions[] = $expression;
+        }
+        // add the rowTransformer
+        $builder->rowTransformer = '\backend\modules\reports\models\Reports::transformHairSamplingDataRow';
+
         return $builder;
     }
 }
