@@ -40,7 +40,7 @@ use yii\helpers\Url;
         ],
         [
             'attribute' => 'event_date',
-            'label' => 'Calving Date',
+            'label' => 'Collection Date',
             'format' => ['date', 'php:d-M-Y'],
         ],
         [
