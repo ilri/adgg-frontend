@@ -40,7 +40,7 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
         return ArrayHelper::merge(parent::rules(), [
             [['milkmor', 'milkmid', 'milkmid'], 'number', 'min' => 0, 'max' => 30, 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
             [['milkday'], 'number', 'min' => 0, 'max' => 60, 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
-            [['milkfat'], 'number', 'min' => 2, 'max' => 10, 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
+            [['milkfat'], 'number', 'min' => 0.5, 'max' => 10, 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
             [['milkprot'], 'number', 'min' => 0.5, 'max' => 6, 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
             [['milksmc'], 'number', 'min' => 15000, 'max' => 99999999999, 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
             ['milkurea', 'number', 'min' => 8, 'max' => 25, 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
