@@ -9,7 +9,7 @@
 namespace console\dataMigration\mistro\klba;
 
 
-use \Yii;
+use Yii;
 
 trait MigrationTrait
 {
