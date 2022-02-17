@@ -22,8 +22,8 @@ class DataMigrationController extends Controller
     public function actionRun()
     {
         $time_start = microtime(true);
-        //$this->doMigration();
-        $this->requeueStalledOdkForms();
+        $this->doMigration();
+//        $this->requeueStalledOdkForms();
         $time_end = microtime(true);
         $executionTime = round($time_end - $time_start, 2);
         $this->stdout("DATA MIGRATION TASK EXECUTED IN {$executionTime} SECONDS\n");
@@ -46,8 +46,8 @@ class DataMigrationController extends Controller
 
     protected function doMigration()
     {
-        \console\dataMigration\mistro\stanley\Migrate::run();
-        \console\dataMigration\mistro\kalro\Migrate::run();
+//        \console\dataMigration\mistro\stanley\Migrate::run();
+//        \console\dataMigration\mistro\kalro\Migrate::run();
         \console\dataMigration\mistro\klba\Migrate::run();
     }
 
