@@ -133,7 +133,7 @@ class Cows extends MigrationBase implements MigrationInterface
                 $newModel->farm_id = $herdModel->farm_id;
                 $newModel->tag_id = $dataModel->Cows_HIONo;
                 $newModel->name = $dataModel->Cows_RegName;
-                $newModel->animal_eartag_id = $dataModel->Cows_EarTag;
+//                $newModel->animal_eartag_id = $dataModel->Cows_EarTag;
                 if (strtolower($dataModel->Cows_Sex) == 'm') {
                     $newModel->sex = 1;
                 } elseif (strtolower($dataModel->Cows_Sex) == 'f') {
