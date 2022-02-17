@@ -26,6 +26,6 @@ trait MigrationTrait
 
     public static function getDb()
     {
-        return \Yii::$app->get('kenyadb');
+        return \Yii::$app->get('mistroDbKlba');
     }
 }
