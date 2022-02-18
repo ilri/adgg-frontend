@@ -81,7 +81,7 @@ class Bulls extends MigrationBase implements MigrationInterface
                     $newModel->farm_id = $herdModel->farm_id;
                 }
                 $newModel->migration_id = Helper::getMigrationId($dataModel->Bulls_ID, static::getMigrationIdPrefix());
-                $newModel->tag_id = $dataModel->Bulls_Nasis1;
+                $newModel->tag_id = 'KLBA-'.$dataModel->Bulls_Nasis1;
                 $newModel->name = $dataModel->Bulls_RegName;
                 $newModel->animal_type = 5;
                 $newModel->short_name = $dataModel->Bulls_ShortName;
