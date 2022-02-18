@@ -131,7 +131,7 @@ class Cows extends MigrationBase implements MigrationInterface
                 $newModel->migration_id = Helper::getMigrationId($dataModel->Cows_ID, static::getMigrationIdPrefix());
                 $newModel->herd_id = $herdModel->id;
                 $newModel->farm_id = $herdModel->farm_id;
-                $newModel->tag_id = $dataModel->Cows_HIONo;
+                $newModel->tag_id = $dataModel->Cows_EarTag;
                 $newModel->name = $dataModel->Cows_RegName;
 //                $newModel->animal_eartag_id = $dataModel->Cows_EarTag;
                 if (strtolower($dataModel->Cows_Sex) == 'm') {
