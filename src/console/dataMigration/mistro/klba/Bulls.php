@@ -85,7 +85,7 @@ class Bulls extends MigrationBase implements MigrationInterface
                 $newModel->name = $dataModel->Bulls_RegName;
                 $newModel->animal_type = 5;
                 $newModel->short_name = $dataModel->Bulls_ShortName;
-                $newModel->animal_eartag_id = $dataModel->Bulls_EarTag;
+//                $newModel->animal_eartag_id = $dataModel->Bulls_EarTag;
                 $newModel->sex = 1;
                 $newModel->birthdate = $dataModel->Bulls_Birth;
                 if ($newModel->birthdate == '0000-00-00') {
