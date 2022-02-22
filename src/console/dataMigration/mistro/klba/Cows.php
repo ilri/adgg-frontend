@@ -162,7 +162,7 @@ class Cows extends MigrationBase implements MigrationInterface
                     $newModel->reg_date = null;
                 }
 
-//                static::saveModel($newModel, $n, $totalRecords);
+                static::saveModel($newModel, $n, $totalRecords);
                 $n++;
             }
         }
