@@ -91,8 +91,8 @@ class Bulls extends MigrationBase implements MigrationInterface
                 if ($newModel->birthdate == '0000-00-00') {
                     $newModel->birthdate = null;
                 }
-                $newModel->sire_tag_id = Helper::getMigrationId($dataModel->Bulls_Sire, static::getMigrationIdPrefix());
-                $newModel->dam_tag_id = Helper::getMigrationId($dataModel->Bulls_Dam, static::getCowMigrationIdPrefix());
+                $newModel->sire_tag_id = Helper::getMigrationId('KLBA-'.$dataModel->Bulls_Sire, static::getMigrationIdPrefix());
+                $newModel->dam_tag_id = Helper::getMigrationId('KLBA-'.$dataModel->Bulls_Dam, static::getCowMigrationIdPrefix());
                 $newModel->breed_composition_details = $dataModel->Bulls_BreedS;
                 $newModel->country_of_origin = $dataModel->Bulls_HerdBookCty;
                 $newModel->herd_book_no = $dataModel->Bulls_HerdBook;
