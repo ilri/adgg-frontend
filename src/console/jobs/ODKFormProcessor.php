@@ -404,6 +404,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     {
         //farmer registration details as defined in ODK forms
         $farmersRepeatKey = 'farmer_general';
+        $staffCodeRepeatKey = 'form_login';
         $farmerGeneralDetailsGroupKey = 'farmer_generaldetails';
         $farmerHouseholdHeadGroupKey = 'farmer_hhheaddetails';
 
@@ -416,6 +417,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $farmerGenderKey = self::getAttributeJsonKey('farmer_gender', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
         $farmerIsHouseholdHeadKey = self::getAttributeJsonKey('farmer_hhhead', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
         $locationStringKey = $farmersRepeatKey . '/farmer_gpslocation';
+        $staffCodeKey = $staffCodeRepeatKey.'/staff_code';
         //household head
 
 
@@ -452,6 +454,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $newFarmerModel->setDynamicAttributesValuesFromOdkForm($farmerData, $farmerHouseholdHeadGroupKey, $farmersRepeatKey);
             //Household Members (No Demographics)
             $newFarmerModel = $this->setFarmerHouseholdMembersNumbersAttributes($newFarmerModel, $k);
+            //Staff Code
+            $newFarmerModel->created_by = $this->getFormDataValueByKey($farmerData,$staffCodeKey);
 
             $this->saveFarmModel($newFarmerModel, $k, true);
         }
