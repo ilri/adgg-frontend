@@ -417,7 +417,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $farmerGenderKey = self::getAttributeJsonKey('farmer_gender', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
         $farmerIsHouseholdHeadKey = self::getAttributeJsonKey('farmer_hhhead', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
         $locationStringKey = $farmersRepeatKey . '/farmer_gpslocation';
-        $staffCodeKey = $staffCodeRepeatKey.'/staff_code';
+        $staffCodeKey = 'staff_code';
         //household head
 
 
