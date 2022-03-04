@@ -63,7 +63,7 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
     public function getExcelColumns()
     {
         return [
-            'animalTagId',
+            'animal_id',
             'milk_cow_status',
             'dry_date',
             'milk_calving_date',
