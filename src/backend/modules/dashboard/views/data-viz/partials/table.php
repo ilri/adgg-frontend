@@ -58,9 +58,9 @@ $projects = Choices::getList(ChoiceTypes::CHOICE_TYPE_PROJECT, false);
                     <?php foreach ($projects as $k => $name): ?>
                         <tr>
                             <th class="dt-row-name"><?= Html::encode($name) ?></th>
-                            <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => 'LSF', 'project' => $name, 'country_id' => $country_ids])) ?></td>
-                            <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => 'MSF', 'project' => $name, 'country_id' => $country_ids])) ?></td>
-                            <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => 'SSF', 'project' => $name, 'country_id' => $country_ids])) ?></td>
+                            <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => '1', 'project' => $name, 'country_id' => $country_ids])) ?></td>
+                            <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => '2', 'project' => $name, 'country_id' => $country_ids])) ?></td>
+                            <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => '3', 'project' => $name, 'country_id' => $country_ids])) ?></td>
                             <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => null, 'project' => $name, 'country_id' => $country_ids])) ?></td>
                             <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['project' => $name, 'country_id' => $country_ids])) ?></td>
                             <?php
