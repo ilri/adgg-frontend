@@ -64,6 +64,7 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
     {
         return [
             'animal_id',
+            'field_agent_id',
             'milk_cow_status',
             'dry_date',
             'milk_calving_date',
