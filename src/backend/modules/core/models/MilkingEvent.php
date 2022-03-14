@@ -45,7 +45,7 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
             [['milksmc'], 'number', 'min' => 15000, 'max' => 99999999999, 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
             ['milkurea', 'number', 'min' => 8, 'max' => 25, 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
             ['milklact', 'number', 'min' => 2, 'max' => 6, 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
-            // ['event_date', 'validateMilkingDate', 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
+            //['event_date', 'validateMilkingDate', 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
             [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
         ]);
     }
@@ -69,7 +69,7 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
             'dry_date',
             'milk_calving_date',
             'event_date',
-            'milk_date',
+            'milk_milkdate',
             'milkmor',
             'milkmid',
             'milkeve',
