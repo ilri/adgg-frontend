@@ -69,6 +69,7 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
             'dry_date',
             'milk_calving_date',
             'event_date',
+            'milk_date',
             'milkmor',
             'milkmid',
             'milkeve',
