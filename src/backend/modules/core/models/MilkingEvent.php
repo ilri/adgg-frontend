@@ -30,6 +30,7 @@ use Yii;
  * @property int $milk_sample_type
  * @property string $dry_date
  * @property string $milk_notes
+ * @property string $milk_milkdate
  * @property int $dim
  * @property int $testday_no
  */
