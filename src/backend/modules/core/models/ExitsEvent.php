@@ -56,20 +56,23 @@ class ExitsEvent extends AnimalEvent implements AnimalEventInterface
     public function getExcelColumns()
     {
         return [
-            'animalTagId',
+//            'animalTagId',
             'event_date',
-            'disposal_reason',
-            'disposal_reason_other',
-            'disposal_amount',
-            'new_country',
-            'new_region',
-            'new_district',
-            'new_ward',
-            'new_village',
-            'new_farmer_phone',
-            'new_farmer_name',
-            'new_breeder_name',
-            'new_breeder_phone',
+//            'disposal_reason',
+//            'disposal_reason_other',
+//            'disposal_amount',
+//            'new_country',
+//            'new_region',
+//            'new_district',
+//            'new_ward',
+//            'new_village',
+//            'new_farmer_phone',
+//            'new_farmer_name',
+//            'new_breeder_name',
+//            'new_breeder_phone',
+            'exit_animalid',
+            'old_farm_id',
+            'new_farmer_id',
         ];
     }
 }
