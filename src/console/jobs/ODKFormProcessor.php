@@ -542,6 +542,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             'latitude' => $farmModel->latitude,
             'longitude' => $farmModel->longitude,
             'reg_date' => $this->getDate(),
+            'created_by' => $this->_model->user_id,
         ]);
 
         $fixedAttributesMap = [
