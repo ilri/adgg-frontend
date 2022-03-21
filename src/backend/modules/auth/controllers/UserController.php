@@ -131,7 +131,7 @@ class UserController extends Controller
         if (Yii::$app->request->isPost && $model->validate($validateAttributes) && $model->save(false)) {
             Yii::$app->session->setFlash(self::FLASH_SUCCESS, Lang::t('SUCCESS_MESSAGE'));
             if (Session::isCountry()) {
-                return $this->redirect(['index', 'level_id' => $model->level_id, 'country_id' => $model->country_id]);x
+                return $this->redirect(['index', 'level_id' => $model->level_id, 'country_id' => $model->country_id]);
             }
             else if (Session::isDistrictUser()){
                 return $this->redirect(['index', 'level_id' => $model->level_id,  'district_id' => $model->district_id]);
