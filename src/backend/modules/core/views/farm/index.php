@@ -15,8 +15,15 @@ use backend\modules\core\models\CountryUnits;
 $controller = Yii::$app->controller;
 
 $this->title = $controller->getPageTitle();
-if ($country) {
+//if ($country) {
+//    $this->params['breadcrumbs'][] = Country::getScalar('name', ['id' => $country]);
+//}
+
+if (Session::isCountry()) {
     $this->params['breadcrumbs'][] = Country::getScalar('name', ['id' => $country]);
+}
+else if (Session::isDistrictUser()){
+    $this->params['breadcrumbs'][] = CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]);
 }
 
 // if ($district){
