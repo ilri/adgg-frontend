@@ -130,7 +130,7 @@ class UserController extends Controller
         $model->ajaxValidate($validateAttributes);
         if (Yii::$app->request->isPost && $model->validate($validateAttributes) && $model->save(false)) {
             Yii::$app->session->setFlash(self::FLASH_SUCCESS, Lang::t('SUCCESS_MESSAGE'));
-            return $this->redirect(['index', 'level_id' => $model->level_id, 'country_id' => $model->country_id]);
+            return $this->redirect(['index', 'level_id' => $model->level_id, 'country_id' => $model->country_id, 'district_id' => $model->district_id]);
         }
 
         return $this->render('create', [
