@@ -15,12 +15,13 @@ use backend\modules\core\models\CountryUnits;
 $controller = Yii::$app->controller;
 
 $this->title = $controller->getPageTitle();
-if ($country) {
-    $this->params['breadcrumbs'][] = Country::getScalar('name', ['id' => $country]);
-}
-//else if ($district){
-//    $this->params['breadcrumbs'][] = CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]);
+//if ($country) {
+//    $this->params['breadcrumbs'][] = Country::getScalar('name', ['id' => $country]);
 //}
+
+ if ($district){
+    $this->params['breadcrumbs'][] = CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]);
+}
 $this->params['breadcrumbs'] [] = $this->title;
 ?>
 <div class="row">
