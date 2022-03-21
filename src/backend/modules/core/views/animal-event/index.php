@@ -19,6 +19,7 @@ $this->title = Lang::t('{resource} data', ['resource' => $controller->resourceLa
 if ($country) {
     $this->params['breadcrumbs'][] = Country::getScalar('name', ['id' => $country]);
 }
+
 $this->params['breadcrumbs'] [] = $this->title;
 
 ?>
