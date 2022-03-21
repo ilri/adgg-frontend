@@ -26,7 +26,6 @@ $this->params['breadcrumbs'] [] = $this->title;
 <div class="row">
     <div class="col-lg-12">
         <?= $this->render('@coreModule/views/farm/_tab', ['model' => $searchModel, 'country' => !empty($country) ? $country : null]) ?>
-        <?= $this->render('@coreModule/views/farm/_tab', ['model' => $searchModel, CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT])]) ?>
         <div class="tab-content">
             <?= $this->render('_filter', ['model' => $searchModel,]) ?>
             <?= $this->render('_grid', ['model' => $searchModel]) ?>
