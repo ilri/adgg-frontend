@@ -100,16 +100,21 @@ class UserController extends Controller
         ]);
     }
 
-    public function actionCreate($level_id = null, $country_id = null)
+    public function actionCreate($level_id = null, $country_id = null, $district_id = null)
     {
         if (Session::isCountry()) {
             $country_id = Session::getCountryId();
             $level_id = UserLevels::LEVEL_COUNTRY;
         }
+        else if (Session::isDistrictUser()){
+            $district_id = Session::getDistrictId();
+            $level_id = UserLevels::LEVEL_DISTRICT;
+        }
 
         $model = new Users([
             'level_id' => $level_id,
             'country_id' => $country_id,
+            'district_id' => $district_id,
             'status' => Users::STATUS_ACTIVE,
             'scenario' => Users::SCENARIO_CREATE,
             'send_email' => true,
