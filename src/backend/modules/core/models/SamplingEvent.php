@@ -51,6 +51,7 @@ class SamplingEvent extends AnimalEvent implements ImportActiveRecordInterface, 
     {
         return [
             'animal_id',
+            'field_agent_id',
             'event_date',
             'hair_sampling_code',
             'Bos_Indicus',
