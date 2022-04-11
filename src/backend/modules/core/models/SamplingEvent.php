@@ -50,7 +50,7 @@ class SamplingEvent extends AnimalEvent implements ImportActiveRecordInterface, 
     public function getExcelColumns()
     {
         return [
-            'animalTagId',
+            'animal_id',
             'event_date',
             'hair_sampling_code',
             'Bos_Indicus',
