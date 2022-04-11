@@ -20,7 +20,7 @@ if ($country) {
 }
 
 else if ($district){
-    $this->params['breadcrumbs'][] = CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]);
+    $this->params['breadcrumbs'][] = Country::getScalar('name', ['id' => Session::isDistrictUser(), 'level' => CountryUnits::LEVEL_DISTRICT]);
 }
 
 $this->params['breadcrumbs'] [] = $this->title;
