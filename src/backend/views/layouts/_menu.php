@@ -13,8 +13,6 @@ use yii\helpers\Url;
 
 //SELECT * FROM adgg_uat.core_country;
 $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
-//select * from adgg_uat.country_units where level = 2
-$district = CountryUnits::getScalar('id', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]);
 ?>
 <div class="kt-aside-menu-wrapper kt-grid__item kt-grid__item--fluid" id="kt_aside_menu_wrapper">
     <div id="kt_aside_menu" class="kt-aside-menu " data-ktmenu-vertical="1" data-ktmenu-scroll="1"
@@ -67,31 +65,6 @@ $district = CountryUnits::getScalar('id', ['id' => Session::getDistrictId(), 'le
                                             </span>
                                     </a>
                                 </li>
-                                <?php elseif (Session::getDistrictId() == $district || Session::isPrivilegedAdmin()): ?>
-                                    <li class="kt-menu__item">
-                                        <a href="<?= Url::to(['/dashboard/data-viz/index', 'district_id' => $district->id]) ?>"
-                                           class="kt-menu__link ">
-                                            <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                            <span
-                                                    class="kt-menu__link-text">
-                                                    <?php if (Session::isVillageUser()): ?>
-                                                        <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getVillageId(), 'level' => CountryUnits::LEVEL_VILLAGE]) . ' ' . 'Village' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
-                                                    <?php elseif (Session::isWardUser()): ?>
-                                                        <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getWardId(), 'level' => CountryUnits::LEVEL_WARD]) . ' ' . 'Ward' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
-                                                    <?php elseif (Session::isDistrictUser()): ?>
-                                                        <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getDistrictId(), 'level' => CountryUnits::LEVEL_DISTRICT]) . ' ' . 'District' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
-                                                    <?php elseif (Session::isRegionUser()): ?>
-                                                        <?= $unitName = CountryUnits::getScalar('name', ['id' => Session::getRegionId(), 'level' => CountryUnits::LEVEL_REGION]) . ' ' . 'Region' . ' ' . '[' . Html::encode($country->name) . ']'; ?>
-                                                    <?php elseif (Session::isOrganizationUser()): ?>
-                                                        <?= $unitName = Organization::getScalar('name', ['id' => Session::getOrgId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
-                                                    <?php elseif (Session::isOrganizationClientUser()): ?>
-                                                        <?= $unitName = Client::getScalar('name', ['id' => Session::getClientId(), 'country_id' => $country->id]) . ' ' . '[' . Html::encode($country->name) . ']'; ?>
-                                                    <?php else: ?>
-                                                        <?= Html::encode($country->name) ?>
-                                                    <?php endif; ?>
-                                            </span>
-                                        </a>
-                                    </li>
                             <?php endif; ?>
                         <?php endforeach; ?>
                     </ul>
