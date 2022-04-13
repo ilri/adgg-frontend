@@ -31,6 +31,7 @@ use Yii;
  * @property string $dry_date
  * @property string $milk_notes
  * @property string $milk_milkdate
+// * @property string $milk_calvdate
  * @property int $dim
  * @property int $testday_no
  */
@@ -46,6 +47,7 @@ class MilkingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
             [['milksmc'], 'number', 'min' => 15000, 'max' => 99999999999, 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
             ['milkurea', 'number', 'min' => 8, 'max' => 25, 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
             ['milklact', 'number', 'min' => 2, 'max' => 6, 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
+            //['milk_calvdate', 'validateCalvingDate', 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
             //['event_date', 'validateMilkingDate', 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
             [$this->getExcelColumns(), 'safe', 'on' => self::SCENARIO_UPLOAD],
         ]);
