@@ -71,7 +71,7 @@ class ExitsEvent extends AnimalEvent implements AnimalEventInterface
 //            'new_farmer_name',
 //            'new_breeder_name',
 //            'new_breeder_phone',
-            'exit_animalid',
+//            'exit_animalid',
             'old_farm_id',
             'new_farmer_id',
         ];
