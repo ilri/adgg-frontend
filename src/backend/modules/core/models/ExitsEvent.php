@@ -57,6 +57,7 @@ class ExitsEvent extends AnimalEvent implements AnimalEventInterface
     {
         return [
 //            'animalTagId',
+            'animal_id',
             'event_date',
 //            'disposal_reason',
 //            'disposal_reason_other',
