@@ -29,8 +29,8 @@ use yii\bootstrap4\Html;
                     <div class="col-lg-6">
                         <?= Html::label($model->getAttributeLabel('field_agent_id')) ?>
                         <?= Select2::widget([
-                            'name' => 'field_agent_id',
-                            'value' => $model->field_agent_id,
+                            'id' => 'field_agent_id',
+                            'name' => $model->field_agent_id,
                             'data' => Client::getListData(),
                             'options' => [
                                 'placeholder' => '[select one field agent]',
@@ -42,8 +42,7 @@ use yii\bootstrap4\Html;
                                 'allowClear' => true
                             ],
                         ]); ?>
-
-                    </div>>
+                    </div>
                     <div class="col-lg-2">
                         <?= Html::label($model->getAttributeLabel('event_type')) ?>
                         <?= Select2::widget([
