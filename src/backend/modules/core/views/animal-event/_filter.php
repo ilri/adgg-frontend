@@ -35,9 +35,8 @@ use yii\bootstrap4\Html;
                             'options' => [
                                 'placeholder' => '[select one field agent]',
                                 'class' => 'form-control select2 parent-depdropdown',
-                                'data-child-selectors' => [
-                                    '#' . Html::getInputId($model, 'field_agent_id', []),
-                                ],
+                                'data-selected' => $model->field_agent_id,
+
                             ],
                             'pluginOptions' => [
                                 'allowClear' => true
