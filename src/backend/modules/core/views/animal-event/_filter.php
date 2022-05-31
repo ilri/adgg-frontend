@@ -1,6 +1,7 @@
 <?php
 
 use backend\modules\core\models\AnimalEvent;
+use backend\modules\core\models\Client;
 use backend\modules\core\models\Choices;
 use backend\modules\core\models\ChoiceTypes;
 use backend\modules\core\models\Country;
@@ -25,6 +26,22 @@ use yii\bootstrap4\Html;
             <div class="card-body">
                 <?= Html::beginForm(['index'], 'get', ['class' => '', 'id' => 'grid-filter-form', 'data-grid' => $model->getPjaxWidgetId()]) ?>
                 <div class="form-row align-items-center">
+<!--                    <div class="col-lg-6">-->
+<!--                        --><?//= Html::label($model->getAttributeLabel('field_agent_id')) ?>
+<!--                        --><?//= Select2::widget([
+//                            'id' => 'field_agent_id',
+//                            'name' => $model->field_agent_id,
+//                            'data' => Client::getListData(),
+//                            'options' => [
+//                                'placeholder' => '[select one field agent]',
+//                                'class' => 'form-control select2 parent-depdropdown',
+//                                'data-selected' => $model->field_agent_id,
+//                            ],
+//                            'pluginOptions' => [
+//                                'allowClear' => true
+//                            ],
+//                        ]); ?>
+<!--                    </div>-->
                     <div class="col-lg-2">
                         <?= Html::label($model->getAttributeLabel('event_type')) ?>
                         <?= Select2::widget([
