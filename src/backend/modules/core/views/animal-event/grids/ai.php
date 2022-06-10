@@ -77,7 +77,7 @@ use yii\helpers\Url;
             'attribute' => 'breeding_aisirecountry',
         ],
         [
-            'attribute' => 'breeding_aisirebreed',
+            'attribute' => 'breeding_aisirebreed',  
             'value' => function (AnimalEvent $model) {
                 return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, $model->breeding_aisirebreed);
             },
