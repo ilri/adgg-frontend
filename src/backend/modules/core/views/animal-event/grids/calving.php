@@ -30,14 +30,14 @@ use yii\helpers\Url;
                 return $model->animal->tag_id;
             },
         ],
-//        [
-//            'attribute' => 'animal_id',
-//            'label' => 'Animal Name',
-//            'value' => function (AnimalEvent $model) {
-//                return $model->animal->name;
-//            },
-//
-//        ],
+        [
+            'attribute' => 'animal_id',
+            'label' => 'Animal Name',
+            'value' => function (AnimalEvent $model) {
+                return $model->animal->name;
+            },
+
+        ],
         [
             'attribute' => 'event_date',
             'label' => 'Collection Date',
