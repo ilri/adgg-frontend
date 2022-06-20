@@ -44,8 +44,11 @@ use yii\web\View;
         [
             'attribute' => 'vacc_vaccine_type',
             'label'=>'Vaccine Type',
+//            'value' => function (AnimalEvent $model) {
+//                return Choices::getMultiSelectLabel($model->vacc_vaccine_type,ChoiceTypes::CHOICE_TYPE_VACCINE_TYPE);
+//            },
             'value' => function (AnimalEvent $model) {
-                return Choices::getMultiSelectLabel($model->vacc_vaccine_type,ChoiceTypes::CHOICE_TYPE_VACCINE_TYPE);
+                return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_VACCINE_TYPE, $model->vacc_vaccine_type);
             },
             'enableSorting' => true,
         ],
