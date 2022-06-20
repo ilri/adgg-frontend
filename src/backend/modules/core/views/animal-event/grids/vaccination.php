@@ -50,7 +50,7 @@ use yii\web\View;
             'value' => function (AnimalEvent $model) {
                 return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_VACCINE_TYPE, $model->vacc_vaccine_type);
             },
-            'enableSorting' => true,
+            'enableSorting' => false,
         ],
 //        [
 //            'attribute' => 'vacc_vaccine_provider',
