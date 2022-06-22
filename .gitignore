@@ -15,3 +15,12 @@ src/vendor
 composer.lock
 yarn.lock
 env.php
+
+.DS_Store
+src/.DS_Store
+src/backend/.DS_Store
+src/backend/assets/.DS_Store
+src/backend/assets/assets/fonts/.DS_Store
+src/backend/assets/assets/fonts/fontawesome/.DS_Store
+src/backend/assets/assets/fonts/fontawesome/svgs/.DS_Store
+
