@@ -119,10 +119,10 @@ use yii\helpers\Url;
         [
             'attribute' => 'tag_id',
         ],
-        [
-            'attribute' => 'calfcolor',
-            'enableSorting' => false,
-        ],
+//        [
+//            'attribute' => 'calfcolor',
+//            'enableSorting' => false,
+//        ],
     ],
 ]);
 ?>
