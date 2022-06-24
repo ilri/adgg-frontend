@@ -518,6 +518,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $animalIdentificationGroupKey = 'animal_identification';
         $animalagedetailsGroupKey = 'animal_agedetails';
         $animalbreeddetailsGroupKey = 'animal_breeddetails';
+        $animalcalfdetailsGroupKey = 'animal_calfregistration';
         $animalsData = $this->_model->form_data[$repeatKey] ?? null;
         if (null === $animalsData) {
             return;
@@ -587,7 +588,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $calvingRepeatKey = $repeatKey . '/animal_calfstatus';
             $calvingsData = $animalData[$calvingRepeatKey] ?? null;
             $eventModel = new CalvingEvent([
-                'animal_id' => $newAnimalModel->id,
+                'animal_id' => $damModel->id,
                 'event_type' => CalvingEvent::EVENT_TYPE_CALVING,
                 'country_id' => $newAnimalModel->country_id,
                 'region_id' => $newAnimalModel->region_id,
@@ -604,10 +605,12 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 'field_agent_id' => $this->_model->user_id,
                 'odk_form_uuid' => $this->_model->form_uuid,
             ]);
+            //Explicitly set addition attributes for calf
+
             if (!empty($calvingsData)) {
                 foreach ($calvingsData as $i => $calvingData) {
                     $newEventModel = clone $eventModel;
-                    $newEventModel->setDynamicAttributesValuesFromOdkForm($calvingData, 'animal_calfregistration', $calvingRepeatKey);
+                    $newEventModel->setDynamicAttributesValuesFromOdkForm($calvingData, $animalcalfdetailsGroupKey, $calvingRepeatKey);
                     $this->saveAnimalEventModel($newEventModel, $i, true);
                 }
             }
