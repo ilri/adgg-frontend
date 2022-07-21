@@ -67,7 +67,7 @@ class UploadAnimals extends ExcelUploadForm implements ImportInterface
                 continue;
             }
             $row['country_id'] = $this->country_id;
-            $row['farm_id'] = $this->farm_id;
+//            $row['farm_id'] = $this->farm_id;
             $row['derivedBirthdate'] = static::getDateColumnData($row['derivedBirthdate'] ?? null);
             $row['birthdate'] = static::getDateColumnData($row['birthdate'] ?? null);
             $row['entry_date'] = static::getDateColumnData($row['entry_date'] ?? null);
