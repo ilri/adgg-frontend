@@ -605,7 +605,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 'field_agent_id' => $this->_model->user_id,
                 'odk_form_uuid' => $this->_model->form_uuid,
             ]);
-            //Explicitly set addition attributes for calf
 
             if (!empty($calvingsData)) {
                 foreach ($calvingsData as $i => $calvingData) {

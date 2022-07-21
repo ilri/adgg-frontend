@@ -469,7 +469,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
     {
         //$columns = array_merge($this->safeAttributes(), $this->getAdditionalAttributes());
         return [
-            'odkFarmCode',
+            'farm_id',
             'tag_id',
             'animal_tagprefix',
             'animal_tagsequence',
