@@ -183,7 +183,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'created_by' => 'Created By',
             'updated_at' => 'Updated At',
             'updated_by' => 'Updated By',
-            'odkFarmCode' => 'Farm Code',
+//            'odkFarmCode' => 'Farm Code',
             'derivedBirthdate' => 'Derived Birthdate',
             'hair_sample_id' => 'Hair Sample Id'
         ];
