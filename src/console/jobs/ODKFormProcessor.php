@@ -585,7 +585,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $newAnimalModel = $this->_animalsModels[$i];
             $n++;
             //calving status
-            $calvingRepeatKey = $repeatKey . '/animal_calfstatus_count';
+            $calvingRepeatKey = $repeatKey . '/animal_calfstatus';
             $calvingsData = $animalData[$calvingRepeatKey] ?? null;
             $eventModel = new CalvingEvent([
                 'animal_id' => $damModel->id,
