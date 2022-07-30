@@ -530,6 +530,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             Yii::error($message);
             return;
         }
+
         $animalModel = new Animal([
             'farm_id' => $farmModel->id,
             'country_id' => $farmModel->country_id,
@@ -588,7 +589,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $calvingRepeatKey = $repeatKey . '/animal_calfstatus';
             $calvingsData = $animalData[$calvingRepeatKey] ?? null;
             $eventModel = new CalvingEvent([
-                'animal_id' => $damModel->id,
+                'animal_id' => $animalModel->id,
                 'event_type' => CalvingEvent::EVENT_TYPE_CALVING,
                 'country_id' => $newAnimalModel->country_id,
                 'region_id' => $newAnimalModel->region_id,
