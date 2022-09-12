@@ -45,7 +45,12 @@ if (count($chart_data) > 0) {
             if ($country != $first_stack){
                 $item['linkedTo'] = $breed;
             }
-            $data[] = $item;
+
+            try {
+                $data[] = $item;
+            } catch (Exception $e) {
+                print "Animal Type is not available";
+            }
 
         }
     }
