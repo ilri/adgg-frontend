@@ -21,6 +21,7 @@ use backend\modules\core\models\FarmMetadataTechnologyMobilization;
 use backend\modules\core\models\MilkingEvent;
 use backend\modules\core\models\OdkForm;
 use backend\modules\core\models\TableAttributeInterface;
+use backend\modules\core\models\WeightEvent;
 use common\helpers\DateUtils;
 use common\helpers\Lang;
 use common\helpers\Str;
@@ -1532,7 +1533,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $model = new MilkingEvent($params);
                 break;
             case AnimalEvent::EVENT_TYPE_WEIGHTS:
-                $model = new MilkingEvent($params);
+                $model = new WeightEvent($params);
                 break;
             default:
                 $model = new AnimalEvent($params);
