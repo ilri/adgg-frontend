@@ -1531,6 +1531,9 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             case AnimalEvent::EVENT_TYPE_MILKING:
                 $model = new MilkingEvent($params);
                 break;
+            case AnimalEvent::EVENT_TYPE_WEIGHTS:
+                $model = new MilkingEvent($params);
+                break;
             default:
                 $model = new AnimalEvent($params);
         }
