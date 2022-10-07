@@ -1115,7 +1115,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     protected function registerAnimalWeight()
     {
         list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCowMonitoringParams();
-        $groupKey = 'milk_prodanimal';
+        $groupKey = 'measure_details';
         $eventDateAttributeKey = NULL;
         $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_WEIGHTS, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey);
     }
