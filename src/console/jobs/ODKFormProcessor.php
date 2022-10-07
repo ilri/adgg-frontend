@@ -156,7 +156,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerAnimalSynchronization();
                 $this->registerAnimalAI();
                 $this->registerAnimalPD();
-                $this->registerAnimalMilk();
+                $this->registerAnimalMilks();
                 $this->registerAnimalVaccination();
                 $this->registerAnimalParasiteInfection();
                 $this->registerAnimalInjury();
@@ -1104,7 +1104,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $this->registerAnimalEvent($data, AnimalEvent::EVENT_TYPE_PREGNANCY_DIAGNOSIS, $pdRepeatKey, $pdGroupKey, $animalCodeAttributeKey, $eventDateKey);
     }
 
-    protected function registerAnimalMilk()
+    protected function registerAnimalMilks()
     {
         list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCowMonitoringParams();
         $groupKey = 'milk_prodanimal';
