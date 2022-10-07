@@ -157,6 +157,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerAnimalAI();
                 $this->registerAnimalPD();
                 $this->registerAnimalMilk();
+                //test
+                $this->registerAnimalWeight();
                 $this->registerAnimalVaccination();
                 $this->registerAnimalParasiteInfection();
                 $this->registerAnimalInjury();
@@ -172,8 +174,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerAnimalExit();
                 $this->registerAnimalECFVaccination();
                 $this->registerCattleHairSampling();
-                //test
-                $this->registerAnimalWeight();
+
+
             } else {
                 $message = Lang::t('This Version ({old_version}) of ODK Form is currently not supported. Version ({version}) and above are supported.', ['old_version' => $this->_model->form_version, 'version' => self::MIN_SUPPORTED_ODK_FORM_VERSION]);
                 $this->_model->error_message = $message;
@@ -1116,7 +1118,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     {
         list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCowMonitoringParams();
         $groupKey = 'measure_details';
-        $eventDateAttributeKey = null;
+        $eventDateAttributeKey = NULL;
         $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_WEIGHTS, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey);
     }
 
