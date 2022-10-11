@@ -158,11 +158,11 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerAnimalPD();
                 $this->registerAnimalMilk();
                 //test
-                $this->registerAnimalWeight();
+                //$this->registerAnimalWeight();
                 $this->registerAnimalVaccination();
                 $this->registerAnimalParasiteInfection();
                 $this->registerAnimalInjury();
-//                $this->registerAnimalMeasureDetails();
+                $this->registerAnimalMeasureDetails();
                 $this->registerAnimalHoofHealth();
                 $this->registerAnimalHoofTreatment();
                 $this->registerAnimalFeedProvided();
@@ -1114,13 +1114,13 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_MILKING, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey);
     }
 //experiment
-    protected function registerAnimalWeight()
-    {
-        list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCowMonitoringParams();
-        $groupKey = 'measure_details';
-        $eventDateAttributeKey = date('Y-m-d');
-        $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_WEIGHTS, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey);
-    }
+//    protected function registerAnimalWeight()
+//    {
+//        list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCowMonitoringParams();
+//        $groupKey = 'measure_details';
+//        $eventDateAttributeKey = date('Y-m-d');
+//        $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_WEIGHTS, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey);
+//    }
 
 
     protected function registerAnimalVaccination()
@@ -1147,49 +1147,49 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_INJURY, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey);
     }
 
-//    protected function registerAnimalMeasureDetails()
-//    {
-//        list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCowMonitoringParams();
-//        $groupKey = 'measure_details';
-//
-//        if (null === $rawData) {
-//            return;
-//        }
-//
-//        $model = new AnimalEvent([
-//            'event_type' => AnimalEvent::EVENT_TYPE_WEIGHTS,
-//            'data_collection_date' => $this->getDate(),
-//            'field_agent_id' => $this->_model->user_id,
-//            'odk_form_uuid' => $this->_model->form_uuid,
-//        ]);
-//        $heartgirthAttributeKey = self::getAttributeJsonKey('measure_heartgirth', $groupKey, $repeatKey);
-//        $weightAttributeKey = self::getAttributeJsonKey('measure_weight', $groupKey, $repeatKey);
-//        $bodyscoreAttributeKey = self::getAttributeJsonKey('measure_bodyscore', $groupKey, $repeatKey);
-//        foreach ($rawData as $k => $dataPoints) {
-//            $dataPoint = $dataPoints[$repeatKey] ?? null;
-//            if (null === $dataPoint) {
-//                continue;
-//            }
-//            foreach ($dataPoint as $i => $data) {
-//                $animalCode = $this->getFormDataValueByKey($data, $animalCodeAttributeKey);
-//                $animalModel = $this->getAnimalModelByOdkCode($animalCode);
-//                $newModel = clone $model;
-//                $newModel->heartgirth = $this->getFormDataValueByKey($data, $heartgirthAttributeKey);
-//                $newModel->weight_kg = $this->getFormDataValueByKey($data, $weightAttributeKey);
-//                $newModel->body_score = $this->getFormDataValueByKey($data, $bodyscoreAttributeKey);
-//                if (empty($newModel->heartgirth) && empty($newModel->weight_kg) && empty($newModel->body_score)) {
-//                    continue;
-//                }
-//                $newModel->animal_id = $animalModel->id ?? null;
-//                if (empty($newModel->event_date)) {
-//                    $newModel->event_date = $newModel->data_collection_date;
-//                }
-//                $newModel->latitude = $animalModel->latitude ?? null;
-//                $newModel->longitude = $animalModel->longitude ?? null;
-//                $this->saveAnimalEventModel($newModel, $k . $i, true);
-//            }
-//        }
-//    }
+    protected function registerAnimalMeasureDetails()
+    {
+        list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCowMonitoringParams();
+        $groupKey = 'measure_details';
+
+        if (null === $rawData) {
+            return;
+        }
+
+        $model = new AnimalEvent([
+            'event_type' => AnimalEvent::EVENT_TYPE_WEIGHTS,
+            'data_collection_date' => $this->getDate(),
+            'field_agent_id' => $this->_model->user_id,
+            'odk_form_uuid' => $this->_model->form_uuid,
+        ]);
+        $heartgirthAttributeKey = self::getAttributeJsonKey('measure_heartgirth', $groupKey, $repeatKey);
+        $weightAttributeKey = self::getAttributeJsonKey('measure_weight', $groupKey, $repeatKey);
+        $bodyscoreAttributeKey = self::getAttributeJsonKey('measure_bodyscore', $groupKey, $repeatKey);
+        foreach ($rawData as $k => $dataPoints) {
+            $dataPoint = $dataPoints[$repeatKey] ?? null;
+            if (null === $dataPoint) {
+                continue;
+            }
+            foreach ($dataPoint as $i => $data) {
+                $animalCode = $this->getFormDataValueByKey($data, $animalCodeAttributeKey);
+                $animalModel = $this->getAnimalModelByOdkCode($animalCode);
+                $newModel = clone $model;
+                $newModel->heartgirth = $this->getFormDataValueByKey($data, $heartgirthAttributeKey);
+                $newModel->weight_kg = $this->getFormDataValueByKey($data, $weightAttributeKey);
+                $newModel->body_score = $this->getFormDataValueByKey($data, $bodyscoreAttributeKey);
+                if (empty($newModel->heartgirth) && empty($newModel->weight_kg) && empty($newModel->body_score)) {
+                    continue;
+                }
+                $newModel->animal_id = $animalModel->id ?? null;
+                if (empty($newModel->event_date)) {
+                    $newModel->event_date = $newModel->data_collection_date;
+                }
+                $newModel->latitude = $animalModel->latitude ?? null;
+                $newModel->longitude = $animalModel->longitude ?? null;
+                $this->saveAnimalEventModel($newModel, $k . $i, true);
+            }
+        }
+    }
 
     protected function registerAnimalFeedProvided()
     {
