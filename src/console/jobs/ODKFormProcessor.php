@@ -158,7 +158,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerAnimalPD();
                 $this->registerAnimalMilk();
                 //test
-                //$this->registerAnimalWeight();
+//                $this->registerAnimalWeight();
                 $this->registerAnimalVaccination();
                 $this->registerAnimalParasiteInfection();
                 $this->registerAnimalInjury();
@@ -1155,6 +1155,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         if (null === $rawData) {
             return;
         }
+        $newAnimalCodeAttributeKey = Str::str_lreplace('platformuniqueid', 'code', $animalCodeAttributeKey);
 
         $model = new AnimalEvent([
             'event_type' => AnimalEvent::EVENT_TYPE_WEIGHTS,
@@ -1172,6 +1173,9 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             }
             foreach ($dataPoint as $i => $data) {
                 $animalCode = $this->getFormDataValueByKey($data, $animalCodeAttributeKey);
+                if (Str::isEmpty($animalCode)) {
+                    $animalCode = $this->getFormDataValueByKey($data, $newAnimalCodeAttributeKey);
+                }
                 $animalModel = $this->getAnimalModelByOdkCode($animalCode);
                 $newModel = clone $model;
                 $newModel->heartgirth = $this->getFormDataValueByKey($data, $heartgirthAttributeKey);
