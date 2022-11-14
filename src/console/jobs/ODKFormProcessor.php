@@ -579,8 +579,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             if (null !== $damModel) {
                 $newAnimalModel->dam_id = $damModel->id;
                 $newAnimalModel->dam_tag_id = $damModel->tag_id;
-            }else {
-                $newAnimalModel->setDynamicAttributesValuesFromOdkForm($animalData, $animalIdentificationGroupKey, $repeatKey);
             }
             $sireModel = $this->getOrRegisterAnimalSire($animalData, $farmModel, $k);
             if (null !== $sireModel) {
