@@ -524,10 +524,15 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $animalagedetailsGroupKey = 'animal_agedetails';
         $animalbreeddetailsGroupKey = 'animal_breeddetails';
         $animalcalfdetailsGroupKey = 'animal_calfregistration';
+
+        $damCodeKey = self::getAttributeJsonKey('animal_damplatformuniqueid', 'animal_damknownlist', 'animal_general');
+
         $animalsData = $this->_model->form_data[$repeatKey] ?? null;
+
         if (null === $animalsData) {
             return;
         }
+
 
         $farmModel = $this->getFarmModel();
         if (null === $farmModel) {
@@ -551,6 +556,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             'reg_date' => $this->getDate(),
             'created_by' => $this->_model->user_id,
         ]);
+        //generate a dam animal model
+        $damanimalCode = $this->getFormDataValueByKey($animalsData, $damCodeKey);
 
         $fixedAttributesMap = [
             'name' => self::getAttributeJsonKey('animal_name', $animalIdentificationGroupKey, $repeatKey),
@@ -576,7 +583,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             }
             $newAnimalModel->setDynamicAttributesValuesFromOdkForm($animalData, $animalIdentificationGroupKey, $repeatKey);
             $damModel = $this->getOrRegisterAnimalDam($animalData, $farmModel, $k);
-            Yii::info(json_encode($damModel,"new dam model jkjkjkj"));
+//            Yii::info(json_encode($damModel,"new dam model jkjkjkj"));
             if (null !== $damModel) {
                 $newAnimalModel->dam_id = $damModel->id;
                 $newAnimalModel->dam_tag_id = $damModel->tag_id;
@@ -595,7 +602,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $calvingRepeatKey = $repeatKey . '/animal_calfstatus';
             $calvingsData = $animalData[$calvingRepeatKey] ?? null;
             $eventModel = new CalvingEvent([
-                'animal_id' => $damModel->id ?? null,
+//                'animal_id' => $damModel->id ?? null,
+                'animal_id' => $damanimalCode->id,
                 'event_type' => CalvingEvent::EVENT_TYPE_CALVING,
                 'country_id' => $newAnimalModel->country_id,
                 'region_id' => $newAnimalModel->region_id,
@@ -616,7 +624,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             if (!empty($calvingsData)) {
                 foreach ($calvingsData as $i => $calvingData) {
                     $newEventModel = clone $eventModel;
-                    Yii::info(json_encode($newEventModel,"New Event Model ppppp"));
+//                    Yii::info(json_encode($newEventModel,"New Event Model ppppp"));
                     $newEventModel->setDynamicAttributesValuesFromOdkForm($calvingData, $animalcalfdetailsGroupKey, $calvingRepeatKey);
                     $this->saveAnimalEventModel($newEventModel, $i, true);
                 }
