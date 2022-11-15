@@ -576,10 +576,11 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             }
             $newAnimalModel->setDynamicAttributesValuesFromOdkForm($animalData, $animalIdentificationGroupKey, $repeatKey);
             $damModel = $this->getOrRegisterAnimalDam($animalData, $farmModel, $k);
-            Yii::info(json_encode($animalData), "changes on whether dam record is being captured");
             if (null !== $damModel) {
                 $newAnimalModel->dam_id = $damModel->id;
                 $newAnimalModel->dam_tag_id = $damModel->tag_id;
+            }else{
+                $newAnimalModel->setDynamicAttributesValuesFromOdkForm($animalData, $animalIdentificationGroupKey, $repeatKey);
             }
             $sireModel = $this->getOrRegisterAnimalSire($animalData, $farmModel, $k);
             if (null !== $sireModel) {
