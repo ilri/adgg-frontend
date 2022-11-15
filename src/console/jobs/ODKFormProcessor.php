@@ -579,8 +579,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             if (null !== $damModel) {
                 $newAnimalModel->dam_id = $damModel->id;
                 $newAnimalModel->dam_tag_id = $damModel->tag_id;
-            }else{
-                $newAnimalModel->setDynamicAttributesValuesFromOdkForm($animalData, $animalIdentificationGroupKey, $repeatKey);
+                return;
             }
             $sireModel = $this->getOrRegisterAnimalSire($animalData, $farmModel, $k);
             if (null !== $sireModel) {
@@ -596,7 +595,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $calvingRepeatKey = $repeatKey . '/animal_calfstatus';
             $calvingsData = $animalData[$calvingRepeatKey] ?? null;
             $eventModel = new CalvingEvent([
-                'animal_id' => $damModel->id,
+                'animal_id' => $animalModel->id,
                 'event_type' => CalvingEvent::EVENT_TYPE_CALVING,
                 'country_id' => $newAnimalModel->country_id,
                 'region_id' => $newAnimalModel->region_id,
