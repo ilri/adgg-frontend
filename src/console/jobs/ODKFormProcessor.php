@@ -204,10 +204,10 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $message = $e->getMessage();
             $message = 'ODK FORM UUID:' . $this->_model->form_uuid . ': ' . $message;
             $trace = $e->getTraceAsString();
-            Yii::$app->controller->stdout("{$message}\n");
-            Yii::$app->controller->stdout("{$trace}\n");
-            Yii::error($message);
-            Yii::error($trace);
+//            Yii::$app->controller->stdout("{$message}\n");
+//            Yii::$app->controller->stdout("{$trace}\n");
+//            Yii::error($message);
+//            Yii::error($trace);
         }
 
         Yii::$app->controller->stdout("Processing ends..\n");
