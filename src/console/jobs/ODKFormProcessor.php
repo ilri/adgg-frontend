@@ -524,18 +524,18 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $animalagedetailsGroupKey = 'animal_agedetails';
         $animalbreeddetailsGroupKey = 'animal_breeddetails';
         $animalcalfdetailsGroupKey = 'animal_calfregistration';
-//        $damgroupkey = 'animal_damknownlist';
 
         $animalsData = $this->_model->form_data[$repeatKey] ?? null;
 
         $damCodeKey = self::getAttributeJsonKey('animal_damplatformuniqueid', 'animal_damknownlist', 'animal_general');
         Yii::info(json_encode($damCodeKey),"dam code key asfaskfaksf");
-        $dammodelcode = $this->getFormDataValueByKey($animalsData, $damCodeKey);
-        Yii::info(json_encode($dammodelcode),"dam model code key dwsafdkajhf");
+
         if (null === $animalsData) {
             return;
         }
 
+        $dammodelcode = $this->getFormDataValueByKey($animalsData, $damCodeKey);
+        Yii::info(json_encode($dammodelcode),"dam model code key dwsafdkajhf");
 
         $farmModel = $this->getFarmModel();
         if (null === $farmModel) {
