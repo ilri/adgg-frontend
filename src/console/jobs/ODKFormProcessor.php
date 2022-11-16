@@ -534,9 +534,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             return;
         }
 
-        $dammodelcode = $this->getFormDataValueByKey($animalsData, $damCodeKey);
-        Yii::info(json_encode($dammodelcode),"dam model code key dwsafdkajhf");
-
         $farmModel = $this->getFarmModel();
         if (null === $farmModel) {
             $message = 'ODK Form processor: Register New Cattle aborted. Farm cannot be null. Form UUID: ' . $this->_model->form_uuid;
@@ -584,6 +581,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             }
             $newAnimalModel->setDynamicAttributesValuesFromOdkForm($animalData, $animalIdentificationGroupKey, $repeatKey);
             $damModel = $this->getOrRegisterAnimalDam($animalData, $farmModel, $k);
+            $dammodelcode = $this->getFormDataValueByKey($animalData, $damCodeKey);
+            Yii::info(json_encode($dammodelcode),"dam model code key dwsafdkajhf");
             if (null !== $damModel) {
                 $newAnimalModel->dam_id = $damModel->id;
                 $newAnimalModel->dam_tag_id = $damModel->tag_id;
@@ -603,7 +602,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $calvingsData = $animalData[$calvingRepeatKey] ?? null;
             $eventModel = new CalvingEvent([
 //                'animal_id' => $damModel->id,
-                'animal_id' => $dammodelcode->id,
+                'animal_id' => $dammodelcode,
                 'event_type' => CalvingEvent::EVENT_TYPE_CALVING,
                 'country_id' => $newAnimalModel->country_id,
                 'region_id' => $newAnimalModel->region_id,
