@@ -1825,22 +1825,23 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      */
     protected function saveAnimalModel($model, $index, $validate = true)
     {
-        $newModel = Animal::find()
-            ->andwhere(['tag_id' => $model->tag_id])
-            ->andwhere(['name' => $model->name])
-            ->andwhere(['village_id' => $model->village_id])
-            ->one();
-        Yii::info(json_encode($newModel), "testing to check how the where condition is executed");
-        if ($newModel !== null) {
-            $newModel->ignoreAdditionalAttributes = false;
-            foreach ($model->safeAttributes() as $attr) {
-                if ($attr !== 'id') {
-                    $newModel->{$attr} = $model->{$attr};
-                }
-            }
-        } else {
-            $newModel = clone $model;
-        }
+//        $newModel = Animal::find()
+//            ->andwhere(['tag_id' => $model->tag_id])
+//            ->andwhere(['name' => $model->name])
+//            ->andwhere(['village_id' => $model->village_id])
+//            ->one();
+//        Yii::info(json_encode($newModel), "testing to check how the where condition is executed");
+//        if ($newModel !== null) {
+//            $newModel->ignoreAdditionalAttributes = false;
+//            foreach ($model->safeAttributes() as $attr) {
+//                if ($attr !== 'id') {
+//                    $newModel->{$attr} = $model->{$attr};
+//                }
+//            }
+//        } else {
+//            $newModel = clone $model;
+//        }
+        $newModel = clone $model;
         $data = $this->saveModel($newModel, $validate);
         $this->_animalsData[$index] = $data['data'];
         $this->_animalsModels[$index] = $data['model'];
