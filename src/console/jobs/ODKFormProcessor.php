@@ -1826,9 +1826,9 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     protected function saveAnimalModel($model, $index, $validate = true)
     {
         $newModel = Animal::find()
-            ->where(['tag_id' => $model->tag_id])
-            ->where('and',['name' => $model->name])
-            ->where('and',['village_id' => $model->village_id])
+            ->andwhere(['tag_id' => $model->tag_id])
+            ->andwhere('and',['name' => $model->name])
+            ->andwhere('and',['village_id' => $model->village_id])
             ->one();
         Yii::info(json_encode($newModel), "testing to check how the where condition is executed");
         if ($newModel !== null) {
