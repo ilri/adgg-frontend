@@ -528,7 +528,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $animalsData = $this->_model->form_data[$repeatKey] ?? null;
 
         $damCodeKey = self::getAttributeJsonKey('animal_damplatformuniqueid', 'animal_damknownlist', 'animal_general');
-        Yii::info(json_encode($damCodeKey),"dam code key asfaskfaksf");
+//        Yii::info(json_encode($damCodeKey),"dam code key asfaskfaksf");
 
         if (null === $animalsData) {
             return;
@@ -1827,8 +1827,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     {
         $newModel = Animal::find()
             ->andWhere(['tag_id' => $model->tag_id])
-            ->andWhere(['name' => $model->name])
-            ->andWhere(['village_id' => $model->village_id])
+//            ->andWhere(['name' => $model->name])
+//            ->andWhere(['village_id' => $model->village_id])
             ->one();
         Yii::info(json_encode($newModel), "testing to check how the where condition is executed");
         if ($newModel !== null) {
