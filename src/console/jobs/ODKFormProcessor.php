@@ -1829,7 +1829,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             ->andWhere(['tag_id' => $model->tag_id])
             ->andWhere('and',['name' => $model->name])
             ->andWhere('and',['village_id' => $model->village_id])
-            ->one();
+            ->all();
         if ($newModel !== null) {
             $newModel->ignoreAdditionalAttributes = false;
             foreach ($model->safeAttributes() as $attr) {
