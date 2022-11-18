@@ -123,7 +123,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             [['birthdate', 'reg_date', 'entry_date'], 'validateNoFutureDate'],
             [['name', 'tag_id', 'sire_tag_id', 'dam_tag_id'], 'string', 'max' => 128],
             [['animal_photo', 'map_address'], 'string', 'max' => 255],
-            ['tag_id', 'unique', 'targetAttribute' => ['country_id', 'tag_id'], 'message' => '{attribute} already exists.'],
+            [['tag_id','village_id','farm_id'], 'unique', 'targetAttribute' => ['country_id', 'tag_id'], 'message' => '{attribute} already exists.'],
             [['sire_tag_id', 'dam_tag_id'], 'validateSireOrDam'],
             ['sire_tag_id', 'validateSireBisexual', 'except' => [self::SCENARIO_MISTRO_DB_BULL_UPLOAD, self::SCENARIO_MISTRO_DB_COW_UPLOAD]],
             ['dam_tag_id', 'validateDamBisexual', 'except' => [self::SCENARIO_MISTRO_DB_BULL_UPLOAD, self::SCENARIO_MISTRO_DB_COW_UPLOAD]],
