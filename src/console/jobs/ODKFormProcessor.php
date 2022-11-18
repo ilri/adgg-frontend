@@ -1827,8 +1827,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     {
         $newModel = Animal::find()
             ->andWhere(['tag_id' => $model->tag_id])
-//            ->andWhere(['name' => $model->name])
-//            ->andWhere(['village_id' => $model->village_id])
+            ->andWhere(['name' => $model->name])
+            ->andWhere(['village_id' => $model->village_id])
             ->one();
         Yii::info(json_encode($newModel), "testing to check how the where condition is executed");
         if ($newModel !== null) {
