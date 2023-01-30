@@ -35,13 +35,27 @@ if (count($chart_data) > 0) {
             foreach ($breed_data as $year => $ydata){
                 $values[] = $ydata['value'];
             }
-            $item = [
-                'id' => $breed,
-                'name' => $breed,
-                'data' => $values,
-                'stack' => $country,
-                'color' => $colorOptions['animal_types'][$breed],
-            ];
+
+            if (!isset($colorOptions['animal_types'])) {
+                $colorOptions['animal_types'] = [];
+            }
+            if (isset($colorOptions['animal_types']) && array_key_exists($breed, $colorOptions['animal_types'])) {
+                $item = [
+                    'id' => $breed,
+                    'name' => $breed,
+                    'data' => $values,
+                    'stack' => $country,
+                    'color' => $colorOptions['animal_types'][$breed],
+                ];
+            } else {
+                $item = [
+                    'id' => $breed,
+                    'name' => $breed,
+                    'data' => $values,
+                    'stack' => $country,
+                    'color' => $colors[0],
+                ];
+            }
             if ($country != $first_stack){
                 $item['linkedTo'] = $breed;
             }
