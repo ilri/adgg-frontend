@@ -35,6 +35,10 @@ if (count($chart_data) > 0) {
             foreach ($breed_data as $year => $ydata){
                 $values[] = $ydata['value'];
             }
+
+            if (!isset($colorOptions['animal_types'])) {
+                $colorOptions['animal_types'] = [];
+            }
             $item = [
                 'id' => $breed,
                 'name' => $breed,

@@ -15,7 +15,7 @@ class UploadSamplingEvent extends UploadAnimalEvent implements ImportInterface
     {
         parent::init();
         $this->event_type = AnimalEvent::EVENT_TYPE_SAMPLING;
-        $this->sampleExcelFileName = 'sampling-event.xlsx';
+        $this->sampleExcelFileName = 'sx.xlsx';
     }
 
 

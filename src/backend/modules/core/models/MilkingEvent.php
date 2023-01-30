@@ -31,6 +31,8 @@ use Yii;
  * @property string $dry_date
  * @property string $milk_notes
  * @property string $milk_milkdate
+ * @property float $milk_methane_concentration
+ * @property float $milk_methane_intensity
 // * @property string $milk_calvdate
  * @property int $dim
  * @property int $testday_no
