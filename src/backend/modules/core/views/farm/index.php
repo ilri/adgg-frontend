@@ -18,10 +18,10 @@ $this->title = $controller->getPageTitle();
 if ($country) {
     $this->params['breadcrumbs'][] = Country::getScalar('name', ['id' => $country]);
 }
-
-else if ($district){
-    $this->params['breadcrumbs'][] = Country::getScalar('name', ['id' => Session::isDistrictUser(), 'level' => CountryUnits::LEVEL_DISTRICT]);
-}
+//
+//else if ($district){
+//    $this->params['breadcrumbs'][] = Country::getScalar('name', ['id' => Session::isDistrictUser(), 'level' => CountryUnits::LEVEL_DISTRICT]);
+//}
 
 $this->params['breadcrumbs'] [] = $this->title;
 ?>
