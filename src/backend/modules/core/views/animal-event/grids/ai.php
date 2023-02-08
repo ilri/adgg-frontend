@@ -20,6 +20,12 @@ use yii\helpers\Url;
     ],
     'columns' => [
         [
+            'attribute' => 'field_agent_id',
+            'value' => function (AnimalEvent $model) {
+                return $model->getRelationAttributeValue('fieldAgent', 'name');
+            }
+        ],
+        [
             'attribute' => 'event_date',
             'label' => 'AI Date',
             'format' => ['date', 'php:d-M-Y'],
@@ -71,7 +77,7 @@ use yii\helpers\Url;
             'attribute' => 'breeding_aisirecountry',
         ],
         [
-            'attribute' => 'breeding_aisirebreed',
+            'attribute' => 'breeding_aisirebreed',  
             'value' => function (AnimalEvent $model) {
                 return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_BREEDS, $model->breeding_aisirebreed);
             },
@@ -88,12 +94,12 @@ use yii\helpers\Url;
         [
             'attribute' => 'breeding_aisemenbatch',
         ],
-        [
-            'attribute' => 'field_agent_id',
-            'value' => function (AnimalEvent $model) {
-                return $model->getRelationAttributeValue('fieldAgent', 'name');
-            },
-        ],
+//        [
+//            'attribute' => 'field_agent_id',
+//            'value' => function (AnimalEvent $model) {
+//                return $model->getRelationAttributeValue('fieldAgent', 'name');
+//            },
+//        ],
     ],
 ]);
 ?>

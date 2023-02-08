@@ -19,6 +19,7 @@ use backend\modules\core\models\Farm;
 use backend\modules\core\models\FarmMetadata;
 use backend\modules\core\models\FarmMetadataType;
 use common\controllers\UploadExcelTrait;
+use common\helpers\DateUtils;
 use common\helpers\Lang;
 use common\helpers\Url;
 use Yii;
@@ -35,9 +36,30 @@ class FarmController extends Controller
         $this->resourceLabel = 'Farm';
     }
 
-    public function actionIndex($country_id = null, $org_id = null, $client_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $name = null, $code = null, $phone = null, $project = null, $farm_type = null, $gender_code = null, $is_active = null, $odk_code = null)
+    /**
+     * @param null $country_id
+     * @param null $org_id
+     * @param null $client_id
+     * @param null $region_id
+     * @param null $district_id
+     * @param null $ward_id
+     * @param null $village_id
+     * @param null $name
+     * @param null $code
+     * @param null $phone
+     * @param null $project
+     * @param null $farm_type
+     * @param null $gender_code
+     * @param null $is_active
+     * @param null $odk_code
+     * @param null $from
+     * @param null $to
+     * @return mixed
+     */
+    public function actionIndex($country_id = null, $org_id = null, $client_id = null, $region_id = null, $district_id = null, $ward_id = null, $village_id = null, $name = null, $code = null, $phone = null, $project = null, $farm_type = null, $gender_code = null, $is_active = null, $odk_code = null,$from = null, $to = null)
     {
         $this->hasPrivilege(Acl::ACTION_VIEW);
+        $dateFilter = DateUtils::getDateFilterParams($from, $to, 'reg_date', false, false);
         $country_id = Session::getCountryId($country_id);
         $org_id = Session::getOrgId($org_id);
         $client_id = Session::getClientId($client_id);
@@ -46,7 +68,7 @@ class FarmController extends Controller
         $ward_id = Session::getWardId($ward_id);
         $village_id = Session::getVillageId($village_id);
         $country = Country::findOne(['id' => $country_id]);
-        $condition = '';
+        $condition = $dateFilter['condition'];
         $params = [];
         $searchModel = Farm::searchModel([
             'defaultOrder' => ['id' => SORT_DESC],
@@ -68,6 +90,8 @@ class FarmController extends Controller
         $searchModel->farm_type = $farm_type;
         $searchModel->gender_code = $gender_code;
         $searchModel->is_active = $is_active;
+        $searchModel->_dateFilterFrom = $dateFilter['from'];
+        $searchModel->_dateFilterTo = $dateFilter['to'];
         $searchModel->odk_code = $odk_code;
         if (Session::isVillageUser()) {
             $searchModel->field_agent_id = Session::getUserId();
@@ -75,7 +99,9 @@ class FarmController extends Controller
         return $this->render('index', [
             'searchModel' => $searchModel,
             'country' => $country,
+            'dateFilter' => $dateFilter,
         ]);
+
     }
 
     public function actionCreate($country_id = null)

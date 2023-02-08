@@ -23,9 +23,9 @@ $projects = Choices::getList(ChoiceTypes::CHOICE_TYPE_PROJECT, false);
             <thead>
             <tr>
                 <th></th>
-                <th>Total LSF</th>
                 <th>Total SSF</th>
-                <th>Total Cattle</th>
+                <th>Total LSF</th>
+                <th>Total MSF</th>
                 <th>Undefined Farm Type</th>
                 <th>Total Farms</th>
                 <th>Total Cattle</th>
@@ -40,9 +40,9 @@ $projects = Choices::getList(ChoiceTypes::CHOICE_TYPE_PROJECT, false);
                     <?php foreach ($countries as $k => $name): ?>
                         <tr>
                             <th class="dt-row-name"><a href="<?= Url::to(['/dashboard/data-viz/index', 'country_id' => $k]) ?>"><?= Html::encode($name) ?></a></th>
-                            <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => 'LSF', 'country_id' => $k])) ?></td>
-                            <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => 'MSF', 'country_id' => $k])) ?></td>
-                            <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => 'SSF', 'country_id' => $k])) ?></td>
+                            <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => '1', 'country_id' => $k])) ?></td>
+                            <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => '2', 'country_id' => $k])) ?></td>
+                            <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => '3', 'country_id' => $k])) ?></td>
                             <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => null, 'country_id' => $k])) ?></td>
                             <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['country_id' => $k])) ?></td>
                             <td><?= Yii::$app->formatter->asDecimal(Animal::getDashboardStats(Animal::STATS_ALL_TIME, false, [],  'created_at', null, null, ['country_id' => $k])) ?></td>
@@ -58,9 +58,9 @@ $projects = Choices::getList(ChoiceTypes::CHOICE_TYPE_PROJECT, false);
                     <?php foreach ($projects as $k => $name): ?>
                         <tr>
                             <th class="dt-row-name"><?= Html::encode($name) ?></th>
-                            <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => 'LSF', 'project' => $name, 'country_id' => $country_ids])) ?></td>
-                            <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => 'MSF', 'project' => $name, 'country_id' => $country_ids])) ?></td>
-                            <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => 'SSF', 'project' => $name, 'country_id' => $country_ids])) ?></td>
+                            <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => '1', 'project' => $name, 'country_id' => $country_ids])) ?></td>
+                            <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => '2', 'project' => $name, 'country_id' => $country_ids])) ?></td>
+                            <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => '3', 'project' => $name, 'country_id' => $country_ids])) ?></td>
                             <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['farm_type' => null, 'project' => $name, 'country_id' => $country_ids])) ?></td>
                             <td><?= Yii::$app->formatter->asDecimal(Farm::getDashboardStats(Farm::STATS_ALL_TIME, false, [],  'created_at', null, null, ['project' => $name, 'country_id' => $country_ids])) ?></td>
                             <?php

@@ -51,7 +51,8 @@ class CalvingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
     public function getExcelColumns()
     {
         return [
-            'animalTagId',
+            'animal_id',
+            'field_agent_id',
             'event_date',
             'calvtype',
             'easecalv',
@@ -71,7 +72,7 @@ class CalvingEvent extends AnimalEvent implements ImportActiveRecordInterface, A
             'calfname',
             'calftagprefix',
             'calftagsec',
-            'tag_id',
+//            'tag_id',
             'calfcolor',
             'calfweight',
             'calfbodyscore',

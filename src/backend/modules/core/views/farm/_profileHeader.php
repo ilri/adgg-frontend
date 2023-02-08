@@ -2,6 +2,7 @@
 
 use backend\modules\core\models\Animal;
 use backend\modules\core\models\Farm;
+use backend\modules\core\models\FarmMetadata;
 use backend\modules\core\models\FarmMetadataType;
 use common\helpers\Lang;
 use yii\bootstrap4\Html;
@@ -9,6 +10,7 @@ use yii\helpers\Url;
 
 /* @var $this \yii\web\View */
 /* @var $farmModel Farm */
+/* @var $farmmetadataModel FarmMetadata */
 $type = Yii::$app->request->get('type', null);
 ?>
 
@@ -73,6 +75,9 @@ $type = Yii::$app->request->get('type', null);
                     <a class="nav-link<?= ($type == $value) ? ' active' : '' ?>"
                        href="<?= Url::to(['view-metadata', 'farm_id' => $farmModel->id, 'type' => $value]) ?>">
                         <?= Lang::t(' {metadataType}', ['metadataType' => $label]) ?>
+                        <span class="badge badge-secondary badge-pill">
+                            <?= FarmMetadata::getCount(['farm_id' => $farmModel->id, 'type' => $value]) ?>
+                        </span>
                     </a>
                 </li>
             <?php endforeach; ?>

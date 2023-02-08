@@ -11,6 +11,7 @@ use common\helpers\Lang;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
+//SELECT * FROM adgg_uat.core_country;
 $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
 ?>
 <div class="kt-aside-menu-wrapper kt-grid__item kt-grid__item--fluid" id="kt_aside_menu_wrapper">
@@ -66,7 +67,6 @@ $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();
                                 </li>
                             <?php endif; ?>
                         <?php endforeach; ?>
-
                     </ul>
                 </div>
             </li>

@@ -80,7 +80,7 @@ abstract class UploadAnimalEvent extends ExcelUploadForm
     {
         $row['country_id'] = $this->country_id;
         $row['event_date'] = static::getDateColumnData($row['event_date']);
-        $row['animal_id'] = $this->getAnimalId($row['animalTagId']);
+//        $row['animal_id'] = $this->getAnimalId($row['animalTagId']);
         return $row;
     }
 

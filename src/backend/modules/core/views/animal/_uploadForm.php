@@ -44,15 +44,14 @@ use yii\bootstrap4\ActiveForm;
             <div class="kt-section__body">
                 <div class="row">
                     <div class="col-md-8">
-                        <?php if (!Session::isCountry()): ?>
-                            <?= $form->field($model, 'country_id')->widget(Select2::class, [
-                                'data' => Country::getListData(),
-                                'options' => ['placeholder' => '[select one]'],
-                                'pluginOptions' => [
-                                    'allowClear' => false
-                                ],
-                            ]) ?>
-                        <?php endif; ?>
+
+                        <?= $form->field($model, 'country_id')->widget(Select2::class, [
+                            'data' => Country::getListData(),
+                            'options' => ['placeholder' => '[select one]'],
+                            'pluginOptions' => [
+                                'allowClear' => false
+                            ],
+                        ]) ?>
                         <?= $this->render('@common/excel/views/uploadExcel', ['model' => $model, 'form_id' => $formId, 'previewUrl' => Url::to(['upload-preview'])]); ?>
                     </div>
                     <div class="col-md-4">

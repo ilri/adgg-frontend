@@ -1,6 +1,6 @@
 <?php
 
-namespace console\dataMigration\mistro\stanley1;
+namespace console\dataMigration\mistro\stanley;
 
 class Cows extends \console\dataMigration\mistro\klba\Cows
 {

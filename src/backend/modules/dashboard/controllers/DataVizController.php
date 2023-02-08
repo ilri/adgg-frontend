@@ -42,7 +42,7 @@ class DataVizController extends Controller
                     'org_id' => $org_id,
                 ]
             ]);
-        } elseif (Session::isCountryUser()) {
+        } elseif (Session::isCountryUser() || Session::isDistrictUser() ) {
             $country_id = Session::getCountryId();
             $org_id = Session::getOrgId();
             return $this->render('country', [
