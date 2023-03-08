@@ -56,7 +56,7 @@ class AIEvent extends AnimalEvent implements ImportActiveRecordInterface, Animal
     {
         return [
             'field_agent_id',
-            'animalTagId',
+            'animal_id',
             'event_date',
             'breeding_service_number',
             'breeding_aibodycondition',

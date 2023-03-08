@@ -44,7 +44,7 @@ class WeightEvent extends AnimalEvent implements ImportActiveRecordInterface, An
     public function getExcelColumns()
     {
         return [
-            'animalTagId',
+            'animal_id',
             'event_date',
             'weight_kg',
             'heartgirth',

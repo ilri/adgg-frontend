@@ -9,6 +9,7 @@
 namespace backend\modules\core\forms;
 
 
+use backend\modules\core\models\Country;
 use backend\modules\core\models\ExcelImport;
 use backend\modules\core\models\Farm;
 use backend\modules\core\models\FarmMetadata;
@@ -45,6 +46,7 @@ class UploadFarmMetadata extends ExcelUploadForm implements ImportInterface
     {
         $columns = [];
         $insert_data = [];
+        $this->countryModel = Country::loadModel($this->country_id);
 
         /* @var $model FarmMetadata */
         $model = new $this->activeRecordModelClass();
@@ -55,8 +57,10 @@ class UploadFarmMetadata extends ExcelUploadForm implements ImportInterface
                 continue;
             }
             $row['farm_id'] = $this->getFarmId($row['farmCode']);
+            $row['country_id'] = $this->country_id;
             $insert_data[$k] = $row;
         }
+        $model = new FarmMetadata(['country_id' => $this->country_id]);
         $this->save($insert_data, $model, false);
     }
 

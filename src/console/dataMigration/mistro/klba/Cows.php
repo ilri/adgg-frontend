@@ -131,17 +131,17 @@ class Cows extends MigrationBase implements MigrationInterface
                 $newModel->migration_id = Helper::getMigrationId($dataModel->Cows_ID, static::getMigrationIdPrefix());
                 $newModel->herd_id = $herdModel->id;
                 $newModel->farm_id = $herdModel->farm_id;
-                $newModel->tag_id = $dataModel->Cows_HIONo;
+                $newModel->tag_id = 'KLBA-'.$dataModel->Cows_ID;
                 $newModel->name = $dataModel->Cows_RegName;
-                $newModel->animal_eartag_id = $dataModel->Cows_EarTag;
+//                $newModel->animal_eartag_id = $dataModel->Cows_EarTag;
                 if (strtolower($dataModel->Cows_Sex) == 'm') {
                     $newModel->sex = 1;
                 } elseif (strtolower($dataModel->Cows_Sex) == 'f') {
                     $newModel->sex = 2;
                 }
                 $newModel->birthdate = $dataModel->Cows_Birth;
-                $newModel->sire_tag_id = Helper::getMigrationId($dataModel->Cows_Sire, static::getBullMigrationIdPrefix());
-                $newModel->dam_tag_id = Helper::getMigrationId($dataModel->Cows_Dam, static::getMigrationIdPrefix());
+                $newModel->sire_tag_id = Helper::getMigrationId('KLBA-'.$dataModel->Cows_Sire, static::getBullMigrationIdPrefix());
+                $newModel->dam_tag_id = Helper::getMigrationId('KLBA-'.$dataModel->Cows_Dam, static::getMigrationIdPrefix());
                 $newModel->breed_composition_details = $dataModel->Cows_BreedS;
                 $newModel->herd_book_no = $dataModel->Cows_HerdBook;
                 $newModel->entry_date = $dataModel->Cows_RegDate;

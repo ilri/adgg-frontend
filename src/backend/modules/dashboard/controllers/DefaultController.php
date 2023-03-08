@@ -30,6 +30,13 @@ class DefaultController extends Controller
         if (Session::isPrivilegedAdmin() || Session::isCountryUser()) {
             return $this->redirect(Url::to(['/dashboard/data-viz']));
         }
+        else if(Session::isPrivilegedAdmin() || Session::isRegionUser()){
+            return $this->redirect(Url::to(['/dashboard/data-viz']));
+        }
+        else if (Session::isPrivilegedAdmin() || Session::isDistrictUser()){
+            return $this->redirect(Url::to(['/dashboard/data-viz']));
+        }
+
 
         elseif (Session::isOrganizationUser()){
             $countries = Country::find()->orderBy(['code' => SORT_ASC])->all();

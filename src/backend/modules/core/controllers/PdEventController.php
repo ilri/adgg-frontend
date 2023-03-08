@@ -17,7 +17,7 @@ use backend\modules\core\models\PDEvent;
 use common\controllers\UploadExcelTrait;
 use Yii;
 
-class PdEventController extends Controller
+class   PdEventController extends Controller
 {
     use AnimalEventTrait, UploadExcelTrait;
 

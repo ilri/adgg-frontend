@@ -9,7 +9,8 @@
 namespace console\dataMigration\mistro\klba;
 
 
-use Yii;
+use yii\db\Connection;
+use yii\base\InvalidConfigException;
 
 trait MigrationTrait
 {
@@ -23,12 +24,8 @@ trait MigrationTrait
         return Migrate::ORG_NAME;
     }
 
-    /**
-     * @return \yii\db\Connection the database connection used by this AR class.
-     * @throws \yii\base\InvalidConfigException
-     */
     public static function getDb()
     {
-        return Yii::$app->get('mistroDbKlba');
+        return \Yii::$app->get('mistroDbKlba');
     }
 }

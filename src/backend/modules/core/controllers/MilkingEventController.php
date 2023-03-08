@@ -38,6 +38,7 @@ class MilkingEventController extends Controller
     public function actionUpload($country_id = null)
     {
         $this->hasPrivilege(Acl::ACTION_CREATE);
+
         $form = new UploadMilkEvent(MilkingEvent::class, ['country_id' => $country_id]);
         $resp = $this->uploadExcelConsole($form, 'milking-event/index', Yii::$app->request->queryParams);
         if ($resp !== false) {

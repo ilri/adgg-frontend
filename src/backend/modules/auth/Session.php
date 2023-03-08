@@ -134,7 +134,7 @@ class Session
      */
     public static function isPrivilegedAdmin()
     {
-        return static::isDev() || static::isSuperAdmin() || static::isSystemAdmin();
+        return static::isDev() || static::isSuperAdmin() || static::isSystemAdmin() || static::isDistrictUser();
     }
 
     /**
