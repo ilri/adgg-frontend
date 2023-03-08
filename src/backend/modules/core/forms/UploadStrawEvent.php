@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * @author: Fred <mconyango@gmail.com>
+ * @author: Mirieri Mogaka <davemirieri@gmail.com>
  * Date: 2019-10-15
  * Time: 8:56 AM
  */
@@ -11,8 +11,7 @@ namespace backend\modules\core\forms;
 
 use backend\modules\core\models\AnimalEvent;
 use backend\modules\core\models\ExcelImport;
-use backend\modules\core\models\MilkingEvent;
-use backend\modules\core\models\PDEvent;
+use backend\modules\core\models\StrawEvent;
 use common\excel\ImportInterface;
 
 class UploadStrawEvent extends UploadAnimalEvent implements ImportInterface
@@ -20,7 +19,7 @@ class UploadStrawEvent extends UploadAnimalEvent implements ImportInterface
     public function init()
     {
         parent::init();
-        $this->event_type = AnimalEvent::EVENT_TYPE_STRAW_EVENT;
+        $this->event_type = AnimalEvent::EVENT_TYPE_STRAW;
         $this->sampleExcelFileName = 'straw-event.xlsx';
     }
 
@@ -46,7 +45,7 @@ class UploadStrawEvent extends UploadAnimalEvent implements ImportInterface
             $insert_data[$k] = $row;
         }
 
-        $model = new PDEvent(['country_id' => $this->country_id, 'event_type' => $this->event_type]);
+        $model = new StrawEvent(['country_id' => $this->country_id, 'event_type' => $this->event_type]);
         $this->save($insert_data, $model, false);
     }
 

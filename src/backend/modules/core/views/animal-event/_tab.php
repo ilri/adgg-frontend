@@ -50,7 +50,7 @@ $events = AnimalEvent::eventTypeOptions();
             $url = 'exit-event/index';
         }elseif ($key == AnimalEvent::EVENT_TYPE_SAMPLING) {
             $url = 'sampling-event/index';
-        }elseif ($key == AnimalEvent::EVENT_TYPE_STRAW_EVENT) {
+        }elseif ($key == AnimalEvent::EVENT_TYPE_STRAW) {
             $url = 'straw-event/index';
         }
 
