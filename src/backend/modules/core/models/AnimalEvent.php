@@ -67,6 +67,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     const EVENT_TYPE_HOOF_HEALTH = 15;
     const EVENT_TYPE_HOOF_TREATMENT = 16;
     const EVENT_TYPE_FEEDING = 17;
+    const EVENT_TYPE_STRAW_EVENT = 18;
 
 
     public $animalTagId;
