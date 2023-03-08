@@ -54,6 +54,7 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
     const TYPE_ANIMAL_EVENT_HOOF_HEALTH = 43;
     const TYPE_ANIMAL_EVENT_HOOF_TREATMENT = 44;
     const TYPE_ANIMAL_EVENT_SAMPLING = 45;
+    const TYPE_ANIMAL_EVENT_STRAW = 46;
 
     /**
      * {@inheritdoc}
