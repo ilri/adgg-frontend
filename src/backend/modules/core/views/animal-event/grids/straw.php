@@ -17,15 +17,15 @@ use yii\helpers\Url;
         Yii::$app->user->canCreate() ? '<a class="btn btn-brand btn-bold btn-upper btn-font-sm btn-space" href="' . Url::to(array_merge(['upload'], Yii::$app->request->queryParams)) . '" data-pjax="0"><i class="fa fa-file-excel-o"></i> ' . Lang::t('Upload Excel/CSV') . '</a> ' : '',
     ],
     'columns' => [
+
         [
-            'attribute' => 'field_agent_id',
-            'value' => function (AnimalEvent $model) {
-                return $model->getRelationAttributeValue('fieldAgent', 'name');
-            }
+            'attribute' => 'straw_id',
+            'enableSorting' => false,
         ],
+
         [
             'attribute' => 'event_date',
-            'label' => 'Examination Date',
+            'label' => 'Straw Collection Date',
             'format' => ['date', 'php:d-M-Y'],
         ],
         [
@@ -42,10 +42,32 @@ use yii\helpers\Url;
             },
         ],
         [
-            'attribute' => 'field_agent_id',
-            'value' => function (AnimalEvent $model) {
-                return $model->getRelationAttributeValue('fieldAgent', 'name');
-            },
+            'attribute' => 'sire_registered_name',
+            'enableSorting' => false,
+        ],
+        [
+            'attribute' => 'sire_short_name',
+            'enableSorting' => false,
+        ],
+        [
+            'attribute' => 'herd_book_number',
+            'enableSorting' => false,
+        ],
+        [
+            'attribute' => 'semen_source',
+            'enableSorting' => false,
+        ],
+        [
+            'attribute' => 'semen_supplier',
+            'enableSorting' => false,
+        ],
+        [
+            'attribute' => 'semen_source_type',
+            'enableSorting' => false,
+        ],
+        [
+            'attribute' => 'sire_genomic_estimated_breeding_value',
+            'enableSorting' => false,
         ],
     ],
 ]);
