@@ -69,6 +69,8 @@ $this->params['breadcrumbs'] [] = $this->title;
                         $url = 'exit-event/index';
                     } elseif ($key == AnimalEvent::EVENT_TYPE_SAMPLING) {
                         $url = 'sampling-event/index';
+                    } elseif ($key == AnimalEvent::EVENT_TYPE_STRAW) {
+                        $url = 'straw-event/index';
                     }
                     ?>
                     <div class="col-lg-4 col-xl-4 order-lg-2 order-xl-2">

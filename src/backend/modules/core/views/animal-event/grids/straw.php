@@ -17,20 +17,16 @@ use yii\helpers\Url;
         Yii::$app->user->canCreate() ? '<a class="btn btn-brand btn-bold btn-upper btn-font-sm btn-space" href="' . Url::to(array_merge(['upload'], Yii::$app->request->queryParams)) . '" data-pjax="0"><i class="fa fa-file-excel-o"></i> ' . Lang::t('Upload Excel/CSV') . '</a> ' : '',
     ],
     'columns' => [
+
         [
-            'attribute' => 'field_agent_id',
-            'value' => function (AnimalEvent $model) {
-                return $model->getRelationAttributeValue('fieldAgent', 'name');
-            }
+            'attribute' => 'straw_id',
+            'enableSorting' => false,
         ],
+
         [
             'attribute' => 'event_date',
-            'label' => 'Examination Date',
+            'label' => 'Straw Collection Date',
             'format' => ['date', 'php:d-M-Y'],
-        ],
-        [
-            'attribute' => 'breeding_pdexamtime',
-            'enableSorting' => false,
         ],
         [
             'attribute' => 'animal_id',
@@ -46,44 +42,31 @@ use yii\helpers\Url;
             },
         ],
         [
-            'attribute' => 'animalbreeding_pdserviceknown',
-            'format' => 'boolean',
+            'attribute' => 'sire_registered_name',
             'enableSorting' => false,
         ],
         [
-            'attribute' => 'breeding_pdservicedate',
+            'attribute' => 'sire_short_name',
             'enableSorting' => false,
         ],
         [
-            'attribute' => 'animalbreeding_pdresult',
-            'value' => function (AnimalEvent $model) {
-                return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_PD_RESULT, $model->animalbreeding_pdresult);
-            },
+            'attribute' => 'herd_book_number',
             'enableSorting' => false,
         ],
         [
-            'attribute' => 'breeding_pdstage',
-            'value' => function (AnimalEvent $model) {
-                return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_PD_STAGE, $model->breeding_pdstage);
-            },
+            'attribute' => 'semen_source',
             'enableSorting' => false,
         ],
         [
-            'attribute' => 'breeding_pdbodyscore',
-            'value' => function (AnimalEvent $model) {
-                return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_BODY_CONDITION, $model->breeding_pdbodyscore);
-            },
+            'attribute' => 'semen_supplier',
             'enableSorting' => false,
         ],
         [
-            'attribute' => 'breeding_pdmethod',
-            'value' => function (AnimalEvent $model) {
-                return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_PD_METHOD, $model->breeding_pdmethod);
-            },
+            'attribute' => 'semen_source_type',
             'enableSorting' => false,
         ],
         [
-            'attribute' => 'breeding_pdcost',
+            'attribute' => 'sire_genomic_estimated_breeding_value',
             'enableSorting' => false,
         ],
     ],

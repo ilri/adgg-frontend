@@ -54,6 +54,7 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
     const TYPE_ANIMAL_EVENT_HOOF_HEALTH = 43;
     const TYPE_ANIMAL_EVENT_HOOF_TREATMENT = 44;
     const TYPE_ANIMAL_EVENT_SAMPLING = 45;
+    const TYPE_ANIMAL_EVENT_STRAW = 46;
 
     /**
      * {@inheritdoc}
@@ -194,6 +195,8 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
                 return 'Exits';
             case self::TYPE_ANIMAL_EVENT_SAMPLING:
                 return 'Sampling';
+            case self::TYPE_ANIMAL_EVENT_STRAW:
+                return 'Straw';
             case self::TYPE_ORGANIZATION_REF_UNITS:
                 return 'Country Administrative Units';
             case self::TYPE_USERS:
@@ -226,6 +229,7 @@ class ExcelImport extends ActiveRecord implements ActiveSearchInterface
             self::TYPE_ANIMAL_EVENT_EXITS => static::decodeType(self::TYPE_ANIMAL_EVENT_EXITS),
             self::TYPE_ANIMAL_EVENT_SAMPLING => static::decodeType(self::TYPE_ANIMAL_EVENT_SAMPLING),
             self::TYPE_ORGANIZATION_REF_UNITS => static::decodeType(self::TYPE_ORGANIZATION_REF_UNITS),
+            self::TYPE_ANIMAL_EVENT_STRAW => static::decodeType(self::TYPE_ANIMAL_EVENT_STRAW),
             self::TYPE_USERS => static::decodeType(self::TYPE_USERS),
         ], $prompt);
     }

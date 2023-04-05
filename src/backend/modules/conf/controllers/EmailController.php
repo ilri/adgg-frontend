@@ -9,6 +9,7 @@ namespace backend\modules\conf\controllers;
 
 use backend\modules\conf\Constants;
 use backend\modules\conf\models\EmailTemplate;
+use Yii;
 
 class EmailController extends Controller
 {
@@ -61,4 +62,5 @@ class EmailController extends Controller
     {
         EmailTemplate::softDelete($id);
     }
+  
 }

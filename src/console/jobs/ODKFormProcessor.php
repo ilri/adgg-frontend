@@ -420,7 +420,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $farmerPhoneKey = self::getAttributeJsonKey('farmer_mobile', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
         $farmerGenderKey = self::getAttributeJsonKey('farmer_gender', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
         $farmerIsHouseholdHeadKey = self::getAttributeJsonKey('farmer_hhhead', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
-        $locationStringKey = $farmersRepeatKey . '/farmer_gpslocation';
+        $locationStringKey = $farmersRepeatKey . '/gpslocation';
         $staffCodeKey = 'staff_code';
         //household head
 
@@ -600,7 +600,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             // Retrieve or register the dam for the animal
             $damModel = $this->getOrRegisterAnimalDam($animalData, $farmModel, $k);
             $dammodelcode = $this->getFormDataValueByKey($animalData, $damCodeKey);
-//            Yii::info(json_encode($dammodelcode),"dam model code key dwsafdkajhf");
+            //Yii::info(json_encode($dammodelcode),"dam model code key dwsafdkajhf");
             if (null !== $damModel) {
                 $newAnimalModel->dam_id = $damModel->id;
                 $newAnimalModel->dam_tag_id = $damModel->tag_id;
@@ -620,7 +620,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $calvingsData = $animalData[$calvingRepeatKey] ?? null;
             // Create a new instance of CalvingEvent
             $eventModel = new CalvingEvent([
-//                'animal_id' => $damModel->id,
+                //'animal_id' => $damModel->id,
                 // Assign the animal ID from the dam model code
                 'animal_id' => $dammodelcode,
                 // Set the event type to calving
@@ -653,53 +653,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             }
         }
     }
-
-//chat GPT test code
-//    protected function registerNewCattle2()
-//    {
-//        // Check if the form data is available
-//        if (!isset($this->_model->form_data['animal_general'])) {
-//            return;
-//        }
-//
-//        // Get the farm model
-//        $farmModel = $this->getFarmModel();
-//        if (!$farmModel) {
-//            $message = 'ODK Form processor: Register New Cattle aborted. Farm cannot be null. Form UUID: ' . $this->_model->form_uuid;
-//            Yii::error($message);
-//            return;
-//        }
-//
-//        // Loop through each animal in the form data
-//        foreach ($this->_model->form_data['animal_general'] as $animalData) {
-//            try {
-//                // Create a new animal model
-//                $newAnimalModel = $this->createAnimalModel($farmModel, $this->_model->form_uuid, $this->getDate(), $this->_model->user_id);
-//
-//                // Set the fixed attributes
-//                $this->setFixedAnimalAttributes($newAnimalModel, $animalData);
-//
-//                // Convert the birthdate to the correct format
-//                $this->setAnimalBirthdate($newAnimalModel, $animalData);
-//
-//                // Set the dynamic attributes
-//                $this->setDynamicAnimalAttributes($newAnimalModel, $animalData);
-//
-//                // Get or register the animal's dam
-//                $damModel = $this->getOrRegisterAnimalDam($animalData, $farmModel);
-//                $dammodelcode = $this->getFormDataValueByKey($animalData, self::getAttributeJsonKey('animal_damplatformuniqueid', 'animal_damknownlist', 'animal_general'));
-//
-//                // Set the dam code on the animal model
-//                $newAnimalModel->dam_code = $damModel ? $damModel->tag_id : $dammodelcode;
-//
-//                // Save the animal model
-//                $newAnimalModel->save();
-//            } catch (\Exception $e) {
-//                // Log the error message
-//                Yii::error('Error while registering new cattle: ' . $e->getMessage());
-//            }
-//        }
-//    }
 
     /**
      * Create a new animal model with the specified farm, form UUID, registration date, and user ID.
@@ -1673,7 +1626,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 if (Str::isEmpty($animalCode)) {
                     $animalCode = $this->getFormDataValueByKey($data, $newAnimalCodeAttributeKey);
                 }
-                //Yii::$app->controller->stdout("Animal Code: {$animalCode}, attributeKey: {$animalCodeAttributeKey}, newAttribute Key:{$newAnimalCodeAttributeKey}\n");
+                Yii::$app->controller->stdout("Animal Code: {$animalCode}, attributeKey: {$animalCodeAttributeKey}, newAttribute Key:{$newAnimalCodeAttributeKey}\n");
 
                 $animalModel = $this->getAnimalModelByOdkCode($animalCode);
 
@@ -1834,15 +1787,16 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             ]);
 
             if ($sireType == 2) {
-                //ai straw
-                $animalModel->animal_type = 6;
-                $fixedAttributesMap = [
-                    'tag_id' => self::getAttributeJsonKey('animal_sirestrawid', $sireStrawDetailsGroupKey, $repeatKey),
-                    'country_of_origin' => self::getAttributeJsonKey('animal_sirestrawcountry', $sireStrawDetailsGroupKey, $repeatKey),
-                    'main_breed' => self::getAttributeJsonKey('animal_sirestrawbreed', $sireStrawDetailsGroupKey, $repeatKey),
-                    'main_breed_other' => self::getAttributeJsonKey('animal_sirestrawbreedoth', $sireStrawDetailsGroupKey, $repeatKey),
-                    'breed_composition' => self::getAttributeJsonKey('animal_sirestrawcomp', $sireStrawDetailsGroupKey, $repeatKey),
-                ];
+//                //ai straw
+//                $animalModel->animal_type = 6;
+//                $fixedAttributesMap = [
+//                    'tag_id' => self::getAttributeJsonKey('animal_sirestrawid', $sireStrawDetailsGroupKey, $repeatKey),
+//                    'country_of_origin' => self::getAttributeJsonKey('animal_sirestrawcountry', $sireStrawDetailsGroupKey, $repeatKey),
+//                    'main_breed' => self::getAttributeJsonKey('animal_sirestrawbreed', $sireStrawDetailsGroupKey, $repeatKey),
+//                    'main_breed_other' => self::getAttributeJsonKey('animal_sirestrawbreedoth', $sireStrawDetailsGroupKey, $repeatKey),
+//                    'breed_composition' => self::getAttributeJsonKey('animal_sirestrawcomp', $sireStrawDetailsGroupKey, $repeatKey),
+//                ];
+                return null;
             } else {
                 //bull
                 $animalModel->animal_type = 5;
