@@ -49,6 +49,7 @@ use yii\helpers\Inflector;
  * @property string $dam_tag_id
  * @property string $dam_name
  * @property int $main_breed
+ * @property int $species
  * @property int $breed_composition
  * @property array|string $secondary_breed
  * @property string $secondary_breed_other
@@ -166,6 +167,7 @@ class Animal extends ActiveRecord implements ActiveSearchInterface, TableAttribu
             'dam_id' => 'Dam',
             'dam_tag_id' => 'Dam Tag ID',
             'main_breed' => 'Main Breed',
+            'species' => 'species',
             'breed_composition' => 'Breed Composition',
             'breed_composition_details' => 'Breed Composition details',
             'secondary_breed' => 'Secondary Breed',
