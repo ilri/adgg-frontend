@@ -17,7 +17,7 @@ sudo apt-get update && sudo apt-get install yarn
 ## Perform the following in your terminal
 ```sh
 # clone from online repo.
-git clone https://gitlab.com/competamillman/adgg-backend.git
+git clone https://github.com/ilri/adgg-frontend.git
 
 # cd into the folder created. Defaults to adgg
 cd adgg
@@ -28,9 +28,6 @@ sudo cp db.sample.php db.php
 
 # verify your database credentials, by editing the db config file
 vi src/common/config/db.php
-
-# import the mysql database dump. Ensure that you have the database named adgg first
-mysql -u root adgg -p < src/data/adgg.sql
 
 # install composer dependencies
 composer install
