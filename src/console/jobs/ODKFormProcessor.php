@@ -621,9 +621,9 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $calvingsData = $animalData[$calvingRepeatKey] ?? null;
             // Create a new instance of CalvingEvent
             $eventModel = new CalvingEvent([
-                //'animal_id' => $damModel->id,
+                'animal_id' => $damModel->id,
                 // Assign the animal ID from the dam model code
-                'animal_id' => $dammodelcode,
+                //'animal_id' => $dammodelcode,
                 // Set the event type to calving
                 'event_type' => CalvingEvent::EVENT_TYPE_CALVING,
                 // Assign location information from the new animals model
