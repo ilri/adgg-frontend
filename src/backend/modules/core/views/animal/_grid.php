@@ -21,8 +21,24 @@ use yii\helpers\Url;
         Yii::$app->user->canCreate() ? '<a class="btn btn-brand btn-bold btn-upper btn-font-sm btn-space" href="' . Url::to(array_merge(['upload'], Yii::$app->request->queryParams)) . '" data-pjax="0"><i class="fa fa-file-excel-o"></i> ' . Lang::t('Upload Excel/CSV') . '</a> ' : '',
     ],
     'columns' => [
+//        [
+//            'attribute' => 'field_agent_id',
+//            'value' => function (Animal $model) {
+//                return $model->getRelationAttributeValue('fieldAgent', 'name');
+//            }
+//        ],
+        [
+            'attribute' => 'farm_id',
+            'value' => function (Animal $model) {
+                return $model->getRelationAttributeValue('farm', 'name');
+            },
+            'filter' => false,
+        ],
         [
             'attribute' => 'tag_id',
+        ],
+        [
+            'attribute' => 'reg_date',
         ],
         [
             'attribute' => 'name',
@@ -40,13 +56,13 @@ use yii\helpers\Url;
                 return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_ANIMAL_TYPES, $model->animal_type);
             }
         ],
-        [
-            'attribute' => 'color',
-            'value' => function (Animal $model) {
-                return !empty($model->color) ? Choices::getMultiSelectLabel($model->color, ChoiceTypes::CHOICE_TYPE_ANIMAL_COLORS) : $model->color_other;
-            }
-
-        ],
+//        [
+//            'attribute' => 'color',
+//            'value' => function (Animal $model) {
+//                return !empty($model->color) ? Choices::getMultiSelectLabel($model->color, ChoiceTypes::CHOICE_TYPE_ANIMAL_COLORS) : $model->color_other;
+//            }
+//
+//        ],
         [
             'attribute' => 'main_breed',
             'value' => function (Animal $model) {
@@ -76,7 +92,7 @@ use yii\helpers\Url;
         [
             'attribute' => 'birthdate',
             'value' => function (Animal $model) {
-                DateUtils::formatDate($model->birthdate, 'd-M-Y');
+                return DateUtils::formatDate($model->birthdate, 'd-M-Y');
             },
             'filter' => false,
         ],

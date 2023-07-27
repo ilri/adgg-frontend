@@ -21,6 +21,7 @@ use backend\modules\core\models\FarmMetadataTechnologyMobilization;
 use backend\modules\core\models\MilkingEvent;
 use backend\modules\core\models\OdkForm;
 use backend\modules\core\models\TableAttributeInterface;
+use backend\modules\core\models\WeightEvent;
 use common\helpers\DateUtils;
 use common\helpers\Lang;
 use common\helpers\Str;
@@ -118,7 +119,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     public function execute($queue)
     {
         $this->_model = OdkForm::find()->andWhere(['id' => $this->itemId])->one();
-        Yii::$app->controller->stdout("Processing started..\n");
+        $form_uuid = $this->_model->form_uuid ?? null;
+        Yii::$app->controller->stdout("Processing started...File Id={$form_uuid}\n");
         if ($this->_model === null) {
             Yii::$app->controller->stdout("No ODK form found with id: {$this->itemId}\n");
             return false;
@@ -137,6 +139,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerFarmerTechnologyMobilization();
                 $this->registerFarmerMilkUtilization();
                 $this->registerFarmerImprovedFodderAdoption();
+                $this->registerConcentrate();
                 $this->registerFarmerFeedbackToHousehold();
                 $this->registerLandOwnership();
                 $this->registerWaterSources();
@@ -154,6 +157,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerAnimalAI();
                 $this->registerAnimalPD();
                 $this->registerAnimalMilk();
+                //test
+//                $this->registerAnimalWeight();
                 $this->registerAnimalVaccination();
                 $this->registerAnimalParasiteInfection();
                 $this->registerAnimalInjury();
@@ -169,6 +174,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerAnimalExit();
                 $this->registerAnimalECFVaccination();
                 $this->registerCattleHairSampling();
+
+
             } else {
                 $message = Lang::t('This Version ({old_version}) of ODK Form is currently not supported. Version ({version}) and above are supported.', ['old_version' => $this->_model->form_version, 'version' => self::MIN_SUPPORTED_ODK_FORM_VERSION]);
                 $this->_model->error_message = $message;
@@ -192,6 +199,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             }
             $this->_model->save(false);
             ODKJsonNotification::createManualNotifications(ODKJsonNotification::NOTIF_ODK_JSON, $this->_model->id);
+            Yii::$app->controller->stdout("Processing successful..\n");
         } catch (\Exception $e) {
             $message = $e->getMessage();
             $message = 'ODK FORM UUID:' . $this->_model->form_uuid . ': ' . $message;
@@ -413,6 +421,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $farmerGenderKey = self::getAttributeJsonKey('farmer_gender', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
         $farmerIsHouseholdHeadKey = self::getAttributeJsonKey('farmer_hhhead', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
         $locationStringKey = $farmersRepeatKey . '/farmer_gpslocation';
+        $staffCodeKey = 'staff_code';
         //household head
 
 
@@ -449,6 +458,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $newFarmerModel->setDynamicAttributesValuesFromOdkForm($farmerData, $farmerHouseholdHeadGroupKey, $farmersRepeatKey);
             //Household Members (No Demographics)
             $newFarmerModel = $this->setFarmerHouseholdMembersNumbersAttributes($newFarmerModel, $k);
+            //Staff Code
+            $newFarmerModel->created_by = $staffCodeKey;
 
             $this->saveFarmModel($newFarmerModel, $k, true);
         }
@@ -506,23 +517,37 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         return $farmerModel;
     }
 
-    protected function registerNewCattle()
+    protected function  registerNewCattle()
     {
+        // Define keys for different groups of data in the form
         $repeatKey = 'animal_general';
         $animalIdentificationGroupKey = 'animal_identification';
         $animalagedetailsGroupKey = 'animal_agedetails';
         $animalbreeddetailsGroupKey = 'animal_breeddetails';
+        $animalcalfdetailsGroupKey = 'animal_calfregistration';
+
+        // Retrieve the data for the animals from the form
         $animalsData = $this->_model->form_data[$repeatKey] ?? null;
+
+        // Get the key for the dam's code
+        $damCodeKey = self::getAttributeJsonKey('animal_damplatformuniqueid', 'animal_damknownlist', 'animal_general');
+
+        // Check if the animal data is null
         if (null === $animalsData) {
             return;
         }
 
+        // Get the farm model
         $farmModel = $this->getFarmModel();
+
+        // If the farm model is null, log an error and return
         if (null === $farmModel) {
             $message = 'ODK Form processor: Register New Cattle aborted. Farm cannot be null. Form UUID: ' . $this->_model->form_uuid;
             Yii::error($message);
             return;
         }
+
+        // Create a new instance of the Animal model and set some properties
         $animalModel = new Animal([
             'farm_id' => $farmModel->id,
             'country_id' => $farmModel->country_id,
@@ -536,8 +561,10 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             'latitude' => $farmModel->latitude,
             'longitude' => $farmModel->longitude,
             'reg_date' => $this->getDate(),
+            'created_by' => $this->_model->user_id,
         ]);
 
+        // Define an array of fixed attribute keys
         $fixedAttributesMap = [
             'name' => self::getAttributeJsonKey('animal_name', $animalIdentificationGroupKey, $repeatKey),
             'tag_id' => self::getAttributeJsonKey('animal_tagid', $animalIdentificationGroupKey, $repeatKey),
@@ -545,16 +572,35 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             'animal_photo' => self::getAttributeJsonKey('animal_photo', $animalIdentificationGroupKey, $repeatKey),
             'main_breed' => self::getAttributeJsonKey('animal_mainbreed', $animalbreeddetailsGroupKey, $repeatKey),
             'breed_composition' => self::getAttributeJsonKey('animal_maincomp', $animalbreeddetailsGroupKey, $repeatKey),
-            'birthdate' => self::getAttributeJsonKey('animal_dobfull', $animalagedetailsGroupKey, $repeatKey),
+            'birthdate' => self::getAttributeJsonKey('animal_actualdob', $animalagedetailsGroupKey, $repeatKey),
         ];
+
         $n = 1;
+
+        // Loop through each animal in the data
         foreach ($animalsData as $k => $animalData) {
+
+            // Create a new instance of the Animal model
             $newAnimalModel = clone $animalModel;
+            // Set the values of the attributes based on the fixed attribute keys
             foreach ($fixedAttributesMap as $attr => $odkKey) {
-                $newAnimalModel->{$attr} = $this->getFormDataValueByKey($animalData, $odkKey);
+                // birthdate has to be processed separately
+                // convert datetime to date first
+                if ($attr == 'birthdate') {
+                    $birthdate = new \DateTime($this->getFormDataValueByKey($animalData, $odkKey));
+                    $newAnimalModel->{$attr} = $birthdate->format('Y-m-d');
+                } else {
+                    $newAnimalModel->{$attr} = $this->getFormDataValueByKey($animalData, $odkKey);
+                }
             }
+
+            // Set the values of any dynamic attributes based on the form data
             $newAnimalModel->setDynamicAttributesValuesFromOdkForm($animalData, $animalIdentificationGroupKey, $repeatKey);
+
+            // Retrieve or register the dam for the animal
             $damModel = $this->getOrRegisterAnimalDam($animalData, $farmModel, $k);
+            $dammodelcode = $this->getFormDataValueByKey($animalData, $damCodeKey);
+//            Yii::info(json_encode($dammodelcode),"dam model code key dwsafdkajhf");
             if (null !== $damModel) {
                 $newAnimalModel->dam_id = $damModel->id;
                 $newAnimalModel->dam_tag_id = $damModel->tag_id;
@@ -572,9 +618,14 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             //calving status
             $calvingRepeatKey = $repeatKey . '/animal_calfstatus';
             $calvingsData = $animalData[$calvingRepeatKey] ?? null;
+            // Create a new instance of CalvingEvent
             $eventModel = new CalvingEvent([
-                'animal_id' => $newAnimalModel->id,
+//                'animal_id' => $damModel->id,
+                // Assign the animal ID from the dam model code
+                'animal_id' => $dammodelcode,
+                // Set the event type to calving
                 'event_type' => CalvingEvent::EVENT_TYPE_CALVING,
+                // Assign location information from the new animals model
                 'country_id' => $newAnimalModel->country_id,
                 'region_id' => $newAnimalModel->region_id,
                 'district_id' => $newAnimalModel->district_id,
@@ -583,20 +634,99 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 'org_id' => $newAnimalModel->org_id,
                 'client_id' => $newAnimalModel->client_id,
                 'data_collection_date' => $this->getDate(),
-                'event_date' => $this->getDate(),//Noted issue: No calving date in ODK form
+                // 'event_date' => $this->getDate(),//Noted issue: No calving date in ODK form
+                'event_date' => $newAnimalModel->birthdate,
+                // Assign latitude and longitude from the new animals model
                 'latitude' => $newAnimalModel->latitude,
                 'longitude' => $newAnimalModel->longitude,
+                // Assign the field agent ID and ODK form UUID from the current model
                 'field_agent_id' => $this->_model->user_id,
                 'odk_form_uuid' => $this->_model->form_uuid,
             ]);
+
             if (!empty($calvingsData)) {
                 foreach ($calvingsData as $i => $calvingData) {
                     $newEventModel = clone $eventModel;
-                    $newEventModel->setDynamicAttributesValuesFromOdkForm($calvingData, 'animal_calfregistration', $calvingRepeatKey);
+                    $newEventModel->setDynamicAttributesValuesFromOdkForm($calvingData, $animalcalfdetailsGroupKey, $calvingRepeatKey);
                     $this->saveAnimalEventModel($newEventModel, $i, true);
                 }
             }
         }
+    }
+
+//chat GPT test code
+//    protected function registerNewCattle2()
+//    {
+//        // Check if the form data is available
+//        if (!isset($this->_model->form_data['animal_general'])) {
+//            return;
+//        }
+//
+//        // Get the farm model
+//        $farmModel = $this->getFarmModel();
+//        if (!$farmModel) {
+//            $message = 'ODK Form processor: Register New Cattle aborted. Farm cannot be null. Form UUID: ' . $this->_model->form_uuid;
+//            Yii::error($message);
+//            return;
+//        }
+//
+//        // Loop through each animal in the form data
+//        foreach ($this->_model->form_data['animal_general'] as $animalData) {
+//            try {
+//                // Create a new animal model
+//                $newAnimalModel = $this->createAnimalModel($farmModel, $this->_model->form_uuid, $this->getDate(), $this->_model->user_id);
+//
+//                // Set the fixed attributes
+//                $this->setFixedAnimalAttributes($newAnimalModel, $animalData);
+//
+//                // Convert the birthdate to the correct format
+//                $this->setAnimalBirthdate($newAnimalModel, $animalData);
+//
+//                // Set the dynamic attributes
+//                $this->setDynamicAnimalAttributes($newAnimalModel, $animalData);
+//
+//                // Get or register the animal's dam
+//                $damModel = $this->getOrRegisterAnimalDam($animalData, $farmModel);
+//                $dammodelcode = $this->getFormDataValueByKey($animalData, self::getAttributeJsonKey('animal_damplatformuniqueid', 'animal_damknownlist', 'animal_general'));
+//
+//                // Set the dam code on the animal model
+//                $newAnimalModel->dam_code = $damModel ? $damModel->tag_id : $dammodelcode;
+//
+//                // Save the animal model
+//                $newAnimalModel->save();
+//            } catch (\Exception $e) {
+//                // Log the error message
+//                Yii::error('Error while registering new cattle: ' . $e->getMessage());
+//            }
+//        }
+//    }
+
+    /**
+     * Create a new animal model with the specified farm, form UUID, registration date, and user ID.
+     *
+     * @param  Farm  $farmModel
+     * @param  string  $formUuid
+     * @param  \DateTime  $regDate
+     * @param  int  $userId
+     * @return Animal
+     */
+    protected function createAnimalModel(Farm $farmModel, string $formUuid, \DateTime $regDate, int $userId): Animal
+    {
+        return new Animal([
+            'farm_id' => $farmModel->id,
+            'country_id' => $farmModel->country_id,
+            'region_id' => $farmModel->region_id,
+            'district_id' => $farmModel->district_id,
+            'ward_id' => $farmModel->ward_id,
+            'village_id' => $farmModel->village_id,
+            'org_id' => $farmModel->org_id,
+            'client_id' => $farmModel->client_id,
+            'odk_form_uuid' => $formUuid,
+            'latitude' => $farmModel->latitude,
+            'longitude' => $farmModel->longitude,
+            'reg_date' => $regDate,
+            'created_by' => $userId,
+        ]);
     }
 
     protected function registerFarmerTechnologyMobilization()
@@ -704,6 +834,28 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         foreach ($data as $k => $datum) {
             $newModel = clone $model;
             $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'improved_fodderdetails', $repeatKey);
+            $i = $newModel->type . $k;
+            $this->saveFarmMetadataModel($newModel, $i, true);
+        }
+
+    }
+
+    protected function registerConcentrate()
+    {
+        $repeatKey = 'feeding_systems';
+        $data = $this->_model->form_data[$repeatKey] ?? null;
+        if (empty($data)) {
+            return;
+        }
+        $model = new FarmMetadata([
+            'farm_id' => $this->getFarmId(),
+            'type' => FarmMetadata::TYPE_CONCENTRATES,
+            'country_id' => $this->_model->country_id,
+            'odk_form_uuid' => $this->_model->form_uuid,
+        ]);
+        foreach ($data as $k => $datum) {
+            $newModel = clone $model;
+            $newModel->setDynamicAttributesValuesFromOdkForm($datum, 'concentrate_feeds', $repeatKey);
             $i = $newModel->type . $k;
             $this->saveFarmMetadataModel($newModel, $i, true);
         }
@@ -1068,6 +1220,15 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $eventDateAttributeKey = self::getAttributeJsonKey('milk_milkdate', $groupKey, $repeatKey);
         $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_MILKING, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey);
     }
+//experiment
+//    protected function registerAnimalWeight()
+//    {
+//        list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCowMonitoringParams();
+//        $groupKey = 'measure_details';
+//        $eventDateAttributeKey = date('Y-m-d');
+//        $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_WEIGHTS, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey);
+//    }
+
 
     protected function registerAnimalVaccination()
     {
@@ -1101,6 +1262,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         if (null === $rawData) {
             return;
         }
+        $newAnimalCodeAttributeKey = Str::str_lreplace('platformuniqueid', 'code', $animalCodeAttributeKey);
 
         $model = new AnimalEvent([
             'event_type' => AnimalEvent::EVENT_TYPE_WEIGHTS,
@@ -1118,6 +1280,9 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             }
             foreach ($dataPoint as $i => $data) {
                 $animalCode = $this->getFormDataValueByKey($data, $animalCodeAttributeKey);
+                if (Str::isEmpty($animalCode)) {
+                    $animalCode = $this->getFormDataValueByKey($data, $newAnimalCodeAttributeKey);
+                }
                 $animalModel = $this->getAnimalModelByOdkCode($animalCode);
                 $newModel = clone $model;
                 $newModel->heartgirth = $this->getFormDataValueByKey($data, $heartgirthAttributeKey);
@@ -1147,7 +1312,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         }
 
         $model = new AnimalEvent([
-            'event_type' => AnimalEvent::EVENT_TYPE_WEIGHTS,
+            'event_type' => AnimalEvent::EVENT_TYPE_FEEDING,
             'data_collection_date' => $this->getDate(),
             'field_agent_id' => $this->_model->user_id,
             'odk_form_uuid' => $this->_model->form_uuid,
@@ -1461,7 +1626,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $repeatKey = $mainRepeatKey . '/animal_hairsamplingdetails';
         $animalCodeAttributeKey = self::getAttributeJsonKey('hairsampling_animalplatformuniqueid', '', $repeatKey);
         $groupKey = 'hairsampling_details';
-        $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_HAIR_SAMPLING, $repeatKey, $groupKey, $animalCodeAttributeKey);
+        $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_SAMPLING, $repeatKey, $groupKey, $animalCodeAttributeKey);
     }
 
     /**
@@ -1491,6 +1656,9 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             case AnimalEvent::EVENT_TYPE_MILKING:
                 $model = new MilkingEvent($params);
                 break;
+            case AnimalEvent::EVENT_TYPE_WEIGHTS:
+                $model = new WeightEvent($params);
+                break;
             default:
                 $model = new AnimalEvent($params);
         }
@@ -1506,7 +1674,9 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                     $animalCode = $this->getFormDataValueByKey($data, $newAnimalCodeAttributeKey);
                 }
                 //Yii::$app->controller->stdout("Animal Code: {$animalCode}, attributeKey: {$animalCodeAttributeKey}, newAttribute Key:{$newAnimalCodeAttributeKey}\n");
+
                 $animalModel = $this->getAnimalModelByOdkCode($animalCode);
+
                 $eventDate = $eventDateAttributeKey !== null ? $this->getFormDataValueByKey($data, $eventDateAttributeKey) : $this->getDate();
                 $newModel = clone $model;
                 if ($newModel->setDynamicAttributesValuesFromOdkForm($data, $groupKey, $repeatKey)) {
@@ -1590,18 +1760,29 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 'animal_type' => 2,//cow
             ]);
 
-            $birthdateKey = OdkForm::isVersion1Point5OrBelow($this->_model->form_version) ? 'animal_damdobfull' : 'animal_damactualdob';
+//            $birthdateKey = OdkForm::isVersion1Point5OrBelow($this->_model->form_version) ? 'animal_damdobfull' : 'animal_damactualdob';
             $fixedAttributesMap = [
                 'name' => self::getAttributeJsonKey('animal_damname', $damDetailGroupKey, $repeatKey),
                 'tag_id' => self::getAttributeJsonKey('animal_damtagid', $damDetailGroupKey, $repeatKey),
                 'main_breed' => self::getAttributeJsonKey('animal_dammainbreed', $damDetailGroupKey, $repeatKey),
                 'main_breed_other' => self::getAttributeJsonKey('animal_dammainbreedoth', $damDetailGroupKey, $repeatKey),
                 'breed_composition' => self::getAttributeJsonKey('animal_dammaincomp', $damDetailGroupKey, $repeatKey),
-                'birthdate' => self::getAttributeJsonKey($birthdateKey, $damDetailGroupKey, $repeatKey),
+                'birthdate' => self::getAttributeJsonKey('animal_damactualdob', $damDetailGroupKey, $repeatKey),
             ];
 
+//            foreach ($fixedAttributesMap as $attr => $odkKey) {
+//                $animalModel->{$attr} = $this->getFormDataValueByKey($damData, $odkKey);
+//            }
             foreach ($fixedAttributesMap as $attr => $odkKey) {
-                $animalModel->{$attr} = $this->getFormDataValueByKey($damData, $odkKey);
+                // birthdate has to be processed separately
+                // convert datetime to date first
+                if ($attr == 'birthdate') {
+                    $datetime = $this->getFormDataValueByKey($damData, $odkKey);
+                    $birthdate = date('Y-m-d', strtotime($datetime));
+                    $animalModel->{$attr} = $birthdate;
+                } else {
+                    $animalModel->{$attr} = $this->getFormDataValueByKey($damData, $odkKey);
+                }
             }
             $i = 'dam_' . $index;
             $this->saveAnimalModel($animalModel, $i, true);
@@ -1677,7 +1858,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                     'breed_composition' => self::getAttributeJsonKey('animal_siremaincomp', $sireBullDetailGroupKey, $repeatKey),
                     'secondary_breed' => self::getAttributeJsonKey('animal_siresecondbreed', $sireBullDetailGroupKey, $repeatKey),
                     'secondary_breed_other' => self::getAttributeJsonKey('animal_siresecondbreedoth', $sireBullDetailGroupKey, $repeatKey),
-                    'birthdate' => self::getAttributeJsonKey($birthdateKey, $sireBullDetailGroupKey, $repeatKey),
+                    'birthdate' => self::getAttributeJsonKey('animal_sireactualdob', $sireBullDetailGroupKey, $repeatKey),
                     'sire_owner' => self::getAttributeJsonKey('animal_sireowner', $sireBullDetailGroupKey, $repeatKey),
                     'sire_owner_scheme' => self::getAttributeJsonKey('animal_sireownerscheme', $sireBullDetailGroupKey, $repeatKey),
                     'sire_owner_institute' => self::getAttributeJsonKey('animal_sireownerinstitute', $sireBullDetailGroupKey, $repeatKey),
@@ -1686,8 +1867,20 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 ];
             }
 
+//            foreach ($fixedAttributesMap as $attr => $odkKey) {
+//                $animalModel->{$attr} = $this->getFormDataValueByKey($sireData, $odkKey);
+//            }
+
             foreach ($fixedAttributesMap as $attr => $odkKey) {
-                $animalModel->{$attr} = $this->getFormDataValueByKey($sireData, $odkKey);
+                // birthdate has to be processed separately
+                // convert datetime to date first
+                if ($attr == 'birthdate') {
+                    $datetime = $this->getFormDataValueByKey($sireData, $odkKey);
+                    $birthdate = date('Y-m-d', strtotime($datetime));
+                    $animalModel->{$attr} = $birthdate;
+                } else {
+                    $animalModel->{$attr} = $this->getFormDataValueByKey($sireData, $odkKey);
+                }
             }
             $i = 'sire_' . $index;
             $this->saveAnimalModel($animalModel, $i, true);
@@ -1731,17 +1924,19 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      */
     protected function saveAnimalModel($model, $index, $validate = true)
     {
-        $newModel = Animal::find()->andWhere(['tag_id' => $model->tag_id])->one();
-        if ($newModel !== null) {
-            $newModel->ignoreAdditionalAttributes = false;
-            foreach ($model->safeAttributes() as $attr) {
-                if ($attr !== 'id') {
-                    $newModel->{$attr} = $model->{$attr};
-                }
-            }
-        } else {
-            $newModel = clone $model;
-        }
+//        $newModel = Animal::find()->andWhere(['tag_id' => $model->tag_id])->one();
+//        Yii::info(json_encode($newModel), "testing to check how the where condition is executed");
+//        if ($newModel !== null) {
+//            $newModel->ignoreAdditionalAttributes = false;
+//            foreach ($model->safeAttributes() as $attr) {
+//                if ($attr !== 'id') {
+//                    $newModel->{$attr} = $model->{$attr};
+//                }
+//            }
+//        } else {
+//            $newModel = clone $model;
+//        }
+        $newModel = clone $model;
         $data = $this->saveModel($newModel, $validate);
         $this->_animalsData[$index] = $data['data'];
         $this->_animalsModels[$index] = $data['model'];

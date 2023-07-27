@@ -12,13 +12,29 @@ use backend\modules\core\models\FarmMetadataBreedingAIProviders;
 use backend\modules\core\models\FarmMetadataBreedingBulls;
 use backend\modules\core\models\FarmMetadataBreedingOtherBulls;
 use backend\modules\core\models\FarmMetadataBreedingSchemeBulls;
+use backend\modules\core\models\FarmMetadataCattleDetails;
+use backend\modules\core\models\FarmMetadataCattleHousingAndStructures;
+use backend\modules\core\models\FarmMetadataConcentrateFeeding;
+use backend\modules\core\models\FarmMetadataExtensionServices;
+use backend\modules\core\models\FarmMetadataFarmStructureDetails;
 use backend\modules\core\models\FarmMetadataFeeding;
+use backend\modules\core\models\FarmMetadataGroupMembership;
 use backend\modules\core\models\FarmMetadataHealth;
+use backend\modules\core\models\FarmMetadataHouseholdMembers;
+use backend\modules\core\models\FarmMetadataImprovedFodderAdoption;
+use backend\modules\core\models\FarmMetadataMilkUtilization;
+use backend\modules\core\models\FarmMetadataMilkUtilizationBuyer;
+use backend\modules\core\models\FarmMetadataOtherSpeciesDetails;
+use backend\modules\core\models\FarmMetadataTechnologyMobilization;
+use backend\modules\core\models\FarmMetadataWaterSource;
+use backend\modules\core\models\FeedingEvent;
+use backend\modules\core\models\SamplingEvent;
 use backend\modules\core\models\HealthEvent;
 use backend\modules\core\models\MilkingEvent;
 use backend\modules\core\models\PDEvent;
 use backend\modules\core\models\SyncEvent;
 use backend\modules\core\models\TableAttribute;
+use backend\modules\core\models\VaccinationEvent;
 use backend\modules\core\models\WeightEvent;
 use common\helpers\ArrayHelper;
 use common\helpers\Utils;
@@ -113,6 +129,11 @@ class ReportBuilder extends Model
     public $name;
 
     /**
+     * @var array
+     */
+    public $extraFields = [];
+
+    /**
      * @return array
      */
     public static function reportableModels()
@@ -146,12 +167,77 @@ class ReportBuilder extends Model
             ],
             'FarmMetadataFeeding' => [
                 'class' => FarmMetadataFeeding::class,
-                'title' => 'Farm Feeding',
+                'title' => 'Farm FeedingEventController',
                 'relations' => ['farm'],
             ],
             'FarmMetadataHealth' => [
                 'class' => FarmMetadataHealth::class,
                 'title' => 'Farm Health',
+                'relations' => ['farm'],
+            ],
+            'FarmMetadataHoseholdMembers' => [
+                'class' => FarmMetadataHouseholdMembers::class,
+                'title' => 'Farm Household Members',
+                'relations' => ['farm'],
+            ],
+            'FarmMetadataExtensionService' => [
+                'class' => FarmMetadataExtensionServices::class,
+                'title' => 'Farm Extension Servise',
+                'relations' => ['farm'],
+            ],
+            'FarmMetadataFarmStructureDetails' => [
+                'class' => FarmMetadataFarmStructureDetails::class,
+                'title' => 'Farm Structure Deatails',
+                'relations' => ['farm'],
+            ],
+            'FarmMetadataCattleDetails' => [
+                'class' => FarmMetadataCattleDetails::class,
+                'title' => 'Farm Cattle Details',
+                'relations' => ['farm'],
+            ],
+            'FarmMetadataCattleHousingAndStructures' => [
+                'class' => FarmMetadataCattleHousingAndStructures::class,
+                'title' => 'Farm Cattle Housing Structures',
+                'relations' => ['farm'],
+            ],
+            'FarmMetadataMilkUUtilization' => [
+                'class' => FarmMetadataMilkUtilization::class,
+                'title' => 'Farm Milk Utilization',
+                'relations' => ['farm'],
+            ],
+            'FarmMetadataMilkUUtilizationBuyer' => [
+                'class' => FarmMetadataMilkUtilizationBuyer::class,
+                'title' => 'Farm Milk Utilization Buyer',
+                'relations' => ['farm'],
+            ],
+            'FarmMetadataGroupMembership' => [
+                'class' => FarmMetadataGroupMembership::class,
+                'title' => 'Farm Group Membership',
+                'relations' => ['farm'],
+            ],
+            'FarmMetadataOtherSpeciesDetails' => [
+                'class' => FarmMetadataOtherSpeciesDetails::class,
+                'title' => 'Farm Other Species Details',
+                'relations' => ['farm'],
+            ],
+            'FarmMetadataTechnologyMobilization' => [
+                'class' => FarmMetadataTechnologyMobilization::class,
+                'title' => 'Farm Technology Mobilization',
+                'relations' => ['farm'],
+            ],
+            'FarmMetadataWaterSource' => [
+                'class' => FarmMetadataWaterSource::class,
+                'title' => 'Farm Water Sources',
+                'relations' => ['farm'],
+            ],
+            'FarmMetadataImprovedFodderAdoption' => [
+                'class' => FarmMetadataImprovedFodderAdoption::class,
+                'title' => 'Farm Improved Fodder Adoption Sources',
+                'relations' => ['farm'],
+            ],
+            'FarmMetadataConcentrateFeeding' => [
+                'class' => FarmMetadataConcentrateFeeding::class,
+                'title' => 'Concentrates',
                 'relations' => ['farm'],
             ],
             'Animal' => [
@@ -255,6 +341,43 @@ class ReportBuilder extends Model
                     'animal.dam' => ['animal.dam_id' => 'dam.id'],
                 ],
             ],
+            'Vaccination_Event' => [
+                'class' => VaccinationEvent::class,
+                'title' => 'Vaccination Events',
+                'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_VACCINATION],
+                'relations' => $eventRelations,
+                'sub_relations' => [
+                    'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.herd' => ['animal.herd_id' => 'herd.id'],
+                    'animal.sire' => ['animal.sire_id' => 'sire.id'],
+                    'animal.dam' => ['animal.dam_id' => 'dam.id'],
+                ],
+            ],
+            'Sampling_Event' => [
+                'class' => SamplingEvent::class,
+                'title' => 'Hair sampling Events',
+                'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_SAMPLING],
+                'relations' => $eventRelations,
+                'sub_relations' => [
+                    'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.herd' => ['animal.herd_id' => 'herd.id'],
+                    'animal.sire' => ['animal.sire_id' => 'sire.id'],
+                    'animal.dam' => ['animal.dam_id' => 'dam.id'],
+                ],
+            ],
+            'Feeding_Event' => [
+                'class' => FeedingEvent::class,
+                'title' => 'Feeding Events',
+                'extraCondition' => ['event_type' => AnimalEvent::EVENT_TYPE_FEEDING],
+                'relations' => $eventRelations,
+                'sub_relations' => [
+                    'animal.farm' => ['animal.farm_id' => 'farm.id'],
+                    'animal.herd' => ['animal.herd_id' => 'herd.id'],
+                    'animal.sire' => ['animal.sire_id' => 'sire.id'],
+                    'animal.dam' => ['animal.dam_id' => 'dam.id'],
+                ],
+            ],
+
         ];
 
     }
@@ -727,6 +850,84 @@ class ReportBuilder extends Model
                 $query->addSelect($expression);
             }
         }
+
+        // get the attributes for select
+        foreach ($this->extraFields as $field => $conditionOperator) {
+            $fieldAlias = str_replace('.', '_', $field);
+            $fieldModelClass = $class;
+            $fieldName = $field;
+
+            if (strpos($field, '.')) {
+                if (substr_count($field, '.') > 1) {
+                    // animal.farm.farmer_name
+                    $relationName = (explode('.', $field)[0]); // animal
+                    $subRelationName = (explode('.', $field)[1]); // farm
+                    // add subrelation to other joins
+                    $other_joins[$subRelationName] = $relationName;
+                    $joins[] = $relationName;
+                    $relationClass = static::getRelationClass($class, $relationName); // Animal::class
+                    $fieldModelClass = static::getRelationClass($relationClass, $subRelationName); // Farm::class
+                    $fieldName = (explode('.', $field)[2]);
+                } else {
+                    $relationName = (explode('.', $field)[0]);
+                    $joins[] = $relationName;
+                    $fieldModelClass = static::getRelationClass($class, $relationName);
+                    $fieldName = (explode('.', $field)[1]);
+                }
+            }
+            # field with table alias
+            $aliasedField = static::getFullColumnName($field, $class);
+            # field with table and column alias
+            $field_alias = ArrayHelper::getValue($this->fieldAliases, $field);
+            $selectField = static::getFullColumnName($field, $class, $field_alias, true);
+
+            // add field to select
+            //$query->addSelect(new Expression( $aliasedField . ' AS "' . $field . '"'));
+
+            if (!in_array($field, $this->excludeFromReport)) {
+                $query->addSelect(new Expression($selectField));
+            }
+            // extract alias from selectField
+
+            $field_alias_array = explode('AS', $selectField);
+            $generated_alias = str_replace('[[', '', $field_alias_array[1]);
+            $generated_alias = str_replace(']]', '', $generated_alias);
+            $generated_alias = trim($generated_alias);
+
+            $this->fieldAliasMapping[$field] = $generated_alias;
+
+            // build the condition
+            if (!empty($conditionOperator)) {
+                // get the condition value for this field
+                $filter = $this->filterValues[$field] ?? '';
+                #
+                # handle other json columns that are not additional attributes in a special way
+                #
+                $columnDbType = $fieldModelClass->getAttributeSchemaType($fieldName);
+                if ($columnDbType == Schema::TYPE_JSON) {
+                    //$params = [':field' => $aliasedField, ':value' => $filter];
+                    //$sqlCondition = new Expression('JSON_SEARCH(:field,"one",:value)', $params);
+                    if (is_array($filter) && !empty($filter)) {
+                        foreach ($filter as $value) {
+                            if ($conditionOperator == 'IN') {
+                                $sqlCondition = new Expression('"' . $value . '" MEMBER OF(' . $aliasedField . ')');
+                                $query->orWhere($sqlCondition);
+                            } elseif ($conditionOperator == 'NOT IN') {
+                                $sqlCondition = new Expression('"' . $value . '" MEMBER OF(' . $aliasedField . ') = 0');
+                                $query->andWhere($sqlCondition);
+                            }
+                        }
+                    } else if (!empty($filter)) {
+                        $sqlCondition = new Expression('"' . $filter . '" MEMBER OF(' . $aliasedField . ')');
+                        $query->andWhere($sqlCondition);
+                    }
+                } else {
+                    $sqlCondition = static::buildCondition($conditionOperator, $aliasedField, $filter);
+                    $query->andFilterWhere($sqlCondition);
+                }
+            }
+        }
+
         return $query;
 
     }

@@ -100,16 +100,21 @@ class UserController extends Controller
         ]);
     }
 
-    public function actionCreate($level_id = null, $country_id = null)
+    public function actionCreate($level_id = null, $country_id = null, $district_id = null)
     {
         if (Session::isCountry()) {
             $country_id = Session::getCountryId();
             $level_id = UserLevels::LEVEL_COUNTRY;
         }
+        else if (Session::isDistrictUser()){
+            $district_id = Session::getDistrictId();
+            $level_id = UserLevels::LEVEL_DISTRICT;
+        }
 
         $model = new Users([
             'level_id' => $level_id,
             'country_id' => $country_id,
+            'district_id' => $district_id,
             'status' => Users::STATUS_ACTIVE,
             'scenario' => Users::SCENARIO_CREATE,
             'send_email' => true,
@@ -125,7 +130,13 @@ class UserController extends Controller
         $model->ajaxValidate($validateAttributes);
         if (Yii::$app->request->isPost && $model->validate($validateAttributes) && $model->save(false)) {
             Yii::$app->session->setFlash(self::FLASH_SUCCESS, Lang::t('SUCCESS_MESSAGE'));
-            return $this->redirect(['index', 'level_id' => $model->level_id, 'country_id' => $model->country_id]);
+            if (Session::isCountry()) {
+                return $this->redirect(['index', 'level_id' => $model->level_id, 'country_id' => $model->country_id]);
+            }
+            else if (Session::isDistrictUser()){
+                return $this->redirect(['index', 'level_id' => $model->level_id,  'district_id' => $model->district_id]);
+            }
+
         }
 
         return $this->render('create', [

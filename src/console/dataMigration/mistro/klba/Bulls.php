@@ -81,18 +81,18 @@ class Bulls extends MigrationBase implements MigrationInterface
                     $newModel->farm_id = $herdModel->farm_id;
                 }
                 $newModel->migration_id = Helper::getMigrationId($dataModel->Bulls_ID, static::getMigrationIdPrefix());
-                $newModel->tag_id = $dataModel->Bulls_Nasis1;
+                $newModel->tag_id = 'KLBA-'.$dataModel->Bulls_ID;
                 $newModel->name = $dataModel->Bulls_RegName;
                 $newModel->animal_type = 5;
                 $newModel->short_name = $dataModel->Bulls_ShortName;
-                $newModel->animal_eartag_id = $dataModel->Bulls_EarTag;
+//                $newModel->animal_eartag_id = $dataModel->Bulls_EarTag;
                 $newModel->sex = 1;
                 $newModel->birthdate = $dataModel->Bulls_Birth;
                 if ($newModel->birthdate == '0000-00-00') {
                     $newModel->birthdate = null;
                 }
-                $newModel->sire_tag_id = Helper::getMigrationId($dataModel->Bulls_Sire, static::getMigrationIdPrefix());
-                $newModel->dam_tag_id = Helper::getMigrationId($dataModel->Bulls_Dam, static::getCowMigrationIdPrefix());
+                $newModel->sire_tag_id = Helper::getMigrationId('KLBA-'.$dataModel->Bulls_Sire, static::getMigrationIdPrefix());
+                $newModel->dam_tag_id = Helper::getMigrationId('KLBA-'.$dataModel->Bulls_Dam, static::getCowMigrationIdPrefix());
                 $newModel->breed_composition_details = $dataModel->Bulls_BreedS;
                 $newModel->country_of_origin = $dataModel->Bulls_HerdBookCty;
                 $newModel->herd_book_no = $dataModel->Bulls_HerdBook;

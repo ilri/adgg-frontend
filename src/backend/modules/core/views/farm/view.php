@@ -46,6 +46,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         [
                             'attribute' => 'farm_type',
+                            'hidden' => false,
                         ],
                         [
                             'attribute' => 'country_id',
@@ -73,6 +74,13 @@ $this->params['breadcrumbs'][] = $this->title;
                             'hidden' => false,
                         ],
                         [
+                            'attribute' => 'ward_code',
+                            'value' => function (Farm $farmModel) {
+                                return $farmModel->getRelationAttributeValue('ward', 'code');
+                            },
+                            'hidden' => false,
+                        ],
+                        [
                             'attribute' => 'village_id',
                             'value' => function (Farm $farmModel) {
                                 return $farmModel->getRelationAttributeValue('village', 'name');
@@ -84,6 +92,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         [
                             'attribute' => 'project',
+                            'hidden' => false,
                         ],
                         [
                             'attribute' => 'map_address',

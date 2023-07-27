@@ -119,6 +119,7 @@ use yii\bootstrap4\ActiveForm;
                             ]) ?>
                         </div>
                     <?php endif; ?>
+
                     <?php if ($model->showVillageField()): ?>
                         <div class="col-md-4">
                             <?= $form->field($model, 'village_id')->widget(Select2::class, [

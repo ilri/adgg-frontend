@@ -71,7 +71,7 @@ class DefaultController extends Controller
         $searchModel->type = $type;
         $searchModel->country_id = $country_id;
 
-        return $this->render('view',[
+        return $this->render('view', [
             'type' => $type,
             'tpl' => $tpl_type,
             'country_id' => $country_id,
@@ -139,13 +139,18 @@ class DefaultController extends Controller
                     $name = $builder->name;
                     $query = null;
                     break;
+                case Constants::REPORT_TYPE_HAIR_SAMPLING:
+                    $builder = Reports::hairsampleReport(\Yii::$app->request->post());
+                    $name = $builder->name;
+                    $query = null;
+                    break;
                 default:
                     $builder = null;
                     $query = null;
             }
         }
 
-        if($builder){
+        if ($builder) {
             $success_msg = Lang::t('Report Queued Successfully. You will be notified once your report is ready for download');
             $transaction = Yii::$app->db->beginTransaction();
             try {

@@ -1,6 +1,7 @@
 <?php
 
 use backend\modules\core\models\AnimalEvent;
+use backend\modules\core\models\Client;
 use backend\modules\core\models\Choices;
 use backend\modules\core\models\ChoiceTypes;
 use backend\modules\core\models\Country;
@@ -40,6 +41,7 @@ use yii\bootstrap4\Html;
                             ],
                         ]); ?>
                     </div>
+
                     <?php if ($model->showCountryField()): ?>
                         <div class="col-lg-2">
                             <?= Html::label($model->getAttributeLabel('country_id')) ?>

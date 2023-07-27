@@ -18,6 +18,12 @@ use yii\helpers\Url;
     ],
     'columns' => [
         [
+            'attribute' => 'field_agent_id',
+            'value' => function (AnimalEvent $model) {
+                return $model->getRelationAttributeValue('fieldAgent', 'name');
+            }
+        ],
+        [
             'attribute' => 'event_date',
             'label' => 'Examination Date',
             'format' => ['date', 'php:d-M-Y'],
@@ -79,12 +85,6 @@ use yii\helpers\Url;
         [
             'attribute' => 'breeding_pdcost',
             'enableSorting' => false,
-        ],
-        [
-            'attribute' => 'field_agent_id',
-            'value' => function (AnimalEvent $model) {
-                return $model->getRelationAttributeValue('fieldAgent', 'name');
-            },
         ],
     ],
 ]);

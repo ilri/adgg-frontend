@@ -19,6 +19,12 @@ use yii\helpers\Url;
     ],
     'columns' => [
         [
+            'attribute' => 'field_agent_id',
+            'value' => function (AnimalEvent $model) {
+                return $model->getRelationAttributeValue('fieldAgent', 'name');
+            }
+        ],
+        [
             'attribute' => 'animal_id',
             'value' => function (AnimalEvent $model) {
                 return $model->animal->tag_id;
@@ -34,7 +40,7 @@ use yii\helpers\Url;
         ],
         [
             'attribute' => 'event_date',
-            'label' => 'Calving Date',
+            'label' => 'Collection Date',
             'format' => ['date', 'php:d-M-Y'],
         ],
         [
@@ -87,13 +93,6 @@ use yii\helpers\Url;
             'enableSorting' => false,
         ],
         [
-            'attribute' => 'calfdeformities',
-            'value' => function (AnimalEvent $model) {
-                return Choices::getMultiSelectLabel($model->calfdeformities, ChoiceTypes::CHOICE_TYPE_CALVE_DEFORMITY);
-            },
-            'enableSorting' => false,
-        ],
-        [
             'attribute' => 'intuse',
             'value' => function (AnimalEvent $model) {
                 return Choices::getLabel(ChoiceTypes::CHOICE_TYPE_CALVE_USE, $model->intuse);
@@ -120,10 +119,10 @@ use yii\helpers\Url;
         [
             'attribute' => 'tag_id',
         ],
-        [
-            'attribute' => 'calfcolor',
-            'enableSorting' => false,
-        ],
+//        [
+//            'attribute' => 'calfcolor',
+//            'enableSorting' => false,
+//        ],
     ],
 ]);
 ?>

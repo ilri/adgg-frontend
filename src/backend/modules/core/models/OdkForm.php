@@ -271,7 +271,7 @@ class OdkForm extends ActiveRecord implements ActiveSearchInterface
         }
         $jsonKey = 'staff_code';
         $code = $this->form_data[$jsonKey] ?? null;
-        $id = Users::getScalar('id', ['odk_code' => $code, 'country_id' => $this->country_id]);
+        $id = Users::getScalar('id', ['id' => $code, 'country_id' => $this->country_id]);
         if (empty($id)) {
             $id = null;
         }
