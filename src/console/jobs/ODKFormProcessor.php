@@ -420,6 +420,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $farmerPhoneKey = self::getAttributeJsonKey('farmer_mobile', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
         $farmerGenderKey = self::getAttributeJsonKey('farmer_gender', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
         $farmerIsHouseholdHeadKey = self::getAttributeJsonKey('farmer_hhhead', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
+        $locationlatitude = self::getAttributeJsonKey('_farmer_gpslocation_latitude', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
+        $locationlongitude = self::getAttributeJsonKey('_farmer_gpslocation_longitude', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
         $locationStringKey = $farmersRepeatKey . '/farmer_gpslocation';
         $staffCodeKey = 'staff_code';
         //household head
@@ -451,9 +453,11 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $newFarmerModel->phone = $this->getFormDataValueByKey($farmerData, $farmerPhoneKey);
             $newFarmerModel->gender_code = $this->getFormDataValueByKey($farmerData, $farmerGenderKey);
             $newFarmerModel->farmer_is_hh_head = $this->getFormDataValueByKey($farmerData, $farmerIsHouseholdHeadKey);
-            $geoLocation = static::splitGPRSLocationString($this->getFormDataValueByKey($farmerData, $locationStringKey));
-            $newFarmerModel->latitude = $geoLocation['latitude'];
-            $newFarmerModel->longitude = $geoLocation['longitude'];
+//            $geoLocation = static::splitGPRSLocationString($this->getFormDataValueByKey($farmerData, $locationStringKey));
+//            $newFarmerModel->latitude = $geoLocation['latitude'];
+//            $newFarmerModel->longitude = $geoLocation['longitude'];
+            $newFarmerModel->latitude = $this->getFormDataValueByKey($farmerData, $locationlatitude);
+            $newFarmerModel->longitude = $this->getFormDataValueByKey($farmerData, $locationlongitude);
             $newFarmerModel->setDynamicAttributesValuesFromOdkForm($farmerData, $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
             $newFarmerModel->setDynamicAttributesValuesFromOdkForm($farmerData, $farmerHouseholdHeadGroupKey, $farmersRepeatKey);
             //Household Members (No Demographics)
@@ -600,7 +604,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             // Retrieve or register the dam for the animal
             $damModel = $this->getOrRegisterAnimalDam($animalData, $farmModel, $k);
             $dammodelcode = $this->getFormDataValueByKey($animalData, $damCodeKey);
-//            Yii::info(json_encode($dammodelcode),"dam model code key dwsafdkajhf");
+            // Yii::info(json_encode($dammodelcode),"dam model code key dwsafdkajhf");
             if (null !== $damModel) {
                 $newAnimalModel->dam_id = $damModel->id;
                 $newAnimalModel->dam_tag_id = $damModel->tag_id;
@@ -653,53 +657,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             }
         }
     }
-
-//chat GPT test code
-//    protected function registerNewCattle2()
-//    {
-//        // Check if the form data is available
-//        if (!isset($this->_model->form_data['animal_general'])) {
-//            return;
-//        }
-//
-//        // Get the farm model
-//        $farmModel = $this->getFarmModel();
-//        if (!$farmModel) {
-//            $message = 'ODK Form processor: Register New Cattle aborted. Farm cannot be null. Form UUID: ' . $this->_model->form_uuid;
-//            Yii::error($message);
-//            return;
-//        }
-//
-//        // Loop through each animal in the form data
-//        foreach ($this->_model->form_data['animal_general'] as $animalData) {
-//            try {
-//                // Create a new animal model
-//                $newAnimalModel = $this->createAnimalModel($farmModel, $this->_model->form_uuid, $this->getDate(), $this->_model->user_id);
-//
-//                // Set the fixed attributes
-//                $this->setFixedAnimalAttributes($newAnimalModel, $animalData);
-//
-//                // Convert the birthdate to the correct format
-//                $this->setAnimalBirthdate($newAnimalModel, $animalData);
-//
-//                // Set the dynamic attributes
-//                $this->setDynamicAnimalAttributes($newAnimalModel, $animalData);
-//
-//                // Get or register the animal's dam
-//                $damModel = $this->getOrRegisterAnimalDam($animalData, $farmModel);
-//                $dammodelcode = $this->getFormDataValueByKey($animalData, self::getAttributeJsonKey('animal_damplatformuniqueid', 'animal_damknownlist', 'animal_general'));
-//
-//                // Set the dam code on the animal model
-//                $newAnimalModel->dam_code = $damModel ? $damModel->tag_id : $dammodelcode;
-//
-//                // Save the animal model
-//                $newAnimalModel->save();
-//            } catch (\Exception $e) {
-//                // Log the error message
-//                Yii::error('Error while registering new cattle: ' . $e->getMessage());
-//            }
-//        }
-//    }
 
     /**
      * Create a new animal model with the specified farm, form UUID, registration date, and user ID.
@@ -1924,6 +1881,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      */
     protected function saveAnimalModel($model, $index, $validate = true)
     {
+//        // only when country_id = 12
 //        $newModel = Animal::find()->andWhere(['tag_id' => $model->tag_id])->one();
 //        Yii::info(json_encode($newModel), "testing to check how the where condition is executed");
 //        if ($newModel !== null) {
@@ -1936,8 +1894,36 @@ class ODKFormProcessor extends BaseObject implements JobInterface
 //        } else {
 //            $newModel = clone $model;
 //        }
-        $newModel = clone $model;
-        $data = $this->saveModel($newModel, $validate);
+//        //else run
+//        $newModel = clone $model;
+//        $data = $this->saveModel($newModel, $validate);
+//        $this->_animalsData[$index] = $data['data'];
+//        $this->_animalsModels[$index] = $data['model'];
+        // Check if the country_id is 12
+        if ($model->country_id === 12) {
+            // Find an existing animal record based on the tag_id
+            $existingModel = Animal::find()->andWhere(['tag_id' => $model->tag_id])->one();
+
+            Yii::info(json_encode($existingModel), "testing to check how the where condition is executed");
+
+            if ($existingModel !== null) {
+                // If an existing animal is found, update its attributes with the new model's attributes
+                // excluding the 'id' attribute to prevent duplicate primary key errors
+                $existingModel->ignoreAdditionalAttributes = false;
+                foreach ($model->safeAttributes() as $attr) {
+                    if ($attr !== 'id') {
+                        $existingModel->{$attr} = $model->{$attr};
+                    }
+                }
+
+                $model = $existingModel; // Set the new model to the existing model for saving/updating
+            }
+        }
+
+        // Save the animal model and get the saved data and model
+        $data = $this->saveModel($model, $validate);
+
+        // Update the arrays holding data and models for further processing (e.g., calving events)
         $this->_animalsData[$index] = $data['data'];
         $this->_animalsModels[$index] = $data['model'];
     }
