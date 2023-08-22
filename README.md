@@ -17,7 +17,7 @@ sudo apt-get update && sudo apt-get install yarn
 ## Perform the following in your terminal
 ```sh
 # clone from online repo.
-git clone https://gitlab.com/competamillman/adgg-backend.git
+git@github.com:ilri/adgg-frontend.git
 
 # cd into the folder created. Defaults to adgg
 cd adgg
