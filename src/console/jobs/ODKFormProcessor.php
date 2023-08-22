@@ -451,9 +451,11 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $newFarmerModel->phone = $this->getFormDataValueByKey($farmerData, $farmerPhoneKey);
             $newFarmerModel->gender_code = $this->getFormDataValueByKey($farmerData, $farmerGenderKey);
             $newFarmerModel->farmer_is_hh_head = $this->getFormDataValueByKey($farmerData, $farmerIsHouseholdHeadKey);
-            $geoLocation = static::splitGPRSLocationString($this->getFormDataValueByKey($farmerData, $locationStringKey));
-            $newFarmerModel->latitude = $geoLocation['latitude'];
-            $newFarmerModel->longitude = $geoLocation['longitude'];
+//            $geoLocation = static::splitGPRSLocationString($this->getFormDataValueByKey($farmerData, $locationStringKey));
+//            $newFarmerModel->latitude = $geoLocation['latitude'];
+//            $newFarmerModel->longitude = $geoLocation['longitude'];
+            $newFarmerModel->latitude = $this->getFormDataValueByKey($farmerData, $locationlatitude);
+            $newFarmerModel->longitude = $this->getFormDataValueByKey($farmerData, $locationlongitude);
             $newFarmerModel->setDynamicAttributesValuesFromOdkForm($farmerData, $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
             $newFarmerModel->setDynamicAttributesValuesFromOdkForm($farmerData, $farmerHouseholdHeadGroupKey, $farmersRepeatKey);
             //Household Members (No Demographics)
@@ -1879,6 +1881,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      */
     protected function saveAnimalModel($model, $index, $validate = true)
     {
+//        // only when country_id = 12
 //        $newModel = Animal::find()->andWhere(['tag_id' => $model->tag_id])->one();
 //        Yii::info(json_encode($newModel), "testing to check how the where condition is executed");
 //        if ($newModel !== null) {
@@ -1891,8 +1894,36 @@ class ODKFormProcessor extends BaseObject implements JobInterface
 //        } else {
 //            $newModel = clone $model;
 //        }
-        $newModel = clone $model;
-        $data = $this->saveModel($newModel, $validate);
+//        //else run
+//        $newModel = clone $model;
+//        $data = $this->saveModel($newModel, $validate);
+//        $this->_animalsData[$index] = $data['data'];
+//        $this->_animalsModels[$index] = $data['model'];
+        // Check if the country_id is 12
+        if ($model->country_id === 12) {
+            // Find an existing animal record based on the tag_id
+            $existingModel = Animal::find()->andWhere(['tag_id' => $model->tag_id])->one();
+
+            Yii::info(json_encode($existingModel), "testing to check how the where condition is executed");
+
+            if ($existingModel !== null) {
+                // If an existing animal is found, update its attributes with the new model's attributes
+                // excluding the 'id' attribute to prevent duplicate primary key errors
+                $existingModel->ignoreAdditionalAttributes = false;
+                foreach ($model->safeAttributes() as $attr) {
+                    if ($attr !== 'id') {
+                        $existingModel->{$attr} = $model->{$attr};
+                    }
+                }
+
+                $model = $existingModel; // Set the new model to the existing model for saving/updating
+            }
+        }
+
+        // Save the animal model and get the saved data and model
+        $data = $this->saveModel($model, $validate);
+
+        // Update the arrays holding data and models for further processing (e.g., calving events)
         $this->_animalsData[$index] = $data['data'];
         $this->_animalsModels[$index] = $data['model'];
     }
