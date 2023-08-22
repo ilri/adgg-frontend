@@ -158,7 +158,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerAnimalPD();
                 $this->registerAnimalMilk();
                 //test
-//                $this->registerAnimalWeight();
+                //$this->registerAnimalWeight();
                 $this->registerAnimalVaccination();
                 $this->registerAnimalParasiteInfection();
                 $this->registerAnimalInjury();
@@ -420,8 +420,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $farmerPhoneKey = self::getAttributeJsonKey('farmer_mobile', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
         $farmerGenderKey = self::getAttributeJsonKey('farmer_gender', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
         $farmerIsHouseholdHeadKey = self::getAttributeJsonKey('farmer_hhhead', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
-        $locationlatitude = self::getAttributeJsonKey('_farmer_gpslocation_latitude', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
-        $locationlongitude = self::getAttributeJsonKey('_farmer_gpslocation_longitude', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
+        $locationlatitude = $farmersRepeatKey . '/farmer_gpslocation_latitude';
+        $locationlongitude = $farmersRepeatKey . '/farmer_gpslocation_longitude';
         $locationStringKey = $farmersRepeatKey . '/farmer_gpslocation';
         $staffCodeKey = 'staff_code';
         //household head
@@ -1881,24 +1881,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      */
     protected function saveAnimalModel($model, $index, $validate = true)
     {
-//        // only when country_id = 12
-//        $newModel = Animal::find()->andWhere(['tag_id' => $model->tag_id])->one();
-//        Yii::info(json_encode($newModel), "testing to check how the where condition is executed");
-//        if ($newModel !== null) {
-//            $newModel->ignoreAdditionalAttributes = false;
-//            foreach ($model->safeAttributes() as $attr) {
-//                if ($attr !== 'id') {
-//                    $newModel->{$attr} = $model->{$attr};
-//                }
-//            }
-//        } else {
-//            $newModel = clone $model;
-//        }
-//        //else run
-//        $newModel = clone $model;
-//        $data = $this->saveModel($newModel, $validate);
-//        $this->_animalsData[$index] = $data['data'];
-//        $this->_animalsModels[$index] = $data['model'];
         // Check if the country_id is 12
         if ($model->country_id === 12) {
             // Find an existing animal record based on the tag_id
