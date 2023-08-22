@@ -420,8 +420,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $farmerPhoneKey = self::getAttributeJsonKey('farmer_mobile', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
         $farmerGenderKey = self::getAttributeJsonKey('farmer_gender', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
         $farmerIsHouseholdHeadKey = self::getAttributeJsonKey('farmer_hhhead', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
-        $locationlatitude = $farmersRepeatKey . '/_farmer_gpslocation_latitude';
-        $locationlongitude = $farmersRepeatKey . '/_farmer_gpslocation_longitude';
+//        $locationlatitude = $farmersRepeatKey . '/_farmer_gpslocation_latitude';
+//        $locationlongitude = $farmersRepeatKey . '/_farmer_gpslocation_longitude';
         $locationStringKey = $farmersRepeatKey . '/farmer_gpslocation';
         $staffCodeKey = 'staff_code';
         //household head
@@ -453,11 +453,11 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $newFarmerModel->phone = $this->getFormDataValueByKey($farmerData, $farmerPhoneKey);
             $newFarmerModel->gender_code = $this->getFormDataValueByKey($farmerData, $farmerGenderKey);
             $newFarmerModel->farmer_is_hh_head = $this->getFormDataValueByKey($farmerData, $farmerIsHouseholdHeadKey);
-//            $geoLocation = static::splitGPRSLocationString($this->getFormDataValueByKey($farmerData, $locationStringKey));
-//            $newFarmerModel->latitude = $geoLocation['latitude'];
-//            $newFarmerModel->longitude = $geoLocation['longitude'];
-            $newFarmerModel->latitude = $this->getFormDataValueByKey($farmerData, $locationlatitude);
-            $newFarmerModel->longitude = $this->getFormDataValueByKey($farmerData, $locationlongitude);
+            $geoLocation = static::splitGPRSLocationString($this->getFormDataValueByKey($farmerData, $locationStringKey));
+            $newFarmerModel->latitude = $geoLocation['latitude'];
+            $newFarmerModel->longitude = $geoLocation['longitude'];
+//            $newFarmerModel->latitude = $this->getFormDataValueByKey($farmerData, $locationlatitude);
+//            $newFarmerModel->longitude = $this->getFormDataValueByKey($farmerData, $locationlongitude);
             $newFarmerModel->setDynamicAttributesValuesFromOdkForm($farmerData, $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
             $newFarmerModel->setDynamicAttributesValuesFromOdkForm($farmerData, $farmerHouseholdHeadGroupKey, $farmersRepeatKey);
             //Household Members (No Demographics)
