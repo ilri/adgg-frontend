@@ -187,4 +187,23 @@ class DataMigrationController extends Controller
             }
         }
     }
+
+
+    public function actionReprocessUnqueuedOdkForms()
+    {
+        $condition = ['is_processed' => 0]; // Updated condition for forms where is_processed is 0
+        $query = OdkForm::find()->andWhere($condition);
+        $totalRecords = $query->count();
+        $n = 1;
+        $modelClassName = OdkForm::class;
+
+        foreach ($query->batch() as $i => $models) {
+            foreach ($models as $model) {
+                ODKFormProcessor::push(['itemId' => $model->id]);
+                $this->stdout("{$modelClassName}: queued {$n} of {$totalRecords} records\n");
+                $n++;
+            }
+        }
+    }
+
 }
