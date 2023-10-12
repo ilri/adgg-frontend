@@ -157,6 +157,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerAnimalAI();
                 $this->registerAnimalPD();
                 $this->registerAnimalMilk();
+                $this->registerAnimalCalving();
                 //test
                 //$this->registerAnimalWeight();
                 $this->registerAnimalVaccination();
@@ -1172,6 +1173,14 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $groupKey = 'milk_prodanimal';
         $eventDateAttributeKey = self::getAttributeJsonKey('milk_milkdate', $groupKey, $repeatKey);
         $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_MILKING, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey);
+    }
+
+    protected function registerAnimalCalving()
+    {
+        list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCowMonitoringParams();
+        $groupKey = 'calving_details';
+        $eventDateAttributeKey = self::getAttributeJsonKey('calving_date', $groupKey, $repeatKey);
+        $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_CALVING, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey);
     }
 //experiment
 //    protected function registerAnimalWeight()
