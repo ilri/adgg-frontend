@@ -421,7 +421,9 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $farmerPhoneKey = self::getAttributeJsonKey('farmer_mobile', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
         $farmerGenderKey = self::getAttributeJsonKey('farmer_gender', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
         $farmerIsHouseholdHeadKey = self::getAttributeJsonKey('farmer_hhhead', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
-        $locationStringKey = $farmersRepeatKey . '/farmer_gpslocation';
+//        $locationStringKey = $farmersRepeatKey . '/farmer_gpslocation';
+        $locationStringKey = 'farmer_general/farmer_gpslocation';
+        Yii::info($locationStringKey, 'location string info');
         $staffCodeKey = 'staff_code';
         //household head
 
