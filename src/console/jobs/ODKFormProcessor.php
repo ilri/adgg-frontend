@@ -455,14 +455,18 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $newFarmerModel->gender_code = $this->getFormDataValueByKey($farmerData, $farmerGenderKey);
             $newFarmerModel->farmer_is_hh_head = $this->getFormDataValueByKey($farmerData, $farmerIsHouseholdHeadKey);
             $geoLocation = static::splitGPRSLocationString($this->getFormDataValueByKey($farmerData, $locationStringKey));
+            Yii::info($geoLocation, 'geo location info');
             $newFarmerModel->latitude = $geoLocation['latitude'];
+            Yii::info($geoLocation['latitude'], 'geo location latitude');
             $newFarmerModel->longitude = $geoLocation['longitude'];
+            Yii::info($geoLocation['longitude'], 'geo location longitude');
             $newFarmerModel->setDynamicAttributesValuesFromOdkForm($farmerData, $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
             $newFarmerModel->setDynamicAttributesValuesFromOdkForm($farmerData, $farmerHouseholdHeadGroupKey, $farmersRepeatKey);
             //Household Members (No Demographics)
             $newFarmerModel = $this->setFarmerHouseholdMembersNumbersAttributes($newFarmerModel, $k);
             //Staff Code
             $newFarmerModel->created_by = $staffCodeKey;
+            Yii::info($newFarmerModel, 'what is being saved');
 
             $this->saveFarmModel($newFarmerModel, $k, true);
         }
