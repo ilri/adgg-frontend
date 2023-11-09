@@ -421,7 +421,9 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $farmerPhoneKey = self::getAttributeJsonKey('farmer_mobile', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
         $farmerGenderKey = self::getAttributeJsonKey('farmer_gender', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
         $farmerIsHouseholdHeadKey = self::getAttributeJsonKey('farmer_hhhead', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
-        $locationStringKey = $farmersRepeatKey . '/farmer_gpslocation';
+        //$locationStringKey = $farmersRepeatKey . '/farmer_gpslocation';
+        $locationStringKey = 'farmer_general/farmer_gpslocation';
+        Yii::info($locationStringKey, 'location string info');
         $staffCodeKey = 'staff_code';
         //household head
 
@@ -453,14 +455,18 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $newFarmerModel->gender_code = $this->getFormDataValueByKey($farmerData, $farmerGenderKey);
             $newFarmerModel->farmer_is_hh_head = $this->getFormDataValueByKey($farmerData, $farmerIsHouseholdHeadKey);
             $geoLocation = static::splitGPRSLocationString($this->getFormDataValueByKey($farmerData, $locationStringKey));
+            Yii::info($geoLocation, 'geo location info');
             $newFarmerModel->latitude = $geoLocation['latitude'];
+            Yii::info($geoLocation['latitude'], 'geo location latitude');
             $newFarmerModel->longitude = $geoLocation['longitude'];
+            Yii::info($geoLocation['longitude'], 'geo location longitude');
             $newFarmerModel->setDynamicAttributesValuesFromOdkForm($farmerData, $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
             $newFarmerModel->setDynamicAttributesValuesFromOdkForm($farmerData, $farmerHouseholdHeadGroupKey, $farmersRepeatKey);
             //Household Members (No Demographics)
             $newFarmerModel = $this->setFarmerHouseholdMembersNumbersAttributes($newFarmerModel, $k);
             //Staff Code
             $newFarmerModel->created_by = $staffCodeKey;
+            Yii::info($newFarmerModel, 'what is being saved');
 
             $this->saveFarmModel($newFarmerModel, $k, true);
         }
