@@ -43,17 +43,30 @@ if (count($chart_data) > 0) {
             $empty_regions[] = $region;
         }
     }
-    foreach ($values as $t => $dv){
+//    foreach ($values as $t => $dv){
+//        // remove those with zeros for all regions
+//        $sum = array_sum($dv);
+//        if($sum > 0){
+//            $data[] = [
+//                'name' => $t,
+//                'data' => $dv,
+//                'color' => $colorOptions['animal_types'][$t],
+//            ];
+//        }
+//    }
+    foreach ($values as $t => $dv) {
         // remove those with zeros for all regions
         $sum = array_sum($dv);
-        if($sum > 0){
+        if ($sum > 0) {
+            $color = isset($colorOptions['animal_types'][$t]) ? $colorOptions['animal_types'][$t] : '#000000'; // Replace #000000 with a default color
             $data[] = [
-                'name' => $t,
-                'data' => $dv,
-                'color' => $colorOptions['animal_types'][$t],
+                'name'  => $t,
+                'data'  => $dv,
+                'color' => $color,
             ];
         }
     }
+
 }
 
 $series = $data;
