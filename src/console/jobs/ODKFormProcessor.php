@@ -168,6 +168,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerAnimalHoofTreatment();
                 $this->registerAnimalFeedProvided();
                 $this->registerAnimalGrowth();
+                $this->registerAnimalWeightOnMilk();
                 $this->registerCalfVaccination();
                 $this->registerCalfParasiteInfection();
                 $this->registerCalfInjury();
@@ -1188,14 +1189,17 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $eventDateAttributeKey = self::getAttributeJsonKey('calving_date', $groupKey, $repeatKey);
         $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_CALVING, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey);
     }
-//experiment
-//    protected function registerAnimalWeight()
-//    {
-//        list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCowMonitoringParams();
-//        $groupKey = 'measure_details';
-//        $eventDateAttributeKey = date('Y-m-d');
-//        $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_WEIGHTS, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey);
-//    }
+    //experiment
+    protected function registerAnimalWeightOnMilk()
+    {
+        list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCowMonitoringParams();
+        $groupKey = 'measure_details';
+        $milkDateAttributeKey = self::getAttributeJsonKey('milk_milkdate', 'cow_monitoringanimal/milk_prodanimal', $repeatKey);
+        $eventDateAttributeKey = isset($rawData[$milkDateAttributeKey]) ? $rawData[$milkDateAttributeKey] : date('Y-m-d');
+        Yii::info($animalCodeAttributeKey, "animal growth milk animalid key");
+        Yii::info($eventDateAttributeKey, "animal growth milk date as weight date animalid key");
+        $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_WEIGHTS, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey);
+    }
 
 
     protected function registerAnimalVaccination()
@@ -1378,6 +1382,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCalfMonitoringParams();
         $groupKey = 'calfmonitor_growth';
         $eventDateAttributeKey = self::getAttributeJsonKey('calfmonitor_date', $groupKey, $repeatKey);
+        Yii::info($animalCodeAttributeKey, "animal growth animalid key");
         $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_WEIGHTS, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey);
     }
 
@@ -1475,7 +1480,12 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $mainRepeatKey = 'calf_monitoring';
         $rawData = $this->_model->form_data[$mainRepeatKey] ?? null;
         $repeatKey = $mainRepeatKey . '/calf_monitoringanimal';
-        $animalCodeAttributeKey = self::getAttributeJsonKey('calfmonitor_animalplatformuniqueid', $this->_model->isVersion1Point5() ? '' : 'calf_monitordetails', $repeatKey);
+        $animalCodeAttributeKey = self::getAttributeJsonKey(
+            'calfmonitor_animalplatformuniqueid',
+            $this->_model->isVersion1Point5() ? '' : 'calf_monitordetails',
+            $mainRepeatKey . '/calf_monitoringanimal'
+        );
+
         return [$rawData, $repeatKey, $animalCodeAttributeKey];
     }
 

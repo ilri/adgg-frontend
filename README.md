@@ -22,9 +22,9 @@ git@github.com:ilri/adgg-frontend.git
 # cd into the folder created. Defaults to adgg
 cd adgg
 
-# Create db.php file by copying the contents of db.sample.php into db.php
+# Create db.php file by copying the contents of db.php into db.php
 cd src/common/config/
-sudo cp db.sample.php db.php
+sudo cp db.php db.php
 
 # verify your database credentials, by editing the db config file
 vi src/common/config/db.php
