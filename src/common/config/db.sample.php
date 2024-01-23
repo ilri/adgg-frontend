@@ -6,9 +6,9 @@
  */
 return [
     'class' => \yii\db\Connection::class,
-    'dsn' => 'mysql:host=localhost;port=3306;dbname=adgg',
-    'username' => 'root',
-    'password' => 'root',
+    'dsn' => 'mysql:host=dev.db.adgg.ilri.org;port=3306;dbname=adgg',
+    'username' => 'dmogaka',
+    'password' => '!Sc00by@2023',
     'charset' => 'utf8mb4',
     'on afterOpen' => function ($event) {
         $event->sender->createCommand("SET time_zone = '+00:00'")->execute();
