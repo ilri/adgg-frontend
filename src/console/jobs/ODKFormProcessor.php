@@ -1196,6 +1196,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $groupKey = 'measure_details';
         $milkDateAttributeKey = self::getAttributeJsonKey('milk_milkdate', 'cow_monitoringanimal/milk_prodanimal', $repeatKey);
         $eventDateAttributeKey = isset($rawData[$milkDateAttributeKey]) ? $rawData[$milkDateAttributeKey] : date('Y-m-d');
+        Yii::info($animalCodeAttributeKey, "animal growth milk animalid key");
+        Yii::info($eventDateAttributeKey, "animal growth milk date as weight date animalid key");
         $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_WEIGHTS, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey);
     }
 
