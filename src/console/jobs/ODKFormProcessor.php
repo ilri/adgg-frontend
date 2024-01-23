@@ -168,6 +168,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerAnimalHoofTreatment();
                 $this->registerAnimalFeedProvided();
                 $this->registerAnimalGrowth();
+                $this->registerAnimalWeightOnMilk();
                 $this->registerCalfVaccination();
                 $this->registerCalfParasiteInfection();
                 $this->registerCalfInjury();
@@ -1188,14 +1189,15 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $eventDateAttributeKey = self::getAttributeJsonKey('calving_date', $groupKey, $repeatKey);
         $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_CALVING, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey);
     }
-//experiment
-//    protected function registerAnimalWeight()
-//    {
-//        list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCowMonitoringParams();
-//        $groupKey = 'measure_details';
-//        $eventDateAttributeKey = date('Y-m-d');
-//        $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_WEIGHTS, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey);
-//    }
+    //experiment
+    protected function registerAnimalWeightOnMilk()
+    {
+        list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCowMonitoringParams();
+        $groupKey = 'measure_details';
+        $milkDateAttributeKey = self::getAttributeJsonKey('milk_milkdate', 'cow_monitoringanimal/milk_prodanimal', $repeatKey);
+        $eventDateAttributeKey = isset($rawData[$milkDateAttributeKey]) ? $rawData[$milkDateAttributeKey] : date('Y-m-d');
+        $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_WEIGHTS, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey);
+    }
 
 
     protected function registerAnimalVaccination()
