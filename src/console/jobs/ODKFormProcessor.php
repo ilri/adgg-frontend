@@ -1476,7 +1476,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $mainRepeatKey = 'calf_monitoring';
         $rawData = $this->_model->form_data[$mainRepeatKey] ?? null;
         $repeatKey = $mainRepeatKey . '/calf_monitoringanimal';
-        $animalCodeAttributeKey = self::getAttributeJsonKey('calfmonitor_animalplatformuniqueid', $this->_model->isVersion1Point5() ? '' : 'calf_monitordetails', $repeatKey);
+        $animalCodeAttributeKey = self::getAttributeJsonKey('calfmonitor_animalplatformuniqueid', $this->_model->isVersion1Point5() ? '' : '', $repeatKey);
         return [$rawData, $repeatKey, $animalCodeAttributeKey];
     }
 
