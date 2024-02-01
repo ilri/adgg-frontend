@@ -623,40 +623,69 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $this->saveAnimalModel($newAnimalModel, $i, true);
             $newAnimalModel = $this->_animalsModels[$i];
             $n++;
-            //calving status
-            $calvingRepeatKey = $repeatKey . '/animal_calfstatus';
-            $calvingsData = $animalData[$calvingRepeatKey] ?? null;
-            // Create a new instance of CalvingEvent
-            $eventModel = new CalvingEvent([
-//                'animal_id' => $damModel->id,
-                // Assign the animal ID from the dam model code
-                'animal_id' => $dammodelcode,
-                // Set the event type to calving
-                'event_type' => CalvingEvent::EVENT_TYPE_CALVING,
-                // Assign location information from the new animals model
-                'country_id' => $newAnimalModel->country_id,
-                'region_id' => $newAnimalModel->region_id,
-                'district_id' => $newAnimalModel->district_id,
-                'ward_id' => $newAnimalModel->ward_id,
-                'village_id' => $newAnimalModel->village_id,
-                'org_id' => $newAnimalModel->org_id,
-                'client_id' => $newAnimalModel->client_id,
-                'data_collection_date' => $this->getDate(),
-                // 'event_date' => $this->getDate(),//Noted issue: No calving date in ODK form
-                'event_date' => $newAnimalModel->birthdate,
-                // Assign latitude and longitude from the new animals model
-                'latitude' => $newAnimalModel->latitude,
-                'longitude' => $newAnimalModel->longitude,
-                // Assign the field agent ID and ODK form UUID from the current model
-                'field_agent_id' => $this->_model->user_id,
-                'odk_form_uuid' => $this->_model->form_uuid,
-            ]);
+            if ($this->_model->isVersion1Point7() ) {
+                // Form version is 1.7 or lower, use $calvingRepeatKey
+                $calvingRepeatKey = $repeatKey . '/animal_calfstatus';
+                $calvingsData = $animalData[$calvingRepeatKey] ?? null;
 
-            if (!empty($calvingsData)) {
-                foreach ($calvingsData as $i => $calvingData) {
-                    $newEventModel = clone $eventModel;
-                    $newEventModel->setDynamicAttributesValuesFromOdkForm($calvingData, $animalcalfdetailsGroupKey, $calvingRepeatKey);
-                    $this->saveAnimalEventModel($newEventModel, $i, true);
+                $eventModel = new CalvingEvent([
+                    // 'animal_id' => $damModel->id,
+                    // Assign the animal ID from the dam model code
+                    'animal_id' => $dammodelcode,
+                    // Set the event type to calving
+                    'event_type' => CalvingEvent::EVENT_TYPE_CALVING,
+                    // Assign location information from the new animals model
+                    'country_id' => $newAnimalModel->country_id,
+                    'region_id' => $newAnimalModel->region_id,
+                    'district_id' => $newAnimalModel->district_id,
+                    'ward_id' => $newAnimalModel->ward_id,
+                    'village_id' => $newAnimalModel->village_id,
+                    'org_id' => $newAnimalModel->org_id,
+                    'client_id' => $newAnimalModel->client_id,
+                    'data_collection_date' => $this->getDate(),
+                    // 'event_date' => $this->getDate(),//Noted issue: No calving date in ODK form
+                    'event_date' => $newAnimalModel->birthdate,
+                    // Assign latitude and longitude from the new animals model
+                    'latitude' => $newAnimalModel->latitude,
+                    'longitude' => $newAnimalModel->longitude,
+                    // Assign the field agent ID and ODK form UUID from the current model
+                    'field_agent_id' => $this->_model->user_id,
+                    'odk_form_uuid' => $this->_model->form_uuid,
+                ]);
+
+                // Process calving events only if calving data is present
+                if (!empty($calvingsData)) {
+                    foreach ($calvingsData as $i => $calvingData) {
+                        $newEventModel = clone $eventModel;
+                        $newEventModel->setDynamicAttributesValuesFromOdkForm($calvingData, $animalcalfdetailsGroupKey, $calvingRepeatKey);
+                        $this->saveAnimalEventModel($newEventModel, $i, true);
+                    }
+                }
+            } else {
+                // Form version is 1.8 or greater, use $repeatKey
+                $newEventModel = new CalvingEvent([
+                    'animal_id' => $dammodelcode,
+                    'event_type' => CalvingEvent::EVENT_TYPE_CALVING,
+                    'country_id' => $newAnimalModel->country_id,
+                    'region_id' => $newAnimalModel->region_id,
+                    'district_id' => $newAnimalModel->district_id,
+                    'ward_id' => $newAnimalModel->ward_id,
+                    'village_id' => $newAnimalModel->village_id,
+                    'org_id' => $newAnimalModel->org_id,
+                    'client_id' => $newAnimalModel->client_id,
+                    'data_collection_date' => $this->getDate(),
+                    'event_date' => $newAnimalModel->birthdate,
+                    'latitude' => $newAnimalModel->latitude,
+                    'longitude' => $newAnimalModel->longitude,
+                    'field_agent_id' => $this->_model->user_id,
+                    'odk_form_uuid' => $this->_model->form_uuid,
+                ]);
+
+                // Check if animal_anydamselected is 1 before processing calving events
+                $animalAnyDamSelected = $this->getFormDataValueByKey($animalData, 'animal_general/animal_damknownlist/animal_anydamselected');
+
+                if ($animalAnyDamSelected == 1) {
+                    $this->saveAnimalEventModel($newEventModel, $k, true);
                 }
             }
         }
@@ -1189,7 +1218,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $eventDateAttributeKey = self::getAttributeJsonKey('calving_date', $groupKey, $repeatKey);
         $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_CALVING, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey);
     }
-    //experiment
+
     protected function registerAnimalWeightOnMilk()
     {
         list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCowMonitoringParams();
