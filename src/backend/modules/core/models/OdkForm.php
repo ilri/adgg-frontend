@@ -43,6 +43,7 @@ class OdkForm extends ActiveRecord implements ActiveSearchInterface
     const ODK_FORM_VERSION_1_POINT_4 = 'Ver 1.4';
     const ODK_FORM_VERSION_1_POINT_5 = 'Ver 1.5';
     const ODK_FORM_VERSION_1_POINT_6 = 'Ver 1.6';
+    const ODK_FORM_VERSION_1_POINT_7 = 'Ver 1.7';
 
     /**
      * {@inheritdoc}
@@ -242,6 +243,14 @@ class OdkForm extends ActiveRecord implements ActiveSearchInterface
     public function isVersion1Point6()
     {
         return $this->form_version === self::ODK_FORM_VERSION_1_POINT_6;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isVersion1Point7()
+    {
+        return $this->form_version === self::ODK_FORM_VERSION_1_POINT_7;
     }
 
     /**
