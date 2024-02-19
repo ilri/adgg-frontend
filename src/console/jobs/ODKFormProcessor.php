@@ -91,7 +91,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     /**
      * @var FarmMetadata[]
      */
-    private $_farmMetadataModels;
+
     /**
      * @var array
      */
@@ -109,7 +109,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     /**
      * @var AnimalEvent[]
      */
-    private $_animalEventModels;
 
     const MIN_SUPPORTED_ODK_FORM_VERSION = OdkForm::ODK_FORM_VERSION_1_POINT_5;
 
