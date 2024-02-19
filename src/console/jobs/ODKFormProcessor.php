@@ -468,7 +468,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $newFarmerModel = $this->setFarmerHouseholdMembersNumbersAttributes($newFarmerModel, $k);
             //Staff Code
             $newFarmerModel->created_by = $staffCodeKey;
-            Yii::info($newFarmerModel, 'what is being saved');
 
             $this->saveFarmModel($newFarmerModel, $k, true);
         }
