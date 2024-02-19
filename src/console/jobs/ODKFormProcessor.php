@@ -26,6 +26,7 @@ use common\helpers\DateUtils;
 use common\helpers\Lang;
 use common\helpers\Str;
 use common\models\ActiveRecord;
+use DateTime;
 use Yii;
 use yii\base\BaseObject;
 use yii\queue\Queue;
@@ -155,7 +156,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 //animal events
                 $this->registerAnimalSynchronization();
                 $this->registerAnimalAI();
-                $this->registerAnimalPD();
+               $this->registerAnimalPD();
                 $this->registerAnimalMilk();
                 $this->registerAnimalCalving();
                 //test
@@ -1194,8 +1195,9 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     {
         //todo pending tests
         $repeatKey = 'animal_breeding';
-        $data = $this->_model->form_data[$repeatKey] ?? null;
-        $pdRepeatKey = $repeatKey . '/animal_breedingpd';
+//        $data = $this->_model-logKey . '/animal_breedingpd';
+        $data = null; // data was throwing an error. I created this line and commented above. {Gideon 15th Feb 2024}
+        $pdRepeatKey = null; # Gideon created this line. $pdRepeatKey was being referenced yet it was not yet created {Gideon 18th Feb 2024}
         $pdGroupKey = 'breeding_pdresults';
         $animalCodeAttributeKey = self::getAttributeJsonKey('breeding_pdanimalplatformuniqueid', '', $pdRepeatKey);
         $eventDateKey = self::getAttributeJsonKey('breeding_pdservicedate', $pdGroupKey, $pdRepeatKey);
@@ -1209,6 +1211,163 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $groupKey = 'milk_prodanimal';
         $eventDateAttributeKey = self::getAttributeJsonKey('milk_milkdate', $groupKey, $repeatKey);
         $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_MILKING, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey);
+    }
+
+    # Gideon 2024-02-18
+    protected function  registerCalfWeightAfterCalving($data,$repeatKey,$groupKey,$params){
+
+        #Define the old and new key names
+        $keyMappings = array(
+            "cow_monitoring/cow_monitoringanimal/weight_measure_details/measure_bodyscore" => "cow_monitoring/cow_monitoringanimal/calving_details/calfmonitor_bodyscore",
+            "cow_monitoring/cow_monitoringanimal/weight_measure_details/measure_heartgirth" => "cow_monitoring/cow_monitoringanimal/calving_details/calfmonitor_heartgirth",
+            "cow_monitoring/cow_monitoringanimal/weight_measure_details/measure_weight" => "cow_monitoring/cow_monitoringanimal/calving_details/calfmonitor_weight"
+        );
+
+        #Loop through each key in the mapping -> Need to rename some keys so that they can be referenced with setting additional attributes
+        foreach ($keyMappings as $oldKey => $newKey) {
+            // Check if the old key exists
+            if (isset($data[$oldKey])) {
+                // Create a new element with the new key and assign the value
+                $data[$newKey] = $data[$oldKey];
+                // Remove the old key
+                unset($data[$oldKey]);
+            }
+        }
+
+
+        $calf_id = $params['calf_id'];
+        $event_date = $params['event_date'] !== null ? $params['event_date'] : $this->getDate();
+
+        #remove param values not required by weight event
+        unset($params["calf_id"]);
+        unset($params["event_date"]);
+
+        $animalModel = $this->getAnimalModelByOdkCode($calf_id); #get calf data for reuse i.e lon,lat, country_id & admin units
+
+
+        // If the animal model is null, log an error and return
+        if (null === $animalModel) {
+            $message = 'ODK Form processor: Register New Calf Weight aborted. Calf Details Not Found. Form UUID: ' . $this->_model->form_uuid;
+            Yii::error($message);
+            return;
+        } else {
+            $weightModel = new WeightEvent($params);
+            $weightModel->animal_id = $calf_id ?? null;
+            $weightModel->event_date = $event_date;
+            $weightModel->setDynamicAttributesValuesFromOdkForm($data, $groupKey, $repeatKey);
+            $this->saveAnimalEventModel($weightModel, 0, true);
+        }
+
+    }
+
+    # Gideon 2024-02-18
+    protected function  registerCalfAfterCalving($data,$repeatKey,$groupKey,$damId,$params){
+        $calf_identification_groupKey = "calf_identification";
+        $calf_breed_groupKey = "calf_breeddetails";
+        $calf_sire_groupKey = "calf_sireknownlist";
+
+        #global params
+        $uuid = $params['odk_form_uuid'];
+        $user_id = $params['field_agent_id'];
+        $longitude = $params['longitude'];
+        $latitude = $params['latitude'];
+
+        # Get Dam Details
+        $damAnimalModel = $this->getAnimalModelByOdkCode($damId);
+
+        # Get calf details
+        $calving_date = $this->getFormDataValueByKey($data, self::getAttributeJsonKey('calving_date', $groupKey, $repeatKey));
+        $calf_sex = $this->getFormDataValueByKey($data, self::getAttributeJsonKey('calfsex', $groupKey, $repeatKey));
+        $calf_animal_type = ($calf_sex === "1") ? 3 : 4; # set animal type. 3 is male calf; 4 is female calf
+        $calf_name = $this->getFormDataValueByKey($data, self::getAttributeJsonKey('calf_name', $calf_identification_groupKey, $repeatKey));
+        $calf_tagid = $this->getFormDataValueByKey($data, self::getAttributeJsonKey('calf_tagid', $calf_identification_groupKey, $repeatKey));
+        $calf_main_breed_comp = $this->getFormDataValueByKey($data, self::getAttributeJsonKey('calf_maincomp', $calf_breed_groupKey, $repeatKey));
+        $calf_mainbreed = $this->getFormDataValueByKey($data, self::getAttributeJsonKey('calf_mainbreed', $calf_breed_groupKey, $repeatKey));
+
+        #sire details
+        $calf_sire_type = $this->getFormDataValueByKey($data, self::getAttributeJsonKey('calf_siretype', $calf_sire_groupKey, $repeatKey));
+        if($calf_sire_type ==="1"){ # bull
+            $calf_sire_id = $this->getFormDataValueByKey($data, self::getAttributeJsonKey('calf_sirebullplatformuniqueid', $calf_sire_groupKey, $repeatKey));
+            $sireModel = $this->getAnimalModelByOdkCode($calf_sire_id);
+            if(null!==$sireModel){
+                $sire_tag_id =$sireModel->tag_id;
+            }
+        } else { # ai
+            $calf_sire_id = $this->getFormDataValueByKey($data, self::getAttributeJsonKey('calf_sireairegistered', $calf_sire_groupKey, $repeatKey));
+            $sireModel = $this->getAnimalModelByOdkCode($calf_sire_id);
+            if(null!==$sireModel){
+                $sire_tag_id =$sireModel->tag_id;
+            }
+        }
+        #Need to rename some keys so that they can be referenced with setting additional attributes
+        #Define the old and new key names
+        $keyMappings = array(
+            "cow_monitoring/cow_monitoringanimal/calving_details/calfregistration_deformities" => "cow_monitoring/cow_monitoringanimal/calving_details/animal_deformities",
+            "cow_monitoring/cow_monitoringanimal/calf_identification/calf_color" => "cow_monitoring/cow_monitoringanimal/calving_details/animal_color"
+        );
+
+        #Loop through each key in the mapping
+        foreach ($keyMappings as $oldKey => $newKey) {
+            // Check if the old key exists
+            if (isset($data[$oldKey])) {
+                // Create a new element with the new key and assign the value
+                $data[$newKey] = $data[$oldKey];
+                // Remove the old key
+                unset($data[$oldKey]);
+            }
+        }
+
+
+
+        # Animal(Calf) Modelling
+        $calfModel = new Animal([
+            'name' => $calf_name,
+            'tag_id' =>  $calf_tagid,
+            'animal_type' => $calf_animal_type,
+            'main_breed' => $calf_mainbreed,
+            'breed_composition' => $calf_main_breed_comp,
+            'birthdate' =>  $calving_date,
+            'farm_id' => $damAnimalModel->farm_id,
+            'dam_id' => $damId,
+            'dam_tag_id' => $damAnimalModel->tag_id,
+            'sire_type' => $calf_sire_type,
+            'sire_id' => $calf_sire_id,
+            'sire_tag_id' => $sire_tag_id,
+            'country_id' => $damAnimalModel->country_id,
+            'region_id' => $damAnimalModel->region_id,
+            'district_id' => $damAnimalModel->district_id,
+            'ward_id' => $damAnimalModel->ward_id,
+            'village_id' => $damAnimalModel->village_id,
+            'org_id' => $damAnimalModel->org_id,
+            'client_id' => $damAnimalModel->client_id,
+            'odk_form_uuid' => $uuid,
+            'latitude' => $latitude,
+            'longitude' => $longitude,
+            'reg_date' => $this->getDate(),
+            'created_by' => $user_id
+        ]);
+
+
+
+        // Set the values of any dynamic attributes based on the form data
+        $calfModel->setDynamicAttributesValuesFromOdkForm($data, $groupKey, $repeatKey);
+
+        $i = 'N-1';
+        $this->saveAnimalModel($calfModel, $i, true);
+
+        #get details of already registered animal
+        $newAnimalModel = $this->_animalsModels[$i];
+        $calf_id = $newAnimalModel->id;
+
+        # calf weight
+        if (null !== $calf_id) {
+            $params['event_type'] = 6; # reset event type to weight from calving
+            $params['calf_id'] =$calf_id ;
+            $params['event_date'] = $calving_date;
+            # call function to register calf weight
+            $this->registerCalfWeightAfterCalving($data,$repeatKey,$groupKey,$params);
+        }
+
     }
 
     protected function registerAnimalCalving()
@@ -1229,7 +1388,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         Yii::info($eventDateAttributeKey, "animal growth milk date as weight date animalid key");
         $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_WEIGHTS, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey);
     }
-
 
     protected function registerAnimalVaccination()
     {
@@ -1646,16 +1804,25 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      */
     protected function registerAnimalEvent($rawData, $eventType, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey = null)
     {
+
         if (null === $rawData) {
             return;
         }
         $newAnimalCodeAttributeKey = Str::str_lreplace('platformuniqueid', 'code', $animalCodeAttributeKey);
+        $calfRegistrationAttributeKey = self::getAttributeJsonKey('calf_registration', $groupKey, $repeatKey);
+        $geolocation = $this->_model->geolocation;
+
         $params = [
             'event_type' => $eventType,
             'data_collection_date' => $this->getDate(),
             'field_agent_id' => $this->_model->user_id,
+            'created_by' => $this->_model->user_id,
             'odk_form_uuid' => $this->_model->form_uuid,
+            'longitude' =>   $geolocation[1],
+            'latitude' =>  $geolocation[0]
         ];
+
+
         switch ($eventType) {
             case AnimalEvent::EVENT_TYPE_CALVING:
                 $model = new CalvingEvent($params);
@@ -1672,6 +1839,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
 
         foreach ($rawData as $k => $dataPoints) {
             $dataPoint = $dataPoints[$repeatKey] ?? null;
+
+
             if (null === $dataPoint) {
                 continue;
             }
@@ -1680,22 +1849,32 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 if (Str::isEmpty($animalCode)) {
                     $animalCode = $this->getFormDataValueByKey($data, $newAnimalCodeAttributeKey);
                 }
-                //Yii::$app->controller->stdout("Animal Code: {$animalCode}, attributeKey: {$animalCodeAttributeKey}, newAttribute Key:{$newAnimalCodeAttributeKey}\n");
-
                 $animalModel = $this->getAnimalModelByOdkCode($animalCode);
-
                 $eventDate = $eventDateAttributeKey !== null ? $this->getFormDataValueByKey($data, $eventDateAttributeKey) : $this->getDate();
                 $newModel = clone $model;
+
                 if ($newModel->setDynamicAttributesValuesFromOdkForm($data, $groupKey, $repeatKey)) {
+
                     $newModel->animal_id = $animalModel->id ?? null;
                     $newModel->event_date = $eventDate;
                     if (empty($newModel->event_date)) {
                         $newModel->event_date = $newModel->data_collection_date;
                     }
-                    $newModel->latitude = $animalModel->latitude ?? null;
-                    $newModel->longitude = $animalModel->longitude ?? null;
                     $this->saveAnimalEventModel($newModel, $k . $i, true);
                 }
+
+                # Register Calf & Calf Weight for Calving Event
+                if ($eventType ===1){
+                    #Get flag that determines if calf + weight should be registered
+                    $is_calf_registered = $this->getFormDataValueByKey($data, $calfRegistrationAttributeKey);
+                    #Check if calf is to be Created
+                    if($is_calf_registered==="1"){
+                        #Register Calf
+                        $this->registerCalfAfterCalving($data,$repeatKey, $groupKey,$animalCode,$params);
+                        #Register Calf Weight
+                    }
+                }
+
             }
         }
     }

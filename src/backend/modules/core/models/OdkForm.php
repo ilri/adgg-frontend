@@ -28,7 +28,7 @@ use console\jobs\ODKFormProcessor;
  * @property int|null $user_id
  * @property string $created_at
  * @property int|null $created_by
- *
+ * @property string|null $geolocation
  * @property Country $country
  * @property Users $user
  */
@@ -114,6 +114,8 @@ class OdkForm extends ActiveRecord implements ActiveSearchInterface
             }
             $this->form_uuid = $this->form_data['_uuid'] ?? null;
             $this->form_version = $this->form_data['_version'] ?? null;
+            $this->geolocation = $this->form_data['_geolocation'] ?? null;
+
             $this->setCountryId();
             $this->setUserId();
             if (empty($this->error_message)) {

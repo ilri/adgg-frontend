@@ -13,6 +13,7 @@ use common\models\ActiveRecord;
 use common\widgets\select2\Select2;
 use console\jobs\ODKFormProcessor;
 use yii\bootstrap4\ActiveForm;
+use Yii;
 
 /**
  * Trait TableAttributeTrait

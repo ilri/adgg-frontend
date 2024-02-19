@@ -1,10 +1,15 @@
 sudo how to set-up & run the project
 The following will guide you through setting up the project on your local PC. If you already have the project on your PC, check the #Other setup section below
 # pre-requisites
-+ php version 7.0+
++ php version 7.4+
 + Mysql version 8.0+
++ php7.4-mysql
++ Composer version 2.2.22
 + composer. (https://getcomposer.org/download/)
 + Yarn. (Yarn requires nodejs, so ensure that you have it first. Follow the steps below to install both)
++ add the dependencies to composer.json
++ sizeg/yii2-jwt ~2.0",
++ lcobucci/jwt ~3.3.0", 
 ```sh
 curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
 sudo apt-get install -y nodejs
@@ -58,6 +63,8 @@ sudo cp env.sample.php env.php
 # you're done
 ```
 
+# debug on loclhost
+php -S localhost:8080 -t <adgg-frontend>
 visit http://localhost/gelf, to view the system. login using the following:
 > username => admin | password => Admin12345
 
@@ -76,13 +83,6 @@ git checkout develop
 ```sh
 composer update
 yarn install
-```
-
-### update the database data
-Run the Yii migrations, so that you get the latest modifications
-```sh
-cd src
-./yii migrate
 ```
 
 ### your done!!!
