@@ -43,6 +43,9 @@ class ODKFormProcessor extends BaseObject implements JobInterface
      * @var OdkForm
      */
     private $_model;
+    private $_farmMetadataModels;
+
+    private $_animalEventModels;
 
     /**
      * @var int
@@ -159,7 +162,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 $this->registerAnimalMilk();
                 $this->registerAnimalCalving();
                 //test
-                //$this->registerAnimalWeight();
+                #$this->registerAnimalWeight();
                 $this->registerAnimalVaccination();
                 $this->registerAnimalParasiteInfection();
                 $this->registerAnimalInjury();
@@ -1214,11 +1217,14 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     # Gideon 2024-02-18
     protected function  registerCalfWeightAfterCalving($data,$repeatKey,$groupKey,$params){
 
+        $weight_measure_details = "cow_monitoring/cow_monitoringanimal/weight_measure_details/";
+        $calving_details = "cow_monitoring/cow_monitoringanimal/calving_details/";
+
         #Define the old and new key names
         $keyMappings = array(
-            "cow_monitoring/cow_monitoringanimal/weight_measure_details/measure_bodyscore" => "cow_monitoring/cow_monitoringanimal/calving_details/calfmonitor_bodyscore",
-            "cow_monitoring/cow_monitoringanimal/weight_measure_details/measure_heartgirth" => "cow_monitoring/cow_monitoringanimal/calving_details/calfmonitor_heartgirth",
-            "cow_monitoring/cow_monitoringanimal/weight_measure_details/measure_weight" => "cow_monitoring/cow_monitoringanimal/calving_details/calfmonitor_weight"
+            $weight_measure_details."measure_bodyscore" =>  $calving_details."calfmonitor_bodyscore",
+            $weight_measure_details."measure_heartgirth" => $calving_details."calfmonitor_heartgirth",
+            $weight_measure_details."measure_weight" => $calving_details."calfmonitor_weight"
         );
 
         #Loop through each key in the mapping -> Need to rename some keys so that they can be referenced with setting additional attributes
@@ -1283,6 +1289,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $calf_mainbreed = $this->getFormDataValueByKey($data, self::getAttributeJsonKey('calf_mainbreed', $calf_breed_groupKey, $repeatKey));
 
         #sire details
+        $sire_tag_id = null;
         $calf_sire_type = $this->getFormDataValueByKey($data, self::getAttributeJsonKey('calf_siretype', $calf_sire_groupKey, $repeatKey));
         if($calf_sire_type ==="1"){ # bull
             $calf_sire_id = $this->getFormDataValueByKey($data, self::getAttributeJsonKey('calf_sirebullplatformuniqueid', $calf_sire_groupKey, $repeatKey));
@@ -1299,9 +1306,22 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         }
         #Need to rename some keys so that they can be referenced with setting additional attributes
         #Define the old and new key names
+
+        $calving_details_key = "cow_monitoring/cow_monitoringanimal/calving_details/";
+        $calf_identification_key = "cow_monitoring/cow_monitoringanimal/calf_identification/";
         $keyMappings = array(
-            "cow_monitoring/cow_monitoringanimal/calving_details/calfregistration_deformities" => "cow_monitoring/cow_monitoringanimal/calving_details/animal_deformities",
-            "cow_monitoring/cow_monitoringanimal/calf_identification/calf_color" => "cow_monitoring/cow_monitoringanimal/calving_details/animal_color"
+            $calving_details_key."calfregistration_deformities" => $calving_details_key."animal_deformities",
+            $calf_identification_key."calf_color" =>  $calving_details_key."animal_color",
+            #below keys are for backward compatility
+            $calving_details_key."calvtype" =>  $calving_details_key."calfregistration_calvingtype",
+            $calving_details_key."easecalv" =>  $calving_details_key."calfregistration_calvingease",
+            $calving_details_key."calfdeformities" =>  $calving_details_key."calfregistration_deformities",
+            $calving_details_key."birthtyp" =>  $calving_details_key."calfregistration_birthtype",
+            $calving_details_key."calving_type_other" =>  $calving_details_key."calfregistration_calvingtypeother",
+            $calving_details_key."calving_ease_other" =>  $calving_details_key."calfregistration_calvingeaseother",
+            $calving_details_key."calfdeformitiesoth" =>  $calving_details_key."calfregistration_deformitiesother",
+            $calving_details_key."intuse" =>  $calving_details_key."calfregistration_intendeduse",
+            $calving_details_key."intuseoth" =>  $calving_details_key."calfregistration_intendeduseother"
         );
 
         #Loop through each key in the mapping
@@ -1314,8 +1334,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 unset($data[$oldKey]);
             }
         }
-
-
 
         # Animal(Calf) Modelling
         $calfModel = new Animal([
@@ -1382,8 +1400,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $groupKey = 'measure_details';
         $milkDateAttributeKey = self::getAttributeJsonKey('milk_milkdate', 'cow_monitoringanimal/milk_prodanimal', $repeatKey);
         $eventDateAttributeKey = isset($rawData[$milkDateAttributeKey]) ? $rawData[$milkDateAttributeKey] : date('Y-m-d');
-        Yii::info($animalCodeAttributeKey, "animal growth milk animalid key");
-        Yii::info($eventDateAttributeKey, "animal growth milk date as weight date animalid key");
         $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_WEIGHTS, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey);
     }
 
