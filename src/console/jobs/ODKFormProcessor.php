@@ -190,19 +190,23 @@ class ODKFormProcessor extends BaseObject implements JobInterface
 
             $this->_model->is_processed = 1;
             $this->_model->processed_at = DateUtils::mysqlTimestamp();
+
+            #Possibility of malformed UTF-8 characters in your data
+            #convert to a valid UTF-8 encoding to clean up the data before further processing.
             if (!empty($this->_farmData)) {
-                $this->_model->farm_data = $this->_farmData;
+                $this->_model->farm_data = json_decode(iconv(mb_detect_encoding(json_encode($this->_farmData), mb_detect_order(), true), 'UTF-8', json_encode($this->_farmData)), true);
             }
             if (!empty($this->_farmMetadata)) {
-                $this->_model->farm_metadata = $this->_farmMetadata;
+                $this->_model->farm_metadata = json_decode(iconv(mb_detect_encoding(json_encode($this->_farmMetadata), mb_detect_order(), true), 'UTF-8', json_encode($this->_farmMetadata)), true);
             }
             if (!empty($this->_animalsData)) {
-                $this->_model->animals_data = $this->_animalsData;
+                $this->_model->animals_data = json_decode(iconv(mb_detect_encoding(json_encode($this->_animalsData), mb_detect_order(), true), 'UTF-8', json_encode($this->_animalsData)), true);
             }
             if (!empty($this->_animalEventsData)) {
-                $this->_model->animal_events_data = $this->_animalEventsData;
+                $this->_model->animal_events_data = json_decode(iconv(mb_detect_encoding(json_encode($this->_animalEventsData), mb_detect_order(), true), 'UTF-8', json_encode($this->_animalEventsData)), true);
             }
             $this->_model->save(false);
+
             ODKJsonNotification::createManualNotifications(ODKJsonNotification::NOTIF_ODK_JSON, $this->_model->id);
             Yii::$app->controller->stdout("Processing successful..\n");
         } catch (\Exception $e) {
@@ -556,7 +560,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             Yii::error($message);
             return;
         }
-
         // Create a new instance of the Animal model and set some properties
         $animalModel = new Animal([
             'farm_id' => $farmModel->id,
@@ -625,6 +628,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $this->saveAnimalModel($newAnimalModel, $i, true);
             $newAnimalModel = $this->_animalsModels[$i];
             $n++;
+
             if ($this->_model->isVersion1Point7() ) {
                 // Form version is 1.7 or lower, use $calvingRepeatKey
                 $calvingRepeatKey = $repeatKey . '/animal_calfstatus';
@@ -663,7 +667,9 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                         $this->saveAnimalEventModel($newEventModel, $i, true);
                     }
                 }
+
             } else {
+
                 // Form version is 1.8 or greater, use $repeatKey
                 $newEventModel = new CalvingEvent([
                     'animal_id' => $dammodelcode,
@@ -683,6 +689,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                     'odk_form_uuid' => $this->_model->form_uuid,
                 ]);
 
+
                 // Check if animal_anydamselected is 1 before processing calving events
                 $animalAnyDamSelected = $this->getFormDataValueByKey($animalData, 'animal_general/animal_damknownlist/animal_anydamselected');
 
@@ -690,6 +697,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                     $this->saveAnimalEventModel($newEventModel, $k, true);
                 }
             }
+
         }
     }
 
@@ -1114,6 +1122,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
     protected function registerFarmExtensionServices()
     {
 
+
         $repeatKey = 'farm_extension';
         $data = $this->_model->form_data[$repeatKey] ?? null;
         if (empty($data)) {
@@ -1208,6 +1217,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
 
     protected function registerAnimalMilk()
     {
+
         list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCowMonitoringParams();
         $groupKey = 'milk_prodanimal';
         $eventDateAttributeKey = self::getAttributeJsonKey('milk_milkdate', $groupKey, $repeatKey);
@@ -1891,6 +1901,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
 
             }
         }
+
     }
 
     /**
