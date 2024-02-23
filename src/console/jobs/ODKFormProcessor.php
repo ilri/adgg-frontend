@@ -431,7 +431,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $farmerIsHouseholdHeadKey = self::getAttributeJsonKey('farmer_hhhead', $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
         //$locationStringKey = $farmersRepeatKey . '/farmer_gpslocation';
         $locationStringKey = 'farmer_general/farmer_gpslocation';
-        Yii::info($locationStringKey, 'location string info');
         $staffCodeKey = 'staff_code';
         //household head
 
@@ -463,11 +462,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $newFarmerModel->gender_code = $this->getFormDataValueByKey($farmerData, $farmerGenderKey);
             $newFarmerModel->farmer_is_hh_head = $this->getFormDataValueByKey($farmerData, $farmerIsHouseholdHeadKey);
             $geoLocation = static::splitGPRSLocationString($this->getFormDataValueByKey($farmerData, $locationStringKey));
-            Yii::info($geoLocation, 'geo location info');
             $newFarmerModel->latitude = $geoLocation['latitude'];
-            Yii::info($geoLocation['latitude'], 'geo location latitude');
             $newFarmerModel->longitude = $geoLocation['longitude'];
-            Yii::info($geoLocation['longitude'], 'geo location longitude');
             $newFarmerModel->setDynamicAttributesValuesFromOdkForm($farmerData, $farmerGeneralDetailsGroupKey, $farmersRepeatKey);
             $newFarmerModel->setDynamicAttributesValuesFromOdkForm($farmerData, $farmerHouseholdHeadGroupKey, $farmersRepeatKey);
             //Household Members (No Demographics)
@@ -613,7 +609,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             // Retrieve or register the dam for the animal
             $damModel = $this->getOrRegisterAnimalDam($animalData, $farmModel, $k);
             $dammodelcode = $this->getFormDataValueByKey($animalData, $damCodeKey);
-            // Yii::info(json_encode($dammodelcode),"dam model code key dwsafdkajhf");
             if (null !== $damModel) {
                 $newAnimalModel->dam_id = $damModel->id;
                 $newAnimalModel->dam_tag_id = $damModel->tag_id;
@@ -1593,7 +1588,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         list($rawData, $repeatKey, $animalCodeAttributeKey) = $this->getCalfMonitoringParams();
         $groupKey = 'calfmonitor_growth';
         $eventDateAttributeKey = self::getAttributeJsonKey('calfmonitor_date', $groupKey, $repeatKey);
-        Yii::info($animalCodeAttributeKey, "animal growth animalid key");
         $this->registerAnimalEvent($rawData, AnimalEvent::EVENT_TYPE_WEIGHTS, $repeatKey, $groupKey, $animalCodeAttributeKey, $eventDateAttributeKey);
     }
 
@@ -2139,8 +2133,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         if ($model->country_id === 12) {
             // Find an existing animal record based on the tag_id
             $existingModel = Animal::find()->andWhere(['tag_id' => $model->tag_id])->one();
-
-            Yii::info(json_encode($existingModel), "testing to check how the where condition is executed");
 
             if ($existingModel !== null) {
                 // If an existing animal is found, update its attributes with the new model's attributes
