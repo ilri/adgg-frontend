@@ -23,7 +23,7 @@ class DataMigrationController extends Controller
     {
         $time_start = microtime(true);
         $this->doMigration();
-//        $this->requeueStalledOdkForms();
+        $this->requeueStalledOdkForms();
         $time_end = microtime(true);
         $executionTime = round($time_end - $time_start, 2);
         $this->stdout("DATA MIGRATION TASK EXECUTED IN {$executionTime} SECONDS\n");
