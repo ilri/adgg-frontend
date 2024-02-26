@@ -83,7 +83,7 @@ class Notif extends ActiveRecord
             }
             $globalUserIds = static::getNotifUsers($notifTypeId);
             $userIds = array_merge($globalUserIds, $userIds);
-            Yii::info($userIds);
+
             if (is_null($enableInternalNotif) || $enableInternalNotif) {
                 $enableInternalNotif = $notifType->enable_internal_notification;
             }
@@ -106,7 +106,10 @@ class Notif extends ActiveRecord
                 self::processSms($notifType, $userIds, $itemId, $createdBy);
             }
         } catch (\Exception $e) {
-            Yii::error($e->getTraceAsString());
+            $message = $e->getMessage();
+            $trace = $e->getTraceAsString();
+            Yii::error($message);
+            Yii::error($trace);
         }
     }
 
