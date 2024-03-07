@@ -52,6 +52,8 @@ $events = AnimalEvent::eventTypeOptions();
             $url = 'sampling-event/index';
         }elseif ($key == AnimalEvent::EVENT_TYPE_STRAW) {
             $url = 'straw-event/index';
+        }elseif ($key == AnimalEvent::EVENT_TYPE_GENERAL_HEALTH) {
+            $url = 'general-health-event/index';
         }
 
         ?>

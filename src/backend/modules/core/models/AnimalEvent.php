@@ -68,6 +68,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
     const EVENT_TYPE_HOOF_TREATMENT = 16;
     const EVENT_TYPE_FEEDING = 17;
     const EVENT_TYPE_STRAW = 18;
+    const EVENT_TYPE_GENERAL_HEALTH = 19;
 
 
     public $animalTagId;
@@ -408,6 +409,8 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
                 return 'Sampling';
             case self::EVENT_TYPE_STRAW:
                 return 'Straw';
+            case self::EVENT_TYPE_GENERAL_HEALTH:
+                return 'General Health';
             default:
                 return '';
         }
@@ -435,6 +438,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             self::EVENT_TYPE_EXITS => static::decodeEventType(self::EVENT_TYPE_EXITS),
             self::EVENT_TYPE_SAMPLING => static::decodeEventType(self::EVENT_TYPE_SAMPLING),
             self::EVENT_TYPE_STRAW => static::decodeEventType(self::EVENT_TYPE_STRAW),
+            self::EVENT_TYPE_GENERAL_HEALTH => static::decodeEventType(self::EVENT_TYPE_GENERAL_HEALTH),
             //self::EVENT_TYPE_CERTIFICATION => static::decodeEventType(self::EVENT_TYPE_CERTIFICATION),
         ], $prompt);
     }
