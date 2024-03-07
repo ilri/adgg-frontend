@@ -95,6 +95,9 @@ trait AnimalEventTrait
             case AnimalEvent::EVENT_TYPE_STRAW:
                 $grid = 'straw';
                 break;
+            case AnimalEvent::EVENT_TYPE_GENERAL_HEALTH:
+                $grid = 'general-health';
+                break;
         }
 
         return $this->render('@coreModule/views/animal-event/index', [
