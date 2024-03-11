@@ -1847,7 +1847,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             $baseModel->setDynamicAttributesValuesFromOdkForm($dataPoints, 'ecf_vaccinationlist', $mainRepeatKey);
             foreach ($dataPoint as $i => $data) {
                 $animalCode = $this->getFormDataValueByKey($data, $animalCodeAttributeKey);
-                $animalModel = $this->getAnimalModelByOdkCode($animalCode,null,null);
+                $animalModel = $this->getAnimalModelByOdkCode($animalCode,$data,AnimalEvent::EVENT_TYPE_VACCINATION);
                 $newModel = clone $baseModel;
                 $newModel->animal_id = $animalModel->id ?? null;
                 $newModel->setDynamicAttributesValuesFromOdkForm($data, 'ecf_vaccinationdetails', $animalRepeat);
@@ -2029,8 +2029,14 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         }elseif($eventType ===5){
             # sync
             $tag_attribute = "animal_breeding/animal_breedingsync/breeding_syncanimaldetails";
-        }
-        else{
+        }elseif($eventType ===10){
+            # hair sampling
+            $tag_attribute = "animal_hairsampling/animal_hairsamplingdetails/hairsampling_animaldetails";
+        }elseif($eventType ===12){
+            # Vaccination: ECF
+            $tag_attribute = "ecf_vaccination/ecf_vaccinationanimal/ecf_vaccinationanimaldetails";
+
+        }else{
             $tag_attribute = null;
         }
         return $tag_attribute;
@@ -2061,7 +2067,6 @@ class ODKFormProcessor extends BaseObject implements JobInterface
             if($jsonData){
                 #get the attribute key with the tag id
                 $tag_attribute = $this->getTagIdKeyAttribute($eventType);
-                Yii::$app->controller->stdout("tag attribute:{$eventType}\n");
                 if($tag_attribute){
                     #get the actual tag id string
                     $tagIdString = $this->getFormDataValueByKey($jsonData, $tag_attribute);
