@@ -94,12 +94,29 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             [['latitude', 'longitude'], 'number'],
             [['map_address', 'uuid'], 'string', 'max' => 255],
             ['event_date', 'validateNoFutureDate'],
-            ['event_date', 'unique', 'targetAttribute' => ['animal_id', 'event_type', 'event_date'], 'message' => '{attribute} should be unique per animal', 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
+            [['animal_id', 'event_date','event_type'], 'uniqueExceptWeightEvent', 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
             [['org_id', 'client_id'], 'safe'],
             ['migration_id', 'unique', 'except' => self::SCENARIO_MISTRO_DB_UPLOAD],
             ['animal_id', 'exist', 'targetClass' => Animal::class, 'targetAttribute' => ['animal_id' => 'id']],
             [[self::SEARCH_FIELD], 'safe', 'on' => self::SCENARIO_SEARCH],
         ];
+    }
+
+    public function uniqueExceptWeightEvent($attribute, $params)
+    {
+        $event_type = $this->event_type;
+        $event_date = $this->event_date;
+        $animal_id = $this->animal_id;
+
+        if ($event_type != self::EVENT_TYPE_VACCINATION) {
+            $count = AnimalEvent::find()
+                ->where(['animal_id' => $animal_id, 'event_date' => $event_date,'event_type' => $event_type])
+                ->count();
+            if ($count > 1) {
+                $this->addError($attribute, Yii::t('app', $attribute.' should be unique per animal'));
+                //
+            }
+        }
     }
 
     /**
