@@ -94,7 +94,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
             [['latitude', 'longitude'], 'number'],
             [['map_address', 'uuid'], 'string', 'max' => 255],
             ['event_date', 'validateNoFutureDate'],
-            [['animal_id', 'event_date','event_type'], 'uniqueExceptWeightEvent', 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
+            [['animal_id', 'event_date','event_type'], 'uniqueExceptVaccinationEvent', 'except' => [self::SCENARIO_MISTRO_DB_UPLOAD]],
             [['org_id', 'client_id'], 'safe'],
             ['migration_id', 'unique', 'except' => self::SCENARIO_MISTRO_DB_UPLOAD],
             ['animal_id', 'exist', 'targetClass' => Animal::class, 'targetAttribute' => ['animal_id' => 'id']],
@@ -102,7 +102,7 @@ class AnimalEvent extends ActiveRecord implements ActiveSearchInterface, TableAt
         ];
     }
 
-    public function uniqueExceptWeightEvent($attribute, $params)
+    public function uniqueExceptVaccinationEvent($attribute, $params)
     {
         $event_type = $this->event_type;
         $event_date = $this->event_date;
