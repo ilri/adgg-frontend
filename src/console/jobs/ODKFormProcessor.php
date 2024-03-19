@@ -1747,7 +1747,7 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         $repeatKey = $mainRepeatKey . '/calf_monitoringanimal';
         $animalCodeAttributeKey = self::getAttributeJsonKey(
             'calfmonitor_animalplatformuniqueid',
-            $this->_model->isVersion1Point5() ? '' : 'calf_monitordetails',
+            '',
             $mainRepeatKey . '/calf_monitoringanimal'
         );
 
@@ -2017,8 +2017,8 @@ class ODKFormProcessor extends BaseObject implements JobInterface
         #1.Dedicated weight event
         #2.Under Milking -> Event ID will be 60
         #3.Under Calf registration
-        if($eventType ===1 OR $eventType ===2 OR $eventType ===60 OR $eventType ===17){
-            # milking|calving|weight(under milking)
+        if($eventType ===1 OR $eventType ===2 OR $eventType ===60 OR $eventType ===17 OR $eventType ===12 OR $eventType ===13 OR $eventType ===14 OR $eventType ===15){
+            # milking|calving|weight(under milking| vaccination | Parasite Infection | Injury| hoof health)
             $tag_attribute ="cow_monitoring/cow_monitoringanimal/cowmonitor_animaldetails";
         }elseif($eventType ===4){
             # pd
