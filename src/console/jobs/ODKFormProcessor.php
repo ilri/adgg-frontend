@@ -655,6 +655,26 @@ class ODKFormProcessor extends BaseObject implements JobInterface
                 }
             }
 
+            #Handle udder scoring -> need to modify keys for the dynamic attribute function to pick the values
+            $animal_details = "animal_general/animal_identification/";
+            #Define the old and new key names
+            $keyMappings = array(
+                "animal_general/udder_scoring/grp_uddersupp/udder_centre_ligament_score" =>  $animal_details."udder_centre_ligament_score",
+                "animal_general/udder_scoring/grp_udderatta/udder_attachment_score" => $animal_details."udder_attachment_score",
+                "animal_general/udder_scoring/grp_teatrep/udder_teat_placement_score" => $animal_details."udder_teat_placement_score"
+            );
+
+            #Loop through each key in the mapping -> Need to rename some keys so that they can be referenced with setting additional attributes
+            foreach ($keyMappings as $oldKey => $newKey) {
+                // Check if the old key exists
+                if (isset($animalData[$oldKey])) {
+                    // Create a new element with the new key and assign the value
+                    $animalData[$newKey] = $animalData[$oldKey];
+                    // Remove the old key
+                    unset($animalData[$oldKey]);
+                }
+            }
+
             // Set the values of any dynamic attributes based on the form data
             $newAnimalModel->setDynamicAttributesValuesFromOdkForm($animalData, $animalIdentificationGroupKey, $repeatKey);
 
